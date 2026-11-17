@@ -1,0 +1,16 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [],
+  "localization_only": false,
+  "map_id": "import_lab",
+  "goal": [
+    5.5,
+    1.0
+  ],
+  "error": "RuntimeError('a supervised ROS process exited')",
+  "last_navigation": null,
+  "received_scans": 0,
+  "has_odometry": false,
+  "has_terrain": false
+}

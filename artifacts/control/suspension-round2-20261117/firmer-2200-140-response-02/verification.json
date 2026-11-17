@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "process_exit": 3,
+  "failure_reason": "suspension_impulse_recovered: Actual chassis impulse recovers without pose constraints or active height control",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=0.008004cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.653185cm vz=-0.000165cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": true,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    },
+    {
+      "name": "suspension_impulse_recovered",
+      "passed": false,
+      "detail": "Actual chassis impulse recovers without pose constraints or active height control"
+    }
+  ],
+  "module_sha256": "9b489d1e212fe0aeed1955f75e7e2a4e6442684a64b41ca345126675c41595d1"
+}

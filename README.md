@@ -21,15 +21,15 @@ UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接�
 
 ## 最新实证：悬挂与接触驾驶
 
-AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂每模块 **1800 N/m、130 N·s/m**；原值1600/90，质量、预载、行程、轮胎凸包、摩擦与控制增益保持不变。
+AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂每模块 **2000 N/m、140 N·s/m**；上一轮1800/130，质量、预载、行程、轮胎凸包、摩擦与控制增益保持不变。
 
-同条件两次原生测量一致：卸载回弹峰值2.643→1.085mm，冲量后反弹0.946→0.213mm。当前模块/参数完成92项原生回归与48PNG，覆盖操控、小陀螺、红蓝波浪往返、坡面制动、射击/复位、ROS速度桥与原LK电流环；另有两次悬挂专项各4项/6PNG。
+同模块原生对照：100N附加载荷压缩15.620→14.447mm，卸载回弹峰值1.085→0.774mm，冲量后反弹0.213→0.029mm。新配置两次专项结果一致。当前模块/参数完成92项原生回归与48PNG，覆盖操控、小陀螺、红蓝波浪往返、坡面制动、射击/复位、ROS速度桥与原LK电流环；另有两次悬挂专项各4项/6PNG。
 
-[悬挂参数、实测与回退](docs/guides/suspension.md) · [机器验收汇总](artifacts/control/suspension-20261117/release-summary.json)
+[悬挂参数、实测与回退](docs/guides/suspension.md) · [机器验收汇总](artifacts/control/suspension-round2-20261117/release-summary.json)
 
 ## 算法、地图与车辆扩展
 
-Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO；Nav2已有平地绕障和RMUC分项运行证据，波浪路线终点精度与故障恢复继续验收。新悬挂下的Point-LIO/Nav2联合尚未重跑。
+Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。当前2000/140悬挂下，原LK/Point-LIO联合11项通过；RMUC波浪自主导航往返9项通过，实际去程/返程终点误差0.1676m/0.1172m，沿用0.25m门限。断线重连首轮完整14项通过；最终重复运行发现扫描TF链的间歇恢复卡点，当前继续跟踪该问题。实际R恢复独立验收，最新证据见当前进度。
 
 地图支持包入口切换。WT CDK示例：`Play-ManualVehicle.cmd assets\maps\wt_cdk_crop\map.json hillside`。弗兰德斯原图资源已准备，完整UE场景运行待验收。[地图说明](docs/guides/map-packages.md)
 
@@ -48,4 +48,4 @@ Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发
 | `tools/`、`tests/` | 导出、构建、验证、集成与离线测试 |
 | `artifacts/`、`third_party/patches` | 精简真实验证/来源记录及上游适配补丁 |
 
-大型模型/贴图、导入后的UE Content、编译/安装目录、缓存和完整运行轨迹保留本地，不进入Git。全新克隆需要按来源记录准备合法可用的资源与本机依赖，再构建/导入。GitHub私有仓库上传当前待连接写入工具可用后完成。
+大型模型/贴图、导入后的UE Content、编译/安装目录、缓存和完整运行轨迹保留本地，不进入Git。全新克隆需要按来源记录准备合法可用的资源与本机依赖，再构建/导入。源码与精简证据已发布至用户指定的公开仓库 [SHENJLYL/RMsimUE](https://github.com/SHENJLYL/RMsimUE)，main及回退标签均已核对远程提交。

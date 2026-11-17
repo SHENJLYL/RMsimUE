@@ -1,0 +1,133 @@
+{
+  "status": "native_windows_verified",
+  "scope": "AIM suspension response and native driving/ROS/LK regression; OS feel and navigation are separate",
+  "module_sha256": "9b489d1e212fe0aeed1955f75e7e2a4e6442684a64b41ca345126675c41595d1",
+  "drive_profile_sha256": "d1db3392b972fe6bb70aea5c0fffa9fc998e0c687ec3a09b9ba6d6b5ce142057",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "changed_parameters": {
+    "physics.SpringStiffnessNPerM": {
+      "before": 1800.0,
+      "after": 2000.0
+    },
+    "physics.SpringDampingNsPerM": {
+      "before": 130.0,
+      "after": 140.0
+    }
+  },
+  "regression_checks": 92,
+  "decoded_pngs": 48,
+  "runs": [
+    {
+      "directory": "traction",
+      "checks": 10,
+      "decoded_pngs": 4,
+      "passed": true
+    },
+    {
+      "directory": "controls/default",
+      "checks": 19,
+      "decoded_pngs": 12,
+      "passed": true
+    },
+    {
+      "directory": "waves/wave_red",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "passed": true
+    },
+    {
+      "directory": "waves/wave_blue",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "passed": true
+    },
+    {
+      "directory": "integration",
+      "checks": 10,
+      "decoded_pngs": 12,
+      "passed": true
+    },
+    {
+      "directory": "fast",
+      "checks": 5,
+      "decoded_pngs": 4,
+      "passed": true
+    },
+    {
+      "directory": "spin",
+      "checks": 6,
+      "decoded_pngs": 4,
+      "passed": true
+    },
+    {
+      "directory": "ros/ros",
+      "checks": 11,
+      "decoded_pngs": 0,
+      "passed": true
+    },
+    {
+      "directory": "lk/lk",
+      "checks": 21,
+      "decoded_pngs": 0,
+      "passed": true
+    }
+  ],
+  "baseline_metrics": {
+    "load_deflection_mm": 15.619501424930561,
+    "release_peak_overshoot_mm": 1.0846521553921034,
+    "release_overshoot_percent": 6.944217525796764,
+    "release_settling_5pct_s": 0.29499999340623617,
+    "release_final_height_error_mm": 0.30649089381990235,
+    "impulse_peak_compression_mm": 5.037932050141674,
+    "impulse_peak_rebound_mm": 0.2131852059212852,
+    "impulse_settling_5pct_s": 0.2249999949708581,
+    "rest_pitch_deg": -1.1698607173176474,
+    "loaded_pitch_deg": -1.8275973600513344
+  },
+  "candidate_metrics": {
+    "load_deflection_mm": 14.446749850549232,
+    "release_peak_overshoot_mm": 0.7735032750917276,
+    "release_overshoot_percent": 5.354168121505341,
+    "release_settling_5pct_s": 0.24999999441206455,
+    "release_final_height_error_mm": 0.17859138791672946,
+    "impulse_peak_compression_mm": 4.903250971178465,
+    "impulse_peak_rebound_mm": 0.028901559315031577,
+    "impulse_settling_5pct_s": 0.2299999948590994,
+    "rest_pitch_deg": -1.0250206620193012,
+    "loaded_pitch_deg": -1.5935719627882867
+  },
+  "repeat_metrics": {
+    "load_deflection_mm": 14.446749850549232,
+    "release_peak_overshoot_mm": 0.7735032750917276,
+    "release_overshoot_percent": 5.354168121505341,
+    "release_settling_5pct_s": 0.24999999441206455,
+    "release_final_height_error_mm": 0.17859138791672946,
+    "impulse_peak_compression_mm": 4.903250971178465,
+    "impulse_peak_rebound_mm": 0.028901559315031577,
+    "impulse_settling_5pct_s": 0.2299999948590994,
+    "rest_pitch_deg": -1.0250206620193012,
+    "loaded_pitch_deg": -1.5935719627882867
+  },
+  "fixture_runs": [
+    "baseline-final-module",
+    "firmer-2000-140-response-02",
+    "firmer-2000-140-response-03"
+  ],
+  "candidate_fixture_checks": 8,
+  "candidate_fixture_pngs": 12,
+  "offline": {
+    "status": "passed",
+    "tests_run": 48,
+    "passed": 46,
+    "skipped": 2,
+    "failures": 0,
+    "errors": 0,
+    "skip_reasons": [
+      "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpoc5z3oy0\\\\outside\\\\vehicle.json' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpoc5z3oy0\\\\vehicle\\\\vehicle.json'",
+      "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmphp04y93u\\\\outside.urdf' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmphp04y93u\\\\vehicle\\\\model\\\\robot.urdf'"
+    ],
+    "scope": "Windows standard-library vehicle/map/geometry/suspension-analysis/reconnect-acceptance tests"
+  },
+  "sleep_threshold_experiment": "rejected and reverted; native sleep unchanged",
+  "real_robot_calibrated": false
+}

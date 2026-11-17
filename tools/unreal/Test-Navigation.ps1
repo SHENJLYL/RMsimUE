@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$EngineRoot,[Parameter(Mandatory=$true)][string]$EvidenceDirectory,[int]$Port=19501,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$InteractiveReset,
+param([Parameter(Mandatory=$true)][string]$EngineRoot,[Parameter(Mandatory=$true)][string]$EvidenceDirectory,[int]$Port=19501,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$InteractiveReset,[switch]$RecoverSession,
  [string]$MapFile='',[string]$NavigationMap='',[double]$GoalX=5.5,[double]$GoalY=1,[double]$InitialX=.6,[double]$InitialY=-.4,[double]$InitialYaw=.15,[switch]$RoundTrip,[double]$ReturnX=0,[double]$ReturnY=0)
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $ue=Get-UnrealTools -EngineRoot $EngineRoot;$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$out=[IO.Path]::GetFullPath($EvidenceDirectory)
@@ -34,6 +34,9 @@ try{
  if($MismatchedMap){$client+='-MismatchedMap'}
  if($PublicClient){$client+='-PublicClient'}
  if($InteractiveReset){$client+='-WaitReset'}
+ if($RecoverSession){$client+='-RecoverSession'}
  & (Join-Path $root 'tools/environment/run-env.ps1') -Command $client
  if($LASTEXITCODE -ne 0){throw 'Native navigation gate failed.'}
-}finally{if(-not $process.HasExited){Stop-Process -Id $process.Id -Force}}
+}finally{
+ if($process){try{if(-not $process.HasExited){Stop-Process -Id $process.Id -Force;if(-not $process.WaitForExit(15000)){throw 'Owned test server did not finish terminating.'}}}finally{$process.Dispose()}}
+}

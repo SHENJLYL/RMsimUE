@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "tests_run": 55,
+  "passed": 53,
+  "skipped": 2,
+  "failures": 0,
+  "errors": 0,
+  "installed": {
+    "navigation_runner.py": {
+      "sha256": "aa6367af68d74807baf224d191219e0d01b4453ba65442f264d8030e9912743b",
+      "source_matches_installed": true
+    },
+    "service_poll.py": {
+      "sha256": "cd30a551bdfc3dcf7da37a6a587251fe23f9b480f0dbc435d085153971734090",
+      "source_matches_installed": true
+    },
+    "navigation_config.py": {
+      "sha256": "7c3d901473e77536e99a0fa9531372218544446cd39ee2aff851a2916ec76ca4",
+      "source_matches_installed": true
+    }
+  },
+  "scope": "offline vehicle/map/geometry/suspension and reconnect/read-only-RPC acceptance"
+}

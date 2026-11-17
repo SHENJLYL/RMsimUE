@@ -124,3 +124,15 @@
 - 原配置与选定配置均重复两次；所有被拒绝的候选、旧严格稳定带失败和波浪失败保留，门限未改。2600/170不能恢复为默认，它曾在波浪返程真实接触受阻。更硬参数需重新测量与路线回归。
 - 顺序回归在ROS11通过后曾被其自有UE服务退出延迟中断；Test-RosBridge.ps1现等待该进程真正退出并Dispose，不操作其他进程。随后以相同模块/参数哈希补齐LK21并确认无残留，汇总明确记录中断/续测，不描述成不间断单次运行。
 - 新悬挂尚未重跑Point-LIO/Nav2联合、原生Ubuntu或实车标定，用户键鼠试驾手感待反馈。导航最新旧悬挂证据rmuc-05-new-tyres真实终点误差0.254827m，门限0.25m，仍失败；接续此点与恢复流程。新轮胎旧悬挂LK/LIO11已通过，不再当成未开始。
+
+## 2026-11-17 第二轮当前基线
+
+- 用户明确指定公开GitHub仓库SHENJLYL/RMsimUE，origin已设置、main 8d85457及两个首轮标签已实际推送，GitHub连接独立核对。前文等待私有建仓的条目是历史状态；以docs/progress/current.md最新提交记录为准。
+- 当前AIM每模块2000N/m、140N·s/m，较1800/130继续提高；只有这两个运行参数变化。当前UE模块9b489d1e、profile d1db3392已完成92项/48PNG回归，两次悬挂专项各4项/6PNG；完整哈希在artifacts/control/suspension-round2-20261117/release-summary.json。自然睡眠、预载、行程、质量、轮胎、摩擦和电机/舵向控制保持原值。
+- 降低睡眠阈值没消除2200/170的卸载高度偏差，试验代码和参数已撤回。最终VehicleContactPhysics源码与原基线一致，SuspensionProbe只新增chassis_awake诊断。不要把失败假设写成根因已修复。
+- 新悬挂下原LK+真实传感器+原Point-LIO的RMUC联合11项通过；rmuc-07自主波浪往返9项，真实误差0.167615/0.117199m。rmuc-09在导航途中断开自有bridge，重连重建且无旧目标重放，随后往返14项通过；停车0.085634m，去回0.222153/0.114775m。门限仍0.25m，未输入定位真值。
+- 新ReadOnlyServicePoll只用于GetState/is_active查询：2秒截止后移除旧pending并重试，原生rmuc-09实际记录3次查询超时恢复。不可用于生命周期转换或导航目标重发。sidecar修改后已真实colcon安装，原脚本在PS重定向stderr时误将colcon warning作终止错误，当前保留原日志并用原生子进程capture获得实际exit0。
+- Windows metadata.json可能含UTF-8 BOM，navigation_config用utf-8-sig兼容；身份字段与错误JSON仍严格校验。3项配置测试与rmuc-11错图2项通过。实际R按键恢复、多车/全场/Ubuntu仍独立待验收。rmuc-12是最终配置下恢复往返复测，结果须查看实际verification，不预填通过。
+
+- 最终rmuc-12恢复复测failed：重连后Point-LIO已初始化、AMCL已active并收到地图，但pointcloud_to_laserscan的TF过滤队列满，initial_pose_sent=false。当前须同时记录rmuc-09首轮14项通过与rmuc-12复测失败；自主往返已验收，重复恢复继续in-progress。诊断入口为2026-11-17-reconnect-tf-chain issue。不要扩大一次成功为稳定恢复，也不要忽略已完成的独立RMUC往返。
+- 最终导航检查点 `artifacts/navigation/suspension-round2-20261117/checkpoint-summary.json` 已核对同一UE模块和车辆profile、各原始报告哈希。pixi激活实际ROS_DOMAIN_ID=71、LOCALHOST_ONLY=1，外层176会被覆盖；诊断须确认实际子进程域。没有改全局网络权限。

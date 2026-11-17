@@ -55,6 +55,6 @@ def prepare(reference,map_yaml,robot,initial_pose):
     # Explicit initial localization is a prior; no simulator truth is consulted here.
     for name,nodes in [('lifecycle_manager_localization',LOCALIZATION_NODES),('lifecycle_manager_navigation',NAVIGATION_NODES)]:
         cfg[name]={'ros__parameters':{'use_sim_time':True,'autostart':True,'node_names':nodes,'bond_timeout':4.0}}
-    metadata=json.loads((map_yaml.parent/'metadata.json').read_text(encoding='utf-8'))
+    metadata=json.loads((map_yaml.parent/'metadata.json').read_text(encoding='utf-8-sig'))
     if 'source_md5' not in metadata:raise ValueError('Re-export the map with source identity metadata.')
     return cfg,metadata

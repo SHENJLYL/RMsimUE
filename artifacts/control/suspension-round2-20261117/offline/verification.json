@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "tests_run": 48,
+  "passed": 46,
+  "skipped": 2,
+  "failures": 0,
+  "errors": 0,
+  "skip_reasons": [
+    "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpoc5z3oy0\\\\outside\\\\vehicle.json' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpoc5z3oy0\\\\vehicle\\\\vehicle.json'",
+    "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmphp04y93u\\\\outside.urdf' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmphp04y93u\\\\vehicle\\\\model\\\\robot.urdf'"
+  ],
+  "scope": "Windows standard-library vehicle/map/geometry/suspension-analysis/reconnect-acceptance tests"
+}

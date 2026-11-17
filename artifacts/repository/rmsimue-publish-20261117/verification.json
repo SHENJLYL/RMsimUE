@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "repository": "SHENJLYL/RMsimUE",
+  "remote_url": "https://github.com/SHENJLYL/RMsimUE.git",
+  "visibility": "public",
+  "authorization": "User explicitly selected this repository in the current request",
+  "branch": "main",
+  "initial_published_head": "8d85457ff71d26f03dedfc74b76fc86258b4750a",
+  "tags": ["baseline/2026-11-17-pre-suspension", "release/2026-11-17-suspension"],
+  "checks": [
+    {"name": "staged_blob_audit", "passed": true, "files": 911, "bytes": 5155282},
+    {"name": "push_main_and_two_tags", "passed": true, "exit_code": 0},
+    {"name": "remote_head_matches_local", "passed": true},
+    {"name": "github_connector_independently_read_remote_ref", "passed": true}
+  ],
+  "force_push_used": false,
+  "local_assets_deleted": false,
+  "scope": "Source, configuration, notices, patches and compact evidence; generated runtime and large source assets remain local"
+}

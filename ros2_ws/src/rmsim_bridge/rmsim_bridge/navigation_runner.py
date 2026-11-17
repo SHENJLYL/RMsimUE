@@ -13,6 +13,7 @@ from rclpy.qos import qos_profile_sensor_data
 from ament_index_python.packages import get_package_prefix
 from .navigation_config import prepare,INTERFACE_NODES,LOCALIZATION_NODES,NAVIGATION_NODES
 from .protocol import identifier
+from .service_poll import ReadOnlyServicePoll
 
 PROGRAMS={
  'loam_interface':('loam_interface','loam_interface_node'),
@@ -50,6 +51,7 @@ class NavigationRunner(Node):
         self.initial_pub=self.create_publisher(PoseWithCovarianceStamped,'initialpose',1)
         self.amcl_state=self.create_client(GetState,'amcl/get_state');self.nomotion=self.create_client(Empty,'request_nomotion_update')
         self.active_client=self.create_client(Trigger,'lifecycle_manager_navigation/is_active');self.pending_active=None;self.nav_active=False
+        self.state_query=ReadOnlyServicePoll(2.0);self.active_query=ReadOnlyServicePoll(2.0)
         self.create_subscription(PoseWithCovarianceStamped,'amcl_pose',lambda m:setattr(self,'pose',m),1)
         self.create_subscription(LaserScan,'obstacle_scan',lambda m:setattr(self,'scan',m),qos_profile_sensor_data)
         self.create_subscription(String,'/rmsim/'+self.robot+'/state',self.observe,1)
@@ -72,6 +74,7 @@ class NavigationRunner(Node):
         for future in (self.pending_state,self.pending_update,self.pending_active):
             if future and not future.done():future.cancel()
         self.pending_state=None;self.pending_update=None;self.pending_active=None;self.nav_active=False
+        self.state_query.clear(self.amcl_state);self.active_query.clear(self.active_client)
         for stream in self.streams:stream.close()
         self.streams=[]
 
@@ -94,9 +97,9 @@ class NavigationRunner(Node):
     def initialize_pose(self):
         if not self.seeded:
             if not self.scan or not self.amcl_state.service_is_ready():return
-            if self.pending_state is None:self.pending_state=self.amcl_state.call_async(GetState.Request());return
-            if not self.pending_state.done():return
-            active=self.pending_state.result().current_state.id==3;self.pending_state=None
+            response=self.state_query.poll(self.amcl_state,GetState.Request(),time.monotonic())
+            if response is None:return
+            active=response.current_state.id==3
             if not active:return
             m=PoseWithCovarianceStamped();self.seed_ns=self.state['sim_time_ns'];m.header.stamp.sec=self.seed_ns//1_000_000_000;m.header.stamp.nanosec=self.seed_ns%1_000_000_000;m.header.frame_id=self.robot+'/map'
             m.pose.pose.position.x=float(self.initial_pose[0]);m.pose.pose.position.y=float(self.initial_pose[1]);yaw=float(self.initial_pose[2]);m.pose.pose.orientation.z=math.sin(yaw/2);m.pose.pose.orientation.w=math.cos(yaw/2)
@@ -116,8 +119,8 @@ class NavigationRunner(Node):
         if self.localized and not self.localization_only and not self.nav_started:
             self.start_nodes(NAVIGATION_NODES+['lifecycle_manager_navigation']);self.nav_started=True
         if self.nav_started:
-            if self.pending_active and self.pending_active.done():self.nav_active=self.pending_active.result().success;self.pending_active=None
-            if self.pending_active is None and self.active_client.service_is_ready():self.pending_active=self.active_client.call_async(Trigger.Request())
+            response=self.active_query.poll(self.active_client,Trigger.Request(),time.monotonic())
+            if response is not None:self.nav_active=response.success
 
     def poll(self):
         if self.state and self.identity is not None and self.identity!=[self.state.get('session'),self.state.get('epoch')]:
@@ -138,7 +141,7 @@ class NavigationRunner(Node):
         elif time.monotonic()-self.received>1 or (self.lio and self.lio.get('phase')!='running'):
             self.stop();self.phase='waiting'
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
-            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,localization_candidate=self.localized,scope='original sentry/Nav2 nodes; no truth input; single robot')
+            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,scope='original sentry/Nav2 nodes; no truth input; single robot')
         self.status.publish(String(data=json.dumps(report)))
         (self.output/'status.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 

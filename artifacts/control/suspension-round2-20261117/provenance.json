@@ -1,0 +1,23 @@
+{
+  "base_commit": "8d85457ff71d26f03dedfc74b76fc86258b4750a",
+  "remote": "https://github.com/SHENJLYL/RMsimUE",
+  "previous_parameters": {
+    "ChassisMassKg": 20.0,
+    "WheelMassKg": 1.0,
+    "SliderMassKg": 0.15,
+    "SteeringMassKg": 0.2,
+    "SuspensionTravelCm": 6.5,
+    "SpringStiffnessNPerM": 1800.0,
+    "SpringDampingNsPerM": 130.0,
+    "SpringPreloadN": 50.0,
+    "SpringForceLimitN": 1000.0,
+    "WheelFriction": 1.8,
+    "ChassisFriction": 0.5,
+    "MotorTorqueNm": 4.0,
+    "BrakeTorqueNm": 8.0,
+    "MotorDampingNmS": 2.0,
+    "LinearDamping": 0.05,
+    "AngularDamping": 0.05
+  },
+  "source": "user requested further stiffness and damping increase"
+}

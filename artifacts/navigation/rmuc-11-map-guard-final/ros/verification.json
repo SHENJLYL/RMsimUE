@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "mismatched_scene_prevents_navigation",
+      "passed": true,
+      "navigation": {
+        "phase": "map_mismatch",
+        "starts": 0,
+        "identity": null,
+        "pids": {},
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-11-map-guard-final\\ros\\navigation\\20261117T072858Z-55276",
+        "map_id": "import_lab",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "read_only_rpc_timeouts": 0,
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      }
+    },
+    {
+      "name": "mismatch_leaves_vehicle_stopped",
+      "passed": true,
+      "drift_m": 0.0010993681365164525
+    }
+  ],
+  "localization_only": false,
+  "map_id": "import_lab",
+  "goal": [
+    5.5,
+    1.0
+  ],
+  "last_navigation": {
+    "phase": "map_mismatch",
+    "starts": 0,
+    "identity": null,
+    "pids": {},
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-11-map-guard-final\\ros\\navigation\\20261117T072858Z-55276",
+    "map_id": "import_lab",
+    "initial_pose_sent": false,
+    "localization_candidate": false,
+    "read_only_rpc_timeouts": 0,
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 0,
+  "has_odometry": false,
+  "has_terrain": false
+}

@@ -1,27 +1,29 @@
 # 仓库与本地资源边界
 
-Git 保存源码、车辆/地图小型描述、配置、依赖锁、上游补丁、CodeStable 文档及精简验证记录。本地仓库与基线已建立；计划发布为私有 GitHub 仓库。2026-11-17 本轮远程建仓操作受到平台安全检查阻止，GitHub 连接虽显示已安装，但本轮没有可调用的 GitHub 写入工具，上传保持待完成。
+远程仓库为用户指定的 **https://github.com/SHENJLYL/RMsimUE**，当前可见性为 public。2026-11-17 已将本地 main 的 `8d85457` 及调整前/首轮悬挂两个标签推送成功，并通过 GitHub 连接独立读取远程分支核对。origin 已配置；后续验收通过的提交继续推送到该仓库。
 
 ## 入库内容
 
-- `unreal/RMSim/Source`、`Config`、`RMSim.uproject`；`ros2_ws/src`；Python 工具、测试和 schema。
-- `assets` 中的小型 manifest、URDF、控制/传感器参数、来源说明；`third_party/patches`。
-- `.codestable`、`docs` 与真实 `verification.json` / `release-summary.json` / provenance 摘要。
+源码、车辆/地图小型描述、配置、依赖锁、上游补丁、CodeStable 文档及精简验证记录进入 Git。主要目录包括 `unreal/RMSim/Source`、`Config`、`ros2_ws/src`、`src`、`tools`、`tests`、`schemas`、`.codestable` 和 `docs`。来源声明、上游许可证及 `third_party/patches` 保留。
+
+`artifacts` 只跟踪实际 verification、release-summary、checkpoint-summary 和 provenance 等精简结果。失败结果同样保留；截图、日志和稠密轨迹留在本机。
 
 ## 保留本地内容
 
-UE 引擎、导入后的 Content、Binaries、Intermediate、Saved、DerivedDataCache；ROS build/install/log 工作区；Python/pixi 缓存；大型网格、CAD、贴图、截图、录制与稠密轨迹；下载的第三方完整源码树；凭证及机器私有配置。
+UE 引擎与导入后的 Content、Binaries、Intermediate、Saved、DerivedDataCache；ROS build/install/log；Python/pixi 缓存；大型网格、CAD、贴图、录制；下载的第三方完整源码树；凭证及机器私有配置均由 `.gitignore` 排除。忽略规则不删除本地文件。
 
-忽略规则保留本地文件，不删除它们。历史摘要引用的截图、日志和原始轨迹仍在 `D:\simulator\artifacts`，克隆仓库只会获得已入库的摘要。
+原始游戏/模型资源维持各自来源和许可边界，公开仓库只包含允许入库的工程代码、描述和说明。原始模型、贴图及授权凭证没有随本次推送上传。
 
 ## 恢复与复现
 
-当前已准备好的本机样例用 `Play-ManualVehicle.cmd` / `Play-Training.cmd` 启动。全新克隆需要先安装原生 UE/ROS 依赖并准备有合法使用权的资源，再执行文档中的构建与导入步骤。模型路径、来源哈希和第三方固定版本保留在对应 SOURCE、provenance 和 research 文档。
+准备好的本机使用 `Play-ManualVehicle.cmd` / `Play-Training.cmd`。新克隆需先准备原生 UE/ROS、具有使用权的资源，再按指南构建与导入。仓库中的 manifest、源码、依赖锁和来源哈希用于复现；大资源另行准备。
 
-车辆运行绑定 `ue_mesh_rig.json`、地图导入报告及 UE 二进制是派生的本机文件；运行参数 `drive-profile.json` 始终入库。调整车辆参数前建立提交/标签，调整后以实际测试更新记录。
+运行参数以车辆包 `drive-profile.json` 为准。`ue_mesh_rig.json`、地图导入报告和 UE Content 属于本地生成文件，内联参数可能是历史导入快照。
 
-上游文件保留各自版权和许可证；本次建仓不为第三方游戏资源或来源代码追加授权。没有自动把仓库改为公开，也不上传本机登录凭证。
+回退标签：`baseline/2026-11-17-pre-suspension` 对应初始工程基线；`release/2026-11-17-suspension` 对应第一轮1800/130悬挂验收。保留旧标签，新一轮采用新标签。
 
 ## 提交流程
 
-`git status --short` → 检查改动 → `git add` → `python tools/repository/audit_index.py` → `git commit` → `git push`。审计检查暂存内容中的大文件、生成目录和常见凭证格式；它是提交前防护，不能覆盖所有秘密格式。
+`git status --short` → 检查差异 → `git add` → `python tools/repository/audit_index.py` → `git commit` → `git push`。
+
+审计实际暂存 blob，检查大文件、生成目录和常见凭证格式。推送使用正常快进，不强制覆盖远程。上传证据：`artifacts/repository/rmsimue-publish-20261117/verification.json`。

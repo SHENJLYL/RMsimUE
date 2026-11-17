@@ -11,7 +11,7 @@ authorization: user_request_in_current_chat
 
 ## 本聊天接续顺序
 
-1. 建立可回滚的 Git 基线，配置忽略规则，上传用户 GitHub。默认私有；源码、配置、来源和精简证据入库，构建产物、大型/受来源限制的资源和凭证保留本地。
+1. 建立可回滚的 Git 基线并上传 GitHub。用户随后明确指定公开仓库 `SHENJLYL/RMsimUE`；main 与两个首轮标签已实际推送。源码、配置、来源和精简证据入库，构建产物、大型/受来源限制的资源和凭证保留本地。
 2. 优先处理用户反馈的 AIM 哨兵悬挂偏软、阻尼感不足。保存原参数，在真实引擎中对比瞬态响应、制动和波浪路线；通过验证后更新默认车辆包。
 3. 接续新轮胎下 RMUC 波浪导航终点精度、往返、断线及 R 恢复；之后继续完整自主链、通用车辆导入、裁判、联机和原生 Ubuntu。
 
@@ -27,4 +27,4 @@ authorization: user_request_in_current_chat
 
 ## 当前检查点（2026-11-17）
 
-本地Git基线和回退标签已建立。AIM悬挂已采用1800N/m、130N·s/m，并通过92项既有原生回归、两次各4项悬挂专项。证据和未覆盖范围见`docs/progress/current.md`。GitHub私有仓库创建/推送仍待可用的连接写入工具；完整长期goal继续active。后续功能优先新悬挂下Point-LIO/Nav2联合与RMUC路线/恢复验收。
+本地Git基线及回退标签已建立，用户指定公开仓库SHENJLYL/RMsimUE已实际接收main及首轮标签。AIM当前2000N/m、140N·s/m通过92项原生回归和两次各4项响应专项。新悬挂下原LK/Point-LIO联合11项、RMUC波浪自主往返9项，以及断线重连后完整往返14项已有实际通过证据。最新复测、代码版本与缺口见docs/progress/current.md和navigation checkpoint。最终恢复复测暴露重连后扫描TF链的间歇卡点，恢复功能继续in-progress。长期goal保持active，先处理该坐标链恢复，再接续实际R、更广路线、通用车辆导入和完整自主/比赛/双平台目标。

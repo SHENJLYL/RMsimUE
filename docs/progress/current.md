@@ -1,46 +1,51 @@
 # 当前进度
 
-更新：2026-11-17，Asia/Shanghai。长期目标保持 active，入口 `.codestable/goal.md`。Windows优先，Ubuntu保留原生同源适配目标；完整自主哨兵、正式比赛和权威联机继续推进。
+更新：2026-11-17，Asia/Shanghai。长期目标 active，完整要求见 `.codestable/goal.md`。当前优先 Windows 原生验收，保留 Ubuntu 同源、通用车辆包、可换地图、高画质、正式裁判和权威联机目标。
 
-## 当前基线：Git 与 AIM 悬挂
+## GitHub 与当前悬挂
 
-本地 Git 已建立源码/配置/精简证据基线 `02e68c9`，标签 `baseline/2026-11-17-pre-suspension`；测试夹具提交 `40927d8`。`.gitignore` 排除构建/安装/缓存、大型资源和凭证，`AGENTS.md` 固定项目接续入口。GitHub 私有仓库上传待完成：本轮建仓操作被平台安全检查阻止，已安装的 GitHub 连接在本轮未提供可调用写入工具，尚无 origin 或远程推送。
+用户指定公开仓库 `SHENJLYL/RMsimUE`。origin 已配置，原本地main `8d85457` 及 `baseline/2026-11-17-pre-suspension`、`release/2026-11-17-suspension` 两个标签已实际推送；GitHub连接独立确认远程SHA。源码、配置、上游声明/补丁和精简证据入库，大资源和生成产物留本地。上传证据：`artifacts/repository/rmsimue-publish-20261117/verification.json`。
 
-AIM 默认车辆包现采用每模块弹簧 **1800 N/m、阻尼130 N·s/m**，原值1600/90。质量、预载50N、行程65mm、源轮胎凸包、摩擦、驱动/舵向增益及自然休眠保持原配置。
+用户要求进一步提高悬挂后，AIM当前默认 **每模块2000 N/m、140 N·s/m**，上一轮1800/130。本轮只改这两个运行参数：预载50N、行程65mm、质量、轮胎源凸包、摩擦、舵向/电机增益与原生休眠不变。
 
-同模块/同输入的两次0.005s原生悬挂测量结果一致：100N附加载荷压缩17.106→15.620mm，卸载回弹峰值2.643→1.085mm，4N·s冲量后的反弹峰值0.946→0.213mm。选定方案四项原生检查与严格稳定带检查均通过；原配置的卸载残余高度偏移另行记录。
+同一UE模块下的100N载荷/卸载/4N·s冲击对照：附加载荷压缩15.6195→14.4467mm；卸载回弹峰值1.08465→0.77350mm；卸载稳定带时间0.295→0.250s；冲击反弹0.21319→0.02890mm。新配置重复两次结果一致，所有原验收门限保留。
 
-**当前配置92项原生回归/48PNG通过**：坡面10、操控19、红蓝波浪各5、训练/复位10、高速改向5、自转稳定6、ROS速度桥11、原LK电流环21。另有两次悬挂专项，各4项/6PNG。ROS测试后的进程退出等待竞态曾中断批次；仅修复测试包装器对其自有进程的等待/释放，再以相同模块与参数哈希补齐LK21，原始中断与恢复记录保留。
+**92项原生回归、48PNG全部通过**：坡面10、手动19、红蓝波浪各5、训练/复位10、高速5、自转稳定6、ROS11、原LK21。两次新悬挂专项各4项/6PNG，另有旧参数同模块对照。离线48项中46通过、2项Windows符号链接权限跳过。精简汇总已逐项检查真实结果及模块/profile/rig哈希：`artifacts/control/suspension-round2-20261117/release-summary.json`。
 
-离线42项中40通过，2项因Windows符号链接权限跳过。证据入口 `artifacts/control/suspension-20261117/release-summary.json`；指南 `docs/guides/suspension.md`。2600/170及其他未同时满足响应/路线要求的候选已拒绝并保留证据。当前参数属于已测演示配置，实车标定、用户手感评审与新悬挂下Point-LIO/Nav2联合验收仍待完成。
+更硬的未通过候选和降低休眠阈值的失败实验均保留，后者已撤回。C++最终只增加悬挂样本 `chassis_awake` 字段。细节见 `.codestable/issues/2026-11-17-suspension-round2/suspension-round2.md`。实车标定与用户键鼠手感单独验收。
 
-## 当前可运行内容
+## 定位与导航接续
 
-- `Play-ManualVehicle.cmd` / `Play-Training.cmd` 默认使用RMUC2027场地和原尺度AIM：约503.850×501.985×419.192mm，轮半径42.5mm；15视觉部件、13真实刚体，四悬挂/四舵向/四轮轴约束。
-- 普通/小陀螺均WASD镜头相对平移；Q/E普通旋转，G切自转，Z/X调速，Ctrl慢行，松键主动制动，Space加强制动，R复位；鼠标瞄准，C自由观察，Shift瞄准镜。
-- 单车训练提供真实弹丸扫掠、靶HP、弹量/热量、射速、倒计时、胜利与复位。原生ROS已接入TwistStamped速度、原LK电流/反馈、高层云台/发射消息、相机/CameraInfo/TF/物理时钟、raw IMU、LiDAR和原Point-LIO。
-- 命令新鲜度、断线/过期制动、会话复位及独立评测真值有分项证据。当前本机单车通信与训练规则范围明确，完整裁判/多车/联机继续在长期目标内。
+新2000/140悬挂下，原LK电流控制器、真实IMU/LiDAR、原Livox消息和原Point-LIO在RMUC同场联合 **11项通过**。短路线IMU点经一次初始姿态对齐的末端误差约6.15mm，评测真值独立。证据：`artifacts/navigation/suspension-round2-lio-lk-20261117/ros/verification.json`。
 
-## 导航接续点
+**RMUC波浪路线自主往返9项通过**，证据 `artifacts/navigation/rmuc-07-suspension-roundtrip/ros/verification.json`：原Point-LIO/AMCL/Nav2完成去程与返程，独立实际终点误差0.167615m和0.117199m。
 
-2026-11-16后续的 `artifacts/navigation/new-tyres-lio-lk-01/ros/verification.json` 已验证源轮胎下原LK、真实传感器和Point-LIO联合11项；短路线IMU点初始姿态对齐后误差约3.58mm。该结果使用旧悬挂，需要在当前1800/130下重新联合验证。
+**主动导航断线、重连及恢复后的往返14项通过**，证据 `artifacts/navigation/rmuc-09-bounded-recovery/ros/verification.json`：只终止本测试持有的bridge进程树；导航停止后在新session、相同epoch重建一次；重新定位误差0.124716m；实际停车距离0.085634m；1仿真秒内无旧目标重放/漂移；随后新目标去程和返程误差0.222153m、0.114775m。
 
-生命周期回复丢失的两种原生夹具已通过，记录在 `artifacts/navigation/lifecycle-reply-loss`。当前最新RMUC导航运行是 `rmuc-05-new-tyres`：目标[9.45,6.40]m，真实终点误差0.254827m超过0.25m门限，保持失败；往返、断线/重连、实际R恢复与启动包装完整验收待完成。
+首次 `rmuc-06` 因监督器等不到生命周期状态查询回复超时而失败。新增只读GetState/is_active查询2秒超时清理重试，rmuc-09实际记录3次查询超时后恢复；状态转换和导航目标不会由此重发。7项查询单元测试通过，最终离线全套55项中53通过、2项符号链接权限跳过；实际colcon安装与源码哈希一致。一个初始Y误填的调用已标aborted_input_error并保留，未计入成功。
 
-平地原AMCL/Theta*/Omni PID绕障和公开目标/取消停车已有历史成功证据。旧Windows安全弹窗曾阻塞实际R键测试；本轮未完成该导航键盘恢复用例。源摘要 `artifacts/navigation/checkpoint-summary.json` 仍是较早检查点，应同时阅读更晚的原始verification文件。
+最终重复 `rmuc-12-final-recovery` 在重连后的扫描TF链阶段超时：6个先行检查通过，整组failed。原Point-LIO已初始化、AMCL已active并收到地图，但pointcloud_to_laserscan因坐标变换不可用持续丢弃队列，未能播种初值。**自主往返已验收，重复会话恢复保持in-progress**。问题与下一诊断入口见 `.codestable/issues/2026-11-17-reconnect-tf-chain/reconnect-tf-chain.md`。
 
-## 地图、车辆包与后续缺口
+另修复Windows metadata UTF-8 BOM兼容，3项配置测试和rmuc-11错图保护2项通过，身份校验保持。统一成功/失败检查点：`artifacts/navigation/suspension-round2-20261117/checkpoint-summary.json`。
 
-RMUC2027和WT CDK地形已有场景运行证据。弗兰德斯原图资源已解码/准备，完整UE场景导入和实际驾驶待验收。受限URDF车辆包离线校验和两个示例已通过；AIM专用mesh-rig导入运行已落地，通用新车的惯量/关节/传感器即插即用仍待扩展。
+上述路线保持原0.25m真实终点门限，未改AMCL/规划器/控制器算法或输入真值。旧 `rmuc-05` 的0.254827m失败保留。下一技术优先项为重复重连时的TF/时钟/订阅链诊断，随后补实际R复位、更多路线和多机器人隔离。
 
-后续继续：新悬挂下定位/导航联合、完整视觉/Hub/云台电机环/行为树、真实传感器与动力学校准、正式赛季裁判、多机器人权威网络与话题隔离、原生Ubuntu构建运行，以及完整原地图与画质验收。
+## 已有可运行内容
 
-## 环境与记录
+`Play-ManualVehicle.cmd` / `Play-Training.cmd` 默认RMUC2027和原尺度AIM：约503.850×501.985×419.192mm，轮半径42.5mm；15视觉部件、13刚体、四悬挂/四舵向/四轮轴约束。WASD镜头相对平移，Q/E旋转，G自转，Z/X转速，Ctrl慢行，Space制动，R复位；鼠标瞄准、C自由观察、Shift瞄准镜。
 
-项目 `D:/simulator`，UE5.8.4 `E:/simulator-tools/UE_5.8`；原生Humble使用RoboStack Python3.14。原模型和原控制器来源目录保持只读。运行参数以车辆包 `drive-profile.json` 为准，导入绑定内联参数属于历史快照。
+训练包含真实弹丸扫掠、靶HP、弹量/热量、射速、倒计时和复位。原生ROS已接入速度、原LK电流反馈、高层云台/发射、相机、IMU、LiDAR和原Point-LIO；有效期、断线与会话复位分项跟踪。
 
-CodeStable现状/计划/问题、`docs/changes`、`artifacts` 分类型保存；旧进度已归档到 `docs/progress/archive/2026-11-17-before-suspension.md`。历史模块通过项只在实际重跑后计入当前验收。
+RMUC2027和WT CDK地形已有运行记录；弗兰德斯原图资源准备完成，完整场景运行待验收。受限URDF工具和两个离线车辆示例已通过，AIM mesh-rig真实导入运行已落地；通用新车的惯量、关节和传感器运行扩展继续推进。
 
-## 当前手动预览
+## 后续范围与环境
 
-本轮默认RMUC手动窗口已重新打开，PID55380。实际窗口截图观察到AIM车辆、场地与HUD，截图时253FPS、0.0km/h、小陀螺关闭；项目窗口内未见安全弹窗遮挡。本次未发送OS键盘操作，用户手感评审保留。记录 `artifacts/control/suspension-20261117/gui-preview/verification.json`，窗口留开供试驾。
+后续推进完整导航/恢复、自主视觉/Hub/云台电机环/行为树、传感器和动力学校准、正式赛季规则、多机器人权威联网、原生Ubuntu运行，以及原战雷完整地图/画质验收。
+
+工作区 `D:/simulator`，UE5.8.4 `E:/simulator-tools/UE_5.8`，Windows Humble使用RoboStack Python3.14。外部原模型与控制器目录只读。实际运行参数从车辆包drive-profile读取，导入rig内联配置为历史快照。
+
+旧进度保存在 `docs/progress/archive/2026-11-17-before-suspension-round2.md`。测试期间已关闭此前PID55380手动窗口；最终预览交接另行追加实际观察记录。
+
+## 当前预览交接
+
+本轮测试进程全部退出后，通过标准单实例入口恢复手动RMUC窗口PID48844。实际窗口截图已观察到RMUC2027场地、AIM车辆、253FPS、0km/h、小陀螺off；当前profile为2000/140，模块/profile哈希与悬挂验收一致。窗口留给用户试驾，未将截图观察计作键鼠手感或延迟验收。证据 `artifacts/control/suspension-round2-20261117/gui-preview/verification.json`，截图保留本地。

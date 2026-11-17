@@ -84,9 +84,9 @@ RosLidar可选读取sensors/lidar.json，实际Visibility首回波查询包含�
 
 导航新增当前子集：Point-LIO估计参考IMU，经原loam_interface和sensor_scan_generation输出odom→base；原terrain节点的odom_frame现可配；AMCL持有map→odom，扫描和代价地图使用实际传感器数据。原fake_vel_transform将导航固定朝向frame速度旋入base，仿真符号为+1。原Theta*/Omni PID/IntensityVoxelLayer在import_lab已实际绕障到达目标，不能外推为RMUC全场导航。
 
-RosBridge发布已加载地图的id/kind/MD5，平地占用导出保存同源MD5；navigation_runner拒绝不匹配地图。初始化用显式有偏先验及非零协方差，等待原AMCL估计候选与Nav2生命周期全部active；没有真值定位输入。原诊断库显式DLL可见性解决Windows虚表崩溃，组件算法未替换。目标取消停车已有实测；失联/实际R恢复、多车隔离、RMUC导航图和完整自主行为仍待验收。
+RosBridge发布已加载地图的id/kind/MD5，平地占用导出保存同源MD5；navigation_runner拒绝不匹配地图。初始化用显式有偏先验及非零协方差，等待原AMCL估计候选与Nav2生命周期全部active；没有真值定位输入。原诊断库显式DLL可见性解决Windows虚表崩溃，组件算法未替换。目标取消停车已有实测；当前2000/140悬挂下RMUC波浪自主往返、主动导航途中bridge断线/重连后重新定位和旧目标不重放均有分项通过证据。监督器以有界只读查询处理状态回复超时。实际R恢复、多车隔离、全场通行图和完整自主行为继续验收。
 
-raw Imu只提供六轴，orientation_covariance[0]=-1；安装TF只从base_link指向传感器，没有世界定位真值。偏置/白噪声是未标定模型，零协方差表示未知。默认200Hz可配通用SimStepSeconds=0.001运行，约0.3倍墙钟；不启用RosImu时没有IMU工作。该物理mesh-rig配置不等于通用URDF传感器支持。源码/原生证据在artifacts/sensors/imu；原Point-LIO已与实际IMU/LiDAR联跑，证据在artifacts/sensors/lidar。当前新悬挂下的定位/导航联合待复测。
+raw Imu只提供六轴，orientation_covariance[0]=-1；安装TF只从base_link指向传感器，没有世界定位真值。偏置/白噪声是未标定模型，零协方差表示未知。默认200Hz可配通用SimStepSeconds=0.001运行，约0.3倍墙钟；不启用RosImu时没有IMU工作。该物理mesh-rig配置不等于通用URDF传感器支持。源码/原生证据在artifacts/sensors/imu；原Point-LIO已与实际IMU/LiDAR联跑，证据在artifacts/sensors/lidar。当前2000/140悬挂下原LK/传感器/Point-LIO联合11项通过，RMUC波浪自主往返与bridge会话恢复也已分项运行；完整范围见当前navigation checkpoint。
 
 原LK电机路径采用固定1ms物理步长及配对反馈计算，PID按仿真采样时间差缩放，原增益保持。可慢于墙钟；HUD的FPS为墙钟实测、sim倍率独立显示。默认手动/速度桥不启用固定1ms步长。电机模式当前没有电气动态和实车参数标定，安全停车反馈的current只代表外部电流通道，不能当作停车伺服电流测量。具体使用与最新验证见docs/guides/sentry-lk-motor-loop.md及对应feature记录。
 
@@ -104,4 +104,4 @@ RosAimControl独立取得云台/训练发射控制，不续期底盘命令。高
 
 ## 当前悬挂与验证入口（2026-11-17）
 
-AIM车辆包默认每模块弹簧1800N/m、阻尼130N·s/m，预载50N、总行程65mm；引擎通用回退值与其他包保持原状。SuspensionProbe仅在显式测试旗标下向实际车体施加相同载荷/冲量，记录真实世界帧状态；普通模式不运行该夹具。当前模块/配置92项既有原生检查与两次各4项悬挂检查通过，汇总artifacts/control/suspension-20261117/release-summary.json。Point-LIO/Nav2在新悬挂下的联合仍待验收。
+AIM车辆包默认每模块弹簧2000N/m、阻尼140N·s/m，预载50N、总行程65mm；引擎通用回退值与其他包保持原状。SuspensionProbe在显式测试旗标下向实际车体施加相同载荷/冲量，并记录真实世界帧与chassis_awake；普通模式不运行该夹具。当前模块/配置92项原生回归与两次各4项悬挂专项通过，汇总artifacts/control/suspension-round2-20261117/release-summary.json。新悬挂原LK/Point-LIO联合11项和RMUC自主往返9项通过。会话恢复首轮14项通过，最终复测因扫描TF链间歇不可用失败，继续in-progress；完整证据见artifacts/navigation/suspension-round2-20261117/checkpoint-summary.json。

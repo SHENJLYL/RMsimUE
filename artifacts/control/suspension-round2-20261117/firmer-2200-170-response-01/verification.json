@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=-0.025517cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.789293cm vz=-0.000184cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": false,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    }
+  ],
+  "failure_reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+  "raw_report_sha256": "77cfde8c60653caa395128f58e289817d607b163ba78bcbe4effe1b1c6db1534"
+}

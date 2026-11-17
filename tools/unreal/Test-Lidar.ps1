@@ -33,4 +33,6 @@ try{
  if($MotorControl){$client+='-MotorControl'}
  & (Join-Path $root 'tools/environment/run-env.ps1') -Command $client
  if($LASTEXITCODE -ne 0){throw 'Native LiDAR gate failed.'}
-}finally{if($process -and -not $process.HasExited){Stop-Process -Id $process.Id -Force}}
+}finally{
+ if($process){try{if(-not $process.HasExited){Stop-Process -Id $process.Id -Force;if(-not $process.WaitForExit(15000)){throw 'Owned test server did not finish terminating.'}}}finally{$process.Dispose()}}
+}

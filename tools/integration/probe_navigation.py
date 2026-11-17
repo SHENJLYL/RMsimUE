@@ -2,6 +2,7 @@
 import argparse,json,math,os,shutil,subprocess,time,sys
 from pathlib import Path
 from probe_ros_topics import Observer,ns
+from navigation_recovery import fresh_reconnect
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.qos import qos_profile_sensor_data
@@ -44,7 +45,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--port',type=int,default=19501);p.add_argument('--output',type=Path,required=True);p.add_argument('--localization-only',action='store_true');p.add_argument('--mismatched-map',action='store_true');p.add_argument('--public-client',action='store_true');p.add_argument('--wait-reset',action='store_true')
     for name,default in [('goal-x',5.5),('goal-y',1.),('initial-x',.6),('initial-y',-.4),('initial-yaw',.15)]:p.add_argument('--'+name,type=float,default=default)
     p.add_argument('--round-trip',action='store_true');p.add_argument('--return-x',type=float,default=0.);p.add_argument('--return-y',type=float,default=0.)
+    p.add_argument('--recover-session',action='store_true',help='Interrupt an active goal by restarting only the owned bridge; verify fresh localization and no stale goal replay')
     args=p.parse_args();initial=[args.initial_x,args.initial_y,args.initial_yaw]
+    if args.recover_session and (args.localization_only or args.mismatched_map):p.error('--recover-session requires actual goal navigation')
     root=Path(__file__).resolve().parents[2];args.output.mkdir(parents=True,exist_ok=False)
     report=dict(status='running',scope='real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates',checks=[],localization_only=args.localization_only)
     scene=json.loads((args.output.parent/'map.json').read_text(encoding='utf-8-sig'));report['map_id']=scene['id'];report['goal']=[args.goal_x,args.goal_y]
@@ -63,6 +66,7 @@ def main():
     def launch(name,argv):
         log=(args.output/(name+'.log')).open('w',encoding='utf-8');logs.append(log)
         child=subprocess.Popen([ros2,'run']+argv,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW);children.append(child)
+        return child
     def wait(predicate,timeout=90):
         deadline=time.monotonic()+timeout
         while not predicate():
@@ -75,7 +79,7 @@ def main():
              '-p','map_yaml:='+str(args.output.parent/'map/map.yaml'),'-p','native_runtime:='+str(root/'artifacts/runtime/navigation/windows'),'-p','output_directory:='+str(args.output/'navigation'),
              '-p','localization_only:='+str(args.localization_only).lower(),'-p','initial_pose:='+json.dumps(initial)]
         launch('navigation',nav)
-        launch('bridge',['rmsim_bridge','bridge','--ros-args','-p',f'port:={args.port}'])
+        bridge=launch('bridge',['rmsim_bridge','bridge','--ros-args','-p',f'port:={args.port}'])
         if args.mismatched_map:
             wait(lambda:node.diag and node.truth and node.nav and node.nav['phase']=='map_mismatch',120)
             check('mismatched_scene_prevents_navigation',node.nav['starts']==0 and not node.nav['pids'],navigation=node.nav)
@@ -95,6 +99,30 @@ def main():
             wait(lambda:node.nav and node.nav['phase']=='running' and node.navigator.server_is_ready(),90)
             goal=NavigateToPose.Goal();goal.pose.header.frame_id='aim_sentry/map';goal.pose.header.stamp.sec=node.clock//1_000_000_000;goal.pose.header.stamp.nanosec=node.clock%1_000_000_000
             goal.pose.pose.position.x=args.goal_x;goal.pose.pose.position.y=args.goal_y;goal.pose.pose.orientation.w=1.
+            if args.recover_session:
+                future=node.navigator.send_goal_async(goal);wait(future.done,20);interrupted=future.result()
+                check('recovery_goal_accepted',interrupted.accepted)
+                origin=node.position();wait(lambda:math.dist(origin,node.position())>.12,60)
+                before=node.position();old_identity=list(node.nav['identity']);old_starts=node.nav['starts']
+                # Fault injection touches only the bridge process created by this fixture.
+                if os.name=='nt':
+                    stopped=subprocess.run(['taskkill','/PID',str(bridge.pid),'/T','/F'],capture_output=True)
+                    if stopped.returncode and bridge.poll() is None:raise RuntimeError('Could not stop the owned bridge tree')
+                else:bridge.terminate()
+                bridge.wait(timeout=15);children.remove(bridge)
+                wait(lambda:node.nav and node.nav['phase']=='waiting' and not node.nav['pids'],45)
+                check('disconnect_stops_owned_navigation_stack',not node.nav['pids'],old_identity=old_identity)
+                node.amcl=None
+                bridge=launch('bridge-reconnect',['rmsim_bridge','bridge','--ros-args','-p',f'port:={args.port}'])
+                wait(lambda:node.diag and node.diag.get('connected') and node.nav and node.nav['phase']=='running' and node.nav['identity']!=old_identity and node.amcl,150)
+                estimate=node.amcl.pose.pose.position;actual=node.position();error=math.hypot(estimate.x-actual[0],estimate.y-actual[1])
+                check('reconnect_rebuilds_estimated_navigation',fresh_reconnect(old_identity,old_starts,node.nav,node.diag,error),starts=node.nav['starts'],identity=node.nav['identity'],error_m=error)
+                check('disconnect_physical_braking',math.dist(before,actual)<.2,travel_m=math.dist(before,actual))
+                start=node.clock;settled=node.position();wait(lambda:node.clock-start>1_000_000_000,30)
+                check('reconnect_does_not_replay_interrupted_goal',math.dist(settled,node.position())<.02,drift_m=math.dist(settled,node.position()))
+                node.navigator.destroy();node.navigator=ActionClient(node,NavigateToPose,'navigate_to_pose')
+                wait(node.navigator.server_is_ready,30)
+                goal.pose.header.stamp.sec=node.clock//1_000_000_000;goal.pose.header.stamp.nanosec=node.clock%1_000_000_000
             if args.public_client:
                 log=(args.output/'goal-client.log').open('w',encoding='utf-8');logs.append(log)
                 client=subprocess.Popen([sys.executable,str(root/'tools/integration/send_navigation_goal.py'),str(args.goal_x),str(args.goal_y)],stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW)

@@ -34,6 +34,7 @@ void AImportLabGameMode::TickSuspensionProbe(double DeltaSeconds)
     Sample->SetNumberField(TEXT("dt_s"),DeltaSeconds);
     Sample->SetNumberField(TEXT("chassis_z_cm"),Position.Z);
     Sample->SetNumberField(TEXT("chassis_vz_cm_s"),Velocity.Z);
+    Sample->SetBoolField(TEXT("chassis_awake"),Chassis->RigidBodyIsAwake());
     Sample->SetNumberField(TEXT("pitch_deg"),Rotation.Pitch);
     Sample->SetNumberField(TEXT("roll_deg"),Rotation.Roll);
     Sample->SetNumberField(TEXT("up_z"),Rig->GetActorUpVector().Z);

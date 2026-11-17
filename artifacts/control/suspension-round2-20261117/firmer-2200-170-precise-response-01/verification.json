@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=-0.000562cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.814247cm vz=-0.000186cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": false,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    }
+  ],
+  "failure_reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+  "conclusion": "Reduced sleep thresholds did not remove post-load height hysteresis. Optional sleep parameter code reverted; keep native sleep."
+}

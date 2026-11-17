@@ -1,0 +1,137 @@
+﻿{
+    "scope":  "sequential native control/contact/ROS/LK regression; no OS keyboard or full navigation acceptance",
+    "status":  "passed",
+    "completed":  [
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-ManualControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\traction",
+                                            "-Traction",
+                                            "-TimeoutSeconds",
+                                            "180"
+                                        ],
+                          "name":  "traction"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-GyroControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\controls",
+                                            "-TimeoutSeconds",
+                                            "240"
+                                        ],
+                          "name":  "controls"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-GyroControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\waves",
+                                            "-WaveRoutes",
+                                            "-PrecisionKeys",
+                                            "-SpinRadS",
+                                            "4",
+                                            "-TimeoutSeconds",
+                                            "240"
+                                        ],
+                          "name":  "waves"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-ManualControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\integration",
+                                            "-Contact",
+                                            "-ContactIntegration",
+                                            "-WithTraining",
+                                            "-ContactDistanceCm",
+                                            "150",
+                                            "-ContactSpeedMps",
+                                            "0.5",
+                                            "-TimeoutSeconds",
+                                            "240"
+                                        ],
+                          "name":  "integration"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-ManualControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\fast",
+                                            "-Gyro",
+                                            "-SteeringResponse",
+                                            "-ResponseSpeedMps",
+                                            "2",
+                                            "-MapFile",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\empty-map.json",
+                                            "-TimeoutSeconds",
+                                            "180"
+                                        ],
+                          "name":  "fast"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-ManualControls.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\spin",
+                                            "-Gyro",
+                                            "-SteeringResponse",
+                                            "-ResponseSpeedMps",
+                                            "2",
+                                            "-ResponseSpinRadS",
+                                            "4",
+                                            "-PrecisionTrace",
+                                            "-MapFile",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\empty-map.json",
+                                            "-TimeoutSeconds",
+                                            "180"
+                                        ],
+                          "name":  "spin"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-RosBridge.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\ros",
+                                            "-RosTopics"
+                                        ],
+                          "name":  "ros"
+                      },
+                      {
+                          "process_exit":  0,
+                          "script":  "Test-RosBridge.ps1",
+                          "arguments":  [
+                                            "-EngineRoot",
+                                            "E:/simulator-tools/UE_5.8",
+                                            "-EvidenceDirectory",
+                                            "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\regression\\lk",
+                                            "-LkMotorLoop"
+                                        ],
+                          "name":  "lk"
+                      }
+                  ],
+    "drive_profile_sha256":  "D1DB3392B972FE6BB70AEA5C0FFFA9FC998E0C687EC3A09B9BA6D6B5CE142057",
+    "module_sha256":  "9B489D1E212FE0AEED1955F75E7E2A4E6442684A64B41CA345126675C41595D1"
+}
