@@ -161,6 +161,7 @@ private:
     void TickTerrainProbe();
     void TickCombatProbe();
     void TickContactProbe(double DeltaSeconds);
+    void TickSuspensionProbe(double DeltaSeconds);
     bool RecordControlCheck(const FString& Name, bool Passed, const TSharedPtr<FJsonObject>& Before, const FString& Detail);
     bool WriteControlReport(const FString& Status, const FString& Reason = FString());
     bool CaptureControlView(const FString& Phase);
