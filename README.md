@@ -29,7 +29,7 @@ AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂�
 
 ## 算法、地图与车辆扩展
 
-Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。当前2000/140悬挂下，原LK/Point-LIO联合11项通过；RMUC波浪自主导航往返9项通过，实际去程/返程终点误差0.1676m/0.1172m，沿用0.25m门限。断线重连首轮完整14项通过；最终重复运行发现扫描TF链的间歇恢复卡点，当前继续跟踪该问题。实际R恢复独立验收，最新证据见当前进度。
+Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。当前2000/140悬挂下，原LK/Point-LIO联合11项通过。最新已完成两轮RMUC断线重连与自主往返各14项、平地实际R复位恢复17项，合计45项导航检查；两轮实际去程误差0.1871/0.1830m、返程0.0902/0.1026m，沿用0.25m门限。Windows导航进程使用经校验的127.0.0.1 UDP配置，解决已复现的重启消息中断；原失败证据保留。[导航指南](docs/guides/native-navigation.md) · [恢复验收](artifacts/navigation/reconnect-tf-20261117/release-summary.json)
 
 地图支持包入口切换。WT CDK示例：`Play-ManualVehicle.cmd assets\maps\wt_cdk_crop\map.json hillside`。弗兰德斯原图资源已准备，完整UE场景运行待验收。[地图说明](docs/guides/map-packages.md)
 

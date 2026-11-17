@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$EngineRoot,[Parameter(Mandatory=$true)][string]$EvidenceDirectory,[int]$Port=19501,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$InteractiveReset,[switch]$RecoverSession,
+param([Parameter(Mandatory=$true)][string]$EngineRoot,[Parameter(Mandatory=$true)][string]$EvidenceDirectory,[int]$Port=19501,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$InteractiveReset,[switch]$RecoverSession,[switch]$LoopbackUdp,
  [string]$MapFile='',[string]$NavigationMap='',[double]$GoalX=5.5,[double]$GoalY=1,[double]$InitialX=.6,[double]$InitialY=-.4,[double]$InitialYaw=.15,[switch]$RoundTrip,[double]$ReturnX=0,[double]$ReturnY=0)
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $ue=Get-UnrealTools -EngineRoot $EngineRoot;$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'));$out=[IO.Path]::GetFullPath($EvidenceDirectory)
@@ -10,13 +10,22 @@ $env:PYTHONPATH=Join-Path $root 'src'
 if($NavigationMap){Copy-Item -LiteralPath $NavigationMap -Destination (Join-Path $out 'map') -Recurse}
 else{& python -m rm_map_tools export (Join-Path $out 'map.json') --output (Join-Path $out 'map') --resolution .05;if($LASTEXITCODE -ne 0){throw 'Map export failed'}}
 if($MismatchedMap){$metadata=Join-Path $out 'map/metadata.json';$data=Get-Content -LiteralPath $metadata -Raw -Encoding UTF8|ConvertFrom-Json;$data.source_md5='00000000000000000000000000000000';$data|ConvertTo-Json -Depth 20|Set-Content -LiteralPath $metadata -Encoding utf8}
+$navigationHashes=@{}
+foreach($name in @('loam_interface.dll','sensor_scan_generation.dll','fake_vel_transform.dll','nav2_lifecycle_manager_core.dll')){
+ $navigationHashes[$name]=(Get-FileHash -LiteralPath (Join-Path $root ('artifacts/runtime/navigation/windows/'+$name))).Hash
+}
+$bridgeHashes=@{}
+foreach($file in Get-ChildItem -LiteralPath (Join-Path $root 'ros2_ws/install_bridge/rmsim_bridge/Lib/site-packages/rmsim_bridge') -Filter '*.py'){
+ $bridgeHashes[$file.Name]=(Get-FileHash -LiteralPath $file.FullName).Hash
+}
 @{started_utc=[DateTime]::UtcNow.ToString('o');
+ navigation_module_sha256=$navigationHashes; installed_bridge_sha256=$bridgeHashes;
  module_sha256=(Get-FileHash -LiteralPath (Join-Path $root 'unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll')).Hash;
  rig_sha256=(Get-FileHash -LiteralPath (Join-Path $root 'assets/vehicles/aim_sentry/ue_mesh_rig.json')).Hash;
  drive_profile_sha256=(Get-FileHash -LiteralPath (Join-Path $root 'assets/vehicles/aim_sentry/drive-profile.json')).Hash;
  map_sha256=(Get-FileHash -LiteralPath (Join-Path $out 'map.json')).Hash;
  navigation_map_sha256=(Get-FileHash -LiteralPath (Join-Path $out 'map/map.pgm')).Hash} |
- ConvertTo-Json | Set-Content -LiteralPath (Join-Path $out 'runtime-provenance.json') -Encoding utf8
+ ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $out 'runtime-provenance.json') -Encoding utf8
 $arguments=@((Quote-UnrealArgument $ue.Project),'/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode','-game','-RenderOffScreen','-unattended','-NoSplash','-NoSound',
  '-RosControl','-RosImu','-RosLidar','-SimStepSeconds=0.001',('-RosPort='+$Port),'-RosCameraWidth=320','-RosCameraHeight=240',
  ('-MeshRigFile='+(Quote-UnrealArgument (Join-Path $root 'assets/vehicles/aim_sentry/ue_mesh_rig.json'))),
@@ -35,6 +44,7 @@ try{
  if($PublicClient){$client+='-PublicClient'}
  if($InteractiveReset){$client+='-WaitReset'}
  if($RecoverSession){$client+='-RecoverSession'}
+ if($LoopbackUdp){$client+='-LoopbackUdp'}
  & (Join-Path $root 'tools/environment/run-env.ps1') -Command $client
  if($LASTEXITCODE -ne 0){throw 'Native navigation gate failed.'}
 }finally{

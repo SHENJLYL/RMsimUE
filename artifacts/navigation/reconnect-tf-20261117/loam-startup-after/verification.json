@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "expected_blocked": false,
+  "kind": "loam",
+  "checks": [
+    {
+      "name": "native_node_initially_responsive",
+      "passed": true
+    },
+    {
+      "name": "paused_clock_missing_tf_contract",
+      "passed": true,
+      "responsive": true
+    },
+    {
+      "name": "missing_transform_does_not_fabricate_scan",
+      "passed": true
+    },
+    {
+      "name": "real_mount_transform_allows_output",
+      "passed": true,
+      "scan_count": 28
+    }
+  ],
+  "scope": "native adapter with synthetic synchronized sensors; no physical-navigation claim",
+  "module_sha256": "cf1a8c71281b0c50fd978ec7bf0eaaea329852f250255e1e5dfc05a07662abc1"
+}

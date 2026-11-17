@@ -1,4 +1,4 @@
-param([int]$Port=19501,[Parameter(Mandatory=$true)][string]$OutputDirectory,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$WaitReset,[switch]$RecoverSession,
+param([int]$Port=19501,[Parameter(Mandatory=$true)][string]$OutputDirectory,[switch]$LocalizationOnly,[switch]$MismatchedMap,[switch]$PublicClient,[switch]$WaitReset,[switch]$RecoverSession,[switch]$LoopbackUdp,
  [double]$GoalX=5.5,[double]$GoalY=1,[double]$InitialX=.6,[double]$InitialY=-.4,[double]$InitialYaw=.15,[switch]$RoundTrip,[double]$ReturnX=0,[double]$ReturnY=0)
 $ErrorActionPreference='Stop';$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 . (Join-Path $root 'ros2_ws/install_lio/local_setup.ps1')
@@ -13,5 +13,6 @@ if($MismatchedMap){$arguments+='--mismatched-map'}
 if($PublicClient){$arguments+='--public-client'}
 if($WaitReset){$arguments+='--wait-reset'}
 if($RecoverSession){$arguments+='--recover-session'}
+if($LoopbackUdp){$arguments+='--loopback-udp'}
 & python @arguments
 exit $LASTEXITCODE

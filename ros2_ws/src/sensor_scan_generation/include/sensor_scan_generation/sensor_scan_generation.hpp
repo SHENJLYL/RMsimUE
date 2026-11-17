@@ -74,6 +74,9 @@ private:
   rclcpp::Time previous_odometry_stamp_{0, 0, RCL_ROS_TIME};
   tf2::Transform previous_transform_;
   bool previous_odometry_valid_{false};
+  rclcpp::TimerBase::SharedPtr diagnostic_timer_;
+  uint64_t received_odometry_{0}, received_clouds_{0}, paired_{0}, transformed_{0};
+  double latest_odom_stamp_{0.0}, latest_cloud_stamp_{0.0};
 };
 
 }  // namespace sensor_scan_generation

@@ -136,3 +136,10 @@
 
 - 最终rmuc-12恢复复测failed：重连后Point-LIO已初始化、AMCL已active并收到地图，但pointcloud_to_laserscan的TF过滤队列满，initial_pose_sent=false。当前须同时记录rmuc-09首轮14项通过与rmuc-12复测失败；自主往返已验收，重复恢复继续in-progress。诊断入口为2026-11-17-reconnect-tf-chain issue。不要扩大一次成功为稳定恢复，也不要忽略已完成的独立RMUC往返。
 - 最终导航检查点 `artifacts/navigation/suspension-round2-20261117/checkpoint-summary.json` 已核对同一UE模块和车辆profile、各原始报告哈希。pixi激活实际ROS_DOMAIN_ID=71、LOCALHOST_ONLY=1，外层176会被覆盖；诊断须确认实际子进程域。没有改全局网络权限。
+
+- 2026-11-17导航恢复最新：当前2000/140悬挂与UE模块不变；正式入口RMUC重连往返两轮各14项、平地实际OS R复位17项通过，统一证据artifacts/navigation/reconnect-tf-20261117/release-summary.json。旧rmuc-12与本轮四次默认传输失败均保留，不能继续作为最新未解决结论。
+- Windows navigation入口在创建ROS context前验证包内127.0.0.1 UDP profile，只影响导航监督器及其子进程。ROS_LOCALHOST_ONLY=0仅出现在该经过校验的进程环境，XML白名单保持本机边界；不要误改为全局开放网络或删除校验。其他ROS模式保持原传输。Ubuntu实际运行、多车与全场路线另行验收。
+- loam_interface/sensor_scan_generation TF查询现为零等待：缺安装变换丢弃当前观测、后续真实样本重试，避免仿真时钟停顿时回调挂起。传输修复与该独立阻塞修复分别留有对照。原生接口20项通过，离线92项中90通过/2权限跳过。
+- 实际导航夹具在pixi激活后由probe_ros_topics设为ROS_DOMAIN_ID173，启动夹具180、重启夹具181；基础pixi默认71。诊断须读取实际环境。
+- R输入仅针对确认PID/项目/证据路径且在前台的自有RMSim窗口。首次焦点失败未发送按键，正常AppActivate后重试发送一次R，ROS独立确认epoch/clock重置和导航重建；不操作其他程序的覆盖窗口。截图只留本地。
+- 下一接续优先：RMUC更多出生点/实际R与路线覆盖、公开启动包装端到端验证，再推进多车隔离和完整自主决策。当前45项导航检查属于限定场景Windows验收；完整长期goal保持active。

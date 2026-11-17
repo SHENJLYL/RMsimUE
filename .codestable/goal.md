@@ -27,4 +27,4 @@ authorization: user_request_in_current_chat
 
 ## 当前检查点（2026-11-17）
 
-本地Git基线及回退标签已建立，用户指定公开仓库SHENJLYL/RMsimUE已实际接收main及首轮标签。AIM当前2000N/m、140N·s/m通过92项原生回归和两次各4项响应专项。新悬挂下原LK/Point-LIO联合11项、RMUC波浪自主往返9项，以及断线重连后完整往返14项已有实际通过证据。最新复测、代码版本与缺口见docs/progress/current.md和navigation checkpoint。最终恢复复测暴露重连后扫描TF链的间歇卡点，恢复功能继续in-progress。长期goal保持active，先处理该坐标链恢复，再接续实际R、更广路线、通用车辆导入和完整自主/比赛/双平台目标。
+本地Git基线及回退标签已建立，用户指定公开仓库SHENJLYL/RMsimUE已实际接收main及回退标签。AIM当前2000N/m、140N·s/m通过92项原生回归和两次各4项响应专项。新悬挂下原LK/Point-LIO联合11项已有证据。最新Windows导航重连修复已完成正式入口两轮RMUC往返各14项、平地实际R复位17项，共45项；源码/安装与实际模块哈希核对，原失败保留。统一证据artifacts/navigation/reconnect-tf-20261117/release-summary.json。长期goal保持active，下一步扩展RMUC出生点/实际R和路线覆盖、公开启动包装，继续通用车辆、多车隔离和完整自主/比赛/双平台目标。

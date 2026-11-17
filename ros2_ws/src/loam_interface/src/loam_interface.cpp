@@ -69,8 +69,10 @@ void LoamInterfaceNode::odometryCallback(const nav_msgs::msg::Odometry::ConstSha
   // Here we transform it to the `odom` frame
   if (!base_frame_to_lidar_initialized_) {
     try {
+      // Never wait on a simulated-clock timeout inside a subscription callback.
+      // Missing mount TF skips this observation; the next real sample retries at its own stamp.
       auto tf_stamped = tf_buffer_->lookupTransform(
-        base_frame_, lidar_frame_, msg->header.stamp, rclcpp::Duration::from_seconds(0.5));
+        base_frame_, lidar_frame_, msg->header.stamp, rclcpp::Duration::from_seconds(0.0));
       tf2::Transform tf_base_frame_to_lidar;
       tf2::fromMsg(tf_stamped.transform, tf_base_frame_to_lidar);
       tf_odom_to_lidar_odom_ = tf_base_frame_to_lidar;

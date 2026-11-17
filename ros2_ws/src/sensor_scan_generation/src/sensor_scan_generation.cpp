@@ -14,6 +14,7 @@
 
 #include "sensor_scan_generation/sensor_scan_generation.hpp"
 
+#include <chrono>
 #include "pcl_ros/transforms.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
@@ -57,6 +58,19 @@ SensorScanGenerationNode::SensorScanGenerationNode(const rclcpp::NodeOptions & o
   sync_->registerCallback(std::bind(
     &SensorScanGenerationNode::laserCloudAndOdometryHandler, this, std::placeholders::_1,
     std::placeholders::_2));
+  odometry_sub_.registerCallback([this](const nav_msgs::msg::Odometry::ConstSharedPtr & m) {
+    ++received_odometry_; latest_odom_stamp_ = rclcpp::Time(m->header.stamp).seconds();
+  });
+  laser_cloud_sub_.registerCallback([this](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m) {
+    ++received_clouds_; latest_cloud_stamp_ = rclcpp::Time(m->header.stamp).seconds();
+  });
+  diagnostic_timer_ = this->create_wall_timer(std::chrono::seconds(3), [this]() {
+    RCLCPP_INFO(get_logger(),
+      "SCAN_HEALTH odom=%llu cloud=%llu paired=%llu transformed=%llu now=%.9f odom_stamp=%.9f cloud_stamp=%.9f",
+      static_cast<unsigned long long>(received_odometry_), static_cast<unsigned long long>(received_clouds_),
+      static_cast<unsigned long long>(paired_), static_cast<unsigned long long>(transformed_),
+      now().seconds(), latest_odom_stamp_, latest_cloud_stamp_);
+  });
 }
 
 void SensorScanGenerationNode::laserCloudAndOdometryHandler(
@@ -69,6 +83,7 @@ void SensorScanGenerationNode::laserCloudAndOdometryHandler(
   tf2::Transform tf_odom_to_lidar;
 
   tf2::fromMsg(odometry_msg->pose.pose, tf_odom_to_lidar);
+  ++paired_;
   try {
     tf_lidar_to_robot_base_ = getTransform(lidar_frame_, robot_base_frame_, pcd_msg->header.stamp);
     tf_lidar_to_chassis = getTransform(lidar_frame_, base_frame_, pcd_msg->header.stamp);
@@ -79,6 +94,7 @@ void SensorScanGenerationNode::laserCloudAndOdometryHandler(
     return;
   }
 
+  ++transformed_;
   tf_odom_to_chassis = tf_odom_to_lidar * tf_lidar_to_chassis;
   tf_odom_to_robot_base = tf_odom_to_lidar * tf_lidar_to_robot_base_;
 
@@ -95,8 +111,10 @@ void SensorScanGenerationNode::laserCloudAndOdometryHandler(
 tf2::Transform SensorScanGenerationNode::getTransform(
   const std::string & target_frame, const std::string & source_frame, const rclcpp::Time & time)
 {
+  // Never wait on a simulated-clock timeout inside a subscription callback.
+  // Missing mount TF skips this observation; the next real sample retries at its own stamp.
   auto transform_stamped = tf_buffer_->lookupTransform(
-    target_frame, source_frame, time, rclcpp::Duration::from_seconds(0.5));
+    target_frame, source_frame, time, rclcpp::Duration::from_seconds(0.0));
   tf2::Transform transform;
   tf2::fromMsg(transform_stamped.transform, transform);
   return transform;

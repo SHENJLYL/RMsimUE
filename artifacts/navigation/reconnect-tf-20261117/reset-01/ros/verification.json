@@ -1,0 +1,263 @@
+{
+  "status": "passed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_identity_and_launched_processes",
+      "passed": true,
+      "navigation": {
+        "phase": "localizing",
+        "starts": 1,
+        "identity": [
+          "DE8CCA1343A20FB818ACFCB652D0D77C",
+          0
+        ],
+        "pids": {
+          "loam_interface": 50632,
+          "sensor_scan_generation": 45992,
+          "terrain_analysis": 28232,
+          "terrain_analysis_ext": 3272,
+          "pointcloud_to_laserscan": 46312,
+          "fake_vel_transform": 25944,
+          "map_server": 55656,
+          "amcl": 12992,
+          "lifecycle_manager_localization": 50828
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\reconnect-tf-20261117\\reset-01\\ros\\navigation\\20261117T082912Z-56352",
+        "map_id": "import_lab",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "read_only_rpc_timeouts": 0,
+        "transport": {
+          "mode": "loopback_udp",
+          "allowed_interfaces": [
+            "127.0.0.1"
+          ],
+          "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+          "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+        },
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "import_lab",
+        "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+        "kind": "rm_flat_map"
+      }
+    },
+    {
+      "name": "estimated_frame_and_scan_chain",
+      "passed": true,
+      "odom_frame": "aim_sentry/odom",
+      "scan_frame": "aim_sentry/base_stabilized",
+      "terrain_points": 3955,
+      "scan_bins": 720
+    },
+    {
+      "name": "amcl_converges_from_perturbed_prior",
+      "passed": true,
+      "initial_prior": [
+        0.6,
+        -0.4,
+        0.15
+      ],
+      "estimated": [
+        0.09463620247239751,
+        -0.054837383749901124
+      ],
+      "truth_xy": [
+        3.2977116024972554e-05,
+        -0.00012945010638162557
+      ],
+      "error_m": 0.10928279027995369,
+      "covariance": [
+        0.022751154892963248,
+        0.01710219905058221,
+        0.0029153332706091124
+      ]
+    },
+    {
+      "name": "amcl_has_no_truth_subscription",
+      "passed": true,
+      "subscriptions": [
+        [
+          "/bond",
+          [
+            "bond/msg/Status"
+          ]
+        ],
+        [
+          "/clock",
+          [
+            "rosgraph_msgs/msg/Clock"
+          ]
+        ],
+        [
+          "/initialpose",
+          [
+            "geometry_msgs/msg/PoseWithCovarianceStamped"
+          ]
+        ],
+        [
+          "/map",
+          [
+            "nav_msgs/msg/OccupancyGrid"
+          ]
+        ],
+        [
+          "/obstacle_scan",
+          [
+            "sensor_msgs/msg/LaserScan"
+          ]
+        ],
+        [
+          "/parameter_events",
+          [
+            "rcl_interfaces/msg/ParameterEvent"
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "recovery_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "disconnect_stops_owned_navigation_stack",
+      "passed": true,
+      "old_identity": [
+        "DE8CCA1343A20FB818ACFCB652D0D77C",
+        0
+      ]
+    },
+    {
+      "name": "reconnect_rebuilds_estimated_navigation",
+      "passed": true,
+      "starts": 2,
+      "identity": [
+        "A45BA1D1438F7342BC1DB2A55DED8B4F",
+        0
+      ],
+      "error_m": 0.10580196268734406
+    },
+    {
+      "name": "disconnect_physical_braking",
+      "passed": true,
+      "travel_m": 0.09644381362085007
+    },
+    {
+      "name": "reconnect_does_not_replay_interrupted_goal",
+      "passed": true,
+      "drift_m": 0.0
+    },
+    {
+      "name": "original_nav2_accepts_goal",
+      "passed": true
+    },
+    {
+      "name": "real_vehicle_reaches_goal",
+      "passed": true,
+      "status": 4,
+      "position": [
+        5.340614995610346,
+        0.9223255789523574,
+        0.00032500377900813505
+      ],
+      "error_m": 0.17730452704140573
+    },
+    {
+      "name": "original_planner_published_path",
+      "passed": true,
+      "path_points": 3
+    },
+    {
+      "name": "return_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "active_goal_cancelled",
+      "passed": true,
+      "status": 5
+    },
+    {
+      "name": "cancel_stops_physical_vehicle",
+      "passed": true,
+      "braking_distance_m": 0.062258710351966826,
+      "settled_drift_m": 0.0
+    },
+    {
+      "name": "reset_rebuilds_navigation_and_localization",
+      "passed": true,
+      "starts": 3,
+      "new_pose": [
+        0.05810757826254172,
+        -0.027016321413576128
+      ],
+      "error_m": 0.06399658707200717
+    },
+    {
+      "name": "reset_does_not_replay_old_goal",
+      "passed": true,
+      "drift_m": 0.0
+    }
+  ],
+  "localization_only": false,
+  "map_id": "import_lab",
+  "goal": [
+    5.5,
+    1.0
+  ],
+  "dds_transport": "navigation_runner_selected",
+  "last_navigation": {
+    "phase": "running",
+    "starts": 3,
+    "identity": [
+      "75058FAE4BA34F24B3AD0185482EFBB4",
+      1
+    ],
+    "pids": {
+      "loam_interface": 56836,
+      "sensor_scan_generation": 17852,
+      "terrain_analysis": 27672,
+      "terrain_analysis_ext": 9372,
+      "pointcloud_to_laserscan": 46428,
+      "fake_vel_transform": 36232,
+      "map_server": 41752,
+      "amcl": 34476,
+      "lifecycle_manager_localization": 20840,
+      "controller_server": 19864,
+      "planner_server": 36568,
+      "smoother_server": 59148,
+      "behavior_server": 50828,
+      "bt_navigator": 28316,
+      "waypoint_follower": 33476,
+      "velocity_smoother": 44176,
+      "lifecycle_manager_navigation": 52212
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\reconnect-tf-20261117\\reset-01\\ros\\navigation\\20261117T082912Z-56352",
+    "map_id": "import_lab",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 4,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 2126,
+  "has_odometry": true,
+  "has_terrain": true,
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom",
+  "last_amcl": [
+    0.05810757826254172,
+    -0.027016321413576128
+  ]
+}

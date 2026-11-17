@@ -141,14 +141,16 @@ class NavigationRunner(Node):
         elif time.monotonic()-self.received>1 or (self.lio and self.lio.get('phase')!='running'):
             self.stop();self.phase='waiting'
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
-            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,scope='original sentry/Nav2 nodes; no truth input; single robot')
+            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,transport=getattr(self,'transport_profile',{'mode':'unreported'}),scope='original sentry/Nav2 nodes; no truth input; single robot')
         self.status.publish(String(data=json.dumps(report)))
         (self.output/'status.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 
     def destroy_node(self):self.stop();return super().destroy_node()
 
 def main(args=None):
-    rclpy.init(args=args);node=NavigationRunner()
+    from .native_transport import configure_navigation_transport
+    transport=configure_navigation_transport()
+    rclpy.init(args=args);node=NavigationRunner();node.transport_profile=transport
     try:rclpy.spin(node)
     except KeyboardInterrupt:pass
     finally:node.destroy_node();rclpy.shutdown()

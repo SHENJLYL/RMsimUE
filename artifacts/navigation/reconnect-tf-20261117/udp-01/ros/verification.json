@@ -1,0 +1,232 @@
+{
+  "status": "passed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_identity_and_launched_processes",
+      "passed": true,
+      "navigation": {
+        "phase": "localizing",
+        "starts": 1,
+        "identity": [
+          "E9A474F74C0F62C0B280B6BFE0CE23FF",
+          0
+        ],
+        "pids": {
+          "loam_interface": 39232,
+          "sensor_scan_generation": 43656,
+          "terrain_analysis": 11072,
+          "terrain_analysis_ext": 10056,
+          "pointcloud_to_laserscan": 42576,
+          "fake_vel_transform": 28480,
+          "map_server": 5440,
+          "amcl": 34648,
+          "lifecycle_manager_localization": 52160
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\reconnect-tf-20261117\\udp-01\\ros\\navigation\\20261117T081346Z-52836",
+        "map_id": "rmuc2027",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "read_only_rpc_timeouts": 0,
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "rmuc2027",
+        "source_md5": "b0453f53370193c59ef594a56003872b",
+        "kind": "rm_mesh_map"
+      }
+    },
+    {
+      "name": "estimated_frame_and_scan_chain",
+      "passed": true,
+      "odom_frame": "aim_sentry/odom",
+      "scan_frame": "aim_sentry/base_stabilized",
+      "terrain_points": 1071,
+      "scan_bins": 720
+    },
+    {
+      "name": "amcl_converges_from_perturbed_prior",
+      "passed": true,
+      "initial_prior": [
+        6.4,
+        6.0,
+        0.15
+      ],
+      "estimated": [
+        5.836387285604112,
+        6.301999118822795
+      ],
+      "truth_xy": [
+        5.800017491919304,
+        6.399597621023927
+      ],
+      "error_m": 0.10415483437930295,
+      "covariance": [
+        0.004522625639772571,
+        0.03374109934036795,
+        0.0006832760454677404
+      ]
+    },
+    {
+      "name": "amcl_has_no_truth_subscription",
+      "passed": true,
+      "subscriptions": [
+        [
+          "/bond",
+          [
+            "bond/msg/Status"
+          ]
+        ],
+        [
+          "/clock",
+          [
+            "rosgraph_msgs/msg/Clock"
+          ]
+        ],
+        [
+          "/initialpose",
+          [
+            "geometry_msgs/msg/PoseWithCovarianceStamped"
+          ]
+        ],
+        [
+          "/map",
+          [
+            "nav_msgs/msg/OccupancyGrid"
+          ]
+        ],
+        [
+          "/obstacle_scan",
+          [
+            "sensor_msgs/msg/LaserScan"
+          ]
+        ],
+        [
+          "/parameter_events",
+          [
+            "rcl_interfaces/msg/ParameterEvent"
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "recovery_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "disconnect_stops_owned_navigation_stack",
+      "passed": true,
+      "old_identity": [
+        "E9A474F74C0F62C0B280B6BFE0CE23FF",
+        0
+      ]
+    },
+    {
+      "name": "reconnect_rebuilds_estimated_navigation",
+      "passed": true,
+      "starts": 2,
+      "identity": [
+        "44A7C59B4D884526C2B57EB77596EF19",
+        0
+      ],
+      "error_m": 0.15433501683468473
+    },
+    {
+      "name": "disconnect_physical_braking",
+      "passed": true,
+      "travel_m": 0.08719318127176152
+    },
+    {
+      "name": "reconnect_does_not_replay_interrupted_goal",
+      "passed": true,
+      "drift_m": 0.0
+    },
+    {
+      "name": "original_nav2_accepts_goal",
+      "passed": true
+    },
+    {
+      "name": "real_vehicle_reaches_goal",
+      "passed": true,
+      "status": 4,
+      "position": [
+        9.318243087941203,
+        6.520291427826328,
+        0.02834426773294661
+      ],
+      "error_m": 0.1784093929247167
+    },
+    {
+      "name": "original_planner_published_path",
+      "passed": true,
+      "path_points": 3
+    },
+    {
+      "name": "round_trip_return_accepted",
+      "passed": true
+    },
+    {
+      "name": "round_trip_reaches_return_goal",
+      "passed": true,
+      "status": 4,
+      "position": [
+        5.845435203345668,
+        6.469472080977576,
+        0.029779462633195718
+      ],
+      "error_m": 0.0830104074102582
+    }
+  ],
+  "localization_only": false,
+  "map_id": "rmuc2027",
+  "goal": [
+    9.45,
+    6.4
+  ],
+  "dds_transport": "explicit_loopback_udp",
+  "last_navigation": {
+    "phase": "running",
+    "starts": 2,
+    "identity": [
+      "44A7C59B4D884526C2B57EB77596EF19",
+      0
+    ],
+    "pids": {
+      "loam_interface": 17356,
+      "sensor_scan_generation": 12784,
+      "terrain_analysis": 30992,
+      "terrain_analysis_ext": 43104,
+      "pointcloud_to_laserscan": 2544,
+      "fake_vel_transform": 57088,
+      "map_server": 41860,
+      "amcl": 30780,
+      "lifecycle_manager_localization": 56988,
+      "controller_server": 35948,
+      "planner_server": 18652,
+      "smoother_server": 32400,
+      "behavior_server": 12068,
+      "bt_navigator": 17868,
+      "waypoint_follower": 38792,
+      "velocity_smoother": 36004,
+      "lifecycle_manager_navigation": 35880
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\reconnect-tf-20261117\\udp-01\\ros\\navigation\\20261117T081346Z-52836",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 2,
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 418,
+  "has_odometry": true,
+  "has_terrain": true,
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom",
+  "last_amcl": [
+    5.911010540430019,
+    6.378273731286409
+  ]
+}

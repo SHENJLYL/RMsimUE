@@ -1,0 +1,72 @@
+{
+  "status": "passed",
+  "transport": "loopback_udp",
+  "checks": [
+    {
+      "cycle": 1,
+      "passed": true,
+      "received_stamps": {
+        "odom": 900000000,
+        "tf": 900000000,
+        "scan": 900000000
+      },
+      "sim_time_ns": 900000000
+    },
+    {
+      "cycle": 2,
+      "passed": true,
+      "received_stamps": {
+        "tf": 1800000000,
+        "odom": 1800000000,
+        "scan": 1800000000
+      },
+      "sim_time_ns": 1800000000
+    },
+    {
+      "cycle": 3,
+      "passed": true,
+      "received_stamps": {
+        "odom": 2800000000,
+        "tf": 2800000000,
+        "scan": 2800000000
+      },
+      "sim_time_ns": 2800000000
+    },
+    {
+      "cycle": 4,
+      "passed": true,
+      "received_stamps": {
+        "odom": 3800000000,
+        "scan": 3800000000,
+        "tf": 3800000000
+      },
+      "sim_time_ns": 3800000000
+    },
+    {
+      "cycle": 5,
+      "passed": true,
+      "received_stamps": {
+        "odom": 4700000000,
+        "tf": 4700000000,
+        "scan": 4700000000
+      },
+      "sim_time_ns": 4700000000
+    },
+    {
+      "cycle": 6,
+      "passed": true,
+      "received_stamps": {
+        "odom": 5600000000,
+        "tf": 5600000000,
+        "scan": 5600000000
+      },
+      "sim_time_ns": 5600000000
+    }
+  ],
+  "scope": "native interface restart on synthetic data; independent of physical navigation",
+  "runtime_sha256": {
+    "fake_vel_transform.dll": "9d5e6efc86d1d6e5568a13bc1b38b0506ef01a36189e8d9e3527c801fa7abc96",
+    "loam_interface.dll": "cf1a8c71281b0c50fd978ec7bf0eaaea329852f250255e1e5dfc05a07662abc1",
+    "sensor_scan_generation.dll": "73ce49df156b0cbd118a576c2d0e39064a13d1cb0937960124cf262cdf447854"
+  }
+}

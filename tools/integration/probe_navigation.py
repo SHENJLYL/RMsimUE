@@ -46,12 +46,20 @@ def main():
     for name,default in [('goal-x',5.5),('goal-y',1.),('initial-x',.6),('initial-y',-.4),('initial-yaw',.15)]:p.add_argument('--'+name,type=float,default=default)
     p.add_argument('--round-trip',action='store_true');p.add_argument('--return-x',type=float,default=0.);p.add_argument('--return-y',type=float,default=0.)
     p.add_argument('--recover-session',action='store_true',help='Interrupt an active goal by restarting only the owned bridge; verify fresh localization and no stale goal replay')
+    p.add_argument('--loopback-udp',action='store_true',help='Diagnostic: explicit Fast DDS IPv4 loopback profile, no shared-memory transport')
     args=p.parse_args();initial=[args.initial_x,args.initial_y,args.initial_yaw]
     if args.recover_session and (args.localization_only or args.mismatched_map):p.error('--recover-session requires actual goal navigation')
     root=Path(__file__).resolve().parents[2];args.output.mkdir(parents=True,exist_ok=False)
     report=dict(status='running',scope='real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates',checks=[],localization_only=args.localization_only)
     scene=json.loads((args.output.parent/'map.json').read_text(encoding='utf-8-sig'));report['map_id']=scene['id'];report['goal']=[args.goal_x,args.goal_y]
+    if args.loopback_udp:
+        from rmsim_bridge.native_transport import loopback_environment
+        environment,transport=loopback_environment(os.environ,root/'ros2_ws/src/rmsim_bridge/config/fastdds-loopback-udp.xml')
+        os.environ.update(environment)
+    report['dds_transport']='diagnostic_all_loopback_udp' if args.loopback_udp else 'navigation_runner_selected'
     rclpy.init();node=NavigationObserver();children=[];logs=[];ros2=shutil.which('ros2')
+    from navigation_diagnostics import NavigationDiagnostics
+    diagnostics=NavigationDiagnostics(node,args.output)
     def save():
         report['last_navigation']=node.nav;report['received_scans']=len(node.scans)
         report['has_odometry']=node.odom is not None;report['has_terrain']=node.terrain is not None
@@ -160,6 +168,7 @@ def main():
         report['status']='passed'
     except Exception as e:report.update(status='failed',error=repr(e));raise
     finally:
+        diagnostics.save()
         for child in children:
             if child.poll() is None:subprocess.run(['taskkill','/PID',str(child.pid),'/T','/F'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);child.wait(timeout=15)
         for log in logs:log.close()
