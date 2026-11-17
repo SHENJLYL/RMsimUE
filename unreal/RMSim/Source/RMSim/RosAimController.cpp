@@ -54,7 +54,7 @@ void URosAimController::Reset(bool ResetPose)
 void URosAimController::SetOperatorBrake(bool Brake)
 {bOperatorBrake=Brake;if(Brake&&bEnabled)Stop(TEXT("operator_brake"));}
 
-bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence)
+bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence,double SimTime)
 {
     if(!bEnabled){Reject(TEXT("aim_control_disabled"));return false;}
     if(bOperatorBrake){Reject(TEXT("operator_brake"));return false;}
@@ -76,7 +76,11 @@ bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence)
     {Reject(TEXT("aim_fields_or_limits"));return false;}
     if(Fire>0&&!Training){Reject(TEXT("shooting_not_enabled"));return false;}
     if(Fire>0&&Permit==0){Reject(TEXT("fire_permission"));return false;}
-    const auto Current=WorldAngles();
+    FString Frame;J->TryGetStringField(TEXT("frame_id"),Frame);
+    const bool NewBodyFrame=Frame==Rig->GetVehicleId()+TEXT("/base_link");
+    if(NewBodyFrame!=bBodyFrame){Yaw.Mode=0;Pitch.Mode=0;}bBodyFrame=NewBodyFrame;
+    double BodyY,BodyP;Rig->GetGimbalAngles(BodyY,BodyP);
+    const auto Current=bBodyFrame?FVector2D(BodyY,BodyP):WorldAngles();
     auto Update=[](FAxis& Old,FAxis New,double Actual)
     {
         if(New.Mode==2)
@@ -88,6 +92,12 @@ bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence)
         Old=New;
     };
     Update(Yaw,Y,Current.X);Update(Pitch,P,Current.Y);
+    if(bBodyFrame)
+    {
+        const double Age=FMath::Clamp(SimTime-J->GetNumberField(TEXT("stamp_ns"))/1.e9,0.,.2);
+        if(Yaw.Mode==1)Yaw.Target=FMath::UnwindRadians(Yaw.Target+Yaw.Rate*Age);
+        if(Pitch.Mode==1)Pitch.Target=FMath::Clamp(Pitch.Target+Pitch.Rate*Age,PitchMin,PitchMax);
+    }
     bFire=Fire>0;bPermit=Permit>0;bLive=true;
     LastCommandWall=FPlatformTime::Seconds();Deadline=LastCommandWall+.2;AcceptedSeq=Sequence;Status=TEXT("active");return true;
 }
@@ -104,14 +114,22 @@ void URosAimController::StepAxis(FAxis& A,double Seconds)
 
 void URosAimController::Drive(double Seconds)
 {
+    // Body-frame trajectory samples carry a rate. Propagate using physical time and
+    // their command timestamp so a network-sized target step does not become an IMU spike.
+    // Legacy world-position/scan semantics remain unchanged.
+    if(bBodyFrame)
+    {
+        if(Yaw.Mode==1)Yaw.Target=FMath::UnwindRadians(Yaw.Target+Yaw.Rate*Seconds);
+        if(Pitch.Mode==1)Pitch.Target=FMath::Clamp(Pitch.Target+Pitch.Rate*Seconds,PitchMin,PitchMax);
+    }
     StepAxis(Yaw,Seconds);StepAxis(Pitch,Seconds);
     const auto CurrentWorld=WorldAngles();
     const double WY=Yaw.Mode?Yaw.Target:CurrentWorld.X,WP=Pitch.Mode?Pitch.Target:CurrentWorld.Y;
     const FVector WorldDirection(FMath::Cos(WP)*FMath::Cos(WY),-FMath::Cos(WP)*FMath::Sin(WY),-FMath::Sin(WP));
     const FRotator Local=Rig->GetActorTransform().InverseTransformVectorNoScale(WorldDirection).Rotation();
     double BeforeY,BeforeP;Rig->GetGimbalAngles(BeforeY,BeforeP);
-    const double DesiredY=Yaw.Mode?-FMath::DegreesToRadians(Local.Yaw):BeforeY;
-    const double UnclampedP=Pitch.Mode?-FMath::DegreesToRadians(Local.Pitch):BeforeP;
+    const double DesiredY=Yaw.Mode?(bBodyFrame?Yaw.Target:-FMath::DegreesToRadians(Local.Yaw)):BeforeY;
+    const double UnclampedP=Pitch.Mode?(bBodyFrame?Pitch.Target:-FMath::DegreesToRadians(Local.Pitch)):BeforeP;
     const double DesiredP=FMath::Clamp(UnclampedP,PitchMin,PitchMax);
     bLimited=FMath::Abs(DesiredP-UnclampedP)>1.e-6;
     if(bLimited&&Pitch.Mode==2)
@@ -153,6 +171,7 @@ TSharedRef<FJsonObject> URosAimController::State(int64 Stamp) const
 {
     auto J=MakeShared<FJsonObject>();J->SetBoolField(TEXT("enabled"),bEnabled);
     J->SetStringField(TEXT("actuator_model"),TEXT("rate_limited_kinematic_gimbal; fixed_neutral_collision_proxy; uncalibrated"));
+    J->SetStringField(TEXT("command_frame"),bBodyFrame?Rig->GetVehicleId()+TEXT("/base_link"):TEXT("rmsim_world"));
     J->SetStringField(TEXT("status"),Status);J->SetNumberField(TEXT("accepted_seq"),AcceptedSeq);
     J->SetNumberField(TEXT("rejected_count"),RejectedCount);J->SetStringField(TEXT("last_rejection"),LastRejection);
     J->SetNumberField(TEXT("command_age_s"),LastCommandWall<0?-1:FPlatformTime::Seconds()-LastCommandWall);

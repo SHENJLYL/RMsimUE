@@ -27,4 +27,4 @@ authorization: user_request_in_current_chat
 
 ## 当前检查点（2026-11-17）
 
-本地Git基线及回退标签已建立，用户指定公开仓库SHENJLYL/RMsimUE已实际接收main及回退标签。AIM当前2000N/m、140N·s/m通过92项原生回归和两次各4项响应专项。新悬挂下原LK/Point-LIO联合11项已有证据。最新Windows导航重连修复已完成正式入口两轮RMUC往返各14项、平地实际R复位17项，共45项；源码/安装与实际模块哈希核对，原失败保留。统一证据artifacts/navigation/reconnect-tf-20261117/release-summary.json。长期goal保持active，下一步扩展RMUC出生点/实际R和路线覆盖、公开启动包装，继续通用车辆、多车隔离和完整自主/比赛/双平台目标。
+可视化导航、sentry导航偏航目标整形及云台安装Mid-360已完成Windows限定验收：84项原生、13项RViz实际选点/航点/取消，离线120通过、2权限跳过。Play-Navigation.cmd与Stop-Navigation.cmd为用户入口；源模型和2000/140悬挂保持。汇总artifacts/navigation/sentry-console-20261117/release-summary.json。长期goal继续active，下一步补新Mid-360组合实际R/断线、更多RMUC路线，再推进通用车辆、多机器人隔离、完整感知决策/裁判、权威联机及Ubuntu原生验收。

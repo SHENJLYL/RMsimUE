@@ -4,6 +4,12 @@ UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接�
 
 [当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-17.md) · [仓库与本地资源](docs/guides/repository.md)
 
+## 可视化 SLAM / 航点导航
+
+双击 **Play-Navigation.cmd** 打开UE场景与RViz。定位就绪后，用 **Nav2 Goal** 点击拖动选目标；**Waypoint / Nav Through Poses Mode** 累积多个地点，再点 **Start Waypoint Following**；**Cancel** 取消任务。关闭RViz或运行 **Stop-Navigation.cmd** 结束本次会话。[操作指南](docs/guides/navigation-console.md)
+
+已接入原sentry导航偏航目标整形，以及按源模型yaw_link实际位置/45°倾角安装的动态Mid-360与共装IMU。当前Windows验收84项原生、13项真实GUI操作通过；离线120通过、2权限跳过。完整波浪路线实际单点误差0.1888m、航点队列终点0.1795m，取消后5.33cm停车，原25cm门限保持。[机器验收](artifacts/navigation/sentry-console-20261117/release-summary.json)
+
 ## 本机直接运行
 
 双击 **Play-ManualVehicle.cmd** 驾驶，双击 **Play-Training.cmd** 进行静态靶射击训练。默认进入 RMUC2027 来源场地，使用本机 `E:\simulator-tools\UE_5.8` 和已导入资源；其他引擎目录可设置 `UE_ROOT`。

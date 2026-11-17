@@ -14,11 +14,14 @@ public:
     void Advance(double Time,bool Connected);
     void Reset();
     void DiscardPending();
+    bool UsesArticulatedMount() const { return bArticulated; }
     const FString& GetSensorId() const { return Id; }
     TSharedRef<FJsonObject> TakeState(TArray<uint8>& Bytes,int32 Offset);
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
-    FString Id,ProfileHash;
+    FString Id,ProfileHash,ParentFrame;
+    bool bArticulated=false;
+    int64 WindowPasses=0,SelfBlocked=0;
     FTransform Mount;
     FVector Origin;
     double RaysPerSecond=0,FrameHz=0,MinElevation=0,MaxElevation=0,MinRange=0,MaxRange=0,NoiseStd=0;

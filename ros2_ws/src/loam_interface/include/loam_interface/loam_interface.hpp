@@ -52,6 +52,7 @@ private:
   std::string base_frame_;
 
   bool base_frame_to_lidar_initialized_;
+  bool align_gravity_initialized_pose_{false};
   tf2::Transform tf_odom_to_lidar_odom_;
 };
 

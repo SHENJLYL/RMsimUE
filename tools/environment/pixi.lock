@@ -58,6 +58,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/noarch/munkres-1.1.4-pyhd8ed1ab_1.conda
       - conda: https://prefix.dev/conda-forge/noarch/packaging-26.3-pyhc364b38_0.conda
       - conda: https://prefix.dev/conda-forge/noarch/pluggy-1.7.0-pyh5ded981_0.conda
+      - conda: https://prefix.dev/conda-forge/noarch/pybind11-abi-11-hc364b38_1.conda
       - conda: https://prefix.dev/conda-forge/noarch/pygments-2.21.0-pyhcf101f3_0.conda
       - conda: https://prefix.dev/conda-forge/noarch/pyparsing-3.3.3-pyh5ded981_0.conda
       - conda: https://prefix.dev/conda-forge/noarch/pytest-9.2.0-pyhc364b38_1.conda
@@ -75,8 +76,10 @@ environments:
       - conda: https://prefix.dev/conda-forge/noarch/wslink-2.6.0-pyhd8ed1ab_0.conda
       - conda: https://prefix.dev/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/_libavif_api-1.4.2-h11686cb_6.conda
+      - conda: https://prefix.dev/conda-forge/win-64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://prefix.dev/conda-forge/win-64/aiohttp-3.14.5-py314h9aa99d3_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/aom-3.15.3-pl5321h06fc181_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/assimp-6.0.6-h0fc915f_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/aws-c-auth-1.0.2-h0e45ca3_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/aws-c-cal-1.0.0-h83b9fca_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/aws-c-common-1.0.5-h6a83c73_0.conda
@@ -111,10 +114,13 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/fontconfig-2.18.3-hd47e2ca_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/fonttools-4.68.0-py314h2359020_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/foonathan-memory-0.7.4-h5112557_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/freeglut-3.2.2-hac47afa_4.conda
+      - conda: https://prefix.dev/conda-forge/win-64/freeimage-3.18.0-h17567e8_27.conda
       - conda: https://prefix.dev/conda-forge/win-64/freetype-2.14.3-h57928b3_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/fribidi-1.0.18-hfd05255_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/frozenlist-1.8.0-py314he6b43c3_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/gdk-pixbuf-2.44.8-h1f5b9c4_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/getopt-win32-0.1-h6a83c73_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/gl2ps-1.4.2-h26c196c_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/glew-2.3.0-hdfd1c44_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/glib-2.90.1-h1d002d9_3.conda
@@ -122,12 +128,18 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/gmock-1.18.0-h4f519af_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/graphicsmagick-1.3.49-h8df1741_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/graphite2-1.3.15-h5112557_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/graphviz-14.1.2-h4c50273_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/gst-plugins-base-1.26.11-h88486b4_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/gstreamer-1.26.11-hae9036a_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/gtest-1.18.0-h477610d_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/gts-0.7.6-ha777514_5.conda
       - conda: https://prefix.dev/conda-forge/win-64/hdf4-4.2.15-h5557f11_7.conda
       - conda: https://prefix.dev/conda-forge/win-64/hdf5-2.2.0-nompi_h8157242_102.conda
       - conda: https://prefix.dev/conda-forge/win-64/icu-78.3-h5112557_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/imath-3.2.3-h1608b31_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/jasper-4.2.9-h1339676_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/jsoncpp-1.9.8-h477610d_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/jxrlib-1.1-hcfcfb64_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/khronos-opencl-icd-loader-2024.10.24-hfd05255_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/kiwisolver-1.5.1-py314hf309875_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/krb5-1.22.2-h719d79b_2.conda
@@ -145,6 +157,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/libbrotlidec-1.2.1-h84f9c24_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libbrotlienc-1.2.1-he2a975b_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libcblas-3.11.0-12_h2a3cdd5_mkl.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libclang13-23.1.5-default_hacd6ee9_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libcurl-8.23.0-hdb0ef4a_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libdav1d-1.5.4-h11686cb_4.conda
       - conda: https://prefix.dev/conda-forge/win-64/libdav1d7-1.5.4-h6a83c73_4.conda
@@ -153,7 +166,10 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/libffi-3.7.0-h3d046cb_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libfreetype-2.14.3-h57928b3_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/libfreetype6-2.14.3-hdbac1cb_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libgcc-16.2.0-h110b43a_7.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libgd-2.3.3-h4974f7c_12.conda
       - conda: https://prefix.dev/conda-forge/win-64/libglib-2.90.1-h8c856d3_3.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libgomp-16.2.0-h8ee18e1_7.conda
       - conda: https://prefix.dev/conda-forge/win-64/libharfbuzz-15.0.0-h03b5201_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libharfbuzz-devel-15.0.0-h03b5201_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libhwloc-2.15.0-default_hae90fe0_1001.conda
@@ -163,6 +179,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/libiceoryx-platform-2.95.8-h477610d_5.conda
       - conda: https://prefix.dev/conda-forge/win-64/libiceoryx-posh-2.95.8-he66a732_5.conda
       - conda: https://prefix.dev/conda-forge/win-64/libiconv-1.18-hc1393d2_3.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libignition-cmake2-2.19.0-hac47afa_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libignition-math6-6.16.0-py314h12ea7ae_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libintl-0.22.5-h5728263_4.conda
       - conda: https://prefix.dev/conda-forge/win-64/libintl-devel-0.22.5-h5728263_4.conda
       - conda: https://prefix.dev/conda-forge/win-64/libjpeg-turbo-3.2.1-hfd05255_0.conda
@@ -196,6 +214,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/libpsl-0.23.1-h9b16d47_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libpython-3.14.10-hc6187dd_100_cp314.conda
       - conda: https://prefix.dev/conda-forge/win-64/libraqm-0.11.0-h50d6d30_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libraw-0.22.3-h345c428_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/librsvg-2.62.4-h5506a08_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/libsodium-1.0.22-h6a83c73_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/libsqlite-3.54.1-hf5d6505_101.conda
@@ -208,6 +227,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/libvulkan-loader-1.4.357.0-h477610d_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/libwebp-base-1.6.0-h4d5522a_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libwinpthread-12.0.0.r688.g6b2176247.1-h57928b3_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/libxcb-1.17.0-h874e120_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/libxml2-16-2.15.4-h3cfd58e_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libxml2-2.15.4-he095d88_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/libzip-1.12.1-h0ac0a2c_0.conda
@@ -236,8 +256,10 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/pcre2-10.49-h8466c1e_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/pillow-13.0.0-py314h6acc0e1_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/pixman-0.46.4-h5112557_3.conda
+      - conda: https://prefix.dev/conda-forge/win-64/pkg-config-0.29.2-hffdb5b9_1013.conda
       - conda: https://prefix.dev/conda-forge/win-64/proj-9.9.0-hd30e2cd_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/propcache-0.5.4-py314h2359020_3.conda
+      - conda: https://prefix.dev/conda-forge/win-64/pthread-stubs-0.4-hfa92662_1004.conda
       - conda: https://prefix.dev/conda-forge/win-64/pugixml-1.15-h372dad0_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/py-opencv-5.0.0-qt6_hd1f4775_612.conda
       - conda: https://prefix.dev/conda-forge/win-64/pyreadline3-3.5.6-py314h86ab7b2_1.conda
@@ -245,6 +267,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/pywin32-312-py314hf700ef7_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/pyyaml-6.0.3-py314hdf0bfb5_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/qhull-2020.2-h47c9fd8_6.conda
+      - conda: https://prefix.dev/conda-forge/win-64/qt-main-5.15.15-hc95f6a6_8.conda
       - conda: https://prefix.dev/conda-forge/win-64/qt6-main-6.12.0-pl5321h0ccdb44_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/rav1e-0.8.1-hb8f67f1_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/sdl2-2.32.56-h5112557_1.conda
@@ -255,9 +278,12 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/svt-av1-4.3.0-hac47afa_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/tbb-2023.1.0-h272cf33_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/tbb-devel-2023.1.0-hdd624b6_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/tinyxml-2.6.2-h477610d_4.conda
       - conda: https://prefix.dev/conda-forge/win-64/tinyxml2-11.0.0-h5112557_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/tk-8.6.13-h967ab96_4.conda
       - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.26100.0-h57928b3_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/urdfdom-6.0.2-h37f4996_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/urdfdom_headers-3.0.1-h477610d_2.conda
       - conda: https://prefix.dev/conda-forge/win-64/utfcpp-4.09-h57928b3_0.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc-14.5-hda273ae_43.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.51.36247-h072b54c_43.conda
@@ -268,6 +294,15 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/vtk-io-ffmpeg-9.7.0-py314h3bf6d39_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/x264-1!164.3095-pl5321h71a6e3e_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/x265-3.5-h3ee6617_4.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libice-1.1.2-hd74fcf3_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libsm-1.2.6-hd74fcf3_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libx11-1.8.14-h2496537_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libxau-1.0.12-hfa92662_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libxdmcp-1.1.5-hfa92662_2.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libxext-1.3.7-hfa92662_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libxpm-3.5.20-hfa92662_0.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-libxt-1.3.1-hfa92662_1.conda
+      - conda: https://prefix.dev/conda-forge/win-64/xorg-xorgproto-2025.1-ha478f15_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/yaml-0.2.5-h6a83c73_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/yaml-cpp-0.8.0-h5112557_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/yarl-1.25.1-py314h2359020_1.conda
@@ -275,6 +310,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/zlib-1.3.2-hfd05255_3.conda
       - conda: https://prefix.dev/conda-forge/win-64/zlib-ng-2.3.3-h0261ad2_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/zstd-1.5.7-h534d264_7.conda
+      - conda: https://prefix.dev/conda-forge/win-64/zziplib-0.13.69-h3ca93ac_2.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-ament-cmake-auto-1.3.14-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-example-interfaces-0.9.3-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-geometry-msgs-4.9.2-h9490d1a_22.conda
@@ -287,6 +323,7 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-lifecycle-manager-1.1.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-map-server-1.1.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-planner-1.1.20-h9490d1a_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-rviz-plugins-1.1.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-smoother-1.1.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-theta-star-planner-1.1.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-velocity-smoother-1.1.20-h9490d1a_22.conda
@@ -303,6 +340,7 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-ros2topic-0.18.20-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-rosgraph-msgs-1.2.3-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-rosidl-default-generators-1.2.1-h9490d1a_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-rviz2-11.2.29-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-sensor-msgs-4.9.2-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-std-msgs-4.9.2-h9490d1a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-tf2-geometry-msgs-0.25.24-h9490d1a_22.conda
@@ -362,7 +400,10 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-iceoryx-binding-c-2.95.8-py314hdeddbba_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-iceoryx-hoofs-2.95.8-py314hdeddbba_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-iceoryx-posh-2.95.8-py314hdeddbba_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-ignition-cmake2-vendor-0.0.2-np2py314h62a9b86_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-ignition-math6-vendor-0.0.2-np2py314h3d5669a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-image-transport-3.1.13-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-interactive-markers-2.3.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-laser-geometry-2.4.1-np2py314h3d5669a_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-launch-1.0.15-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-launch-ros-0.19.14-np2py314hf807026_22.conda
@@ -370,6 +411,7 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-launch-testing-ament-cmake-1.0.15-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-launch-xml-1.0.15-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-launch-yaml-1.0.15-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-libcurl-vendor-3.1.3-np2py314h2507846_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-libstatistics-collector-1.3.4-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-libyaml-vendor-1.2.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-lifecycle-msgs-1.2.3-np2py314hf807026_22.conda
@@ -390,6 +432,7 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-map-server-1.1.20-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-msgs-1.1.20-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-planner-1.1.20-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-rviz-plugins-1.1.20-np2py314hd6cf829_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-smoother-1.1.20-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-theta-star-planner-1.1.20-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-util-1.1.20-np2py314h8a564fe_22.conda
@@ -417,6 +460,7 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rclpy-3.3.22-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rcpputils-2.4.7-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rcutils-5.1.10-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-resource-retriever-3.1.3-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rmw-6.1.4-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rmw-connextdds-0.11.6-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rmw-connextdds-common-0.11.6-np2py314hf807026_22.conda
@@ -457,6 +501,12 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rosidl-typesupport-introspection-cpp-3.1.9-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rpyutils-0.2.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-rti-connext-dds-cmake-module-0.11.6-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-assimp-vendor-11.2.29-np2py314h5b7ca81_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-common-11.2.29-np2py314hd6cf829_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-default-plugins-11.2.29-np2py314hd6cf829_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-ogre-vendor-11.2.29-np2py314h10ea678_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-rendering-11.2.29-np2py314h4c86546_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz2-11.2.29-np2py314hd6cf829_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-sensor-msgs-4.9.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-sensor-msgs-py-4.9.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-smclib-4.1.4-np2py314hf807026_22.conda
@@ -471,9 +521,14 @@ environments:
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-tf2-ros-0.25.24-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-tf2-ros-py-0.25.24-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-tf2-sensor-msgs-0.25.24-np2py314h3d5669a_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-tinyxml-vendor-0.8.3-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-tinyxml2-vendor-0.7.7-np2py314hcdf597f_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-tracetools-4.1.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-unique-identifier-msgs-2.2.1-np2py314hf807026_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-urdf-2.6.1-np2py314hf807026_23.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-urdf-parser-plugin-2.6.1-np2py314hf807026_23.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-urdfdom-6.0.0-py314h3c71d71_22.conda
+      - conda: https://prefix.dev/robostack-humble/win-64/ros2-urdfdom-headers-3.0.0-py314hdeddbba_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-visualization-msgs-4.9.2-np2py314hf807026_22.conda
       - conda: https://prefix.dev/robostack-humble/win-64/ros2-yaml-cpp-vendor-8.0.2-np2py314hf807026_22.conda
 packages:
@@ -1004,6 +1059,16 @@ packages:
   run_exports: {}
   size: 30111
   timestamp: 1792063298993
+- conda: https://prefix.dev/conda-forge/noarch/pybind11-abi-11-hc364b38_1.conda
+  sha256: 9e7fe12f727acd2787fb5816b2049cef4604b7a00ad3e408c5e709c298ce8bf1
+  md5: f0599959a2447c1e544e216bddf393fa
+  license: BSD-3-Clause
+  license_family: BSD
+  run_exports:
+    weak:
+    - pybind11-abi ==11
+  size: 14671
+  timestamp: 1752769938071
 - conda: https://prefix.dev/conda-forge/noarch/pygments-2.21.0-pyhcf101f3_0.conda
   sha256: f5f015ff1bc3e1b7fc08eee096b1865234189ae0b82bebdb86a5369116e42fa0
   md5: 2882dee445dfa45b0c5afce3ffb7730a
@@ -1197,6 +1262,23 @@ packages:
   run_exports: {}
   size: 10131
   timestamp: 1794050466450
+- conda: https://prefix.dev/conda-forge/win-64/_openmp_mutex-4.5-20_gnu.conda
+  build_number: 20
+  sha256: 8a1cee28bd0ee7451ada1cd50b64720e57e17ff994fc62dd8329bef570d382e4
+  md5: 1626967b574d1784b578b52eaeb071e7
+  depends:
+  - libgomp >=7.5.0
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  constrains:
+  - openmp_impl <0.0a0
+  - msys2-conda-epoch <0.0a0
+  license: BSD-3-Clause
+  license_family: BSD
+  run_exports:
+    strong:
+    - _openmp_mutex >=4.5
+  size: 52252
+  timestamp: 1770943776666
 - conda: https://prefix.dev/conda-forge/win-64/aiohttp-3.14.5-py314h9aa99d3_1.conda
   sha256: f7a7fb3c7f65c51cc968c6aa7d9ca9a30e4e26c49de25f9d71c1c0bca6e9fdaf
   md5: c7aaa415754626fb74817a5c33b00e49
@@ -1232,6 +1314,22 @@ packages:
     - aom >=3.15.3,<3.16.0a0
   size: 2226803
   timestamp: 1793484199589
+- conda: https://prefix.dev/conda-forge/win-64/assimp-6.0.6-h0fc915f_0.conda
+  sha256: b0529081076d5f47620cea3e1613843d3d7b8e6390aa83a0c266badd151c1b1c
+  md5: ba648389b73c80dfe57f682fa4330fc6
+  depends:
+  - libzlib >=1.3.2,<2.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - zlib
+  license: BSD-3-Clause
+  license_family: BSD
+  run_exports:
+    weak:
+    - assimp >=6.0.6,<7.0a0
+  size: 12959320
+  timestamp: 1794309809734
 - conda: https://prefix.dev/conda-forge/win-64/aws-c-auth-1.0.2-h0e45ca3_1.conda
   sha256: 0c39824bf61182cc9b1e980ba4d2711ec316a9ac83da5989f4818df07ec400ca
   md5: 06263a6c7e45cfd2fdb36f14b0a92dd1
@@ -1790,6 +1888,43 @@ packages:
     - foonathan-memory >=0.7.4,<0.7.5.0a0
   size: 208210
   timestamp: 1779093120082
+- conda: https://prefix.dev/conda-forge/win-64/freeglut-3.2.2-hac47afa_4.conda
+  sha256: d4d255236a305e0fde4f9b360cca647331fad5348f70333c88fc50b3a6eabccc
+  md5: dd76cafa8f23c9aaee93aa7e745fdba4
+  depends:
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - freeglut >=3.2.2,<4.0a0
+  size: 113837
+  timestamp: 1776928077923
+- conda: https://prefix.dev/conda-forge/win-64/freeimage-3.18.0-h17567e8_27.conda
+  sha256: 532b2ee17e2ccff72e8f7a7c6e608ab6a4dd2b61626dbbe0dc2987687e5557bc
+  md5: 7c650aa97ceac4f4e77577236a70d7f0
+  depends:
+  - imath >=3.2.3,<3.2.4.0a0
+  - jxrlib >=1.1,<1.2.0a0
+  - libjpeg-turbo >=3.2.0,<4.0a0
+  - libpng >=1.6.59,<1.7.0a0
+  - libraw >=0.22.2,<0.23.0a0
+  - libtiff >=4.7.2,<4.8.0a0
+  - libwebp-base >=1.6.0,<2.0a0
+  - libzlib >=1.3.2,<2.0a0
+  - openexr >=3.5.2,<3.6.0a0
+  - openjpeg >=2.5.4,<3.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: GPL-2.0-or-later OR GPL-3.0-or-later OR FreeImage
+  run_exports:
+    weak:
+    - freeimage >=3.18.0,<3.19.0a0
+  size: 470377
+  timestamp: 1791023072887
 - conda: https://prefix.dev/conda-forge/win-64/freetype-2.14.3-h57928b3_2.conda
   sha256: 32f7dd8ffe62fd485e9e6570e871f5be45af74c84fde62241a2417046a373efd
   md5: 6fc6c09c05a099d58efd9b2e96598e41
@@ -1851,6 +1986,23 @@ packages:
     - gdk-pixbuf >=2.44.8,<3.0a0
   size: 580893
   timestamp: 1788490510775
+- conda: https://prefix.dev/conda-forge/win-64/getopt-win32-0.1-h6a83c73_3.conda
+  sha256: d04c4a6c11daa72c4a0242602e1d00c03291ef66ca2d7cd0e171088411d57710
+  md5: 49c36fcad2e9af6b91e91f2ce5be8ebd
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  license: LGPL-3.0-only
+  license_family: LGPL
+  run_exports:
+    weak:
+    - getopt-win32 >=0.1,<0.1.1.0a0
+  size: 26238
+  timestamp: 1750744808182
 - conda: https://prefix.dev/conda-forge/win-64/gl2ps-1.4.2-h26c196c_2.conda
   sha256: c6e2e126e4c4fb1255f5d00e31b69822ccfc958bca34bdb6f0a7460334832a52
   md5: e678d76c5cc0209bd1d967fef16f4b73
@@ -1960,6 +2112,71 @@ packages:
     - graphite2 >=1.3.15,<2.0a0
   size: 98064
   timestamp: 1786118492029
+- conda: https://prefix.dev/conda-forge/win-64/graphviz-14.1.2-h4c50273_0.conda
+  sha256: 58f83755509a19501a9efe40c484727ffa61fcfaf6a237870678a79638fa6982
+  md5: afabed4c46b197b89eb974aa038d12db
+  depends:
+  - cairo >=1.18.4,<2.0a0
+  - getopt-win32 >=0.1,<0.1.1.0a0
+  - gts >=0.7.6,<0.8.0a0
+  - libexpat >=2.7.3,<3.0a0
+  - libgd >=2.3.3,<2.4.0a0
+  - libglib >=2.86.3,<3.0a0
+  - libwebp-base >=1.6.0,<2.0a0
+  - libzlib >=1.3.1,<2.0a0
+  - pango >=1.56.4,<2.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: EPL-1.0
+  license_family: Other
+  run_exports:
+    weak:
+    - graphviz >=14.1.2,<15.0a0
+  size: 1223547
+  timestamp: 1769427507016
+- conda: https://prefix.dev/conda-forge/win-64/gst-plugins-base-1.26.11-h88486b4_0.conda
+  sha256: 68e518906536886fdf9e9e839a90747e44bacc2e0c2005ab335d265ba074623b
+  md5: 5c22a369b4efc69768bdc311c2114778
+  depends:
+  - gstreamer ==1.26.11 hae9036a_0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - libexpat >=2.7.5,<3.0a0
+  - libvorbis >=1.3.7,<1.4.0a0
+  - libogg >=1.3.5,<1.4.0a0
+  - gstreamer >=1.26.11,<1.27.0a0
+  - libzlib >=1.3.2,<2.0a0
+  - pango >=1.56.4,<2.0a0
+  - libintl >=0.22.5,<1.0a0
+  - libglib >=2.86.4,<3.0a0
+  license: LGPL-2.0-or-later
+  license_family: LGPL
+  run_exports:
+    weak:
+    - gst-plugins-base >=1.26.11,<1.27.0a0
+  size: 5071873
+  timestamp: 1776268416801
+- conda: https://prefix.dev/conda-forge/win-64/gstreamer-1.26.11-hae9036a_0.conda
+  sha256: 45d85b9efbcddc88632cb8a982da1aee8f7b40e226087374a4099ca90a2b81d0
+  md5: 8b55f5b5964749e457d28ddffbd15e14
+  depends:
+  - glib >=2.86.4,<3.0a0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - libzlib >=1.3.2,<2.0a0
+  - libintl >=0.22.5,<1.0a0
+  - libglib >=2.86.4,<3.0a0
+  - libiconv >=1.18,<2.0a0
+  license: LGPL-2.0-or-later
+  license_family: LGPL
+  run_exports:
+    weak:
+    - gstreamer >=1.26.11,<1.27.0a0
+  size: 3541310
+  timestamp: 1776268416801
 - conda: https://prefix.dev/conda-forge/win-64/gtest-1.18.0-h477610d_1.conda
   sha256: b13377ca438565267079e98cdb0cc96b80099309f05f8643dbf8643066f8007a
   md5: 931a07f37b46fb3c4ad8d757c80cdbde
@@ -1976,6 +2193,20 @@ packages:
     - gtest >=1.18.0,<1.18.1.0a0
   size: 550483
   timestamp: 1786419397659
+- conda: https://prefix.dev/conda-forge/win-64/gts-0.7.6-ha777514_5.conda
+  sha256: 313967899345a6b3afc18c5030e6b4046c6fdba3fb369be4c1f0726be8d6639f
+  md5: bdd47b88dbd7481dfcb53fa42e58c851
+  depends:
+  - libglib >=2.90.1,<3.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: LGPL-2.0-or-later
+  run_exports:
+    weak:
+    - gts >=0.7.6,<0.8.0a0
+  size: 190910
+  timestamp: 1794841603734
 - conda: https://prefix.dev/conda-forge/win-64/hdf4-4.2.15-h5557f11_7.conda
   sha256: 52fa5dde69758c19c69ab68a3d7ebfb2c9042e3a55d405c29a59d3b0584fd790
   md5: 84344a916a73727c1326841007b52ca8
@@ -2045,6 +2276,22 @@ packages:
     - imath >=3.2.3,<3.2.4.0a0
   size: 161894
   timestamp: 1787252030226
+- conda: https://prefix.dev/conda-forge/win-64/jasper-4.2.9-h1339676_2.conda
+  sha256: f22e46c48963ffeeba896cfe0da39c79af42a9d0fcc54539448e38f175e77b63
+  md5: c2244fd6ef55eb8d10d5c47547a42cb4
+  depends:
+  - libjpeg-turbo
+  - freeglut >=3.2.2,<4.0a0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - libjpeg-turbo >=3.2.0,<4.0a0
+  license: JasPer-2.0
+  run_exports:
+    weak:
+    - jasper >=4.2.9,<5.0a0
+  size: 468745
+  timestamp: 1788279853208
 - conda: https://prefix.dev/conda-forge/win-64/jsoncpp-1.9.8-h477610d_2.conda
   sha256: 7bada25a08b9db9c5be9eb95841cf22cf523f825cf45daa5c05d0bb02179ab81
   md5: 04d6b8fb600995177635d6b657edeae9
@@ -2058,6 +2305,20 @@ packages:
     - jsoncpp >=1.9.8,<1.9.9.0a0
   size: 364360
   timestamp: 1789213627589
+- conda: https://prefix.dev/conda-forge/win-64/jxrlib-1.1-hcfcfb64_3.conda
+  sha256: a9ac265bcf65fce57cfb6512a1b072d5489445d14aa1b60c9bdf73370cf261b2
+  md5: a9dff8432c11dfa980346e934c29ca3f
+  depends:
+  - ucrt >=10.0.20348.0
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  license: BSD-2-Clause
+  license_family: BSD
+  run_exports:
+    weak:
+    - jxrlib >=1.1,<1.2.0a0
+  size: 355340
+  timestamp: 1703334132631
 - conda: https://prefix.dev/conda-forge/win-64/khronos-opencl-icd-loader-2024.10.24-hfd05255_2.conda
   sha256: 245bd150a9f0b922dc34f173027631a20f18b009604d827a796d792a79bac178
   md5: 2ac3e6f3457b870f1794395be57e96fb
@@ -2329,6 +2590,25 @@ packages:
     - libcblas >=3.11.0,<4.0a0
   size: 67586
   timestamp: 1793822325150
+- conda: https://prefix.dev/conda-forge/win-64/libclang13-23.1.5-default_hacd6ee9_0.conda
+  sha256: 786de3088929960c3e9d977000a6f613c6ebe3b5fdf0d779bbf25cc349979e6d
+  md5: 8578b174cc84874fd712ad45c12b47ff
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - llvm-openmp >=23.1.5
+  - zstd >=1.5.7,<1.6.0a0
+  - libxml2
+  - libxml2-16 >=2.15.4
+  - libzlib >=1.3.2,<2.0a0
+  license: Apache-2.0 WITH LLVM-exception
+  license_family: APACHE
+  run_exports:
+    weak:
+    - libclang13 >=23.1.5
+  size: 37503238
+  timestamp: 1794343379996
 - conda: https://prefix.dev/conda-forge/win-64/libcurl-8.23.0-hdb0ef4a_0.conda
   sha256: d3088e1fd049fe0c1905ba6174e77279ddb4817739a204aaf4bd31d59d38ea6a
   md5: 6c87d16ec0db964b4bcc4102ff8bba9b
@@ -2437,6 +2717,47 @@ packages:
   run_exports: {}
   size: 340385
   timestamp: 1786641044865
+- conda: https://prefix.dev/conda-forge/win-64/libgcc-16.2.0-h110b43a_7.conda
+  sha256: 59feb6d16cba13a70f22dae70a44670eb2cc45e652e9a34a014814c2ca871132
+  md5: bd1e0d06981ae43e35c1ebb50e268c59
+  depends:
+  - _openmp_mutex >=4.5
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  constrains:
+  - libgcc-ng ==16.2.0=*_7
+  - libgomp 16.2.0 h8ee18e1_7
+  - msys2-conda-epoch <0.0a0
+  license: GPL-3.0-only WITH GCC-exception-3.1
+  license_family: GPL
+  run_exports: {}
+  size: 826913
+  timestamp: 1790304405241
+- conda: https://prefix.dev/conda-forge/win-64/libgd-2.3.3-h4974f7c_12.conda
+  sha256: 9ab562c718bd3fcef5f6189c8e2730c3d9321e05f13749a611630475d41207fc
+  md5: 3a5b40267fcd31f1ba3a24014fe92044
+  depends:
+  - fontconfig >=2.15.0,<3.0a0
+  - fonts-conda-ecosystem
+  - icu >=78.1,<79.0a0
+  - libexpat >=2.7.3,<3.0a0
+  - libfreetype >=2.14.1
+  - libfreetype6 >=2.14.1
+  - libjpeg-turbo >=3.1.2,<4.0a0
+  - libpng >=1.6.53,<1.7.0a0
+  - libtiff >=4.7.1,<4.8.0a0
+  - libwebp-base >=1.6.0,<2.0a0
+  - libzlib >=1.3.1,<2.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - xorg-libxpm >=3.5.17,<4.0a0
+  license: GD
+  license_family: BSD
+  run_exports:
+    weak:
+    - libgd >=2.3.3,<2.4.0a0
+  size: 166711
+  timestamp: 1766331770351
 - conda: https://prefix.dev/conda-forge/win-64/libglib-2.90.1-h8c856d3_3.conda
   sha256: fc62a1106d8b72559bbb2bb68e56f3637869ee19ad934d058c24e7e3d5d08e23
   md5: 5fd662d6a3f37f4ea2e3d60a63b44254
@@ -2457,6 +2778,21 @@ packages:
     - libglib >=2.90.1,<3.0a0
   size: 4611784
   timestamp: 1794580562068
+- conda: https://prefix.dev/conda-forge/win-64/libgomp-16.2.0-h8ee18e1_7.conda
+  sha256: 4b8a747f047d069ccd2a6cf2f4fdbc6b0c0e4dcd840998d1fe607b8c234e707b
+  md5: 1725e0c19dd2f01de09805536c4f3b51
+  depends:
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  constrains:
+  - msys2-conda-epoch <0.0a0
+  license: GPL-3.0-only WITH GCC-exception-3.1
+  license_family: GPL
+  run_exports:
+    strong:
+    - _openmp_mutex >=4.5
+    - libgomp >=16.2.0
+  size: 688609
+  timestamp: 1790304345963
 - conda: https://prefix.dev/conda-forge/win-64/libharfbuzz-15.0.0-h03b5201_0.conda
   sha256: 28c321e6e5dcea4ed9e8e3f4fccc1627fdc631ee26bde4623c10317c1b3e7eca
   md5: 0f6a7ad23a5e26d22c9d4f4846e18166
@@ -2597,6 +2933,39 @@ packages:
     - libiconv >=1.18,<2.0a0
   size: 694899
   timestamp: 1787033851701
+- conda: https://prefix.dev/conda-forge/win-64/libignition-cmake2-2.19.0-hac47afa_0.conda
+  sha256: eb046b4940617fca374fe409d333f765b8c18ba858d6fb8ea65168fe1cf3b914
+  md5: fc0c135eb3010fc6ca762ff50eaae41a
+  depends:
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports:
+    weak:
+    - libignition-cmake2 >=2.19.0,<3.0a0
+  size: 200213
+  timestamp: 1782304830013
+- conda: https://prefix.dev/conda-forge/win-64/libignition-math6-6.16.0-py314h12ea7ae_1.conda
+  sha256: da51297934b1d42f1e90d4eac4024089692c445cd8d87a55232a3fa92a124dfd
+  md5: ac1d15b02107a2c5d8f313261c8a1e77
+  depends:
+  - eigen
+  - libignition-cmake2 >=2.17.3,<3.0a0
+  - pybind11-abi 11
+  - python >=3.14,<3.15.0a0
+  - python_abi 3.14.* *_cp314
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports:
+    weak:
+    - libignition-math6 >=6.16.0,<7.0a0
+  size: 759135
+  timestamp: 1777838025078
 - conda: https://prefix.dev/conda-forge/win-64/libintl-0.22.5-h5728263_4.conda
   sha256: 85b50be2209f3b8a873830ec9894477d260f4c7ba9540e65959f5812bf7219f8
   md5: 36d6e0045173974521fabd42bd5033d6
@@ -3163,6 +3532,23 @@ packages:
     - libraqm >=0.11.0,<0.12.0a0
   size: 33471
   timestamp: 1784850324004
+- conda: https://prefix.dev/conda-forge/win-64/libraw-0.22.3-h345c428_0.conda
+  sha256: 714fe0773e45283575b3d3ccee67a0d3a3e792950e78da22503a84a3e9fb76aa
+  md5: f8035f76131cd001013b0f9a926e7898
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - lcms2 >=2.19.1,<3.0a0
+  - libzlib >=1.3.2,<2.0a0
+  - jasper >=4.2.9,<5.0a0
+  - libjpeg-turbo >=3.2.0,<4.0a0
+  license: LGPL-2.1-only
+  run_exports:
+    weak:
+    - libraw >=0.22.3,<0.23.0a0
+  size: 575769
+  timestamp: 1793041632651
 - conda: https://prefix.dev/conda-forge/win-64/librsvg-2.62.4-h5506a08_0.conda
   sha256: ba329e4bd97afd261a44933b599450bead02e519e8ec280a98aae438816fb7f9
   md5: 09293e6bfb0dcdc907a7cc9aa5e75adf
@@ -3348,6 +3734,23 @@ packages:
   run_exports: {}
   size: 34475
   timestamp: 1793054490651
+- conda: https://prefix.dev/conda-forge/win-64/libxcb-1.17.0-h874e120_3.conda
+  sha256: 313ea44a8edb7093acd1d895aecbb8c3a8a235b0fcd3ca9fd2c97aa3e4064dc4
+  md5: ba8aa88bf05824eedb673a0b8c0391b2
+  depends:
+  - libgcc >=13
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - pthread-stubs
+  - ucrt >=10.0.20348.0
+  - xorg-libxau >=1.0.12,<2.0a0
+  - xorg-libxdmcp >=1.1.5,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - libxcb >=1.17.0,<2.0a0
+  size: 1215929
+  timestamp: 1794246316357
 - conda: https://prefix.dev/conda-forge/win-64/libxml2-16-2.15.4-h3cfd58e_1.conda
   sha256: 819c4edd7b7bcfa9461aeccb56c0a7e9fa7c251163333e64222c142499822958
   md5: 69b4a6c50e1cb5865648e039da8e5c12
@@ -3800,6 +4203,19 @@ packages:
     - pixman >=0.46.4,<1.0a0
   size: 257473
   timestamp: 1786106677325
+- conda: https://prefix.dev/conda-forge/win-64/pkg-config-0.29.2-hffdb5b9_1013.conda
+  sha256: b6c2a3c7b6b2726ced43946f2798eabfe50333144ce8195f1e7558d24c139298
+  md5: 18cf69296cccd94d6921016bdf346c24
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - libglib >=2.88.3,<3.0a0
+  license: GPL-2.0-or-later
+  license_family: GPL
+  run_exports: {}
+  size: 37998
+  timestamp: 1788677380581
 - conda: https://prefix.dev/conda-forge/win-64/proj-9.9.0-hd30e2cd_1.conda
   sha256: c389c09ba963c2e9288b77dab3ee817dc3edd4aeabd534d945c0760c9db14108
   md5: 16717a611bb61fa715a9dd48531b4b9e
@@ -3836,6 +4252,18 @@ packages:
   run_exports: {}
   size: 57644
   timestamp: 1793703513959
+- conda: https://prefix.dev/conda-forge/win-64/pthread-stubs-0.4-hfa92662_1004.conda
+  sha256: 2418cf449df76b0da851cb59b7c826a9ade81914eaff799fbfd3f509ba1edf46
+  md5: fda2f9fedee1b85ba855ea26a9b6bbf8
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports: {}
+  size: 10612
+  timestamp: 1788382011501
 - conda: https://prefix.dev/conda-forge/win-64/pugixml-1.15-h372dad0_0.conda
   sha256: 97b34ed73b6f559fcf5e706d4c8435923ba95cfed478d3fd50b475f94f60dc6e
   md5: cadea4c6edb512e979edbf793bf979ac
@@ -3951,6 +4379,34 @@ packages:
     - qhull >=2020.2,<2020.3.0a0
   size: 1378564
   timestamp: 1793908367907
+- conda: https://prefix.dev/conda-forge/win-64/qt-main-5.15.15-hc95f6a6_8.conda
+  sha256: e30c4dfc4e0690b9e185c960e18bf5020e52837b5127b47f654f39b3ae11fe4e
+  md5: cc54806e21c9fb479ce6dd5f8e2e96fc
+  depends:
+  - gst-plugins-base >=1.26.10,<1.27.0a0
+  - gstreamer >=1.26.10,<1.27.0a0
+  - icu >=78.3,<79.0a0
+  - krb5 >=1.22.2,<1.23.0a0
+  - libclang13 >=22.1.0
+  - libglib >=2.86.4,<3.0a0
+  - libjpeg-turbo >=3.1.2,<4.0a0
+  - libpng >=1.6.55,<1.7.0a0
+  - libsqlite >=3.52.0,<4.0a0
+  - libzlib >=1.3.1,<2.0a0
+  - openssl >=3.5.5,<4.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - zstd >=1.5.7,<1.6.0a0
+  constrains:
+  - qt 5.15.15
+  license: LGPL-3.0-only
+  license_family: LGPL
+  run_exports:
+    weak:
+    - qt-main >=5.15.15,<5.16.0a0
+  size: 59170602
+  timestamp: 1773962814517
 - conda: https://prefix.dev/conda-forge/win-64/qt6-main-6.12.0-pl5321h0ccdb44_2.conda
   sha256: 3c3e65139fa1c8bf1f7b132fc89f966a73c05cbd89191f9aae3d29e083f1d754
   md5: e01b79a801e2b70ec2f3bbeb0989c747
@@ -4114,6 +4570,19 @@ packages:
     - tbb >=2023.1.0
   size: 1157866
   timestamp: 1790591979710
+- conda: https://prefix.dev/conda-forge/win-64/tinyxml-2.6.2-h477610d_4.conda
+  sha256: 53a24d3a353f7d436479a80cc5c9283c5e23104add1888dd87a0bdf0e2e990b5
+  md5: 7140929ea5cf7b146b191f5fb4556da9
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  license: Zlib
+  run_exports:
+    weak:
+    - tinyxml >=2.6.2,<2.6.3.0a0
+  size: 84025
+  timestamp: 1791364197596
 - conda: https://prefix.dev/conda-forge/win-64/tinyxml2-11.0.0-h5112557_1.conda
   sha256: aace0c0c0dbcd2b0a028ba06573878d6a852228c70d3031e3c035cf9e066b020
   md5: ca4db58a2d84895956bba15dfb02e92c
@@ -4150,6 +4619,36 @@ packages:
   run_exports: {}
   size: 694692
   timestamp: 1756385147981
+- conda: https://prefix.dev/conda-forge/win-64/urdfdom-6.0.2-h37f4996_1.conda
+  sha256: 8a118c95b0abe72ff792241d1bad38100d3df806ee1a081a26be6f928d6f017d
+  md5: 3b758e8d990c5daeeba86e52ce52660a
+  depends:
+  - urdfdom_headers >=3.0.1,<4.0a0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - console_bridge >=1.0.2,<1.1.0a0
+  - tinyxml2 >=11.0.0,<11.1.0a0
+  license: BSD-3-Clause
+  license_family: BSD
+  run_exports:
+    weak:
+    - urdfdom_headers >=3.0.1,<4.0a0
+    - urdfdom >=6.0.2,<7.0a0
+  size: 100707
+  timestamp: 1793831033109
+- conda: https://prefix.dev/conda-forge/win-64/urdfdom_headers-3.0.1-h477610d_2.conda
+  sha256: 4341a4c3702f8fb1c1d8e33983429a0ed650bae0680719883fb2de1d8d13a12a
+  md5: 2d376b786573f9ba8711d7ef232c54c2
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  license: BSD-3-Clause
+  license_family: BSD
+  run_exports: {}
+  size: 20101
+  timestamp: 1793089271685
 - conda: https://prefix.dev/conda-forge/win-64/utfcpp-4.09-h57928b3_0.conda
   sha256: 0de7c233d7d0ba91ecdc4de85f1894f45a20b55ed33371e7159ec42c81a5fb97
   md5: 6930bd6bf8290dbf83b2fecf42931971
@@ -4321,6 +4820,140 @@ packages:
     - x265 >=3.5,<3.6.0a0
   size: 3099189
   timestamp: 1788447000121
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libice-1.1.2-hd74fcf3_0.conda
+  sha256: 85832f409756e78d6d0a92756cd5463fa253219041e40a681d5e8d4c9d21ec8b
+  md5: a1629a20e5b128c4512b80a93bb1ae55
+  depends:
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - libgcc >=14
+  - ucrt >=10.0.20348.0
+  - xorg-libx11 >=1.8.13,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libice >=1.1.2,<2.0a0
+  size: 168856
+  timestamp: 1786474456144
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libsm-1.2.6-hd74fcf3_1.conda
+  sha256: bc043a818313abfd836e4e662df1cc9edd6d81994c87a8b35004ca286cebe7c8
+  md5: edb94e6121d977d7bc2cc0f56d656c14
+  depends:
+  - libgcc >=14
+  - ucrt >=10.0.20348.0
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - xorg-libice >=1.1.2,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libsm >=1.2.6,<2.0a0
+  size: 116838
+  timestamp: 1786545424783
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libx11-1.8.14-h2496537_0.conda
+  sha256: 4c47bbba495fe90f8e9caeace21e1276aaaec60a692d336b2306ee061a412898
+  md5: 4f3be0be0c51683947fd1ed956bc66c1
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - libxcb >=1.17.0,<2.0a0
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libx11 >=1.8.14,<2.0a0
+  size: 954487
+  timestamp: 1792545810673
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libxau-1.0.12-hfa92662_2.conda
+  sha256: b9f063792e4d50ef2669c30dfc4ba14aefb4fdc37e384241a71093bee0493ad1
+  md5: 68403004c805ce03b71a5889a4c47fa1
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libxau >=1.0.12,<2.0a0
+  size: 112892
+  timestamp: 1788960775276
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libxdmcp-1.1.5-hfa92662_2.conda
+  sha256: 6265afeeaab391aa245e173dba5e18c8e69ac5a73f60fe20d8057ebadafbb4a4
+  md5: 17274cf7d62e029e62653a3e6c80b379
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libxdmcp >=1.1.5,<2.0a0
+  size: 72768
+  timestamp: 1789677202037
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libxext-1.3.7-hfa92662_1.conda
+  sha256: bd39b2950d5144eb6bd5fafc4002fa7bbdcf2f72c32e4709aa080cb4c158ec4a
+  md5: ff2351642e25ff00ae484a6b533c0c9e
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  - xorg-libx11 >=1.8.13,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libxext >=1.3.7,<2.0a0
+  size: 288484
+  timestamp: 1787101089071
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libxpm-3.5.20-hfa92662_0.conda
+  sha256: fbb1c3cdb72a8fc37d644690cf45949d33cbd85c819789dddd43ce4dac9670d5
+  md5: a732dc305e4c670b38e6fa95e8159ab7
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  - xorg-libx11 >=1.8.13,<2.0a0
+  - xorg-libxext >=1.3.7,<2.0a0
+  - xorg-libxt >=1.3.1,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libxpm >=3.5.20,<4.0a0
+  size: 237557
+  timestamp: 1792529825754
+- conda: https://prefix.dev/conda-forge/win-64/xorg-libxt-1.3.1-hfa92662_1.conda
+  sha256: 4d1d9b59dc7c2e90f0a1388dd6feb87b54a033bba29f7a7269e35487d332c5be
+  md5: 41eebca909ba9e18a69eba80152ffb1c
+  depends:
+  - libgcc >=15
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - ucrt >=10.0.20348.0
+  - xorg-libice >=1.1.2,<2.0a0
+  - xorg-libsm >=1.2.6,<2.0a0
+  - xorg-libx11 >=1.8.13,<2.0a0
+  license: MIT
+  license_family: MIT
+  run_exports:
+    weak:
+    - xorg-libxt >=1.3.1,<2.0a0
+  size: 927081
+  timestamp: 1787103397071
+- conda: https://prefix.dev/conda-forge/win-64/xorg-xorgproto-2025.1-ha478f15_3.conda
+  sha256: 445b80d36ee97ffcc4794dd5c73665890e62d335c057beeb75b577af2004e0cd
+  md5: c4792e716ddc26721f36f0d55235a72a
+  depends:
+  - libwinpthread >=12.0.0.r4.gg4f2fc60ca
+  - libgcc >=15
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports: {}
+  size: 605547
+  timestamp: 1788874100157
 - conda: https://prefix.dev/conda-forge/win-64/yaml-0.2.5-h6a83c73_3.conda
   sha256: 80ee68c1e7683a35295232ea79bcc87279d31ffeda04a1665efdb43cbd50a309
   md5: 433699cba6602098ae8957a323da2664
@@ -4429,6 +5062,20 @@ packages:
     - zstd >=1.5.7,<1.6.0a0
   size: 387535
   timestamp: 1786599623274
+- conda: https://prefix.dev/conda-forge/win-64/zziplib-0.13.69-h3ca93ac_2.conda
+  sha256: e079aca99369f7a2a6a402a0256dad065cfaf17cd9ede1b03118ca5f38c6711d
+  md5: c79eee98990e5986d5d8bd02cf5a2a5e
+  depends:
+  - libzlib >=1.3.1,<2.0a0
+  - ucrt >=10.0.20348.0
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  license: LGPL-2.0-or-later OR MPL-1.1
+  run_exports:
+    weak:
+    - zziplib >=0.13.69,<0.14.0a0
+  size: 65791
+  timestamp: 1719242575938
 - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-ament-cmake-auto-1.3.14-h9490d1a_22.conda
   sha256: a88448e89db52d1fc1d14b659d6c47c4cc5bb3cf90934ec59f1039cd193a4196
   md5: cc3a339c571af18af31672993f0e0ff0
@@ -4537,6 +5184,15 @@ packages:
   run_exports: {}
   size: 2073
   timestamp: 1792833135692
+- conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-rviz-plugins-1.1.20-h9490d1a_22.conda
+  sha256: 309102ccb50444398dd6fbe902e5fe4a04f0184c7c6a0a9f6c7925ef31ad2245
+  md5: 49b504d92cfec3b5fd216c180b420525
+  depends:
+  - ros2-nav2-rviz-plugins ==1.1.20
+  - ros2-distro-mutex 0.11.* humble_*
+  run_exports: {}
+  size: 2100
+  timestamp: 1792831907699
 - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-nav2-smoother-1.1.20-h9490d1a_22.conda
   sha256: 1c4a056e6397cd76f532433d0c781553339fb52925ac8f839708b6ced527bad8
   md5: e5fafee17a6adf64fb8e2d64287fb2ec
@@ -4681,6 +5337,15 @@ packages:
   run_exports: {}
   size: 2132
   timestamp: 1792815735460
+- conda: https://prefix.dev/robostack-humble/win-64/ros-humble-rviz2-11.2.29-h9490d1a_22.conda
+  sha256: 4cea31ca0b0ae3cea5f2e93fa3e7103a3ab777aec7ce1618325cc0fbb00087ac
+  md5: 0bd63ebd8faa3259e7379c7caa15956e
+  depends:
+  - ros2-rviz2 ==11.2.29
+  - ros2-distro-mutex 0.11.* humble_*
+  run_exports: {}
+  size: 2036
+  timestamp: 1792831812191
 - conda: https://prefix.dev/robostack-humble/win-64/ros-humble-sensor-msgs-4.9.2-h9490d1a_22.conda
   sha256: 00f788ee9461ba2133d84e0e2ea7d01a857d434aad48b3d4d8cc8fb164b37045
   md5: b97ac7a788b637caaa041b6c272343d4
@@ -5741,6 +6406,47 @@ packages:
   run_exports: {}
   size: 7943
   timestamp: 1792804397362
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-ignition-cmake2-vendor-0.0.2-np2py314h62a9b86_22.conda
+  sha256: 416027850a560b591bc2158b4b6e5f834c8c6e4f98bce60af38afdaf4d1ac3e8
+  md5: 7d1c93f1a8ec8be9bf453e4ea1516a9f
+  depends:
+  - libignition-cmake2
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - graphviz >=14.1.2,<15.0a0
+  - python_abi 3.14.* *_cp314
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - numpy >=1.25,<3
+  - libignition-cmake2 >=2.19.0,<3.0a0
+  license: Apache-2.0
+  run_exports: {}
+  size: 22869
+  timestamp: 1792809322265
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-ignition-math6-vendor-0.0.2-np2py314h3d5669a_22.conda
+  sha256: 3995cc9bbbceaf25bae907c8a199ba87645733ef93d343411ec993f8c112189d
+  md5: fbc732a87973157762bd3b903aa27035
+  depends:
+  - libignition-math6
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ignition-cmake2-vendor
+  - ros2-ros-workspace
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - python_abi 3.14.* *_cp314
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - eigen-abi >=5.0.1.100,<5.0.1.101.0a0
+  - numpy >=1.25,<3
+  - libignition-math6 >=6.16.0,<7.0a0
+  license: Apache-2.0
+  run_exports: {}
+  size: 23480
+  timestamp: 1792811035238
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-image-transport-3.1.13-np2py314hf807026_22.conda
   sha256: 729db982d7dec92774ce988bffa8928d58fb29827f409c01686d4f8532eeb98c
   md5: 18b1cbceeffd1bf0ba85a4dadc01daa5
@@ -5762,6 +6468,30 @@ packages:
   run_exports: {}
   size: 329110
   timestamp: 1792824597663
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-interactive-markers-2.3.2-np2py314hf807026_22.conda
+  sha256: f388d0fba0263aa515790fcb7eecc951780d00307378053b452728c544097676
+  md5: 30739391c6af5a9706869f2cacefaaa8
+  depends:
+  - python
+  - ros2-builtin-interfaces
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-rclcpp
+  - ros2-rclpy
+  - ros2-rmw
+  - ros2-ros-workspace
+  - ros2-tf2
+  - ros2-tf2-geometry-msgs
+  - ros2-visualization-msgs
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - python_abi 3.14.* *_cp314
+  - numpy >=1.25,<3
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 212781
+  timestamp: 1792826435129
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-laser-geometry-2.4.1-np2py314h3d5669a_22.conda
   sha256: dfe1f54f0b6cd74a541aebb1aec757412105b8cad1a82bddbaea45e97504669d
   md5: 4c281ca34b34362b2b9a9c0f9e905c90
@@ -5915,6 +6645,26 @@ packages:
   run_exports: {}
   size: 23853
   timestamp: 1792808268885
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-libcurl-vendor-3.1.3-np2py314h2507846_22.conda
+  sha256: 96a3f4a48a11bc954c4523d26a30b15f1279538c9fdf5cff34570a98a5c0530d
+  md5: 1d168a7d38931322216b57ffdd61cbc4
+  depends:
+  - libcurl
+  - pkg-config
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - python_abi 3.14.* *_cp314
+  - numpy >=1.25,<3
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - libcurl >=8.23.0,<9.0a0
+  license: Apache-2.0 OR MIT
+  run_exports: {}
+  size: 21653
+  timestamp: 1792806507536
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-libstatistics-collector-1.3.4-np2py314hf807026_22.conda
   sha256: 00fd414bc4365bebc4d0ffd3b6fb35a79c6bf5abcfe18e3781c622b4418594fd
   md5: 892498988b0aa3094c6be7fe8fdbc44a
@@ -6431,6 +7181,41 @@ packages:
   run_exports: {}
   size: 683529
   timestamp: 1792832992278
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-rviz-plugins-1.1.20-np2py314hd6cf829_22.conda
+  sha256: ad54907142c7700b299b42976cb6449c9677adc391bff91f52f43aff32a969be
+  md5: 7198143db68a9ebf4ca22274099e4c7a
+  depends:
+  - python
+  - qt-main
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-geometry-msgs
+  - ros2-nav-msgs
+  - ros2-nav2-lifecycle-manager
+  - ros2-nav2-msgs
+  - ros2-nav2-util
+  - ros2-pluginlib
+  - ros2-rclcpp
+  - ros2-rclcpp-lifecycle
+  - ros2-resource-retriever
+  - ros2-ros-workspace
+  - ros2-rviz-common
+  - ros2-rviz-default-plugins
+  - ros2-rviz-ogre-vendor
+  - ros2-rviz-rendering
+  - ros2-std-msgs
+  - ros2-tf2-geometry-msgs
+  - ros2-visualization-msgs
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - python_abi 3.14.* *_cp314
+  - numpy >=1.25,<3
+  - qt-main >=5.15.15,<5.16.0a0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  license: Apache-2.0
+  run_exports: {}
+  size: 268803
+  timestamp: 1792831612745
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-nav2-smoother-1.1.20-np2py314hf807026_22.conda
   sha256: bbc678e3a5954802deb0dcb1741b22d26a7925ca964d081fe556c8c0bff9ae2d
   md5: fa148a4a2ec17d79769d0be8bf3e5490
@@ -7077,6 +7862,26 @@ packages:
   run_exports: {}
   size: 124778
   timestamp: 1792812142284
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-resource-retriever-3.1.3-np2py314hf807026_22.conda
+  sha256: c1fb70de7a733a736e212fd8bdebac261ecfcd426dd6e36f9317135f400ca8c8
+  md5: 70bd2a5a0ac034590a0f2fe3b11a4a28
+  depends:
+  - python
+  - ros2-ament-index-cpp
+  - ros2-ament-index-python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-libcurl-vendor
+  - ros2-ros-workspace
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - numpy >=1.25,<3
+  - python_abi 3.14.* *_cp314
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 46878
+  timestamp: 1792811788447
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-rmw-6.1.4-np2py314hf807026_22.conda
   sha256: 5bc4b54aef8d03051907c1fda7a925c67b4ae1e06cfc3aa529ff814537c0e3d5
   md5: 4b24afa38001860e370016e2ddc8112c
@@ -7994,6 +8799,177 @@ packages:
   run_exports: {}
   size: 29284
   timestamp: 1792810874942
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-assimp-vendor-11.2.29-np2py314h5b7ca81_22.conda
+  sha256: 544d6c35e50d6e06fc9a89338a2878d08b1128636f0a79fa2959997bc39c11e3
+  md5: af244cc78ddfc4bb25d6113b9079910a
+  depends:
+  - assimp
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - assimp >=6.0.5,<7.0a0
+  - python_abi 3.14.* *_cp314
+  - numpy >=1.25,<3
+  license: Apache-2.0 OR BSD-3-Clause
+  run_exports: {}
+  size: 22411
+  timestamp: 1792809247132
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-common-11.2.29-np2py314hd6cf829_22.conda
+  sha256: 1d859227de947a21742f5ead649b2fd761fd7826c6029e0cd9d6cd2282b57c87
+  md5: cf8409cafb581bfdd6896c89be8a8dca
+  depends:
+  - python
+  - qt-main
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-geometry-msgs
+  - ros2-message-filters
+  - ros2-pluginlib
+  - ros2-rclcpp
+  - ros2-rcpputils
+  - ros2-resource-retriever
+  - ros2-ros-workspace
+  - ros2-rviz-ogre-vendor
+  - ros2-rviz-rendering
+  - ros2-sensor-msgs
+  - ros2-std-msgs
+  - ros2-tf2
+  - ros2-tf2-geometry-msgs
+  - ros2-tf2-ros
+  - ros2-tinyxml2-vendor
+  - ros2-urdf
+  - ros2-yaml-cpp-vendor
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - python_abi 3.14.* *_cp314
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - qt-main >=5.15.15,<5.16.0a0
+  - numpy >=1.25,<3
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 642229
+  timestamp: 1792826436321
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-default-plugins-11.2.29-np2py314hd6cf829_22.conda
+  sha256: 33474290aab7422af67896608d7844e9d364f5806e46dc5338232f92992477e6
+  md5: 848ccb2dee132ef408d9d7350243b6ac
+  depends:
+  - python
+  - qt-main
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-geometry-msgs
+  - ros2-ignition-math6-vendor
+  - ros2-image-transport
+  - ros2-interactive-markers
+  - ros2-laser-geometry
+  - ros2-map-msgs
+  - ros2-nav-msgs
+  - ros2-pluginlib
+  - ros2-rclcpp
+  - ros2-resource-retriever
+  - ros2-ros-workspace
+  - ros2-rviz-common
+  - ros2-rviz-ogre-vendor
+  - ros2-rviz-rendering
+  - ros2-tf2
+  - ros2-tf2-geometry-msgs
+  - ros2-tf2-ros
+  - ros2-urdf
+  - ros2-visualization-msgs
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - python_abi 3.14.* *_cp314
+  - qt-main >=5.15.15,<5.16.0a0
+  - numpy >=1.25,<3
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 1073525
+  timestamp: 1792829194348
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-ogre-vendor-11.2.29-np2py314h10ea678_22.conda
+  sha256: fc3dfc8ecec3cc29aac4986fe32b19f508c6eab57754e96774e9b5a86276490a
+  md5: b335fe7a5142144d32f7c2f6fb516674
+  depends:
+  - assimp
+  - freetype
+  - glew
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - xorg-libx11
+  - xorg-xorgproto
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - pugixml >=1.15,<1.16.0a0
+  - zziplib >=0.13.69,<0.14.0a0
+  - glew >=2.3.0,<2.4.0a0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - python_abi 3.14.* *_cp314
+  - libfreetype >=2.14.3
+  - libfreetype6 >=2.14.3
+  - libzlib >=1.3.2,<2.0a0
+  - freeimage >=3.18.0,<3.19.0a0
+  - numpy >=1.25,<3
+  - assimp >=6.0.5,<7.0a0
+  - xorg-libx11 >=1.8.14,<2.0a0
+  license: Apache-2.0 OR MIT
+  run_exports: {}
+  size: 4636371
+  timestamp: 1792809433308
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz-rendering-11.2.29-np2py314h4c86546_22.conda
+  sha256: c02e6a042996f4a5b5f9e15d88afae1913dd8098ac89776feb6bcdeaf1820256
+  md5: 88884c1a1116d99294d970a182340799
+  depends:
+  - eigen
+  - eigen-abi-devel
+  - python
+  - qt-main
+  - ros2-ament-index-cpp
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-eigen3-cmake-module
+  - ros2-resource-retriever
+  - ros2-ros-workspace
+  - ros2-rviz-assimp-vendor
+  - ros2-rviz-ogre-vendor
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - qt-main >=5.15.15,<5.16.0a0
+  - glew >=2.3.0,<2.4.0a0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - numpy >=1.25,<3
+  - eigen-abi >=5.0.1.100,<5.0.1.101.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 895417
+  timestamp: 1792812163345
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-rviz2-11.2.29-np2py314hd6cf829_22.conda
+  sha256: 886db7d72404b7925b2a3a5788c97d5d817928739d277eb264ac170512dc9046
+  md5: 4d6f676f6a579a9182a5d89b0b5f87c4
+  depends:
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - ros2-rviz-common
+  - ros2-rviz-default-plugins
+  - ros2-rviz-ogre-vendor
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - numpy >=1.25,<3
+  - qt-main >=5.15.15,<5.16.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 57047
+  timestamp: 1792831611913
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-sensor-msgs-4.9.2-np2py314hf807026_22.conda
   sha256: d282c3d05dd13addb50b2025a266ca4bbb9b34cad706ce0e72c26f610b469baa
   md5: e77388ef6cdb16bc662af015a35bc36f
@@ -8296,6 +9272,25 @@ packages:
   run_exports: {}
   size: 45057
   timestamp: 1792825407959
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-tinyxml-vendor-0.8.3-np2py314hf807026_22.conda
+  sha256: 2278485d29e0b5715ad472063c5693329badd2a1d9a949362e9ca0af0a28c962
+  md5: 06200cc44461ef95b036a4b386ea1b43
+  depends:
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - tinyxml
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - python_abi 3.14.* *_cp314
+  - numpy >=1.25,<3
+  - tinyxml >=2.6.2,<2.6.3.0a0
+  license: Apache-2.0
+  run_exports: {}
+  size: 22155
+  timestamp: 1792806628318
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-tinyxml2-vendor-0.7.7-np2py314hcdf597f_22.conda
   sha256: cc15c04eec42b3732c64fc6609b5142c72a6dadc5216033cf9c71746d2148430
   md5: 2b95714230826de70458166c85fc5fd6
@@ -8350,6 +9345,81 @@ packages:
   run_exports: {}
   size: 78961
   timestamp: 1792815796973
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-urdf-2.6.1-np2py314hf807026_23.conda
+  sha256: 49c72e86dd5a2da6d89050fde473bc61950ed9cb942a88c45371f469cf439074
+  md5: d1035d99667e8e1195f1f69c0e998a77
+  depends:
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-pluginlib
+  - ros2-ros-workspace
+  - ros2-tinyxml2-vendor
+  - ros2-urdf-parser-plugin
+  - ros2-urdfdom
+  - ros2-urdfdom-headers
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - numpy >=1.25,<3
+  - python_abi 3.14.* *_cp314
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 122105
+  timestamp: 1793226386324
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-urdf-parser-plugin-2.6.1-np2py314hf807026_23.conda
+  sha256: db83ed38444f90b66423e5577ae240c842eda0df4c66f45414977a3a82ef7d44
+  md5: 2e8b92d3ffa3a6862b7d97cb1b88f8e8
+  depends:
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - ros2-urdfdom-headers
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  - numpy >=1.25,<3
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 29980
+  timestamp: 1793226386304
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-urdfdom-6.0.0-py314h3c71d71_22.conda
+  sha256: 825f4b04c178d9231b19fd2087472dc6c6a549b0d6c19102b8f339f8bbe0ed81
+  md5: 0ea53a8081d7cedab3a3a0c0559e5448
+  depends:
+  - console_bridge
+  - python
+  - ros2-console-bridge-vendor
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - ros2-tinyxml-vendor
+  - ros2-urdfdom-headers
+  - tinyxml
+  - urdfdom >=6.0.0,<6.1.0a0
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  - console_bridge >=1.0.2,<1.1.0a0
+  - tinyxml >=2.6.2,<2.6.3.0a0
+  - python_abi 3.14.* *_cp314
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 8262
+  timestamp: 1792812148874
+- conda: https://prefix.dev/robostack-humble/win-64/ros2-urdfdom-headers-3.0.0-py314hdeddbba_22.conda
+  sha256: 3ac8e1c9cfbd708df484311938b36fbbd53923d790481de717b46ca9c5ecfe8a
+  md5: a06c81217a219c8f34c56305f824f65f
+  depends:
+  - python
+  - ros2-distro-mutex 0.11.* humble_*
+  - ros2-ros-workspace
+  - urdfdom_headers >=3.0.0,<3.1.0a0
+  - python_abi 3.14.* *_cp314
+  - ros2-distro-mutex >=0.11.0,<0.12.0a0
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 7359
+  timestamp: 1792803307300
 - conda: https://prefix.dev/robostack-humble/win-64/ros2-visualization-msgs-4.9.2-np2py314hf807026_22.conda
   sha256: 08cbbc8b5c34c5b283251bd2ae47d8f403ffaeb0aba8b8fd45d75cf53c028921
   md5: d31c13094fead4f580b039215400d932

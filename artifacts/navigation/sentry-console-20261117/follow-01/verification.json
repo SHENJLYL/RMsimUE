@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "scope": "Read-only original navigation-follow target, actual joint feedback, real mounted sensors; sends no commands and consumes no truth",
+  "checks": [
+    {
+      "name": "real_navigation_follow_active",
+      "passed": true,
+      "samples": 3518
+    },
+    {
+      "name": "actual_gimbal_tracks_shaped_target",
+      "passed": true,
+      "median_error_rad": 0.0008951240154685403
+    },
+    {
+      "name": "actual_gimbal_changes_direction",
+      "passed": true,
+      "accumulated_yaw_travel_rad": 4.718837555652997
+    },
+    {
+      "name": "original_yaw_rate_limit_retained",
+      "passed": true
+    },
+    {
+      "name": "navigation_fire_stays_disabled",
+      "passed": true
+    },
+    {
+      "name": "moving_mount_has_live_pointclouds",
+      "passed": true,
+      "clouds": 1051,
+      "maximum_points": 6810
+    },
+    {
+      "name": "moving_mount_imu_and_tf_received",
+      "passed": true,
+      "imu_samples": 21028,
+      "joint_tf": {
+        "aim_sentry/yaw_link": 131553006248
+      }
+    },
+    {
+      "name": "lidar_attached_to_actual_yaw_parent",
+      "passed": true,
+      "profile": {
+        "id": "lidar",
+        "profile_md5": "ca2e428f7aed61cfe490f59884d72819",
+        "calibrated": false,
+        "model": "ideal_single_return_raycast; spherical_fibonacci_not_device_pattern; constant_reflectivity; physics_frame_time_quantization",
+        "frame_id": "aim_sentry/lidar_link",
+        "parent_frame_id": "aim_sentry/yaw_link",
+        "pose_in_parent": {
+          "position_m": [
+            0.19812227804774685,
+            0.07375968980603695,
+            0.17056386526967365
+          ],
+          "rotation_xyzw": [
+            -1.9330379232482337e-05,
+            0.3826837731868331,
+            -8.006913533426475e-06,
+            0.923879391101303
+          ]
+        },
+        "mount_schema": 2,
+        "optical_window_passes": 25120138,
+        "self_occluded_rays": 1893686,
+        "rays_per_second": 200000,
+        "frame_hz": 10,
+        "min_range_m": 0.1,
+        "max_range_m": 40,
+        "elevation_min_rad": -0.12217304763960307,
+        "elevation_max_rad": 0.9075712110370514,
+        "traced_rays": 26298601,
+        "returns": 6881587,
+        "missed_rays": 0,
+        "dropped_scans": 0,
+        "history_resets": 0,
+        "max_physics_step_s": 0.0010000000474974513,
+        "published_scans": 1314,
+        "published_points": 6876876
+      }
+    }
+  ]
+}

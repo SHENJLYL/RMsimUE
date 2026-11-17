@@ -594,3 +594,41 @@ bool AVehicleRig::LoadMeshRig(const FString& Filename, FString& Error)
     UE_LOG(LogRMSim, Display, TEXT("MESH_RIG_BOUNDS_CM %s"), *GetVisualBounds().GetSize().ToString());
     return true;
 }
+
+
+bool AVehicleRig::GetSensorParentWorld(const FString& Parent,FTransform& Pose) const
+{
+    if(Parent==TEXT("base_link")){Pose=GetActorTransform();return true;}
+    if(Parent!=TEXT("yaw_link"))return false;
+    const auto* Joint=Joints.Find(YawJoint);
+    if(!Joint||!IsValid(Joint->Child))return false;
+    Pose=Joint->Child->GetComponentTransform();return !Pose.ContainsNaN();
+}
+
+void AVehicleRig::EnableArticulatedSensorQueries()
+{
+    // Dedicated query-only surface follows each actual visual joint. Physical contact
+    // bodies and their response to vehicles/maps retain their existing settings.
+    for(auto* Body:ContactBodies)if(IsValid(Body))Body->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Ignore);
+    for(auto* Visual:VisualMeshes)if(IsValid(Visual))
+    {
+        Visual->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        Visual->SetCollisionResponseToAllChannels(ECR_Ignore);
+        Visual->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Block);
+        Visual->RecreatePhysicsState();
+    }
+}
+
+TSharedRef<FJsonObject> AVehicleRig::GetSensorJointState(int64 Stamp) const
+{
+    auto J=MakeShared<FJsonObject>();FTransform World;
+    if(!GetSensorParentWorld(TEXT("yaw_link"),World))return J;
+    const FTransform Local=World.GetRelativeTransform(GetActorTransform());
+    const FVector P=Local.GetLocation()/100;const FQuat Q=Local.GetRotation();
+    J->SetStringField(TEXT("parent_frame_id"),VehicleId+TEXT("/base_link"));
+    J->SetStringField(TEXT("frame_id"),VehicleId+TEXT("/yaw_link"));J->SetNumberField(TEXT("stamp_ns"),double(Stamp));
+    auto Pose=MakeShared<FJsonObject>();
+    Pose->SetArrayField(TEXT("position_m"),{MakeShared<FJsonValueNumber>(P.X),MakeShared<FJsonValueNumber>(-P.Y),MakeShared<FJsonValueNumber>(P.Z)});
+    Pose->SetArrayField(TEXT("rotation_xyzw"),{MakeShared<FJsonValueNumber>(-Q.X),MakeShared<FJsonValueNumber>(Q.Y),MakeShared<FJsonValueNumber>(-Q.Z),MakeShared<FJsonValueNumber>(Q.W)});
+    J->SetObjectField(TEXT("pose_in_parent"),Pose);return J;
+}

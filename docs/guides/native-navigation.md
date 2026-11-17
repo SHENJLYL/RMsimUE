@@ -1,5 +1,7 @@
 # 原生哨兵导航
 
+日常使用可双击 **Play-Navigation.cmd**：包含RViz选点/连续航点、sentry偏航跟随和云台安装Mid-360。[图形操作指南](navigation-console.md)。本页四终端入口保留为固定安装传感器/原导航诊断方式。
+
 Windows当前已验证原Point-LIO、原地形/扫描节点、AMCL、Theta*和Omni PID：平地绕障、RMUC波浪往返、导航中断线重连、目标取消以及平地实际R复位恢复。最新验收为两轮RMUC各14项与平地17项，汇总在 `artifacts/navigation/reconnect-tf-20261117/release-summary.json`。完整自主视觉/决策、多车、全场路线和Ubuntu继续分项验收。
 
 ## 构建和启动

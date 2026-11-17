@@ -4,7 +4,7 @@ from rclpy.qos import QoSProfile,ReliabilityPolicy,DurabilityPolicy,qos_profile_
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import TransformStamped
 from tf2_msgs.msg import TFMessage
-from .protocol import ProtocolError,validate_imu
+from .protocol import ProtocolError,validate_imu,mount_pose
 
 
 
@@ -32,8 +32,9 @@ class ImuPublisher:
                 if name not in self.publishers:
                     self.publishers[name]=self.node.create_publisher(Imu,'/'+self.node.robot_id+'/'+name+'/data_raw',qos_profile_sensor_data)
                 tf=TransformStamped();set_stamp(tf.header.stamp,state['sim_time_ns']);tf.header.frame_id=p['parent_frame_id'];tf.child_frame_id=p['frame_id']
-                t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,p['pose_in_base']['position_m'])
-                t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,p['pose_in_base']['rotation_xyzw']);transforms.append(tf)
+                local=mount_pose(p,self.node.robot_id)
+                t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,local['position_m'])
+                t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,local['rotation_xyzw']);transforms.append(tf)
             self.static_pub.publish(TFMessage(transforms=transforms))
         for s in data['samples']:
             old=self.previous.get(s['id']);seq=s['seq'];stamp=s['stamp_ns']

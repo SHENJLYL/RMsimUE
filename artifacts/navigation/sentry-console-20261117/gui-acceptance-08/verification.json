@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "scope": "real Windows RViz mouse/buttons plus independent native ROS observer",
+  "runs": [
+    {
+      "mode": "single",
+      "status": "passed",
+      "checks": 4,
+      "path": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\gui-acceptance-08\\single\\verification.json"
+    },
+    {
+      "mode": "waypoints",
+      "status": "passed",
+      "checks": 6,
+      "path": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\gui-acceptance-08\\waypoints\\verification.json"
+    },
+    {
+      "mode": "cancel",
+      "status": "passed",
+      "checks": 3,
+      "path": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\gui-acceptance-08\\cancel\\verification.json"
+    }
+  ],
+  "target": [
+    6.8,
+    6.4
+  ],
+  "return_point": [
+    5.8,
+    6.4
+  ],
+  "checks": 13
+}

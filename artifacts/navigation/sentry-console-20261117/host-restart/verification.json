@@ -1,0 +1,13 @@
+{
+  "status": "interrupted_by_host_restart",
+  "observed_boot_local": "2026-11-17T18:42:25+08:00",
+  "source_files_intact": true,
+  "passed_sensor_checks": 9,
+  "passed_alignment_checks": 4,
+  "gui_acceptance": "First single-goal observer timed out before restart; no UI acceptance claimed.",
+  "corrupted_live_snapshots": [
+    "console-03/status.json",
+    "console-03/action-events.json"
+  ],
+  "scope": "Latest active snapshots contain zero-filled bytes after host restart; originals preserved; fresh session required."
+}

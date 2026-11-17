@@ -1,0 +1,45 @@
+{
+  "status": "visible_ready_no_active_goal",
+  "scope": "observed owned RViz window and native session status after GUI acceptance",
+  "utc": "2026-11-17T11:54:28.885796+00:00",
+  "session": "console-08",
+  "navigation": "active",
+  "localization": "active",
+  "feedback_observed": "canceled",
+  "actions": {
+    "navigate_to_pose": [
+      {
+        "id": "4ebe167950e018944da1dfdf3a1aa9be",
+        "status": 4
+      },
+      {
+        "id": "bd38cb45f66c589feaeeb089db884459",
+        "status": 4
+      },
+      {
+        "id": "2d9dcc3754b57fe25390482c000e83c1",
+        "status": 4
+      },
+      {
+        "id": "17f43adc58e619c045359f22376a4a7b",
+        "status": 5
+      }
+    ],
+    "follow_waypoints": [
+      {
+        "id": "da6c425ec82fb208e2921d178b68987f",
+        "status": 4
+      }
+    ]
+  },
+  "owned_processes": {
+    "ue": 35748,
+    "pointlio": 37972,
+    "navigation": 10160,
+    "bridge": 2728,
+    "rviz": 4956
+  },
+  "screenshot_path": "artifacts/navigation/sentry-console-20261117/console-08/accepted-handoff.png",
+  "screenshot_sha256": "3ec45365c5fa6dc14f65eaafc68a0adaf77d4f66f3c354e15211cd50f57411ed",
+  "screenshot_retained_local": true
+}

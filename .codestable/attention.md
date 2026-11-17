@@ -143,3 +143,12 @@
 - 实际导航夹具在pixi激活后由probe_ros_topics设为ROS_DOMAIN_ID173，启动夹具180、重启夹具181；基础pixi默认71。诊断须读取实际环境。
 - R输入仅针对确认PID/项目/证据路径且在前台的自有RMSim窗口。首次焦点失败未发送按键，正常AppActivate后重试发送一次R，ROS独立确认epoch/clock重置和导航重建；不操作其他程序的覆盖窗口。截图只留本地。
 - 下一接续优先：RMUC更多出生点/实际R与路线覆盖、公开启动包装端到端验证，再推进多车隔离和完整自主决策。当前45项导航检查属于限定场景Windows验收；完整长期goal保持active。
+
+## 2026-11-17 可视化导航当前基线
+
+- Play-Navigation.cmd/Stop-Navigation.cmd已提供UE+RViz启动和自有进程清理；真实GUI单点4/航点6/取消3共13项通过，完整原action联合14与兼容回归70共84项。离线120通过、2权限跳过。当前证据sentry-console-20261117/release-summary.json。
+- radar_mid360随yaw_link，光学中心零位base约[.198122,.073760,.361194]m，前倾45°；共装IMU按实际关节运动采样。源blend哈希不变，悬挂2000/140保持。专有扫描、反射和实车标定继续补充。
+- Point-LIO的satu_acc在归一化前与原始加速度比较；ROS SI必须同步设置acc_norm=9.81和原3g阈值29.43。pointlio_units.py及6项单位测试固定契约，旧失败保留。
+- Qt的TogglePattern曾只改勾选而未激活Nav2 Goal；测试采用QAction InvokePattern和实际OS地图鼠标，保持前台/PID/像素归属校验。读取实时相机投影，默认65px/m近车视图；GUI短路线与完整波浪action分别记录，不放宽25cm门限。
+- 导航偏航整形参考原95c66c2，最大目标转速1rad/s、加速度2rad/s²、输入200ms过期。扫描/获准自瞄优先，导航不开火。完整硬件云台电流环/Hub/视觉继续独立跟踪。
+- 新Mid360组合的实际R/断线恢复、Nav Through Poses按钮专项、更多出生点/全场、多车和原生Ubuntu保持后续验收。关闭RViz停止该会话；不得并行多个同项目UE做性能结论。大资源/截图/稠密轨迹保留本地。

@@ -3,6 +3,8 @@
 #include "RosCoordinates.h"
 #include "Dom/JsonObject.h"
 #include "Engine/World.h"
+#include "Components/PrimitiveComponent.h"
+#include "Materials/MaterialInterface.h"
 #include "Misc/FileHelper.h"
 #include "Misc/SecureHash.h"
 #include "Serialization/JsonReader.h"
@@ -38,9 +40,9 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
     {Error=TEXT("cannot read physical LiDAR runtime profile");return false;}
     FString Schema,Parent,Pattern;bool Calibrated=true;const TSharedPtr<FJsonObject>* Pose;FVector Rpy;
     double SeedValue=0,ReflectivityValue=0;
-    if(J->Values.Num()!=15||!J->TryGetStringField(TEXT("schema"),Schema)||Schema!=TEXT("rm_lidar_runtime_v1")||
+    if(J->Values.Num()!=15||!J->TryGetStringField(TEXT("schema"),Schema)||(Schema!=TEXT("rm_lidar_runtime_v1")&&Schema!=TEXT("rm_lidar_runtime_v2"))||
        !J->TryGetBoolField(TEXT("calibrated"),Calibrated)||Calibrated||!J->TryGetStringField(TEXT("id"),Id)||Id.IsEmpty()||Id.Len()>64||Id==TEXT("base")||
-       !FChar::IsAlpha(Id[0])||!J->TryGetStringField(TEXT("parent_frame"),Parent)||Parent!=TEXT("base_link")||
+       !FChar::IsAlpha(Id[0])||!J->TryGetStringField(TEXT("parent_frame"),Parent)||(Parent!=TEXT("base_link")&&(Schema!=TEXT("rm_lidar_runtime_v2")||Parent!=TEXT("yaw_link")))||
        !J->TryGetStringField(TEXT("pattern"),Pattern)||Pattern!=TEXT("spherical_fibonacci")||
        !J->TryGetObjectField(TEXT("origin"),Pose)||(*Pose)->Values.Num()!=2||!LidarVector(*Pose,TEXT("xyz"),Origin,5)||!LidarVector(*Pose,TEXT("rpy"),Rpy,2*PI)||
        !LidarNumber(J,TEXT("rays_per_second"),RaysPerSecond,100,200000)||
@@ -53,6 +55,9 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
        !LidarNumber(J,TEXT("noise_seed"),SeedValue,0,2147483647)||FMath::FloorToDouble(SeedValue)!=SeedValue)
     {Error=TEXT("invalid LiDAR identity, mount, scan or range configuration");return false;}
     for(TCHAR Ch:Id)if(Ch>127||!(FChar::IsAlnum(Ch)||Ch=='_')){Error=TEXT("invalid LiDAR id");return false;}
+    ParentFrame=Parent;bArticulated=Parent!=TEXT("base_link");
+    FTransform ParentPose;if(!Vehicle->GetSensorParentWorld(Parent,ParentPose)){Error=TEXT("unknown LiDAR parent joint");return false;}
+    if(bArticulated)Vehicle->EnableArticulatedSensorQueries();
     Rig=Vehicle;Mount=FTransform(RosCoordinates::Rotation(Rpy),RosCoordinates::Position(Origin));
     Seed=int32(SeedValue);Reflectivity=int32(ReflectivityValue);Random.Initialize(Seed);
     ProfileHash=LexToString(FMD5Hash::HashFile(*Profile));MotionGeneration=Rig->GetMotionGeneration();
@@ -66,7 +71,7 @@ void URosLidarComponent::DiscardPending()
 void URosLidarComponent::Reset()
 {
     DiscardPending();RayIndex=0;Traced=0;Hits=0;MissedRays=0;DroppedScans=0;ScanSequence=0;HistoryResets=0;MaxStep=0;
-    MotionGeneration=Rig->GetMotionGeneration();Random.Initialize(Seed);
+    MotionGeneration=Rig->GetMotionGeneration();Random.Initialize(Seed);WindowPasses=0;SelfBlocked=0;
 }
 
 void URosLidarComponent::FinishScan()
@@ -93,9 +98,11 @@ void URosLidarComponent::Advance(double Time,bool Connected)
     const int64 Due=FMath::FloorToInt64(Requested);RayRemainder=Requested-Due;
     const int32 Count=int32(FMath::Min<int64>(Due,FMath::Min(4096,65536-Building.Num()/20)));
     MissedRays+=Due-Count;
-    const FTransform WorldMount=Mount*Rig->GetActorTransform();
+    FTransform ParentPose;if(!Rig->GetSensorParentWorld(ParentFrame,ParentPose))return;
+    const FTransform WorldMount=Mount*ParentPose;
     const FVector Start=WorldMount.GetLocation();
     FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimLidar),true);
+    Query.bReturnFaceIndex=bArticulated;
     // Self geometry is deliberately not ignored: placement and occlusion must be physical.
     for(int32 I=0;I<Count;++I)
     {
@@ -106,8 +113,25 @@ void URosLidarComponent::Advance(double Time,bool Connected)
         const FVector Local(XY*FMath::Cos(Azimuth),-XY*FMath::Sin(Azimuth),Z);
         const FVector Direction=WorldMount.TransformVectorNoScale(Local);
         FHitResult Hit;++Traced;
-        if(!GetWorld()->LineTraceSingleByChannel(Hit,Start,Start+Direction*(MaxRange*100),ECC_Visibility,Query))continue;
-        double Distance=Hit.Distance/100.;if(Distance<MinRange||Distance>MaxRange)continue;
+        FVector RayStart=Start;bool Found=false;
+        for(int Pass=0;Pass<(bArticulated?16:1);++Pass)
+        {
+            if(!GetWorld()->LineTraceSingleByChannel(Hit,RayStart,Start+Direction*(MaxRange*100),bArticulated?ECC_GameTraceChannel1:ECC_Visibility,Query))break;
+            bool Window=false;
+            if(bArticulated&&Hit.GetActor()==Rig&&Hit.GetComponent()&&Hit.FaceIndex!=INDEX_NONE)
+            {
+                int32 Section=INDEX_NONE;const auto* Material=Hit.GetComponent()->GetMaterialFromCollisionFaceIndex(Hit.FaceIndex,Section);
+                // Audited sensor window and its source protective optical dome only.
+                Window=Material&&(Material->GetName()==TEXT("aim_sentry_mid360_blue_glass")||Material->GetName()==TEXT("aim_sentry_radar_glass"));
+                if(SelfBlocked<8)UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_FACE comp=%s face=%d section=%d material=%s distance_cm=%.6f window=%d"),*Hit.GetComponent()->GetName(),Hit.FaceIndex,Section,Material?*Material->GetName():TEXT("none"),Hit.Distance,Window);
+            }
+            if(!Window){Found=true;break;}
+            ++WindowPasses;RayStart=Hit.ImpactPoint+Direction*.02; // 0.2mm step past this optical face only.
+        }
+        if(!Found)continue;
+        double Distance=(Hit.ImpactPoint-Start).Size()/100.;
+        if(Hit.GetActor()==Rig){if(SelfBlocked<8)UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_BLOCK comp=%s face=%d distance_m=%.6f penetrating=%d"),*Hit.GetComponent()->GetName(),Hit.FaceIndex,Distance,Hit.bStartPenetrating);++SelfBlocked;}
+        if(Distance<MinRange||Distance>MaxRange)continue;
         if(NoiseStd>0)Distance+=NoiseStd*FMath::Sqrt(-2*FMath::Loge(FMath::Max(double(Random.FRand()),1.e-12)))*FMath::Cos(2*PI*Random.FRand());
         if(Distance<MinRange||Distance>MaxRange)continue;
         const FVector Point(Local.X*Distance,-Local.Y*Distance,Local.Z*Distance);
@@ -123,9 +147,10 @@ TSharedRef<FJsonObject> URosLidarComponent::TakeState(TArray<uint8>& Bytes,int32
     auto J=MakeShared<FJsonObject>();J->SetStringField(TEXT("id"),Id);J->SetStringField(TEXT("profile_md5"),ProfileHash);
     J->SetBoolField(TEXT("calibrated"),false);J->SetStringField(TEXT("model"),TEXT("ideal_single_return_raycast; spherical_fibonacci_not_device_pattern; constant_reflectivity; physics_frame_time_quantization"));
     J->SetStringField(TEXT("frame_id"),Rig->GetVehicleId()+TEXT("/")+Id+TEXT("_link"));
-    J->SetStringField(TEXT("parent_frame_id"),Rig->GetVehicleId()+TEXT("/base_link"));
+    J->SetStringField(TEXT("parent_frame_id"),Rig->GetVehicleId()+TEXT("/")+ParentFrame);
     auto Pose=MakeShared<FJsonObject>();Pose->SetArrayField(TEXT("position_m"),LidarVec(Origin));const auto Q=Mount.GetRotation();
-    Pose->SetArrayField(TEXT("rotation_xyzw"),{MakeShared<FJsonValueNumber>(-Q.X),MakeShared<FJsonValueNumber>(Q.Y),MakeShared<FJsonValueNumber>(-Q.Z),MakeShared<FJsonValueNumber>(Q.W)});J->SetObjectField(TEXT("pose_in_base"),Pose);
+    Pose->SetArrayField(TEXT("rotation_xyzw"),{MakeShared<FJsonValueNumber>(-Q.X),MakeShared<FJsonValueNumber>(Q.Y),MakeShared<FJsonValueNumber>(-Q.Z),MakeShared<FJsonValueNumber>(Q.W)});J->SetObjectField(bArticulated?TEXT("pose_in_parent"):TEXT("pose_in_base"),Pose);
+    if(bArticulated){J->SetNumberField(TEXT("mount_schema"),2);J->SetNumberField(TEXT("optical_window_passes"),WindowPasses);J->SetNumberField(TEXT("self_occluded_rays"),SelfBlocked);}
     J->SetNumberField(TEXT("rays_per_second"),RaysPerSecond);J->SetNumberField(TEXT("frame_hz"),FrameHz);
     J->SetNumberField(TEXT("min_range_m"),MinRange);J->SetNumberField(TEXT("max_range_m"),MaxRange);
     J->SetNumberField(TEXT("elevation_min_rad"),MinElevation);J->SetNumberField(TEXT("elevation_max_rad"),MaxElevation);

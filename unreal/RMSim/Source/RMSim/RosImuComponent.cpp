@@ -35,7 +35,7 @@ bool URosImuComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FS
         !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Root)||!Root.IsValid())
     {Error=TEXT("cannot read physical IMU runtime profile");return false;}
     FString Schema;bool Calibrated=true;const TArray<TSharedPtr<FJsonValue>>* Imus;
-    if(Root->Values.Num()!=3||!Root->TryGetStringField(TEXT("schema"),Schema)||Schema!=TEXT("rm_imu_runtime_v1")||
+    if(Root->Values.Num()!=3||!Root->TryGetStringField(TEXT("schema"),Schema)||(Schema!=TEXT("rm_imu_runtime_v1")&&Schema!=TEXT("rm_imu_runtime_v2"))||
         !Root->TryGetBoolField(TEXT("calibrated"),Calibrated)||Calibrated||!Root->TryGetArrayField(TEXT("imus"),Imus)||Imus->Num()<1||Imus->Num()>4)
     {Error=TEXT("IMU profile requires schema, calibrated=false and1..4 sensors");return false;}
     TSet<FString> Names;
@@ -45,7 +45,7 @@ bool URosImuComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FS
         const auto J=Item->AsObject();FChannel C;FString Parent;double Seed=0;
         const TSharedPtr<FJsonObject>* Origin;
         if(!J.IsValid()||J->Values.Num()!=9||!J->TryGetStringField(TEXT("id"),C.Id)||C.Id.IsEmpty()||C.Id.Len()>64||C.Id==TEXT("base")||
-            !FChar::IsAlpha(C.Id[0])||Names.Contains(C.Id)||!J->TryGetStringField(TEXT("parent_frame"),Parent)||Parent!=TEXT("base_link")||
+            !FChar::IsAlpha(C.Id[0])||Names.Contains(C.Id)||!J->TryGetStringField(TEXT("parent_frame"),Parent)||(Parent!=TEXT("base_link")&&(Schema!=TEXT("rm_imu_runtime_v2")||Parent!=TEXT("yaw_link")))||
             !J->TryGetObjectField(TEXT("origin"),Origin)||(*Origin)->Values.Num()!=2||!ImuNumber(J,TEXT("rate_hz"),C.Rate)||C.Rate<1||C.Rate>1000||
             !ImuNumber(J,TEXT("noise_seed"),Seed)||Seed<0||Seed>2147483647.||FMath::FloorToDouble(Seed)!=Seed||
             !ImuVec(J,TEXT("accel_bias_mps2"),C.AccelBias,100)||!ImuVec(J,TEXT("gyro_bias_rad_s"),C.GyroBias,100)||
@@ -55,6 +55,8 @@ bool URosImuComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FS
         FVector Rpy;
         if(!ImuVec(*Origin,TEXT("xyz"),C.OriginMetres,5)||!ImuVec(*Origin,TEXT("rpy"),Rpy,2*PI))
         {Error=TEXT("invalid IMU mount in SI units");return false;}
+        C.ParentFrame=Parent;FTransform ParentPose;
+        if(!Vehicle->GetSensorParentWorld(Parent,ParentPose)){Error=TEXT("unknown IMU parent joint");return false;}
         C.Mount=FTransform(RosCoordinates::Rotation(Rpy),RosCoordinates::Position(C.OriginMetres));
         C.Seed=int32(Seed);C.Random.Initialize(C.Seed);Names.Add(C.Id);Channels.Add(C);
     }
@@ -70,7 +72,7 @@ double URosImuComponent::Gaussian(FRandomStream& Random)
 void URosImuComponent::Reset()
 {
     MotionGeneration=Rig->GetMotionGeneration();
-    for(auto& C:Channels){C.HasHistory=false;C.NextDue=0;C.PreviousTime=0;C.Pending.Reset();C.Sequence=0;C.MissedPeriods=0;C.Dropped=0;C.HistoryResets=0;C.Invalid=0;C.Random.Initialize(C.Seed);}
+    for(auto& C:Channels){C.HasHistory=false;C.HasRelativeHistory=false;C.NextDue=0;C.PreviousTime=0;C.Pending.Reset();C.Sequence=0;C.MissedPeriods=0;C.Dropped=0;C.HistoryResets=0;C.Invalid=0;C.Random.Initialize(C.Seed);}
 }
 
 void URosImuComponent::DiscardPending()
@@ -79,13 +81,16 @@ void URosImuComponent::DiscardPending()
 bool URosImuComponent::UsesId(const FString& Id) const
 {for(const auto& C:Channels)if(C.Id==Id)return true;return false;}
 
+bool URosImuComponent::UsesArticulatedMount() const
+{for(const auto& C:Channels)if(C.ParentFrame!=TEXT("base_link"))return true;return false;}
+
 void URosImuComponent::Advance(double Time,bool Collect)
 {
     if(!Rig||!FMath::IsFinite(Time)||Time<0)return;
     if(MotionGeneration!=Rig->GetMotionGeneration())
     {
         MotionGeneration=Rig->GetMotionGeneration();
-        for(auto& C:Channels){C.HasHistory=false;C.Pending.Reset();C.NextDue=Time;++C.HistoryResets;}
+        for(auto& C:Channels){C.HasHistory=false;C.HasRelativeHistory=false;C.Pending.Reset();C.NextDue=Time;++C.HistoryResets;}
     }
     GravityZ=GetWorld()->GetGravityZ();
     for(auto& C:Channels)
@@ -95,7 +100,25 @@ void URosImuComponent::Advance(double Time,bool Collect)
         const int64 Missed=FMath::Max<int64>(0,FMath::FloorToInt64((Time-C.NextDue+1.e-9)/Period));
         C.MissedPeriods+=Missed;C.NextDue+=(Missed+1)*Period;
         FTransform Pose;FVector Velocity,Omega;
-        if(!Rig->SampleChassisImu(C.Mount,Pose,Velocity,Omega)){++C.Invalid;C.HasHistory=false;continue;}
+        FTransform Relative=C.Mount;
+        if(C.ParentFrame!=TEXT("base_link"))
+        {
+            FTransform Parent;if(!Rig->GetSensorParentWorld(C.ParentFrame,Parent)){++C.Invalid;C.HasHistory=false;continue;}
+            Relative=(C.Mount*Parent).GetRelativeTransform(Rig->GetActorTransform());
+        }
+        if(!Rig->SampleChassisImu(Relative,Pose,Velocity,Omega)){++C.Invalid;C.HasHistory=false;continue;}
+        if(C.ParentFrame!=TEXT("base_link"))
+        {
+            if(!C.HasRelativeHistory)
+            {C.PreviousRelative=Relative;C.PreviousRelativeTime=Time;C.HasRelativeHistory=true;C.HasHistory=false;continue;}
+            const double JointDt=Time-C.PreviousRelativeTime;
+            if(JointDt<=1.e-8){++C.Invalid;C.HasHistory=false;continue;}
+            Velocity+=Rig->GetActorQuat().RotateVector((Relative.GetLocation()-C.PreviousRelative.GetLocation())/JointDt);
+            FQuat Delta=Relative.GetRotation()*C.PreviousRelative.GetRotation().Inverse();Delta.Normalize();
+            if(Delta.W<0)Delta=FQuat(-Delta.X,-Delta.Y,-Delta.Z,-Delta.W);
+            Omega+=Rig->GetActorQuat().RotateVector(Delta.GetRotationAxis()*Delta.GetAngle()/JointDt);
+            C.PreviousRelative=Relative;C.PreviousRelativeTime=Time;
+        }
         if(!C.HasHistory){C.PreviousVelocity=Velocity;C.PreviousTime=Time;C.HasHistory=true;continue;}
         const double Dt=Time-C.PreviousTime;
         if(Dt<=1.e-8){++C.Invalid;C.HasHistory=false;continue;}
@@ -130,10 +153,11 @@ TSharedRef<FJsonObject> URosImuComponent::TakeState()
     for(auto& C:Channels)
     {
         auto P=MakeShared<FJsonObject>();P->SetStringField(TEXT("id"),C.Id);P->SetStringField(TEXT("frame_id"),RobotId+TEXT("/")+C.Id+TEXT("_link"));
-        P->SetStringField(TEXT("parent_frame_id"),RobotId+TEXT("/base_link"));P->SetNumberField(TEXT("rate_hz"),C.Rate);
+        P->SetStringField(TEXT("parent_frame_id"),RobotId+TEXT("/")+C.ParentFrame);P->SetNumberField(TEXT("rate_hz"),C.Rate);
         auto Mount=MakeShared<FJsonObject>();Mount->SetArrayField(TEXT("position_m"),ImuVector(C.OriginMetres));
         const auto Q=C.Mount.GetRotation();Mount->SetArrayField(TEXT("rotation_xyzw"),{MakeShared<FJsonValueNumber>(-Q.X),MakeShared<FJsonValueNumber>(Q.Y),MakeShared<FJsonValueNumber>(-Q.Z),MakeShared<FJsonValueNumber>(Q.W)});
-        P->SetObjectField(TEXT("pose_in_base"),Mount);P->SetArrayField(TEXT("accel_noise_std_mps2"),ImuVector(C.AccelStd));
+        P->SetObjectField(C.ParentFrame==TEXT("base_link")?TEXT("pose_in_base"):TEXT("pose_in_parent"),Mount);
+        if(C.ParentFrame!=TEXT("base_link"))P->SetNumberField(TEXT("mount_schema"),2);P->SetArrayField(TEXT("accel_noise_std_mps2"),ImuVector(C.AccelStd));
         P->SetArrayField(TEXT("gyro_noise_std_rad_s"),ImuVector(C.GyroStd));P->SetArrayField(TEXT("accel_bias_mps2"),ImuVector(C.AccelBias));
         P->SetArrayField(TEXT("gyro_bias_rad_s"),ImuVector(C.GyroBias));P->SetNumberField(TEXT("noise_seed"),C.Seed);
         Profiles.Add(MakeShared<FJsonValueObject>(P));Samples.Append(C.Pending);C.Pending.Reset();

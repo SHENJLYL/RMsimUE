@@ -7,7 +7,8 @@ from rclpy.clock import Clock,ClockType
 from rclpy.qos import QoSProfile
 from std_msgs.msg import String
 from ament_index_python.packages import get_package_prefix
-from .protocol import identifier,pose,number
+from .protocol import identifier,pose,number,mount_pose
+from .pointlio_units import si_acceleration_parameters
 
 def multiply(a,b):
     x,y,z,w=a;u,v,t,s=b
@@ -18,14 +19,15 @@ def rotate(q,v):
 
 def parameters(data,robot,imu_id):
     lidar=data['lidar'];imu=next(p for p in data['imu']['profiles'] if p['id']==imu_id)
-    li=lidar['pose_in_base'];im=imu['pose_in_base'];pose(li);pose(im)
+    if lidar['parent_frame_id']!=imu['parent_frame_id']:raise ValueError('Point-LIO requires LiDAR and IMU on the same rigid parent')
+    li=mount_pose(lidar,robot);im=mount_pose(imu,robot)
     q=im['rotation_xyzw'];inverse=[-q[0],-q[1],-q[2],q[3]]
     x,y,z,w=multiply(inverse,li['rotation_xyzw'])
     rotation=list(map(float,[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w),2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w),2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]))
     translation=list(map(float,rotate(inverse,[a-b for a,b in zip(li['position_m'],im['position_m'])])))
     gravity=number(data['imu']['gravity_z_mps2'],'world gravity')
     return {'use_sim_time':True,'common.lid_topic':'/'+robot+'/'+identifier(lidar['id'])+'/livox',
-        'common.imu_topic':'/'+robot+'/'+imu_id+'/data_raw','mapping.acc_norm':9.81,
+        'common.imu_topic':'/'+robot+'/'+imu_id+'/data_raw',**si_acceleration_parameters(),
         'mapping.gravity':[0.,0.,gravity],'mapping.gravity_init':[0.,0.,gravity],
         'mapping.extrinsic_T':translation,'mapping.extrinsic_R':rotation,
         'mapping.imu_time_inte':1./number(imu['rate_hz'],'IMU rate'),
@@ -76,6 +78,8 @@ class PointLioRunner(Node):
                 self.identity=identity;self.get_logger().info('Started original Point-LIO for new sensor session; extrinsics derived from actual mounts.')
             self.phase='running'
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pid=self.child.pid if self.child else None,
+            reference_frame=self.robot+'/'+self.imu_id+'_link',
+            reference_parent_frame=next((p['parent_frame_id'] for p in (self.state or {}).get('imu',{}).get('profiles',[]) if p['id']==self.imu_id),None),
             scope='original estimator; new sensor session restarts map and local origin; no truth input',output_directory=str(self.output))
         self.status.publish(String(data=json.dumps(report)))
         (self.output/'status.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

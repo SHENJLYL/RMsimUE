@@ -14,7 +14,7 @@ class RMSIM_API URosAimController : public UActorComponent
     GENERATED_BODY()
 public:
     bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Muzzle,ATrainingRange* Range,bool Enabled,FString& Error);
-    bool Accept(const TSharedPtr<FJsonObject>& Packet,int64 Sequence);
+    bool Accept(const TSharedPtr<FJsonObject>& Packet,int64 Sequence,double SimTime);
     void Reject(const FString& Reason);
     void Stop(const FString& Reason);
     void Reset(bool ResetPose);
@@ -32,6 +32,7 @@ private:
     UPROPERTY() USceneCaptureComponent2D* Aim=nullptr;
     UPROPERTY() ATrainingRange* Training=nullptr;
     bool bEnabled=false,bLive=false,bFire=false,bPermit=false,bOperatorBrake=false,bLimited=false;
+    bool bBodyFrame=false;
     FAxis Yaw,Pitch;
     FString YawName,PitchName,Status=TEXT("waiting"),LastRejection;
     double PitchMin=0,PitchMax=0,YawRateLimit=0,PitchRateLimit=0;

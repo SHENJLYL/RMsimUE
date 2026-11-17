@@ -5,7 +5,7 @@ from rclpy.serialization import serialize_message
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import PointCloud2,PointField
 from tf2_msgs.msg import TFMessage
-from .protocol import ProtocolError
+from .protocol import ProtocolError,mount_pose
 from .imu import set_stamp
 
 
@@ -31,7 +31,9 @@ class LidarPublisher:
         load_package_dlls('livox_ros_driver2')
         from livox_ros_driver2.msg import CustomMsg
         key=(state['session'],state['epoch'])
-        config={k:data[k] for k in ('id','profile_md5','model','frame_id','parent_frame_id','pose_in_base','rays_per_second','frame_hz','min_range_m','max_range_m','elevation_min_rad','elevation_max_rad')}
+        local=mount_pose(data,self.node.robot_id)
+        config={k:data[k] for k in ('id','profile_md5','model','frame_id','parent_frame_id','rays_per_second','frame_hz','min_range_m','max_range_m','elevation_min_rad','elevation_max_rad')}
+        config['fixed_mount']=local
         fingerprint=json.dumps(config,sort_keys=True)
         if key==self.identity and fingerprint!=self.fingerprint:raise ProtocolError('LiDAR configuration changed within a session')
         if key!=self.identity:
@@ -41,8 +43,8 @@ class LidarPublisher:
             self.raw_pub=self.node.create_publisher(CustomMsg,prefix+'/livox',qos_profile_sensor_data)
             self.cloud_pub=self.node.create_publisher(PointCloud2,prefix+'/points',qos_profile_sensor_data)
             tf=TransformStamped();set_stamp(tf.header.stamp,state['sim_time_ns']);tf.header.frame_id=data['parent_frame_id'];tf.child_frame_id=data['frame_id']
-            t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,data['pose_in_base']['position_m'])
-            t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,data['pose_in_base']['rotation_xyzw']);self.static_pub.publish(TFMessage(transforms=[tf]))
+            t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,local['position_m'])
+            t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,local['rotation_xyzw']);self.static_pub.publish(TFMessage(transforms=[tf]))
         for scan in data['scans']:
             if scan['seq']<=self.sequence:raise ProtocolError('LiDAR sequence regressed')
             self.sequence=scan['seq'];n=scan['point_count'];offset=scan['byte_offset'];points=payload[offset:offset+scan['byte_length']]

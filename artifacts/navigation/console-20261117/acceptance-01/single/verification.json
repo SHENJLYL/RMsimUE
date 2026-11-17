@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "mode": "single",
+  "checks": [
+    {
+      "name": "rviz_action_reaches_original_nav2",
+      "passed": true,
+      "goal_id": "6d9649fb830d37b05b3f9460029d1933",
+      "action": "navigate_to_pose"
+    },
+    {
+      "name": "original_nav2_goal_success",
+      "passed": true,
+      "status": 4
+    },
+    {
+      "name": "actual_vehicle_reaches_selected_point",
+      "passed": true,
+      "error_m": 0.1766370803698593,
+      "position": [
+        9.35354571576129,
+        6.5479771239536255,
+        0.027726735010871976
+      ],
+      "target": [
+        9.45,
+        6.4
+      ]
+    },
+    {
+      "name": "real_planner_path_visible",
+      "passed": true,
+      "path_points": 74
+    }
+  ],
+  "scope": "actual RViz GUI goals; independent truth evaluation; no control/pose injection"
+}

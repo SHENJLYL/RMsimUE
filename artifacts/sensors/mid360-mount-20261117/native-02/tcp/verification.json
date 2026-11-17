@@ -1,0 +1,36 @@
+{
+  "status": "failed",
+  "scope": "real UE articulated geometry, raycasts, encoder TF and sampled IMU; TCP observer only",
+  "checks": [
+    {
+      "name": "measured_yaw_parent_mount",
+      "passed": true,
+      "pose_in_parent": {
+        "position_m": [
+          0.19812227804774685,
+          0.07375968980603695,
+          0.17056386526967365
+        ],
+        "rotation_xyzw": [
+          -1.9330379232482337e-05,
+          0.3826837731868331,
+          -8.006913533426475e-06,
+          0.923879391101303
+        ]
+      },
+      "position_in_base_m": [
+        0.19812227804774685,
+        0.07375968980603695,
+        0.3611938243761189
+      ]
+    },
+    {
+      "name": "real_scene_returns_through_optical_window",
+      "passed": false,
+      "maximum_points_per_scan": 0,
+      "optical_window_passes": 0,
+      "self_occluded_rays": 401000
+    }
+  ],
+  "error": "AssertionError('real_scene_returns_through_optical_window')"
+}

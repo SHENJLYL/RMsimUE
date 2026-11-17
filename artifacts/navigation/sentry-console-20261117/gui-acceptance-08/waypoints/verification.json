@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "mode": "waypoints",
+  "checks": [
+    {
+      "name": "rviz_action_reaches_original_nav2",
+      "passed": true,
+      "goal_id": "da6c425ec82fb208e2921d178b68987f",
+      "action": "follow_waypoints"
+    },
+    {
+      "name": "original_nav2_goal_success",
+      "passed": true,
+      "status": 4
+    },
+    {
+      "name": "actual_vehicle_reaches_selected_point",
+      "passed": true,
+      "error_m": 0.1780886607853466,
+      "position": [
+        6.6467824463342104,
+        6.490774183273601,
+        0.06499906863496252
+      ],
+      "target": [
+        6.8,
+        6.4
+      ]
+    },
+    {
+      "name": "real_planner_path_visible",
+      "passed": true,
+      "path_points": 18
+    },
+    {
+      "name": "both_waypoints_executed_in_order",
+      "passed": true,
+      "waypoints": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "physical_outbound_leg_observed",
+      "passed": true,
+      "maximum_x": 6.64679149496631,
+      "minimum_x": 5.8797715679141245,
+      "requested_extent": [
+        5.8,
+        6.8
+      ]
+    }
+  ],
+  "scope": "actual RViz GUI goals; independent truth evaluation; no control/pose injection"
+}

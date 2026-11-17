@@ -16,6 +16,7 @@
 
 #include "pcl_ros/transforms.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2/utils.hpp"
 
 namespace loam_interface
 {
@@ -28,6 +29,7 @@ LoamInterfaceNode::LoamInterfaceNode(const rclcpp::NodeOptions & options)
   this->declare_parameter<std::string>("odom_frame", "odom");
   this->declare_parameter<std::string>("base_frame", "");
   this->declare_parameter<std::string>("lidar_frame", "");
+  align_gravity_initialized_pose_ = this->declare_parameter<bool>("align_gravity_initialized_pose", false);
 
   this->get_parameter("state_estimation_topic", state_estimation_topic_);
   this->get_parameter("registered_scan_topic", registered_scan_topic_);
@@ -75,7 +77,20 @@ void LoamInterfaceNode::odometryCallback(const nav_msgs::msg::Odometry::ConstSha
         base_frame_, lidar_frame_, msg->header.stamp, rclcpp::Duration::from_seconds(0.0));
       tf2::Transform tf_base_frame_to_lidar;
       tf2::fromMsg(tf_stamped.transform, tf_base_frame_to_lidar);
-      tf_odom_to_lidar_odom_ = tf_base_frame_to_lidar;
+      if (align_gravity_initialized_pose_) {
+        // Point-LIO already gravity-aligns its estimated initial IMU attitude.
+        // Preserve that vertical and remove only the estimated initial base yaw;
+        // applying the full tilted mount again would rotate gravity a second time.
+        tf2::Transform estimated_imu;
+        tf2::fromMsg(msg->pose.pose, estimated_imu);
+        const auto estimated_base = estimated_imu * tf_base_frame_to_lidar.inverse();
+        tf2::Quaternion heading;
+        heading.setRPY(0.0, 0.0, -tf2::getYaw(estimated_base.getRotation()));
+        tf_odom_to_lidar_odom_ = tf2::Transform(
+          heading, tf2::quatRotate(heading, -estimated_base.getOrigin()));
+      } else {
+        tf_odom_to_lidar_odom_ = tf_base_frame_to_lidar;
+      }
       base_frame_to_lidar_initialized_ = true;
     } catch (tf2::TransformException & ex) {
       RCLCPP_WARN(this->get_logger(), "TF lookup failed: %s Retrying...", ex.what());

@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "mode": "cancel",
+  "checks": [
+    {
+      "name": "rviz_action_reaches_original_nav2",
+      "passed": true,
+      "goal_id": "17f43adc58e619c045359f22376a4a7b",
+      "action": "navigate_to_pose"
+    },
+    {
+      "name": "rviz_cancel_returns_cancelled",
+      "passed": true
+    },
+    {
+      "name": "cancelled_vehicle_stays_stopped",
+      "passed": true,
+      "drift_m": 0.0
+    }
+  ],
+  "scope": "actual RViz GUI goals; independent truth evaluation; no control/pose injection"
+}

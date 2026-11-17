@@ -1,0 +1,76 @@
+{
+  "status": "failed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "DB0B59AC4392DA93C126B0B9B0CA88FD",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": false,
+      "status": 6,
+      "error_m": 5.304766335033167,
+      "position": [
+        4.146045648123242,
+        6.492812189440988,
+        0.02923367524657296
+      ]
+    }
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "DB0B59AC4392DA93C126B0B9B0CA88FD",
+      0
+    ],
+    "pids": {
+      "loam_interface": 40948,
+      "sensor_scan_generation": 32420,
+      "terrain_analysis": 6940,
+      "terrain_analysis_ext": 32164,
+      "pointcloud_to_laserscan": 5424,
+      "fake_vel_transform": 38752,
+      "map_server": 33652,
+      "amcl": 39024,
+      "lifecycle_manager_localization": 4720,
+      "controller_server": 33916,
+      "planner_server": 35620,
+      "smoother_server": 39592,
+      "behavior_server": 37396,
+      "bt_navigator": 4448,
+      "waypoint_follower": 11436,
+      "velocity_smoother": 40640,
+      "lifecycle_manager_navigation": 10444
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\native-console-01\\navigation\\20261117T111907Z-25704",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    4.146045648123242,
+    6.492812189440988,
+    0.02923367524657296
+  ],
+  "error": "AssertionError('single_goal_actual_arrival')"
+}

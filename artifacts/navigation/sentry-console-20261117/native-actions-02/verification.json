@@ -1,0 +1,135 @@
+{
+  "status": "passed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "D35A91F54E3728DB3FB7E5AE19A06175",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "error_m": 0.18876553764683407,
+      "position": [
+        9.26849563791309,
+        6.451851660981324,
+        0.030349891337922177
+      ]
+    },
+    {
+      "name": "original_planner_path",
+      "passed": true,
+      "points": 72
+    },
+    {
+      "name": "waypoint_sequence_accepted",
+      "passed": true
+    },
+    {
+      "name": "waypoint_sequence_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "missed_waypoints": [],
+      "error_m": 0.1795482001299066
+    },
+    {
+      "name": "waypoints_observed_in_order",
+      "passed": true,
+      "indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "cancel_test_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "native_action_cancelled",
+      "passed": true,
+      "status": 5
+    },
+    {
+      "name": "cancelled_vehicle_stopped",
+      "passed": true,
+      "braking_m": 0.05331987969216854,
+      "drift_m": 0.0
+    },
+    {
+      "name": "gimbal_follows_original_shaped_target",
+      "passed": true,
+      "samples": 12300,
+      "median_error_rad": 0.00044834876114571465,
+      "yaw_travel_rad": 12.559795341981495
+    },
+    {
+      "name": "original_gimbal_rate_limit",
+      "passed": true
+    },
+    {
+      "name": "mounted_lidar_and_imu_live",
+      "passed": true,
+      "clouds": 554,
+      "imu": 11095
+    },
+    {
+      "name": "session_and_no_fire_preserved",
+      "passed": true
+    }
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "D35A91F54E3728DB3FB7E5AE19A06175",
+      0
+    ],
+    "pids": {
+      "loam_interface": 39156,
+      "sensor_scan_generation": 8488,
+      "terrain_analysis": 35752,
+      "terrain_analysis_ext": 22072,
+      "pointcloud_to_laserscan": 7796,
+      "fake_vel_transform": 38676,
+      "map_server": 40896,
+      "amcl": 22584,
+      "lifecycle_manager_localization": 39296,
+      "controller_server": 34684,
+      "planner_server": 40084,
+      "smoother_server": 39208,
+      "behavior_server": 36248,
+      "bt_navigator": 17604,
+      "waypoint_follower": 37424,
+      "velocity_smoother": 29828,
+      "lifecycle_manager_navigation": 14652
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\native-console-03\\navigation\\20261117T112604Z-35408",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    9.076639187650953,
+    6.460895761615165,
+    0.02943959027840144
+  ]
+}

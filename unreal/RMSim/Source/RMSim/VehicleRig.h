@@ -66,6 +66,9 @@ public:
     double GetMeasuredYawRate() const;
     FVector GetCommandOriginVelocity() const;
     bool SampleChassisImu(const FTransform& Mount,FTransform& SensorWorld,FVector& PointVelocityCm,FVector& AngularVelocityRad) const;
+    bool GetSensorParentWorld(const FString& Parent,FTransform& Pose) const;
+    void EnableArticulatedSensorQueries();
+    TSharedRef<FJsonObject> GetSensorJointState(int64 Stamp) const;
     uint64 GetMotionGeneration() const { return MotionGeneration; }
     void EnableExternalDriveLease(bool Enabled);
     void RenewExternalDriveLease(double Seconds);

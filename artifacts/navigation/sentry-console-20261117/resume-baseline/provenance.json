@@ -1,0 +1,225 @@
+{
+  "head": "0a83cc4c060b873082597a646fd4ff572a8018b8",
+  "files": [
+    {
+      "path": ".codestable/features/2026-11-17-sentry-navigation-console/design.md",
+      "sha256": "6fc159701aaf3d0a94698d9911180a48deae964a26fd2afa42398cba872b2aa6"
+    },
+    {
+      "path": "Play-Navigation.cmd",
+      "sha256": "2a2d6f1da1e472b6085e57a17b96a43f762a3c5f8cf53c77f3e49dd9feb4645a"
+    },
+    {
+      "path": "Stop-Navigation.cmd",
+      "sha256": "ee050ecd79575b259317d50500363705e25997b93d93a77b24773aa20522395b"
+    },
+    {
+      "path": "assets/maps/rmuc2027/navigation-console/SOURCE.json",
+      "sha256": "acda0cc5b256bf597c014397a28d8af03fbee4ddf2df3f7adb956de08f38cea6"
+    },
+    {
+      "path": "assets/maps/rmuc2027/navigation-console/map.yaml",
+      "sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b"
+    },
+    {
+      "path": "assets/maps/rmuc2027/navigation-console/scene.json",
+      "sha256": "fd9c6bad8650f5b0728ac3d636cbc991858d0d6464252017d7a53ac51807bd33"
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/navigation-follow.json",
+      "sha256": "d5bf930b85ce0668db1d434b271fab5dfebce8c6ddc2907329c45897af122aef"
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360-imu.json",
+      "sha256": "9fc5bf3e274229b19f15d6d4533470d398b54bba2c08da2579583a43f190cbc1"
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360-source.json",
+      "sha256": "d863674a3dde54ee31b741da76f5d549c50b7d8565e9b10124d2a34128df7753"
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360.json",
+      "sha256": "484d0088296d3c69861e6f3b14907da03f99ef9f1472fb6fb41994c096762229"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_follow.py",
+      "sha256": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_follow_adapter.py",
+      "sha256": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13"
+    },
+    {
+      "path": "schemas/imu-runtime-v2.schema.json",
+      "sha256": "3712e78967208a364265337a2facb26081fd8cbef28dec850f1e90d62d7fcd2c"
+    },
+    {
+      "path": "schemas/lidar-runtime-v2.schema.json",
+      "sha256": "c70d58470b8b3d6d4002e3a6ed29d52641a44dfe01d47588b0e24947f56f8403"
+    },
+    {
+      "path": "tests/control/test_navigation_console.py",
+      "sha256": "0698790ccd5920ae1a507e11ada2e2ccead6a3391936a2d1eec5be3890868090"
+    },
+    {
+      "path": "tests/control/test_navigation_follow.py",
+      "sha256": "2e4949b3a23b20c67ba594c0690d9e78757eb3d3154497497c6edee3b901edaf"
+    },
+    {
+      "path": "tools/assets/inspect_mid360_mount.py",
+      "sha256": "9541e1ad18542acda5a6732609ae470e056eb3f2d8e5af6826e4c12c31d247a0"
+    },
+    {
+      "path": "tools/environment/Prepare-NavigationConsole.cmd",
+      "sha256": "dc1633b0fb1ddc8f89cc2d279e070faaedcbd9393afc2d64f3f44c98c138011c"
+    },
+    {
+      "path": "tools/environment/Prepare-NavigationConsole.ps1",
+      "sha256": "e8513b918b33021e3f16db0a34ad25f3ee1c9f1d14a1e00095367d5cfe074750"
+    },
+    {
+      "path": "tools/environment/Start-NavigationConsole.ps1",
+      "sha256": "446e6990f463817f0d98042507980eecc3661bd713c8e308bd1573f40b1464d5"
+    },
+    {
+      "path": "tools/environment/Stop-NavigationConsole.ps1",
+      "sha256": "a0505a5bf2ee45e498f87ccf93a829e56b4bce5305711bcec2c3fc769efdea86"
+    },
+    {
+      "path": "tools/environment/stage_rviz_runtime.py",
+      "sha256": "0ac47b7b59df7234b1628727df7646c1aaf4a4afc98df8fae17844fc1628ea4f"
+    },
+    {
+      "path": "tools/integration/Invoke-RvizConsoleUi.ps1",
+      "sha256": "e6310f9fa95a547de400ad4327daf27da63021b0549306cd7c411227a6f7d9d6"
+    },
+    {
+      "path": "tools/integration/Run-NavigationConsole.ps1",
+      "sha256": "b66e7f9754cdcf5bf1eab053bc88154969025d8d1a22b246f6f6bb5d8c32f8e6"
+    },
+    {
+      "path": "tools/integration/navigation_console.py",
+      "sha256": "f223084115e72956b23bb64fb965c08cd23a024e9e3b1f78f742e12bcd1bbbfb"
+    },
+    {
+      "path": "tools/integration/navigation_console_config.py",
+      "sha256": "bb3c4862105fe2d504a6f74cddbc728b82990224535e4331eacf90c1a24d9515"
+    },
+    {
+      "path": "tools/integration/observe_console_goal.py",
+      "sha256": "c00ba862d14ae8cdbb4c0f950c5cc1c294a46510f70fb886cf1df401c6d1db7e"
+    },
+    {
+      "path": "tools/integration/observe_navigation_follow.py",
+      "sha256": "07c85af5291a64304f1fc2944754cd6d1aee8abcfef276d9a2186ff21157ed1e"
+    },
+    {
+      "path": "tools/integration/probe_loam_mount_alignment.py",
+      "sha256": "2170febe8c0fd019c6da54cc3bd340849410968b17b712048b41543ff103ab23"
+    },
+    {
+      "path": "tools/integration/probe_mid360_mount.py",
+      "sha256": "0297837de0274d6a816a095f1539d8498100f27460c4b131c3c5977edb8b90b7"
+    },
+    {
+      "path": "tools/integration/test_navigation_console_ui.py",
+      "sha256": "deecf0cde866d61557e18979cb9cdfac928d57c22b3ba1bf771d20020cae1d9c"
+    },
+    {
+      "path": "tools/unreal/Test-Mid360Mount.ps1",
+      "sha256": "8fa921b821ff6e937cdd791e311363fe3698370fc324b78fe113729bd4376f6e"
+    },
+    {
+      "path": "ros2_ws/src/loam_interface/include/loam_interface/loam_interface.hpp",
+      "sha256": "b622ced526eb078ce441a6626a450e2cef9cfcea2f975197a2025d92e5333785"
+    },
+    {
+      "path": "ros2_ws/src/loam_interface/src/loam_interface.cpp",
+      "sha256": "ed1ad70485900e400bedd2b5fd496a72d9dac6f19905b15753023d85cb43ebb3"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_adapter.py",
+      "sha256": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/imu.py",
+      "sha256": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/lidar.py",
+      "sha256": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_runner.py",
+      "sha256": "f0c02f1542249d1ae10dc1a43a89911d514b015af8a90d067b29329ffe5c8f6d"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py",
+      "sha256": "ebeb5170571abab54d2a2a256d0e3f04e3615a3e141693fa43961631d202aaa8"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/point_lio_runner.py",
+      "sha256": "66b66c4396c0b22b03508368ed7a2938251d56bad901e21e109b2dd2106e0ff3"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/protocol.py",
+      "sha256": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08"
+    },
+    {
+      "path": "tools/environment/pixi.lock",
+      "sha256": "476551dd4cc0a80340b959422b08f7b2a6ce29834f5db712e1e757da9e88642e"
+    },
+    {
+      "path": "tools/environment/pixi.toml",
+      "sha256": "bf6096c88d829402be76b699a2eaf5712805a1de12cfbe8a0533e933eb2127ff"
+    },
+    {
+      "path": "tools/environment/stage_navigation_runtime.py",
+      "sha256": "04d2cb6939d6eb72f1d83d9e5587112fb16451cfbf1b737d6170824b7aa450cb"
+    },
+    {
+      "path": "unreal/RMSim/Config/DefaultEngine.ini",
+      "sha256": "274203cfbb8fc5a1631f88e753a26e8efa26c7f33e9651c0861f1417d1fca11c"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosAimController.cpp",
+      "sha256": "b8a9d3a2e9bc3ef284acb661f8b5209d08269a62fa6109313ed54c17be940be6"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosAimController.h",
+      "sha256": "04224fbf0eab64f5e19c9c1acd3f47d55393f236c3a15a6cdcf7993d07cd534c"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp",
+      "sha256": "6e0754ed8bb0a3ac962c51b45da706f86a08ef8a6f1d995d174cb01caf1f0315"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosBridgeComponent.h",
+      "sha256": "20176aff4599ee9d06f967a0e0ff832137a3c40298adb2ca178728d06d01798d"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosImuComponent.cpp",
+      "sha256": "0689b14c78c82abf7b6b3c39a766f32684f37e0de2f94aed64e1c4b6d6d972ee"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosImuComponent.h",
+      "sha256": "a902dd7627997fb3a875d6090469f6e35df060abeafceb2a15150a02fcfc52ba"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosLidarComponent.cpp",
+      "sha256": "cd0424299280a07604df029e523424ea3018a54dc7704919aa9624aba1fbfbce"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/RosLidarComponent.h",
+      "sha256": "63b662694f63151ea63dc7b53c659f1a6b18d2b123f2d41d8a02116d60092b85"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/VehicleRig.cpp",
+      "sha256": "9bcb33d428f811d262c24760c776e3685fc9da622987fde83987100edcdb6b98"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/VehicleRig.h",
+      "sha256": "7435fbeed07683d8d479b960a6b89e4b15867901af8c3d9755abbc0fe5d31404"
+    }
+  ]
+}

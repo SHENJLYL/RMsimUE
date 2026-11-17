@@ -9,6 +9,7 @@ class UTextureRenderTarget2D;
 class FSocket;
 class ISocketSubsystem;
 class FJsonObject;
+class FJsonValue;
 class ATrainingRange;
 class URosAimController;
 class URosImuComponent;
@@ -46,6 +47,8 @@ private:
     int32 Port=9451,Width=1280,Height=720,SendOffset=0;
     int64 Epoch=0,TickIndex=0,AcceptedSeq=-1,RejectedCommands=0,Images=0;
     double CameraHz=10,HFovDegrees=60,EpochSolverTime=0,LastCommandWall=-1,LastPollWall=0,LastStateWall=0,LastSendProgressWall=0,NextImageSim=0;
+    TArray<TSharedPtr<FJsonValue>> SensorMountSamples;
+    int64 DroppedSensorMountSamples=0;
     TArray<uint8> Inbound,Outbound;
     TArray<FColor> Pixels;
     double LastSimTime=0,RealTimeFactor=0;

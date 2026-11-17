@@ -1,0 +1,21 @@
+{
+  "status": "failed",
+  "scope": "real Windows RViz mouse/buttons plus independent native ROS observer",
+  "runs": [
+    {
+      "mode": "single",
+      "status": "failed",
+      "checks": 3,
+      "path": "D:\\simulator\\artifacts\\navigation\\sentry-console-20261117\\gui-acceptance-07\\single\\verification.json"
+    }
+  ],
+  "target": [
+    6.8,
+    6.4
+  ],
+  "return_point": [
+    5.8,
+    6.4
+  ],
+  "error": "RuntimeError('GUI gate failed: single; see D:\\\\simulator\\\\artifacts\\\\navigation\\\\sentry-console-20261117\\\\gui-acceptance-07\\\\single')"
+}

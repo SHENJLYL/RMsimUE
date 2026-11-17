@@ -214,3 +214,7 @@ mesh地图新增kind=rm_mesh_map，描述显示/碰撞虚拟资产路径、源�
 2026-11-16：swerve-gyro-control最小切片已实现并通过45项原生检查，输入/控制参数移入车辆包，独立舵轮、小陀螺及坡上保持生效。本地LK核心数学与配置预备件为后续同源节点接入提供入口；完整电机消息/功率标定、ROS感知、比赛和网络仍是后续目标。
 
 2026-11-16后续：在AIM接触样例上先完成原生ROS桥的速度/相机/时钟切片，未等待完整sentry依赖闭包。11项真实ROS、19项TCP、只读/停顿/复位与19项手动回归通过，证据artifacts/ros2/native-release-summary.json。该切片不改变原长期双平台同源、完整感知/电机控制和联网目标，也不将native-sentry-profile标完成。
+
+## 2026-11-17 可视化导航切片
+
+Windows RViz单点/双航点/取消、原sentry导航偏航跟随、实际yaw_link位置Mid-360及共装IMU已分项验收；84原生、13GUI和120离线通过/2权限跳过。用户入口Play-Navigation.cmd/Stop-Navigation.cmd，当前限定场地与边界见sentry-navigation-console接受记录。长期同源Ubuntu、通用车辆、完整自主/裁判和权威联机目标保持，下一步扩展新组合恢复/场地覆盖。

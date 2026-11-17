@@ -147,6 +147,7 @@ void URosBridgeComponent::Disconnect(const FString& Reason)
 {
     if(Client){LastDisconnect=Reason;if(Reason==TEXT("slow_reader"))++SlowReaderDisconnects;
         UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_DISCONNECT reason=%s"),*Reason);}
+    SensorMountSamples.Reset();
     CloseSocket(Client);Inbound.Reset();Outbound.Reset();SendOffset=0;LastCommandWall=-1;CommandStatus=Reason;
     if(AimController)AimController->Stop(Reason);
     if(Imu)Imu->DiscardPending();
@@ -174,10 +175,10 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
     if(Kind==TEXT("aim"))
     {
         if(Identity!=Session||CommandEpoch!=Epoch){AimController->Reject(TEXT("session_epoch"));return true;}
-        if(Frame!=TEXT("rmsim_world")){AimController->Reject(TEXT("frame"));return true;}
+        if(Frame!=TEXT("rmsim_world")&&Frame!=RobotId+TEXT("/base_link")){AimController->Reject(TEXT("frame"));return true;}
         const double Age=SimTime-Stamp/1.e9;
         if(Age>.2||Age<-.05){AimController->Reject(TEXT("timestamp"));return true;}
-        AimController->Accept(J,int64(Sequence));return true;
+        AimController->Accept(J,int64(Sequence),SimTime);return true;
     }
     if(Identity!=Session||CommandEpoch!=Epoch){Reject(TEXT("session_epoch"));return true;}
     if(Frame!=RobotId+TEXT("/base_link")){Reject(TEXT("frame"));return true;}
@@ -294,6 +295,7 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
         State->SetObjectField(TEXT("training_evaluation"),AimController->Evaluation());
     }
     if(bMotorControl)State->SetObjectField(TEXT("motors"),Rig->GetMotorFeedback());
+    if(!SensorMountSamples.IsEmpty()){State->SetArrayField(TEXT("sensor_mounts"),SensorMountSamples);State->SetNumberField(TEXT("dropped_sensor_mounts"),DroppedSensorMountSamples);SensorMountSamples.Reset();}
     if(Imu)State->SetObjectField(TEXT("imu"),Imu->TakeState());
     TArray<uint8> LidarBytes;const int32 CameraBytes=Capture?Width*Height*3:0;
     if(Lidar)
@@ -325,6 +327,11 @@ void URosBridgeComponent::Advance()
     const double SimDelta=FMath::Max(0.,SimTime-LastSimTime);LastSimTime=SimTime;
     // Apply only the previously accepted aim command over elapsed physics time.
     if(AimController)AimController->Advance(SimDelta);
+    if(Client&&((Imu&&Imu->UsesArticulatedMount())||(Lidar&&Lidar->UsesArticulatedMount())))
+    {
+        if(SensorMountSamples.Num()>=64){SensorMountSamples.RemoveAt(0,1,EAllowShrinking::No);++DroppedSensorMountSamples;}
+        SensorMountSamples.Add(MakeShared<FJsonValueObject>(Rig->GetSensorJointState(FMath::RoundToInt64(SimTime*1.e9))));
+    }
     if(Imu)Imu->Advance(SimTime,Client!=nullptr);
     if(Lidar)Lidar->Advance(SimTime,Client!=nullptr);
     // Retire an EOF peer before deciding whether a newly queued connection is

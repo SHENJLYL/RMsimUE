@@ -1,0 +1,63 @@
+{
+  "source_blend_sha256": "4414ee2f57ef5604b8e9cd8cdf2b2386a424737271ed94c40abbad2e1ce18d37",
+  "source_object": "radar_mid360",
+  "source_parent": "bone_turret",
+  "source_linear_scale": 2.0,
+  "optical_center_base_m": [
+    0.19812227804774685,
+    0.07375968980603695,
+    0.36119382437611897
+  ],
+  "mount_parent_frame": "yaw_link",
+  "origin_in_parent": {
+    "xyz": [
+      0.19812227804774685,
+      0.07375968980603695,
+      0.17056386526967365
+    ],
+    "rpy": [
+      -5.917937960475683e-05,
+      0.7853989005088806,
+      -4.184617137070745e-05
+    ]
+  },
+  "optical_axis_base": [
+    0.7071073651313782,
+    2.9589637051685713e-05,
+    0.7071061134338379
+  ],
+  "sphere_radius_m": 0.022006218719577014,
+  "sphere_max_fit_error_m": 7.928249060305467e-05,
+  "axis_covariance_alignment": 0.9999530580083377,
+  "fit_acceptance_tolerance_m": 0.0001,
+  "optical_faces": 3869,
+  "optical_vertices": 2138,
+  "surface_vertices_checked": 2138,
+  "sensor_geometry_bounds_m": {
+    "lo": [
+      0.14773029088974,
+      0.04132082685828209,
+      0.310802698135376
+    ],
+    "hi": [
+      0.22012189030647278,
+      0.11405908316373825,
+      0.38319310545921326
+    ]
+  },
+  "yaw_pivot_base_m": [
+    0.0,
+    0.0,
+    0.1906299591064453
+  ],
+  "scope": "Geometric optical-dome center and axis. Sensor X chosen by projecting robot +X onto optical-axis plane; not measured factory optical/IMU calibration.",
+  "nominal_lidar_in_imu_translation_m": [
+    -0.011,
+    -0.02329,
+    0.04412
+  ],
+  "extrinsic_source": "ros2_ws/src/point_lio/config/mid360.yaml: mapping.extrinsic_T; nominal, not hardware calibrated",
+  "device_spec_source": "https://www.livoxtech.com/mid-360/specs",
+  "scan_model": "ideal spherical_fibonacci non-repeating rays, not proprietary device pattern",
+  "legacy_profiles_retained": true
+}

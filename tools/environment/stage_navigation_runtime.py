@@ -20,6 +20,8 @@ for package,executable in vendor.items():
 # Pluginlib/BT plugins are loaded at runtime, not necessarily visible in EXE imports.
 for metadata in (prefix/'conda-meta').glob('ros2-nav2-*.json'):
     package=json.loads(metadata.read_text(encoding='utf-8'))
+    # GUI plugins have their own audited RViz/Ogre runtime; do not inject them into headless Nav2.
+    if package['name']=='ros2-nav2-rviz-plugins':continue
     if package['name'].removeprefix('ros2-').replace('-','_') in native_overlays:continue
     plugins.extend(prefix/file for file in package['files'] if file.lower().endswith('.dll'))
 assert len(programs)>=16 and plugins

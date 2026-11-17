@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "scope": "real Windows RViz mouse/buttons plus independent native ROS observer",
+  "runs": [
+    {
+      "mode": "single",
+      "status": "passed",
+      "checks": 4,
+      "path": "D:\\simulator\\artifacts\\navigation\\console-20261117\\acceptance-01\\single\\verification.json"
+    }
+  ],
+  "error": "RuntimeError(\"RViz button unavailable: Waypoint mode\\nAt D:\\\\simulator\\\\tools\\\\integration\\\\Invoke-RvizConsoleUi.ps1:44 char:54\\n+ ... n.Current.IsEnabled){throw ('RViz button unavailable: '+$ButtonName)}\\n+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\n    + CategoryInfo          : OperationStopped: (RViz button unavailable: Waypoint mode:String) [], RuntimeException\\n    + FullyQualifiedErrorId : RViz button unavailable: Waypoint mode\\n \\n\")"
+}

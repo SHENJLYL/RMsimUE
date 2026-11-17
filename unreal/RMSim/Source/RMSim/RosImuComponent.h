@@ -16,11 +16,15 @@ public:
     void Reset();
     void DiscardPending();
     bool UsesId(const FString& Id) const;
+    bool UsesArticulatedMount() const;
     TSharedRef<FJsonObject> TakeState();
 private:
     struct FChannel
     {
-        FString Id;
+        FString Id,ParentFrame;
+        FTransform PreviousRelative;
+        bool HasRelativeHistory=false;
+        double PreviousRelativeTime=0;
         FTransform Mount;
         FVector OriginMetres,AccelBias,GyroBias,AccelStd,GyroStd;
         double Rate=200,NextDue=0,PreviousTime=0;

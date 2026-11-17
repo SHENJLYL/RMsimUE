@@ -13,6 +13,10 @@ from .protocol import ProtocolError,aim_packet,hold_aim,number
 class AimAdapter:
     def __init__(self,node):
         self.node=node;self.identity=None;self.permission=False;self.auto=None;self.scan=None
+        self.navigation=None
+        if node.declare_parameter('navigation_follow',False).value:
+            from .navigation_follow_adapter import NavigationFollowAdapter
+            self.navigation=NavigationFollowAdapter(node)
         self.serial=0;self.sent=None;self.rejected=0;self.error='';self.source='hold';self.legacy_frame=False
         self.last_stamp={'auto':-1,'scan':-1}
         qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE)
@@ -26,6 +30,7 @@ class AimAdapter:
         if key!=self.identity:
             self.identity=key;self.permission=False;self.auto=None;self.scan=None;self.sent=None
             self.last_stamp={'auto':-1,'scan':-1}
+            if self.navigation:self.navigation.reset()
 
     def ready(self):
         node=self.node
@@ -84,8 +89,12 @@ class AimAdapter:
             if self.node.state is None or not self.node.transport.connected:
                 self.identity=None;self.permission=False;self.auto=None;self.scan=None;self.sent=None
             return
-        if self.permission and self.fresh(self.auto) and self.auto['control']:source='auto';entry=self.auto
-        elif self.fresh(self.scan):source='scan';entry=self.scan
+        auto_ready=self.permission and self.fresh(self.auto) and self.auto['control']
+        scan_ready=self.fresh(self.scan)
+        nav=self.navigation.poll(bool(auto_ready or scan_ready)) if self.navigation else None
+        if auto_ready:source='auto';entry=self.auto
+        elif scan_ready:source='scan';entry=self.scan
+        elif nav:source='navigation';entry=nav
         else:source='hold';entry=None
         token=(source,entry['serial'] if entry else 0,self.permission)
         self.source=source
@@ -95,10 +104,10 @@ class AimAdapter:
         if source!='auto':command['fire']=0;command['permit']=0
         seq=self.node.sequence+1
         try:
-            raw=aim_packet(self.node.state,seq,stamp,command)
+            raw=aim_packet(self.node.state,seq,stamp,command,entry.get('frame_id','rmsim_world') if entry else 'rmsim_world')
             if self.node.transport.queue(raw):self.node.sequence=seq;self.node.forwarded+=1;self.sent=token
         except ProtocolError as error:self.reject(error)
 
     def diagnostic(self):
         return dict(source=self.source,permission=self.permission,rejected=self.rejected,error=self.error,
-                    scan_empty_frame_means_world=self.legacy_frame)
+                    scan_empty_frame_means_world=self.legacy_frame,navigation_follow=self.navigation.report if self.navigation else None)

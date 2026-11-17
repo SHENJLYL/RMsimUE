@@ -79,6 +79,13 @@ class NavigationRunner(Node):
         self.streams=[]
 
     def start(self):
+        reference=self.lio.get('reference_frame',self.robot+'/imu_link')
+        if not reference.startswith(self.robot+'/') or not reference.endswith('_link'):raise ValueError('Invalid estimator reference frame')
+        identifier(reference[len(self.robot)+1:-5])
+        cfg=json.loads(self.params.read_text(encoding='utf-8'))
+        for name in ('loam_interface','sensor_scan_generation'):cfg[name]['ros__parameters']['lidar_frame']=reference
+        cfg['loam_interface']['ros__parameters']['align_gravity_initialized_pose']=self.lio.get('reference_parent_frame')==self.robot+'/yaw_link'
+        self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.starts+=1
         names=INTERFACE_NODES+LOCALIZATION_NODES+['lifecycle_manager_localization']
         self.start_nodes(names)

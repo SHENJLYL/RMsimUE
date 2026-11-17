@@ -1,0 +1,33 @@
+{
+  "status": "failed",
+  "mode": "single",
+  "checks": [
+    {
+      "name": "rviz_action_reaches_original_nav2",
+      "passed": true,
+      "goal_id": "f632414530b7c0ae75b681d29f0f2b55",
+      "action": "navigate_to_pose"
+    },
+    {
+      "name": "original_nav2_goal_success",
+      "passed": true,
+      "status": 4
+    },
+    {
+      "name": "actual_vehicle_reaches_selected_point",
+      "passed": false,
+      "error_m": 0.2650356329563028,
+      "position": [
+        6.660272789230785,
+        6.625211441332814,
+        0.05481991133034327
+      ],
+      "target": [
+        6.8,
+        6.4
+      ]
+    }
+  ],
+  "scope": "actual RViz GUI goals; independent truth evaluation; no control/pose injection",
+  "error": "AssertionError('actual_vehicle_reaches_selected_point')"
+}

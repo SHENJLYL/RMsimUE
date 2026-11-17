@@ -1,0 +1,19 @@
+{
+  "status": "failed",
+  "mode": "single",
+  "checks": [
+    {
+      "name": "rviz_action_reaches_original_nav2",
+      "passed": true,
+      "goal_id": "2b342179c1ee5ba25f81ec72dfdffd05",
+      "action": "navigate_to_pose"
+    },
+    {
+      "name": "original_nav2_goal_success",
+      "passed": false,
+      "status": 6
+    }
+  ],
+  "scope": "actual RViz GUI goals; independent truth evaluation; no control/pose injection",
+  "error": "AssertionError('original_nav2_goal_success')"
+}

@@ -88,6 +88,7 @@ def validate_state(state, image, robot_id):
         raise ProtocolError('invalid command acknowledgement')
     integer(command.get('accepted_seq'), 'accepted sequence', -1)
     number(command.get('age_s'), 'command age')
+    if 'sensor_mounts' in state:validate_sensor_mounts(state['sensor_mounts'],robot_id,state['sim_time_ns'])
     if 'aim' in state:validate_aim_state(state['aim'],state['sim_time_ns'])
     if 'imu' in state:validate_imu(state['imu'],robot_id,state['sim_time_ns'])
     if 'training_evaluation' in state and not isinstance(state['training_evaluation'],dict):raise ProtocolError('invalid training evaluation')
@@ -199,7 +200,8 @@ def hold_aim():
                 yaw_min=-math.pi,yaw_max=math.pi,pitch_min=-math.pi/2,pitch_max=math.pi/2,fire=0,permit=0)
 
 
-def aim_packet(state, sequence, stamp_ns, command):
+def aim_packet(state, sequence, stamp_ns, command, frame_id="rmsim_world"):
+    if frame_id not in ("rmsim_world",identifier(state["robot_id"])+"/base_link"):raise ProtocolError("unsupported aim frame")
     integer(sequence,'aim sequence',1);integer(stamp_ns,'aim stamp')
     age=state['sim_time_ns']-stamp_ns
     if age>200_000_000 or age < -FUTURE_TOLERANCE_NS:raise ProtocolError('stale or future aim stamp')
@@ -212,7 +214,7 @@ def aim_packet(state, sequence, stamp_ns, command):
         if mode==2 and command[axis+'_max']-command[axis+'_min']<=1.e-5:raise ProtocolError('empty scan range')
     for flag in ('fire','permit'):integer(command[flag],flag,0,1)
     if command['fire'] and not command['permit']:raise ProtocolError('fire requires permission')
-    payload=dict(v=1,kind='aim',session=state['session'],epoch=state['epoch'],seq=sequence,stamp_ns=stamp_ns,frame_id='rmsim_world')
+    payload=dict(v=1,kind='aim',session=state['session'],epoch=state['epoch'],seq=sequence,stamp_ns=stamp_ns,frame_id=frame_id)
     payload.update(command)
     return json.dumps(payload,allow_nan=False,separators=(',',':')).encode('utf-8')+b'\n'
 
@@ -230,9 +232,10 @@ def validate_imu(data,robot,sim_time):
         name=identifier(p.get('id'))
         if name=='base' or name in ids:raise ProtocolError('duplicate or reserved IMU id')
         ids.add(name)
-        if p.get('frame_id')!=robot+'/'+name+'_link' or p.get('parent_frame_id')!=robot+'/base_link':raise ProtocolError('invalid IMU frames')
+        if p.get('frame_id')!=robot+'/'+name+'_link':raise ProtocolError('invalid IMU frames')
+        mount_pose(p,robot)
         if not 1<=number(p.get('rate_hz'),'IMU rate')<=1000:raise ProtocolError('invalid IMU rate')
-        pose(p.get('pose_in_base'))
+        # mount_pose validated the fixed transform in its explicit parent frame.
         for key in ('accel_bias_mps2','gyro_bias_rad_s','accel_noise_std_mps2','gyro_noise_std_rad_s'):
             values=vector(p.get(key),3,key)
             if 'std' in key and any(x<0 for x in values):raise ProtocolError('negative IMU noise')
@@ -260,9 +263,10 @@ LIDAR_POINT = struct.Struct('<IfffBBBB')
 def validate_lidar(data,payload,camera_bytes,robot,sim_time):
     if not isinstance(data,dict) or data.get('calibrated') is not False:raise ProtocolError('invalid uncalibrated LiDAR metadata')
     name=identifier(data.get('id'))
-    if name=='base' or data.get('frame_id')!=robot+'/'+name+'_link' or data.get('parent_frame_id')!=robot+'/base_link':raise ProtocolError('invalid LiDAR frames')
+    if name=='base' or data.get('frame_id')!=robot+'/'+name+'_link':raise ProtocolError('invalid LiDAR frames')
+    mount_pose(data,robot)
     if not isinstance(data.get('model'),str) or not isinstance(data.get('profile_md5'),str):raise ProtocolError('missing LiDAR model identity')
-    pose(data.get('pose_in_base'))
+    # Parent-relative fixed transform validated above; dynamic joint samples are separate.
     if not 100<=number(data.get('rays_per_second'),'ray rate')<=200000 or not 1<=number(data.get('frame_hz'),'LiDAR frame rate')<=30:raise ProtocolError('invalid LiDAR rate')
     lo=number(data.get('min_range_m'),'minimum range');hi=number(data.get('max_range_m'),'maximum range')
     if not 0<lo<hi<=200:raise ProtocolError('invalid LiDAR range')
@@ -289,3 +293,28 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
         offset+=length;previous=seq
     if offset!=len(payload):raise ProtocolError('unclaimed binary payload')
 
+
+
+def mount_pose(data,robot):
+    """Return a fixed, explicitly parented mount; never reinterpret moving data as static."""
+    parent=data.get('parent_frame_id')
+    if parent==robot+'/base_link' and 'mount_schema' not in data:
+        value=data.get('pose_in_base')
+    elif type(data.get('mount_schema')) is int and data['mount_schema']==2 and parent==robot+'/yaw_link':
+        if 'pose_in_base' in data:raise ProtocolError('articulated mount must not claim a static base pose')
+        value=data.get('pose_in_parent')
+    else:raise ProtocolError('unsupported sensor parent or mount schema')
+    pose(value)
+    if any(abs(v)>5 for v in value['position_m']):raise ProtocolError('sensor mount exceeds vehicle bounds')
+    return value
+
+
+def validate_sensor_mounts(samples,robot,sim_time):
+    if not isinstance(samples,list) or not 1<=len(samples)<=64:raise ProtocolError('invalid joint TF batch')
+    last=-1
+    for s in samples:
+        if not isinstance(s,dict) or set(s)!={'parent_frame_id','frame_id','stamp_ns','pose_in_parent'}:raise ProtocolError('invalid joint TF fields')
+        if s['parent_frame_id']!=robot+'/base_link' or s['frame_id']!=robot+'/yaw_link':raise ProtocolError('joint TF cannot publish localization frames')
+        t=integer(s['stamp_ns'],'joint TF stamp')
+        if not last<t<=sim_time:raise ProtocolError('joint TF time must be ordered and physical')
+        pose(s['pose_in_parent']);last=t

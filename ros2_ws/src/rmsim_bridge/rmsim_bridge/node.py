@@ -91,6 +91,7 @@ class BridgeNode(Node):
             self.sequence = next_sequence
             self.forwarded += 1
             self.command_error = ''
+            if self.aim is not None and self.aim.navigation is not None:self.aim.navigation.observe_velocity(message)
         except ProtocolError as error:
             self.rejected += 1
             self.command_error = str(error)
@@ -132,6 +133,14 @@ class BridgeNode(Node):
         clock = ClockMessage()
         stamp(clock.clock, state['sim_time_ns'])
         self.clock_pub.publish(clock)
+        if state.get('sensor_mounts'):
+            transforms=[]
+            for sample in state['sensor_mounts']:
+                tf=TransformStamped();stamp(tf.header.stamp,sample['stamp_ns'])
+                tf.header.frame_id=sample['parent_frame_id'];tf.child_frame_id=sample['frame_id'];local=sample['pose_in_parent']
+                tf.transform.translation.x,tf.transform.translation.y,tf.transform.translation.z=map(float,local['position_m'])
+                tf.transform.rotation.x,tf.transform.rotation.y,tf.transform.rotation.z,tf.transform.rotation.w=map(float,local['rotation_xyzw']);transforms.append(tf)
+            self.tf_pub.publish(TFMessage(transforms=transforms))
         self.imu.observe(state)
         self.lidar.observe(state,pixels)
         if state['v']==2:pixels=pixels[:state['camera_bytes']]

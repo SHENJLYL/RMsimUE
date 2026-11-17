@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "kind": "rm_mesh_map",
+  "id": "rmuc2027",
+  "display_name": "RMUC 2027 V1.0.0",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "bounds_m": {
+    "lo": [
+      -13.999996185302734,
+      -8.001565933227539,
+      -0.3009999990463257
+    ],
+    "hi": [
+      13.999996185302734,
+      8.001565933227539,
+      3.497683048248291
+    ]
+  },
+  "meshes": [
+    {
+      "id": "floor",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_floor.visual_floor",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_floor.collision_floor"
+    },
+    {
+      "id": "centre_platform",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_centre_platform.visual_centre_platform",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_centre_platform.collision_centre_platform"
+    },
+    {
+      "id": "red_ramp_dart_station",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_red_ramp_dart_station.visual_red_ramp_dart_station",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_red_ramp_dart_station.collision_red_ramp_dart_station"
+    },
+    {
+      "id": "blue_ramp_dart_station",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_blue_ramp_dart_station.visual_blue_ramp_dart_station",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_blue_ramp_dart_station.collision_blue_ramp_dart_station"
+    },
+    {
+      "id": "red_road",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_red_road.visual_red_road",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_red_road.collision_red_road"
+    },
+    {
+      "id": "blue_road",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_blue_road.visual_blue_road",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_blue_road.collision_blue_road"
+    },
+    {
+      "id": "red_resource_zone",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_red_resource_zone.visual_red_resource_zone",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_red_resource_zone.collision_red_resource_zone"
+    },
+    {
+      "id": "blue_resource_zone",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_blue_resource_zone.visual_blue_resource_zone",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_blue_resource_zone.collision_blue_resource_zone"
+    },
+    {
+      "id": "red_fortress",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_red_fortress.visual_red_fortress",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_red_fortress.collision_red_fortress"
+    },
+    {
+      "id": "blue_fortress",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_blue_fortress.visual_blue_fortress",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_blue_fortress.collision_blue_fortress"
+    },
+    {
+      "id": "base_footing",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_base_footing.visual_base_footing",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_base_footing.collision_base_footing"
+    },
+    {
+      "id": "fan_frame",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_fan_frame.visual_fan_frame",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_fan_frame.collision_fan_frame"
+    },
+    {
+      "id": "fan",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_fan.visual_fan",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_fan.collision_fan"
+    },
+    {
+      "id": "base",
+      "visual_asset": "/Game/RMSim/Maps/rmuc2027/visual_base.visual_base",
+      "collision_asset": "/Game/RMSim/Maps/rmuc2027/collision_base.collision_base"
+    }
+  ],
+  "spawns": [
+    {
+      "id": "default",
+      "team": "red",
+      "position_m": [
+        5.8,
+        6.4,
+        0.03147864
+      ],
+      "yaw_rad": 0.0
+    }
+  ],
+  "regions": [],
+  "limitations": [
+    "static CAD rest pose",
+    "source tessellation and simplification, not certified CAD identity",
+    "no match mechanisms or calibrated physics",
+    "no official surface artwork in CAD"
+  ],
+  "source_sha256": "a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0"
+}
