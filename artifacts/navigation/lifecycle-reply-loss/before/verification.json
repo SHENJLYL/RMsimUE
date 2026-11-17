@@ -1,0 +1,26 @@
+{
+  "status": "reproduced_expected_hang",
+  "case": "committed",
+  "expected_hang": true,
+  "scope": "native manager and concurrent lifecycle RPC; no simulator truth or robot control",
+  "manager_pid": 11008,
+  "runtime_hashes": {
+    "lifecycle_manager.exe": "af494951a64d5bf9dbcd8d57fd47bb99b8161c01f79f0cc5f1eff6c24f96215c",
+    "lifecycle_msgs__rosidl_generator_c.dll": "cad6f834bf33e986cc3f33dd009f37a850a70bc5107d0d8f4388c311b0560073",
+    "lifecycle_msgs__rosidl_typesupport_c.dll": "3d14b82de659bd37957f9200bb76c23d576c8029d050f5d331d0ce521cd8996f",
+    "lifecycle_msgs__rosidl_typesupport_cpp.dll": "3611399291aa2027eaaa34c046d1674eb0ae8ea5221897ef47540e32222f1d27",
+    "lifecycle_msgs__rosidl_typesupport_fastrtps_c.dll": "cc4461366ad626f6b22df846b17f46d4ba6c269671cd9538d0bf09ff3a977b9d",
+    "lifecycle_msgs__rosidl_typesupport_fastrtps_cpp.dll": "f71f22f19d11447a4463f558573baa0e443556f6cdf2d4e4ed39408855cf80ef",
+    "lifecycle_msgs__rosidl_typesupport_introspection_c.dll": "bff2791d6d811961846ab12e47f7b2f3b8253b980a8b417a6156be6f0097c287",
+    "lifecycle_msgs__rosidl_typesupport_introspection_cpp.dll": "ec08033118c2758f0f42999f7c7200876d040f0fe1a801dae18a025a83ca698a",
+    "nav2_lifecycle_manager_core.dll": "83a06585c998078ec9f8518b815bc1ffbf2bf89d1fe4062e6f5737535abddea6",
+    "rclcpp_lifecycle.dll": "e5eb5ba62fd6d02d3af7631887ca18a9909a283f34ca16a46e678b9eedfff342",
+    "rcl_lifecycle.dll": "f38d256c60e78878d36494a982b9291cab5cf1c52e1a2e3a1acb6b2b248d3c70"
+  },
+  "elapsed_wall_s": 8.009427099954337,
+  "transitions": [
+    1
+  ],
+  "peer_state": 2,
+  "status_reply_received": false
+}

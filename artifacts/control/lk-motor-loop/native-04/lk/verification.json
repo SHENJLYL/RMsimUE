@@ -1,0 +1,71 @@
+{
+  "status": "failed",
+  "scope": "native original LK PID/power loop and actual current-driven Chaos joints",
+  "checks": [
+    {
+      "name": "native_original_node_and_feedback",
+      "passed": true,
+      "node_executable": "ros2_ws/install_control/chassis_controllers/lib/chassis_controllers/lk_full_wheel_chassis_controller.exe",
+      "motors": {
+        "enabled": true,
+        "current_active": true,
+        "order": "front_left,front_right,back_left,back_right",
+        "amps_per_count": 0.008056640625,
+        "wheel_nm_per_amp": 0.14,
+        "steer_nm_per_amp": 0.14,
+        "calibrated": false,
+        "steer": [
+          {
+            "encoder": 32665,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32700,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32627,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32664,
+            "speed_deg_s": 0,
+            "current": 0
+          }
+        ],
+        "wheel": [
+          {
+            "encoder": 409,
+            "speed_deg_s": 3,
+            "current": -4
+          },
+          {
+            "encoder": 410,
+            "speed_deg_s": 3,
+            "current": -4
+          },
+          {
+            "encoder": 391,
+            "speed_deg_s": 3,
+            "current": -4
+          },
+          {
+            "encoder": 394,
+            "speed_deg_s": 2,
+            "current": -4
+          }
+        ]
+      }
+    },
+    {
+      "name": "original_power_limiter_active",
+      "passed": false,
+      "max_current_count": 883,
+      "drift_m": 0.038970803169698365
+    }
+  ],
+  "error": "AssertionError('original_power_limiter_active')"
+}

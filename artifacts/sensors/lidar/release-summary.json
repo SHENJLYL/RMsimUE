@@ -1,0 +1,308 @@
+{
+  "status": "native_windows_scoped_verified",
+  "utc": "2026-11-15T22:50:51.973570+00:00",
+  "runs": {
+    "analytic_original_node": {
+      "path": "pointlio-native-01/verification.json",
+      "checks": 5,
+      "report_sha256": "e1743da0c01b8cae48d4a5b6c2cb2bc6c7701261f45f59c573b3bc3a986cd838",
+      "earlier_estimator_build": true
+    },
+    "physical_default_reset": {
+      "path": "native-04-reset/ros/verification.json",
+      "checks": 13,
+      "report_sha256": "b02a8d21c8309ed4c42b31bb4040e361b5dd30be011c62c0fa9d86c4b238d242"
+    },
+    "physical_rotated_mount": {
+      "path": "native-05-mount/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "89d503c691c53c1119c2b97841e5e881967aefdb5762f0c6dfa80755dd324cc4"
+    },
+    "rmuc": {
+      "path": "native-06-rmuc/ros/verification.json",
+      "checks": 10,
+      "report_sha256": "038af32f4dfb884f7195fe8de99bebf8e497a66c3a7c09387165eeb2942f95a6"
+    },
+    "rmuc_original_lk_and_lio": {
+      "path": "native-07-lk-rmuc/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "62d3257384c39585a376756111b9fb66863bd84f23eaf5a14ba36f4f2da06d70"
+    },
+    "pressure": {
+      "path": "pressure-02/tcp/verification.json",
+      "checks": 3,
+      "report_sha256": "01e7f9c5a7573011e21462fb9607eff813f75b1ff7bdac57c21e121876c508fe"
+    },
+    "self_occlusion": {
+      "path": "occlusion-01/self/verification.json",
+      "checks": 3,
+      "report_sha256": "1e9ade1c8adc4253d6e5d2e7943e9d4e093b3bf05e594d1f1cd2d3ac0603ebeb"
+    },
+    "near_wall": {
+      "path": "occlusion-01/blind_low/verification.json",
+      "checks": 3,
+      "report_sha256": "c9a19d0b596acd5632284a178c63a77a3c0480a794e7a17a135f966974b0ae27"
+    },
+    "blind_shadow": {
+      "path": "occlusion-01/blind_high/verification.json",
+      "checks": 3,
+      "report_sha256": "efd915e74be4fd7facda523f68b77072d8b8a06eb5a4779ec695fa6ba9f76f9e"
+    },
+    "imu_regression": {
+      "path": "regression-imu/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "0eb58a3a124898d8d4f98f282aeb3559684a7f4b4d16fd333322a71509b537c9"
+    },
+    "velocity_regression": {
+      "path": "regression-velocity/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "2e4ce2ff6bf75ab84f7dbf5478deb46fdbefbe119a940ddde65cfc62469c1d3b"
+    },
+    "aim_regression": {
+      "path": "regression-aim/aim/verification.json",
+      "checks": 20,
+      "report_sha256": "71a79ce1673ebee12eae2d21156f23cfbf425a8a6c1a05624f3cff385ba3290c"
+    },
+    "tcp_regression": {
+      "path": "regression-tcp/tcp/verification.json",
+      "checks": 19,
+      "report_sha256": "4f39c941e3500bf10b4c3f5687c938ae814aad04c6af955a4cbcc378eb388f53"
+    },
+    "invalid_profile": {
+      "path": "invalid-profiles-01/verification.json",
+      "checks": 2,
+      "report_sha256": "01380ad3cb58c56d46d8925069e0c29b645b67fc984ab2d086cbd893f6084335"
+    },
+    "invalid_original_parameter": {
+      "path": "pointlio-invalid-type/verification.json",
+      "checks": 1,
+      "report_sha256": "ebada18b7145620d2573f9e78cec65ba5d1f09c3f2a2fe2ddcae6447295bb60a"
+    },
+    "serialization": {
+      "path": "livox-serialization.json",
+      "checks": 5,
+      "report_sha256": "155d4c8636b2fd01743c8430a2162fcf752bdea55bccb9c2a5548ba55b1ebd84"
+    },
+    "manual_regression": {
+      "path": "regression-manual/default/verification.json",
+      "checks": 19,
+      "report_sha256": "c512c5cf08230f85660c41968b77c67d8958a8811d7ac5e0f4628cb73caa5ce7"
+    }
+  },
+  "module_sha256": "e5b4d9d994805ff900d94356d1b70d2abc11de34d91dfb979ac607562be57fd3",
+  "pointlio_exe_sha256": "4af6aa0acff50beacea14c09fdd05042bf4b8596a77aff14ca9a2871eb216929",
+  "original_source_provenance": "artifacts/sources/point_lio/provenance.json",
+  "installed_bridge_matches_source": true,
+  "input_sha256": {
+    "unreal/RMSim/Source/RMSim/CombatProbe.cpp": "78e2378322fc7c6394ca7f782f454b458c910e78c3bbe5846a09bcd1d4b596ff",
+    "unreal/RMSim/Source/RMSim/ContactProbe.cpp": "658b8d19c374ca8fd2bc4c1e4d3d8d23ec30fe388f459d49e64cf662620335ff",
+    "unreal/RMSim/Source/RMSim/GyroProbe.cpp": "a6ecc8b4033a1a0551957b0b22e35e6f7111d3b12d1ecfb2984fa2452a1549ed",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp": "2b8b32ab6535cdbe38b03babe2454f19e460b5ce565ec7144538dc0d362e0fb1",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.h": "82976f76ff40d0acacd676b97dff747e3e458cb04809c5e057f45db843fb1f75",
+    "unreal/RMSim/Source/RMSim/ImuFixture.cpp": "aa0a04ecdbf3fd21a96d8270667e6b0b6fc6303c93a041db91765e36db86d76a",
+    "unreal/RMSim/Source/RMSim/ManualControlProbe.cpp": "1851b2edb0961bc9425225b5b14e6d20aa9e6b14b79c010807d746cdceeb1a66",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.cpp": "15bef529e17c630f55963badf40b3c08dd325bc31e5af7eb80b17094433e5f41",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.h": "49746ec6c5331e3a0496c7759945ce8cee72b11f53079d324383f05c1703b3cc",
+    "unreal/RMSim/Source/RMSim/MapStage.cpp": "c7ba9a3db1a2562aabc335524a5e4bf0abba22cea6ecfa8f36c7fd256d93eca8",
+    "unreal/RMSim/Source/RMSim/MapStage.h": "138714912781b9e15f5e2aaf8f8022cc5f9bbeaa99735ac1977683c537cc5f2f",
+    "unreal/RMSim/Source/RMSim/MeshMap.cpp": "6a97903da1fd499c68884a39e49b78309d32678f06e488dde2c1b4aa66064bc9",
+    "unreal/RMSim/Source/RMSim/RMSim.Build.cs": "22bfc20426d6cbc1a686f49a54532cfaa38d80278909d553eca69d91740dc296",
+    "unreal/RMSim/Source/RMSim/RMSim.cpp": "2ee8a82f63ac09c567742f553c546bae32ec45e7ed0d91ef45673fdbb6b73ef8",
+    "unreal/RMSim/Source/RMSim/RosAimController.cpp": "5e627bd973629611c6d024912f071c0cc96ce8cc62f81536fedca1ac5b6c4eec",
+    "unreal/RMSim/Source/RMSim/RosAimController.h": "061de51d2a59bfd22110bd91faaca22b8fd891b42ed6a180a0c736739f4cdcb3",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp": "aa4bf408e9722300229a5a230c0bfae91b3d6f499571f730012b71e2959d5c03",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.h": "128d7639ced19482abb7b8611d7bfbdb1590e1407dbda62de3b25524133deb8a",
+    "unreal/RMSim/Source/RMSim/RosCoordinates.h": "9cc91f4abff0cb58610ae8eabeb2035aaadef7886946df45f29bfdfe1c3a9a2a",
+    "unreal/RMSim/Source/RMSim/RosImuComponent.cpp": "ea54477e87ce90907685e5df63c3e0b7a277eca9985a6fdba081de23942d0473",
+    "unreal/RMSim/Source/RMSim/RosImuComponent.h": "27832b28ae9a72fa0166fe93d9e587962672bd0039e60b6b2def8081b0e4b278",
+    "unreal/RMSim/Source/RMSim/RosLidarComponent.cpp": "5d66da0163b09155f3388a7b27131eb87491dd250a1e2a8a9fba06d72b6e3383",
+    "unreal/RMSim/Source/RMSim/RosLidarComponent.h": "02a37e681f30f826c13585c3813411fec05546845bd7dab2b1cee5396e50a8d9",
+    "unreal/RMSim/Source/RMSim/TerrainProbe.cpp": "af533210c8b7d3a3a4036a2d26f9db944ef438446087452f27152ef39ba1501b",
+    "unreal/RMSim/Source/RMSim/TractionProbe.cpp": "e842f6d8428c576cc756f4fa4d4df3d32f88cdac7996e8b6c07cbab07b2de281",
+    "unreal/RMSim/Source/RMSim/TrainingRange.cpp": "1aa8da6f701484af1228207eeea36eb9f96190b0481e61f6a489dee3c6a47697",
+    "unreal/RMSim/Source/RMSim/TrainingRange.h": "2a4e9f94cf8b1a6fccaa606f10808d3ea745bfec1cc70d39bcdac6f972cdaa90",
+    "unreal/RMSim/Source/RMSim/VehicleContactPhysics.cpp": "6158b8d7ba0bce1b997c8eb1b93816386ae71ad95211e6b50274f4f32c4c50cb",
+    "unreal/RMSim/Source/RMSim/VehicleDrive.cpp": "32e7f27cb009b309cd385812eb1d0073e2e75dd24b3312bdbb0fd2d798d1343e",
+    "unreal/RMSim/Source/RMSim/VehicleMotorDrive.cpp": "8a367025587921fcbf1057ac2d80aabeac87ae80a98f051ac455606e1af67826",
+    "unreal/RMSim/Source/RMSim/VehicleRig.cpp": "7605b094e1dc63b6b36be3a03284bc7c3b9439d6cbe03fe04992d04f0c46b85f",
+    "unreal/RMSim/Source/RMSim/VehicleRig.h": "8ff23849a099a1d39cce2fcb1f67b75247cbe6abba3bfbecf3db6f043c4c70fb",
+    "unreal/RMSim/Source/RMSim/VehicleTerrain.cpp": "538ef9dff6a32d44561debc9c23603223910fbbd0f3b14b22b8bf1c249e71c4a",
+    "unreal/RMSim/Source/RMSim/Control/SentrySwerveKinematics.h": "84cf3907108cefa30ee634cee289f172014dd30f216d8841fc981b52162094b5",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_adapter.py": "f1411a4d7cabcd998bb3f3778f4b6f8bf39f8db5e97a582754ca360c27b0ef40",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_demo.py": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/control_dlls.py": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/drive_demo.py": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/imu.py": "e5c977953d071595af2dacb22b91dee68f44c61cccb9ef8e6752f3d53d7b746e",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lidar.py": "acd3aafc36d6c00e7c46c9453bbc6db1c05dc8645c4f49137ed622a5c21dcad0",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lk_adapter.py": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py": "3788c303f45bc32ebd7e518c6a18e20909848a887c1ecb39a0e8b9a565d8488c",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/point_lio_runner.py": "c9842383b8b8eeb173efd670276b8560e1d1422f0fbd43d79910ab7f1c64c7c9",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/protocol.py": "ae48765bbb9fa96917329dc8d14a5c2dc08a17262ac6ca51976dc532d6116c2c",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/transport.py": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/__init__.py": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+    "ros2_ws/src/point_lio/include/common_lib.h": "9497750c8adf58ba6236a727a4cc342e949201b5f0e61f93c8b0680424b6ca28",
+    "ros2_ws/src/point_lio/include/matplotlibcpp.h": "5602396f543aad2d499a5b8f072f76d925141231e8acb98614e90a2ec3ec77c4",
+    "ros2_ws/src/point_lio/include/so3_math.h": "e6f4a13e7b72bcadbded1e739f521a50a577b5d1ca7d5c0aa2d0c4845a37646e",
+    "ros2_ws/src/point_lio/launch/point_lio.launch.py": "d2dc437e6a618a78717d2b1c59aba69b87cab7ee58cf11b5f68fde1aa078f0a2",
+    "ros2_ws/src/point_lio/src/Estimator.cpp": "135459c16d18636c807bf18a8fffa2fa43272e0fb3e9184f2bf80b124d1912eb",
+    "ros2_ws/src/point_lio/src/Estimator.h": "d0d51f620fd02a5f650a4cd17a7a80b57b5559683dbcbe712cf818feeb87e6ad",
+    "ros2_ws/src/point_lio/src/IMU_Processing.cpp": "8530dc2684b26a9054bfdf9b79d5082a866c01f94844b122cd43c8650d1aea16",
+    "ros2_ws/src/point_lio/src/IMU_Processing.h": "27d6fb4cc9860d3a25fee2719e7241bc0304131664a9878cf94c328948bfd4fa",
+    "ros2_ws/src/point_lio/src/laserMapping.cpp": "687f6481abb5280e2f733ed211e5388a8d7b50e347c0adde1cf7c83181bf046c",
+    "ros2_ws/src/point_lio/src/li_initialization.cpp": "9fc78c444e70da36ddc470f0f567db1405773fd9d5347216f8e8c3c16395e5da",
+    "ros2_ws/src/point_lio/src/li_initialization.h": "79f14a5f99f40c976a99d64e7a1c40807ccb5b4034144d583821dec001506aba",
+    "ros2_ws/src/point_lio/src/parameters.cpp": "3d3f36968fdc2c5f4644150895fd0e9fb9ef7a0430f77c137eecdfe4846870c5",
+    "ros2_ws/src/point_lio/src/parameters.h": "5fa20244105738f1785da6c3423dcf36eb52f059da83c1312286cc7ad46c2fc0",
+    "ros2_ws/src/point_lio/src/preprocess.cpp": "a6cfc292946405c32103585144621f4d02675c4001239d69be085bd4f7f8bb1f",
+    "ros2_ws/src/point_lio/src/preprocess.h": "95dedb005690b9bec94de665a31af2178e065dcf6af337198309a5cf461cac7d",
+    "ros2_ws/src/point_lio/include/ivox/eigen_types.h": "3b8a19e5c2979295383ff21160ec08bbb853c9b70d73745fb87a80cfc32ceec2",
+    "ros2_ws/src/point_lio/include/ivox/hilbert.hpp": "e145216d1d894f04c1a53201e206ef725e75a238a32c26f9fd8b34582f25c68a",
+    "ros2_ws/src/point_lio/include/ivox/ivox3d.h": "48892292d0cb4be8f3d60b3f3b57732ce86c9e2ca7814264128e7b397aac3e61",
+    "ros2_ws/src/point_lio/include/ivox/ivox3d_node.hpp": "16bc33eb9783844dbf729c02a85a58fe5c78fc6c536aba0f40f20a9109488eb5",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/esekfom/esekfom.hpp": "0155f9ff49055d9f90c19154b5ba2e8b27684ca86657223b3f204589b631749a",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/esekfom/util.hpp": "fbf382a63838d4f834117010bc3a0a4faa1ab0790b6ddc3085b090bc5a4874aa",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/build_manifold.hpp": "3ead1049f8edd5ded925cf6c4c70cb9833ff304bc5ce3d94182c0d1d65d77384",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/startIdx.hpp": "952df182043fdfc8a5d26f5e889b5b405ed908eb1850391d95abebaf89e3d607",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/mtkmath.hpp": "0f0aa04f162ef029a5a9f2b2c9bd4eb4c1aec488b35a998a4ab040df24eddf67",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/SubManifold.hpp": "5381ac698347bccfc38c1165a22af457fb372cda1e986c4ca3a113012e795250",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/vectview.hpp": "542fd83490ac26c10f52fe134ca6053dbd7d71a3e5a6a0f76ff20e8228607488",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/S2.hpp": "38aca2b8b1474fe1d1c3b71839558bddbab198bb7fd2656471202983fc47a1d3",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/SEn.hpp": "2ef8b30d6d5257f86070010f404f47fd49f6ce5c25f967a9b15698c2ffd42889",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/SOn.hpp": "0446a9afd34a73c02d97a5d832e9a8e2d92fb23b0e2dca13ffed303df12dd907",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/vect.hpp": "032f8821e03eedbd4eec880ecc1bda781065c641a80e536e83d187b73474d855",
+    "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/wrapped_cv_mat.hpp": "47c377167f870adf334553f8555de1581311e01f31862d75da0bba177c8e98f0",
+    "schemas/lidar-runtime-v1.schema.json": "227319da42f83be20d88592c4ce4d912f8f036437ea256711067560d1cb53f0d",
+    "assets/vehicles/aim_sentry/sensors/lidar.json": "1e1159fb6a70d5e66e6f5d26e0c598197189ed9c6ec5bbbba2f2111293cbaf8f",
+    "assets/vehicles/aim_sentry/sensors/imu.json": "e870fcf9d6235df05d35082bf09266a5a15b551359a1af26f27eb19110dc9039",
+    "assets/vehicles/aim_sentry/drive-profile.json": "2a4f219cb66ac970c0a8adc190be9daa7adc5e33416bd66670079613321d0e01",
+    "tools/environment/pixi.toml": "c5a226e441ec11baa83593027016a4cdd8e31b991af098b5427620ec80056ef6",
+    "tools/environment/pixi.lock": "93d0dbea40ca45d3e34d352e6b33ef00d089dc9964200f417a8882559859f433",
+    "third_party/patches/point-lio-native.patch": "352e33500c8d10db71b8d915c7d6cfb30e796e9ce2aecdf1af9246cab1d4098a",
+    "ros2_ws/src/livox_ros_driver2/msg/CustomMsg.msg": "5ee841edb777874574cc4dc9e6ae8913002bce2bac6725d4fa06f10359793749",
+    "ros2_ws/src/livox_ros_driver2/msg/CustomPoint.msg": "380013b937f4356a07b279fe144be158233bad5f6ac494b02e3f421244c75b9b",
+    "ros2_ws/src/point_lio/CMakeLists.txt": "d8f23cde9a6db43276e6cdaa8e06cf99532216d1a9cd38b36bbed7f16671fe39",
+    "ros2_ws/src/point_lio/package.xml": "126f5ebc7b904935fb79fd9170109e0583a190f4c4b631618bf7e3abcc3f4d4f",
+    "ros2_ws/src/livox_ros_driver2/CMakeLists.txt": "36033505a0ea9029bfb55fbaf7afc367483b31f7e8a93a34ef5084318cceb0c2",
+    "ros2_ws/src/livox_ros_driver2/package.xml": "4ecc5417058554dd2f3c6ae8bf29d10606bd12242ba673fb793aa728d387383c",
+    "ros2_ws/src/rmsim_bridge/setup.py": "611b0c43ad421b376f85e3038c78666e373ee5f36e6cbdaaa703fb75ee386ab6",
+    "ros2_ws/src/rmsim_bridge/package.xml": "5f6279306deb86fe570ba262a3933de57c0f0832f799ef5c2282f727b5f00b37",
+    "tools/environment/stage_controller_runtime.py": "ccebbee79be10df0507a5b64bd758fb8f45334db5a188096d22f977ceecd7321",
+    "tools/environment/Build-PointLio.ps1": "01a530e13015ef96bc145b51fb1176bfd48d9c3ebf737f85bba48a362d9f6634",
+    "tools/environment/Build-PointLio.cmd": "7e5c35b4b3531c83aeb75e83483dc918adf728698b48660580b33ccebf24dfce",
+    "tools/environment/Build-RosBridge.ps1": "394f954edbd06c6806765abd42c5fb2da88a6304b7720a9d4f9307b29c007033"
+  },
+  "motion_metrics": {
+    "physical_default_reset": {
+      "name": "original_lio_tracks_ue_motion",
+      "passed": true,
+      "estimate_delta_m": [
+        1.3417296372427217,
+        -0.0012198145389310236,
+        -0.006933587439827473
+      ],
+      "aligned_estimate_delta_m": [
+        1.3417477218543412,
+        -0.000999625808450289,
+        -0.0001835339447452982
+      ],
+      "truth_imu_delta_m": [
+        1.3407828906581911,
+        -0.0008535907951739458,
+        -0.0005753286774964894
+      ],
+      "error_m": 0.0010515362926588046,
+      "evaluation": "one initial orientation alignment; actual IMU mounting point; no truth enters estimator"
+    },
+    "physical_rotated_mount": {
+      "name": "original_lio_tracks_ue_motion",
+      "passed": true,
+      "estimate_delta_m": [
+        1.3319876398315629,
+        -0.0015540703778444145,
+        0.005961518831576723
+      ],
+      "aligned_estimate_delta_m": [
+        1.332000832481731,
+        -0.0015028907616306232,
+        0.0007423563230379676
+      ],
+      "truth_imu_delta_m": [
+        1.3320169063541896,
+        -0.0008112862089548387,
+        -4.985084753550417e-06
+      ],
+      "error_m": 0.0010183783218713444,
+      "evaluation": "one initial orientation alignment; actual IMU mounting point; no truth enters estimator"
+    },
+    "rmuc": {
+      "name": "original_lio_tracks_ue_motion",
+      "passed": true,
+      "estimate_delta_m": [
+        1.3381594860580863,
+        0.006811992776566404,
+        -0.002044947801851215
+      ],
+      "aligned_estimate_delta_m": [
+        1.3381575191620732,
+        0.007306750281403031,
+        -0.0015685964022486797
+      ],
+      "truth_imu_delta_m": [
+        1.3321765141340176,
+        0.00021722044372207705,
+        -3.1184884458829165e-05
+      ],
+      "error_m": 0.009401993865134517,
+      "evaluation": "one initial orientation alignment; actual IMU mounting point; no truth enters estimator"
+    },
+    "rmuc_original_lk_and_lio": {
+      "name": "original_lio_tracks_ue_motion",
+      "passed": true,
+      "estimate_delta_m": [
+        1.3956486781225446,
+        0.004094651375010111,
+        0.0006088285028720188
+      ],
+      "aligned_estimate_delta_m": [
+        1.3956488442238042,
+        0.00361788667479285,
+        0.0018931719421562585
+      ],
+      "truth_imu_delta_m": [
+        1.3938930976539998,
+        0.00022055636719908733,
+        -0.00030027353127326517
+      ],
+      "error_m": 0.004408594138859169,
+      "evaluation": "one initial orientation alignment; actual IMU mounting point; no truth enters estimator"
+    }
+  },
+  "manual_response": [
+    {
+      "name": "steering_step_response",
+      "passed": true,
+      "detail": "90deg lateral step: target start 5.3ms, wheel command 8.9ms, all modules >=80deg 96.7ms; actual world ticks, not OS latency"
+    },
+    {
+      "name": "moving_direction_response",
+      "passed": true,
+      "detail": "0.6m/s moving 90deg input change: target heading within 10deg 258.8ms; actual velocity within 15deg 251.5ms"
+    }
+  ],
+  "offline": {
+    "protocol_tests": 19,
+    "json_schema_validated": true,
+    "powershell_syntax": true,
+    "bash_syntax": true,
+    "ubuntu_native": false
+  },
+  "limits": [
+    "Ideal ray pattern and constant reflectivity; not a Mid-360 optical replica or calibrated hardware",
+    "Actual rays share their physical frame time;1ms quantization, no invented5us physics",
+    "Local single-robot estimator only; original output topics are not yet isolated for multiple robots",
+    "Initial orientation alignment used only for independent error evaluation; no truth enters Point-LIO",
+    "Fixed1ms simulation can run near0.3x wall time; no real-time guarantee",
+    "No complete Nav2/behavior/vision/referee/multiplayer or native Ubuntu acceptance"
+  ],
+  "process_note": "Probes exited0; UE/test child processes are terminated by harness after verification. Invalid original parameter exits2; invalid UE profile termination uses explicit error logs as well as actual exit status."
+}

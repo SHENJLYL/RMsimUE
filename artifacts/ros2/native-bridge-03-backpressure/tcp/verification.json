@@ -1,0 +1,132 @@
+{
+  "scope": "actual native UE TCP/physics/rendering; ROS topic proof is separate",
+  "status": "failed",
+  "checks": [
+    {
+      "name": "native_clock_and_image",
+      "passed": true,
+      "frames": 19,
+      "width": 640,
+      "height": 360,
+      "clock_ns": 2224684540
+    },
+    {
+      "name": "optical_projection_matches_real_armor",
+      "passed": true,
+      "projected_pixel": [
+        312.34445433709755,
+        114.05428381287027
+      ],
+      "red_pixels": 49,
+      "world_target": [
+        3.4,
+        0,
+        0.64
+      ]
+    },
+    {
+      "name": "forward_si_motion",
+      "passed": true,
+      "displacement": [
+        1.290691763661733,
+        0.004278116877152027,
+        1.2281922770824853e-05
+      ]
+    },
+    {
+      "name": "publisher_silence_brakes",
+      "passed": true,
+      "settled_drift_m": 0.0006902929342068675
+    },
+    {
+      "name": "left_si_motion",
+      "passed": true,
+      "displacement": [
+        -0.02112572943843194,
+        0.6247568599904096,
+        -0.0028898626489684354
+      ]
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 1,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 2,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_frame",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_frame",
+        "age_s": -1,
+        "rejected_count": 3,
+        "last_rejection": "frame"
+      }
+    },
+    {
+      "name": "reject_session_epoch",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_session_epoch",
+        "age_s": -1,
+        "rejected_count": 4,
+        "last_rejection": "session_epoch"
+      }
+    },
+    {
+      "name": "reject_sequence",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_sequence",
+        "age_s": -1,
+        "rejected_count": 5,
+        "last_rejection": "sequence"
+      }
+    },
+    {
+      "name": "reject_limits",
+      "passed": true,
+      "command": {
+        "accepted_seq": 156,
+        "status": "rejected_limits",
+        "age_s": -1,
+        "rejected_count": 6,
+        "last_rejection": "limits"
+      }
+    },
+    {
+      "name": "disconnect_and_new_session",
+      "passed": true,
+      "new_session": "BA0EAF094D7ED19D03C1A3A964CEF688",
+      "drift_m": 0.0003800107620728012
+    },
+    {
+      "name": "close_duplicate_key",
+      "passed": true
+    },
+    {
+      "name": "close_oversized",
+      "passed": true
+    }
+  ],
+  "error": "ConnectionError('native server disconnected')"
+}

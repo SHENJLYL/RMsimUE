@@ -1,0 +1,78 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_identity_and_launched_processes",
+      "passed": true,
+      "navigation": {
+        "phase": "localizing",
+        "starts": 1,
+        "identity": [
+          "6C386D0A49EA5D0B65F7D2AF65771F2C",
+          0
+        ],
+        "pids": {
+          "loam_interface": 35456,
+          "sensor_scan_generation": 32512,
+          "terrain_analysis": 4328,
+          "terrain_analysis_ext": 48640,
+          "pointcloud_to_laserscan": 35032,
+          "fake_vel_transform": 17312,
+          "map_server": 59300,
+          "amcl": 21996,
+          "lifecycle_manager_localization": 49656
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-04-wave-diagnostic\\ros\\navigation\\20261116T005603Z-58996",
+        "map_id": "rmuc2027",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "rmuc2027",
+        "source_md5": "b0453f53370193c59ef594a56003872b",
+        "kind": "rm_mesh_map"
+      }
+    }
+  ],
+  "localization_only": false,
+  "map_id": "rmuc2027",
+  "goal": [
+    9.45,
+    6.4
+  ],
+  "last_navigation": {
+    "phase": "localizing",
+    "starts": 1,
+    "identity": [
+      "6C386D0A49EA5D0B65F7D2AF65771F2C",
+      0
+    ],
+    "pids": {
+      "loam_interface": 35456,
+      "sensor_scan_generation": 32512,
+      "terrain_analysis": 4328,
+      "terrain_analysis_ext": 48640,
+      "pointcloud_to_laserscan": 35032,
+      "fake_vel_transform": 17312,
+      "map_server": 59300,
+      "amcl": 21996,
+      "lifecycle_manager_localization": 49656
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-04-wave-diagnostic\\ros\\navigation\\20261116T005603Z-58996",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": false,
+    "localization_candidate": false,
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 349,
+  "has_odometry": true,
+  "has_terrain": true,
+  "error": "TimeoutError('navigation observation timeout')",
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom"
+}

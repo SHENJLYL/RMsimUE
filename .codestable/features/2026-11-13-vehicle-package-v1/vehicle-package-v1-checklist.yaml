@@ -1,0 +1,30 @@
+feature: 2026-11-13-vehicle-package-v1
+steps:
+  - id: manifest
+    action: Define and validate package paths and manifest fields.
+    status: done
+  - id: urdf
+    action: Parse and validate the robot tree, geometry and inertial data.
+    status: done
+  - id: examples
+    action: Add two packages and canonical inspect/export commands.
+    status: done
+  - id: verification
+    action: Run acceptance scenarios and capture output.
+    status: done
+checks:
+  - id: S1
+    description: Two distinct valid vehicle packages.
+    status: passed
+  - id: S2
+    description: Complete deterministic canonical export.
+    status: passed
+  - id: S3
+    description: Malformed and escaping packages are rejected.
+    status: passed
+  - id: S4
+    description: Source and existing output preserved on failure.
+    status: passed
+  - id: S5
+    description: CLI and regression suite run on the current host.
+    status: passed

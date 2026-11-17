@@ -1,0 +1,13 @@
+feature: 2026-11-16-ros2-native-bridge
+steps:
+  - {id: environment, status: done, action: Native Humble tf2_msgs installed and imported; lock updated.}
+  - {id: server, status: done, action: Bounded loopback transport and synchronous Chaos clock; prephysics lease and reconnect invalidation verified.}
+  - {id: sensors, status: done, action: Rendered RGB8 at 1280x720 and fixed60deg optics; matched Image/Info/TF stamps and real landmark.}
+  - {id: native_proof, status: done, action: Installed native ros2 run bridge and drive_demo move the physical rig; failures/reconnect/reset gates passed.}
+  - {id: records, status: done, action: Guide and scoped acceptance recorded; Ubuntu/full sentry/motor loop not claimed.}
+checks:
+  - {id: native_ros_package, status: passed, evidence: artifacts/ros2/final-cli-demo-02/ros/verification.json}
+  - {id: physical_ros_control, status: passed, evidence: artifacts/ros2/final-cli-demo-02/ros/verification.json}
+  - {id: image_info_tf_clock, status: passed, evidence: artifacts/ros2/final-tcp-contract/tcp/verification.json}
+  - {id: rejection_disconnect_reset, status: passed, evidence: artifacts/ros2/native-release-summary.json}
+  - {id: manual_regression, status: passed, evidence: artifacts/ros2/manual-regression/default/verification.json}

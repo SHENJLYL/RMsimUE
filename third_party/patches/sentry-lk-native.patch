@@ -1,0 +1,242 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,9 @@
+ cmake_minimum_required(VERSION 3.8)
+ project(chassis_controllers)
++if(MSVC)
++    add_compile_definitions(_USE_MATH_DEFINES NOMINMAX)
++    add_compile_options(/utf-8)
++endif()
+ 
+ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+     add_compile_options(-Wall -Wextra -Wpedantic)
+--- a/include/chassis_controllers/lk_full_wheel_chassis_controller.hpp
++++ b/include/chassis_controllers/lk_full_wheel_chassis_controller.hpp
+@@ -5,6 +5,9 @@
+ 
+ #include <rclcpp/rclcpp.hpp>
+ #include <chrono>
++#include <algorithm>
++#include <cmath>
++#include <stdexcept>
+ 
+ #include <std_msgs/msg/string.hpp>
+ 
+@@ -22,6 +25,7 @@
+ public:
+     explicit LKFullWheelChassisController(const rclcpp::NodeOptions &options = rclcpp::NodeOptions())
+         : Node("lk_full_wheel_chassis_controller", options) {
++        feedback_driven_=this->declare_parameter<bool>("feedback_driven",false);
+         this->declare_parameter<int32_t>("front_left_ecd_zero", 30507);
+         this->declare_parameter<int32_t>("front_right_ecd_zero", 21248);
+         this->declare_parameter<int32_t>("back_left_ecd_zero", 23534);
+@@ -53,9 +57,14 @@
+                 this->create_subscription<
+                     chassis_controllers::msg::ChassisControl>(
+                     this->get_parameter("chassis_cmd_read_topic").as_string(),
+-                    rclcpp::SensorDataQoS(),
++                    rclcpp::SensorDataQoS().keep_last(1),
+                     [this](chassis_controllers::msg::ChassisControl::SharedPtr msg) {
++                        if (!std::isfinite(msg->x_speed) || !std::isfinite(msg->y_speed) || !std::isfinite(msg->spin_speed) ||
++                            std::abs(msg->x_speed)>20 || std::abs(msg->y_speed)>20 || std::abs(msg->spin_speed)>20) {
++                            control_command_.emergency_stop=1; last_command_={}; return;
++                        }
+                         this->control_command_ = *msg;
++                        last_command_=std::chrono::steady_clock::now();
+                     }
+                 );
+ 
+@@ -63,9 +72,11 @@
+                 this->create_subscription<
+                     custom_msgs::msg::ReadLkMotorMulti>(
+                     this->get_parameter("steer_motor_read_topic").as_string(),
+-                    rclcpp::SensorDataQoS(),
++                    rclcpp::SensorDataQoS().keep_last(1),
+                     [this](custom_msgs::msg::ReadLkMotorMulti::SharedPtr msg) {
+                         this->steer_motor_status_ = *msg;
++                        last_steer_=std::chrono::steady_clock::now();
++                        control_from_feedback();
+                     }
+                 );
+ 
+@@ -73,9 +84,11 @@
+                 this->create_subscription<
+                     custom_msgs::msg::ReadLkMotorMulti>(
+                     this->get_parameter("wheel_motor_read_topic").as_string(),
+-                    rclcpp::SensorDataQoS(),
++                    rclcpp::SensorDataQoS().keep_last(1),
+                     [this](custom_msgs::msg::ReadLkMotorMulti::SharedPtr msg) {
+                         this->wheel_motor_status_ = *msg;
++                        last_wheel_=std::chrono::steady_clock::now();
++                        control_from_feedback();
+                     }
+                 );
+ 
+@@ -83,20 +96,23 @@
+                 this->create_publisher<
+                     custom_msgs::msg::WriteLkMotorBroadcastCurrentControl>(
+                     this->get_parameter("steer_motor_write_topic").as_string(),
+-                    rclcpp::SensorDataQoS()
++                    rclcpp::SensorDataQoS().keep_last(1)
+                 );
+ 
+         wheel_motor_pub_ =
+                 this->create_publisher<
+                     custom_msgs::msg::WriteLkMotorBroadcastCurrentControl>(
+                     this->get_parameter("wheel_motor_write_topic").as_string(),
+-                    rclcpp::SensorDataQoS()
++                    rclcpp::SensorDataQoS().keep_last(1)
+                 );
+ 
+         control_timer_ =
+                 this->create_wall_timer(
+                     1ms,
+-                    [this] { control_loop(); });
++                    [this] {
++                        if (!feedback_driven_ || std::chrono::steady_clock::now()-last_steer_>100ms ||
++                            std::chrono::steady_clock::now()-last_wheel_>100ms) control_loop();
++                    });
+ 
+ #ifdef POWER_FITTING
+         fit_loop_timer_ = this->create_wall_timer(
+@@ -108,6 +124,25 @@
+     }
+ 
+ private:
++    bool feedback_driven_=false;
++    int64_t last_feedback_stamp_=-1;
++    void control_from_feedback() {
++        if (!feedback_driven_) return;
++        const auto &a=steer_motor_status_.header.stamp;
++        const auto &b=wheel_motor_status_.header.stamp;
++        if (a.sec!=b.sec || a.nanosec!=b.nanosec) return;
++        const int64_t stamp=static_cast<int64_t>(a.sec)*1000000000+a.nanosec;
++        if (stamp==last_feedback_stamp_) return;
++        if (stamp<last_feedback_stamp_) last_command_={};
++        const float ratio=last_feedback_stamp_>=0 && stamp>last_feedback_stamp_ ?
++            std::clamp(static_cast<float>(stamp-last_feedback_stamp_)/1000000.f,.1f,100.f):1.f;
++        for(auto &pid:steer_angle_pids_)pid.set_sample_ratio(ratio);
++        for(auto &pid:steer_speed_pids_)pid.set_sample_ratio(ratio);
++        for(auto &pid:wheel_speed_pids_)pid.set_sample_ratio(ratio);
++        last_feedback_stamp_=stamp;
++        control_loop();
++    }
++    std::chrono::steady_clock::time_point last_command_{},last_steer_{},last_wheel_{};
+     int32_t front_left_ecd_zero_;
+     int32_t front_right_ecd_zero_;
+     int32_t back_left_ecd_zero_;
+@@ -239,10 +274,12 @@
+     }
+ 
+     ShortestPath static calc_shortest_path(const int32_t current_ecd, const int32_t target_ecd) {
+-        const int32_t forwardDistanceA = (target_ecd - current_ecd + 32768) % 32768;
+-        const int32_t backwardDistanceA = (current_ecd - target_ecd + 32768) % 32768;
+-        const int32_t forwardDistanceB = (target_ecd - current_ecd + 32768 + (32768 / 2)) % 32768;
+-        const int32_t backwardDistanceB = (current_ecd - target_ecd + 32768 + (32768 / 2)) % 32768;
++        const int32_t current = ((current_ecd % 32768)+32768)%32768;
++        const int32_t target = ((target_ecd % 32768)+32768)%32768;
++        const int32_t forwardDistanceA = (target - current + 32768) % 32768;
++        const int32_t backwardDistanceA = (current - target + 32768) % 32768;
++        const int32_t forwardDistanceB = (target - current + 32768 + (32768 / 2)) % 32768;
++        const int32_t backwardDistanceB = (current - target + 32768 + (32768 / 2)) % 32768;
+ 
+         int32_t rotationAngle;
+         ShortestPath res{};
+--- a/include/chassis_controllers/utils/pid.hpp
++++ b/include/chassis_controllers/utils/pid.hpp
+@@ -50,8 +50,10 @@
+         void set_deadband(const float db) { deadband_ = db; }
+         void set_output_limit(const float max_out) { out_max_ = max_out; }
+         void set_integral_limit(const float max_iout) { i_max_ = max_iout; }
++        void set_sample_ratio(const float ratio) { sample_ratio_ = ratio>0 && ratio<=100 ? ratio:1.0f; }
+ 
+     private:
++        float sample_ratio_ = 1.0f; // Default preserves the original1ms discrete controller.
+         float kp_;
+         float ki_;
+         float kd_;
+--- a/package.xml
++++ b/package.xml
+@@ -20,6 +20,8 @@
+   <depend>std_msgs</depend>
+   <depend>sensor_msgs</depend>
+   <depend>custom_msgs</depend>
++  <depend>rclcpp</depend>
++  <depend>eigen</depend>
+ 
+   <export>
+     <build_type>ament_cmake</build_type>
+--- a/src/lk_full_wheel_chassis_controller.cpp
++++ b/src/lk_full_wheel_chassis_controller.cpp
+@@ -32,7 +32,16 @@
+ #endif
+ 
+ void LKFullWheelChassisController::control_loop() {
+-    if (control_command_.emergency_stop) {
++    const auto now=std::chrono::steady_clock::now();
++    const bool fresh=now-last_command_<=250ms && now-last_steer_<=100ms && now-last_wheel_<=100ms;
++    const bool online=steer_motor_status_.motor1_online && steer_motor_status_.motor2_online &&
++        steer_motor_status_.motor3_online && steer_motor_status_.motor4_online &&
++        wheel_motor_status_.motor1_online && wheel_motor_status_.motor2_online &&
++        wheel_motor_status_.motor3_online && wheel_motor_status_.motor4_online;
++    if (!fresh || !online || control_command_.emergency_stop) {
++        for (auto &pid:steer_angle_pids_) pid.clear();
++        for (auto &pid:steer_speed_pids_) pid.clear();
++        for (auto &pid:wheel_speed_pids_) pid.clear();
+         steer_motor_command_.motor1_cmd = 0;
+         steer_motor_command_.motor2_cmd = 0;
+         steer_motor_command_.motor3_cmd = 0;
+@@ -103,17 +112,17 @@
+     chassis_ik_solution_.v_back_left = rpm_bl;
+     chassis_ik_solution_.v_back_right = rpm_br;
+ 
+-    const int16_t target_front_left_ecd =
+-            static_cast<int16_t>((chassis_ik_solution_.direction_front_left / (2.0f * M_PI)) * 32768 +
++    const int32_t target_front_left_ecd =
++            static_cast<int32_t>((chassis_ik_solution_.direction_front_left / (2.0f * M_PI)) * 32768 +
+                                  front_left_ecd_zero_) % 32768;
+-    const int16_t target_front_right_ecd =
+-            static_cast<int16_t>((chassis_ik_solution_.direction_front_right / (2.0f * M_PI)) * 32768 +
++    const int32_t target_front_right_ecd =
++            static_cast<int32_t>((chassis_ik_solution_.direction_front_right / (2.0f * M_PI)) * 32768 +
+                                  front_right_ecd_zero_) % 32768;
+-    const int16_t target_back_left_ecd =
+-            static_cast<int16_t>((chassis_ik_solution_.direction_back_left / (2.0f * M_PI)) * 32768 +
++    const int32_t target_back_left_ecd =
++            static_cast<int32_t>((chassis_ik_solution_.direction_back_left / (2.0f * M_PI)) * 32768 +
+                                  back_left_ecd_zero_) % 32768;
+-    const int16_t target_back_right_ecd =
+-            static_cast<int16_t>((chassis_ik_solution_.direction_back_right / (2.0f * M_PI)) * 32768 +
++    const int32_t target_back_right_ecd =
++            static_cast<int32_t>((chassis_ik_solution_.direction_back_right / (2.0f * M_PI)) * 32768 +
+                                  back_right_ecd_zero_) % 32768;
+ 
+     // optimize path
+--- a/src/utils/pid.cpp
++++ b/src/utils/pid.cpp
+@@ -15,10 +15,10 @@
+             return 0.0f;
+         }
+ 
+-        d_error_ = pre_error_ - last_error_;
++        d_error_ = (pre_error_ - last_error_) / sample_ratio_;
+ 
+         if (pre_error_ > -error_max_ && pre_error_ < error_max_) {
+-            sum_error_ += (pre_error_ + last_error_) / 2.0f;
++            sum_error_ += (pre_error_ + last_error_) / 2.0f * sample_ratio_;
+         }
+ 
+         last_error_ = pre_error_;
+@@ -65,10 +65,10 @@
+                               (std::fabs(sum_error_) < i_max_);
+ 
+         if (will_integrate) {
+-            result.K = kp_ + ki_ / 2.0f;
++            result.K = kp_ + ki_ * sample_ratio_ / 2.0f;
+             result.M = -kp_ * ref
+                        + ki_ * sum_error_
+-                       + ki_ * (-ref + last_error_) / 2.0f;
++                       + ki_ * (-ref + last_error_) / 2.0f * sample_ratio_;
+         } else {
+             result.K = kp_;
+             result.M = -kp_ * ref

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "mode": "self",
+  "checks": [
+    {
+      "name": "actual_scan_available",
+      "passed": true,
+      "scans": 9
+    },
+    {
+      "name": "own_vehicle_occludes_lidar",
+      "passed": true,
+      "points_on_own_vehicle": 765,
+      "returned_points": 10391
+    },
+    {
+      "name": "no_hit_rays_are_not_fake_returns",
+      "passed": true,
+      "returns": 93709,
+      "traced": 180600
+    }
+  ]
+}

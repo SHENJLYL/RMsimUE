@@ -1,0 +1,27 @@
+{
+  "schema_version":1,
+  "kind":"rm_flat_map",
+  "id":"warehouse_lanes",
+  "display_name":"Warehouse Lanes",
+  "units":"m",
+  "coordinate_system":"ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "floor":{"size_m":[24,16], "surface_z_m":0, "thickness_m":0.2, "color_rgb":[0.09,0.14,0.10]},
+  "boundary":{"height_m":2, "thickness_m":0.25},
+  "obstacles":[
+    {"id":"probe_box", "center_m":[4,1,0.8], "size_m":[0.8,0.8,1.6], "yaw_rad":0, "color_rgb":[0.68,0.36,0.12]},
+    {"id":"west_storage", "center_m":[-7,3,1], "size_m":[4,1.2,2], "yaw_rad":0, "color_rgb":[0.3,0.4,0.55]},
+    {"id":"east_storage", "center_m":[7,-3,1], "size_m":[3,1.2,2], "yaw_rad":0, "color_rgb":[0.3,0.4,0.55]},
+    {"id":"partition", "center_m":[-2,4,0.9], "size_m":[0.4,3,1.8], "yaw_rad":0, "color_rgb":[0.45,0.48,0.5]},
+    {"id":"diagonal_barrier", "center_m":[0,-5,0.5], "size_m":[2,0.4,1], "yaw_rad":0.5, "color_rgb":[0.75,0.55,0.15]}
+  ],
+  "spawns":[
+    {"id":"default", "team":"red", "position_m":[-3,-2,0], "yaw_rad":0.35},
+    {"id":"blue", "team":"blue", "position_m":[7,4,0], "yaw_rad":3.141592653589793}
+  ],
+  "regions":[
+    {"id":"red_spawn", "kind":"spawn", "team":"red", "center_m":[-3,-2], "size_m":[2,2]},
+    {"id":"blue_supply", "kind":"supply", "team":"blue", "center_m":[7,4], "size_m":[2,2]},
+    {"id":"central_capture", "kind":"capture", "team":"neutral", "center_m":[0,2], "size_m":[2,2]}
+  ],
+  "inspection_obstacle_id":"probe_box"
+}

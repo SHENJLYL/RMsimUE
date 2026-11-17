@@ -1,0 +1,156 @@
+{
+  "scope": "actual native UE TCP/physics/rendering; ROS topic proof is separate",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "native_clock_and_image",
+      "passed": true,
+      "frames": 19,
+      "width": 640,
+      "height": 360,
+      "clock_ns": 2124186043
+    },
+    {
+      "name": "optical_projection_matches_real_armor",
+      "passed": true,
+      "projected_pixel": [
+        560.7331963440936,
+        123.68658223161015
+      ],
+      "red_pixels": 49,
+      "world_target": [
+        4.0,
+        -1.7,
+        0.64
+      ]
+    },
+    {
+      "name": "sensor_optics_independent_of_observer",
+      "passed": true,
+      "sensor_hfov_rad": 1.0471975511965976,
+      "observer_hfov_rad": 0.5235987755982988
+    },
+    {
+      "name": "forward_si_motion",
+      "passed": true,
+      "displacement": [
+        1.2715636173111422,
+        0.003881039963715278,
+        5.785363360342194e-06
+      ]
+    },
+    {
+      "name": "publisher_silence_brakes",
+      "passed": true,
+      "settled_drift_m": 0.0006654712585292011
+    },
+    {
+      "name": "left_si_motion",
+      "passed": true,
+      "displacement": [
+        -0.008499268916038138,
+        0.637182375765402,
+        -0.003136295365475981
+      ]
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 2,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 3,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_frame",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_frame",
+        "age_s": -1,
+        "rejected_count": 4,
+        "last_rejection": "frame"
+      }
+    },
+    {
+      "name": "reject_session_epoch",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_session_epoch",
+        "age_s": -1,
+        "rejected_count": 5,
+        "last_rejection": "session_epoch"
+      }
+    },
+    {
+      "name": "reject_sequence",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_sequence",
+        "age_s": -1,
+        "rejected_count": 6,
+        "last_rejection": "sequence"
+      }
+    },
+    {
+      "name": "reject_limits",
+      "passed": true,
+      "command": {
+        "accepted_seq": 155,
+        "status": "rejected_limits",
+        "age_s": -1,
+        "rejected_count": 7,
+        "last_rejection": "limits"
+      }
+    },
+    {
+      "name": "disconnect_and_new_session",
+      "passed": true,
+      "new_session": "0455DD0142C6D11B4A0714AA8A8156BD",
+      "drift_m": 0.00038467434228294824
+    },
+    {
+      "name": "close_duplicate_key",
+      "passed": true
+    },
+    {
+      "name": "close_oversized",
+      "passed": true
+    },
+    {
+      "name": "nonfinite_rejected",
+      "passed": true
+    },
+    {
+      "name": "partial_command_not_applied",
+      "passed": true
+    },
+    {
+      "name": "fragment_completed_once",
+      "passed": true
+    },
+    {
+      "name": "slow_reader_disconnected_bounded",
+      "passed": true,
+      "last_disconnect": "slow_reader"
+    }
+  ],
+  "states": 520,
+  "images": 107
+}

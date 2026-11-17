@@ -1,0 +1,62 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_and_original_programs",
+      "passed": true,
+      "navigation": {
+        "phase": "running",
+        "starts": 1,
+        "identity": [
+          "66F3EDFC48240565EFC594AA89FD301C",
+          0
+        ],
+        "pids": {
+          "loam_interface": 23104,
+          "sensor_scan_generation": 51352,
+          "terrain_analysis": 42988,
+          "terrain_analysis_ext": 55832,
+          "pointcloud_to_laserscan": 5140,
+          "fake_vel_transform": 31612,
+          "map_server": 25952,
+          "amcl": 47476,
+          "lifecycle_manager_localization": 23924
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\native-02-localization\\ros\\navigation\\20261115T233550Z-40136",
+        "map_id": "import_lab",
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "import_lab",
+        "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+        "kind": "rm_flat_map"
+      }
+    }
+  ],
+  "localization_only": true,
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "66F3EDFC48240565EFC594AA89FD301C",
+      0
+    ],
+    "pids": {
+      "loam_interface": 23104,
+      "sensor_scan_generation": 51352,
+      "terrain_analysis": 42988,
+      "terrain_analysis_ext": 55832,
+      "pointcloud_to_laserscan": 5140,
+      "fake_vel_transform": 31612,
+      "map_server": 25952,
+      "amcl": 47476,
+      "lifecycle_manager_localization": 23924
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\native-02-localization\\ros\\navigation\\20261115T233550Z-40136",
+    "map_id": "import_lab",
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 0,
+  "error": "TimeoutError('navigation observation timeout')"
+}

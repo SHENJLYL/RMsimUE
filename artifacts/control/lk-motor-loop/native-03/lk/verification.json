@@ -1,0 +1,65 @@
+{
+  "status": "failed",
+  "scope": "native original LK PID/power loop and actual current-driven Chaos joints",
+  "checks": [
+    {
+      "name": "native_original_node_and_feedback",
+      "passed": false,
+      "node_executable": "ros2_ws/install_control/chassis_controllers/lib/chassis_controllers/lk_full_wheel_chassis_controller.exe",
+      "motors": {
+        "enabled": true,
+        "current_active": false,
+        "order": "front_left,front_right,back_left,back_right",
+        "amps_per_count": 0.008056640625,
+        "wheel_nm_per_amp": 0.14,
+        "steer_nm_per_amp": 0.14,
+        "calibrated": false,
+        "steer": [
+          {
+            "encoder": 32755,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32758,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 2,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32756,
+            "speed_deg_s": 0,
+            "current": 0
+          }
+        ],
+        "wheel": [
+          {
+            "encoder": 50,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 56,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 55,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 54,
+            "speed_deg_s": 0,
+            "current": 0
+          }
+        ]
+      }
+    }
+  ],
+  "error": "AssertionError('native_original_node_and_feedback')"
+}

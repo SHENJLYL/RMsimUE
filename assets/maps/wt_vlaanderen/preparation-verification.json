@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "scope": "prepared source assets and explicit instance transforms; not Unreal rendering or gameplay",
+  "source_instances": 45675,
+  "serialized_source_instances_checked": 35825,
+  "affine_baked_instances": 9850,
+  "max_serialized_corner_error_m": 0.0005340680263618183,
+  "terrain_exact_bytes": true,
+  "visual_assets": 726,
+  "collision_assets": 639,
+  "checked_file_hashes": 1365,
+  "fbx_roundtrips": [
+    {
+      "id": "prop_france_town_building_2_floors_c",
+      "triangles": 2399,
+      "uv_layers": [
+        3
+      ],
+      "bounds_error_m": 1.430511474609375e-06
+    },
+    {
+      "id": "affine_127_132_000",
+      "triangles": 6240,
+      "uv_layers": [
+        3
+      ],
+      "bounds_error_m": 0.00020599365234375
+    },
+    {
+      "id": "world_static_000",
+      "triangles": 178792,
+      "uv_layers": [
+        1
+      ],
+      "bounds_error_m": 0.0009765625
+    },
+    {
+      "id": "col_prop_france_town_building_2_floors_c",
+      "triangles": 786,
+      "uv_layers": [
+        0
+      ],
+      "bounds_error_m": 1.430511474609375e-06
+    }
+  ]
+}

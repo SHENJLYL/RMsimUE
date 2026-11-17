@@ -1,0 +1,30 @@
+feature: 2026-11-13-manual-aim-sentry
+steps:
+  - id: source-audit
+    action: Audit Blender geometry, materials and pivots without modifying source.
+    status: done
+  - id: export
+    action: Export grouped assets and the consumer manifest.
+    status: done
+  - id: unreal-runtime
+    action: Implement import, manual controls, collision and camera views.
+    status: done
+  - id: runtime-proof
+    action: Compile and verify in actual Unreal Engine.
+    status: done
+checks:
+  - id: A1
+    description: Source hash unchanged and provenance recorded.
+    status: passed
+  - id: A2
+    description: Parts/materials load at correct dimensions and pivots.
+    status: passed
+  - id: A3
+    description: Manual chassis/gimbal commands and collision verified.
+    status: passed
+  - id: A4
+    description: External and onboard cameras visually verified.
+    status: passed
+  - id: A5
+    description: Reproducible native build/run evidence with clear limitations.
+    status: passed

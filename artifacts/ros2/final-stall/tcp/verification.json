@@ -1,0 +1,12 @@
+{
+  "scope": "actual native UE TCP/physics/rendering; ROS topic proof is separate",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "game_thread_stall_invalidates_buffered_commands",
+      "passed": true,
+      "last_disconnect": "game_tick_stall",
+      "drift_m": 0.001230252277583167
+    }
+  ]
+}

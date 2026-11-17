@@ -1,0 +1,145 @@
+{
+  "status": "native_windows_scoped_verified",
+  "utc": "2026-11-15T21:16:39.556036+00:00",
+  "module_sha256": "01456db6a5ae30fd9ce6644c5679bbc0d8461f796d8ae5d7f7024292a149a8d0",
+  "runs": {
+    "aim": {
+      "path": "native-06-release/aim/verification.json",
+      "checks": 21,
+      "report_sha256": "61dfbbcc7e15f8742fc9754f3b9b484bb78c58ecb89908a4f5f33f217cc25fbf"
+    },
+    "lk_aim": {
+      "path": "native-04-lk-combined/aim/verification.json",
+      "checks": 20,
+      "report_sha256": "6ce92cf89d7b982db7236c0c7a1b8e16535ec0c02e09a17aee9bcbd3ecc0be4a"
+    },
+    "observe": {
+      "path": "native-05-observe/aim/verification.json",
+      "checks": 4,
+      "report_sha256": "db6d17d15fabd7e028f96254dd108b8daea06c364526b231133be4b82932fc94"
+    },
+    "velocity": {
+      "path": "regression-velocity/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "f5d948782d8dec02d3a2f68ea116773237ef7de029e1b96466f460939b2d5eb9"
+    },
+    "tcp": {
+      "path": "regression-tcp/tcp/verification.json",
+      "checks": 19,
+      "report_sha256": "be440c35fa9342b5697bdf0b8f3aacf6a9dea6836a66eaa7dbb9feb57f66345d"
+    },
+    "combat": {
+      "path": "regression-combat/verification.json",
+      "checks": 15,
+      "pngs": 10,
+      "report_sha256": "f2466236ed0e4144c95a0f601a1fceba2a33a8039e1d656c431fbc1e4fde26f7",
+      "module_sha256": "01456DB6A5AE30FD9CE6644C5679BBC0D8461F796D8AE5D7F7024292A149A8D0"
+    },
+    "manual": {
+      "path": "regression-manual/default/verification.json",
+      "checks": 19,
+      "pngs": 12,
+      "report_sha256": "6b0e2dfb10b1704f23dab732147e80369ec7bf8b91055f60f9d2272f445f8c38",
+      "module_sha256": "01456DB6A5AE30FD9CE6644C5679BBC0D8461F796D8AE5D7F7024292A149A8D0"
+    }
+  },
+  "input_sha256": {
+    "unreal/RMSim/Source/RMSim/CombatProbe.cpp": "78e2378322fc7c6394ca7f782f454b458c910e78c3bbe5846a09bcd1d4b596ff",
+    "unreal/RMSim/Source/RMSim/ContactProbe.cpp": "658b8d19c374ca8fd2bc4c1e4d3d8d23ec30fe388f459d49e64cf662620335ff",
+    "unreal/RMSim/Source/RMSim/GyroProbe.cpp": "a6ecc8b4033a1a0551957b0b22e35e6f7111d3b12d1ecfb2984fa2452a1549ed",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp": "b605043728bd5c42b3f40d1f2413b386ec05b091c313847d379e275657d16698",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.h": "ea9bf96d6b2ca80a30b7d1ddc852950abcf455323949c1a53d97e227f28e0105",
+    "unreal/RMSim/Source/RMSim/ManualControlProbe.cpp": "1851b2edb0961bc9425225b5b14e6d20aa9e6b14b79c010807d746cdceeb1a66",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.cpp": "15bef529e17c630f55963badf40b3c08dd325bc31e5af7eb80b17094433e5f41",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.h": "49746ec6c5331e3a0496c7759945ce8cee72b11f53079d324383f05c1703b3cc",
+    "unreal/RMSim/Source/RMSim/MapStage.cpp": "c7ba9a3db1a2562aabc335524a5e4bf0abba22cea6ecfa8f36c7fd256d93eca8",
+    "unreal/RMSim/Source/RMSim/MapStage.h": "138714912781b9e15f5e2aaf8f8022cc5f9bbeaa99735ac1977683c537cc5f2f",
+    "unreal/RMSim/Source/RMSim/MeshMap.cpp": "6a97903da1fd499c68884a39e49b78309d32678f06e488dde2c1b4aa66064bc9",
+    "unreal/RMSim/Source/RMSim/RMSim.Build.cs": "22bfc20426d6cbc1a686f49a54532cfaa38d80278909d553eca69d91740dc296",
+    "unreal/RMSim/Source/RMSim/RMSim.cpp": "2ee8a82f63ac09c567742f553c546bae32ec45e7ed0d91ef45673fdbb6b73ef8",
+    "unreal/RMSim/Source/RMSim/RosAimController.cpp": "5e627bd973629611c6d024912f071c0cc96ce8cc62f81536fedca1ac5b6c4eec",
+    "unreal/RMSim/Source/RMSim/RosAimController.h": "061de51d2a59bfd22110bd91faaca22b8fd891b42ed6a180a0c736739f4cdcb3",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp": "d5fc65d99dcc1cbe85e6bf557f2488796b0068ed3f9745d3f21453787334bef6",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.h": "1daed2d8a1d2396c52064bbd0fdca0116d6367ad4bca1be2c0da7bd0b560fbf1",
+    "unreal/RMSim/Source/RMSim/RosCoordinates.h": "9cc91f4abff0cb58610ae8eabeb2035aaadef7886946df45f29bfdfe1c3a9a2a",
+    "unreal/RMSim/Source/RMSim/TerrainProbe.cpp": "af533210c8b7d3a3a4036a2d26f9db944ef438446087452f27152ef39ba1501b",
+    "unreal/RMSim/Source/RMSim/TractionProbe.cpp": "e842f6d8428c576cc756f4fa4d4df3d32f88cdac7996e8b6c07cbab07b2de281",
+    "unreal/RMSim/Source/RMSim/TrainingRange.cpp": "1aa8da6f701484af1228207eeea36eb9f96190b0481e61f6a489dee3c6a47697",
+    "unreal/RMSim/Source/RMSim/TrainingRange.h": "2a4e9f94cf8b1a6fccaa606f10808d3ea745bfec1cc70d39bcdac6f972cdaa90",
+    "unreal/RMSim/Source/RMSim/VehicleContactPhysics.cpp": "b4a2aa88d295b2b525a4c7575b244d47fca3aaa11313079320d29a1ca894bf2e",
+    "unreal/RMSim/Source/RMSim/VehicleDrive.cpp": "95261334afd62a4e2565d2c4e0ae3a6cccc58ab847b4e1e4e27c594b8ac5fdc1",
+    "unreal/RMSim/Source/RMSim/VehicleMotorDrive.cpp": "8a367025587921fcbf1057ac2d80aabeac87ae80a98f051ac455606e1af67826",
+    "unreal/RMSim/Source/RMSim/VehicleRig.cpp": "7605b094e1dc63b6b36be3a03284bc7c3b9439d6cbe03fe04992d04f0c46b85f",
+    "unreal/RMSim/Source/RMSim/VehicleRig.h": "3cf412f141fcd633136ee0d7a697870ad759639651a89f6d28cc42be736a5733",
+    "unreal/RMSim/Source/RMSim/VehicleTerrain.cpp": "538ef9dff6a32d44561debc9c23603223910fbbd0f3b14b22b8bf1c249e71c4a",
+    "unreal/RMSim/Source/RMSim/Control/SentrySwerveKinematics.h": "84cf3907108cefa30ee634cee289f172014dd30f216d8841fc981b52162094b5",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_adapter.py": "f1411a4d7cabcd998bb3f3778f4b6f8bf39f8db5e97a582754ca360c27b0ef40",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_demo.py": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/control_dlls.py": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/drive_demo.py": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lk_adapter.py": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py": "f41507bcfee8497f963ded2502b54942fc10fb1441459ff0461eed6814b504c3",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/protocol.py": "c44ebcc6e059db25ccaa63256c6d0e604ab804054de622c90c4dc5ea015c0fdb",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/transport.py": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/__init__.py": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+    "ros2_ws/src/sp_msgs/CMakeLists.txt": "450cbf4bec786e81a8d00a9567792701635cacc531de82fdc3a050006f21279c",
+    "ros2_ws/src/sp_msgs/package.xml": "2e510a794b7c92f7a7e63b293eaffd3402da8e53f251899a3d445952df507356",
+    "ros2_ws/src/sp_msgs/msg/AutoAimCommandMsg.msg": "f73c347d68233c848ed196403a7a3a13d898018e2742a02f487c244beeba6b6f",
+    "ros2_ws/src/sp_msgs/msg/AutoaimTargetMsg.msg": "b3e78e92f0bb1900d2423c3bdaf540eca5bcfee2d29ccf378c91e181ef00f360",
+    "ros2_ws/src/sp_msgs/msg/EnemyStatusMsg.msg": "c5ea51debeb14aa5d756abd905abedcac68bf8af1fb1b435956342e5c9708a7c",
+    "ros2_ws/src/pb_rm_interfaces/CMakeLists.txt": "49802dd35f097f0560158b387bc1c9ad9ac5669fa09d077857cc08137f355910",
+    "ros2_ws/src/pb_rm_interfaces/LICENSE": "e27d20d301ddb6a8386f5cf3485a0c5c01b9062a4cc32bec265a7deabc82177f",
+    "ros2_ws/src/pb_rm_interfaces/package.xml": "43a497bbdccc3c20440887f95877ede53468c2af83d2438be1898b0550adc496",
+    "ros2_ws/src/pb_rm_interfaces/README.md": "3bfeb6c97cb23e2040b92ab9e7bf455fcfb380bbd9cf12808333eee11ef93cea",
+    "ros2_ws/src/pb_rm_interfaces/msg/Gimbal.msg": "7bcefebf551657ad89f190818bdea40b18b8aa84b697f48256e219d2107b21d7",
+    "ros2_ws/src/pb_rm_interfaces/msg/GimbalCmd.msg": "6332f3f6a58112c27b642e44bdeffa5cab823670c7d309a3c2d8f0f4d4516236",
+    "ros2_ws/src/pb_rm_interfaces/msg/Models.msg": "82469a9669ab007d51ff32b81fd2784c6d7e82c89105e3e1f084c864cdaac9f1",
+    "ros2_ws/src/pb_rm_interfaces/msg/RobotStateInfo.msg": "4191a84985e5c32a5527cda9886d503f7590e5577e6a18994776dc751622cd41",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/Buff.msg": "63c63fdea181804bc9cd85052a41a47d800a2c78c7f3a00daf0f0e11da7ee089",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/EventData.msg": "85d95af1ae9a0133153e27d34248ee16e43c12de8eb352b42210a71d2ea05ce2",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/GameRobotHP.msg": "f4f0210a28176b5a44649e935b75229097b05e0a1fb87d352a723149b166c655",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/GameStatus.msg": "4d79fef478d44b8be33f367c77b42e2721914947092770db2bf34d56cf5e287a",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/GroundRobotPosition.msg": "22906ef492800cf7a1b2aed9ee2c33825630c8c0f66a90e39cccdeae491a72b3",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/RfidStatus.msg": "da5e5b50ac395f296128b9a3aa761a8b383dd1112c318358727fc97e9e941224",
+    "ros2_ws/src/pb_rm_interfaces/msg/referee/RobotStatus.msg": "bffa8921fc0a3feb68404b488beff0a4847e7be38af14d1eaaaced9bb3797d31"
+  },
+  "original_interface_files_verified": 20,
+  "message_definitions_unchanged": true,
+  "installed_bridge_python_matches": true,
+  "protocol_checks": 14,
+  "powershell_syntax_files": 9,
+  "bash_scope": "Windows syntax check only, not Ubuntu runtime",
+  "limits": [
+    "rate-limited kinematic gimbal; neutral collision proxy; not original hardware gimbal/fire motor loop",
+    "calibration fixture angles, not real vision recognition",
+    "training rules not official RMUC referee",
+    "native Ubuntu and full sentry_ws not verified"
+  ],
+  "gui": {
+    "real_R_observed": true,
+    "fps_observed": [
+      240,
+      270,
+      261
+    ],
+    "after_ammo": 100,
+    "targets_restored": true,
+    "subsequent_aim_demo_moves_gimbal": true,
+    "scope": "native UI observation and actual key; not latency measurement"
+  },
+  "final_manual_gui": {
+    "observed": true,
+    "pid": 54648,
+    "map": "RMUC2027 V1.0.0",
+    "fps_observed": [
+      245,
+      235,
+      236
+    ],
+    "real_R_reset": true,
+    "ammo_after_reset": 100,
+    "gyro": "off",
+    "ros_control": false,
+    "utc": "2026-11-15T21:18:41.813558+00:00"
+  }
+}

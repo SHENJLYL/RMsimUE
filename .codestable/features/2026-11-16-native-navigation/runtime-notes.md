@@ -1,0 +1,24 @@
+# 原生导航执行记录
+
+- 固定原导航ffd68e5f、Omni控制器b542c579、Nav2插件e6778ca4、扫描转换2879a024。原实车启动明确use_amcl=True；small_gicp a0d20483已保留原副本但不是本轮默认运行路径。
+- Nav2原生依赖可从RoboStack取得，版本1.1.20。锁差异为107净新增及4个压缩/图像库替换，已保留前后锁；“零替换”断言失败后未阻断安装是编排错误，不能称为纯新增。原ROS/Python包未替换。
+- 原8包Windows构建通过。自定义layers.dll与Nav2内置同名，改为pb_nav2_layers并同步XML；算法类/实现保持原样。统一部署18程序/301非系统DLL约272MB，无全局PATH或系统库变更。
+- UE新增地图id/类型/原文件MD5，导航栅格带同源MD5并在runner检查，避免换图后误加载旧占用。已编译；import_lab真实启动确认地图身份匹配。
+- 原loam/sensor_scan配置以IMU frame对应Point-LIO的实际位姿参考，不能误用LiDAR光心；原fake_vel_transform仿真translation_scale=1。原Humble1.1.20实际参数名为progress_checker_plugin单数，适配配置据源码核对。
+- native-01-localization：原节点启动，但生命周期管理器访问异常0xc0000005，未进入AMCL收敛；不记导航通过。独立生命周期程序移除UE/传感器/autostart仍复现。
+- 同Nav2官方1.1.20(a0970867)源码原生重建仍复现，排除只换该预编译组件即可修复的假设。原checkout为明确的sparse nav2_lifecycle_manager子树，非全量Nav2源码下载。
+- 临时NAV_BOOT日志覆盖参数声明/读取、preshutdown和服务创建，最后可见hardware_id_set。正在用实际异常栈区分诊断注册和构造后启动故障；临时诊断输出须在定位后移除。
+- 最小std::mutex默认/兼容宏两版本，在System32及与Nav2同目录/父环境下都正常，MSVCP140实际14.51.36247，旧运行库互斥锁假设已排除。没有采用该宏去掩盖问题。
+- 独立diagnostic_updater实例的构造、内部锁、add和force_update也正常，退出0。首个夹具缺NOMINMAX导致编译失败，修正后通过；这不是导航算法问题。
+- 手动预览已为导航验证关闭；当前不得称窗口仍留开。最终收尾恢复默认RMUC，继续区分临时夹具/静态检查/实际导航验收。
+- 故障栈定位DiagnosticTaskVector::addInternal的虚调用。普通Updater跨DLL对象复现，派生Probe对象不复现；CMake官方文档明确委托构造/虚表需要显式dllimport。固定diagnostics4.0.7(a1b95037)原源码，GenerateExportHeader为Updater及基类补可见性后，普通夹具退出0，生命周期管理器持续正常。没有删诊断、改系统运行库或采用无关mutex兼容宏；临时NAV_BOOT/异常钩子已从产品源码移除。
+- native-02生命周期/AMCL/地图激活正常，但扫描队列满。证据显示原terrain两个节点硬编码frame_id=odom，而实际TF使用aim_sentry/odom；新增odom_frame参数，默认保留odom，算法处理逻辑不改。
+- native-03坐标/地形/扫描已通；本适配使用set_initial_pose参数产生零协方差，有偏位置被当作确定值，误差0.72m。改用带0.25/0.25/0.09协方差的标准initialpose及原AMCL静止更新服务；native-04四项通过，误差约0.112m，无真值订阅。
+- native-05原规划器/Omni PID/代价地图插件已加载，目标被拒因测试在Lifecycle激活完成前即发出。已以管理器is_active服务作为ready依据；同时代价地图观测原点使用真实LiDAR frame，位姿接口仍按IMU参考。
+- native-06-goal七项通过：原链路实际到达[5.5,1.0]，真实末端[5.3223,0.9053]误差0.2014m。3887个实测点，最大位移约3mm、最大采样间隔8ms；主要障碍最小中心距0.534m，扣除0.36m包络及保守采样移动量后仍不相交。不是只看到cmd_vel或计划路径。
+- native-07-map-guard两项通过：篡改占用元数据MD5时starts0、无导航子进程，车体维持停止。RMUC导航及取消/失联/实际R恢复仍必须补测，feature保持in-progress。
+- 后续旧功能回归已完成：新环境中原LK/Point-LIO RMUC联合11项、瞄准20项、手动19项/12PNG通过；共享运行库部署的原控制器/Point-LIO入口也重建执行成功。
+- native-08公开目标脚本成功退出0，真实目标取消status5，取消后约0.0598m停车、稳定段漂移约0.032mm；实际R还在等待。早期未经过run-env直接启动的diagnostics_probe触发系统网络权限提示，工具无法操作PickerHost安全弹窗，已请用户点击取消。后续夹具在自身进程和PS包装都显式设ROS_LOCALHOST_ONLY=1/DOMAIN176，未放行防火墙权限。没有把未完成的R写成通过。
+- native-08最终因等待实际R300秒超时退出，前10项仍保留为分项成功，不是完整运行通过。系统弹窗的用户取消尚待确认；下一次可补专门的reset-only用例，避免重跑已通过的长路线。
+- 同期只读采样RMUC真实full-map-collision.glb：1614431三角形，280×162网格，44800有几何列，其中24479列超过两个表面，32层上限未截断。中心列同时有约0.149/2.509/2.796m上表面，证明俯视最高面不能直接当通行地面。结果在artifacts/maps/rmuc2027/navigation-columns-01，尚不是可行导航地图。
+- 导出地图9项、协议20项通过，PS入口语法检查通过；首次在错误cwd运行协议测试导致import失败，按包目录运行后通过，不把环境调用错误当产品缺陷。

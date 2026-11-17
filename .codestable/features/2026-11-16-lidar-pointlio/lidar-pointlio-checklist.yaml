@@ -1,0 +1,12 @@
+feature: 2026-11-16-lidar-pointlio
+steps:
+  - {id: source_contract, status: done, action: Pinned original source and message bytes; native Livox CDR decode verified at five sizes.}
+  - {id: native_algorithm, status: done, action: Original node built; actual parameter-type failure corrected and fails fast; raw source plus reversible patch preserved.}
+  - {id: physical_lidar, status: done, action: Real distance/time/distortion; pressure3; own/blind/no-return9; invalid profiles2 passed.}
+  - {id: localization, status: done, action: Native reset13; rotated mount11; RMUC10; original LK plus RMUC11 passed with no truth subscription.}
+  - {id: regression_records, status: done, action: IMU11/velocity11/aim20/TCP19/manual19 plus12PNG passed; source and evidence aggregation recorded.}
+checks:
+  - {id: interfaces, status: passed, evidence: lidar-pointlio-acceptance.md}
+  - {id: native_scenarios, status: passed, evidence: artifacts/sensors/lidar/release-summary.json}
+  - {id: scope_boundaries, status: passed, evidence: lidar-pointlio-acceptance.md}
+  - {id: permanent_records, status: passed, evidence: architecture/requirements/roadmap/current/changes}

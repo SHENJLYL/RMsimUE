@@ -1,0 +1,10 @@
+# IMU-side overlay only; LiDAR/extrinsics and native Point-LIO execution are not yet validated.
+# Source mid360.yaml uses acc_norm=1 for g; this simulator emits m/s^2.
+/**:
+  ros__parameters:
+    use_sim_time: true
+    common:
+      imu_topic: /aim_sentry/imu/data_raw
+    mapping:
+      acc_norm: 9.81
+      imu_time_inte: 0.005

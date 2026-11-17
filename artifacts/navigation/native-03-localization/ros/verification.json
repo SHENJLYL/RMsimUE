@@ -1,0 +1,103 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_and_original_programs",
+      "passed": true,
+      "navigation": {
+        "phase": "running",
+        "starts": 1,
+        "identity": [
+          "72B1EACB412B265E5AE74FB1BC01B484",
+          0
+        ],
+        "pids": {
+          "loam_interface": 47548,
+          "sensor_scan_generation": 21788,
+          "terrain_analysis": 56504,
+          "terrain_analysis_ext": 34312,
+          "pointcloud_to_laserscan": 16888,
+          "fake_vel_transform": 20256,
+          "map_server": 12344,
+          "amcl": 53444,
+          "lifecycle_manager_localization": 29432
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\native-03-localization\\ros\\navigation\\20261115T234201Z-32212",
+        "map_id": "import_lab",
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "import_lab",
+        "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+        "kind": "rm_flat_map"
+      }
+    },
+    {
+      "name": "estimated_frame_and_scan_chain",
+      "passed": true,
+      "odom_frame": "aim_sentry/odom",
+      "terrain_points": 4021,
+      "scan_bins": 720
+    },
+    {
+      "name": "amcl_converges_from_perturbed_prior",
+      "passed": false,
+      "initial_prior": [
+        0.6,
+        -0.4,
+        0.15
+      ],
+      "estimated": [
+        0.6000000000000913,
+        -0.4000000000001091
+      ],
+      "truth_xy": [
+        0.00044185010342106645,
+        -0.0002123030516511526
+      ],
+      "error_m": 0.7206248522906147,
+      "covariance": [
+        7.549516567451064e-15,
+        -6.647460359943125e-14,
+        -1.0214051826551413e-14
+      ]
+    }
+  ],
+  "localization_only": true,
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "72B1EACB412B265E5AE74FB1BC01B484",
+      0
+    ],
+    "pids": {
+      "loam_interface": 47548,
+      "sensor_scan_generation": 21788,
+      "terrain_analysis": 56504,
+      "terrain_analysis_ext": 34312,
+      "pointcloud_to_laserscan": 16888,
+      "fake_vel_transform": 20256,
+      "map_server": 12344,
+      "amcl": 53444,
+      "lifecycle_manager_localization": 29432
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\native-03-localization\\ros\\navigation\\20261115T234201Z-32212",
+    "map_id": "import_lab",
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 35,
+  "has_odometry": true,
+  "has_terrain": true,
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom",
+  "last_amcl": [
+    0.6000000000000913,
+    -0.4000000000001091
+  ],
+  "error": "AssertionError('amcl_converges_from_perturbed_prior')"
+}

@@ -1,0 +1,150 @@
+roadmap: rm-simulator
+created: 2026-11-13
+items:
+  - slug: native-navigation
+    description: 原哨兵AMCL/地形/自定义Nav2控制器在真实传感器和车辆上的导航闭环
+    depends_on: [lidar-pointlio, ros2-sensor-control-bridge]
+    status: in-progress
+    feature: 2026-11-16-native-navigation
+    minimal_loop: true
+    notes: 已核对实际默认AMCL路径和锁定原源码，原生依赖与构建推进中；尚无导航验收
+  - slug: lidar-pointlio
+    description: 真实滚动激光扫描与原哨兵Point-LIO同源定位闭环
+    depends_on: [native-imu, ros2-sensor-control-bridge]
+    status: done
+    feature: 2026-11-16-lidar-pointlio
+    minimal_loop: true
+    notes: Windows原节点/消息、真实扫描、复位13/旋转安装11/RMUC10/原LK联合11及既有功能回归通过；未校准，不含完整导航/多车/Ubuntu
+  - slug: native-imu
+    description: 真实底盘安装点六轴IMU、独立采样、有界传输与ROS原始消息
+    depends_on: [contact-vehicle, ros2-sensor-control-bridge]
+    status: done
+    feature: 2026-11-16-native-imu
+    minimal_loop: true
+    notes: Windows最终12/自由落体3/坡面1/帧率不足11及非法配置拒绝通过，既有功能回归通过；未标定，AHRS/LiDAR/Point-LIO与Ubuntu未验收
+  - slug: ros-aim-fire
+    description: 原视觉与行为树消息驱动世界瞄准、扫描、实际训练发射和独立失效处理
+    depends_on: [ros2-sensor-control-bridge, training-combat]
+    status: done
+    feature: 2026-11-16-ros-aim-fire
+    minimal_loop: true
+    notes: Windows普通21/原LK联合20/只观察4及既有功能回归通过；仍是高层直连，云台动力学/真实视觉/完整Hub与Ubuntu未验收
+  - slug: sentry-lk-motor-loop
+    description: 用户原LK控制器经原电机消息驱动真实轮轴与舵轴反馈闭环
+    depends_on: [swerve-gyro-control, ros2-sensor-control-bridge]
+    status: done
+    feature: 2026-11-16-sentry-lk-motor-loop
+    minimal_loop: true
+    notes: Windows原LK22项与默认模式回归通过；固定1ms约0.3倍速，原LK波浪路线/实车标定/完整sentry_ws/Ubuntu仍未完成
+  - slug: swerve-gyro-control
+    description: 独立舵轮、镜头相对键盘平移、小陀螺调速与坡面主动制动
+    depends_on: [contact-vehicle]
+    status: done
+    feature: 2026-11-15-swerve-gyro-control
+    minimal_loop: true
+    notes: Windows45项/40PNG及本机LK数学适配通过；用户手感持续反馈，完整ROS电机桥和实车校准未完成
+  - slug: contact-vehicle
+    description: 原尺度AIM原生接触悬挂驱动与完整波浪通行样例
+    depends_on: [manual-aim-sentry, source-mesh-maps]
+    status: done
+    feature: 2026-11-15-contact-vehicle
+    minimal_loop: true
+    notes: Windows红蓝波浪0.35/1mps往返和8项整合通过；独立舵向、实车校准和Ubuntu未完成
+  - slug: training-combat
+    description: 手动射击、真实命中、训练HP/弹热/回合重置
+    depends_on: [manual-aim-sentry]
+    status: done
+    feature: 2026-11-15-training-combat
+    minimal_loop: true
+    notes: 14项原生训练检查与18项操控回归；不是官方裁判或联机验收
+  - slug: vehicle-package-v1
+    description: 实现车辆包 v1 校验、受限 URDF 解析、规范化导出、两个示例和运行预检
+    depends_on: []
+    status: done
+    feature: 2026-11-13-vehicle-package-v1
+    minimal_loop: false
+    notes: 仅离线资源与环境检查，不等于 UE 或 ROS 闭环
+  - slug: native-sentry-profile
+    description: 在 Windows 与 Ubuntu 构建并回放同一份 sentry_ws 算法源码
+    depends_on: [vehicle-package-v1]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 不采用 WSL，不用替代算法冒充原程序
+  - slug: manual-aim-sentry
+    description: 使用用户现有 AIM 哨兵资产，在 UE 实现手动底盘、云台与相机样例
+    depends_on: [vehicle-package-v1]
+    status: done
+    feature: 2026-11-13-manual-aim-sentry
+    minimal_loop: true
+    notes: Windows手动首样例已运行；18操控+9碰撞检查通过，Ubuntu及校准动力学仍未完成
+  - slug: ue-vehicle-runtime
+    description: 在 UE5 加载受支持车辆并验证几何、惯量、关节与驱动
+    depends_on: [vehicle-package-v1]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: AIM接触样例已有原生证据；通用车型、独立舵向和实车惯量验证仍需完成
+  - slug: ros2-sensor-control-bridge
+    description: 连接原生 ROS 2 的时钟、控制、TF、传感器与失效处理
+    depends_on: [native-sentry-profile, ue-vehicle-runtime]
+    status: in-progress
+    feature: 2026-11-16-ros2-native-bridge
+    minimal_loop: false
+    notes: Windows速度/原LK电流/高层瞄准射击/相机/IMU/LiDAR及原Point-LIO切片已验收；完整算法/传感器校准/Ubuntu尚未完成
+  - slug: single-sentry-closed-loop
+    description: 两端分别运行同源哨兵完成真实感知、导航和决策最小闭环
+    depends_on: [ros2-sensor-control-bridge]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 后续自主算法闭环，独立真值用于评测；用户先要求手动样例
+  - slug: rmul-referee-v1
+    description: 建立明确赛季的 RMUL 发射、命中、裁判与行为响应闭环
+    depends_on: [single-sentry-closed-loop]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 按规则逐项记录覆盖范围
+  - slug: authoritative-multiplayer
+    description: 多台原生算法客户端加入同一权威比赛并验证断线和身份隔离
+    depends_on: [rmul-referee-v1]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 连接成功不等于比赛验收通过
+  - slug: sensor-physics-calibration
+    description: 以实测依据校准光影成像、传感器采样和车辆动力学
+    depends_on: [single-sentry-closed-loop]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 保存误差与性能预算
+  - slug: map-package-v1
+    description: 通过地图包切换场地并保持碰撞、导航、出生点与比赛区域一致
+    depends_on: [manual-aim-sentry]
+    status: done
+    feature: 2026-11-15-map-package-v1
+    minimal_loop: false
+    notes: 平地box地图加载/导航栅格/区域合同先于裁判实现；不代表完整比赛规则
+  - slug: source-mesh-maps
+    description: RMUC2027默认静态地图和WT CDK地形示例
+    depends_on: [manual-aim-sentry, map-package-v1]
+    status: done
+    feature: 2026-11-15-source-mesh-maps
+    minimal_loop: false
+    notes: Windows各7项地形检查通过；不等于完整战雷地图/比赛/物理
+  - slug: wt-existing-map
+    description: 按最新指令直接转换东欧或弗兰德斯原场景
+    depends_on: [source-mesh-maps]
+    status: in-progress
+    feature: 2026-11-15-wt-existing-map
+    minimal_loop: false
+    notes: 当前优先弗兰德斯；完整几何、材质、布局和实际UE验收仍在推进
+  - slug: rmuc-roles-and-radar
+    description: 扩展 RMUC 角色与雷达规则并按赛季验收比赛流程
+    depends_on: [authoritative-multiplayer, sensor-physics-calibration, map-package-v1]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 列出所有尚未支持规则，不承诺一次完整复刻

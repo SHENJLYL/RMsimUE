@@ -1,0 +1,239 @@
+{
+  "status": "native_verified_gui_observed",
+  "utc": "2026-11-15T17:06:27.026843+00:00",
+  "module_sha256": "8b9230e5d1a10a0f1b65f834dd6804a4a45032e6ea2682ab1cd7435b2abc444b",
+  "drive_profile_sha256": "2a4f219cb66ac970c0a8adc190be9daa7adc5e33416bd66670079613321d0e01",
+  "checks": 45,
+  "pngs": 40,
+  "source_vehicle_files_unchanged": 29,
+  "source_controller_files_unchanged": 12,
+  "collision_bindings_valid": 15,
+  "results": [
+    {
+      "path": "release-controls-01/default",
+      "checks": 19,
+      "pngs": 12,
+      "module_sha256": "8B9230E5D1A10A0F1B65F834DD6804A4A45032E6EA2682AB1CD7435B2ABC444B",
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "details": [
+        {
+          "name": "gyro_supported_spawn",
+          "detail": "phase 3.004s speed 0.068cm/s yaw 0.000rad/s upright 0.9997"
+        },
+        {
+          "name": "normal_camera_forward_smooth",
+          "detail": "forward 102.856cm lateral -0.124cm peak command acceleration 0.8000m/s2"
+        },
+        {
+          "name": "released_keys_active_brake",
+          "detail": "coast distance 20.605cm, speed 0.901cm/s"
+        },
+        {
+          "name": "normal_camera_left_strafe",
+          "detail": "left 89.438cm forward -1.355cm"
+        },
+        {
+          "name": "normal_strafe_brake",
+          "detail": "phase 1.504s speed 0.161cm/s yaw 0.002rad/s upright 0.9901"
+        },
+        {
+          "name": "gyro_camera_forward_direction",
+          "detail": "forward 329.712cm lateral -6.048cm body spin 11.054rad"
+        },
+        {
+          "name": "gyro_faster_key",
+          "detail": "setpoint 2.500 actual 2.451rad/s"
+        },
+        {
+          "name": "gyro_slower_minimum",
+          "detail": "setpoint 0.500 actual 0.509rad/s"
+        },
+        {
+          "name": "gyro_faster_maximum",
+          "detail": "setpoint 4.000 actual 3.888rad/s"
+        },
+        {
+          "name": "gyro_mouse_pitch_world_aim",
+          "detail": "pitch -8.030deg, muzzle direction error 0.056deg"
+        },
+        {
+          "name": "gyro_toggle_off_brakes_spin",
+          "detail": "phase 2.003s speed 0.139cm/s yaw 0.006rad/s upright 0.9999"
+        },
+        {
+          "name": "normal_forward_after_camera_turn",
+          "detail": "Camera yaw 90.0; original forward 0.417cm original left -89.823cm"
+        },
+        {
+          "name": "camera_turn_release_brake",
+          "detail": "phase 1.201s speed 0.000cm/s yaw -0.000rad/s upright 0.9895"
+        },
+        {
+          "name": "normal_right_after_camera_turn",
+          "detail": "Camera-relative right: original forward -88.669cm original left 2.052cm"
+        },
+        {
+          "name": "steering_response_rest_pose",
+          "detail": "phase 1.502s speed 0.132cm/s yaw 0.001rad/s upright 0.9997"
+        },
+        {
+          "name": "steering_step_response",
+          "detail": "90deg lateral step: target start 5.1ms, wheel command 9.8ms, all modules >=80deg 100.8ms; actual world ticks, not OS latency"
+        },
+        {
+          "name": "moving_turn_initial_velocity",
+          "detail": "phase 1.006s speed 60.387cm/s yaw -0.006rad/s upright 0.9988"
+        },
+        {
+          "name": "moving_direction_response",
+          "detail": "0.6m/s moving 90deg input change: target heading within 10deg 263.8ms; actual velocity within 15deg 256.7ms"
+        },
+        {
+          "name": "precision_key_speed_cap",
+          "detail": "Ctrl + full throttle: actual 0.3511m/s, configured cap 0.3500m/s"
+        }
+      ]
+    },
+    {
+      "path": "release-waves-precision/wave_red",
+      "checks": 5,
+      "pngs": 6,
+      "module_sha256": "8B9230E5D1A10A0F1B65F834DD6804A4A45032E6EA2682AB1CD7435B2ABC444B",
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "details": [
+        {
+          "name": "gyro_supported_spawn",
+          "detail": "phase 3.002s speed 0.536cm/s yaw 0.002rad/s upright 0.9993"
+        },
+        {
+          "name": "gyro_spin_up",
+          "detail": "phase 2.501s speed 1.697cm/s yaw 3.854rad/s upright 0.9983"
+        },
+        {
+          "name": "gyro_forward_wave_route",
+          "detail": "progress 340.048cm lateral -1.474cm body spin 37.892rad minimum upright 0.9666"
+        },
+        {
+          "name": "gyro_route_brake",
+          "detail": "phase 2.003s speed 0.041cm/s yaw -0.001rad/s upright 0.9991"
+        },
+        {
+          "name": "gyro_reverse_wave_route",
+          "detail": "progress 9.568cm lateral 0.906cm body spin 38.163rad minimum upright 0.9482"
+        }
+      ]
+    },
+    {
+      "path": "release-waves-precision/wave_blue",
+      "checks": 5,
+      "pngs": 6,
+      "module_sha256": "8B9230E5D1A10A0F1B65F834DD6804A4A45032E6EA2682AB1CD7435B2ABC444B",
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "details": [
+        {
+          "name": "gyro_supported_spawn",
+          "detail": "phase 3.001s speed 0.188cm/s yaw 0.000rad/s upright 0.9992"
+        },
+        {
+          "name": "gyro_spin_up",
+          "detail": "phase 2.502s speed 3.139cm/s yaw 3.731rad/s upright 0.9983"
+        },
+        {
+          "name": "gyro_forward_wave_route",
+          "detail": "progress 340.082cm lateral 0.378cm body spin 39.116rad minimum upright 0.9649"
+        },
+        {
+          "name": "gyro_route_brake",
+          "detail": "phase 2.004s speed 0.000cm/s yaw -0.000rad/s upright 0.9993"
+        },
+        {
+          "name": "gyro_reverse_wave_route",
+          "detail": "progress 9.783cm lateral 1.528cm body spin 37.576rad minimum upright 0.9595"
+        }
+      ]
+    },
+    {
+      "path": "release-traction",
+      "checks": 6,
+      "pngs": 4,
+      "module_sha256": "8B9230E5D1A10A0F1B65F834DD6804A4A45032E6EA2682AB1CD7435B2ABC444B",
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "details": [
+        {
+          "name": "traction_supported_slope",
+          "detail": "speed 0.5323cm/s upright 0.90833"
+        },
+        {
+          "name": "parallel_wheels_free_roll",
+          "detail": "Motor-disabled wheels aligned down slope roll 78.095cm in 0.801s"
+        },
+        {
+          "name": "transverse_wheels_settle",
+          "detail": "Four modules steer across slope; maximum error 0.00574rad"
+        },
+        {
+          "name": "transverse_contact_grip",
+          "detail": "Same slope, motors disabled: transverse downhill 0.054cm vs aligned 78.095cm"
+        },
+        {
+          "name": "traction_reset_for_hold",
+          "detail": "speed 0.5213cm/s upright 0.90691"
+        },
+        {
+          "name": "released_keys_hold_slope",
+          "detail": "Zero movement input, motors active: downhill 0.609cm, speed 0.000cm/s"
+        }
+      ]
+    },
+    {
+      "path": "release-integration",
+      "checks": 10,
+      "pngs": 12,
+      "module_sha256": "8B9230E5D1A10A0F1B65F834DD6804A4A45032E6EA2682AB1CD7435B2ABC444B",
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "details": [
+        {
+          "name": "physical_settle",
+          "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99982"
+        },
+        {
+          "name": "physical_forward_route",
+          "detail": "Motor/contact driven route progress 150.273/150.000cm, drift -0.031cm, time 3.649s"
+        },
+        {
+          "name": "physical_brake",
+          "detail": "Brake acts on physical wheels, measured speed 0.1234cm/s"
+        },
+        {
+          "name": "physical_reverse_route",
+          "detail": "Reverse crosses same source route: remaining 9.657cm, drift 0.225cm"
+        },
+        {
+          "name": "physical_shared_left_turn",
+          "detail": "Shared Q/E path measured hull yaw change -63.361 degrees"
+        },
+        {
+          "name": "physical_shared_right_turn",
+          "detail": "Shared Q/E path measured hull yaw change 42.040 degrees"
+        },
+        {
+          "name": "physical_shared_aim_fire",
+          "detail": "Physical chassis, shared aim/LMB: shots=1 hits=1 targetHP=80"
+        },
+        {
+          "name": "physical_wall_stop",
+          "detail": "Shared throttle into real wall: travel 85.736cm, speed 0.082cm/s"
+        },
+        {
+          "name": "physical_shared_reset",
+          "detail": "R restores all independent bodies, clears velocity, resets training once and settles at spawn"
+        },
+        {
+          "name": "physical_fall_recovery",
+          "detail": "Injected below-map pose recovers through the live guard before KillZ, once only"
+        }
+      ]
+    }
+  ],
+  "gui_evidence": "gui-verification.json"
+}

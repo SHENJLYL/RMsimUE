@@ -1,0 +1,117 @@
+# Attention
+
+本文件是 CodeStable 技能启动必读的项目注意事项入口。
+
+## 项目碎片知识
+
+<!-- cs-note managed: 项目 owner 已在本次对话明确授权记录长期约束。 -->
+
+### 编译与构建
+
+- 用户要求 Windows 和 Ubuntu 原生环境使用同一套 `sentry_ws` 源码测试；不采用 WSL，不把双系统运行不同算法称为同源验证。
+- 2026-11-15最新优先级：先在Windows实现/实测，Ubuntu预先离线适配。当前不等待Ubuntu/SSH，不把脚本语法检查记成原生Ubuntu验收。
+- 已选主路线为 UE5 + ROS 2。上游 `27UL_Sentry_ws` 的已检查版本使用 Humble；完整 Windows 依赖闭包和原生构建尚未验证。
+- 车辆包 v1 标准库工具、受限 URDF 解析和两个示例已有 scoped 验证；当前推进用户优先要求的 AIM Sentry 手动样例。工具/资源检查通过不代表 UE 或 ROS 2 闭环可运行。
+- 2026-11-15 已确认 UE 5.8.4 Installed Build：`E:\simulator-tools\UE_5.8`，CL 58902052。`LauncherInstalled.dat` 仍空，脚本须显式传 `-EngineRoot`，不要因此判定引擎未安装。
+- UE 5.8 当前 targets 使用 `BuildSettingsVersion.V7`；初次 V5 构建冲突及局部变量 `Role` 隐藏成员的 C4458 已修复。2026-11-15 原生 Win64 Development Editor 构建退出 0，`artifacts/unreal/build.log` 为 `Result: Succeeded`，已产生 `unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll`。这不等于资产导入或场景运行通过。
+
+### 运行与本地起服务
+
+- 用户要求联机比赛对抗、真实光影与传感器属性、比赛逻辑、可替换地图和新车辆扩展。
+- 比赛权威状态由服务器持有；机器人算法实例只能消费其允许获得的传感器/裁判信息。网络协议和联机实现仍属 roadmap。
+- Windows 原生 Humble 通信/包构建、UE 模块构建、实际资产导入及引擎内运动学 probe 已通过。最新基线 `artifacts/unreal/2026-11-15/probe-07-final-controls`：9/9运动检查；`controls-04-aim-fix`：18/18控制检查、10张PNG解码，包装脚本退出0；真实 GUI 已显示模型。没有真实哨兵算法闭环或原生双平台验收。
+- 用户优先使用 `E:\WarThunderModding\war_thunder_sentry\aim_sentry.blend` 做手动样例；2026-11-15 最新要求是 War Thunder 式移动和视角，Windows手动样例已分项验收，用户准星/灵敏度反馈已回归修复。源目录只读，导出包位于 `assets/vehicles/aim_sentry`；自动车辆仍在后续范围。
+
+### 测试
+
+- 记录实际命令、退出状态、环境与证据路径。源码审查、格式校验、构建通过、运行通过和实车校准分别记录。
+- 不能用仿真真值定位替代 Point-LIO 后宣称同一定位算法已经验收；真值可作为独立评测数据。
+- probe 通过证明引擎内调用/碰撞查询/变换与截图链路，不证明完整键盘操作验收或真实物理标定；早期CUA输入被guard打断；后续真实窗口已记录W/S/A/D/C/Shift/滚轮与位姿变化，共用控制路径有独立回归，不夸大为所有OS输入压力测试。
+
+### 命令与脚本陷阱
+
+- 上游最新导航的 `cmd_vel` 输出为 `TwistStamped`，原深北莫 Gazebo 接口为 `Twist`；接入前核对类型和坐标系。
+- 上游 Point-LIO 依赖 Livox 消息包，而该驱动构建绑定 Linux `.so`；跳过整个驱动包会破坏消息依赖。证据见 `docs/research/source-audit.md`。
+- 本机 UE 构建需要进入工作区外的引擎目录；本轮 sandbox 直接 UBT 调用访问 `Engine/Source` 被拒，已通过批准的 sandbox 外构建继续。不要把此访问限制误记为项目编译错误，也不要全局放宽文件权限。
+- 本机原生 Humble 是 RoboStack 的 Python 3.14 构建；不能混用官方 Python 3.10 的 rclpy 扩展/DLL。Windows colcon 的 ament_python 源目录和 build 目录须在同一盘符。
+- Ubuntu 同源入口 `tools/unreal/Start-ManualVehicle.sh` 已提供；目前只有 Windows 上 Git Bash 语法/预检证据，不能算原生 Ubuntu 构建或运行通过。
+- 车辆 bounds 不得包含相机 frustum；视觉轮子自转的 AABB 不得驱动碰撞地面判断，现使用独立轮碰撞 proxy。两项均由真实 probe 暴露并修复。
+- PowerShell 反序列化得到的 UTC DateTime 不要再次 Parse 成无时区时间，否则曾减去 8 小时并把新 probe 误判为 stale；probe-04/05 已验证包装脚本修复。
+- PNG 捕获须保持正确的 sRGB RenderTarget 格式；本轮已修复亮度并调整 studio 灯光，属于视觉输出修正，不是传感器或材料物理标定。
+
+### 路径与目录约定
+
+- 项目工作区：`D:\simulator`。`.codestable/architecture/` 只记录现状；计划放在 `.codestable/roadmap/`。
+- 车辆包、地图包的静态资产不执行任意插件或外部脚本；资产路径由导入器校验。
+
+### 环境变量与凭证
+
+- 未使用的 AndroidFileServer 插件已禁用，其自动生成的本地 token 已移除；不在代码、文档或证据摘要中记录 token 值。
+
+### 其他
+
+- 授权来源：2026-11-13 用户要求持续自主实现并长期记录；2026-11-15 用户确认安装完成并要求继续。可在既定范围内继续可逆实现及验证，不以逐阶段重复确认阻塞。
+- 上述授权不等于用户逐篇审阅了自动生成的方案。文档中的 `last_reviewed` 表示维护者检查日期；未单独审阅的文件注明 `user_review: not_requested_under_standing_authorization`。
+- 任何功能完成状态必须有实际证据；未安装工具、缺少依赖或尚未运行时保持未验收状态。
+- 旧 Epic MSI 1925/1603 安装阻碍属于 2026-11-13 历史状态；2026-11-15 已发现实际引擎，当前不再等待安装或重复请求登录。引擎文件存在仍不等于项目编译、导入或运行通过。
+- 用户已将原goal恢复active；继续原目标，不新建替代目标，不把手动首样例通过当整个目标完成。
+
+- 当前手动相机从炮口/第三人称pivot分别投向同一世界目标，切镜不得直接复用旧镜头角度。鼠标读raw counts，敏感度/FOV只各应用一次；参数在DefaultGame.ini。
+- 用户指定RMUC2027作为第一张地图，现默认assets/maps/rmuc2027/map.json；输入来自DJI V1.0.0与hxyulin同源转换包，来源/哈希在包内SOURCE.md。官方CAD的Z-up声明必须保留，不能再按普通glTF做Y-up旋转。
+- 地图分rm_flat_map和rm_mesh_map。前者支持box占用导出；后者使用独立triangle collision和轮位地形跟随，尚无语义比赛区域/坡地导航导出。不能把两者混称导航闭环。
+- WT第二地图只是官方CDK location_sample的512m高度场裁剪；真实足球场/训练场bin仍未转换。原游戏和CDK目录只读，权利/来源单独记录。
+- TerrainPose在physics bodies就绪后才落车；缺支撑/过大台阶/碰撞即拒绝。倾斜底盘瞄准须变换到车体局部系；转向扫掠覆盖中间姿态。当前5cm台阶、35°坡度和2cm间隙是运动学预览参数，不是轮胎标定。
+- 地图最终证据：rmuc2027/terrain-final-02、wt_cdk_crop/terrain-final-03，各7项与4PNG；flat-regression-after-terrain为18/18控制。最终构建已重新打开，实际GUI观察到RMUC2027 HUD、车辆和场地，窗口留给用户试驾。
+- 用户随后明确要求直接用东欧/弗兰德斯等现成战雷地图，并授权解包查资源/源码；当前优先wt-existing-map，不能以CDK裁剪代替。两个DBLD原图已定位，优先转换较小的弗兰德斯。原游戏目录只读。
+- 原图解码证据在artifacts/maps/wt_existing。地图HM2精细地形与外部lmap背景不是同一个数据块；目前已解出前者和RIGz存储布局，SCN/外部landmesh/程序生成内容需单独核对。
+- 解包器源码固定于third_party/dagor_asset_explorer提交1f0d1e04，当前进行了Python3.14/headless/新版计数/原始顶点声明等适配。只加载本机UE的Epic Oodle库，不运行下载的daKernel/dae_intrinsics DLL。工具补丁须持续保存。
+- 原图模型不能按“通道数量+步长”猜布局；保留所有UV与材质索引，旧树木可在同一buffer混合叶片/树干布局。每个导出几何须比较资源自带bounds，有限值本身不足以证明正确。
+- 最新优先级：用户要求地图并行时先完成仿真功能。Play-Training.cmd已实际运行，14项训练检查/18项旧操控回归通过；单车静态靶训练已交付，完整裁判、ROS接入和联机仍未实现。不得因地图漫长而停下功能工作。
+- TrainingRange拥有训练时间、弹热/弹量、目标HP、扫掠弹丸与epoch。发射按下一枪/热量恢复事件切分仿真子步，不能按每渲染帧最多一枪。失焦仍推进时间，但首帧重新聚焦不触发开火。训练橙框是弹道预测；非训练仍为射线。
+- 弗兰德斯assets/maps/wt_vlaanderen已准备726视觉/639碰撞FBX；原存储45675物件全部保留，含9850剪切矩阵烘焙。preparation-verification.json通过，但完整UE场景尚未导入验收。材质917输出、原碰撞616资源均有真实来源；专用着色及程序生成植被局限见SOURCE/材质报告。
+- UE MapImportLibrary已编译，原生tiny场景API检查确实保存测试umap。完整导入器tools/unreal/import_wt_scene.py可继续，但运行时savedlevel接入仍待做，不能把资产准备/接口检查说成完整原图可玩。
+- 用户再次“请继续”授权工作；goal工具当前仍报告paused且无resume能力，不新建替代目标，也不把界面状态阻塞已授权工作。
+- 用户随后已将goal恢复active。当前必须使用真实尺度AIM：约0.503850×0.501985×0.419192m，轮半径0.0425m。源WT linear_scale=2必须在export_aim_sentry.py去除，网格/关节/炮口/相机一起规范化，不能再以展示倍率运行机器人。
+- 2026-11-15用户报告“RMUC几乎不能移动”。默认出生原生9项行驶通过；中央12°坡道整车box有确证假阻挡，已改为7部件稳定box查询并实际行驶1.6m。更陡坡折/低矮通道未全路线验收。证据artifacts/assets/scale-fix-20261115；原数据只读，旧导出在before。
+- 后续用户明确波浪路仍不能走，不能把中央坡道通过作为问题全解决。波浪69.9mm起伏/42.29°局部面触发旧35°门限；轮径支撑和真实前悬接触也需要处理。现在推进contact-vehicle：真实Chaos车体/四升降模块/四轮/约束，而不是继续抬车或关闭碰撞。
+- 资产已拆11部件：fixedbody只保留body+linear_guides，4carrier/carriage/caps模块和4wheelchildren。保持原尺寸/材质/1260698三角形，中立轮心误差0。悬挂65.333mm几何参考不等于实测弹簧/行程。此时C++接触动力学尚在集成，尚未验收波浪路线，不要启动旧7部件映射覆盖新包。
+- ROS sidecar已在ros2_ws/src/rmsim_bridge落地，12项离线协议/socket测试通过，但UE服务端和原生ROS收发未完成。用户当前优先级是波浪通行修复；其他功能保留，不替代此问题。
+- 波浪修复最终更新：wave-native-09与10-slow中红蓝各3.4m完整往返通过（1/0.35m/s），integration-02共8项/10PNG通过。此前01–08失败保留作诊断，不能继续读成最新阻塞。根因包含电机符号、body16凸包凹槽误填35.7mm，以及关节MassConditioning与真实接触质量不一致；现body128凸包、投影/质量调节均关，弹簧预载/刚度显式可配。
+- 默认Play-ManualVehicle/Play-Training与Windows/Linux全启动入口现为ContactPhysics。11视觉部件、9独立刚体；几何尺度不变，不强制车体位姿穿障碍。旧运动学须显式KinematicPreview。ensure_vehicle_collision.py跨平台检查/重建缺失碰撞，派生资产/绑定含哈希且保存旧rig。
+- 这是未标定的接触样例：固定朝前轮组差速转向，源舵轮独立舵向和云台动态碰撞尚未实现；不称为全场所有路线或实车全部物理能力通过。自定义出生点的训练靶可能越界；wave入口使用纯驾驶，训练默认出生点单独验证。
+- 最新活动工作变更：用户在试驾后要求平滑加速、更快转向、松键主动制动、小陀螺转速映射与崎岖路面方向正确。已确认普通/小陀螺均为镜头相对WASD平移，G切自转，Z/X调速，Q/E普通模式旋转，鼠标瞄准俯仰。正在推进swerve-gyro-control；不要把旧11部件接触验收外推到新15部件全部通过。
+- 新15部件/13刚体已导出、核验和导入；4转向carrier从滑动模块分离，中立尺寸/1260698三角形/源哈希不变。VehicleDrive.cpp管理SI速度整形、四舵轮和舵向速度前馈；drive-profile.json在车辆包内。swerve-integration-01有10项/12PNG原生成功；gyro flat-01前进/松键/横移通过但小陀螺侧漂38cm失败，flat-02-feedforward正在复测。粗糙地形小陀螺和坡向抓地还没验收。
+- 用户提供了本机控制器E:/27UL_Sentry_chassis_controllers-main/27UL_Sentry_chassis_controllers-main（嵌套一层）。只读，12文件哈希见artifacts/sources/sentry_chassis_local。Control/SentrySwerveKinematics.h已适配其LK向量/32768编码器最短路径，修复int16跨界/负模；独立MSVC检查通过。源chassis_radius默认0.40m与原尺度轮心约0.194m不同，不照搬。完整ROS/custom_msgs/PID电流模型尚未接入。
+- 试驾曾驶出地图坠落；已增加R重置所有物理部件及地图最低点以下5m自动恢复，integration-03-recovery旧11部件版本10项通过，新15部件integration-01也通过。原生路线probe禁用自动恢复，不能借重生掩盖路线失败。
+- 2026-11-16当前控制基线：release-controls-01为19项/12PNG；release-waves-precision在Ctrl+W/S、0.35m/s与4rad/s下红蓝3.4m往返各5项通过；release-traction6项、release-integration10项。合计45项/40PNG、同一模块与配置哈希；release-summary.json是当前机器证据入口。
+- 最新手感修正已量化：行进90度改向由966.7ms降到256.7ms；静止四轮到80度100.8ms。速度大小/方向分开限幅（0.8m/s²起步、3m/s²松键、6m/s²Space、4m/s²改向），G/Z/X、Ctrl慢行、Q/E旋转均已实现。默认关闭车体速度外环，轮速PI保持坡上零速。45项只证明当前演示参数与覆盖路线，不声称实车/OS全链路延迟校准。
+- 手动窗口关闭两路未用离屏逐帧渲染、HUD显示FPS。单实例实测约7ms帧间隔；曾因试驾+验证并行出现183–300ms长帧。Play入口经Start-PreparedVehicle.ps1拒绝重复实例/编译期间启动；开发多实例需显式AllowMultiple。不要再用多个同项目游戏实例互相争用GPU做延迟结论。
+- drive-profile.json为车辆包内启动时读取的配置；ue_mesh_rig.json中的内联值/哈希是导入快照，运行值以实际profile为准。adapters/sentry_lk.yaml仅为原LK节点的离线预备参数，不代表完整ROS电机消息桥已工作。
+- 最终GUI已观察：RMUC最新单实例215–229FPS，真实G/X/Z/R键与HUD转速联动，R后出生点静止/gyro off/训练重置；gui-verification.json留证。不要把这些GUI键验证说成完整OS端到端延迟测量。源控制与车辆参数仍待实车标定。
+- 2026-11-16后续ROS更新：UE RosBridgeComponent与原生rmsim_bridge已真实互通。RosBridge只观察、RosControl交出底盘；不开旗标无额外采集。物理Chaos时钟、1280×720 RGB8/CameraInfo/光学TF、TwistStamped驱动与250ms单调租约已验收。证据artifacts/ros2/native-release-summary.json；完整sentry_ws/原LK电流环、ROS云台/开火、LiDAR/IMU和Ubuntu仍未完成。
+- ROS坐标为aim_sentry/base_link，m/s、rad/s、x前y左；禁止使用墙钟给TwistStamped打戳。R引起epoch/session和仿真时间重置；真值只在evaluation topic，不发布定位TF。仅loopback单连接，不能当联机比赛服务器。
+- 新ROS模块下manual-regression/default仍为19项/12PNG，行进改向251.1ms、静止舵向101.7ms；旧控制45项为此前模块，不能称为最新模块全部重跑。相机array('B')优化只证明赋值局部耗时改善；同步GPU读回仍可能影响帧率。
+- 原生ROS包修改后须colcon重新安装到ros2_ws/install_bridge；源码存在不代表ros2 run能找到新入口。pixi已补tf2_msgs/ros2run，实际CLI drive_demo已跑。Ubuntu脚本仅语法检查，依赖须另行离线准备。
+- 后续原LK工作正在收尾：ros2_ws/src/chassis_controllers为用户12文件的工作副本，pristine在third_party/sentry_chassis_original；完整custom_msgs固定EcatV2_Master 7c1bd8a。原节点已通过原生电流/反馈运行，采用RosMotorControl固定1ms物理步长与feedback_driven PID，约0.3倍实时；默认手动仍原路径。native-08有21项含真实R，新增同一电机力矩上限后native-10复测中，尚待默认模式回归，不能先写全功能完成。
+- Windows原节点从Codex启动继承MSIX身份，普通PATH不参与其静态DLL搜索；Build-SentryControllers.cmd已部署非系统DLL闭包到EXE旁，并带哈希清单。Python使用限定包目录的os.add_dll_directory。不得借此修改系统安全设置或全局DLL目录。原库构建成功不等于原节点运行成功，native-01至03保留诊断证据。
+- 原LK最终更新：native-10-release22项含真实R/CLI/故障通过，安全停车轮矩限制2.255859375Nm；同最终模块普通ROS11项、TCP19项、手动19项/12PNG通过。统一证据artifacts/control/lk-motor-loop/release-summary.json。原LK固定1ms模拟约0.28–0.33倍速，不是墙钟1kHz；未做该原节点的波浪路线或实车电气标定。默认手动RMUC已重新打开并R复位，212–240FPS，静止舵向96.5ms/行进改向256.7ms为引擎内时序。
+- 最新ros-aim-fire收尾中：原sp_msgs与pb_rm_interfaces完整包已构建；RosAimControl独立接管云台/训练发射，许可/过期/回合与底盘分开。原Hub的scan pitch为上正，AutoAim pitch为下正，适配已按固定源码记录。此高层直连不是原硬件云台/发射电机环，且没有运行视觉识别。21普通/20 LK联合/4只观察有证据；最终回归及恢复手动窗口尚待本轮收尾。
+- ros-aim-fire最终更新：native-06普通21、native-04原LK联合20、native-05只观察4全部通过；射击15/10PNG、普通ROS11、TCP19、手动19/12PNG回归通过。证据artifacts/control/ros-aim-fire/release-summary.json。关节速度按真实角度差采样，发射事件使用帧前后炮口插值，R仅重置一次。最终默认RMUC手动窗口已恢复/复位，235–245FPS；云台动态物理/原硬件电机环、完整Hub/视觉识别和Ubuntu仍未完成。
+- 物理IMU已限定验收：RosImu读取车辆包sensors/imu.json，真实点速度差减世界重力、轴向角速度转换、最多4通道。世界重力当前9.8m/s²，静止传感器X/Y不必为0，须按实际车体/安装姿态投影；坡面角不等于悬挂后车体角。raw orientation_covariance[0]=-1，无AHRS/真值定位TF。固定步长可用SimStepSeconds独立配置；未采周期和缓冲丢样显式记录。最终12项/自由落体3/坡面1/帧率不足11与非法配置拒绝通过；普通ROS11/瞄准20/手动19回归通过，见artifacts/sensors/imu/release-summary.json。Point-LIO仅有SI参数预备件，不是算法闭环。
+- 最新LiDAR/Point-LIO更新：原源码3099b9dd、Livox a8230b02已原生运行；真实扫描/原消息/自动外参、复位13、旋转安装11、RMUC10、原LK联合11及压力/遮挡/既有功能回归通过，见artifacts/sensors/lidar/release-summary.json。理想均匀射线与常反射率未标定，不是Mid-360光学复刻；固定1ms约0.3倍墙钟，默认手动不启用传感器。
+- RosLidar使用v2多段二进制，原v1无LiDAR/命令不变；sidecar重装须先source install_lio，入口Build-RosBridge.ps1。原Livox接口与Linux硬件SDK分离；不能把消息构建称为硬件驱动已移植。
+- 原Point-LIO会丢弃倒退时间而不清地图，runner按session/epoch重启原节点。外参必须是float数组；原参数读取异常现退出2，不许继续半初始化估计。原CDR padding字节无语义，测试比较原解码后的全部字段。原输出仍单车全局话题，多车/完整导航/Ubuntu未完成。
+- current.md现只保留当前状态；旧详细进度在docs/progress/archive/2026-11-16-before-lidar-pointlio.md。本attention较早的“尚未实现”条目是当时记录，最新具体证据及current优先。
+- LiDAR收尾默认手动RMUC已恢复235–237FPS并R复位，gui-restored.json留证。一次沙箱Get-Process未看到已启动UE，但沙箱外按项目命令行匹配的CIM证明仍活着，随后CUA窗口出现；不可凭一次清单空结果就重复启动。
+- native-navigation当前有实际平地绕障/AMCL/原插件到达、错图拒绝、公开目标脚本和取消停车证据；尚未完成RMUC导航/失联/R恢复，不能标feature/长期goal完成。原诊断库Updater缺DLL虚表可见性导致Windows访问异常，GenerateExportHeader补声明后通过；不能删诊断或误套旧mutex兼容宏。原terrain硬编码odom已参数化，原AMCL初值须非零协方差。
+- 导航环境净新增107包、替换4个图像/压缩库，前后锁和回归已保留。原LK/Point-LIO联合11、瞄准20、手动19/12PNG通过，见artifacts/navigation/checkpoint-summary.json。源码原副本7仓库、工作包和补丁分存。
+- 导航R测试被PickerHost的diagnostics_probe.exe防火墙弹窗挡住；工具未给可操作窗口ID，点击被目标窗口保护拦截，已请求用户点“取消”，不要重复请求或自行点允许。没有放行网络权限；夹具现明确ROS_LOCALHOST_ONLY=1/DOMAIN176。native-08等待R超时，已有目标/取消结果仅是分项成功。需要用户取消后重新补R用例，并在CUA观察到交接结果后调用completion_summary。
+- 导航本轮末尾已重新启动默认手动预览PID13632，仅启动确认；GUI仍待系统弹窗取消后观察，不把旧235–237FPS记录当本轮实测。下一轮先核对实际进程，避免重复实例。
+
+- 用户再次反馈滞后：2026-11-16本轮复现2m/s改向714.6ms/4rad自转732.8ms，方向参数10m/s²与100m/s³后358.5/361.4ms；0.6m/s149.9ms。51项/32PNG回归，证据artifacts/control/latency-20261116/summary.json。新高自转切慢行组合仍失败（0.35目标/0.428实际），独立gyro-precision-ripple；不要把spin-after整组写成通过。无效刚度/外环/1ms子步已恢复，仅保留两项方向参数修改。
+
+- 本轮默认手动窗口PID35612已恢复，实际看到RMUC HUD235FPS/静止/gyro off；旧diagnostics_probe.exe安全弹窗仍遮挡，PickerHost仍无窗口ID，先前取消交接未结束。gui-status.json只记录显示观察，不是键盘验收；不要绕过窗口保护或重复启动实例。
+
+- 2026-11-16最新gyro-precision-ripple已完成Windows分项验证：原轮胎弧形源凸包替代错误全宽圆柱，collision_vertices_m与几何哈希进入导出/导入/缓存；停车不再逐帧WakeAllRigidBodies。profile与本轮before逐字一致，所有试验调参/位置保持已撤回。92项/48PNG含ROS11/原LK21通过，见artifacts/control/gyro-ripple-20261116/release-summary.json。不要继续把旧spin-after失败当当前阻塞，但保留为历史复现。
+- 当前TractionProbe是10项，包含更严格的静止准备、实际下坡松键、外力唤醒/恢复；原位移/速度门限未放宽。Chaos GetConstraintForce在UE5.8返回末子步冲量，新字段注明Nms；旧spring/axle字段名是历史兼容，不得直接作力/力矩标定。
+- 当前预览PID29224已实际显示RMUC243FPS/静止/gyro off；旧diagnostics_probe安全弹窗仍覆盖且PickerHost无可操作ID。用户取消交接未结束，不重复请求或绕过窗口保护，CUA completion_summary仍应等交接实际结束。上一批Point-LIO/Nav2是旧几何证据，后续应在新轮胎下做联合回归。长期goal仍active。

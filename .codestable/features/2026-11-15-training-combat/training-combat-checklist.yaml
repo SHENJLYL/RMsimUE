@@ -1,0 +1,11 @@
+feature: 2026-11-15-training-combat
+steps:
+  - {id: gameplay, status: done, action: Implement projectile/armor/round state and visible targets.}
+  - {id: controls, status: done, action: Connect shared input and HUD.}
+  - {id: validate, status: done, action: Run actual combat and preserved control checks.}
+  - {id: record, status: done, action: Save playable entry point and scoped evidence.}
+checks:
+  - {id: real_hits_and_occlusion, status: done}
+  - {id: ammo_heat_cadence, status: done}
+  - {id: round_reset_focus, status: done}
+  - {id: native_display, status: done}

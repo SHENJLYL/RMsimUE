@@ -1,0 +1,87 @@
+{
+  "status": "failed",
+  "scope": "actual native ROS2 processes and UE; evaluation truth only for test measurement",
+  "python": "E:\\simulator-cache\\environments\\rm-simulator-ros2-humble-9257817147700612234\\envs\\default\\python.exe",
+  "bridge_module": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\Lib\\site-packages\\rmsim_bridge\\__init__.py",
+  "checks": [
+    {
+      "name": "actual_ros_image_info_tf",
+      "passed": true,
+      "matching_stamps": 4,
+      "stamp_ns": 759570241,
+      "width": 1280,
+      "height": 720,
+      "focal_pixels": 1108.5125168440816
+    },
+    {
+      "name": "physics_clock_drives_ros_time",
+      "passed": true,
+      "clock_samples": 21,
+      "ros_time_ns": 759570241
+    },
+    {
+      "name": "truth_not_localization_tf",
+      "passed": true,
+      "tf_edges": [
+        [
+          "aim_sentry/base_link",
+          "aim_sentry/aim_camera_optical_frame"
+        ]
+      ]
+    },
+    {
+      "name": "ros_twist_moves_native_vehicle",
+      "passed": true,
+      "displacement": [
+        1.055635412640142,
+        0.002037539173354246,
+        -0.0003500132669321765
+      ],
+      "ack": {
+        "accepted_seq": 64,
+        "status": "active",
+        "age_s": 0.03379810228943825,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "ros_publisher_stop_brakes",
+      "passed": true,
+      "drift_m": 0.0006636182333392868,
+      "ack": {
+        "accepted_seq": 65,
+        "status": "expired",
+        "age_s": 1.496511798352003,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "ros_left_axis",
+      "passed": true,
+      "displacement": [
+        0.021108014761225702,
+        0.5194963731179504,
+        -0.003274074055551033
+      ]
+    },
+    {
+      "name": "unsupported_component_rejected",
+      "passed": true,
+      "error": "only planar vx/vy/wz are supported"
+    },
+    {
+      "name": "stale_ros_command_rejected",
+      "passed": true,
+      "error": "stale or future cmd_vel stamp"
+    },
+    {
+      "name": "sidecar_restart_no_replay",
+      "passed": true,
+      "drift_m": 8.393294762099991e-05,
+      "new_session": "BB3F81094F7644143F8D4CA8DC2061F0"
+    }
+  ],
+  "error": "TimeoutError('ROS observation timed out')"
+}

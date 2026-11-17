@@ -1,0 +1,378 @@
+diff --git a/fake_vel_transform/CMakeLists.txt b/fake_vel_transform/CMakeLists.txt
+index 0a48440..4726745 100644
+--- a/fake_vel_transform/CMakeLists.txt
++++ b/fake_vel_transform/CMakeLists.txt
+@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 3.10)
+ project(fake_vel_transform)
+ 
+ ## Use C++14
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+ ## enforcing cleaner code.
+-add_definitions(-Wall -Werror)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++else()
++  add_compile_options(-Wall -Werror)
++endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+diff --git a/fake_vel_transform/package.xml b/fake_vel_transform/package.xml
+index 448a012..82e4abb 100644
+--- a/fake_vel_transform/package.xml
++++ b/fake_vel_transform/package.xml
+@@ -9,7 +9,7 @@
+   <author email="lihanchen2004@163.com">Lihan Chen</author>
+ 
+   <!-- buildtool_depend: dependencies of the build process -->
+-  <buildtool_depend>ament_cmake</buildtool_depend>
++  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+ 
+   <!-- depend: build, export, and execution dependency -->
+   <depend>rclcpp</depend>
+diff --git a/loam_interface/CMakeLists.txt b/loam_interface/CMakeLists.txt
+index d37a8ac..2cb096f 100644
+--- a/loam_interface/CMakeLists.txt
++++ b/loam_interface/CMakeLists.txt
+@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 3.10)
+ project(loam_interface)
+ 
+ ## Use C++14
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+ ## enforcing cleaner code.
+-add_definitions(-Wall -Werror)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++else()
++  add_compile_options(-Wall -Werror)
++endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+diff --git a/loam_interface/package.xml b/loam_interface/package.xml
+index a7d8c58..047dd3b 100644
+--- a/loam_interface/package.xml
++++ b/loam_interface/package.xml
+@@ -8,7 +8,7 @@
+   <license>Apache-2.0</license>
+   <author email="lihanchen2004@163.com">Lihan Chen</author>
+ 
+-  <buildtool_depend>ament_cmake</buildtool_depend>
++  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+ 
+   <depend>rclcpp</depend>
+   <depend>rclcpp_components</depend>
+diff --git a/sensor_scan_generation/CMakeLists.txt b/sensor_scan_generation/CMakeLists.txt
+index 7c9b8b5..2a97a6e 100644
+--- a/sensor_scan_generation/CMakeLists.txt
++++ b/sensor_scan_generation/CMakeLists.txt
+@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 3.10)
+ project(sensor_scan_generation)
+ 
+ ## Use C++14
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+ ## enforcing cleaner code.
+-add_definitions(-Wall -Werror)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++else()
++  add_compile_options(-Wall -Werror)
++endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+diff --git a/sensor_scan_generation/package.xml b/sensor_scan_generation/package.xml
+index 39eee37..b5e7f13 100644
+--- a/sensor_scan_generation/package.xml
++++ b/sensor_scan_generation/package.xml
+@@ -8,7 +8,7 @@
+   <license>Apache-2.0</license>
+   <author email="lihanchen2004@163.com">Lihan Chen</author>
+ 
+-  <buildtool_depend>ament_cmake</buildtool_depend>
++  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+ 
+   <depend>rclcpp</depend>
+   <depend>rclcpp_components</depend>
+diff --git a/terrain_analysis/CMakeLists.txt b/terrain_analysis/CMakeLists.txt
+index 2a9bfcc..ed9036c 100644
+--- a/terrain_analysis/CMakeLists.txt
++++ b/terrain_analysis/CMakeLists.txt
+@@ -8,7 +8,7 @@ endif()
+ 
+ # Default to C++14
+ if(NOT CMAKE_CXX_STANDARD)
+-  set(CMAKE_CXX_STANDARD 14)
++  set(CMAKE_CXX_STANDARD 17)
+ endif()
+ 
+ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+@@ -17,6 +17,10 @@ endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++endif()
+ 
+ find_package(ament_cmake REQUIRED)
+ find_package(rclcpp REQUIRED)
+diff --git a/terrain_analysis/src/terrainAnalysis.cpp b/terrain_analysis/src/terrainAnalysis.cpp
+index 2a537f0..f47bd78 100644
+--- a/terrain_analysis/src/terrainAnalysis.cpp
++++ b/terrain_analysis/src/terrainAnalysis.cpp
+@@ -196,6 +196,7 @@ int main(int argc, char ** argv)
+ {
+   rclcpp::init(argc, argv);
+   auto nh = rclcpp::Node::make_shared("terrainAnalysis");
++  const auto odom_frame = nh->declare_parameter<std::string>("odom_frame", "odom");
+ 
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+   nh->declare_parameter<double>("decayTime", decayTime);
+@@ -639,7 +640,7 @@ int main(int argc, char ** argv)
+       sensor_msgs::msg::PointCloud2 terrainCloud2;
+       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
+       terrainCloud2.header.stamp = rclcpp::Time(static_cast<uint64_t>(laserCloudTime * 1e9));
+-      terrainCloud2.header.frame_id = "odom";
++      terrainCloud2.header.frame_id = odom_frame;
+       pubLaserCloud->publish(terrainCloud2);
+     }
+ 
+diff --git a/terrain_analysis_ext/CMakeLists.txt b/terrain_analysis_ext/CMakeLists.txt
+index 1c4e852..f696f15 100644
+--- a/terrain_analysis_ext/CMakeLists.txt
++++ b/terrain_analysis_ext/CMakeLists.txt
+@@ -8,7 +8,7 @@ endif()
+ 
+ # Default to C++14
+ if(NOT CMAKE_CXX_STANDARD)
+-  set(CMAKE_CXX_STANDARD 14)
++  set(CMAKE_CXX_STANDARD 17)
+ endif()
+ 
+ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+@@ -17,6 +17,10 @@ endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++endif()
+ 
+ find_package(ament_cmake REQUIRED)
+ find_package(rclcpp REQUIRED)
+diff --git a/terrain_analysis_ext/src/terrainAnalysisExt.cpp b/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+index 16dbeb4..560bba3 100644
+--- a/terrain_analysis_ext/src/terrainAnalysisExt.cpp
++++ b/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+@@ -173,6 +173,7 @@ void clearingHandler(const std_msgs::msg::Float32::ConstSharedPtr dis) {
+ int main(int argc, char **argv) {
+   rclcpp::init(argc, argv);
+   auto nh = rclcpp::Node::make_shared("terrainAnalysisExt");
++  const auto odom_frame = nh->declare_parameter<std::string>("odom_frame", "odom");
+ 
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+   nh->declare_parameter<double>("decayTime", decayTime);
+@@ -559,7 +560,7 @@ int main(int argc, char **argv) {
+       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
+       terrainCloud2.header.stamp =
+           rclcpp::Time(static_cast<uint64_t>(laserCloudTime * 1e9));
+-      terrainCloud2.header.frame_id = "odom";
++      terrainCloud2.header.frame_id = odom_frame;
+       pubTerrainCloud->publish(terrainCloud2);
+     }
+ 
+diff --git a/pb_omni_pid_pursuit_controller/CMakeLists.txt b/pb_omni_pid_pursuit_controller/CMakeLists.txt
+index f8cc825..036ab43 100644
+--- a/pb_omni_pid_pursuit_controller/CMakeLists.txt
++++ b/pb_omni_pid_pursuit_controller/CMakeLists.txt
+@@ -4,6 +4,11 @@ project(pb_omni_pid_pursuit_controller)
+ ## Set C++ standard
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
+ 
+ ## Export compile commands for clangd and clang-tidy
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+diff --git a/pb_omni_pid_pursuit_controller/package.xml b/pb_omni_pid_pursuit_controller/package.xml
+index e5c2bad..e78db1e 100644
+--- a/pb_omni_pid_pursuit_controller/package.xml
++++ b/pb_omni_pid_pursuit_controller/package.xml
+@@ -7,7 +7,7 @@
+   <maintainer email="lihanchen2004@163.com">Lihan Chen</maintainer>
+   <license>Apache-2.0</license>
+ 
+-  <buildtool_depend>ament_cmake</buildtool_depend>
++  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+ 
+   <depend>nav2_common</depend>
+   <depend>nav2_core</depend>
+diff --git a/pb_nav2_plugins/CMakeLists.txt b/pb_nav2_plugins/CMakeLists.txt
+index c7aa8cd..2f2b7ff 100644
+--- a/pb_nav2_plugins/CMakeLists.txt
++++ b/pb_nav2_plugins/CMakeLists.txt
+@@ -6,7 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+ ## enforcing cleaner code.
+-add_definitions(-Wall -Werror)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++else()
++  add_compile_options(-Wall -Werror)
++endif()
+ 
+ ## Export compile commands for clangd
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+@@ -21,6 +27,8 @@ ament_auto_add_library(pb_back_up_frees_space_behavior SHARED
+ ament_auto_add_library(layers SHARED
+   src/layers/intensity_voxel_layer.cpp
+ )
++# Nav2 itself also ships layers.dll; keep this plugin's binary identity distinct.
++set_target_properties(layers PROPERTIES OUTPUT_NAME pb_nav2_layers)
+ 
+ if(BUILD_TESTING)
+   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+diff --git a/pb_nav2_plugins/costmap_plugins.xml b/pb_nav2_plugins/costmap_plugins.xml
+index 4d3a411..29640f0 100644
+--- a/pb_nav2_plugins/costmap_plugins.xml
++++ b/pb_nav2_plugins/costmap_plugins.xml
+@@ -1,5 +1,5 @@
+ <class_libraries>
+-  <library path="layers">
++  <library path="pb_nav2_layers">
+     <class type="pb_nav2_costmap_2d::IntensityVoxelLayer"     base_class_type="nav2_costmap_2d::Layer">
+       <description>Similar to obstacle costmap, but uses 3D voxel grid to store data.</description>
+     </class>
+diff --git a/pb_nav2_plugins/package.xml b/pb_nav2_plugins/package.xml
+index 500f71c..e455bb4 100644
+--- a/pb_nav2_plugins/package.xml
++++ b/pb_nav2_plugins/package.xml
+@@ -8,7 +8,7 @@
+   <license>Apache-2.0</license>
+   <author email="lihanchen2004@163.com">Lihan Chen</author>
+ 
+-  <buildtool_depend>ament_cmake</buildtool_depend>
++  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+   <build_depend>nav2_common</build_depend>
+ 
+   <depend>rclcpp</depend>
+diff --git a/pointcloud_to_laserscan/CMakeLists.txt b/pointcloud_to_laserscan/CMakeLists.txt
+index 22cd293..4371b1d 100644
+--- a/pointcloud_to_laserscan/CMakeLists.txt
++++ b/pointcloud_to_laserscan/CMakeLists.txt
+@@ -1,5 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(pointcloud_to_laserscan)
++set(CMAKE_CXX_STANDARD 17)
++set(CMAKE_CXX_STANDARD_REQUIRED ON)
++if(MSVC)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++  add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
+ 
+ find_package(ament_cmake_auto REQUIRED)
+ ament_auto_find_build_dependencies()
+diff --git a/nav2_lifecycle_manager/CMakeLists.txt b/nav2_lifecycle_manager/CMakeLists.txt
+index 5f4b3f3..c589615 100644
+--- a/nav2_lifecycle_manager/CMakeLists.txt
++++ b/nav2_lifecycle_manager/CMakeLists.txt
+@@ -1,5 +1,9 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(nav2_lifecycle_manager)
++if(MSVC)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++  add_compile_options(/bigobj /utf-8 /EHsc)
++endif()
+ 
+ find_package(ament_cmake REQUIRED)
+ find_package(geometry_msgs REQUIRED)
+diff --git a/diagnostic_updater/CMakeLists.txt b/diagnostic_updater/CMakeLists.txt
+index 46c2ecc..f960e56 100644
+--- a/diagnostic_updater/CMakeLists.txt
++++ b/diagnostic_updater/CMakeLists.txt
+@@ -19,13 +19,17 @@ find_package(rclcpp REQUIRED)
+ find_package(rclpy REQUIRED)
+ find_package(std_msgs REQUIRED)
+ 
+-add_library(${PROJECT_NAME}
++add_library(${PROJECT_NAME} SHARED
+   src/diagnostic_updater.cpp
+ )
++include(GenerateExportHeader)
++generate_export_header(${PROJECT_NAME}
++  EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/include/diagnostic_updater/export.h")
+ target_include_directories(
+   ${PROJECT_NAME}
+   PUBLIC
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+   $<INSTALL_INTERFACE:include>
+ )
+ target_link_libraries(
+@@ -114,6 +118,8 @@ install(
+   DIRECTORY include/
+   DESTINATION include
+ )
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/diagnostic_updater/export.h"
++  DESTINATION include/diagnostic_updater)
+ 
+ ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
+ 
+diff --git a/diagnostic_updater/include/diagnostic_updater/diagnostic_updater.hpp b/diagnostic_updater/include/diagnostic_updater/diagnostic_updater.hpp
+index 517a704..4dd1618 100644
+--- a/diagnostic_updater/include/diagnostic_updater/diagnostic_updater.hpp
++++ b/diagnostic_updater/include/diagnostic_updater/diagnostic_updater.hpp
+@@ -35,6 +35,7 @@
+ #ifndef DIAGNOSTIC_UPDATER__DIAGNOSTIC_UPDATER_HPP_
+ #define DIAGNOSTIC_UPDATER__DIAGNOSTIC_UPDATER_HPP_
+ 
++#include "diagnostic_updater/export.h"
+ #include <functional>  // for bind()
+ #include <memory>
+ #include <stdexcept>
+@@ -207,7 +208,7 @@ private:
+  * common functionality used for producing diagnostic updates and for
+  * self-tests.
+  */
+-class DiagnosticTaskVector
++class DIAGNOSTIC_UPDATER_EXPORT DiagnosticTaskVector
+ {
+ protected:
+   /**
+@@ -353,7 +354,7 @@ protected:
+  * determined by the "~/diagnostic_updater.period" ros2 parameter.
+  * The force_update function can always be triggered async to the period interval.
+  */
+-class Updater : public DiagnosticTaskVector
++class DIAGNOSTIC_UPDATER_EXPORT Updater : public DiagnosticTaskVector
+ {
+ public:
+   bool verbose_;

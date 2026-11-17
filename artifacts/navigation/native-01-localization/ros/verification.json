@@ -1,0 +1,62 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_and_original_programs",
+      "passed": true,
+      "navigation": {
+        "phase": "running",
+        "starts": 1,
+        "identity": [
+          "F3E3C7634D830E433E8CFEA77EBBAA69",
+          0
+        ],
+        "pids": {
+          "loam_interface": 55284,
+          "sensor_scan_generation": 39092,
+          "terrain_analysis": 39428,
+          "terrain_analysis_ext": 17044,
+          "pointcloud_to_laserscan": 44808,
+          "fake_vel_transform": 15068,
+          "map_server": 12344,
+          "amcl": 14472,
+          "lifecycle_manager_localization": 34360
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\native-01-localization\\ros\\navigation\\20261115T231322Z-47980",
+        "map_id": "import_lab",
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "import_lab",
+        "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+        "kind": "rm_flat_map"
+      }
+    }
+  ],
+  "localization_only": true,
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "F3E3C7634D830E433E8CFEA77EBBAA69",
+      0
+    ],
+    "pids": {
+      "loam_interface": 55284,
+      "sensor_scan_generation": 39092,
+      "terrain_analysis": 39428,
+      "terrain_analysis_ext": 17044,
+      "pointcloud_to_laserscan": 44808,
+      "fake_vel_transform": 15068,
+      "map_server": 12344,
+      "amcl": 14472,
+      "lifecycle_manager_localization": 34360
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\native-01-localization\\ros\\navigation\\20261115T231322Z-47980",
+    "map_id": "import_lab",
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 0,
+  "error": "RuntimeError('a supervised ROS process exited')"
+}

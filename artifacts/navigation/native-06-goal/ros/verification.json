@@ -1,0 +1,176 @@
+{
+  "status": "passed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_identity_and_launched_processes",
+      "passed": true,
+      "navigation": {
+        "phase": "localizing",
+        "starts": 1,
+        "identity": [
+          "FB4B0B224A7FC1E3B50D8C8386DA21E6",
+          0
+        ],
+        "pids": {
+          "loam_interface": 56060,
+          "sensor_scan_generation": 16288,
+          "terrain_analysis": 29288,
+          "terrain_analysis_ext": 44468,
+          "pointcloud_to_laserscan": 19296,
+          "fake_vel_transform": 30344,
+          "map_server": 29544,
+          "amcl": 9176,
+          "lifecycle_manager_localization": 39948
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\native-06-goal\\ros\\navigation\\20261115T235144Z-38612",
+        "map_id": "import_lab",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "import_lab",
+        "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+        "kind": "rm_flat_map"
+      }
+    },
+    {
+      "name": "estimated_frame_and_scan_chain",
+      "passed": true,
+      "odom_frame": "aim_sentry/odom",
+      "terrain_points": 3984,
+      "scan_bins": 720
+    },
+    {
+      "name": "amcl_converges_from_perturbed_prior",
+      "passed": true,
+      "initial_prior": [
+        0.6,
+        -0.4,
+        0.15
+      ],
+      "estimated": [
+        0.08110710192521657,
+        -0.011067333968273366
+      ],
+      "truth_xy": [
+        0.0004293338013929104,
+        -0.0002122324050046598
+      ],
+      "error_m": 0.08140476337039704,
+      "covariance": [
+        0.018347596567049224,
+        0.012834401715994268,
+        0.0025984847854426444
+      ]
+    },
+    {
+      "name": "amcl_has_no_truth_subscription",
+      "passed": true,
+      "subscriptions": [
+        [
+          "/bond",
+          [
+            "bond/msg/Status"
+          ]
+        ],
+        [
+          "/clock",
+          [
+            "rosgraph_msgs/msg/Clock"
+          ]
+        ],
+        [
+          "/initialpose",
+          [
+            "geometry_msgs/msg/PoseWithCovarianceStamped"
+          ]
+        ],
+        [
+          "/map",
+          [
+            "nav_msgs/msg/OccupancyGrid"
+          ]
+        ],
+        [
+          "/obstacle_scan",
+          [
+            "sensor_msgs/msg/LaserScan"
+          ]
+        ],
+        [
+          "/parameter_events",
+          [
+            "rcl_interfaces/msg/ParameterEvent"
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "original_nav2_accepts_goal",
+      "passed": true
+    },
+    {
+      "name": "real_vehicle_reaches_goal",
+      "passed": true,
+      "status": 4,
+      "position": [
+        5.322256436349018,
+        0.9053227541531986,
+        0.0002486241167185632
+      ],
+      "error_m": 0.20138658172898827
+    },
+    {
+      "name": "original_planner_published_path",
+      "passed": true,
+      "path_points": 3
+    }
+  ],
+  "localization_only": false,
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "FB4B0B224A7FC1E3B50D8C8386DA21E6",
+      0
+    ],
+    "pids": {
+      "loam_interface": 56060,
+      "sensor_scan_generation": 16288,
+      "terrain_analysis": 29288,
+      "terrain_analysis_ext": 44468,
+      "pointcloud_to_laserscan": 19296,
+      "fake_vel_transform": 30344,
+      "map_server": 29544,
+      "amcl": 9176,
+      "lifecycle_manager_localization": 39948,
+      "controller_server": 49904,
+      "planner_server": 40944,
+      "smoother_server": 8180,
+      "behavior_server": 12380,
+      "bt_navigator": 33220,
+      "waypoint_follower": 3800,
+      "velocity_smoother": 30292,
+      "lifecycle_manager_navigation": 38456
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\native-06-goal\\ros\\navigation\\20261115T235144Z-38612",
+    "map_id": "import_lab",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 256,
+  "has_odometry": true,
+  "has_terrain": true,
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom",
+  "last_amcl": [
+    5.364964787500729,
+    0.9106050079295583
+  ]
+}

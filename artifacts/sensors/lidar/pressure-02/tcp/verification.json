@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "slow_reader_keeps_bounded_lidar_queue",
+      "passed": true,
+      "dropped_scans": 8,
+      "disconnect_reason": "slow_reader"
+    },
+    {
+      "name": "backpressure_does_not_keep_driving",
+      "passed": true,
+      "drift_m": 0.06154383887988005,
+      "command": {
+        "accepted_seq": -1,
+        "status": "waiting",
+        "age_s": -1,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "new_connection_does_not_replay_scans",
+      "passed": true,
+      "session_start_ns": 2923000139,
+      "scans": [
+        {
+          "seq": 43,
+          "start_ns": 2924000139,
+          "end_ns": 2957000140,
+          "point_count": 1663,
+          "byte_offset": 0,
+          "byte_length": 33260
+        },
+        {
+          "seq": 44,
+          "start_ns": 2958000140,
+          "end_ns": 2991000142,
+          "point_count": 1718,
+          "byte_offset": 0,
+          "byte_length": 34360
+        },
+        {
+          "seq": 45,
+          "start_ns": 2992000142,
+          "end_ns": 3025000144,
+          "point_count": 1716,
+          "byte_offset": 0,
+          "byte_length": 34320
+        },
+        {
+          "seq": 46,
+          "start_ns": 3026000144,
+          "end_ns": 3059000145,
+          "point_count": 1720,
+          "byte_offset": 0,
+          "byte_length": 34400
+        },
+        {
+          "seq": 47,
+          "start_ns": 3060000145,
+          "end_ns": 3093000147,
+          "point_count": 1713,
+          "byte_offset": 0,
+          "byte_length": 34260
+        }
+      ]
+    }
+  ],
+  "scope": "actual UE LiDAR30Hz pressure fixture and native chassis command watchdog"
+}

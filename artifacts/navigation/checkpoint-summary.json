@@ -1,0 +1,250 @@
+{
+  "status": "progress_verified_feature_in_progress",
+  "utc": "2026-11-16T00:26:40.675285+00:00",
+  "runs": {
+    "localization": {
+      "path": "native-04-localization/ros/verification.json",
+      "checks": 4,
+      "sha256": "00609a73152c537f105710c290a4708ccf409438e2e68ae2fbfd73e39a955225"
+    },
+    "goal": {
+      "path": "native-06-goal/ros/verification.json",
+      "checks": 7,
+      "sha256": "f3394b103157bf6d75a4bb1b4d4c88ee752d5ca182333f5b0efe9952581ea060"
+    },
+    "map_guard": {
+      "path": "native-07-map-guard/ros/verification.json",
+      "checks": 2,
+      "sha256": "d6480eb2b7fa03330d70f81843c6bb3584c77c3f8c533cf90dd19dd4886ac4ea"
+    },
+    "lidar_lk_regression": {
+      "path": "regression-lidar-lk/ros/verification.json",
+      "checks": 11,
+      "sha256": "c17bc69b22a0a06ecefd4965a6d32d6ada897a6a3694f4c4de36be48d5807667"
+    },
+    "aim_regression": {
+      "path": "regression-aim/aim/verification.json",
+      "checks": 20,
+      "sha256": "3c6d092dcf04a8399c68182caefefa67621dbb8641ce2c96897323e77a38233a"
+    },
+    "manual_regression": {
+      "path": "regression-manual/default/verification.json",
+      "sha256": "4aa3c7ffaa11d2cb3b0ea6609b6ba44f518aacbac40b7eaef6008e28093d3988",
+      "checks": 19
+    },
+    "trajectory": {
+      "path": "native-06-goal/trajectory-verification.json",
+      "sha256": "7184a889d577f3956386bd6b488fafc96cfea11b3b98011bdd182f58e3254096",
+      "checks": [
+        {
+          "name": "probe_box",
+          "passed": true,
+          "center_distance_m": 0.5342894323640658,
+          "envelope_radius_m": 0.36,
+          "sampling_travel_margin_m": 0.032000004
+        },
+        {
+          "name": "tall_box",
+          "passed": true,
+          "center_distance_m": 1.1731018522703713,
+          "envelope_radius_m": 0.36,
+          "sampling_travel_margin_m": 0.032000004
+        }
+      ]
+    }
+  },
+  "interrupted_run": {
+    "path": "native-08-public-cancel-reset/ros/verification.json",
+    "status": "failed",
+    "error": "TimeoutError('navigation observation timeout')",
+    "passed_checks": [
+      {
+        "name": "matching_map_identity_and_launched_processes",
+        "passed": true,
+        "navigation": {
+          "phase": "localizing",
+          "starts": 1,
+          "identity": [
+            "C60F07EA476A03A9BC97AEABAFCD592C",
+            0
+          ],
+          "pids": {
+            "loam_interface": 3008,
+            "sensor_scan_generation": 50172,
+            "terrain_analysis": 21480,
+            "terrain_analysis_ext": 22628,
+            "pointcloud_to_laserscan": 29128,
+            "fake_vel_transform": 41684,
+            "map_server": 33784,
+            "amcl": 30480,
+            "lifecycle_manager_localization": 49492
+          },
+          "output_directory": "D:\\simulator\\artifacts\\navigation\\native-08-public-cancel-reset\\ros\\navigation\\20261116T000732Z-45604",
+          "map_id": "import_lab",
+          "initial_pose_sent": false,
+          "localization_candidate": false,
+          "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+        },
+        "map": {
+          "id": "import_lab",
+          "source_md5": "81ef6140283fd22c41a8ebaff8eff411",
+          "kind": "rm_flat_map"
+        }
+      },
+      {
+        "name": "estimated_frame_and_scan_chain",
+        "passed": true,
+        "odom_frame": "aim_sentry/odom",
+        "terrain_points": 4040,
+        "scan_bins": 720
+      },
+      {
+        "name": "amcl_converges_from_perturbed_prior",
+        "passed": true,
+        "initial_prior": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "estimated": [
+          0.06274777192201136,
+          -0.047672664610356054
+        ],
+        "truth_xy": [
+          0.0004212985138149006,
+          -0.0002122071980397977
+        ],
+        "error_m": 0.07833954496478075,
+        "covariance": [
+          0.01807559765637877,
+          0.009635676566154796,
+          0.0026042865270508296
+        ]
+      },
+      {
+        "name": "amcl_has_no_truth_subscription",
+        "passed": true,
+        "subscriptions": [
+          [
+            "/bond",
+            [
+              "bond/msg/Status"
+            ]
+          ],
+          [
+            "/clock",
+            [
+              "rosgraph_msgs/msg/Clock"
+            ]
+          ],
+          [
+            "/initialpose",
+            [
+              "geometry_msgs/msg/PoseWithCovarianceStamped"
+            ]
+          ],
+          [
+            "/map",
+            [
+              "nav_msgs/msg/OccupancyGrid"
+            ]
+          ],
+          [
+            "/obstacle_scan",
+            [
+              "sensor_msgs/msg/LaserScan"
+            ]
+          ],
+          [
+            "/parameter_events",
+            [
+              "rcl_interfaces/msg/ParameterEvent"
+            ]
+          ]
+        ]
+      },
+      {
+        "name": "public_goal_client_succeeds",
+        "passed": true,
+        "process_exit": 0
+      },
+      {
+        "name": "real_vehicle_reaches_goal",
+        "passed": true,
+        "status": 4,
+        "position": [
+          5.324194595123914,
+          0.914912255576252,
+          0.00027613114001221465
+        ],
+        "error_m": 0.1953137594609391
+      },
+      {
+        "name": "original_planner_published_path",
+        "passed": true,
+        "path_points": 3
+      },
+      {
+        "name": "return_goal_accepted",
+        "passed": true
+      },
+      {
+        "name": "active_goal_cancelled",
+        "passed": true,
+        "status": 5
+      },
+      {
+        "name": "cancel_stops_physical_vehicle",
+        "passed": true,
+        "braking_distance_m": 0.05983761031176962,
+        "settled_drift_m": 3.222510810804943e-05
+      }
+    ],
+    "limitation": "Actual R was not performed: system permission popup was not operable through the window tool; user cancellation was requested. Do not mark reset passed."
+  },
+  "module_sha256": "646235222cbbdb1ce960da9d60f6751580594eb3e157d2994760fff2b85258ee",
+  "runtime_manifest_sha256": "ba518b94612f5c7f4eabc8288240cb1f977c186a0dc1b887eb00a223f208fbec",
+  "source_provenance": "artifacts/sources/navigation/provenance.json",
+  "source_patch_sha256": "85d9552290b3502165b860b4a10d3778fcd85463967e13cb11a1b0e5093f9d48",
+  "input_sha256": {
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_adapter.py": "f1411a4d7cabcd998bb3f3778f4b6f8bf39f8db5e97a582754ca360c27b0ef40",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_demo.py": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/control_dlls.py": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/drive_demo.py": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/imu.py": "e5c977953d071595af2dacb22b91dee68f44c61cccb9ef8e6752f3d53d7b746e",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lidar.py": "acd3aafc36d6c00e7c46c9453bbc6db1c05dc8645c4f49137ed622a5c21dcad0",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lk_adapter.py": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": "c0ac6cbe25cd9fc790039a1f358645ea626ca8c9418908787e89b3b19ba28057",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_runner.py": "008174d74e47add6d9208be2a137e95c15d83e8cd9f7cc120703afdcd178750f",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py": "df58d91301d1ee820c0ffdbf842de06bc94f82934777a239929f8eadff295e0a",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/point_lio_runner.py": "c9842383b8b8eeb173efd670276b8560e1d1422f0fbd43d79910ab7f1c64c7c9",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/protocol.py": "83d1c6643355661ec3f409f5ea62fdd002c093efffddd74c58f8c3d7c811ff24",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/transport.py": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/__init__.py": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+    "tools/environment/native_runtime.py": "aeafe91929b75ea279de3e941571e3f5084fed79c8ffd0338a3e02314c123bfc",
+    "tools/environment/stage_controller_runtime.py": "bc9f40d334b13cdec9e7e6e10c3811d27ce4f209ddc8f9206e2155b7ba7c5c68",
+    "tools/environment/stage_navigation_runtime.py": "ede0e3a79f035bf5bb225ad806271805f078a599747aa7336911cb81ef916cb4",
+    "tools/environment/pixi.toml": "4593ba1ca97c5bf653d7f6e4d51fd4035cd65d097e67243f0fc0c96951ccdb0b",
+    "tools/environment/pixi.lock": "cbc08c7a0b29659bd2ada98ec0d01a0bcd7b3b70a0cfbbe660c5717216b83098",
+    "src/rm_map_tools/__main__.py": "deb80a4bb0445e144785efa99a46d801d1941d7ea2fba26d7e5d5574a5f4b471"
+  },
+  "source_bridge_matches_installed": true,
+  "offline": {
+    "protocol_checks": 20,
+    "map_checks": 9,
+    "powershell_syntax": true
+  },
+  "rmuc_geometry": "artifacts/maps/rmuc2027/navigation-columns-01/geometry-report.json",
+  "remaining": [
+    "Actual navigation R and disconnect/reconnect recovery",
+    "RMUC traversability/localization map and actual RMUC goal tests",
+    "Direct end-to-end Windows launcher verification",
+    "Native Ubuntu",
+    "Full sentry decision/vision/Hub, official rules and networking"
+  ],
+  "limits": [
+    "Current goal proof is import_lab only, not RMUC navigation",
+    "Uncalibrated ray/physics model",
+    "Single-robot topic namespace, fixed1ms can be slower than real time"
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "kind": {
+      "const": "rm_flat_map"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "display_name": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "units": {
+      "const": "m"
+    },
+    "coordinate_system": {
+      "const": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP"
+    },
+    "floor": {
+      "type": "object",
+      "properties": {
+        "size_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 100
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "surface_z_m": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "thickness_m": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 5
+        },
+        "color_rgb": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "size_m",
+        "surface_z_m",
+        "thickness_m",
+        "color_rgb"
+      ],
+      "additionalProperties": false
+    },
+    "boundary": {
+      "type": "object",
+      "properties": {
+        "height_m": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "thickness_m": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 25
+        }
+      },
+      "required": [
+        "height_m",
+        "thickness_m"
+      ],
+      "additionalProperties": false
+    },
+    "obstacles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "center_m": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "size_m": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0.02,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "yaw_rad": {
+            "type": "number",
+            "minimum": -3.141592653589793,
+            "maximum": 3.141592653589793
+          },
+          "color_rgb": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 3,
+            "maxItems": 3
+          }
+        },
+        "required": [
+          "id",
+          "center_m",
+          "size_m",
+          "yaw_rad",
+          "color_rgb"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 256
+    },
+    "spawns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "team": {
+            "enum": [
+              "neutral",
+              "red",
+              "blue"
+            ]
+          },
+          "position_m": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "yaw_rad": {
+            "type": "number",
+            "minimum": -3.141592653589793,
+            "maximum": 3.141592653589793
+          }
+        },
+        "required": [
+          "id",
+          "team",
+          "position_m",
+          "yaw_rad"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "kind": {
+            "enum": [
+              "spawn",
+              "supply",
+              "capture"
+            ]
+          },
+          "team": {
+            "enum": [
+              "neutral",
+              "red",
+              "blue"
+            ]
+          },
+          "center_m": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "size_m": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 100
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "team",
+          "center_m",
+          "size_m"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 256
+    },
+    "inspection_obstacle_id": {
+      "type": "string",
+      "pattern": "^$|^[a-z][a-z0-9_]*$",
+      "description": "Optional landmark for the fixed motion probe; not needed for ordinary maps."
+    }
+  },
+  "required": [
+    "schema_version",
+    "kind",
+    "id",
+    "display_name",
+    "units",
+    "coordinate_system",
+    "floor",
+    "boundary",
+    "obstacles",
+    "spawns",
+    "regions"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Structural contract; geometric containment, duplicate IDs and references require runtime/offline semantic validation."
+}

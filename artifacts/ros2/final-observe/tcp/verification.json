@@ -1,0 +1,41 @@
+{
+  "scope": "actual native UE TCP/physics/rendering; ROS topic proof is separate",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "native_clock_and_image",
+      "passed": true,
+      "frames": 19,
+      "width": 640,
+      "height": 360,
+      "clock_ns": 2206835840
+    },
+    {
+      "name": "optical_projection_matches_real_armor",
+      "passed": true,
+      "projected_pixel": [
+        571.6795654718801,
+        96.35260706941018
+      ],
+      "red_pixels": 49,
+      "world_target": [
+        4.0,
+        -1.7,
+        0.64
+      ]
+    },
+    {
+      "name": "sensor_optics_independent_of_observer",
+      "passed": true,
+      "sensor_hfov_rad": 1.0471975511965976,
+      "observer_hfov_rad": 0.5235987755982988
+    },
+    {
+      "name": "manual_mode_rejects_remote_drive",
+      "passed": true,
+      "drift_m": 2.9332734310908672e-05
+    }
+  ],
+  "states": 134,
+  "images": 27
+}

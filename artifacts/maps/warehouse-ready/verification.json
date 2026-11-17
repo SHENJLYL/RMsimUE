@@ -1,0 +1,57 @@
+{
+  "map_id": "warehouse_lanes",
+  "checks": [
+    {
+      "name": "map_identity",
+      "passed": true,
+      "detail": "75836e9b5af468ea14dc86fe83003efcc9823645b137c7d1cfe5d30c7d674f14"
+    },
+    {
+      "name": "actual_movement",
+      "passed": true,
+      "detail": "nine actual engine checks, not just map load"
+    },
+    {
+      "name": "obstacle_geometry",
+      "passed": true,
+      "detail": {
+        "max_error_cm": 1.4210854715202004e-14
+      }
+    },
+    {
+      "name": "spawn_transform",
+      "passed": true,
+      "detail": {
+        "actual_cm": [
+          -300,
+          200,
+          1.9999991655349731
+        ],
+        "actual_yaw_rad": -0.35
+      }
+    },
+    {
+      "name": "semantic_regions",
+      "passed": true,
+      "detail": [
+        "red_spawn"
+      ]
+    },
+    {
+      "name": "occupancy_landmarks",
+      "passed": true,
+      "detail": {
+        "width": 480,
+        "height": 320,
+        "resolution": 0.05,
+        "origin": [
+          -12.0,
+          -8.0,
+          0
+        ]
+      }
+    }
+  ],
+  "passed": true,
+  "scope": "native Windows flat geometry/collision/spawn/regions and static occupancy; not referee or localization"
+}

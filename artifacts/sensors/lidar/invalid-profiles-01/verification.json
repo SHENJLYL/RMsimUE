@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "error": "invalid LiDAR identity, mount, scan or range configuration",
+      "name": "invalid_rate",
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "error": "IMU and LiDAR sensor ids must be unique",
+      "name": "duplicate_sensor_id",
+      "passed": true,
+      "process_exit": 0
+    }
+  ],
+  "scope": "actual startup rejection and termination; exit status alone is not acceptance",
+  "passed": true
+}

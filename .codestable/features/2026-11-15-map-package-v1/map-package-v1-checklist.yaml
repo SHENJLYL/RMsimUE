@@ -1,0 +1,25 @@
+feature: 2026-11-15-map-package-v1
+steps:
+  - id: contract
+    action: Define two flat map packages and validate fields and geometry.
+    status: done
+  - id: runtime
+    action: Load packages in UE and place the vehicle at a checked spawn.
+    status: done
+  - id: navigation
+    action: Export occupancy data from the same blocking geometry.
+    status: done
+  - id: verify
+    action: Run both maps and preserve the default control/collision checks.
+    status: done
+checks:
+  - id: map_validation
+    status: done
+  - id: native_load_two_maps
+    status: done
+  - id: spawn_collision_guard
+    status: done
+  - id: coherent_occupancy
+    status: done
+  - id: visual_and_movement
+    status: done

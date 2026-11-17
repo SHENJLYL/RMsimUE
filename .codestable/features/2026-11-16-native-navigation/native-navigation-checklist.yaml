@@ -1,0 +1,8 @@
+feature: 2026-11-16-native-navigation
+steps:
+  - {id: source_and_dependencies, status: done, action: Actual default AMCL chain and seven pinned source repositories recorded; dependency replacements explicit.}
+  - {id: native_build, status: done, action: Original nodes/plugins and native lifecycle/diagnostics overlays built and actually loaded.}
+  - {id: estimated_frames, status: done, action: Actual LIO/odometry/terrain/scan chain verified in flat scene with explicit frames.}
+  - {id: localization, status: done, action: AMCL converges from0.72m perturbed prior to about0.08..0.11m without truth subscription in tested scene.}
+  - {id: navigation, status: in-progress, action: Native06 reaches goal with measured avoidance; RMUC and cancel/loss/reset recovery still pending.}
+  - {id: records_regressions, status: in-progress, action: Source patches and phase evidence preserved; old feature regressions and user launch verification underway.}

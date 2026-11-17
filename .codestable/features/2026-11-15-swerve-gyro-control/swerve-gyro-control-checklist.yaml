@@ -1,0 +1,15 @@
+feature: 2026-11-15-swerve-gyro-control
+steps:
+  - {id: baseline, status: done, action: Preserve contact vehicle baseline and verify recovery.}
+  - {id: assets, status: done, action: Separate physical steering carriers with unchanged neutral geometry.}
+  - {id: drive, status: done, action: Shared SI velocity controller and per-vehicle profile with smooth response.}
+  - {id: input, status: done, action: G/Z/X and camera-relative WASD in both modes; Q/E and Ctrl; gimbal preserved.}
+  - {id: native_proof, status: done, action: 45 native checks and 40 PNGs on matching module/profile hashes.}
+  - {id: records, status: done, action: Records updated; Windows GUI G/X/Z/R observed and preview left at spawn.}
+checks:
+  - {id: geometry_and_source_integrity, status: passed, evidence: artifacts/gameplay/gyro-control/release-summary.json}
+  - {id: smooth_speed_and_turn_response, status: passed, evidence: artifacts/gameplay/gyro-control/release-controls-01/default/control-result.json}
+  - {id: camera_relative_gyro_direction, status: passed, evidence: artifacts/gameplay/gyro-control/release-controls-01/default/control-result.json}
+  - {id: gyro_speed_mapping_limits, status: passed, evidence: artifacts/gameplay/gyro-control/release-controls-01/default/control-result.json}
+  - {id: rough_terrain_gyro_and_aim, status: passed, evidence: artifacts/gameplay/gyro-control/release-waves-precision/verification.json}
+  - {id: contact_shooting_recovery_regression, status: passed, evidence: artifacts/gameplay/gyro-control/release-integration/control-result.json}

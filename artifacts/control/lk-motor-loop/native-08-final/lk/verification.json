@@ -1,0 +1,211 @@
+{
+  "status": "passed",
+  "scope": "native original LK PID/power loop and actual current-driven Chaos joints",
+  "checks": [
+    {
+      "name": "native_original_node_and_feedback",
+      "passed": true,
+      "node_executable": "ros2_ws/install_control/chassis_controllers/lib/chassis_controllers/lk_full_wheel_chassis_controller.exe",
+      "motors": {
+        "enabled": true,
+        "current_active": true,
+        "order": "front_left,front_right,back_left,back_right",
+        "amps_per_count": 0.008056640625,
+        "wheel_nm_per_amp": 0.14,
+        "steer_nm_per_amp": 0.14,
+        "calibrated": false,
+        "steer": [
+          {
+            "encoder": 32759,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 32762,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 4,
+            "speed_deg_s": 0,
+            "current": 0
+          },
+          {
+            "encoder": 2,
+            "speed_deg_s": 0,
+            "current": 0
+          }
+        ],
+        "wheel": [
+          {
+            "encoder": 421,
+            "speed_deg_s": 0,
+            "current": -9
+          },
+          {
+            "encoder": 422,
+            "speed_deg_s": 0,
+            "current": -10
+          },
+          {
+            "encoder": 422,
+            "speed_deg_s": 0,
+            "current": -10
+          },
+          {
+            "encoder": 423,
+            "speed_deg_s": 0,
+            "current": -10
+          }
+        ]
+      }
+    },
+    {
+      "name": "original_power_limiter_active",
+      "passed": true,
+      "max_current_count": 10,
+      "drift_m": 7.062647707940305e-05
+    },
+    {
+      "name": "current_driven_forward",
+      "passed": true,
+      "displacement": [
+        1.164725374965659,
+        0.0003400387534093974,
+        0.00013529142407842087
+      ],
+      "max_current_count": 546
+    },
+    {
+      "name": "forward_steering_settled",
+      "passed": true,
+      "max_angle_error_deg": 0.08789062500002329,
+      "max_steady_speed_deg_s": 5,
+      "simulation_rate": 0.30029559685747303
+    },
+    {
+      "name": "original_zero_velocity_brake",
+      "passed": true,
+      "drift_m": 0.0
+    },
+    {
+      "name": "current_driven_left",
+      "passed": true,
+      "displacement": [
+        0.030068104735179624,
+        0.884237380091232,
+        0.00015737109695670884
+      ]
+    },
+    {
+      "name": "current_driven_positive_yaw",
+      "passed": true,
+      "yaw_change_rad": 1.42630464908661,
+      "translation_m": 0.005874562002844563
+    },
+    {
+      "name": "chassis_publisher_loss_brakes",
+      "passed": true,
+      "drift_m": 5.152671168311686e-06,
+      "adapter": {
+        "status": "chassis_command_timeout",
+        "feedback_samples": 16804,
+        "current_message_age_s": {
+          "steer": 0.01679399999557063,
+          "wheel": 0.016764900006819516
+        }
+      }
+    },
+    {
+      "name": "original_estop_brakes",
+      "passed": true,
+      "adapter": {
+        "status": "emergency_stop",
+        "feedback_samples": 18403,
+        "current_message_age_s": {
+          "steer": 0.016563799988944083,
+          "wheel": 0.01653630001237616
+        }
+      }
+    },
+    {
+      "name": "bridge_loss_brakes",
+      "passed": true,
+      "drift_m": 5.925631125482458e-05
+    },
+    {
+      "name": "motor_reject_overcurrent",
+      "passed": true,
+      "reason": "motor_limits"
+    },
+    {
+      "name": "motor_reject_fractional_current",
+      "passed": true,
+      "reason": "motor_limits"
+    },
+    {
+      "name": "motor_reject_invalid_brake",
+      "passed": true,
+      "reason": "motor_brake"
+    },
+    {
+      "name": "motor_reject_stale",
+      "passed": true,
+      "reason": "timestamp"
+    },
+    {
+      "name": "motor_reject_wrong_session",
+      "passed": true,
+      "reason": "session_epoch"
+    },
+    {
+      "name": "velocity_cannot_compete_with_current_mode",
+      "passed": true
+    },
+    {
+      "name": "explicit_motor_brake_acknowledged",
+      "passed": true
+    },
+    {
+      "name": "current_reconnect_does_not_replay",
+      "passed": true,
+      "adapter": {
+        "status": "emergency_stop",
+        "feedback_samples": 500,
+        "current_message_age_s": {
+          "steer": 0.013843299995642155,
+          "wheel": 0.0138130999985151
+        }
+      }
+    },
+    {
+      "name": "real_R_resets_current_epoch",
+      "passed": true,
+      "before_epoch": 0,
+      "after_epoch": 1
+    },
+    {
+      "name": "installed_original_message_demo",
+      "passed": true,
+      "forward_m": 0.15561429615486058,
+      "displacement": [
+        0.1556142956377851,
+        0.00011419303603960707,
+        -0.0005455665465893135
+      ]
+    },
+    {
+      "name": "controller_loss_brakes",
+      "passed": true,
+      "drift_m": 0.00015333919538197582,
+      "adapter": {
+        "status": "motor_controller_timeout",
+        "feedback_samples": 32714,
+        "current_message_age_s": {
+          "steer": 5.093527399993036,
+          "wheel": 5.093494799977634
+        }
+      }
+    }
+  ]
+}

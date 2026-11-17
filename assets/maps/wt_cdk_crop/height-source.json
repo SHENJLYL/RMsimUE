@@ -1,0 +1,31 @@
+{
+  "schema": "wt_cdk_height_crop_v1",
+  "source_file": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\WarThunderCDK\\levels\\location_sample\\heightmapLand\\heightmap.r32.zst",
+  "source_sha256": "eeca156ec0cc64f732d915bdce88657132c2b3ff3c99e62e2016f2f1887e9a58",
+  "settings_sha256": "9aad966540bb1080d0d4f5fd5e0a9d4e418e8e11175118275a21334c16f685fe",
+  "source_dimensions": [
+    2048,
+    2048
+  ],
+  "crop_center_pixel": [
+    1120,
+    1120
+  ],
+  "patch_samples": 33,
+  "cell_size_m": 16.0,
+  "size_m": [
+    512.0,
+    512.0
+  ],
+  "height_scale": 1314.41,
+  "height_offset": -784.413,
+  "removed_reference_height_m": 266.53338282597065,
+  "local_height_min_m": 0.0,
+  "local_height_max_m": 20.457744598388672,
+  "frame": "local X follows source columns, local Y follows rows, Z is height; not a geographic or game referee frame",
+  "limitations": [
+    "CDK location_sample crop, not a shipped small battle map",
+    "terrain only; no buildings/foliage/material layers",
+    "16m original sampling; no invented high-frequency detail"
+  ]
+}

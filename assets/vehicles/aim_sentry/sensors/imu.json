@@ -1,0 +1,44 @@
+{
+  "schema": "rm_imu_runtime_v1",
+  "calibrated": false,
+  "imus": [
+    {
+      "id": "imu",
+      "parent_frame": "base_link",
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.15
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "rate_hz": 200.0,
+      "accel_bias_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_bias_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "accel_noise_std_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_noise_std_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "noise_seed": 2027
+    }
+  ]
+}

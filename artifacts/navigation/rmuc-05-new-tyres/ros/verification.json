@@ -1,0 +1,177 @@
+{
+  "status": "failed",
+  "scope": "real UE sensors, original sentry interfaces/AMCL/Nav2; truth only evaluates",
+  "checks": [
+    {
+      "name": "matching_map_identity_and_launched_processes",
+      "passed": true,
+      "navigation": {
+        "phase": "localizing",
+        "starts": 1,
+        "identity": [
+          "F05B2DF946E86B044C31ABAABBA249A3",
+          0
+        ],
+        "pids": {
+          "loam_interface": 30312,
+          "sensor_scan_generation": 57420,
+          "terrain_analysis": 15264,
+          "terrain_analysis_ext": 50608,
+          "pointcloud_to_laserscan": 42608,
+          "fake_vel_transform": 57616,
+          "map_server": 45336,
+          "amcl": 38956,
+          "lifecycle_manager_localization": 19316
+        },
+        "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-05-new-tyres\\ros\\navigation\\20261116T031801Z-15600",
+        "map_id": "rmuc2027",
+        "initial_pose_sent": false,
+        "localization_candidate": false,
+        "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+      },
+      "map": {
+        "id": "rmuc2027",
+        "source_md5": "b0453f53370193c59ef594a56003872b",
+        "kind": "rm_mesh_map"
+      }
+    },
+    {
+      "name": "estimated_frame_and_scan_chain",
+      "passed": true,
+      "odom_frame": "aim_sentry/odom",
+      "terrain_points": 1133,
+      "scan_bins": 720
+    },
+    {
+      "name": "amcl_converges_from_perturbed_prior",
+      "passed": true,
+      "initial_prior": [
+        6.4,
+        6.0,
+        0.15
+      ],
+      "estimated": [
+        5.8779106277237725,
+        6.352245176596089
+      ],
+      "truth_xy": [
+        5.800169584940253,
+        6.399528629816489
+      ],
+      "error_m": 0.09099117914124843,
+      "covariance": [
+        0.006139761553122014,
+        0.03017867677657904,
+        0.0008886665355104514
+      ]
+    },
+    {
+      "name": "amcl_has_no_truth_subscription",
+      "passed": true,
+      "subscriptions": [
+        [
+          "/bond",
+          [
+            "bond/msg/Status"
+          ]
+        ],
+        [
+          "/clock",
+          [
+            "rosgraph_msgs/msg/Clock"
+          ]
+        ],
+        [
+          "/initialpose",
+          [
+            "geometry_msgs/msg/PoseWithCovarianceStamped"
+          ]
+        ],
+        [
+          "/map",
+          [
+            "nav_msgs/msg/OccupancyGrid"
+          ]
+        ],
+        [
+          "/obstacle_scan",
+          [
+            "sensor_msgs/msg/LaserScan"
+          ]
+        ],
+        [
+          "/parameter_events",
+          [
+            "rcl_interfaces/msg/ParameterEvent"
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "original_nav2_accepts_goal",
+      "passed": true
+    },
+    {
+      "name": "real_vehicle_reaches_goal",
+      "passed": false,
+      "status": 4,
+      "position": [
+        9.25452386662415,
+        6.563481265472428,
+        0.026912139921872278
+      ],
+      "error_m": 0.2548274766975485
+    }
+  ],
+  "localization_only": false,
+  "map_id": "rmuc2027",
+  "goal": [
+    9.45,
+    6.4
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "F05B2DF946E86B044C31ABAABBA249A3",
+      0
+    ],
+    "pids": {
+      "loam_interface": 30312,
+      "sensor_scan_generation": 57420,
+      "terrain_analysis": 15264,
+      "terrain_analysis_ext": 50608,
+      "pointcloud_to_laserscan": 42608,
+      "fake_vel_transform": 57616,
+      "map_server": 45336,
+      "amcl": 38956,
+      "lifecycle_manager_localization": 19316,
+      "controller_server": 29128,
+      "planner_server": 17044,
+      "smoother_server": 50532,
+      "behavior_server": 50572,
+      "bt_navigator": 54476,
+      "waypoint_follower": 10308,
+      "velocity_smoother": 56160,
+      "lifecycle_manager_navigation": 57048
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\rmuc-05-new-tyres\\ros\\navigation\\20261116T031801Z-15600",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "localization_candidate": true,
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "received_scans": 206,
+  "has_odometry": true,
+  "has_terrain": true,
+  "odometry_frames": [
+    "aim_sentry/odom",
+    "aim_sentry/base_link"
+  ],
+  "terrain_frame": "aim_sentry/odom",
+  "last_amcl": [
+    9.315076153511132,
+    6.370817519299114
+  ],
+  "error": "AssertionError('real_vehicle_reaches_goal')"
+}

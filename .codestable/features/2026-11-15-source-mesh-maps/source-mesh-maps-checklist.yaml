@@ -1,0 +1,28 @@
+feature: 2026-11-15-source-mesh-maps
+steps:
+  - id: source
+    action: Verify and prepare RMUC2027 and the CDK crop without changing sources.
+    status: done
+  - id: import
+    action: Import real paired meshes and source-color materials into UE.
+    status: done
+  - id: drive
+    action: Implement bounded terrain following through the common movement path.
+    status: done
+  - id: verify
+    action: Run both maps, terrain and flat regression checks, inspect captures.
+    status: done
+  - id: deliver
+    action: Set default map and update source, usage, architecture and progress records.
+    status: done
+checks:
+  - id: source_identity
+    status: done
+  - id: rmuc_native_scene_and_drive
+    status: done
+  - id: terrain_boundaries
+    status: done
+  - id: wt_native_scene_and_drive
+    status: done
+  - id: flat_controls_regression
+    status: done

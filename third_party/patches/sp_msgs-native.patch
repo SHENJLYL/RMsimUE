@@ -1,0 +1,8 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,4 +20,5 @@
+   DEPENDENCIES builtin_interfaces
+ )
+ 
++ament_export_dependencies(rosidl_default_runtime)
+ ament_package()

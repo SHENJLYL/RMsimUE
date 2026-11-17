@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "fixture": "incline",
+  "scope": "native ROS and actual physical chassis, raw orientation unavailable",
+  "checks": [
+    {
+      "name": "incline_gravity_projection",
+      "passed": false,
+      "mean_specific_force": [
+        4.06240146540137,
+        -0.0106533076412808,
+        8.918351209781067
+      ],
+      "expected": [
+        3.3517974045915535,
+        0,
+        9.208987683701903
+      ]
+    }
+  ],
+  "error": "AssertionError('incline_gravity_projection')"
+}

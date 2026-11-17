@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "rm_mesh_map",
+  "id": "wt_cdk_crop",
+  "display_name": "War Thunder CDK terrain crop (512m)",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "bounds_m": {
+    "lo": [
+      -256.0,
+      -256.0,
+      0.0
+    ],
+    "hi": [
+      256.0,
+      256.0,
+      20.457744598388672
+    ]
+  },
+  "meshes": [
+    {
+      "id": "terrain",
+      "visual_asset": "/Game/RMSim/Maps/wt_cdk_crop/visual_terrain.visual_terrain",
+      "collision_asset": "/Game/RMSim/Maps/wt_cdk_crop/collision_terrain.collision_terrain"
+    }
+  ],
+  "spawns": [
+    {
+      "id": "default",
+      "team": "neutral",
+      "position_m": [
+        0,
+        0,
+        0
+      ],
+      "yaw_rad": 0
+    },
+    {
+      "id": "hillside",
+      "team": "neutral",
+      "position_m": [
+        136,
+        100,
+        5.505534052848816
+      ],
+      "yaw_rad": 0
+    }
+  ],
+  "regions": [],
+  "source_sha256": "eeca156ec0cc64f732d915bdce88657132c2b3ff3c99e62e2016f2f1887e9a58",
+  "limitations": [
+    "CDK location_sample crop, not a shipped small battle map",
+    "terrain only; no buildings/foliage/material layers",
+    "16m original sampling; no invented high-frequency detail",
+    "plain preview material; not the original War Thunder ground appearance"
+  ]
+}

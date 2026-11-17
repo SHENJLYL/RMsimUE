@@ -1,0 +1,129 @@
+{
+  "status": "direction_response_fix_native_verified_with_open_precision_issue",
+  "scope": "engine input to actual physical velocity heading; no OS-to-display latency claim",
+  "module_sha256": "6ad1705beafce84588c9dd8148a7f500aa41c2009e0bc6bf4de8a23b72f2e715",
+  "drive_profile_sha256": "0850a038ab048112caa508eee39d3460af73727ae7f35335fcf3b0be71027a58",
+  "engine_config_restored": true,
+  "profile_changes": {
+    "LateralAccelerationMps2": {
+      "before": 4.0,
+      "after": 10.0
+    },
+    "DirectionJerkMps3": {
+      "before": 40.0,
+      "after": 100.0
+    }
+  },
+  "comparisons": [
+    {
+      "speed_m_s": 0.6,
+      "spin_rad_s": 0,
+      "before": {
+        "run": "baseline/default",
+        "run_status": "passed",
+        "direction_check_passed": true,
+        "actual_response_ms": 254.6,
+        "detail": "0.6m/s moving 90deg input change: target heading within 10deg 261.9ms; actual velocity within 15deg 254.6ms"
+      },
+      "after": {
+        "run": "controls-after/default",
+        "run_status": "passed",
+        "direction_check_passed": true,
+        "actual_response_ms": 149.9,
+        "detail": "0.60m/s, 0.00rad/s spin, moving 90deg input change: target heading within 10deg 142.5ms; actual velocity within 15deg 149.9ms; settled error 0.00deg, speed 0.599m/s"
+      }
+    },
+    {
+      "speed_m_s": 2,
+      "spin_rad_s": 0,
+      "before": {
+        "run": "fast-before",
+        "run_status": "failed",
+        "direction_check_passed": false,
+        "actual_response_ms": 714.6,
+        "detail": "2.00m/s, 0.00rad/s spin, moving 90deg input change: target heading within 10deg 747.8ms; actual velocity within 15deg 714.6ms"
+      },
+      "after": {
+        "run": "fast-after",
+        "run_status": "passed",
+        "direction_check_passed": true,
+        "actual_response_ms": 358.5,
+        "detail": "2.00m/s, 0.00rad/s spin, moving 90deg input change: target heading within 10deg 330.2ms; actual velocity within 15deg 358.5ms; settled error 0.09deg, speed 1.997m/s"
+      }
+    },
+    {
+      "speed_m_s": 2,
+      "spin_rad_s": 4,
+      "before": {
+        "run": "spin-before",
+        "run_status": "failed",
+        "direction_check_passed": false,
+        "actual_response_ms": 732.8,
+        "detail": "2.00m/s, 4.00rad/s spin, moving 90deg input change: target heading within 10deg 746.9ms; actual velocity within 15deg 732.8ms"
+      },
+      "after": {
+        "run": "spin-after",
+        "run_status": "failed",
+        "direction_check_passed": true,
+        "actual_response_ms": 361.4,
+        "detail": "2.00m/s, 4.00rad/s spin, moving 90deg input change: target heading within 10deg 333.5ms; actual velocity within 15deg 361.4ms; settled error 0.67deg, speed 2.003m/s"
+      }
+    }
+  ],
+  "passed_runs": [
+    {
+      "directory": "fast-after",
+      "checks": 5,
+      "pngs": 4,
+      "passed": true
+    },
+    {
+      "directory": "controls-after/default",
+      "checks": 19,
+      "pngs": 12,
+      "passed": true
+    },
+    {
+      "directory": "waves-after/wave_red",
+      "checks": 5,
+      "pngs": 6,
+      "passed": true
+    },
+    {
+      "directory": "waves-after/wave_blue",
+      "checks": 5,
+      "pngs": 6,
+      "passed": true
+    },
+    {
+      "directory": "traction-after",
+      "checks": 6,
+      "pngs": 4,
+      "passed": true
+    },
+    {
+      "directory": "ros-after/ros",
+      "checks": 11,
+      "passed": true
+    }
+  ],
+  "passed_checks": 51,
+  "decoded_pngs": 32,
+  "open_issues": [
+    {
+      "id": "2026-11-16-gyro-precision-ripple",
+      "run": "spin-after",
+      "status": "failed",
+      "check": "precision_key_speed_cap",
+      "detail": "Ctrl + full throttle: actual 0.4283m/s, configured cap 0.3500m/s"
+    }
+  ],
+  "reverted_candidates": [
+    "spin-stiffness-160",
+    "spin-feedback",
+    "spin-substep-1ms"
+  ],
+  "native_platform": "Windows",
+  "ubuntu_native_verified": false,
+  "user_handfeel_accepted": false
+}

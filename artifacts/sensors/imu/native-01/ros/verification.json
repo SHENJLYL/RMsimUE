@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "fixture": "motion",
+  "scope": "native ROS and actual physical chassis, raw orientation unavailable",
+  "checks": [
+    {
+      "name": "stationary_specific_force",
+      "passed": false,
+      "mean_accel": [
+        -0.2028554043023446,
+        -0.0038110481357599116,
+        9.798147165404643
+      ],
+      "mean_gyro": [
+        -2.6095456840629353e-06,
+        -0.0012318270888562275,
+        3.95822813397069e-07
+      ],
+      "world_gravity": 9.8
+    }
+  ],
+  "error": "AssertionError('stationary_specific_force')"
+}

@@ -1,0 +1,135 @@
+{
+  "status": "passed",
+  "scope": "original ROS messages and actual UE scene/projectiles; calibration fixture, not vision recognition",
+  "motor_mode": false,
+  "checks": [
+    {
+      "name": "original_messages_and_own_state",
+      "passed": true,
+      "shooter_keys": [
+        "ammo",
+        "available",
+        "clock_source",
+        "cooling_per_second",
+        "epoch",
+        "heat",
+        "heat_per_shot",
+        "launch_cm_s",
+        "max_heat",
+        "shot_interval",
+        "shots",
+        "status",
+        "time"
+      ]
+    },
+    {
+      "name": "training_time_matches_physics",
+      "passed": true,
+      "training_time": 0.5473657329877217,
+      "physics_time": 0.54736574
+    },
+    {
+      "name": "scan_bounds_and_pitch_sign",
+      "passed": true,
+      "yaw_range": [
+        -0.24960014063550476,
+        0.2425402281467466
+      ],
+      "pitch_down_range": [
+        -0.14942229317682273,
+        0.09820258664268802
+      ],
+      "empty_upstream_frame": true
+    },
+    {
+      "name": "absolute_world_aim",
+      "passed": true,
+      "world_angles": [
+        0.49999999534890555,
+        0.14999923131158718
+      ]
+    },
+    {
+      "name": "joint_feedback_matches_optical_tf",
+      "passed": true,
+      "vector_error": 7.687021693176821e-07,
+      "stamp_ns": 3985998839
+    },
+    {
+      "name": "world_aim_stabilizes_spinning_chassis",
+      "passed": true,
+      "chassis_turn_rad": 1.4160997606806758,
+      "world_error_rad": 8.216332801526435e-16
+    },
+    {
+      "name": "aim_stream_cannot_renew_chassis",
+      "passed": true,
+      "chassis_change_rad": 0.0006881603087502963,
+      "chassis_status": "expired"
+    },
+    {
+      "name": "actual_pitch_mechanical_limit",
+      "passed": true,
+      "pitch": 0.55,
+      "limit": 0.55
+    },
+    {
+      "name": "permission_zero_inhibits_fire",
+      "passed": true
+    },
+    {
+      "name": "real_projectile_hits_calibration_armor",
+      "passed": true,
+      "shots": 1,
+      "hits": 1,
+      "health_before": 100,
+      "health_after": 80
+    },
+    {
+      "name": "heat_and_ammo_are_authoritative",
+      "passed": true,
+      "shots": 14,
+      "heat_budget_shots": 14.2
+    },
+    {
+      "name": "chassis_stream_cannot_renew_fire",
+      "passed": true,
+      "shots_after_expiry": 16
+    },
+    {
+      "name": "old_source_timestamp_rejected",
+      "passed": true,
+      "error": "stale or future aim stamp"
+    },
+    {
+      "name": "wire_bad_frame",
+      "passed": true
+    },
+    {
+      "name": "wire_wrong_epoch",
+      "passed": true
+    },
+    {
+      "name": "wire_bad_mode",
+      "passed": true
+    },
+    {
+      "name": "wire_bad_range",
+      "passed": true
+    },
+    {
+      "name": "wire_nonfinite",
+      "passed": true
+    },
+    {
+      "name": "reconnect_needs_new_permission",
+      "passed": true
+    },
+    {
+      "name": "installed_original_aim_demo",
+      "passed": true,
+      "world_yaw": 0.3000136834859494,
+      "world_pitch": -0.10004932541809128
+    }
+  ]
+}

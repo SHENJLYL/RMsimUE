@@ -1,0 +1,13 @@
+feature: 2026-11-16-native-imu
+steps:
+  - {id: contract, status: done, action: ROS/Point-LIO units pinned; vehicle profile and schema created.}
+  - {id: sampling, status: done, action: Actual point motion and specific force; bounded real samples and skip counters.}
+  - {id: ros, status: done, action: Raw Imu and static mounts published; no attitude estimate or localization TF.}
+  - {id: native_proof, status: done, action: Final motion/pressure/R12; freefall3; incline1; limited-frame11; invalid profile rejection; velocity11/aim20/manual19 regressions passed.}
+  - {id: records, status: done, action: Guide; source references; scoped requirement; architecture; roadmap; changes and release aggregation saved.}
+checks:
+  - {id: interface, status: passed, evidence: native-imu-acceptance.md#1-接口契约核对}
+  - {id: behavior, status: passed, evidence: native-imu-acceptance.md#2-行为与决策核对}
+  - {id: native_scenarios, status: passed, evidence: artifacts/sensors/imu/release-summary.json}
+  - {id: terminology, status: passed, evidence: raw-six-axis-and-no-ahrs-boundaries}
+  - {id: records, status: passed, evidence: native-imu-acceptance.md}

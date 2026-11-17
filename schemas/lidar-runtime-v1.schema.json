@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Uncalibrated physical ray LiDAR runtime profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "calibrated", "id", "parent_frame", "origin", "pattern", "rays_per_second", "frame_hz", "elevation_min_rad", "elevation_max_rad", "min_range_m", "max_range_m", "range_noise_std_m", "reflectivity", "noise_seed"],
+  "properties": {
+    "schema": {"const": "rm_lidar_runtime_v1"},
+    "calibrated": {"const": false},
+    "id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$", "not": {"const": "base"}},
+    "parent_frame": {"const": "base_link"},
+    "origin": {"type": "object", "additionalProperties": false, "required": ["xyz", "rpy"], "properties": {
+      "xyz": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": -5, "maximum": 5}},
+      "rpy": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": -6.283185307179586, "maximum": 6.283185307179586}}
+    }},
+    "pattern": {"const": "spherical_fibonacci"},
+    "rays_per_second": {"type": "number", "minimum": 100, "maximum": 200000},
+    "frame_hz": {"type": "number", "minimum": 1, "maximum": 30},
+    "elevation_min_rad": {"type": "number", "minimum": -1.5707963267948966, "maximum": 1.5707963267948966},
+    "elevation_max_rad": {"type": "number", "minimum": -1.5707963267948966, "maximum": 1.5707963267948966},
+    "min_range_m": {"type": "number", "minimum": 0.01, "maximum": 10},
+    "max_range_m": {"type": "number", "minimum": 0.02, "maximum": 200},
+    "range_noise_std_m": {"type": "number", "minimum": 0, "maximum": 1},
+    "reflectivity": {"type": "integer", "minimum": 0, "maximum": 255},
+    "noise_seed": {"type": "integer", "minimum": 0, "maximum": 2147483647}
+  },
+  "$comment": "Runtime additionally requires max>min, elevation span>=0.001, <=65536 nominal rays/frame, and unique IDs across IMU/LiDAR."
+}

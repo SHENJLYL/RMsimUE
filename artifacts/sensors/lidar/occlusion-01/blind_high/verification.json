@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "mode": "blind_high",
+  "checks": [
+    {
+      "name": "actual_scan_available",
+      "passed": true,
+      "scans": 10
+    },
+    {
+      "name": "blind_occluder_does_not_reveal_background",
+      "passed": true,
+      "near_wall_points": 0,
+      "illegal_background_points": 0,
+      "other_returns": 3894
+    },
+    {
+      "name": "no_hit_rays_are_not_fake_returns",
+      "passed": true,
+      "returns": 39426,
+      "traced": 201200
+    }
+  ]
+}

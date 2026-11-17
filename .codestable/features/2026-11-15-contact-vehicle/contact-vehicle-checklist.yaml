@@ -1,0 +1,15 @@
+feature: 2026-11-15-contact-vehicle
+steps:
+  - {id: reproduce, status: done, action: Inspect actual wave geometry and demonstrate old model false gates and real body contact.}
+  - {id: asset, status: done, action: Separate 11 modules and author independent convex collision; body refined to 128 hulls after source-triangle contact audit.}
+  - {id: physics, status: done, action: Native contact baseline verified and archived before swerve evolution.}
+  - {id: integration, status: done, action: integration-03-recovery passed ten checks including wall and resets.}
+  - {id: native_proof, status: done, action: wave-native-09 and 10-slow passed both full original routes in both directions.}
+  - {id: records, status: done, action: Baseline acceptance recorded; current controls maintained in swerve-gyro-control.}
+checks:
+  - {id: source_integrity, status: passed, evidence: artifacts/assets/contact-physics/source-integrity-latest.json}
+  - {id: stable_contact_pose, status: passed, evidence: artifacts/gameplay/contact-physics/flat-preload-01/control-result.json}
+  - {id: actual_drive_and_steer, status: passed, evidence: artifacts/gameplay/contact-physics/integration-01/control-result.json}
+  - {id: red_blue_waves, status: passed, evidence: artifacts/gameplay/contact-physics/wave-native-10-slow/verification.json}
+  - {id: walls_remain_physical, status: passed, evidence: artifacts/gameplay/contact-physics/integration-03-recovery/control-result.json}
+  - {id: aim_fire_preserved, status: passed, evidence: artifacts/gameplay/contact-physics/integration-01/control-result.json}

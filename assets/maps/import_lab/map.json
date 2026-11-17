@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "rm_flat_map",
+  "id": "import_lab",
+  "display_name": "Vehicle Import Lab",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "floor": {"size_m": [20,20], "surface_z_m": 0, "thickness_m": 0.2, "color_rgb": [0.12,0.15,0.19]},
+  "boundary": {"height_m": 1.5, "thickness_m": 0.2},
+  "obstacles": [
+    {"id":"probe_box", "center_m":[3.5,1,0.6], "size_m":[0.6,0.6,1.2], "yaw_rad":0, "color_rgb":[0.22,0.31,0.42]},
+    {"id":"tall_box", "center_m":[4.5,-1.4,1], "size_m":[0.8,0.8,2], "yaw_rad":0, "color_rgb":[0.28,0.38,0.48]}
+  ],
+  "spawns": [
+    {"id":"default", "team":"neutral", "position_m":[0,0,0], "yaw_rad":0},
+    {"id":"blue", "team":"blue", "position_m":[7,5,0], "yaw_rad":3.141592653589793}
+  ],
+  "regions": [
+    {"id":"home", "kind":"spawn", "team":"red", "center_m":[0,0], "size_m":[2,2]},
+    {"id":"supply", "kind":"supply", "team":"blue", "center_m":[7,5], "size_m":[2,2]},
+    {"id":"capture", "kind":"capture", "team":"neutral", "center_m":[0,5], "size_m":[2,2]}
+  ],
+  "inspection_obstacle_id": "probe_box"
+}

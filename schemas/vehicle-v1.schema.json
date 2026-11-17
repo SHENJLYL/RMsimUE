@@ -1,0 +1,340 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$"
+    },
+    "display_name": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "urdf"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": {"pattern": "[<>\"|?*\\u0000-\\u001f]"},
+          "pattern": "^(?!/)(?!.*\\\\)(?!.*:)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/$).+$"
+        }
+      },
+      "required": [
+        "format",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "differential_drive",
+            "holonomic"
+          ]
+        },
+        "base_link": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+        },
+        "wheel_joints": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+          }
+        },
+        "gimbal": {
+          "type": "object",
+          "properties": {
+            "yaw_joint": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+            },
+            "pitch_joint": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+            }
+          },
+          "required": [
+            "yaw_joint",
+            "pitch_joint"
+          ],
+          "additionalProperties": false
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "linear_mps": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "angular_rps": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "linear_mps",
+            "angular_rps"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "base_link",
+        "wheel_joints",
+        "limits"
+      ],
+      "additionalProperties": false
+    },
+    "sensors": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$"
+              },
+              "type": {
+                "const": "camera"
+              },
+              "parent_link": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+              },
+              "origin": {
+                "type": "object",
+                "properties": {
+                  "xyz": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "rpy": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "xyz",
+                  "rpy"
+                ],
+                "additionalProperties": false
+              },
+              "rate_hz": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "horizontal_fov_rad": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 3.141592653589793
+                  }
+                },
+                "required": [
+                  "width",
+                  "height",
+                  "horizontal_fov_rad"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "parent_link",
+              "origin",
+              "rate_hz",
+              "parameters"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$"
+              },
+              "type": {
+                "const": "imu"
+              },
+              "parent_link": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+              },
+              "origin": {
+                "type": "object",
+                "properties": {
+                  "xyz": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "rpy": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "xyz",
+                  "rpy"
+                ],
+                "additionalProperties": false
+              },
+              "rate_hz": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "parent_link",
+              "origin",
+              "rate_hz",
+              "parameters"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$"
+              },
+              "type": {
+                "const": "lidar"
+              },
+              "parent_link": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"
+              },
+              "origin": {
+                "type": "object",
+                "properties": {
+                  "xyz": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "rpy": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "xyz",
+                  "rpy"
+                ],
+                "additionalProperties": false
+              },
+              "rate_hz": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "horizontal_samples": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "range_min_m": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "range_max_m": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "horizontal_samples",
+                  "range_min_m",
+                  "range_max_m"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "parent_link",
+              "origin",
+              "rate_hz",
+              "parameters"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "display_name",
+    "model",
+    "control",
+    "sensors"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RM vehicle package manifest v1",
+  "$comment": "The stdlib CLI additionally validates path containment, URDF topology and physical inertia, joint and sensor references, distinct gimbal joints, sensor IDs, and lidar min < max. JSON Schema considers 1.0 an integer; the CLI deliberately requires a JSON integer token for schema_version and dimensions."
+}

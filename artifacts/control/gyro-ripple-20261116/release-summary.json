@@ -1,0 +1,435 @@
+{
+  "status": "native_windows_verified_gui_input_pending",
+  "scope": "source tyre hulls, camera-relative manual controls, gyro, real contact/grade braking, ROS velocity and original LK current control",
+  "module_sha256": "fc02832821c6a0097b0d0e4d957f1de7d5c76479362877b9143ca81bce3bce0c",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "drive_profile_sha256": "0850a038ab048112caa508eee39d3460af73727ae7f35335fcf3b0be71027a58",
+  "control_and_physics_profile_unchanged_this_issue": true,
+  "engine_settings_unchanged": true,
+  "source_blend_unchanged": true,
+  "original_controller_files_unchanged": 12,
+  "native_checks": 92,
+  "decoded_pngs": 48,
+  "runs": [
+    {
+      "directory": "final-traction",
+      "checks": 10,
+      "decoded_pngs": 4,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-spin",
+      "checks": 6,
+      "decoded_pngs": 4,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-controls/default",
+      "checks": 19,
+      "decoded_pngs": 12,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-waves/wave_red",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-waves/wave_blue",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-integration",
+      "checks": 10,
+      "decoded_pngs": 12,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-fast",
+      "checks": 5,
+      "decoded_pngs": 4,
+      "passed": true,
+      "process_exit": 0
+    },
+    {
+      "directory": "final-ros/ros",
+      "checks": 11,
+      "passed": true,
+      "provenance_scope": "same sequential frozen-module run; individual launch hashes were not captured, now added to the wrapper for future runs"
+    },
+    {
+      "directory": "final-lk/lk",
+      "checks": 21,
+      "passed": true,
+      "provenance_scope": "same sequential frozen-module run; individual launch hashes were not captured, now added to the wrapper for future runs"
+    }
+  ],
+  "steady_gyro_speed_error_m_s": {
+    "mean": -0.0017396002341292945,
+    "rms": 0.01016181451232846,
+    "minimum": -0.025311601298045827,
+    "maximum": 0.018104411264202203
+  },
+  "steady_gyro_world_velocity_error_m_s": {
+    "mean": 0.015489376997182063,
+    "rms": 0.016727542043457253,
+    "minimum": 0.0004208824625567954,
+    "maximum": 0.030530598541553898
+  },
+  "details": {
+    "final-traction": [
+      {
+        "name": "traction_supported_slope",
+        "passed": true,
+        "detail": "speed 0.0000cm/s upright 0.90675"
+      },
+      {
+        "name": "parallel_wheels_free_roll",
+        "passed": true,
+        "detail": "Motor-disabled wheels aligned down slope roll 71.189cm in 0.802s"
+      },
+      {
+        "name": "transverse_wheels_settle",
+        "passed": true,
+        "detail": "Four modules steer across slope; maximum error 0.00645rad"
+      },
+      {
+        "name": "transverse_contact_grip",
+        "passed": true,
+        "detail": "Same slope, motors disabled: transverse downhill 0.193cm vs aligned 71.189cm"
+      },
+      {
+        "name": "traction_reset_for_hold",
+        "passed": true,
+        "detail": "Hold measurement starts after 2.003s setup, 0.724s continuously below 0.5cm/s at chassis origin"
+      },
+      {
+        "name": "released_keys_hold_slope",
+        "passed": true,
+        "detail": "Zero movement input, motors active: downhill -0.000cm, speed 0.000cm/s"
+      },
+      {
+        "name": "downhill_drive_before_release",
+        "passed": true,
+        "detail": "Actual downhill distance 52.528cm, speed 35.721cm/s"
+      },
+      {
+        "name": "downhill_key_release_brake",
+        "passed": true,
+        "detail": "Released moving input on 20deg slope: stop distance 5.356cm, final origin speed 0.000cm/s"
+      },
+      {
+        "name": "parked_external_impulse_wakes_body",
+        "passed": true,
+        "detail": "External impulse: physical movement 0.717cm, peak origin speed 19.718cm/s"
+      },
+      {
+        "name": "parked_external_impulse_recovery",
+        "passed": true,
+        "detail": "speed 0.0000cm/s upright 0.90467"
+      }
+    ],
+    "final-spin": [
+      {
+        "name": "steering_response_rest_pose",
+        "passed": true,
+        "detail": "phase 1.502s speed 0.000cm/s yaw -0.000rad/s upright 0.9976"
+      },
+      {
+        "name": "steering_step_response",
+        "passed": true,
+        "detail": "90deg lateral step: target start 7.1ms, wheel command 7.1ms, all modules >=80deg 94.6ms; actual world ticks, not OS latency"
+      },
+      {
+        "name": "moving_turn_initial_velocity",
+        "passed": true,
+        "detail": "phase 3.754s speed 210.142cm/s yaw 4.041rad/s upright 0.9954"
+      },
+      {
+        "name": "moving_direction_response",
+        "passed": true,
+        "detail": "2.00m/s, 4.00rad/s spin, moving 90deg input change: target heading within 10deg 329.1ms; actual velocity within 15deg 380.0ms; settled error 1.50deg, speed 1.993m/s"
+      },
+      {
+        "name": "precision_key_speed_cap",
+        "passed": true,
+        "detail": "Ctrl + full throttle: actual at 2s 0.3548m/s, configured cap 0.3500m/s"
+      },
+      {
+        "name": "precision_steady_spin",
+        "passed": true,
+        "detail": "579 real frames over 3.999s: peak speed error 0.02531m/s, world velocity RMS error 0.01673m/s, max gap 0.0080s"
+      }
+    ],
+    "final-controls/default": [
+      {
+        "name": "gyro_supported_spawn",
+        "passed": true,
+        "detail": "phase 3.005s speed 0.000cm/s yaw -0.000rad/s upright 0.9975"
+      },
+      {
+        "name": "normal_camera_forward_smooth",
+        "passed": true,
+        "detail": "forward 102.862cm lateral 0.126cm peak command acceleration 0.8000m/s2"
+      },
+      {
+        "name": "released_keys_active_brake",
+        "passed": true,
+        "detail": "coast distance 20.597cm, speed 0.000cm/s"
+      },
+      {
+        "name": "normal_camera_left_strafe",
+        "passed": true,
+        "detail": "left 90.642cm forward 0.147cm"
+      },
+      {
+        "name": "normal_strafe_brake",
+        "passed": true,
+        "detail": "phase 1.503s speed 0.000cm/s yaw -0.000rad/s upright 0.9889"
+      },
+      {
+        "name": "gyro_camera_forward_direction",
+        "passed": true,
+        "detail": "forward 328.990cm lateral 2.941cm body spin 11.270rad"
+      },
+      {
+        "name": "gyro_faster_key",
+        "passed": true,
+        "detail": "setpoint 2.500 actual 2.498rad/s"
+      },
+      {
+        "name": "gyro_slower_minimum",
+        "passed": true,
+        "detail": "setpoint 0.500 actual 0.499rad/s"
+      },
+      {
+        "name": "gyro_faster_maximum",
+        "passed": true,
+        "detail": "setpoint 4.000 actual 3.964rad/s"
+      },
+      {
+        "name": "gyro_mouse_pitch_world_aim",
+        "passed": true,
+        "detail": "pitch -8.019deg, muzzle direction error 0.058deg"
+      },
+      {
+        "name": "gyro_toggle_off_brakes_spin",
+        "passed": true,
+        "detail": "phase 2.000s speed 0.000cm/s yaw -0.000rad/s upright 0.9981"
+      },
+      {
+        "name": "normal_forward_after_camera_turn",
+        "passed": true,
+        "detail": "Camera yaw 90.0; original forward 0.044cm original left -88.370cm"
+      },
+      {
+        "name": "camera_turn_release_brake",
+        "passed": true,
+        "detail": "phase 1.201s speed 0.000cm/s yaw -0.000rad/s upright 0.9909"
+      },
+      {
+        "name": "normal_right_after_camera_turn",
+        "passed": true,
+        "detail": "Camera-relative right: original forward -87.944cm original left -0.003cm"
+      },
+      {
+        "name": "steering_response_rest_pose",
+        "passed": true,
+        "detail": "phase 1.503s speed 0.000cm/s yaw -0.000rad/s upright 0.9976"
+      },
+      {
+        "name": "steering_step_response",
+        "passed": true,
+        "detail": "90deg lateral step: target start 4.6ms, wheel command 9.7ms, all modules >=80deg 96.3ms; actual world ticks, not OS latency"
+      },
+      {
+        "name": "moving_turn_initial_velocity",
+        "passed": true,
+        "detail": "phase 2.002s speed 59.407cm/s yaw -0.010rad/s upright 0.9987"
+      },
+      {
+        "name": "moving_direction_response",
+        "passed": true,
+        "detail": "0.60m/s, 0.00rad/s spin, moving 90deg input change: target heading within 10deg 146.4ms; actual velocity within 15deg 139.5ms; settled error 0.21deg, speed 0.600m/s"
+      },
+      {
+        "name": "precision_key_speed_cap",
+        "passed": true,
+        "detail": "Ctrl + full throttle: actual at 2s 0.3423m/s, configured cap 0.3500m/s"
+      }
+    ],
+    "final-waves/wave_red": [
+      {
+        "name": "gyro_supported_spawn",
+        "passed": true,
+        "detail": "phase 3.008s speed 0.000cm/s yaw -0.000rad/s upright 0.9944"
+      },
+      {
+        "name": "gyro_spin_up",
+        "passed": true,
+        "detail": "phase 2.508s speed 9.553cm/s yaw 3.949rad/s upright 0.9961"
+      },
+      {
+        "name": "gyro_forward_wave_route",
+        "passed": true,
+        "detail": "progress 340.295cm lateral 3.703cm body spin 37.158rad minimum upright 0.9593"
+      },
+      {
+        "name": "gyro_route_brake",
+        "passed": true,
+        "detail": "phase 2.007s speed 0.000cm/s yaw -0.000rad/s upright 0.9954"
+      },
+      {
+        "name": "gyro_reverse_wave_route",
+        "passed": true,
+        "detail": "progress 9.611cm lateral -0.524cm body spin 33.632rad minimum upright 0.9629"
+      }
+    ],
+    "final-waves/wave_blue": [
+      {
+        "name": "gyro_supported_spawn",
+        "passed": true,
+        "detail": "phase 3.003s speed 0.000cm/s yaw -0.000rad/s upright 0.9944"
+      },
+      {
+        "name": "gyro_spin_up",
+        "passed": true,
+        "detail": "phase 2.506s speed 9.748cm/s yaw 3.980rad/s upright 0.9957"
+      },
+      {
+        "name": "gyro_forward_wave_route",
+        "passed": true,
+        "detail": "progress 340.294cm lateral 3.542cm body spin 36.817rad minimum upright 0.9581"
+      },
+      {
+        "name": "gyro_route_brake",
+        "passed": true,
+        "detail": "phase 2.003s speed 0.000cm/s yaw -0.000rad/s upright 0.9946"
+      },
+      {
+        "name": "gyro_reverse_wave_route",
+        "passed": true,
+        "detail": "progress 9.780cm lateral -0.477cm body spin 33.680rad minimum upright 0.9582"
+      }
+    ],
+    "final-integration": [
+      {
+        "name": "physical_settle",
+        "passed": true,
+        "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99764"
+      },
+      {
+        "name": "physical_forward_route",
+        "passed": true,
+        "detail": "Motor/contact driven route progress 150.018/150.000cm, drift -0.116cm, time 3.628s"
+      },
+      {
+        "name": "physical_brake",
+        "passed": true,
+        "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+      },
+      {
+        "name": "physical_reverse_route",
+        "passed": true,
+        "detail": "Reverse crosses same source route: remaining 9.893cm, drift -0.046cm"
+      },
+      {
+        "name": "physical_shared_left_turn",
+        "passed": true,
+        "detail": "Shared Q/E path measured hull yaw change -65.399 degrees"
+      },
+      {
+        "name": "physical_shared_right_turn",
+        "passed": true,
+        "detail": "Shared Q/E path measured hull yaw change 43.821 degrees"
+      },
+      {
+        "name": "physical_shared_aim_fire",
+        "passed": true,
+        "detail": "Physical chassis, shared aim/LMB: shots=1 hits=1 targetHP=80"
+      },
+      {
+        "name": "physical_wall_stop",
+        "passed": true,
+        "detail": "Shared throttle into real wall: travel 85.711cm, speed 0.058cm/s"
+      },
+      {
+        "name": "physical_shared_reset",
+        "passed": true,
+        "detail": "R restores all independent bodies, clears velocity, resets training once and settles at spawn"
+      },
+      {
+        "name": "physical_fall_recovery",
+        "passed": true,
+        "detail": "Injected below-map pose recovers through the live guard before KillZ, once only"
+      }
+    ],
+    "final-fast": [
+      {
+        "name": "steering_response_rest_pose",
+        "passed": true,
+        "detail": "phase 1.503s speed 0.000cm/s yaw -0.000rad/s upright 0.9975"
+      },
+      {
+        "name": "steering_step_response",
+        "passed": true,
+        "detail": "90deg lateral step: target start 6.9ms, wheel command 13.6ms, all modules >=80deg 92.7ms; actual world ticks, not OS latency"
+      },
+      {
+        "name": "moving_turn_initial_velocity",
+        "passed": true,
+        "detail": "phase 3.754s speed 198.603cm/s yaw 0.009rad/s upright 0.9991"
+      },
+      {
+        "name": "moving_direction_response",
+        "passed": true,
+        "detail": "2.00m/s, 0.00rad/s spin, moving 90deg input change: target heading within 10deg 327.2ms; actual velocity within 15deg 368.4ms; settled error 0.17deg, speed 1.981m/s"
+      },
+      {
+        "name": "precision_key_speed_cap",
+        "passed": true,
+        "detail": "Ctrl + full throttle: actual at 2s 0.3467m/s, configured cap 0.3500m/s"
+      }
+    ]
+  },
+  "source_geometry_pipeline": {
+    "passed": true,
+    "changed_collision_parts": [
+      "wheel_l_02",
+      "wheel_r_02",
+      "wheel_r_01",
+      "wheel_l_01"
+    ],
+    "source_visual_fbx_unchanged": true,
+    "control_profile_unchanged": true,
+    "source_geometry_hashes_verified": true,
+    "native_import_exit_code": 0,
+    "native_preparation": "artifacts/assets/contact-physics/prepare-20261116-013728-3505584",
+    "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308"
+  },
+  "parking_implementation": "native Chaos sleep retained at zero command; new drive commands and external impulses wake the body; no position hold/pose override",
+  "diagnostics_units": "new joint angular output is last-substep N.s.m impulse, not torque; early trace-baseline torque_nm name is legacy-mislabeled",
+  "rejected_candidates_reverted": [
+    "steering stiffness160/1000",
+    "body velocity feedback",
+    "1ms substep",
+    "wheel integral6/8",
+    "spring stiffness2200/damping140",
+    "wheel position hold"
+  ],
+  "limitations": [
+    "No native Ubuntu run",
+    "No real-robot dynamics calibration",
+    "OS keyboard/UI handoff still blocked by existing Windows Security prompt",
+    "This is not full sentry_ws/referee/network/WT-map acceptance"
+  ]
+}

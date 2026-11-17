@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "slow_reader_keeps_bounded_lidar_queue",
+      "passed": true,
+      "dropped_scans": 8,
+      "disconnect_reason": "slow_reader"
+    },
+    {
+      "name": "backpressure_does_not_keep_driving",
+      "passed": true,
+      "drift_m": 0.062029064476169356,
+      "command": {
+        "accepted_seq": -1,
+        "status": "waiting",
+        "age_s": -1,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "new_connection_does_not_replay_scans",
+      "passed": true,
+      "session_start_ns": 2967000141,
+      "scans": []
+    }
+  ],
+  "scope": "actual UE LiDAR30Hz pressure fixture and native chassis command watchdog"
+}

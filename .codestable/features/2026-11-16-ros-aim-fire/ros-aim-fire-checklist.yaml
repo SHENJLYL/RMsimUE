@@ -1,0 +1,13 @@
+feature: 2026-11-16-ros-aim-fire
+steps:
+  - {id: contracts, status: done, action: Original20 files pinned and built; source-consumer sign/frame semantics recorded.}
+  - {id: authority, status: done, action: Separate aim lease and explicit RosAimControl; training follows solver time.}
+  - {id: actuator, status: done, action: World aiming, reflected scan, joint feedback and event-time projectile origin implemented.}
+  - {id: ros, status: done, action: Original messages, bounded CLI demo and separate own/evaluation topics verified.}
+  - {id: proof, status: done, action: Final normal21, LK combined20, observe4; combat15 and existing ROS/manual regressions passed.}
+  - {id: records, status: done, action: Source hashes and scoped acceptance recorded; manual RMUC restored.}
+checks:
+  - {id: original_aim_contract, status: passed, evidence: artifacts/control/ros-aim-fire/native-06-release/aim/verification.json}
+  - {id: combined_and_observe, status: passed, evidence: artifacts/control/ros-aim-fire/release-summary.json}
+  - {id: projectile_timing, status: passed, evidence: artifacts/control/ros-aim-fire/regression-combat/verification.json}
+  - {id: existing_behavior, status: passed, evidence: artifacts/control/ros-aim-fire/release-summary.json}

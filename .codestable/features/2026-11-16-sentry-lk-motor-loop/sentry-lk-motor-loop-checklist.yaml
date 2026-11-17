@@ -1,0 +1,11 @@
+feature: 2026-11-16-sentry-lk-motor-loop
+steps:
+  - {id: source, status: done, action: Original12 source hashes unchanged; complete pinned custom_msgs; native MSVC and scoped DLL deployment verified.}
+  - {id: motor, status: done, action: Real shaft feedback and direct torque/reactions; fixed1ms physics; fallback torque capped by current model.}
+  - {id: adapter, status: done, action: Original messages and PID/power code run with fresh paired feedback; explicit current ownership.}
+  - {id: proof, status: done, action: Final22 LK gates and realR;11 velocity ROS plus19 TCP and19 manual regression passed.}
+  - {id: records, status: done, action: Source patches and scoped acceptance recorded; release-summary.json hashes verified.}
+checks:
+  - {id: native_original_loop, status: passed, evidence: artifacts/control/lk-motor-loop/native-10-release/lk/verification.json}
+  - {id: defaults_preserved, status: passed, evidence: artifacts/control/lk-motor-loop/release-summary.json}
+  - {id: original_source_unchanged, status: passed, evidence: artifacts/control/lk-motor-loop/release-summary.json}

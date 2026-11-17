@@ -1,0 +1,136 @@
+{
+  "status": "native_windows_scoped_verified",
+  "utc": "2026-11-15T22:00:47.995330+00:00",
+  "module_sha256": "2de17eac2ed5eadeb425036e07553b9c0e2c34090dab20eb2f19c66390408f33",
+  "runs": {
+    "imu_motion_pressure_reset": {
+      "path": "native-04-release/ros/verification.json",
+      "checks": 12,
+      "report_sha256": "57faa337e9213d05ace22c292d7f55fd2baebb5295637b3e31ef484136efb01c"
+    },
+    "freefall": {
+      "path": "native-freefall-01/ros/verification.json",
+      "checks": 3,
+      "report_sha256": "37686338bf950cbb98c3f6b46b5325579c8065939f1a893e83c0b714d5f26887"
+    },
+    "incline": {
+      "path": "native-incline-02/ros/verification.json",
+      "checks": 1,
+      "report_sha256": "62fff32590eb496b91f55eda935e8b5d5f841fd08db022105197208c0b10d165"
+    },
+    "frame_limited": {
+      "path": "native-frame-limited-01/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "272a723433b78a4ed8c91f91fec6b19783bc91aa058a9973c785de235689743d"
+    },
+    "velocity": {
+      "path": "regression-velocity/ros/verification.json",
+      "checks": 11,
+      "report_sha256": "c1054d8e4ef7e057c3c93b5b4f733d6ffb16cd8950d5ae113ca6b038037d9f1d"
+    },
+    "aim": {
+      "path": "regression-aim/aim/verification.json",
+      "checks": 20,
+      "report_sha256": "561c87620926e787e8e9a971a3b34d6173eaca8eed35120477760f6db41d731f"
+    },
+    "manual": {
+      "path": "regression-manual/default/verification.json",
+      "report_sha256": "e3f28f6808cf66c17ef3f9200a1234cb867e93b4e033a0f37dcfb47ef84ac0a9",
+      "run_id": "C13EFBB14D76819B33D10994484EA1F5",
+      "checks": 19,
+      "decoded_captures": 12,
+      "passed": true,
+      "os_input_verified": false,
+      "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+      "process_exit": 0,
+      "drive_profile_sha256": "2A4F219CB66AC970C0A8ADC190BE9DAA7ADC5E33416BD66670079613321D0E01",
+      "module_sha256": "2DE17EAC2ED5EADEB425036E07553B9C0E2C34090DAB20EB2F19C66390408F33",
+      "rig_sha256": "F2657D6AD83BA462DB504838C648265B7DCF9E2084C41E985DC5555E2CD97218",
+      "map_sha256": "672993BD53194CD8B8FA91962F0BC293B0486994AEAC352C0BF898FD5AE5C0D2"
+    },
+    "invalid_profile": {
+      "path": "invalid-profile-02/verification.json",
+      "report_sha256": "29f2d17a010e19223bd72a2fbde8f464ed8a6e1b90e61f172cea18562084d78f",
+      "passed": true,
+      "case": "negative noise standard deviation",
+      "scope": "actual rejection log and process termination; Windows graceful exit code alone is not acceptance",
+      "process_exit": 0
+    }
+  },
+  "installed_python_matches_source": true,
+  "input_sha256": {
+    "unreal/RMSim/Source/RMSim/CombatProbe.cpp": "78e2378322fc7c6394ca7f782f454b458c910e78c3bbe5846a09bcd1d4b596ff",
+    "unreal/RMSim/Source/RMSim/ContactProbe.cpp": "658b8d19c374ca8fd2bc4c1e4d3d8d23ec30fe388f459d49e64cf662620335ff",
+    "unreal/RMSim/Source/RMSim/GyroProbe.cpp": "a6ecc8b4033a1a0551957b0b22e35e6f7111d3b12d1ecfb2984fa2452a1549ed",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp": "53ecc5a6018b94b13121de8a101d051c689601c79531f2039d75b7741ce3eeb9",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.h": "82976f76ff40d0acacd676b97dff747e3e458cb04809c5e057f45db843fb1f75",
+    "unreal/RMSim/Source/RMSim/ImuFixture.cpp": "aa0a04ecdbf3fd21a96d8270667e6b0b6fc6303c93a041db91765e36db86d76a",
+    "unreal/RMSim/Source/RMSim/ManualControlProbe.cpp": "1851b2edb0961bc9425225b5b14e6d20aa9e6b14b79c010807d746cdceeb1a66",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.cpp": "15bef529e17c630f55963badf40b3c08dd325bc31e5af7eb80b17094433e5f41",
+    "unreal/RMSim/Source/RMSim/MapImportLibrary.h": "49746ec6c5331e3a0496c7759945ce8cee72b11f53079d324383f05c1703b3cc",
+    "unreal/RMSim/Source/RMSim/MapStage.cpp": "c7ba9a3db1a2562aabc335524a5e4bf0abba22cea6ecfa8f36c7fd256d93eca8",
+    "unreal/RMSim/Source/RMSim/MapStage.h": "138714912781b9e15f5e2aaf8f8022cc5f9bbeaa99735ac1977683c537cc5f2f",
+    "unreal/RMSim/Source/RMSim/MeshMap.cpp": "6a97903da1fd499c68884a39e49b78309d32678f06e488dde2c1b4aa66064bc9",
+    "unreal/RMSim/Source/RMSim/RMSim.Build.cs": "22bfc20426d6cbc1a686f49a54532cfaa38d80278909d553eca69d91740dc296",
+    "unreal/RMSim/Source/RMSim/RMSim.cpp": "2ee8a82f63ac09c567742f553c546bae32ec45e7ed0d91ef45673fdbb6b73ef8",
+    "unreal/RMSim/Source/RMSim/RosAimController.cpp": "5e627bd973629611c6d024912f071c0cc96ce8cc62f81536fedca1ac5b6c4eec",
+    "unreal/RMSim/Source/RMSim/RosAimController.h": "061de51d2a59bfd22110bd91faaca22b8fd891b42ed6a180a0c736739f4cdcb3",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp": "52c82c45b22faef406037b761243cf1ac77f8593d436d7a05de6eee6a989fe33",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.h": "d728de4486214c144905af63f7cd0b30fff1c42f8b04927a406bc552b3a0504e",
+    "unreal/RMSim/Source/RMSim/RosCoordinates.h": "9cc91f4abff0cb58610ae8eabeb2035aaadef7886946df45f29bfdfe1c3a9a2a",
+    "unreal/RMSim/Source/RMSim/RosImuComponent.cpp": "e5b8b8669e9a2ca126f3fac2da889e3ac8aa5073620de8d2e07514fee5f616d8",
+    "unreal/RMSim/Source/RMSim/RosImuComponent.h": "71451e28d97b1e2325b3ae974aeb8017957517974611534157af0535f780cfb8",
+    "unreal/RMSim/Source/RMSim/TerrainProbe.cpp": "af533210c8b7d3a3a4036a2d26f9db944ef438446087452f27152ef39ba1501b",
+    "unreal/RMSim/Source/RMSim/TractionProbe.cpp": "e842f6d8428c576cc756f4fa4d4df3d32f88cdac7996e8b6c07cbab07b2de281",
+    "unreal/RMSim/Source/RMSim/TrainingRange.cpp": "1aa8da6f701484af1228207eeea36eb9f96190b0481e61f6a489dee3c6a47697",
+    "unreal/RMSim/Source/RMSim/TrainingRange.h": "2a4e9f94cf8b1a6fccaa606f10808d3ea745bfec1cc70d39bcdac6f972cdaa90",
+    "unreal/RMSim/Source/RMSim/VehicleContactPhysics.cpp": "6158b8d7ba0bce1b997c8eb1b93816386ae71ad95211e6b50274f4f32c4c50cb",
+    "unreal/RMSim/Source/RMSim/VehicleDrive.cpp": "32e7f27cb009b309cd385812eb1d0073e2e75dd24b3312bdbb0fd2d798d1343e",
+    "unreal/RMSim/Source/RMSim/VehicleMotorDrive.cpp": "8a367025587921fcbf1057ac2d80aabeac87ae80a98f051ac455606e1af67826",
+    "unreal/RMSim/Source/RMSim/VehicleRig.cpp": "7605b094e1dc63b6b36be3a03284bc7c3b9439d6cbe03fe04992d04f0c46b85f",
+    "unreal/RMSim/Source/RMSim/VehicleRig.h": "8ff23849a099a1d39cce2fcb1f67b75247cbe6abba3bfbecf3db6f043c4c70fb",
+    "unreal/RMSim/Source/RMSim/VehicleTerrain.cpp": "538ef9dff6a32d44561debc9c23603223910fbbd0f3b14b22b8bf1c249e71c4a",
+    "unreal/RMSim/Source/RMSim/Control/SentrySwerveKinematics.h": "84cf3907108cefa30ee634cee289f172014dd30f216d8841fc981b52162094b5",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_adapter.py": "f1411a4d7cabcd998bb3f3778f4b6f8bf39f8db5e97a582754ca360c27b0ef40",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/aim_demo.py": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/control_dlls.py": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/drive_demo.py": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/imu.py": "e5c977953d071595af2dacb22b91dee68f44c61cccb9ef8e6752f3d53d7b746e",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/lk_adapter.py": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py": "ea4b08fc8e5420c39ee47ab3ac97019df7def61c5cbccc7b347cbac9dd3d69d4",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/protocol.py": "030430591e227ce4f856d147dd13d638061162ad805949f93dfa38cde27f01ce",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/transport.py": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/__init__.py": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+    "assets/vehicles/aim_sentry/sensors/imu.json": "e870fcf9d6235df05d35082bf09266a5a15b551359a1af26f27eb19110dc9039",
+    "assets/vehicles/aim_sentry/adapters/point_lio_imu.yaml": "dd895e1d22a732a672da72f50c4a0b19e4f199f8400ae6c0677f0b9c6c5cd6ac",
+    "schemas/imu-runtime-v1.schema.json": "b76703160fb2b49ce0076b5d1016ebe4614302184e9d97f26b03d447d7640abf",
+    "assets/vehicles/aim_sentry/drive-profile.json": "2a4f219cb66ac970c0a8adc190be9daa7adc5e33416bd66670079613321d0e01",
+    "tools/unreal/Start-ManualVehicle.sh": "be8706171eb274bca0879ff1ad7c1f367714849ce21b0edd7e60bda4da69e5cf"
+  },
+  "response_checks": [
+    {
+      "name": "steering_step_response",
+      "passed": true,
+      "detail": "90deg lateral step: target start 4.4ms, wheel command 9.1ms, all modules >=80deg 99.5ms; actual world ticks, not OS latency"
+    },
+    {
+      "name": "moving_direction_response",
+      "passed": true,
+      "detail": "0.6m/s moving 90deg input change: target heading within 10deg 265.9ms; actual velocity within 15deg 251.6ms"
+    }
+  ],
+  "offline": {
+    "protocol_tests": 16,
+    "powershell_syntax_files": 6,
+    "bash_syntax": true,
+    "ubuntu_native": false
+  },
+  "limits": [
+    "Raw six-axis only; orientation unavailable; no AHRS or localization truth TF",
+    "Vehicle dimensions and IMU mount/noise/physics are not hardware calibrated",
+    "Point-LIO SI overlay prepared; LiDAR and actual Point-LIO execution remain incomplete",
+    "Fixed 1ms physics may run at about 0.3x wall time; default manual remains real time",
+    "No whole sentry_ws, full match/multiplayer or native Ubuntu acceptance"
+  ],
+  "process_note": "Native probes returned exit0; test harness deliberately terminates UE after checks. Invalid startup records its actual exit separately."
+}

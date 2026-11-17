@@ -1,0 +1,75 @@
+{
+  "scope": "vehicle_importer_only",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "utc": "2026-11-13T13:39:42.740165+00:00",
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/vehicle_tools",
+        "-v"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "test_cli_failure_keeps_existing_output_and_leaves_no_partial (test_vehicle.VehicleTests.test_cli_failure_keeps_existing_output_and_leaves_no_partial) ... ok\ntest_cli_protects_source_and_inspects_valid_package (test_vehicle.VehicleTests.test_cli_protects_source_and_inspects_valid_package) ... ok\ntest_control_references_and_duplicate_roles_rejected (test_vehicle.VehicleTests.test_control_references_and_duplicate_roles_rejected) ... ok\ntest_disconnected_cycle_rejected_even_with_one_root (test_vehicle.VehicleTests.test_disconnected_cycle_rejected_even_with_one_root) ... ok\ntest_dtd_and_entity_rejected_without_access (test_vehicle.VehicleTests.test_dtd_and_entity_rejected_without_access) ... ok\ntest_duplicate_json_key_and_boolean_version_rejected (test_vehicle.VehicleTests.test_duplicate_json_key_and_boolean_version_rejected) ... ok\ntest_duplicate_link_and_joint_names_rejected (test_vehicle.VehicleTests.test_duplicate_link_and_joint_names_rejected) ... ok\ntest_examples_have_different_geometry_and_complete_sensor_rigs (test_vehicle.VehicleTests.test_examples_have_different_geometry_and_complete_sensor_rigs) ... ok\ntest_fixed_joint_and_sphere_supported (test_vehicle.VehicleTests.test_fixed_joint_and_sphere_supported) ... ok\ntest_geometry_and_joint_limits_rejected (test_vehicle.VehicleTests.test_geometry_and_joint_limits_rejected) ... ok\ntest_internal_manifest_link_preserves_package_root_and_source_files (test_vehicle.VehicleTests.test_internal_manifest_link_preserves_package_root_and_source_files) ... error: output: must not overwrite a source package file\nerror: output: must not overwrite a source package file\nok\ntest_manifest_paths_reject_escape_absolute_and_urls (test_vehicle.VehicleTests.test_manifest_paths_reject_escape_absolute_and_urls) ... ok\ntest_manifest_symlink_escape_is_rejected_for_file_entry (test_vehicle.VehicleTests.test_manifest_symlink_escape_is_rejected_for_file_entry) ... skipped \"symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\SHEN\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpyhuv_s5z\\\\\\\\outside\\\\\\\\vehicle.json' -> 'C:\\\\\\\\Users\\\\\\\\SHEN\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpyhuv_s5z\\\\\\\\vehicle\\\\\\\\vehicle.json'\"\ntest_mesh_path_escape_is_rejected (test_vehicle.VehicleTests.test_mesh_path_escape_is_rejected) ... ok\ntest_mesh_references_remain_local_and_are_hashed (test_vehicle.VehicleTests.test_mesh_references_remain_local_and_are_hashed) ... ok\ntest_multiple_roots_and_missing_parent_rejected (test_vehicle.VehicleTests.test_multiple_roots_and_missing_parent_rejected) ... ok\ntest_nonfinite_and_boolean_numbers_rejected (test_vehicle.VehicleTests.test_nonfinite_and_boolean_numbers_rejected) ... ok\ntest_physical_inertia_validation (test_vehicle.VehicleTests.test_physical_inertia_validation) ... ok\ntest_reads_are_bounded_before_size_rejection (test_vehicle.VehicleTests.test_reads_are_bounded_before_size_rejection) ... ok\ntest_schema_rejects_nonportable_path_characters (test_vehicle.VehicleTests.test_schema_rejects_nonportable_path_characters) ... ok\ntest_sensor_validation (test_vehicle.VehicleTests.test_sensor_validation) ... ok\ntest_source_hash_and_deterministic_export (test_vehicle.VehicleTests.test_source_hash_and_deterministic_export) ... ok\ntest_symlink_asset_escape_is_rejected (test_vehicle.VehicleTests.test_symlink_asset_escape_is_rejected) ... skipped \"symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\SHEN\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpqsuh7lyb\\\\\\\\outside.urdf' -> 'C:\\\\\\\\Users\\\\\\\\SHEN\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpqsuh7lyb\\\\\\\\vehicle\\\\\\\\model\\\\\\\\robot.urdf'\"\ntest_unknown_fields_rejected (test_vehicle.VehicleTests.test_unknown_fields_rejected) ... ok\ntest_unsupported_urdf_semantics_are_not_silently_dropped (test_vehicle.VehicleTests.test_unsupported_urdf_semantics_are_not_silently_dropped) ... ok\ntest_windows_junction_escape_is_rejected (test_vehicle.VehicleTests.test_windows_junction_escape_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 26 tests in 1.352s\n\nOK (skipped=2)\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "rm_vehicle_tools",
+        "validate",
+        "D:\\simulator\\assets\\vehicles\\sentry_omni"
+      ],
+      "returncode": 0,
+      "stdout": "VALID sentry_omni: 7 links, 6 joints, 3 sensors\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "rm_vehicle_tools",
+        "export",
+        "D:\\simulator\\assets\\vehicles\\sentry_omni",
+        "--output",
+        "D:\\simulator\\artifacts\\vehicles\\sentry_omni.canonical.json"
+      ],
+      "returncode": 0,
+      "stdout": "EXPORTED sentry_omni -> D:\\simulator\\artifacts\\vehicles\\sentry_omni.canonical.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "rm_vehicle_tools",
+        "validate",
+        "D:\\simulator\\assets\\vehicles\\training_diff"
+      ],
+      "returncode": 0,
+      "stdout": "VALID training_diff: 5 links, 4 joints, 3 sensors\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "rm_vehicle_tools",
+        "export",
+        "D:\\simulator\\assets\\vehicles\\training_diff",
+        "--output",
+        "D:\\simulator\\artifacts\\vehicles\\training_diff.canonical.json"
+      ],
+      "returncode": 0,
+      "stdout": "EXPORTED training_diff -> D:\\simulator\\artifacts\\vehicles\\training_diff.canonical.json\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

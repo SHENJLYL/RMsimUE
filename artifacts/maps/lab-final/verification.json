@@ -1,0 +1,57 @@
+{
+  "map_id": "import_lab",
+  "checks": [
+    {
+      "name": "map_identity",
+      "passed": true,
+      "detail": "99be3156ea9bf792cb6d6dc8a909ebee348595db76811aed18f4d142f5598e86"
+    },
+    {
+      "name": "actual_movement",
+      "passed": true,
+      "detail": "nine actual engine checks, not just map load"
+    },
+    {
+      "name": "obstacle_geometry",
+      "passed": true,
+      "detail": {
+        "max_error_cm": 0.0
+      }
+    },
+    {
+      "name": "spawn_transform",
+      "passed": true,
+      "detail": {
+        "actual_cm": [
+          0,
+          0,
+          1.9999991655349731
+        ],
+        "actual_yaw_rad": 0.0
+      }
+    },
+    {
+      "name": "semantic_regions",
+      "passed": true,
+      "detail": [
+        "home"
+      ]
+    },
+    {
+      "name": "occupancy_landmarks",
+      "passed": true,
+      "detail": {
+        "width": 400,
+        "height": 400,
+        "resolution": 0.05,
+        "origin": [
+          -10.0,
+          -10.0,
+          0
+        ]
+      }
+    }
+  ],
+  "passed": true,
+  "scope": "native Windows flat geometry/collision/spawn/regions and static occupancy; not referee or localization"
+}

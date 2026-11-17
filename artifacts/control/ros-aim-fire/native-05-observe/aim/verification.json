@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "scope": "original ROS messages and actual UE scene/projectiles; calibration fixture, not vision recognition",
+  "motor_mode": false,
+  "checks": [
+    {
+      "name": "observe_only_rejects_original_aim",
+      "passed": true,
+      "error": "UE RosAimControl is not enabled"
+    },
+    {
+      "name": "manual_motion_has_observed_joint_velocity",
+      "passed": true,
+      "yaw": -0.1946579749009057,
+      "velocity": -9.424777960769381
+    },
+    {
+      "name": "observe_reset_reconnects",
+      "passed": true
+    },
+    {
+      "name": "server_observe_mode_rejects_aim",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# Original LK simulation profile; use UE RosMotorControl and the bridge's LK backend.
+# Virtual encoder zero is 0. Topics are isolated from real EtherCAT hardware.
+# Geometry is derived from this 1x vehicle package, not the source node default radius.
+lk_full_wheel_chassis_controller:
+  ros__parameters:
+    feedback_driven: true
+    wheel_radius: 0.042500000000
+    chassis_radius: 0.194146113939
+    front_left_ecd_zero: 0
+    front_right_ecd_zero: 0
+    back_left_ecd_zero: 0
+    back_right_ecd_zero: 0
+    chassis_cmd_read_topic: /rmsim/aim_sentry/chassis_command
+    steer_motor_write_topic: /rmsim/aim_sentry/steer/current_command
+    steer_motor_read_topic: /rmsim/aim_sentry/steer/feedback
+    wheel_motor_write_topic: /rmsim/aim_sentry/wheel/current_command
+    wheel_motor_read_topic: /rmsim/aim_sentry/wheel/feedback

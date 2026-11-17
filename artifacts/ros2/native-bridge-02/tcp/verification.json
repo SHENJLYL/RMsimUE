@@ -1,0 +1,145 @@
+{
+  "scope": "actual native UE TCP/physics/rendering; ROS topic proof is separate",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "native_clock_and_image",
+      "passed": true,
+      "frames": 20,
+      "width": 640,
+      "height": 360,
+      "clock_ns": 2542469610
+    },
+    {
+      "name": "optical_projection_matches_real_armor",
+      "passed": true,
+      "projected_pixel": [
+        312.3121250593676,
+        113.94657165994926
+      ],
+      "red_pixels": 49,
+      "world_target": [
+        3.4,
+        0,
+        0.64
+      ]
+    },
+    {
+      "name": "forward_si_motion",
+      "passed": true,
+      "displacement": [
+        1.2890303795013438,
+        0.0038390727470704687,
+        7.906785916087955e-05
+      ]
+    },
+    {
+      "name": "publisher_silence_brakes",
+      "passed": true,
+      "settled_drift_m": 0.0014068453692512208
+    },
+    {
+      "name": "left_si_motion",
+      "passed": true,
+      "displacement": [
+        -0.07108617665682648,
+        0.6466422705384953,
+        -0.0029152356438444113
+      ]
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 1,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_timestamp",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_timestamp",
+        "age_s": -1,
+        "rejected_count": 2,
+        "last_rejection": "timestamp"
+      }
+    },
+    {
+      "name": "reject_frame",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_frame",
+        "age_s": -1,
+        "rejected_count": 3,
+        "last_rejection": "frame"
+      }
+    },
+    {
+      "name": "reject_session_epoch",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_session_epoch",
+        "age_s": -1,
+        "rejected_count": 4,
+        "last_rejection": "session_epoch"
+      }
+    },
+    {
+      "name": "reject_sequence",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_sequence",
+        "age_s": -1,
+        "rejected_count": 5,
+        "last_rejection": "sequence"
+      }
+    },
+    {
+      "name": "reject_limits",
+      "passed": true,
+      "command": {
+        "accepted_seq": 153,
+        "status": "rejected_limits",
+        "age_s": -1,
+        "rejected_count": 6,
+        "last_rejection": "limits"
+      }
+    },
+    {
+      "name": "disconnect_and_new_session",
+      "passed": true,
+      "new_session": "960269CA4DA211411EF17B8D82A5775E",
+      "drift_m": 0.0005358798810096165
+    },
+    {
+      "name": "close_duplicate_key",
+      "passed": true
+    },
+    {
+      "name": "close_oversized",
+      "passed": true
+    },
+    {
+      "name": "close_nonfinite",
+      "passed": true
+    },
+    {
+      "name": "partial_command_not_applied",
+      "passed": true
+    },
+    {
+      "name": "fragment_completed_once",
+      "passed": true
+    }
+  ],
+  "states": 518,
+  "images": 107
+}

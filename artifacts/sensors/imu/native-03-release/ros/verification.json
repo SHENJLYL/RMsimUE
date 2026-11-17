@@ -1,0 +1,339 @@
+{
+  "status": "passed",
+  "fixture": "motion",
+  "scope": "native ROS and actual physical chassis, raw orientation unavailable",
+  "checks": [
+    {
+      "name": "stationary_specific_force",
+      "passed": true,
+      "mean_accel": [
+        -0.20265212815315936,
+        -0.003811279766777836,
+        9.798147310840838
+      ],
+      "expected_sensor_gravity": [
+        -0.20265426236926415,
+        -0.0038112659604356853,
+        9.797903113767006
+      ],
+      "mean_gyro": [
+        -2.5683618267991e-06,
+        -0.001216347072446564,
+        3.8655483024626845e-07
+      ],
+      "world_gravity": 9.8
+    },
+    {
+      "name": "orientation_explicitly_unavailable",
+      "passed": true
+    },
+    {
+      "name": "real_sampling_and_batch_transport",
+      "passed": true,
+      "samples_last_sim_second": 199,
+      "mean_interval_s": 0.005000000237373737,
+      "scheduled_periods": 404,
+      "accounted_periods": 404,
+      "stats": [
+        {
+          "id": "imu",
+          "measured_samples": 404,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        },
+        {
+          "id": "imu_offset",
+          "measured_samples": 404,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        },
+        {
+          "id": "imu_rotated",
+          "measured_samples": 404,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        },
+        {
+          "id": "imu_noisy",
+          "measured_samples": 404,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        }
+      ]
+    },
+    {
+      "name": "rotated_mount_axes",
+      "passed": true,
+      "max_error": 1.2999687747691873e-14,
+      "paired_samples": 199
+    },
+    {
+      "name": "configured_noise_and_covariance",
+      "passed": true,
+      "noise_means": [
+        -0.0011467025679817741,
+        0.0005461922207560418,
+        0.0006832486252621449
+      ],
+      "noise_std": [
+        0.010583084554551425,
+        0.010375439411507623,
+        0.010350910535159392
+      ]
+    },
+    {
+      "name": "positive_yaw_gyro_sign",
+      "passed": true,
+      "mean_gyro": [
+        -0.006849527127777704,
+        -0.006711403290448577,
+        0.9673743476942703
+      ]
+    },
+    {
+      "name": "lever_arm_centripetal_acceleration",
+      "passed": true,
+      "measured_delta_x": -0.1872161876062615,
+      "expected_delta_x": -0.18720634774822034
+    },
+    {
+      "name": "drive_acceleration_is_measured",
+      "passed": true,
+      "mean_accel": [
+        0.6946446785685103,
+        -0.020117216015361223,
+        9.792734575272805
+      ]
+    },
+    {
+      "name": "static_tf_mount_only",
+      "passed": true
+    },
+    {
+      "name": "reconnect_keeps_raw_sensor_contract",
+      "passed": true
+    },
+    {
+      "name": "reset_has_no_old_imu_backlog",
+      "passed": true,
+      "samples": 100
+    }
+  ],
+  "received_counts": {
+    "imu": 100,
+    "imu_offset": 100,
+    "imu_rotated": 100,
+    "imu_noisy": 100
+  },
+  "imu_diagnostic": {
+    "model": "raw6axis_point_velocity_difference; interval_average_acceleration; no_AHRS",
+    "profile_md5": "7dfbe81ac5d27a0aa9019eea794cf748",
+    "calibrated": false,
+    "gravity_z_mps2": -9.8,
+    "profiles": [
+      {
+        "id": "imu",
+        "frame_id": "aim_sentry/imu_link",
+        "parent_frame_id": "aim_sentry/base_link",
+        "rate_hz": 200,
+        "pose_in_base": {
+          "position_m": [
+            0,
+            0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "accel_noise_std_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_noise_std_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "accel_bias_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_bias_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "noise_seed": 2027
+      },
+      {
+        "id": "imu_offset",
+        "frame_id": "aim_sentry/imu_offset_link",
+        "parent_frame_id": "aim_sentry/base_link",
+        "rate_hz": 200,
+        "pose_in_base": {
+          "position_m": [
+            0.2,
+            0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "accel_noise_std_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_noise_std_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "accel_bias_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_bias_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "noise_seed": 2027
+      },
+      {
+        "id": "imu_rotated",
+        "frame_id": "aim_sentry/imu_rotated_link",
+        "parent_frame_id": "aim_sentry/base_link",
+        "rate_hz": 200,
+        "pose_in_base": {
+          "position_m": [
+            0,
+            0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0,
+            0.7071067811865476,
+            0,
+            0.7071067811865476
+          ]
+        },
+        "accel_noise_std_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_noise_std_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "accel_bias_mps2": [
+          0,
+          0,
+          0
+        ],
+        "gyro_bias_rad_s": [
+          0,
+          0,
+          0
+        ],
+        "noise_seed": 2027
+      },
+      {
+        "id": "imu_noisy",
+        "frame_id": "aim_sentry/imu_noisy_link",
+        "parent_frame_id": "aim_sentry/base_link",
+        "rate_hz": 200,
+        "pose_in_base": {
+          "position_m": [
+            0,
+            0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "accel_noise_std_mps2": [
+          0.01,
+          0.01,
+          0.01
+        ],
+        "gyro_noise_std_rad_s": [
+          0.0005,
+          0.0005,
+          0.0005
+        ],
+        "accel_bias_mps2": [
+          0.02,
+          -0.01,
+          0.03
+        ],
+        "gyro_bias_rad_s": [
+          0.001,
+          -0.002,
+          0.003
+        ],
+        "noise_seed": 4054
+      }
+    ],
+    "stats": [
+      {
+        "id": "imu",
+        "measured_samples": 155,
+        "missed_periods": 0,
+        "dropped_samples": 0,
+        "history_resets": 0,
+        "invalid_samples": 0
+      },
+      {
+        "id": "imu_offset",
+        "measured_samples": 155,
+        "missed_periods": 0,
+        "dropped_samples": 0,
+        "history_resets": 0,
+        "invalid_samples": 0
+      },
+      {
+        "id": "imu_rotated",
+        "measured_samples": 155,
+        "missed_periods": 0,
+        "dropped_samples": 0,
+        "history_resets": 0,
+        "invalid_samples": 0
+      },
+      {
+        "id": "imu_noisy",
+        "measured_samples": 155,
+        "missed_periods": 0,
+        "dropped_samples": 0,
+        "history_resets": 0,
+        "invalid_samples": 0
+      }
+    ],
+    "published_samples": 12944
+  }
+}
