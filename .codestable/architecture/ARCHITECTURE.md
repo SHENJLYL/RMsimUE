@@ -4,7 +4,7 @@ slug: architecture
 scope: 已实现模块与实际证据
 summary: Windows UE接触舵轮、原LK、高层瞄准、相机/IMU/LiDAR与原Point-LIO已分项运行，Ubuntu仍离线准备
 status: current
-last_reviewed: 2026-11-16
+last_reviewed: 2026-11-17
 tags: [unreal, vehicle, controls]
 depends_on: []
 implements: []
@@ -58,7 +58,7 @@ MouseX/Y使用原始计数，按本项目灵敏度和FOV比例各应用一次。
 
 mesh场地等碰撞body真实创建后落车。默认AIM样例随后启用VehicleContactPhysics：13独立刚体、4滑动弹簧/4舵向/4轮轴约束；真实世界帧解算位移，禁用旧TerrainPose行驶门限。旧运动学仅显式诊断。瞄准目标先转车体局部坐标，保留倾斜地面的世界瞄准行为。显示mesh无碰撞、独立隐藏mesh承担triangle查询/物理接触。
 
-ContactProbe/GyroProbe/TractionProbe以真实世界帧运行路线、控制、响应和坡向抓地检查；OnComponentHit保存接触证据。关节投影/质量调节关闭。碰撞通过prepare/ensure_vehicle_collision.py在独立资产生成，bind_vehicle_collision.py核对哈希并保存旧rig。当前15视觉部件，body128凸包保留低处凹槽，轮为32面圆柱；Win/Linux入口共享准备脚本。
+ContactProbe/GyroProbe/TractionProbe以真实世界帧运行路线、控制、响应和坡向抓地检查；OnComponentHit保存接触证据。关节投影/质量调节关闭。碰撞通过prepare/ensure_vehicle_collision.py在独立资产生成，bind_vehicle_collision.py核对哈希并保存旧rig。当前15视觉部件，body128凸包保留低处凹槽，四轮采用源胎冠凸包；缺少源轮胎几何的包回退圆柱。Win/Linux入口共享准备脚本。
 
 VehicleDrive.cpp拥有带坐标声明的速度目标、世界平面速度大小/方向整形、舵向前馈和轮速PI执行。Control/SentrySwerveKinematics.h适配本机LK核心数学逻辑。车辆包drive-profile.json启动时读取，配置不依赖键盘来源。GameMode仅负责镜头相对WASD、Q/E、G/Z/X、Ctrl及HUD；GameMode在PostPhysics更新视图，车辆电机在PrePhysics更新。手动模式取消未使用离屏视图逐帧渲染，快捷入口防止重复实例。
 
@@ -86,13 +86,13 @@ RosLidar可选读取sensors/lidar.json，实际Visibility首回波查询包含�
 
 RosBridge发布已加载地图的id/kind/MD5，平地占用导出保存同源MD5；navigation_runner拒绝不匹配地图。初始化用显式有偏先验及非零协方差，等待原AMCL估计候选与Nav2生命周期全部active；没有真值定位输入。原诊断库显式DLL可见性解决Windows虚表崩溃，组件算法未替换。目标取消停车已有实测；失联/实际R恢复、多车隔离、RMUC导航图和完整自主行为仍待验收。
 
-raw Imu只提供六轴，orientation_covariance[0]=-1；安装TF只从base_link指向传感器，没有世界定位真值。偏置/白噪声是未标定模型，零协方差表示未知。默认200Hz可配通用SimStepSeconds=0.001运行，约0.3倍墙钟；不启用RosImu时没有IMU工作。该物理mesh-rig配置不等于通用URDF传感器支持。源码/原生证据在artifacts/sensors/imu，Point-LIO仅准备SI参数覆盖。
+raw Imu只提供六轴，orientation_covariance[0]=-1；安装TF只从base_link指向传感器，没有世界定位真值。偏置/白噪声是未标定模型，零协方差表示未知。默认200Hz可配通用SimStepSeconds=0.001运行，约0.3倍墙钟；不启用RosImu时没有IMU工作。该物理mesh-rig配置不等于通用URDF传感器支持。源码/原生证据在artifacts/sensors/imu；原Point-LIO已与实际IMU/LiDAR联跑，证据在artifacts/sensors/lidar。当前新悬挂下的定位/导航联合待复测。
 
 原LK电机路径采用固定1ms物理步长及配对反馈计算，PID按仿真采样时间差缩放，原增益保持。可慢于墙钟；HUD的FPS为墙钟实测、sim倍率独立显示。默认手动/速度桥不启用固定1ms步长。电机模式当前没有电气动态和实车参数标定，安全停车反馈的current只代表外部电流通道，不能当作停车伺服电流测量。具体使用与最新验证见docs/guides/sentry-lk-motor-loop.md及对应feature记录。
 
 RosAimControl独立取得云台/训练发射控制，不续期底盘命令。高层云台仍为有限转速运动学关节/中立碰撞代理，不是硬件电流环。ROS模式训练时间跟随Chaos，发射时刻在前后炮口姿态间插值。自身弹量/热量与靶HP/命中评测分话题；只观察模式仍采集实际手动关节速度。sp_msgs/pb_rm_interfaces是固定原消息包，完整Hub/视觉算法没有因此被标为已运行。
 
-没有校准动力学、比赛权威服务器、完整裁判、ROS2感知闭环或原生Ubuntu验收。手动visual rig不能冒充带真实惯量的vehicle.json。长期设计仍在roadmap，当前架构不把它们写成已实现。
+后续范围包括实车动力学标定、比赛权威服务器、完整裁判、完整自主感知决策闭环与原生Ubuntu验收。AIM物理mesh-rig与通用vehicle.json导入分别跟踪，长期设计放在roadmap。
 
 训练状态由本地GameMode协调的TrainingRange持有，输入只表达trigger/reset；事件时间属于仿真。当前没有网络客户端写入路径，也没有声明已经是联网权威服务器。原始地图资产准备与编辑器导入脚本属于离线工具，不计为运行时支持完成。
 
@@ -101,3 +101,7 @@ RosAimControl独立取得云台/训练发射控制，不续期底盘命令。高
 当前本地舵轮驾驶的起步与改向分别限幅：车辆包方向加速度10m/s²/jerk100m/s³，起步0.8m/s²、松键3m/s²。2m/s改向专项有前后对照；高自转切慢行波动已由源胎冠及按需唤醒修复，见2026-11-16-drive-response-lag及gyro-precision-ripple的当前证据。原LK电流执行模式独立，未因本地参数修订而更换算法。
 
 当前轮胎优先由源网格凸包提供collision_vertices_m，prepare/bind/ensure与importer共享几何哈希，旧圆柱仅作为未提供源轮胎几何时的回退。四轮刚体质量/控制参数沿用原配置，允许静止岛自然休眠，新运动指令主动唤醒。原gyro-precision-ripple已由源胎冠和按需唤醒修复，92项当前原生回归可查。刚性凸包不等于橡胶接触标定。
+
+## 当前悬挂与验证入口（2026-11-17）
+
+AIM车辆包默认每模块弹簧1800N/m、阻尼130N·s/m，预载50N、总行程65mm；引擎通用回退值与其他包保持原状。SuspensionProbe仅在显式测试旗标下向实际车体施加相同载荷/冲量，记录真实世界帧状态；普通模式不运行该夹具。当前模块/配置92项既有原生检查与两次各4项悬挂检查通过，汇总artifacts/control/suspension-20261117/release-summary.json。Point-LIO/Nav2在新悬挂下的联合仍待验收。

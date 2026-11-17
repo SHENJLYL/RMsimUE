@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "analysis_failure": null,
+  "scope": "native Chaos load/release/impulse fixture, uncalibrated demonstration parameters",
+  "native_checks": 4,
+  "decoded_pngs": 6,
+  "samples": 2204,
+  "process_exit": 0,
+  "provenance": {
+    "hashes": {
+      "module": "ED648A22746365E8B4E101C9B5C407957E846844A27EBD781BD19EA8D69CA5EF",
+      "map": "99BE3156EA9BF792CB6D6DC8A909EBEE348595DB76811AED18F4D142F5598E86",
+      "profile": "F01FE76E631E1925B7C159885C0A4DAA872918E34082C00E9ED49EC4744E793A",
+      "rig": "2DCFADFB8AE69463DE6463BD14C2B45E938155BE694F214A5D706821ED08F308"
+    },
+    "started_utc": "2026-11-17T06:00:13.5557472Z",
+    "fixed_step_s": 0.005,
+    "load_n": 100
+  },
+  "physics_parameters": {
+    "ChassisMassKg": 20,
+    "WheelMassKg": 1,
+    "SliderMassKg": 0.15,
+    "SteeringMassKg": 0.2,
+    "SuspensionTravelCm": 6.5,
+    "SpringStiffnessNPerM": 1800,
+    "SpringDampingNsPerM": 130,
+    "SpringPreloadN": 50,
+    "SpringForceLimitN": 1000,
+    "WheelFriction": 1.8,
+    "ChassisFriction": 0.5,
+    "MotorTorqueNm": 4,
+    "BrakeTorqueNm": 8,
+    "MotorDampingNmS": 2,
+    "LinearDamping": 0.05,
+    "AngularDamping": 0.05
+  },
+  "metrics": {
+    "load_deflection_mm": 15.619501424930561,
+    "release_peak_overshoot_mm": 1.0846521553921034,
+    "release_overshoot_percent": 6.944217525796764,
+    "release_settling_5pct_s": 0.29499999340623617,
+    "release_final_height_error_mm": 0.30649089381990235,
+    "impulse_peak_compression_mm": 5.037932050141674,
+    "impulse_peak_rebound_mm": 0.2131852059212852,
+    "impulse_settling_5pct_s": 0.2249999949708581,
+    "rest_pitch_deg": -1.1698607173176474,
+    "loaded_pitch_deg": -1.8275973600513344
+  },
+  "metrics_definition": "settling band=max(5% of initial excursion,0.2mm); must stay inside through end with >=0.5s remaining",
+  "raw_report_sha256": "fb31ae08da16f870894f3425fcdddb370c82cfdc0da7b7641159ff94efd49837"
+}

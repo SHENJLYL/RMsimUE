@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "tests_run": 42,
+  "passed": 40,
+  "skipped": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped_cases": [
+    {
+      "test": "test_manifest_symlink_escape_is_rejected_for_file_entry (rmsim_check_0.VehicleTests.test_manifest_symlink_escape_is_rejected_for_file_entry)",
+      "reason": "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpt2trvy5_\\\\outside\\\\vehicle.json' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpt2trvy5_\\\\vehicle\\\\vehicle.json'"
+    },
+    {
+      "test": "test_symlink_asset_escape_is_rejected (rmsim_check_0.VehicleTests.test_symlink_asset_escape_is_rejected)",
+      "reason": "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpx6mtifng\\\\outside.urdf' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpx6mtifng\\\\vehicle\\\\model\\\\robot.urdf'"
+    }
+  ]
+}

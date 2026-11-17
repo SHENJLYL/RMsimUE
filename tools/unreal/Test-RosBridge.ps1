@@ -79,5 +79,12 @@ try{
     }
     if($LASTEXITCODE -ne 0){throw 'Native bridge client gates failed.'}
 }finally{
-    if($null -ne $process -and -not $process.HasExited){Stop-Process -Id $process.Id -Force}
+    if($null -ne $process){
+        try{
+            if(-not $process.HasExited){
+                Stop-Process -Id $process.Id -Force
+                if(-not $process.WaitForExit(15000)){throw 'Owned ROS probe server did not finish terminating.'}
+            }
+        }finally{$process.Dispose()}
+    }
 }

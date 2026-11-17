@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=-0.291782cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.298828cm vz=-0.000163cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": false,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    }
+  ],
+  "raw_report_sha256": "fe85089410aa925fde2e5f527dcf46288d5f225becec8d370a64bb44362ded9d"
+}

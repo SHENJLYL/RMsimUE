@@ -1,0 +1,33 @@
+{
+  "status": "failed",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "reason": "gyro_reverse_wave_route: progress 138.777cm lateral 11.041cm body spin 17.663rad minimum upright 0.9725",
+  "checks": [
+    {
+      "name": "gyro_supported_spawn",
+      "passed": true,
+      "detail": "phase 3.009s speed 0.000cm/s yaw -0.000rad/s upright 0.9971"
+    },
+    {
+      "name": "gyro_spin_up",
+      "passed": true,
+      "detail": "phase 2.504s speed 9.000cm/s yaw 3.975rad/s upright 0.9972"
+    },
+    {
+      "name": "gyro_forward_wave_route",
+      "passed": true,
+      "detail": "progress 340.149cm lateral 2.214cm body spin 35.809rad minimum upright 0.9604"
+    },
+    {
+      "name": "gyro_route_brake",
+      "passed": true,
+      "detail": "phase 2.008s speed 0.000cm/s yaw -0.000rad/s upright 0.9966"
+    },
+    {
+      "name": "gyro_reverse_wave_route",
+      "passed": false,
+      "detail": "progress 138.777cm lateral 11.041cm body spin 17.663rad minimum upright 0.9725"
+    }
+  ],
+  "raw_report_sha256": "9dec017f138b9c43c42a9d754162891757619f8aa34693240180de2f065d6e70"
+}

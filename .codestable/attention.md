@@ -115,3 +115,12 @@
 - 2026-11-16最新gyro-precision-ripple已完成Windows分项验证：原轮胎弧形源凸包替代错误全宽圆柱，collision_vertices_m与几何哈希进入导出/导入/缓存；停车不再逐帧WakeAllRigidBodies。profile与本轮before逐字一致，所有试验调参/位置保持已撤回。92项/48PNG含ROS11/原LK21通过，见artifacts/control/gyro-ripple-20261116/release-summary.json。不要继续把旧spin-after失败当当前阻塞，但保留为历史复现。
 - 当前TractionProbe是10项，包含更严格的静止准备、实际下坡松键、外力唤醒/恢复；原位移/速度门限未放宽。Chaos GetConstraintForce在UE5.8返回末子步冲量，新字段注明Nms；旧spring/axle字段名是历史兼容，不得直接作力/力矩标定。
 - 当前预览PID29224已实际显示RMUC243FPS/静止/gyro off；旧diagnostics_probe安全弹窗仍覆盖且PickerHost无可操作ID。用户取消交接未结束，不重复请求或绕过窗口保护，CUA completion_summary仍应等交接实际结束。上一批Point-LIO/Nav2是旧几何证据，后续应在新轮胎下做联合回归。长期goal仍active。
+
+## 2026-11-17 当前接续检查点
+
+- 本聊天已再次明确完整长期goal，持久入口`.codestable/goal.md`和`AGENTS.md`。本地Git基线02e68c9，原始标签baseline/2026-11-17-pre-suspension；GitHub建仓受到平台安全检查阻止，本轮没有可调用GitHub写入工具，上传保持待完成，不记成已推送。
+- AIM当前默认悬挂是每模块1800N/m、130N·s/m（旧1600/90）。仅修改车辆包两项；质量、预载50N、行程65mm、源轮胎、摩擦、控制增益、自然休眠不变。旧ue_mesh_rig内联值是导入快照，读取实际drive-profile.json，勿因旧内联值回退已验证参数。
+- 当前模块92项/48PNG通过，覆盖坡面10/操控19/红蓝波浪各5/训练复位10/高速5/自转6/ROS11/原LK21；另有两次悬挂专项各4项/6PNG。100N加载卸载与4N·s冲量真实测量，回弹峰值分别降低58.95%/77.46%。汇总artifacts/control/suspension-20261117/release-summary.json；离线40通过、2权限跳过。
+- 原配置与选定配置均重复两次；所有被拒绝的候选、旧严格稳定带失败和波浪失败保留，门限未改。2600/170不能恢复为默认，它曾在波浪返程真实接触受阻。更硬参数需重新测量与路线回归。
+- 顺序回归在ROS11通过后曾被其自有UE服务退出延迟中断；Test-RosBridge.ps1现等待该进程真正退出并Dispose，不操作其他进程。随后以相同模块/参数哈希补齐LK21并确认无残留，汇总明确记录中断/续测，不描述成不间断单次运行。
+- 新悬挂尚未重跑Point-LIO/Nav2联合、原生Ubuntu或实车标定，用户键鼠试驾手感待反馈。导航最新旧悬挂证据rmuc-05-new-tyres真实终点误差0.254827m，门限0.25m，仍失败；接续此点与恢复流程。新轮胎旧悬挂LK/LIO11已通过，不再当成未开始。

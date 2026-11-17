@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "reason": "suspension_impulse_recovered: Actual chassis impulse recovers without pose constraints or active height control",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=-0.009458cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.608584cm vz=-0.000153cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": true,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    },
+    {
+      "name": "suspension_impulse_recovered",
+      "passed": false,
+      "detail": "Actual chassis impulse recovers without pose constraints or active height control"
+    }
+  ],
+  "raw_report_sha256": "509977e366a2519bd1dc13f5be1bf2ab34533ae46bb1b1a6e8cde572fd29619d"
+}

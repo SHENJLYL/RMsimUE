@@ -1,0 +1,254 @@
+{
+  "status": "native_windows_verified",
+  "scope": "AIM suspension tuning, native transient and existing contact/control/ROS/LK regression",
+  "candidate": "balanced-1800-130",
+  "module_sha256": "ed648a22746365e8b4e101c9b5c407957e846844a27ebd781bd19ea8d69ca5ef",
+  "drive_profile_sha256": "f01fe76e631e1925b7c159885c0a4daa872918e34082c00e9ed49ec4744e793a",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "execution_scope": "sequential independent native runs; LK resumed after verified ROS server shutdown, using identical module and profile hashes",
+  "execution_interruption": {
+    "status": "interrupted_after_successful_ros_gate",
+    "reason": "Sequential single-instance guard saw the previous owned UE ROS server during asynchronous termination; LK not started. No physics or control gate failed.",
+    "completed_checks": 71,
+    "pending_checks": 21,
+    "original_profile_restored": true,
+    "followup": "Wait for and dispose only the owned ROS server process, then run the pending LK gate with the same frozen module and profile."
+  },
+  "changed_parameters": {
+    "physics.SpringStiffnessNPerM": {
+      "before": 1600.0,
+      "after": 1800.0
+    },
+    "physics.SpringDampingNsPerM": {
+      "before": 90.0,
+      "after": 130.0
+    }
+  },
+  "regression_checks": 92,
+  "regression_pngs": 48,
+  "regression_runs": [
+    {
+      "path": "regression-02/traction/verification.json",
+      "checks": 10,
+      "decoded_pngs": 4,
+      "status": "passed",
+      "verification_sha256": "18e4ab35a896670afd45c072ee5d403459282f0355f12bf9309f8b77ca6dce26"
+    },
+    {
+      "path": "regression-02/controls/default/verification.json",
+      "checks": 19,
+      "decoded_pngs": 12,
+      "status": "passed",
+      "verification_sha256": "9096919fd85b204bd51dd0d0aa6c13593701bc25d197fd30be803afbe7d502e9"
+    },
+    {
+      "path": "regression-02/waves/wave_red/verification.json",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "status": "passed",
+      "verification_sha256": "f965bc6676ef53142e9ed0dabc244da724768cad675e0ec7d006cfb272b97b23"
+    },
+    {
+      "path": "regression-02/waves/wave_blue/verification.json",
+      "checks": 5,
+      "decoded_pngs": 6,
+      "status": "passed",
+      "verification_sha256": "2e48e5524f3f9ee0539d3363c3056810750401a31835219b11d98206c9f3c0fe"
+    },
+    {
+      "path": "regression-02/integration/verification.json",
+      "checks": 10,
+      "decoded_pngs": 12,
+      "status": "passed",
+      "verification_sha256": "393e5077e6a77a78e5a5f10d665f1eb044f031dcc28777b2e8220e6469394843"
+    },
+    {
+      "path": "regression-02/fast/verification.json",
+      "checks": 5,
+      "decoded_pngs": 4,
+      "status": "passed",
+      "verification_sha256": "3530abd5051cca961f35a25ce0159fb5d7ad0a2c70ed3752f840647691ebd42d"
+    },
+    {
+      "path": "regression-02/spin/verification.json",
+      "checks": 6,
+      "decoded_pngs": 4,
+      "status": "passed",
+      "verification_sha256": "51d2162d61a9b00cf1067276dcbedd4e3522e18d6b4732f76f7c38809de88aaa"
+    },
+    {
+      "path": "regression-02/ros/ros/verification.json",
+      "checks": 11,
+      "decoded_pngs": 0,
+      "status": "passed",
+      "verification_sha256": "35a3c4390e9542f80110e0687d93e2e899940667ecc08f5c044ff8cf5c5c4d43"
+    },
+    {
+      "path": "regression-02/lk/lk/verification.json",
+      "checks": 21,
+      "decoded_pngs": 0,
+      "status": "passed",
+      "verification_sha256": "2114892a0df86711d7c6e49df324855dac07df95d30bcd56d5d39a4dd019417d"
+    }
+  ],
+  "response_runs": [
+    {
+      "path": "balanced-1800-130-response-01/verification.json",
+      "native_checks": 4,
+      "decoded_pngs": 6,
+      "metrics": {
+        "load_deflection_mm": 15.619501424930561,
+        "release_peak_overshoot_mm": 1.0846521553921034,
+        "release_overshoot_percent": 6.944217525796764,
+        "release_settling_5pct_s": 0.29499999340623617,
+        "release_final_height_error_mm": 0.30649089381990235,
+        "impulse_peak_compression_mm": 5.037932050141674,
+        "impulse_peak_rebound_mm": 0.2131852059212852,
+        "impulse_settling_5pct_s": 0.2249999949708581,
+        "rest_pitch_deg": -1.1698607173176474,
+        "loaded_pitch_deg": -1.8275973600513344
+      },
+      "verification_sha256": "18240fbd216b9dfa0b28ef608e10d9033beb8109a4090e683b5b3fa6fcd1ba55"
+    },
+    {
+      "path": "balanced-1800-130-response-02/verification.json",
+      "native_checks": 4,
+      "decoded_pngs": 6,
+      "metrics": {
+        "load_deflection_mm": 15.619501424930561,
+        "release_peak_overshoot_mm": 1.0846521553921034,
+        "release_overshoot_percent": 6.944217525796764,
+        "release_settling_5pct_s": 0.29499999340623617,
+        "release_final_height_error_mm": 0.30649089381990235,
+        "impulse_peak_compression_mm": 5.037932050141674,
+        "impulse_peak_rebound_mm": 0.2131852059212852,
+        "impulse_settling_5pct_s": 0.2249999949708581,
+        "rest_pitch_deg": -1.1698607173176474,
+        "loaded_pitch_deg": -1.8275973600513344
+      },
+      "verification_sha256": "1b561d4bce1a71af6cdf8786612ec8867885ad7bb4eac74ebc60108dcc4facdc"
+    }
+  ],
+  "original_response": {
+    "path": "baseline-01/verification.json",
+    "status": "failed",
+    "metrics": {
+      "load_deflection_mm": 17.106280791763226,
+      "release_peak_overshoot_mm": 2.642511369593059,
+      "release_overshoot_percent": 15.447608990876867,
+      "release_settling_5pct_s": null,
+      "release_final_height_error_mm": 1.873587058060284,
+      "impulse_peak_compression_mm": 5.14545640294477,
+      "impulse_peak_rebound_mm": 0.945721884323518,
+      "impulse_settling_5pct_s": 0.23999999463558197,
+      "rest_pitch_deg": -1.415900148958145,
+      "loaded_pitch_deg": -2.017541522263555
+    }
+  },
+  "offline": {
+    "status": "passed",
+    "tests_run": 42,
+    "passed": 40,
+    "skipped": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped_cases": [
+      {
+        "test": "test_manifest_symlink_escape_is_rejected_for_file_entry (rmsim_check_0.VehicleTests.test_manifest_symlink_escape_is_rejected_for_file_entry)",
+        "reason": "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpt2trvy5_\\\\outside\\\\vehicle.json' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpt2trvy5_\\\\vehicle\\\\vehicle.json'"
+      },
+      {
+        "test": "test_symlink_asset_escape_is_rejected (rmsim_check_0.VehicleTests.test_symlink_asset_escape_is_rejected)",
+        "reason": "symlink creation unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpx6mtifng\\\\outside.urdf' -> 'C:\\\\Users\\\\SHEN\\\\AppData\\\\Local\\\\Temp\\\\tmpx6mtifng\\\\vehicle\\\\model\\\\robot.urdf'"
+      }
+    ]
+  },
+  "rejected_or_failed_experiments": [
+    {
+      "path": "balanced-1800-150-response-01/control-result.json",
+      "native_status": "passed",
+      "analysis_status": "failed",
+      "reason": "Response did not remain in the original-height settling band for 0.5s",
+      "raw_sha256": "9c6279268e6bcccd0090ea946cec6e18facfbc78518d55bb51fcb41a3c2b4dbe"
+    },
+    {
+      "path": "balanced-2000-130-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+      "raw_sha256": "aa8f5221913aa647f84cab41bbac3571b87e54c400e743cec3f286f21a129883"
+    },
+    {
+      "path": "balanced-2000-160-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+      "raw_sha256": "5a9f2f4a2ef234a9a3dfd22d214ac6a187bc2be65821896be413cf7c55bcca78"
+    },
+    {
+      "path": "balanced-2200-130-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+      "raw_sha256": "fe85089410aa925fde2e5f527dcf46288d5f225becec8d370a64bb44362ded9d"
+    },
+    {
+      "path": "balanced-2200-150-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+      "raw_sha256": "ab7ea9a1acce9abaed75f5206a5ef70c1f740b5d8ea26e4dd2b016b2c8803407"
+    },
+    {
+      "path": "balanced-2400-150-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_impulse_recovered: Actual chassis impulse recovers without pose constraints or active height control",
+      "raw_sha256": "2e9ef9cc3cf304aab87c932074786b740e57120429035f92b0d7ec1e7ac27c03"
+    },
+    {
+      "path": "balanced-2400-160-response-01/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "suspension_impulse_recovered: Actual chassis impulse recovers without pose constraints or active height control",
+      "raw_sha256": "509977e366a2519bd1dc13f5be1bf2ab34533ae46bb1b1a6e8cde572fd29619d"
+    },
+    {
+      "path": "baseline-01/control-result.json",
+      "native_status": "passed",
+      "analysis_status": "failed",
+      "reason": "Response did not remain in the original-height settling band for 0.5s",
+      "raw_sha256": "46ed39538a39df58dfbceb94f926e8db216a4638215075717727bd0e62408a29"
+    },
+    {
+      "path": "baseline-02/control-result.json",
+      "native_status": "passed",
+      "analysis_status": "failed",
+      "reason": "Response did not remain in the original-height settling band for 0.5s",
+      "raw_sha256": "639ff840cbfde19751dc52bbd7ef7f16e66d8700f85af2fb524d5b83ed386702"
+    },
+    {
+      "path": "regression-01/waves/wave_red/control-result.json",
+      "native_status": "failed",
+      "analysis_status": "failed",
+      "reason": "gyro_reverse_wave_route: progress 138.777cm lateral 11.041cm body spin 17.663rad minimum upright 0.9725",
+      "raw_sha256": "9dec017f138b9c43c42a9d754162891757619f8aa34693240180de2f065d6e70"
+    }
+  ],
+  "preserved": [
+    "mass",
+    "preload",
+    "travel",
+    "source tyre hulls",
+    "all drive/steering gains",
+    "friction",
+    "natural sleep and collision semantics"
+  ],
+  "not_verified_this_release": [
+    "OS keyboard end-to-end latency and user feel",
+    "native Ubuntu",
+    "real-robot dynamics calibration",
+    "Point-LIO/Nav2 under the new suspension",
+    "full sentry/referee/multiplayer"
+  ]
+}

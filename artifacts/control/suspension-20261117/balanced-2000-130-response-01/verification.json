@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "scope": "native suspension recovery gate; original thresholds unchanged",
+  "reason": "suspension_release_recovered: Unforced physical spring/damper response returns within 2mm of unloaded height",
+  "checks": [
+    {
+      "name": "suspension_baseline_settled",
+      "passed": true,
+      "detail": "Unloaded physical equilibrium z=-0.324527cm vz=0.000000cm/s"
+    },
+    {
+      "name": "suspension_loaded_equilibrium",
+      "passed": true,
+      "detail": "100.000N added chassis load, compression=1.416777cm vz=-0.000202cm/s"
+    },
+    {
+      "name": "suspension_release_recovered",
+      "passed": false,
+      "detail": "Unforced physical spring/damper response returns within 2mm of unloaded height"
+    }
+  ],
+  "raw_report_sha256": "aa8f5221913aa647f84cab41bbac3571b87e54c400e743cec3f286f21a129883"
+}

@@ -24,3 +24,7 @@ authorization: user_request_in_current_chat
 ## 文件约定
 
 需求/设计/问题：`.codestable/`；用户指南/变更/进度：`docs/`；源码：`unreal/RMSim/Source`、`ros2_ws/src`、`src`、`tools`；包与配置：`assets/`；实际运行产物：`artifacts/`。原模型与原控制器来源目录保持只读。
+
+## 当前检查点（2026-11-17）
+
+本地Git基线和回退标签已建立。AIM悬挂已采用1800N/m、130N·s/m，并通过92项既有原生回归、两次各4项悬挂专项。证据和未覆盖范围见`docs/progress/current.md`。GitHub私有仓库创建/推送仍待可用的连接写入工具；完整长期goal继续active。后续功能优先新悬挂下Point-LIO/Nav2联合与RMUC路线/恢复验收。

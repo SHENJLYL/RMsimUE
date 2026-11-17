@@ -1,0 +1,105 @@
+{
+  "status": "passed",
+  "scope": "actual native ROS2 processes and UE; evaluation truth only for test measurement",
+  "python": "E:\\simulator-cache\\environments\\rm-simulator-ros2-humble-9257817147700612234\\envs\\default\\python.exe",
+  "bridge_module": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\Lib\\site-packages\\rmsim_bridge\\__init__.py",
+  "checks": [
+    {
+      "name": "actual_ros_image_info_tf",
+      "passed": true,
+      "matching_stamps": 4,
+      "stamp_ns": 559236642,
+      "width": 640,
+      "height": 360,
+      "focal_pixels": 554.2562584220408
+    },
+    {
+      "name": "fixed_sensor_optics_runtime",
+      "passed": true,
+      "camera_config": {
+        "width": 640,
+        "height": 360,
+        "hfov_rad": 1.0471975511965976,
+        "nominal_hz": 10,
+        "observer_hfov_rad": 0.5235987755982988
+      }
+    },
+    {
+      "name": "physics_clock_drives_ros_time",
+      "passed": true,
+      "clock_samples": 17,
+      "ros_time_ns": 559236642
+    },
+    {
+      "name": "truth_not_localization_tf",
+      "passed": true,
+      "tf_edges": [
+        [
+          "aim_sentry/base_link",
+          "aim_sentry/aim_camera_optical_frame"
+        ]
+      ]
+    },
+    {
+      "name": "ros_twist_moves_native_vehicle",
+      "passed": true,
+      "displacement": [
+        1.0458747694286232,
+        0.0016167273652398118,
+        -0.0003064596202237979
+      ],
+      "ack": {
+        "accepted_seq": 64,
+        "status": "active",
+        "age_s": 0.014540702104568481,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "ros_publisher_stop_brakes",
+      "passed": true,
+      "drift_m": 0.0,
+      "ack": {
+        "accepted_seq": 65,
+        "status": "expired",
+        "age_s": 1.481800600886345,
+        "rejected_count": 0,
+        "last_rejection": ""
+      }
+    },
+    {
+      "name": "ros_left_axis",
+      "passed": true,
+      "displacement": [
+        0.0009373147991860176,
+        0.4980125225849625,
+        3.348675260836549e-05
+      ]
+    },
+    {
+      "name": "unsupported_component_rejected",
+      "passed": true,
+      "error": "only planar vx/vy/wz are supported"
+    },
+    {
+      "name": "stale_ros_command_rejected",
+      "passed": true,
+      "error": "stale or future cmd_vel stamp"
+    },
+    {
+      "name": "installed_ros2_run_demo",
+      "passed": true,
+      "displacement_m": 0.36149513900065244
+    },
+    {
+      "name": "sidecar_restart_no_replay",
+      "passed": true,
+      "drift_m": 0.0,
+      "new_session": "4A54582A46A6346E9823368AB5DFA17C"
+    }
+  ],
+  "image_messages": 9,
+  "states": 42,
+  "rmw": "rmw_fastrtps_cpp"
+}
