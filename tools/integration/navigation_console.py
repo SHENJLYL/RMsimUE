@@ -41,6 +41,10 @@ def main() -> int:
     parser.add_argument('--output', type=Path)
     parser.add_argument('--port', type=int, default=9451)
     parser.add_argument('--domain', type=int, default=71)
+    parser.add_argument('--control-profile', choices=['simulation','reality'], default='simulation', help='Use original sentry_ws Nav2 controller, smoother, planner and costmap configuration')
+    parser.add_argument('--navigation-source', type=Path, help='Explicit vehicle-supplied sentry_ws Nav2 YAML; omit to use workspace preset')
+    parser.add_argument('--navigation-follow-profile',type=Path,help='Vehicle-supplied high-level navigation gimbal-follow profile')
+    parser.add_argument('--sim-step', type=float, choices=[0.001,0.002,0.005,0.01], default=0.005, help='Fixed physics-step seconds; acceptance required for non-default values')
     parser.add_argument('--no-rviz', action='store_true', help='Integration-test mode; normal users use RViz')
     parser.add_argument('--offscreen', action='store_true', help='Owned integration fixture only; requires --no-rviz')
     parser.add_argument('--run-seconds', type=float, default=0., help='Optional bounded integration run')
@@ -54,6 +58,12 @@ def main() -> int:
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     scene = prepare_scene(args.scene, output/'scene')
+    navigation_source = (args.navigation_source or ROOT/'ros2_ws/src/pb2025_nav_bringup/config'/args.control_profile/'nav2_params.yaml').resolve()
+    follow_source = (args.navigation_follow_profile or ROOT/'assets/vehicles/aim_sentry/navigation-follow.json').resolve()
+    if not follow_source.is_file() or follow_source.stat().st_size>16384:
+        raise ValueError('Invalid vehicle gimbal-follow profile')
+    from rmsim_bridge.sentry_navigation_source import source_profile
+    source_profile(ROOT/'ros2_ws/src/pb2025_nav_bringup/config/reality/nav2_params.yaml',args.control_profile,str(navigation_source))
     config = output/'navigation.rviz'
     config.write_text(json.dumps(rviz_configuration(scene['view']), indent=2)+'\n', encoding='utf-8')
     from ament_index_python.packages import get_package_share_directory
@@ -75,6 +85,8 @@ def main() -> int:
     node = Node('rmsim_navigation_console_monitor')
     state = {'phase':'starting', 'scene':args.scene, 'pid':os.getpid(), 'output_directory':str(output),
              'ros_domain_id':args.domain, 'ros_port':args.port, 'transport':transport,
+             'control_profile':args.control_profile,'sim_step_seconds':args.sim_step,
+             'navigation_source':str(navigation_source),'gimbal_follow_profile':str(follow_source),
              'navigation':None, 'bridge':None, 'estimated_pose':None, 'clock_ns':0,
              'map_received':False, 'path_points':0, 'actions':{}, 'pids':{},
              'scope':'Point-LIO local mapping + AMCL map localization + original Nav2; monitor consumes no evaluation truth'}
@@ -137,12 +149,14 @@ def main() -> int:
                           rig_sha256=digest(ROOT/'assets/vehicles/aim_sentry/ue_mesh_rig.json'),
                           lidar_sha256=digest(ROOT/'assets/vehicles/aim_sentry/sensors/mid360.json'),
                           imu_sha256=digest(ROOT/'assets/vehicles/aim_sentry/sensors/mid360-imu.json'),
-                          navigation_follow_sha256=digest(ROOT/'assets/vehicles/aim_sentry/navigation-follow.json'))
+                          navigation_follow_sha256=digest(follow_source),navigation_follow_profile=str(follow_source),
+                          source_control_config_sha256=digest(navigation_source),navigation_source=str(navigation_source),
+                          control_profile=args.control_profile,sim_step_seconds=args.sim_step)
         source_root=ROOT/'ros2_ws/src/rmsim_bridge/rmsim_bridge'
         import rmsim_bridge
         installed_root=Path(rmsim_bridge.__file__).resolve().parent
         provenance['bridge_inputs']={}
-        for name in ('node.py','protocol.py','imu.py','lidar.py','aim_adapter.py','navigation_follow.py','navigation_follow_adapter.py','navigation_config.py','navigation_runner.py','point_lio_runner.py','pointlio_units.py'):
+        for name in ('node.py','protocol.py','imu.py','lidar.py','aim_adapter.py','navigation_follow.py','navigation_follow_adapter.py','navigation_config.py','navigation_runner.py','point_lio_runner.py','pointlio_units.py','sentry_pointlio_source.py'):
             source=source_root/name;installed=installed_root/name
             provenance['bridge_inputs'][name]={'source_sha256':digest(source),'installed_sha256':digest(installed)}
             if source.read_text(encoding='utf-8')!=installed.read_text(encoding='utf-8'):
@@ -158,17 +172,18 @@ def main() -> int:
             '-game',*display_flags,'-NoSplash','-NoSound',
             '-RosControl','-RosAimControl','-RosImu','-RosLidar',
             '-LidarProfile='+str(ROOT/'assets/vehicles/aim_sentry/sensors/mid360.json'),
-            '-ImuProfile='+str(ROOT/'assets/vehicles/aim_sentry/sensors/mid360-imu.json'),'-SimStepSeconds=0.001','-RosCameraWidth=320','-RosCameraHeight=240',
+            '-ImuProfile='+str(ROOT/'assets/vehicles/aim_sentry/sensors/mid360-imu.json'),'-SimStepSeconds='+str(args.sim_step),'-RosCameraWidth=320','-RosCameraHeight=240',
             '-RosPort='+str(args.port), '-MeshRigFile='+str(ROOT/'assets/vehicles/aim_sentry/ue_mesh_rig.json'),
             '-MapFile='+scene['scene_file'], '-abslog='+str(output/'runtime.log')], original)
-        launch('pointlio', [ros2,'run','rmsim_bridge','point_lio','--ros-args','-p','imu_id:=mid360_imu','-p','output_directory:='+str(output/'pointlio')], original)
+        launch('pointlio', [ros2,'run','rmsim_bridge','point_lio','--ros-args','-p','imu_id:=mid360_imu','-p','sentry_source:='+str(navigation_source),'-p','output_directory:='+str(output/'pointlio')], original)
         launch('navigation', [ros2,'run','rmsim_bridge','navigation','--ros-args','-p',
             'reference_config:='+str(ROOT/'ros2_ws/src/pb2025_nav_bringup/config/reality/nav2_params.yaml'),
             '-p','map_yaml:='+scene['map_yaml'],'-p','initial_pose:='+json.dumps(scene['initial_pose']),
+            '-p','control_profile:='+args.control_profile,'-p','control_source:='+str(navigation_source),
             '-p','native_runtime:='+str(ROOT/'artifacts/runtime/navigation/windows'),
             '-p','output_directory:='+str(output/'navigation')], local_environment)
         launch('bridge', [ros2,'run','rmsim_bridge','bridge','--ros-args','-p','port:='+str(args.port),'-p','aim_control:=true',
-            '-p','navigation_follow:=true','-p','navigation_follow_profile:='+str(ROOT/'assets/vehicles/aim_sentry/navigation-follow.json')], original)
+            '-p','navigation_follow:=true','-p','navigation_follow_profile:='+str(follow_source)], original)
         print('Starting native navigation. Waiting for measured localization and Nav2 readiness...', flush=True)
         deadline = time.monotonic()+180; last_save = 0.
         while True:

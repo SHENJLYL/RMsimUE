@@ -42,9 +42,15 @@ class NavigationRunner(Node):
         initial=self.declare_parameter('initial_pose',[.6,-.4,.15]).value;self.initial_pose=initial
         self.runtime=self.declare_parameter('native_runtime','').value
         self.localization_only=self.declare_parameter('localization_only',False).value
+        self.control_profile=self.declare_parameter('control_profile','legacy').value
+        self.control_source=self.declare_parameter('control_source','').value
         base=Path(self.declare_parameter('output_directory','artifacts/navigation/live').value)
         self.output=base/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+str(os.getpid()));self.output.mkdir(parents=True,exist_ok=False)
-        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial)
+        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source)
+        from .sentry_navigation_source import source_profile
+        self.source_identity=source_profile(reference,self.control_profile,self.control_source)[1]
+        self.controller_config=cfg['controller_server']['ros__parameters']['FollowPath']
+        self.smoother_config=cfg['velocity_smoother']['ros__parameters']
         self.params=self.output/'parameters.yaml';self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.state=None;self.lio=None;self.received=0.;self.identity=None;self.children={};self.streams=[];self.starts=0;self.phase='waiting'
         self.scan=None;self.pose=None;self.seeded=False;self.localized=False;self.nav_started=False;self.seed_ns=0;self.pose_stamp=0;self.good_poses=0;self.pending_state=None;self.pending_update=None;self.next_update=0.
@@ -148,7 +154,11 @@ class NavigationRunner(Node):
         elif time.monotonic()-self.received>1 or (self.lio and self.lio.get('phase')!='running'):
             self.stop();self.phase='waiting'
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
-            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,transport=getattr(self,'transport_profile',{'mode':'unreported'}),scope='original sentry/Nav2 nodes; no truth input; single robot')
+            output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,
+            control_profile=self.control_profile,control_source=self.source_identity,
+            navigation_velocity_limit_mps=self.controller_config['v_linear_max'],
+            smoother_max_velocity=self.smoother_config['max_velocity'],
+            smoother_max_accel=self.smoother_config['max_accel'],smoother_max_decel=self.smoother_config['max_decel'],localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,transport=getattr(self,'transport_profile',{'mode':'unreported'}),scope='original sentry/Nav2 nodes; no truth input; single robot')
         self.status.publish(String(data=json.dumps(report)))
         (self.output/'status.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 

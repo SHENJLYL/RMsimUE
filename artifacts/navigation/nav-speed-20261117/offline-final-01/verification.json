@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "scope": "offline source, protocol and configuration checks; native engine gates separate",
+  "tests_run": 129,
+  "passed": 127,
+  "skipped": 2,
+  "failures": 0,
+  "errors": 0,
+  "failed_tests": [],
+  "skipped_tests": [
+    "rmsim_offline_11.VehicleTests.test_manifest_symlink_escape_is_rejected_for_file_entry",
+    "rmsim_offline_11.VehicleTests.test_symlink_asset_escape_is_rejected"
+  ],
+  "files": [
+    {
+      "path": "tests/control/test_native_transport.py",
+      "sha256": "b86872b90e702d05232653ed8607f020076b1f2797a6ab91e5a9d7fff7ce854c"
+    },
+    {
+      "path": "tests/control/test_navigation_console.py",
+      "sha256": "0698790ccd5920ae1a507e11ada2e2ccead6a3391936a2d1eec5be3890868090"
+    },
+    {
+      "path": "tests/control/test_navigation_follow.py",
+      "sha256": "2e4949b3a23b20c67ba594c0690d9e78757eb3d3154497497c6edee3b901edaf"
+    },
+    {
+      "path": "tests/control/test_navigation_metadata.py",
+      "sha256": "6f61e4d28bab3e0c42f217b1c44b9219052de0d1e02f00f190fadd26e64897e7"
+    },
+    {
+      "path": "tests/control/test_navigation_recovery.py",
+      "sha256": "4a144cc7f4f42abc121bf2531d5fe56f6018ba740dcd295d03807f1a08adeea6"
+    },
+    {
+      "path": "tests/control/test_navigation_speed.py",
+      "sha256": "c0e01de74a9cc371de80600e34d6ab9d32f869768ef15431b83cf18268981ca6"
+    },
+    {
+      "path": "tests/control/test_pointlio_units.py",
+      "sha256": "7a8813ae4088ae35667bcd0c41911308c8995ac1baee3d93e2c99decff02f207"
+    },
+    {
+      "path": "tests/control/test_service_poll.py",
+      "sha256": "4238503a18714aaa6500f8be40fcf5d1b7a967bda15cc4690adf2ef48857ddb1"
+    },
+    {
+      "path": "tests/control/test_suspension_analysis.py",
+      "sha256": "03248de7b3c9a8ab12ebb4455ac031c108f977030bf411a21983d006b07e6947"
+    },
+    {
+      "path": "tests/map_tools/test_map.py",
+      "sha256": "62972af68455cbf1f12ad738edb9395423562b12e6dd4b7990ccfaedcc9f6819"
+    },
+    {
+      "path": "tests/test_wheel_contact_geometry.py",
+      "sha256": "e7c5ca91eb3b900c54ed1e794e552fb1d62de7a5d69178c0d47db469de8a7168"
+    },
+    {
+      "path": "tests/vehicle_tools/test_vehicle.py",
+      "sha256": "cccc37a3819abebf56b4122beffc38ae63951d843c71393f149b27f854c05add"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/test/test_imu_contract.py",
+      "sha256": "a6d3502833426ebaba35b3624c9aa0d3ddd6b7af8bfae9b7fd63f5318dd7b7c6"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/test/test_lidar_contract.py",
+      "sha256": "75501a1844b55b442985fd495d5c1f471e5ac7d030b7399e896ada2e415d1d95"
+    },
+    {
+      "path": "ros2_ws/src/rmsim_bridge/test/test_protocol.py",
+      "sha256": "b2b24c69c4e7f1d28cf8763756570a9423c450aef7833e03454c0ae3c1801f9f"
+    }
+  ]
+}

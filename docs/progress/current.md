@@ -46,3 +46,11 @@ AIM悬挂保持2000N/m、140N·s/m，质量、50N预载、65mm行程、源轮胎
 ## 当前窗口交接
 
 console-08已实际观察到RViz地图/点云，Navigation与Localization均active，最后任务Feedback为canceled；action状态均已结束，未留活动目标。整套窗口保持打开，截图留本机，交接记录见artifacts/navigation/sentry-console-20261117/gui-handoff/verification.json。
+
+## 2026-11-17 工作分支：sentry_ws 速度与 1× 仿真（实验中）
+
+工作分支 `feat/navigation-speed-20261117` 正直接读取 `sentry_ws` 工作副本的 Simulation YAML。AIM 导航前进/后退/横移上限为 3.0/1.5/2.0 m/s，平滑加减速、曲率/接近目标减速、规划器和局部/全局避障均由原 ROS 2 配置和原节点控制。点云滤波也改由该 YAML 选择；外部车辆可使用 `-NavigationSource` 提供自己导航文件。原下载源码不变，历史 0.35 m/s 诊断入口保留。
+
+**目前是实验阶段：** 7 项来源契约测试通过，离线 127 通过、2 权限跳过，原生桥源码/安装哈希一致；最后一次完整 3m/s 配置试验中单点实际误差 0.200725m 通过，完整往返终点 0.388199m 超出 0.25m 门限。5ms 动态路段曾观察到约 0.437× 仿真倍率，稳定 1× 实时运行尚待性能优化。失败证据与完整表格见 `artifacts/navigation/nav-speed-20261117/checkpoint-summary.json` 和 `.codestable/issues/2026-11-17-navigation-source-realtime/sentry-nav-speed.md`。
+
+本实验未标记为正式版本，已验收的 `main` 保持先前导航基线；进一步完成高速度完整路线与真实实时性后才合并。

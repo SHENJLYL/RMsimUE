@@ -362,13 +362,13 @@ controller_server:
       lookahead_time: 1.0
       min_lookahead_dist: 0.5
       max_lookahead_dist: 1.0
-      use_interpolation: false
+      use_interpolation: true  # interpolated lookahead on high-speed wave routes
       use_rotate_to_heading: false
       use_rotate_to_heading_treshold: 0.1
-      min_approach_linear_velocity: 0.5
-      approach_velocity_scaling_dist: 1.0
+      min_approach_linear_velocity: 0.05  # AIM physics: allow lower speed near final goal
+      approach_velocity_scaling_dist: 2.0  # AIM braking distance at high travel speed
       v_linear_min: -2.5
-      v_linear_max: 2.5
+      v_linear_max: 3.0  # AIM manual forward speed cap; sentry_ws simulation owns this setting
       v_angular_min: -3.0
       v_angular_max: 3.0
       curvature_min: 0.4                                # 低曲率阈值，低于此值不减速。
@@ -562,10 +562,10 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [2.5, 2.5, 3.0]
-    min_velocity: [-2.5, -2.5, -3.0]
-    max_accel: [4.5, 4.5, 5.0]
-    max_decel: [-4.5, -4.5, -5.0]
+    max_velocity: [3.0, 2.0, 3.0]  # AIM manual forward and lateral limits
+    min_velocity: [-1.5, -2.0, -3.0]  # AIM manual reverse and lateral limits
+    max_accel: [0.8, 0.8, 3.0]  # AIM physical chassis acceleration from drive-profile.json
+    max_decel: [-3.0, -3.0, -5.0]  # AIM physical braking envelope
     odom_topic: "odometry"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

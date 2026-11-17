@@ -1,0 +1,92 @@
+{
+  "status": "in_progress_high_speed",
+  "source_of_truth": "working sentry_ws simulation/nav2_params.yaml",
+  "source_path": "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml",
+  "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f",
+  "upstream_unchanged_sha256": "b33701c88be0e4d68cd3046e4732c9dc5235fdb0361290fa65907f3956382926",
+  "manual_limits_mps": {
+    "forward": 3.0,
+    "reverse": 1.5,
+    "lateral": 2.0
+  },
+  "native_planner_smoother_costmap_from_source": true,
+  "native_pointlio_filtering_from_source": true,
+  "source_to_installed_python_verified": true,
+  "offline": {
+    "passed": 127,
+    "skipped": 2,
+    "tests_run": 129
+  },
+  "trials": {
+    "step10ms-native-01": {
+      "status": "failed",
+      "failed_check": "single_goal_actual_arrival",
+      "check_count": 3,
+      "single_error_m": 0.650738567371055,
+      "waypoint_error_m": null,
+      "sha256": "3c51a8e95adf739d9ceb499697dfb179dd1b8cf4028edddf22916c37c5b7b814"
+    },
+    "step5ms-native-01": {
+      "status": "failed",
+      "failed_check": "waypoint_sequence_actual_arrival",
+      "check_count": 6,
+      "single_error_m": 0.18246155743278536,
+      "waypoint_error_m": 1.394717314115759,
+      "sha256": "51dd2ae936c500c4fb9071dce28d7fb58b732186c46559039e89afe24fcec518"
+    },
+    "approach-step5ms-native-01": {
+      "status": "failed",
+      "failed_check": "waypoint_sequence_actual_arrival",
+      "check_count": 6,
+      "single_error_m": 0.21042053260907229,
+      "waypoint_error_m": 0.9374360992674816,
+      "sha256": "11ccbb62fe02a33ccce36fd9900d16c7e0482d95be91f67a46f729d7f8bfaf86"
+    },
+    "smoother-step5ms-native-01": {
+      "status": "failed",
+      "failed_check": "waypoint_sequence_actual_arrival",
+      "check_count": 6,
+      "single_error_m": 0.19236049404638686,
+      "waypoint_error_m": 0.9632327106123144,
+      "sha256": "21bbf20d7f57bcaffbe1447c94e844b87c60d104aaafd84674e0d86749800aeb"
+    },
+    "held-gimbal-native-01": {
+      "status": "failed",
+      "failed_check": "waypoint_sequence_actual_arrival",
+      "check_count": 6,
+      "single_error_m": 0.22001400464786333,
+      "waypoint_error_m": 1.31621349025527,
+      "sha256": "e1f45d4b69519c869e1ce3c288a1e428f6d57c478ca0b765288f0c3b751b1880"
+    },
+    "all-source-step5ms-native-01": {
+      "status": "failed",
+      "failed_check": "waypoint_sequence_actual_arrival",
+      "check_count": 6,
+      "single_error_m": 0.20072482918666096,
+      "waypoint_error_m": 0.3881988808569881,
+      "sha256": "c434ba5069264eaf6897cafa1d307e4603d5b0416caafab40c4dcc35c3d15228"
+    }
+  },
+  "realtime_measurement": {
+    "status": "incomplete",
+    "scope": "sim time vs monotonic wall time, read-only file observation; no controls or truth injection",
+    "samples": 87,
+    "sim_elapsed_s": 9.599999785000001,
+    "wall_elapsed_s": 21.97519470000043,
+    "measured_realtime_factor": 0.4368561878998876,
+    "median_reported_rate": 0.46861063719262924,
+    "min_reported_rate": 0.3161339055997564,
+    "max_reported_rate": 0.5056175956027694,
+    "session_identity": [
+      "F9F7AAFA4C37B936E4F2F1872A3E19A9",
+      0
+    ]
+  },
+  "full_route_accepted": false,
+  "limitations": [
+    "Repeated high-speed waypoint route fails independent actual-position acceptance",
+    "Physics/sensor clock observed slower than real time under load",
+    "Full automatic vehicle-package import still pending; external navigation YAML path available"
+  ],
+  "scope": "Standalone Windows native source integration and real UE/ROS tests; no truth fed to control"
+}

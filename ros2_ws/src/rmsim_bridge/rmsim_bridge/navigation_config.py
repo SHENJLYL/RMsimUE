@@ -3,16 +3,19 @@ import copy,json
 from pathlib import Path
 import yaml
 from .protocol import identifier
+from .sentry_navigation_source import source_profile
 
 LOCALIZATION_NODES=['map_server','amcl']
 NAVIGATION_NODES=['controller_server','planner_server','smoother_server','behavior_server','bt_navigator','waypoint_follower','velocity_smoother']
 INTERFACE_NODES=['loam_interface','sensor_scan_generation','terrain_analysis','terrain_analysis_ext','pointcloud_to_laserscan','fake_vel_transform']
 
-def prepare(reference,map_yaml,robot,initial_pose):
+def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',control_source=''):
     identifier(robot);reference=Path(reference);map_yaml=Path(map_yaml).resolve()
     source=yaml.safe_load(reference.read_text(encoding='utf-8'))
     selected=INTERFACE_NODES+LOCALIZATION_NODES+NAVIGATION_NODES+['local_costmap','global_costmap']
     cfg={key:copy.deepcopy(source[key]) for key in selected}
+    upstream_blocks, upstream_identity = source_profile(reference, control_profile, control_source)
+    cfg.update(upstream_blocks)
     def clock(value):
         if isinstance(value,dict):
             for key,item in value.items():
@@ -37,8 +40,11 @@ def prepare(reference,map_yaml,robot,initial_pose):
     get('controller_server').pop('progress_checker_plugins',None)
     get('controller_server')['progress_checker_plugin']='progress_checker' # Humble1.1.20 uses singular.
     get('controller_server')['general_goal_checker'].update(xy_goal_tolerance=.10)
-    get('controller_server')['FollowPath'].update(v_linear_max=.35,min_lookahead_dist=.25,lookahead_dist=.4)
-    get('velocity_smoother').update(max_velocity=[.35,.35,2.0],min_velocity=[-.35,-.35,-2.0],max_accel=[.8,.8,3.0],max_decel=[-3.0,-3.0,-5.0],deadband_velocity=[0.0,0.0,0.0])
+    if control_profile=='legacy':
+        # Stable historical diagnostics only. The user console uses the actual sentry
+        # simulation profile, including the native curvature/approach limits.
+        get('controller_server')['FollowPath'].update(v_linear_max=.35,min_lookahead_dist=.25,lookahead_dist=.4)
+        get('velocity_smoother').update(max_velocity=[.35,.35,2.0],min_velocity=[-.35,-.35,-2.0],max_accel=[.8,.8,3.0],max_decel=[-3.0,-3.0,-5.0],deadband_velocity=[0.0,0.0,0.0])
     bt=get('bt_navigator');bt.update(global_frame=world,robot_base_frame=fake)
     trees=reference.parents[2]/'behavior_trees'
     for key,file in [('default_nav_to_pose_bt_xml','navigate_to_pose_w_replanning_and_recovery.xml'),('default_nav_through_poses_bt_xml','navigate_through_poses_w_replanning_and_recovery.xml')]:

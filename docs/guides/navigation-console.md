@@ -43,3 +43,18 @@ Point-LIO接收ROS SI惯性数据。原3g加速度饱和阈值同步换算为29.
 ## 证据和复测
 
 最新完整通过项及缺口以 `docs/progress/current.md` 和该功能的发布汇总为准。`Test-Mid360Mount.ps1` 验证真实旋转安装和惯性测量；`probe_sentry_navigation.py` 验证原Nav2航点、取消和云台/传感器联动；`test_navigation_console_ui.py` 单独验证真实RViz操作。禁止将后台action成功写成鼠标界面验收成功。
+
+## sentry_ws 导航速度由源配置管理（实验分支）
+
+当前实验分支默认读取 `ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml`，该 ROS 2 工作副本暂将 AIM 前进上限调为 3.0m/s，平滑器的 x/y 轴限分别匹配车包手动参数，原控制器、曲率减速、接近目标减速及 Theta*/代价地图照常工作。原始上游配置保存在只读的 `third_party/sentry_nav_original`。
+
+对于未来不同底盘，可直接向启动器传入其自己的 `sentry_ws` 配置文件，覆盖控制、平滑、避障与 Point-LIO 滤波，而不在仿真中新增该车专属速度常数：
+
+```powershell
+cd D:\simulator
+.\tools\environment\Start-NavigationConsole.ps1 -ControlProfile simulation -NavigationSource 'D:\new_vehicle\sentry_ws\src\pb2025_nav_bringup\config\simulation\nav2_params.yaml'
+```
+
+可选的 `-NavigationFollowProfile` 接收车辆自己的云台目标整形配置。当前 UE mesh-rig、Mid-360 等仍默认 AIM，其他车辆完整自动导入和运行另行验收。
+
+**验证边界：** 本次 3m/s 配置单点导航已在原生 UE/ROS 上通过；长波浪路双航点和稳定 1× 实时运行尚未通过。完整证据 `artifacts/navigation/nav-speed-20261117/checkpoint-summary.json`。图形界面原来 0.35m/s 版本的 84+13 项成功记录仍属于先前已验收版本。

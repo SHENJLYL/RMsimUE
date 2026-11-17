@@ -28,3 +28,7 @@ authorization: user_request_in_current_chat
 ## 当前检查点（2026-11-17）
 
 可视化导航、sentry导航偏航目标整形及云台安装Mid-360已完成Windows限定验收：84项原生、13项RViz实际选点/航点/取消，离线120通过、2权限跳过。Play-Navigation.cmd与Stop-Navigation.cmd为用户入口；源模型和2000/140悬挂保持。汇总artifacts/navigation/sentry-console-20261117/release-summary.json。长期goal继续active，下一步补新Mid-360组合实际R/断线、更多RMUC路线，再推进通用车辆、多机器人隔离、完整感知决策/裁判、权威联机及Ubuntu原生验收。
+
+## 当前工作切片：原 sentry_ws 控速与实时性能
+
+2026-11-17 增加实验目标：导航速度、变速、避障和滤波参数从 sentry_ws ROS YAML 读取；AIM 当前 3m/s 前进上限在该 ROS 源文件调整，允许新车替换自己的文件。长波浪路 0.25m 验收及标准 1× 实时仍 open，详细问题与试验在 .codestable/issues/2026-11-17-navigation-source-realtime。原先长期 goal 继续 active，main 已验收基线保持。
