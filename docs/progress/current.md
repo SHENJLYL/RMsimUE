@@ -40,3 +40,7 @@ RMUC2027和WT CDK地形已有场景运行证据。弗兰德斯原图资源已解
 项目 `D:/simulator`，UE5.8.4 `E:/simulator-tools/UE_5.8`；原生Humble使用RoboStack Python3.14。原模型和原控制器来源目录保持只读。运行参数以车辆包 `drive-profile.json` 为准，导入绑定内联参数属于历史快照。
 
 CodeStable现状/计划/问题、`docs/changes`、`artifacts` 分类型保存；旧进度已归档到 `docs/progress/archive/2026-11-17-before-suspension.md`。历史模块通过项只在实际重跑后计入当前验收。
+
+## 当前手动预览
+
+本轮默认RMUC手动窗口已重新打开，PID55380。实际窗口截图观察到AIM车辆、场地与HUD，截图时253FPS、0.0km/h、小陀螺关闭；项目窗口内未见安全弹窗遮挡。本次未发送OS键盘操作，用户手感评审保留。记录 `artifacts/control/suspension-20261117/gui-preview/verification.json`，窗口留开供试驾。
