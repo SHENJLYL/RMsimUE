@@ -1,0 +1,47 @@
+{
+  "schema": "wt_static_collision_recipe_v1",
+  "version": 1,
+  "models": {
+    "russia_rails_sleeper_a": 14349,
+    "rail_crosstie": 37,
+    "pavement_border_a": 1013,
+    "pavement_border_a_secondlayer": 334,
+    "pavement_border_a_white_secondlayer": 514,
+    "pavement_border_b": 651,
+    "pavement_border_b_secondlayer": 294,
+    "pavement_border_b_white_secondlayer": 423,
+    "pavement_border_c": 355,
+    "pavement_border_d": 242,
+    "pavement_border_e": 226,
+    "pavement_border_g": 4,
+    "sicily_pavement_border_a": 4,
+    "sicily_pavement_border_b": 8
+  },
+  "cell_size_m": 32,
+  "matrix_dagor_to_ros": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "triangle_policy": "source triangles, shared static BVH, no decimation",
+  "convex_models": [
+    "pavement_border_a_white_secondlayer",
+    "pavement_border_b_white_secondlayer",
+    "sicily_pavement_border_a",
+    "sicily_pavement_border_b"
+  ],
+  "affine_policy": "complete source affine matrix, local spatial-cell coordinates",
+  "runtime": "rig and pinned spawn; query range plus preload margin and hysteresis"
+}

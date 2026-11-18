@@ -15,6 +15,7 @@ class FJsonObject;
 class FJsonValue;
 class URosBridgeComponent;
 class UWTFoliageCrushComponent;
+class UWTGeneratedCollisionComponent;
 class UMapOverview;
 struct FMapOverviewFrame;
 struct FManualRigState;
@@ -60,6 +61,7 @@ private:
     UPROPERTY() ATrainingRange* Training = nullptr;
     UPROPERTY() URosBridgeComponent* RosBridge=nullptr;
     UPROPERTY() UWTFoliageCrushComponent* SoftFoliage=nullptr;
+    UPROPERTY() UWTGeneratedCollisionComponent* GeneratedCollision=nullptr;
     bool bRosBridgeEnabled=false,bRosControl=false,bRosAimControl=false;
     FString ImuFixture;
     double ImuFixtureElapsed=0;

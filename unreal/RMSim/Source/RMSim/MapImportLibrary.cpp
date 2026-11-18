@@ -1,4 +1,10 @@
 #include "MapImportLibrary.h"
+#include "WTGeneratedCollisionComponent.h"
+#include "Engine/Texture2DArray.h"
+#include "Engine/Texture2D.h"
+#if WITH_EDITOR
+#include "AssetCompilingManager.h"
+#endif
 #include "RosCoordinates.h"
 #include "VehicleRig.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
@@ -258,4 +264,128 @@ FString UMapImportLibrary::DescribeMapMesh(UStaticMesh* Mesh)
     }
     Report->SetArrayField(TEXT("sections"),Sections);
     FString Result;FJsonSerializer::Serialize(Report,TJsonWriterFactory<>::Create(&Result));return Result;
+}
+
+bool UMapImportLibrary::PrepareGeneratedCollision(UStaticMesh* Mesh,const FString& Mode,
+    int32 ExpectedTriangles,const FString& SourceFbxSha256,const FString& RecipeSha256,
+    const TArray<FVector>& ConvexVerticesCm,FString& Error)
+{
+    Error.Reset();
+#if WITH_EDITOR
+    auto IsHash=[](const FString& Value)
+    {
+        if(Value.Len()!=64)return false;
+        for(TCHAR C:Value)if(!((C>='0'&&C<='9')||(C>='a'&&C<='f')))return false;
+        return true;
+    };
+    if(!Mesh||!Mesh->GetPathName().StartsWith(TEXT("/Game/RMSim/Maps/wt_vlaanderen/GeneratedCollision/"))||
+       !IsHash(SourceFbxSha256)||!IsHash(RecipeSha256)||ExpectedTriangles<=0||ExpectedTriangles>500000||
+       (Mode!=TEXT("triangle_bvh")&&Mode!=TEXT("convex")))
+    {Error=TEXT("invalid generated collision preparation request");return false;}
+    TArray<UObject*> Pending;Pending.Add(Mesh);
+    FAssetCompilingManager::Get().FinishCompilationForObjects(Pending);
+    if(Mesh->GetNumSourceModels()!=1||Mesh->GetNumTriangles(0)!=ExpectedTriangles)
+    {Error=TEXT("generated source mesh LOD/triangle count differs");return false;}
+    if((Mode==TEXT("convex")&&ConvexVerticesCm.Num()!=8)||
+       (Mode==TEXT("triangle_bvh")&&!ConvexVerticesCm.IsEmpty()))
+    {Error=TEXT("generated convex must use the eight source corners");return false;}
+    for(const FVector& V:ConvexVerticesCm)
+        if(V.ContainsNaN()||V.GetAbsMax()>100000.)
+        {Error=TEXT("invalid generated convex point");return false;}
+    Mesh->Modify();Mesh->CreateBodySetup();
+    UBodySetup* Body=Mesh->GetBodySetup();Body->Modify();
+    Body->RemoveSimpleCollision();
+    Body->bMeshCollideAll=true;Body->bDoubleSidedGeometry=true;
+    Body->CollisionTraceFlag=Mode==TEXT("convex")?CTF_UseSimpleAsComplex:CTF_UseComplexAsSimple;
+    if(Mode==TEXT("convex"))
+    {
+        FKConvexElem Hull;Hull.VertexData=ConvexVerticesCm;Hull.UpdateElemBox();
+        Body->AggGeom.ConvexElems.Add(MoveTemp(Hull));
+    }
+    Body->InvalidatePhysicsData();
+    Mesh->RemoveUserDataOfClass(UWTGeneratedCollisionData::StaticClass());
+    auto* Data=NewObject<UWTGeneratedCollisionData>(Mesh);
+    Data->SourceFbxSha256=SourceFbxSha256;Data->RecipeSha256=RecipeSha256;
+    Data->CollisionMode=Mode;Data->SourceTriangles=ExpectedTriangles;
+    Mesh->AddAssetUserData(Data);
+    Mesh->PostEditChange();
+    FAssetCompilingManager::Get().FinishCompilationForObjects(Pending);
+    Body=Mesh->GetBodySetup();Body->CreatePhysicsMeshes();
+    if(!UWTGeneratedCollisionComponent::ValidateMesh(Mesh,Error))return false;
+    Mesh->MarkPackageDirty();return true;
+#else
+    Error=TEXT("generated collision authoring requires the editor");return false;
+#endif
+}
+
+FString UMapImportLibrary::DescribeGeneratedCollision(UStaticMesh* Mesh)
+{
+    FString Error;auto J=MakeShared<FJsonObject>();
+    const bool Valid=UWTGeneratedCollisionComponent::ValidateMesh(Mesh,Error);
+    J->SetBoolField(TEXT("valid"),Valid);J->SetStringField(TEXT("error"),Error);
+    if(Mesh)
+    {
+        J->SetStringField(TEXT("asset"),Mesh->GetPathName());
+        J->SetNumberField(TEXT("triangles"),Mesh->GetNumTriangles(0));
+        if(const auto* Data=Cast<UWTGeneratedCollisionData>(
+            Mesh->GetAssetUserDataOfClass(UWTGeneratedCollisionData::StaticClass())))
+        {
+            J->SetStringField(TEXT("source_fbx_sha256"),Data->SourceFbxSha256);
+            J->SetStringField(TEXT("recipe_sha256"),Data->RecipeSha256);
+            J->SetStringField(TEXT("mode"),Data->CollisionMode);
+        }
+        if(const UBodySetup* Body=Mesh->GetBodySetup())
+        {
+            J->SetNumberField(TEXT("triangle_bvhs"),Body->TriMeshGeometries.Num());
+            J->SetNumberField(TEXT("convex_hulls"),Body->AggGeom.ConvexElems.Num());
+            J->SetNumberField(TEXT("simple_shapes"),Body->AggGeom.GetElementCount());
+            J->SetNumberField(TEXT("trace_flag"),static_cast<int32>(Body->GetCollisionTraceFlag()));
+            J->SetBoolField(TEXT("cooked"),Body->bCreatedPhysicsMeshes&&!Body->bFailedToCreatePhysicsMeshes);
+        }
+    }
+    FString Text;FJsonSerializer::Serialize(J,TJsonWriterFactory<>::Create(&Text));return Text;
+}
+
+UWTGeneratedCollisionComponent* UMapImportLibrary::CreateGeneratedCollisionAudit(
+    UObject* WorldContextObject,const FString& ManifestFile,const FVector& AnchorWorldCm,
+    double QueryRangeMetres,FString& Error)
+{
+    UWorld* World=GEngine->GetWorldFromContextObject(WorldContextObject,EGetWorldErrorMode::ReturnNull);
+    if(!World){Error=TEXT("generated collision audit needs a world");return nullptr;}
+    FActorSpawnParameters Params;Params.ObjectFlags|=RF_Transient;
+    AActor* Actor=World->SpawnActor<AActor>(FVector::ZeroVector,FRotator::ZeroRotator,Params);
+    if(!Actor){Error=TEXT("cannot create generated collision audit actor");return nullptr;}
+    auto* Component=NewObject<UWTGeneratedCollisionComponent>(Actor);
+    Actor->AddInstanceComponent(Component);Component->RegisterComponent();
+    if(!Component->InitializeAudit(ManifestFile,AnchorWorldCm,QueryRangeMetres,Error))
+    {Actor->Destroy();return nullptr;}
+    return Component;
+}
+
+FString UMapImportLibrary::DescribeMapTextureArray(UTexture2DArray* Texture)
+{
+    if(!Texture)return FString();
+#if WITH_EDITOR
+    TArray<UObject*> Pending;Pending.Add(Texture);
+    FAssetCompilingManager::Get().FinishCompilationForObjects(Pending);
+#endif
+    auto J=MakeShared<FJsonObject>();
+    J->SetNumberField(TEXT("width"),Texture->GetSizeX());
+    J->SetNumberField(TEXT("height"),Texture->GetSizeY());
+    J->SetNumberField(TEXT("slices"),Texture->GetArraySize());
+    J->SetNumberField(TEXT("mips"),Texture->GetNumMips());
+    TArray<TSharedPtr<FJsonValue>> Sources;
+#if WITH_EDITORONLY_DATA
+    J->SetNumberField(TEXT("source_width"),Texture->Source.GetSizeX());
+    J->SetNumberField(TEXT("source_height"),Texture->Source.GetSizeY());
+    J->SetNumberField(TEXT("source_slices"),Texture->Source.GetNumSlices());
+    for(const UTexture2D* Source:Texture->SourceTextures)
+        Sources.Add(MakeShared<FJsonValueString>(Source?Source->GetPathName():FString()));
+#else
+    J->SetNumberField(TEXT("source_width"),0);
+    J->SetNumberField(TEXT("source_height"),0);
+    J->SetNumberField(TEXT("source_slices"),0);
+#endif
+    J->SetArrayField(TEXT("source_textures"),Sources);
+    FString Text;FJsonSerializer::Serialize(J,TJsonWriterFactory<>::Create(&Text));return Text;
 }

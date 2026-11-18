@@ -4,6 +4,7 @@
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
 #include "WTFoliageCrushComponent.h"
+#include "WTGeneratedCollisionComponent.h"
 #include "RosCoordinates.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
@@ -299,6 +300,14 @@ bool AImportLabGameMode::CreateStage()
     const FBox LocalBounds = Rig->GetLocalCollisionBounds();
     Rig->SetActorLocationAndRotation(RosCoordinates::Position(Spawn->GroundMetres) + FVector(0,0,2.0-LocalBounds.Min.Z),
         RosCoordinates::Rotation(FVector(0,0,Spawn->YawRadians)));
+    if (StageMap.bSavedScene && StageMap.Id == TEXT("wt_vlaanderen"))
+    {
+        GeneratedCollision = NewObject<UWTGeneratedCollisionComponent>(this);
+        AddInstanceComponent(GeneratedCollision);
+        GeneratedCollision->RegisterComponent();
+        if (!GeneratedCollision->Initialize(Rig, StageMap.SourceFile, StageMap.SceneSourceHash, MapError))
+        { Abort(MapError); return false; }
+    }
     if (ProbeReport.IsValid()) { ProbeReport->SetStringField(TEXT("map_id"),StageMap.Id); ProbeReport->SetStringField(TEXT("spawn_id"),SpawnId); }
     if (ControlReport.IsValid()) { ControlReport->SetStringField(TEXT("map_id"),StageMap.Id); ControlReport->SetStringField(TEXT("spawn_id"),SpawnId); }
     const FVector FloorOffset=StageMap.bSavedScene ? RosCoordinates::Position(Spawn->GroundMetres) : FVector(0,0,StageMap.FloorZ*100.0);
@@ -409,6 +418,11 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
     LastFrameWallSeconds=FrameWallNow;
     FrameAverageSeconds=FrameAverageSeconds>0?FMath::Lerp(FrameAverageSeconds,FrameWallDelta,.05):FrameWallDelta;
     if(!IsValid(Rig)){Abort(TEXT("vehicle no longer exists"));return;}
+    if (GeneratedCollision)
+    {
+        FString CollisionError;
+        if (!GeneratedCollision->Advance(CollisionError)) { Abort(CollisionError); return; }
+    }
     if (!bSpawnValidated)
     {
         SpawnValidationElapsed += DeltaSeconds;

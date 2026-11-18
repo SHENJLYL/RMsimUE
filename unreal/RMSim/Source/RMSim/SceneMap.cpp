@@ -1,4 +1,5 @@
 #include "MapStage.h"
+#include "WTGeneratedCollisionComponent.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Dom/JsonObject.h"
 #include "Engine/StaticMesh.h"
@@ -31,7 +32,9 @@ struct FSceneState
 {
     int32 Landscapes=0,HeightfieldComponents=0,VisualComponents=0,CollisionComponents=0;
     int64 VisualInstances=0,CollisionInstances=0,GrassInstances=0;
-    int32 GrassComponents=0;
+    int32 GrassComponents=0,GeneratedComponents=0;
+    int64 GeneratedInstances=0;
+    bool GeneratedReady=true;
     bool PhysicsReady=true,MeshesValid=true,GrassCollisionDisabled=true;
 };
 FSceneState InspectScene(UWorld* World,const FString& AssetPrefix)
@@ -62,7 +65,18 @@ FSceneState InspectScene(UWorld* World,const FString& AssetPrefix)
                 State.GrassCollisionDisabled &= Component->GetCollisionEnabled()==ECollisionEnabled::NoCollision;
                 continue;
             }
-            const UStaticMesh* Mesh=Component->GetStaticMesh();
+            UStaticMesh* Mesh=Component->GetStaticMesh();
+            if(Component->ComponentHasTag(TEXT("RMSimGeneratedCollision")))
+            {
+                FString GeneratedError;
+                const bool Valid=UWTGeneratedCollisionComponent::ValidateMesh(Mesh,GeneratedError);
+                State.MeshesValid &= Valid;
+                State.GeneratedReady &= Valid && Component->IsRegistered() && Component->IsPhysicsStateCreated() &&
+                    Component->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics && Component->GetInstanceCount()>0;
+                State.PhysicsReady &= State.GeneratedReady;
+                ++State.GeneratedComponents;State.GeneratedInstances+=Component->GetInstanceCount();
+                continue;
+            }
             State.MeshesValid &= Mesh && Mesh->GetPathName().StartsWith(AssetPrefix) && Component->GetInstanceCount()>0;
             if(Component->GetCollisionEnabled()==ECollisionEnabled::NoCollision)
             {
@@ -165,6 +179,9 @@ void FMapStage::AddSceneReport(UWorld* World,const TSharedRef<FJsonObject>& Repo
     Report->SetNumberField(TEXT("visual_instances"),static_cast<double>(State.VisualInstances));
     Report->SetNumberField(TEXT("collision_instances"),static_cast<double>(State.CollisionInstances));
     Report->SetBoolField(TEXT("scene_collision_ready"),State.PhysicsReady);
+    Report->SetNumberField(TEXT("generated_collision_components"),State.GeneratedComponents);
+    Report->SetNumberField(TEXT("generated_collision_instances"),static_cast<double>(State.GeneratedInstances));
+    Report->SetBoolField(TEXT("generated_collision_ready"),State.GeneratedReady);
     Report->SetNumberField(TEXT("streamed_grass_components"),State.GrassComponents);
     Report->SetNumberField(TEXT("streamed_grass_instances"),static_cast<double>(State.GrassInstances));
     Report->SetBoolField(TEXT("streamed_grass_collision_disabled"),State.GrassCollisionDisabled);
