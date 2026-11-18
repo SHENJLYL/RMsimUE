@@ -1,0 +1,478 @@
+{
+  "schema": "wt_source_parser_review_v1",
+  "status": "passed",
+  "started_utc": "2026-11-18T04:12:32.480731+00:00",
+  "synthetic_binary_fixtures": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "passed": true,
+    "log_sha256": "91bcc2c4189722fbf13407b69ca9864c2e5ecc39b5343b10438baa3a31b5928a"
+  },
+  "original_archive": {
+    "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\aces.vromfs.bin",
+    "sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+    "magic": "VRFx",
+    "target": 1129316352,
+    "header_size": 24,
+    "extension_flags": 0,
+    "version": 37552145,
+    "packed_size": 19892327,
+    "decoded_size": 27649792,
+    "body_sha256": "d337a4e5904179cef9654c110f55d0db9e8286ac83503cac8ffb52ed265f3f27",
+    "file_count": 26022
+  },
+  "original_context": {
+    "shared_names": 220116,
+    "dictionary_entry": "02910f04273ea69a2042040e7e31b89f8ed8ef4403ec97efda8698810bb0942c.dict"
+  },
+  "original_blk_checks": [
+    {
+      "entry": "gamedata/scenes/avg_vlaanderen_objects.blk",
+      "source_sha256": "ce044ef5ae744fa34ac3c785577d169c513cfd327f2698983a4c17a045cda006",
+      "decoded_json_sha256": "9b77563a10ca2cc8f675cff34dfbd819944c11196f93fc063a5e80283cf5698f",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/_random_grass.blk",
+      "source_sha256": "406f4316d4ebbe056afe72971e0597f78e670fbefff95371b4c64a5994865bd3",
+      "decoded_json_sha256": "55e40bd858067ea00fcc0ab52729838f636301f5764c855c974e798cb4f68f61",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/_tank_grass.blk",
+      "source_sha256": "0342e75c195bafc60b206e7d86e6afbcf9fa2157f59c079b82d4e4254e116c37",
+      "decoded_json_sha256": "050235bda3e3f4fb2d819af9fe2616b28065540ef2ef27474586788864cb7e9f",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/avg_vlaanderen.blk",
+      "source_sha256": "2de8930e9f443ab6218567378514ff76b8ce86fd7cf2f06428c94e878fa23b9c",
+      "decoded_json_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_autumn_norway.blk",
+      "source_sha256": "22b62c7c18c032e503232637c1cd88b32b7e84982a17251efe8edd6392a1c915",
+      "decoded_json_sha256": "8ce7d1fe3dc50b8e68bf5dfd8a25d1049ab613dca35a06f9303027d8917dec3d",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_blueberry_a.blk",
+      "source_sha256": "bbe6c2f5046d33955f0ec288e226422f16de21079da3b7a37209d920ff8f5551",
+      "decoded_json_sha256": "0f8c26ecb4b1438097136ec516e0faf48edc900cec809961fe2e55de3a3b3751",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_cane_a.blk",
+      "source_sha256": "4f6b8c74002c7af333d3d6a68db9368ff9ab755d2820104661d7c8132b3c17fe",
+      "decoded_json_sha256": "99c0204011eaa4ed4e1a0f13fd486f4041542eda3ff012c9fa1034f8c69373a6",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_daisies_a.blk",
+      "source_sha256": "b2780cbf5ee39c63b62d06c48c14a911477996a6f6e2e93104d549ad5adcd4dd",
+      "decoded_json_sha256": "8f07ff254b9dab9a3fe17ee5c8902bde59945faa69b4a4453f0c3f7f1b350ee2",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_desert_stones_a.blk",
+      "source_sha256": "998c67753fdbfb4f225cec0e613f26cc70040b964a99fe653285fecaf78d53c2",
+      "decoded_json_sha256": "c17fc54fedbe43bb9d92e406b6f85dda27aaa78b5d85a1a7e2e4fa1e2b07c256",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_dry_desert_a.blk",
+      "source_sha256": "2acd8ee3515ecd589193bd4de71cee69845c45fe5ede0a0e86216e79ff816a37",
+      "decoded_json_sha256": "51e274be6fcfaa551ad9aec55551decd38c4ee8dc9987ed3c4a0046097f8a965",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_dry_desert_b.blk",
+      "source_sha256": "608e9b73d11fe4dca2ce329848f59aa53ddac3488031b3aca0ad386001c771e6",
+      "decoded_json_sha256": "45ef2d5e243ed04799aab692bd320a34fe0b41437601f937adf926962d7a690e",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_dry_desert_c.blk",
+      "source_sha256": "7af5a32919219425e739058183da9f676e15892c67f2eaa1b14338a2fead2075",
+      "decoded_json_sha256": "b6ff1b1ad6aef4cb06e04ddf803eaf3e8b2810d6276aa121bf8f223f4a987975",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_fill_a.blk",
+      "source_sha256": "3b9fbfb811eb30a69c892937d2fbe65c30b1a2270e588755605e4c7dbafb6872",
+      "decoded_json_sha256": "e14901f1b85fb94ae4a9e205ab01338fb373a58751c3f61348b638a6d10a0ada",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_fill_b.blk",
+      "source_sha256": "061ae62b7ff08d43705e8fa8f1e656c5a88335a103cfca05013b02063c3a8e6f",
+      "decoded_json_sha256": "7703bd6a588fb864426cde2634672008cdcefec8c74235c07231e33923acd1d2",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_heather_a.blk",
+      "source_sha256": "76be199e6c5d64c32e91875fea5cda0c2a7037579ec1550085227d0422b1c255",
+      "decoded_json_sha256": "d22909de959e75fbf60b31107458807f5b63a218324ce1f111d45672b17c896b",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_ivantea_a.blk",
+      "source_sha256": "d8c61b038ccf7ce14974d8d1c50ab33da65f08ed1d2c03dc1a8b46536217e5ca",
+      "decoded_json_sha256": "91b35d81919b727423fbc9907966864c0333096cbc795b5b2b65dfcbc58f328f",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness.blk",
+      "source_sha256": "4b29f507a83cd0c47a75e78bd8da5e71c4412d18e4d8b29a3f7e851fcd886474",
+      "decoded_json_sha256": "eceaa80b34240b5eaa28cbe16d96ff7684b88c2446a46c624babdc3402634eea",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness_cold.blk",
+      "source_sha256": "4b29f507a83cd0c47a75e78bd8da5e71c4412d18e4d8b29a3f7e851fcd886474",
+      "decoded_json_sha256": "eceaa80b34240b5eaa28cbe16d96ff7684b88c2446a46c624babdc3402634eea",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness_contrast.blk",
+      "source_sha256": "1f385466db5604e8ca5288c88d5eeeee4dcd256837d0b2382fa01e885ccdf4f8",
+      "decoded_json_sha256": "352a8297bb10dcfe1da4733c3e63008914e6060f0f902fbdda408f7dde949210",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness_dry_desert_bright.blk",
+      "source_sha256": "2d91746e2696580091e0b9a32226d901b538496abe897ad8f4f6df4cfd503c03",
+      "decoded_json_sha256": "f31ec70d55125bf12efef6dca8b764cb22429a8a0528780cf96ed27ed7370ea6",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness_dry_desert_dark.blk",
+      "source_sha256": "c4bc279340058f471e5ecaaea794bbb9cb69789cb4ca9fdbcc9f7e3991c6f6a1",
+      "decoded_json_sha256": "0292cc2ad5b5c32974f3579ea6672787cdbf07d003ad45ed15d3e3a720889d96",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_lightness_warm.blk",
+      "source_sha256": "73ce852837163fd4148695f1f298b8a873caee5c45d14281bcb468378735366f",
+      "decoded_json_sha256": "7118004bd4762426b378c0cd3ddb52d4ad242d341b0fb91ed927f936c02416ca",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_moss_a.blk",
+      "source_sha256": "52452c6c02bf089308bff4aa12013eb0046240be7a7ce102d2aba8fd800da143",
+      "decoded_json_sha256": "037dd88492619d3d63eea4616ad843b0ba300bf019f00cd0bbda7733a804b9d7",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_paigle_a.blk",
+      "source_sha256": "16a9e305407955754bf46675370672e36fa7199363c22fe5b19a6e4ca928e801",
+      "decoded_json_sha256": "eb679d670607febccaa5bbe03098f8f0f6a129378148d6032cddc075cfbce657",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_platanthera_a.blk",
+      "source_sha256": "17b814b7d8a89caca56ee4f84e160cae4409fc8642d751eaa751bdf06a9995e7",
+      "decoded_json_sha256": "65594d1146fd6e0f1a7682fae483e5d062457841f1c78111ca68b861abc19907",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_reed_a.blk",
+      "source_sha256": "6290a48ed481dfef4690aaa575e2a23410f5f2eeaf3fcb4d1a2df44deca6a1a7",
+      "decoded_json_sha256": "0732c94678a7346f3587309592317f57cd35035c861087f3c411eeb24a003a17",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_a_1.blk",
+      "source_sha256": "c9d7407d0ec3cd144558076583de9d19e7d4ef88b45bb8729ec623dbb366eef7",
+      "decoded_json_sha256": "fe786173c97d3af952cf37d0113d37cd2e59d2b16d69044b552c071ed234ccdd",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_a_2.blk",
+      "source_sha256": "5a8d061a72e798c7312807ec78870f1e513bea13f208eb1368cb9001c5ec9ea4",
+      "decoded_json_sha256": "4bcd9216886d0d2aa06bf44807615754b52f081bde2a8e230c0a1162d4d3c03b",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_a_3.blk",
+      "source_sha256": "7c3336ba8f0e51761b509dc48204774d1ab167d3f9442a696ec87cf2a44cc5bf",
+      "decoded_json_sha256": "bf23f7710dcd64dbce5d0b58ddb89a64a49c610f9a85762c3b06029621c2c726",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_a_4.blk",
+      "source_sha256": "4a34cda828bacf1b452af1a4774d8ee80ab61a59d55cdbe030559c81a5fe1150",
+      "decoded_json_sha256": "0bb51476cfba88a0b876198a92e4384cfbe145d2ef9cedb20f4b2c1641bcd596",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_b_1.blk",
+      "source_sha256": "c9d7407d0ec3cd144558076583de9d19e7d4ef88b45bb8729ec623dbb366eef7",
+      "decoded_json_sha256": "fe786173c97d3af952cf37d0113d37cd2e59d2b16d69044b552c071ed234ccdd",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_b_2.blk",
+      "source_sha256": "5a8d061a72e798c7312807ec78870f1e513bea13f208eb1368cb9001c5ec9ea4",
+      "decoded_json_sha256": "4bcd9216886d0d2aa06bf44807615754b52f081bde2a8e230c0a1162d4d3c03b",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_b_3.blk",
+      "source_sha256": "7c3336ba8f0e51761b509dc48204774d1ab167d3f9442a696ec87cf2a44cc5bf",
+      "decoded_json_sha256": "bf23f7710dcd64dbce5d0b58ddb89a64a49c610f9a85762c3b06029621c2c726",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_scatter_b_4.blk",
+      "source_sha256": "f1384cf6de3e2a826442ac2f47c0c7ca3466672117e519a4e7352f075809aa44",
+      "decoded_json_sha256": "edd22b412bfa32a911224634d03d75462275b356b2edaa3cd26ae197db0abf46",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_simple_a.blk",
+      "source_sha256": "faca610a1daacbe716dbdc0edaee36bc48d61c026e1068046879bbd3d29732b4",
+      "decoded_json_sha256": "e490be27f3092a68b5a3596bad5119a7cbb2a38281ee95cef012cbe56998f4ac",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_simple_b.blk",
+      "source_sha256": "a999d9a36f98eb8c9ee4dd19cf0fccf9a4f4d192538beaa58e67249be6b5879a",
+      "decoded_json_sha256": "e90c4249ec717c2176948c64fadcb6c82205baaee50c780918e17f6a297084e1",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_sword_a.blk",
+      "source_sha256": "c5b906a423bbd8d923bcb107654254cc523a60d76164a17f91c8fe2449710ea2",
+      "decoded_json_sha256": "8e115f0699e3f9f8c6465034b700496d8c06ee5a32af1ee9df90fd1e402a709d",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_tavolga_a.blk",
+      "source_sha256": "847b03708da902f41cc62c1e57d3e9fa38a47778c77cd40c71b5f55aec747426",
+      "decoded_json_sha256": "24ab93f28524351da15ec4bef727a99478f31eefb3d04b4e4aa3a5e3245de98c",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_tulip_a.blk",
+      "source_sha256": "997ad2dcf92a3f4393376b6ee637cfbb6924e17632295c9e9c8a4ab46f4c9d16",
+      "decoded_json_sha256": "6d882f7e2dc2e619ab2878ceb1e041a49b3c21bea2e3290f84868ffdef971c47",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/grass_colors/_grass_color_wheat_a.blk",
+      "source_sha256": "1b55db5b4e7c96537076ebd772f81d890395b1a1eb0027c487fbfa4fe5fe657b",
+      "decoded_json_sha256": "79c36bf3b965564383f1f2c60cbe73a7909a84fb87cc2f9d0a0c957d2ce8437a",
+      "exact_decoded_value_equal": true,
+      "format_label": 3
+    },
+    {
+      "entry": "levels/small_grass/_bush_dead_a.blk",
+      "source_sha256": "1fee212e90290643022efec941a884bdddf644c90bfde625af1fa1ef61fc6390",
+      "decoded_json_sha256": "6065675daaa9173aeec675995ff945918ac49798316f5e792aa9b3bed740e40e",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_chamerion_angustifolium_purple.blk",
+      "source_sha256": "80d41ad5fbc3ccb55ec99c22b507fca74e3636f721e7b65833f93c4bdffadc98",
+      "decoded_json_sha256": "ac86252dbe275ca8f86da4bfef2c904ae6cd248d44d433623919b1c15cf0a548",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_field_grass_a.blk",
+      "source_sha256": "fe29f0722d4655882f26a4961bb6bd0534687527046303ca083d868b91ac1b23",
+      "decoded_json_sha256": "4ad55deb15b59ffba60c84352722d39f749a591b6d1dde59da351185f5cab84c",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_bush_a.blk",
+      "source_sha256": "d3f77c9a9b79a3953ec5767604517d7555096c78df0ef88e04bbef46c0ad59fa",
+      "decoded_json_sha256": "2d30b774e2cec424d1e46d677e65ff4d9f919ca7165fe7c05226af84100699f5",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_burnt_a.blk",
+      "source_sha256": "37145c8e521251223dfc393e9e3ac265901cedd3a49fe2afe5c1a4b81e095f4d",
+      "decoded_json_sha256": "cb15bd528524e9386d986d761cb870bde866d3dfa18de3c11d3d69b94739af4f",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_low_a.blk",
+      "source_sha256": "f44a882350f1a2a64d2e69c645ef162bc1d15aa481b8b125c10990ef6c45e923",
+      "decoded_json_sha256": "7864851d5a732c26c4f644ad459412e85bb704522f4cb552fb3ebe9be880eb29",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_low_b.blk",
+      "source_sha256": "85c887ba41bc51ab64436b5f9484b708228290d19fd16358a79db73f85b7a587",
+      "decoded_json_sha256": "5cfc7e946fd493bedfb2750ec6bdb9538e3d289658faccdf538444ad43efbd6d",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_low_c.blk",
+      "source_sha256": "94d774a2d59c7b6c5c9001ef0b7e5bbdd3ea3c7f30c5d678af9afedc09d69a2c",
+      "decoded_json_sha256": "173fbbacf9f114a221d4f27c5cc94e83164f0b2448a838c63d925f50500df623",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_low_d.blk",
+      "source_sha256": "d0dde13ca5074253a586a383cdaa178e6a87177f32151b444d239fa17026fb43",
+      "decoded_json_sha256": "8ec4ec89858ccf1e017c81aa412b166d32d7c2f30a382508c9b6f61d4aa03ebe",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_tall_a.blk",
+      "source_sha256": "e986595d1de1460eecda89e293fe7d983b79cb6ab26908429718364d89f74eeb",
+      "decoded_json_sha256": "7a01bc07d36eaf536afb0931ec75415f60b5dc020c2a9868f785652d65b70f92",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_tall_b.blk",
+      "source_sha256": "4a3a5c11bf8048194be8a47d0833ab6d5f76879f86b30cc2534dbd87fc883fec",
+      "decoded_json_sha256": "60d23260a94da08fafdf731f1c907d8fb44ac08bab2a30903b6793d6154307fa",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_generic_grass_tall_c.blk",
+      "source_sha256": "02eefab9b05f5a1117ff33e973851317dd65287c12e8d14a5076b085602c72fa",
+      "decoded_json_sha256": "10d5c8ef7c73285dd10256f2216a1f04693ab9d28f84923cc6371c3122458b84",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_matricaria_chamomilla_white.blk",
+      "source_sha256": "1adfd0a34f0eaaaa78f9f7e01b80edc02eb07cf26db6380d8bcf6981c6595220",
+      "decoded_json_sha256": "4f0611b2c39a397fb2e468d1bc45f981e8d9b329d33813249311c26b8ed71cd7",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_poppy_a_yellow.blk",
+      "source_sha256": "c65ffa968083a13b167b42f8d1e21dbc7dc525f95aff74d5d24a3b4bd110d924",
+      "decoded_json_sha256": "c602917b491bcb3602cc74ca363d1781d5041ed758e0bb2f61d6d6994f5a6227",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    },
+    {
+      "entry": "levels/small_grass/_tanacetum_vulgare.blk",
+      "source_sha256": "87370beb24a10b64894cdf5564b1a4837062e1568007295df1178985b7a4faa0",
+      "decoded_json_sha256": "90e9ff75b93b6b3171cf97b4b7efbd314b7216ed413f66780b5467166597adb5",
+      "exact_decoded_value_equal": true,
+      "format_label": 5
+    }
+  ],
+  "original_blk_count": 55,
+  "non_ascii_archive_keys": [
+    "ÿ?nm"
+  ],
+  "utf8_reproducer": {
+    "raw_name_hex": "3f3f2e626c6b",
+    "previous_latin1_result": "??.blk",
+    "expected_and_current_utf8_result": "??.blk",
+    "reserved_shared_namemap_key_preserved": true
+  },
+  "field_semantics": {
+    "point2_type_code": 4,
+    "param_name_bits": 24,
+    "param_type_bits": 8,
+    "block_name_id_offset": 1,
+    "point2_component_storage": "little-endian float32",
+    "color_value_storage": "raw B,G,R,A bytes",
+    "color_example_word_hex": "0xff112233",
+    "color_example_decoded": [
+      51,
+      34,
+      17,
+      255
+    ]
+  },
+  "official_dagor_source": {
+    "repository": "D:\\simulator\\third_party\\dagor_engine",
+    "commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "files": [
+      {
+        "git_path": "prog/dagorInclude/ioSys/dag_dataBlock.h",
+        "sha256": "f9abfa711aec98c979569a624d93324c315dcfcf6cacd9249ba71fa741f6a2d9",
+        "bytes": 43942
+      },
+      {
+        "git_path": "prog/dagorInclude/math/dag_e3dColor.h",
+        "sha256": "fa5d2430d081aea2e0f835363178f4f6f80af0f3a5fcd1f69d500904c2e5f249",
+        "bytes": 1654
+      },
+      {
+        "git_path": "prog/dagorInclude/generic/dag_patchTab.h",
+        "sha256": "aee08a4cdb3fd539956c89d5000d5168acb59c295dc1359f9269185cd7b45fb0",
+        "bytes": 4220
+      },
+      {
+        "git_path": "prog/dagorInclude/osApiWrappers/dag_vromfs.h",
+        "sha256": "c7f0bbb55c52a3aff795104602636ce8bd30d72f0adf971bbeb288f51ff37fb7",
+        "bytes": 15672
+      },
+      {
+        "git_path": "prog/engine/ioSys/dataBlock/blk_serialize.cpp",
+        "sha256": "0733c8977c9198e26009bffad8a76df7464872c590599aca33c8802effb560d3",
+        "bytes": 44444
+      }
+    ]
+  },
+  "implementation": {
+    "wt_blk.py": "2710ac448051ac7354391373bbc626498c0d744f6811b1733055f297bf570820",
+    "wt_vromfs.py": "8eccf3eb507554ebb745f441cd0a3ad9ba1c90db37e2eee5fcaf6acbcad00874",
+    "test_wt_container_decoders.py": "e6d4b18935f0a29aa1fc99b4edb598d0ab6751a616edc0349dc6f1468eebb642"
+  },
+  "finished_utc": "2026-11-18T04:12:35.382376+00:00"
+}

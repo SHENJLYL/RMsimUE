@@ -1,0 +1,816 @@
+{
+  "schema": "wt_tree_split_alpha_audit_v1",
+  "status": "passed",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_source_sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+  "texture_inventory_sha256": "0380fe2a3f722c33a140b8eda34ea9a9687efdb6cf5dd416606f489c89c6c79b",
+  "scope": "43 ordinary tree materials; facing_leaves excluded",
+  "ordinary_tree_materials": 43,
+  "qualified_materials": 25,
+  "texture_count": 17,
+  "selection_rule": "atest>0; actual slot1 exists; diffuse alpha all255; actual slot1 grayscale with nonconstant red coverage; original/package SHA equality",
+  "official_reference": {
+    "commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "file": "prog/daNetGame/shaders/rendinst_vegetation.dshl",
+    "alpha_split_slot1_binding_lines": [
+      125,
+      127
+    ],
+    "alpha_split_red_sampling_lines": [
+      616,
+      617
+    ],
+    "shadow_plain_vs_split_lines": [
+      820,
+      823
+    ],
+    "note": "Public plain rendinst_tree_colored samples T0.a; separate-alpha variants sample T1.x. Actual source-game plain-named materials carry split textures; adapter selection is backed by these file contents, not shader-name equivalence."
+  },
+  "materials": [
+    {
+      "material_id": "WT_828452a950ed28ae2aeb",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "tilia_bark_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_51b981ff52bc7761fcba",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_flowers_tex_d",
+      "t1": "tree_populus_branches_flowers_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_7375d19bf8473e5f4bfd",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "tilia_bark_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_14c453b71387047b1282",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_flowers_tex_d",
+      "t1": "tree_populus_branches_flowers_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_67d9090053480355a133",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "tilia_bark_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_2ce004bb88a7bcdf95c2",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_flowers_tex_d",
+      "t1": "tree_populus_branches_flowers_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_a7e4c3af15a15b9a10b8",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "ivy_branches_a_tex_d",
+      "t1": "ivy_branches_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_17cfa4e50ed89c874bd0",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "ivy_branches_a_tex_d",
+      "t1": "ivy_branches_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_e6766b37d5fe7e3b5c98",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "grape_branches_tex_d",
+      "t1": "grape_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_e072f1950ed9842a0451",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_392835424f911ce1646c",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_5fa91c887b06d42627e5",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_580a8a13e39621ce7e97",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_2e5c6bc89106fde99258",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_c7e042aefb09ddace5f3",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_4861839a30bcacf1aaf7",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_6f83dff1c4e549672725",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_6520f42fbc01e604ad0c",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_28f38d6d9cdc6a94ee84",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_496f43a49bcdef0f450b",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_d11ce004c5e81f0cee65",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_454544fafae0bb7d99a1",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_891899348b6d5f0ebc1b",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_0a7da223dfc93f56afa5",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_bcb10dc075e4a248252a",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_976995997d3308e2a08b",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_028607bd4122cd3a149c",
+      "shader": "rendinst_tree_colored",
+      "atest": 0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_f388b2b4d7c3cc9476b8",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branch_dry_burnt_a_tex_d",
+      "t1": "tree_branch_dry_burnt_a_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_c48e617cbdad4a67e7b1",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "poplar_bark_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_5e87f6737452b5e124e9",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_tex_d",
+      "t1": "tree_populus_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_5e5e4a882c2f813fd5b5",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_tex_d",
+      "t1": "tree_populus_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_896db9ad6f05ff8fb41e",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "poplar_bark_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_86f74a7afa62f85d902e",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_tex_d",
+      "t1": "tree_populus_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_c1018635d61d3b6633eb",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "poplar_bark_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_3bc7913a1a2590a83acd",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_tex_d",
+      "t1": "tree_populus_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_7fb66cdbac490e4a920b",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "poplar_bark_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture"
+      ]
+    },
+    {
+      "material_id": "WT_4a9616a400138db67d15",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_populus_branches_tex_d",
+      "t1": "tree_populus_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_6f93ca10101616febd21",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "tilia_bark_b_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture",
+        "diffuse_has_alpha_coverage"
+      ]
+    },
+    {
+      "material_id": "WT_592b4ce8fd7e259f495a",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_poplar_branches_tex_d",
+      "t1": "tree_poplar_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_137a0a5a59ab9c5b7dde",
+      "shader": "rendinst_tree",
+      "atest": 0,
+      "t0": "tilia_bark_b_tex_d",
+      "t1": null,
+      "qualifies_split_alpha_adapter": false,
+      "exclusion_reasons": [
+        "atest_disabled",
+        "no_slot1_texture",
+        "diffuse_has_alpha_coverage"
+      ]
+    },
+    {
+      "material_id": "WT_9210d424dcbbcf9d80df",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_poplar_branches_tex_d",
+      "t1": "tree_poplar_branches_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_024791ff3c42986b1880",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branches_tilia_b_tex_d",
+      "t1": "tree_branches_tilia_b_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    },
+    {
+      "material_id": "WT_21ae14458d6848e2948f",
+      "shader": "rendinst_tree_colored",
+      "atest": 127.0,
+      "t0": "tree_branches_tilia_b_tex_d",
+      "t1": "tree_branches_tilia_b_tex_a",
+      "qualifies_split_alpha_adapter": true,
+      "exclusion_reasons": []
+    }
+  ],
+  "textures": [
+    {
+      "name": "grape_branches_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\grape_branches_tex_a.png",
+      "package_file": "textures/grape_branches_tex_a.png",
+      "sha256": "1076703dad299d7195d8b67864bf432437a0a71c6b66da024e9ca78de3d9c2aa",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        1024,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 1513555,
+      "pixel_count": 2097152,
+      "red_below_127_fraction": 0.7217192649841309
+    },
+    {
+      "name": "grape_branches_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\grape_branches_tex_d.png",
+      "package_file": "textures/grape_branches_tex_d.png",
+      "sha256": "fb07f85fa08347c6f0e863113a988aa7b40e2ccea1c305a200b275b1394274a4",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        1024,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 156,
+      "red_below_127": 2096778,
+      "pixel_count": 2097152,
+      "red_below_127_fraction": 0.999821662902832
+    },
+    {
+      "name": "ivy_branches_a_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\ivy_branches_a_tex_a.png",
+      "package_file": "textures/ivy_branches_a_tex_a.png",
+      "sha256": "826d6c9250cd5b476e1243e696c5835f69e6c6c6c6f9a52d8ea3ad3c627e161c",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 254,
+      "red_below_127": 815046,
+      "pixel_count": 1048576,
+      "red_below_127_fraction": 0.7772884368896484
+    },
+    {
+      "name": "ivy_branches_a_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\ivy_branches_a_tex_d.png",
+      "package_file": "textures/ivy_branches_a_tex_d.png",
+      "sha256": "b359bcba024f5b7ff84306d518cd97cc791b4269dc4e1c35d1dc039478faa01a",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 904501,
+      "pixel_count": 1048576,
+      "red_below_127_fraction": 0.8625993728637695
+    },
+    {
+      "name": "poplar_bark_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\poplar_bark_tex_d.png",
+      "package_file": "textures/poplar_bark_tex_d.png",
+      "sha256": "32ffea13f5d0d704c63a1289ccdb4d3df19355b93993d7b791157a045188789d",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 189,
+      "red_below_127": 1021565,
+      "pixel_count": 1048576,
+      "red_below_127_fraction": 0.9742403030395508
+    },
+    {
+      "name": "tilia_bark_a_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tilia_bark_a_tex_d.png",
+      "package_file": "textures/tilia_bark_a_tex_d.png",
+      "sha256": "3e0c03142e809367ddd761fe441e3abf481e1e4e1623b8d2b8721594a6afb9c0",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        512,
+        1024
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 156,
+      "red_below_127": 521176,
+      "pixel_count": 524288,
+      "red_below_127_fraction": 0.9940643310546875
+    },
+    {
+      "name": "tilia_bark_b_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tilia_bark_b_tex_d.png",
+      "package_file": "textures/tilia_bark_b_tex_d.png",
+      "sha256": "e4854c31c48c835ebcfb8fe2b7f681168e684b35f7e1a325ef3660208e8892d2",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 181,
+      "red_below_127": 1035598,
+      "pixel_count": 1048576,
+      "red_below_127_fraction": 0.9876232147216797
+    },
+    {
+      "name": "tree_branch_dry_burnt_a_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_branch_dry_burnt_a_tex_a.png",
+      "package_file": "textures/tree_branch_dry_burnt_a_tex_a.png",
+      "sha256": "0d31cee8bbc3336f69f4c9dafd090a26e886af7ac6f0fef88bea827feeeb785f",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 1487065,
+      "pixel_count": 4194304,
+      "red_below_127_fraction": 0.35454392433166504
+    },
+    {
+      "name": "tree_branch_dry_burnt_a_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_branch_dry_burnt_a_tex_d.png",
+      "package_file": "textures/tree_branch_dry_burnt_a_tex_d.png",
+      "sha256": "8fb7652aa0bb3b90d8635e51ea9f33eddf8974ff9fb2400ab9b4d7e8038c5cc3",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 206,
+      "red_below_127": 4159035,
+      "pixel_count": 4194304,
+      "red_below_127_fraction": 0.991591215133667
+    },
+    {
+      "name": "tree_branches_tilia_b_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_branches_tilia_b_tex_a.png",
+      "package_file": "textures/tree_branches_tilia_b_tex_a.png",
+      "sha256": "ed7398bb58c59fc1827231d14a5ad23568a8033787c3553aedeeaf67d1554750",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 3510623,
+      "pixel_count": 4194304,
+      "red_below_127_fraction": 0.8369977474212646
+    },
+    {
+      "name": "tree_branches_tilia_b_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_branches_tilia_b_tex_d.png",
+      "package_file": "textures/tree_branches_tilia_b_tex_d.png",
+      "sha256": "df271da6b7ad5e982b660c9765a2fcc80dda0b820f34e9e4db43c346a129d4b4",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        2048,
+        2048
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 24,
+      "red_max": 132,
+      "red_below_127": 4194300,
+      "pixel_count": 4194304,
+      "red_below_127_fraction": 0.9999990463256836
+    },
+    {
+      "name": "tree_poplar_branches_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_poplar_branches_tex_a.png",
+      "package_file": "textures/tree_poplar_branches_tex_a.png",
+      "sha256": "02a8e1cca84f95dededb72ffc4130f440567e4f9fe5455ff71d73793c73d0340",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 14261351,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.8500427603721619
+    },
+    {
+      "name": "tree_poplar_branches_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_poplar_branches_tex_d.png",
+      "package_file": "textures/tree_poplar_branches_tex_d.png",
+      "sha256": "30fe292c525f39aa869eeacaaeba2f20d86f1d70689f5f35e7d1af8aab27b046",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 231,
+      "red_below_127": 16690258,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.9948168992996216
+    },
+    {
+      "name": "tree_populus_branches_flowers_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_populus_branches_flowers_tex_a.png",
+      "package_file": "textures/tree_populus_branches_flowers_tex_a.png",
+      "sha256": "3ad3dd6f24c3cfb604c7eab51a5799fcee5ea0529e63f800a3fb5e7b12d9a97b",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 13820635,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.8237740397453308
+    },
+    {
+      "name": "tree_populus_branches_flowers_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_populus_branches_flowers_tex_d.png",
+      "package_file": "textures/tree_populus_branches_flowers_tex_d.png",
+      "sha256": "ea82e2eb60bbdacef3a8d880166d5ff62e2545dbd72a38a633d04100bf3f2b76",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 198,
+      "red_below_127": 16725469,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.9969156384468079
+    },
+    {
+      "name": "tree_populus_branches_tex_a",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_populus_branches_tex_a.png",
+      "package_file": "textures/tree_populus_branches_tex_a.png",
+      "sha256": "a30d2aa571b157ef45f62e1ec18ac9ffe9d21cb93c30bc5ba56af54b08c4bbf4",
+      "source_package_identical": true,
+      "mode": "L",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": true,
+      "red_min": 0,
+      "red_max": 255,
+      "red_below_127": 14585652,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.8693726062774658
+    },
+    {
+      "name": "tree_populus_branches_tex_d",
+      "source_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\tree_populus_branches_tex_d.png",
+      "package_file": "textures/tree_populus_branches_tex_d.png",
+      "sha256": "f779e8d4077051b25aada1811fa931a34274676e606513e15ef9c8a4a05b1a1e",
+      "source_package_identical": true,
+      "mode": "RGBA",
+      "size": [
+        4096,
+        4096
+      ],
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "grayscale": false,
+      "red_min": 0,
+      "red_max": 189,
+      "red_below_127": 16755981,
+      "pixel_count": 16777216,
+      "red_below_127_fraction": 0.9987342953681946
+    }
+  ]
+}

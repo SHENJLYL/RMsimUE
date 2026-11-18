@@ -1,0 +1,19 @@
+{
+  "schema": "wt_grass_native_bake_v1",
+  "status": "failed",
+  "started_utc": "2026-11-18T04:20:53.033233+00:00",
+  "command": " D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject -run=pythonscript -script=D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py -FoliagePackage=D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen -FoliageReport=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-01/verification.json -AbsLog=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-01/engine.log -d3d11 -AllowCommandletRendering -NoShaderWorker -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound",
+  "scripts_sha256": {
+    "author_wt_grass.py": "a6f896a9d541b74593b190d0e51e1115fff102ba9695935dfb8bfff5ca7fea87",
+    "wt_grass.py": "bd74f02d3d5f7b4608b76d34e845cf745a9937d968bc2b03d29a43b64824ca26"
+  },
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "foliage_definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "world_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "map_file_sha256_before": "6e4b763968f7e71afadc5885d59b195c88b9e207491f8ff41da2fd87aa6218ef",
+  "scene_import_report_sha256_before": "33fe32e8ab458d38e22dd90a1dfcf6f538a92ebc5061e50a48f11f89df5d4348",
+  "error": "type object 'MaterialShadingModel' has no attribute 'MSM_TWOSIDED_FOLIAGE'",
+  "traceback": "Traceback (most recent call last):\n  File \"D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py\", line 85, in main\n    report['authoring'] = install_grass(package, folder)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\simulator-wt-vlaanderen\\tools\\unreal\\wt_grass.py\", line 221, in install_grass\n    parent.set_editor_property('shading_model', unreal.MaterialShadingModel.MSM_TWOSIDED_FOLIAGE)\n                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'MaterialShadingModel' has no attribute 'MSM_TWOSIDED_FOLIAGE'\n",
+  "finished_utc": "2026-11-18T04:21:04.846294+00:00"
+}

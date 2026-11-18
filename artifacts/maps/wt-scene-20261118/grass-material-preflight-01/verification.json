@@ -1,0 +1,76 @@
+{
+  "schema": "wt_grass_material_gate_preflight_v1",
+  "status": "passed",
+  "verification_script_sha256": "0503beb43c06963ba00199857f9046c0d5f810c9225b81169d0cfefbd7174457",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "foliage_definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "grass_authoring_script_sha256": "14b1aa819f1ff921daf1b308400bb103047744b3279c37eb77cf30767f24fe45",
+  "unchanged_existing_validation_functions": {
+    "digest": true,
+    "save": true,
+    "asset_file": true,
+    "landclass_texture_record": true,
+    "graph_record": true,
+    "statistics": true
+  },
+  "no_ue_asset_write_calls": true,
+  "original_source_texture_hashes": {
+    "grass_tulip_b_Masks": "465b309ab62c6020abbb09cf342f66f6b31a18acf6b4985da09e55239e6f5413",
+    "grass_tulip_b_Alpha": "9f1918a239bb2f57e5f97b03e9b1347776efa08fe263988582470b315a7e71c3",
+    "WT_GrassLandColor": "9f961b92696b646d79c84a43d5c3a3227a419ae6544fabfd4ebabf7ad6c75a0c",
+    "grass_paigle_a_Masks": "dcc3a795e791c2cb1e71cbbc35d277d76794c1d3ec351744fde813d8f66f0a0c",
+    "grass_paigle_a_Alpha": "5de3c73e928af954e8fbb0fd324ef53b9368dbc6aa68e8a7fdb7dd0f85b5022a",
+    "grass_fill_a_Masks": "ba515e12b9f22273da64563077b7574e8dcc92298f250fb71338497891a6d415",
+    "grass_fill_a_Alpha": "c10b5c8324177e5cf81da54cf828b6d85ded2a9fa062e3665e69782ff39dd4ce",
+    "grass_blueberry_a_Masks": "f22a934fa9c144356100ac9ab61e4c0492577b330475a6dd9fe08db8c9661a22",
+    "grass_blueberry_a_Alpha": "a20c0ea1aabbf7fc85d8e1d57b926478a3b1c281665584b207c29d1a13f8e303",
+    "grass_daisies_a_Masks": "9ee457117b6e38b26493e0a0dadab9685f6c9e189b39e7aeb323aadf62352c11",
+    "grass_daisies_a_Alpha": "b242db839a6f6e2972389aa049d6466f8b96369f32e2e2259d3f39e3f1137e83",
+    "grass_heather_a_Masks": "cbbf82579f8d0f641283f6d5a1da52a1d05d57a8a77bd5f1375bbc95c0dfd3e8",
+    "grass_heather_a_Alpha": "903dd23b6ed6d1eacba46b21cf266ab3f702f2fc16e2a8a28593a48e74f32c26",
+    "grass_simple_a_Masks": "59d4f1bca4f61dd2d2b32748b192947c4d5ad73bcde9dbc62bf92854e367d593",
+    "grass_simple_a_Alpha": "bb431eaa0cead985c96dbbb8d7caec34f2f09bab18f3493637b25d623d184b3c"
+  },
+  "expected_target_paths": [
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/WT_Grass",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_00",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_01",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_02",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_03",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_04",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_05",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_06",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_07",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_08",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_09",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_10",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_11",
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_12"
+  ],
+  "planned_asset_counts": {
+    "parents": 8,
+    "leaf_instances": 2,
+    "water_instances": 1,
+    "land_instances": 1,
+    "height_decal_instances": 34,
+    "ground_other_instances": 1,
+    "tree_instances": 43,
+    "grass_parents": 1,
+    "grass_instances": 13,
+    "total": 104
+  },
+  "mock_registry_boundary_checks": {
+    "all_authored": "authored_pending_compile",
+    "none_authored": "not_authored",
+    "one_missing": "incomplete_authoring",
+    "no_contract": "not_present"
+  },
+  "api_contracts": {
+    "property_output_name": "UE5.8 MaterialEditingLibrary.h:321 returns FString",
+    "custom_outputs": "MaterialExpressions.cpp:12873-12892 names return and OpacityOut",
+    "instance_overrides": "MaterialInstanceBasePropertyOverrides.h retains blend, shading, two-sided, clip and usage overrides"
+  },
+  "native_compilation_verified": false,
+  "saved_asset_bindings_verified": false,
+  "rendering_visual_quality_verified": false
+}

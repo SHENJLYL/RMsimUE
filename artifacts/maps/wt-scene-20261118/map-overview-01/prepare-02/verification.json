@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "command": [
+    "D:\\simulator-wt-vlaanderen\\tools\\maps\\prepare_wt_overview.py",
+    "--package",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen",
+    "--calibration",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\georef-02\\verification.json",
+    "--calibration-sha256",
+    "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+    "--dae-root",
+    "D:\\simulator\\third_party\\dagor_asset_explorer\\src\\dae",
+    "--oodle-library",
+    "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\runtimes\\win-x64\\native\\oo2core.dll",
+    "--output",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\prepare-02"
+  ],
+  "started_utc": "2026-11-18T04:13:51.943446+00:00",
+  "outputs": [
+    {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\overview\\avg_vlaanderen_tankmap.png",
+      "sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851",
+      "bytes": 973658,
+      "changed": false
+    },
+    {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\overview\\calibration.json",
+      "sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+      "bytes": 27775,
+      "changed": false
+    },
+    {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\overview.json",
+      "sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b",
+      "bytes": 1883,
+      "changed": false
+    }
+  ],
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "image_sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851",
+  "calibration_sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+  "image_ros_corners_m": {
+    "top_left": [
+      0.0,
+      -2048.0
+    ],
+    "top_right": [
+      2048.0,
+      -2048.0
+    ],
+    "bottom_left": [
+      0.0,
+      0.0
+    ]
+  },
+  "texture_asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapOverview.WT_MapOverview",
+  "original_level_archive": {
+    "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\aces.vromfs.bin",
+    "sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+    "magic": "VRFx",
+    "target": 1129316352,
+    "header_size": 24,
+    "extension_flags": 0,
+    "version": 37552145,
+    "packed_size": 19892327,
+    "decoded_size": 27649792,
+    "body_sha256": "d337a4e5904179cef9654c110f55d0db9e8286ac83503cac8ffb52ed265f3f27",
+    "file_count": 26022
+  },
+  "original_level_decoding": {
+    "format_label": 5,
+    "decoded_bytes": 4563,
+    "local_names": 0,
+    "shared_names": 220116,
+    "blocks": 48,
+    "parameters": 514,
+    "complex_bytes": 216
+  },
+  "original_shared_context": {
+    "shared_names": 220116,
+    "dictionary_entry": "02910f04273ea69a2042040e7e31b89f8ed8ef4403ec97efda8698810bb0942c.dict"
+  },
+  "fresh_dxp_decode_matches_calibrated_png": true,
+  "original_map_coordinates": {
+    "tankMapCoord0": [
+      0.0,
+      0.0
+    ],
+    "tankMapCoord1": [
+      2048.0,
+      2048.0
+    ]
+  },
+  "spawn": {
+    "id": "default",
+    "position_ros_m": [
+      1028.0,
+      -1020.0,
+      -1.3805752992630005
+    ],
+    "yaw_rad": 0,
+    "image_uv": [
+      0.501953125,
+      0.501953125
+    ],
+    "image_pixel": [
+      514.0,
+      514.0
+    ]
+  },
+  "scripts": {
+    "prepare_wt_overview.py": "96e838121be0ee6e2d09de14b3f5d4b1b0f4a5a1159490bd7c701a844a1e9d53",
+    "wt_blk.py": "2710ac448051ac7354391373bbc626498c0d744f6811b1733055f297bf570820",
+    "wt_vromfs.py": "8eccf3eb507554ebb745f441cd0a3ad9ba1c90db37e2eee5fcaf6acbcad00874",
+    "export_wt_textures.py": "f4541f044de5e3d6019ef271a9edd40c72f7074769bf947b00c631118126560f"
+  },
+  "finished_utc": "2026-11-18T04:13:52.410761+00:00"
+}

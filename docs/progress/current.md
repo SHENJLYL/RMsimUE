@@ -1,48 +1,56 @@
 # 当前进度
 
-更新：2026-11-17，Asia/Shanghai。长期goal保持active，完整范围见`.codestable/goal.md`。Windows原生优先，保留Ubuntu同源、通用车辆包、可换地图、高画质、正式裁判与权威联机目标。
+更新：2026-11-18，Asia/Shanghai。长期 goal 保持 active，完整范围见 [.codestable/goal.md](../../.codestable/goal.md)。本轮在独立工作树 `D:/simulator-wt-vlaanderen`、分支 `feat/wt-vlaanderen-20261117` 推进弗兰德斯；原导航工作树 `D:/simulator` 保持独立。
 
-## 最新交付：可视化航点、原导航云台跟随与动态Mid-360
+## 本轮新增：原地表、水面、草层与地图界面
 
-双击根目录 **Play-Navigation.cmd** 启动默认RMUC2027场景、原生ROS桥、Point-LIO、AMCL/Nav2和RViz。定位就绪后显示地图、障碍代价、实际规划路径、估计位姿、点云、云台和Mid-360坐标轴。RViz支持Nav2 Goal选点、Waypoint模式累积航点、Start Waypoint Following及Cancel。关闭RViz或运行Stop-Navigation.cmd结束本次拥有的进程。[完整操作说明](../guides/navigation-console.md)。
+原 Land class、原池塘颜色、13 层地表草和原底图 UI 已接入各自数据链。本轮已完成草图烘焙、同步预览实例生成、独立保存重载、水面更新，以及后续组合模块的保存场景和两地图接触验收；104 个材质资源的原生编译与最终 GUI 验收均已通过；原地表、实际草区、小地图和 M 键大地图四项目标已有实测证据。
 
-**当前真实验收：84项原生检查、13项图形操作检查通过；离线122项中120通过、2项Windows符号链接权限跳过。** 汇总：`artifacts/navigation/sentry-console-20261117/release-summary.json`，已核对当前UE/profile/rig、安装Python和导航DLL。
-
-| 验证范围 | 真实结果 |
+| 新增范围 | 已实现内容与本轮实际证据 |
 |---|---|
-| 原Nav2完整波浪路线单点、两航点和取消联合 | 14项通过；单点实际误差0.188766m，航点队列终点0.179548m，取消后0.053320m停车、后续漂移0m |
-| RViz实际选点 | 4项通过；目标[6.8,6.4]，实际终点误差0.201611m |
-| RViz累积两个航点并启动 | 6项通过；按[5.8,6.4]→[6.8,6.4]执行，终点误差0.178089m |
-| RViz实际Cancel按钮 | 3项通过；原action返回取消，观察窗口漂移0m |
-| Mid-360动态安装专项 | 9项通过；关节转动改变光学原点，IMU测到对应角速度/比力，保留车体遮挡且不误开火 |
-| 旧功能原生回归 | 手动19、ROS速度11、瞄准20、原LK/LiDAR/Point-LIO联合11，共61项通过；与Mid-360专项合为70项兼容性回归 |
+| 原 Land 背景 | 五类原地表颜色、1,024 cell 的原 class/atlas 权重和源坐标；`import-07-land-ui` 已原生退出 0 |
+| 原水面 | 按源地图、原材质 ID 和原水面几何绑定 level 颜色；`water-native-02` 退出 0、14.17 s，World 与 scene manifest SHA 保持 |
+| 原草层 | 七个源网格、四张权重图、13 层；`grass-native-07-resume` 退出 0，1,089 个有效 / 986 个有权重组件，两预览视点产生 2,237 个 Grass 组件和 52,984 个原生 render instances |
+| 小地图与 M 大图 | 原 tankmap 已标定并导入；512 米跟车图、M 展开全图、车位/朝向/出生点与坐标已实测；M 四次切换通过，行驶与 Q 旋转时两种地图的标记同步更新 |
 
-84项包含14项联合与70项回归；图形13项单独统计。真实到点0.25m门限保持。完整波浪路线由原action接口验收，GUI用明确记录的短距离路线独立验收按钮和点击。
+`grass-reload-02-final` 在草重载/水面验收模块 `1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a` 上原生退出 0、27 项通过。七网格、13 层和四处源样点均已回读；非零层数为 0 / 4 / 8 / 4，最大四角误差 1 byte、插值误差 0.25 byte，58 个文件 SHA 保持。World 为 `20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25`。草实例按视点生成，保存关卡持久保存 GrassData。
 
-## 对齐sentry_ws
+后续并行构建的模块 `d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404` 已完成 `native-scene-04-final` 的 21 项保存场景检查，原生退出 0、14.043 s；`flanders-contact-04-final` 和 `rmuc-regression-03-final` 各通过 5 项接触/复位检查、保存 8 张 PNG。三份对应 `summary.json` 位于本轮证据目录。保存源场景与运行时碰撞分层采用各自计数，实际测试模块包含并行开发的动态破坏功能；此处记录地图功能的独立验收。
 
-导航偏航目标整形参考`unnc-aim/universal_controller`固定提交95c66c28717e0b4d0f586c2ebf8df99d47a24ab0：按行进方向形成目标，保留最短角、1rad/s最大目标转速、2rad/s²加速度、0.3rad/s最低转动段速度、0.02rad容差及0.2s有效期。配置在`assets/vehicles/aim_sentry/navigation-follow.json`。估计底盘航向与实际关节反馈参与转换，扫描/获准自瞄优先，导航不开火。
+`native-materials-08-final` 已在 d79cf620… 模块上完成 104 个材质资源的原生编译，退出 0、54.527 s，保存资产保持；`native-materials-07` 的失败记录保留。最终 GUI 已在同一 d79cf620… 模块、PID 43760 上通过：12 次真实 OS 动作、16 个驾驶输入边沿、4 次 M 切换和 8 张截图。W/A 驶至 ROS `(1075.232351,-1012.656026)`，实际看见草与粉白花、绿褐色远处地表；Q 旋转后小地图与大图箭头由右转向下，出生标记保持独立。证据为 `artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json`。草、水、保存场景和驾驶结果分别绑定上述实际模块。日常入口仍为 `Play-WarThunder.cmd`；重建顺序见 [Flanders 指南](../guides/war-thunder-flanders.md)。
 
-完整联合路线记录12300个跟随样本，实际云台与整形目标中位角差0.00044835rad；累计实际云台转动12.5598rad，点云/共装IMU持续输出。原硬件云台电流PID和完整Hub/视觉仲裁仍按后续范围跟踪。
+## 历史基础检查点：原图保存关卡与接触驾驶
 
-Mid-360来自原模型radar_mid360/bone_turret，对应yaw_link。零位光学中心相对底盘约[0.19812,0.07376,0.36119]m、前倾约45°。源blend哈希再次确认不变。射线/动态TF/共装IMU随实际云台关节运动，Point-LIO使用同一刚性父节点的安装外参。360°水平、-7°到52°俯仰、200k射线/仿真秒、10Hz为当前理想规格模型；专有扫描图样、材料反射与实车标定后续补齐。
+**以下基础检查点已完成全场景导入、独立原生重载、材质编译和实际接触行驶。** 这些结果绑定当时的 `eceebaa1634a…` 模块；本轮新增组合按上方最新证据验收。入口使用原尺度 AIM 哨兵、镜头相对 WASD、制动、瞄准和 R 复位；默认 RMUC、训练与导航入口继续独立使用。
 
-## 本轮修正与证据边界
+| 验证范围 | 实际结果与证据 |
+|---|---|
+| 完整导入 | `import-06` 原生退出 0；726 视觉 + 639 碰撞网格全部通过，保存 World 身份与源地图匹配 |
+| 保存重载 | `native-scene-03` 21 项通过；1,365 个网格、35,922 视觉 placements、20,033 原碰撞 placements、1,089 地形碰撞分量全部读回 |
+| 几何一致性 | 原生 13,478,779 三角 = 源 13,478,813 减去已证明的 34 个共点退化面；原材质分配、叶片数据和两通道贴花 UV 通过 |
+| 地形与碰撞 | 4 个源高度射线通过，最大数值误差 0.006035 cm；原 kiosk 碰撞实例实际命中 |
+| 真实材质编译 | `native-materials-06` 88 个资产通过：7 父材质、2 facing-leaves、34 地表覆盖、1 land、1 river、43 普通树；日志 Error 0 |
+| 弗兰德斯接触驾驶 | `flanders-contact-03-rvt` 5 项、8 PNG、原生退出 0；前进 3.40284 m，横漂 0.00070 m，制动速度 0，共用复位距出生点 0.000133 m |
+| 原地图回归 | `rmuc-regression-02-final` 在同一模块与车辆参数下 5 项、8 PNG、原生退出 0；范围为接触行驶、制动、倒车与共用复位 |
 
-固定Point-LIO源码在归一化前用原始加速度做饱和检查；原参数acc_norm=1、satu_acc=3对应g输入。ROS SI适配现同步转换为9.81与29.43，保持原3g范围。6项单位测试与修正后的完整路线通过。单位错误导致的原失败、GUI工具选择/低倍率像素偏差失败和一次启动失败均保留，未放宽到点门限。
+上述数字是对应夹具和样点的实际数值结果。图形入口的移动视角观察、纹理预算与交接记录单独保存在本轮 GUI 证据中。精简原始证据统一位于 `artifacts/maps/wt-scene-20261118`；完整日志、图像、原始坐标与导入资产保留本地。
 
-当前GUI使用原Nav2插件。自动验收分别核对原action、真实轨迹与取消结果；工具返回成功没有被单独当作车辆到点。依赖增加55包、没有替换旧包，前后锁文件与来源记录在artifacts/navigation/console-20261117。
+## 基础检查点的画面修正
 
-旧断线/实际R恢复已有独立版本证据；本轮新Mid-360组合的实际R、更多出生点和跨高度路线继续扩展。Nav Through Poses按钮已保留原插件入口，其专项独立验收待补。
+从原 draw 顶点恢复 `short4n.position.w` 到第二 UV，保留源拓扑、UV0 与材质。地表覆盖沿原公式计算透明度，再通过 RVT 投到 Landscape 和背景地表；实际静止、行驶后及复位截图中，车辆完整可见，旧悬空覆盖块已经消除。RVT 原生绑定、保存重载与渲染同步均有独立证据。
 
-## 已保留的车辆与工程基线
+25 个普通树材质按实际源 PNG 身份和哈希使用 `T1.r` 分离遮罩，另外 18 个保持原绑定。旧树叶的 91 个 facing cards、182 个叶片三角、2,369 个实例保留原 half4 偏移；摄像机朝向适配、5 个全精度 UV 和原生 shader 均通过。最新图像已观察到树冠的透明间隙。
 
-AIM悬挂保持2000N/m、140N·s/m，质量、50N预载、65mm行程、源轮胎、摩擦和原驱动增益未改。手动/训练入口保留；本轮手动19及ROS/瞄准/LK联合回归已经重跑。地图与资源包按类型管理，大型资产、UE Content、生成文件和完整日志/截图留本地。
+启动会先等待真实编译计数、纹理请求和渲染帧完成。此次首次运行从 66 个 shader jobs 等到 0，30.626 秒后就绪；出生点附近 RVT 请求覆盖 88 个顶级页，同步 API 返回后再等 2 个已完成渲染帧。88 表示按原生 allocation 计算的请求矩形覆盖数量。户外光照使用太阳、天空与环境光；RMUC 原有室内补光路径保持。
 
-工作区D:/simulator；UE5.8.4在E:/simulator-tools/UE_5.8；原生Humble使用RoboStack Python3.14。源码、配置、依赖锁、上游补丁、CodeStable和精简证据发布到用户指定公开仓库SHENJLYL/RMsimUE。原模型和原控制器来源目录只读。
+## 车辆与原导航基线
 
-后续继续扩大RMUC路线/恢复覆盖、通用车辆导入、多机器人隔离、完整感知决策/Hub/裁判、权威联机、Ubuntu原生运行及实车物理/传感器标定。弗兰德斯原图完整场景与画质验收继续保留。旧进度归档：`docs/progress/archive/2026-11-17-before-sentry-console.md`。
+历史 `eceebaa1634a…` 地图接触检查点使用 AIM **2000 N/m、140 N·s/m** 悬挂，以及当时车辆包的质量、50 N 预载、65 mm 行程、源轮胎、摩擦和驱动增益。实际测试模块包含并行开发的碰撞分层与动态破坏功能；车辆参数、World、profile 与 rig 身份按各次实际报告核对。
 
-## 当前窗口交接
+2026-11-17 的可视化导航版本已经完成 84 项原生和 13 项 GUI 检查，完整波浪路线实际单点误差 0.188766 m、航点队列终点误差 0.179548 m；离线 120 通过、2 项权限跳过。该批结果绑定其当日模块，详见 [原导航验收](../../artifacts/navigation/sentry-console-20261117/release-summary.json) 与 [操作指南](../guides/navigation-console.md)。本轮新地图分支的完整导航路线和稳定 1× 验收继续独立跟踪，达到合并门槛后再合入 main。
 
-console-08已实际观察到RViz地图/点云，Navigation与Localization均active，最后任务Feedback为canceled；action状态均已结束，未留活动目标。整套窗口保持打开，截图留本机，交接记录见artifacts/navigation/sentry-console-20261117/gui-handoff/verification.json。
+## 接续范围
+
+地图的原资源覆盖已明确记录：13 类原本无实体碰撞资源、43 类未找到对应碰撞的视觉资源逐项列明。原 Land 基础颜色/权重、源水色和 13 层草规则已接入；地表微细节、按高度混合的 biome 边界、grass-decal 去草、小草 billboard、风动等范围继续按 [来源记录](../../assets/maps/wt_vlaanderen/SOURCE.md) 和 [材质适配说明](../research/wt-material-adapters.md) 扩展。后续扩大原图道路、坡地、跨高度和更多出生点的驾驶与导航覆盖。
+
+通用车辆包、多机器人隔离、完整感知决策/Hub/裁判、权威联机、Ubuntu 原生运行及实车物理/传感器标定继续保留。旧当前进度全文已归档：[2026-11-18-before-wt-scene.md](archive/2026-11-18-before-wt-scene.md)。

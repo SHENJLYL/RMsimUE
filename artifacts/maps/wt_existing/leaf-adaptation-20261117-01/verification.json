@@ -1,0 +1,826 @@
+{
+  "status": "passed",
+  "scope": "three sourced facing-leaf FBX reference cards and raw UV payloads; UE import/rendering pending",
+  "blender_version": "5.1.2",
+  "adapter": {
+    "version": 1,
+    "mode": "camera_no_wind",
+    "source_shader": "rendinst_facing_leaves",
+    "delta_xy_uv": 3,
+    "delta_z_wind_uv": 4,
+    "reference_delta_dagor": "[dx,dy,-dz]",
+    "reference_delta_ros": "[dx,dz,dy]",
+    "ue_uv_values": "raw_delta_m_and_wind_number"
+  },
+  "preparation_script_sha256": "230d2bbcc66c0c0b6f476c0bfcd476248c2401d7f983ff0cb6a96d99d1a09cb7",
+  "independent_source_verification": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\independent-source-verification.json",
+  "independent_source_verification_sha256": "fc407348e05dabb8d50db6ecee3dcccaab8f8d3c7150540718ee9cf7064a0408",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_groups": {
+    "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6"
+  },
+  "dae_commit": "1f0d1e04ded04bf9b28e8d5be93cb79714f505d3",
+  "raw_payload_verification": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\raw-payload\\raw-payload-verification.json",
+  "raw_payload_verification_sha256": "ec4217d52abb6ae4edcbb97074e70663dda0d1f350da860b6ca32760f401e7d5",
+  "before_scene_source_sha256": "7e0e1756d6ff57e31ec70382ecd2a0f65c8abe40d80c5a5f26b1b75685f23624",
+  "after_scene_source_sha256": "f0cee3b0ba9debb62f614cf89e8792fd14a3869a1f4ae01cfc2c827a53b72996",
+  "original_preparation_verification_sha256": "b5413ff9ce460c9b252f96d57d66accac9ce043083d43bf351555b0bb449717e",
+  "original_preparation_verification_unchanged": true,
+  "backup_root": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\before",
+  "total_leaf_quads": 91,
+  "total_leaf_triangles": 182,
+  "total_original_instances": 2369,
+  "affine_leaf_meshes": 0,
+  "all_leaf_instances_uniform_positive_scale": true,
+  "untouched_manifest_visual_mesh_records": 723,
+  "untouched_manifest_collision_mesh_records": 639,
+  "source_limits_unchanged": true,
+  "models": [
+    {
+      "name": "kh_gol_euraspen_fall_03_rendinst",
+      "source": {
+        "group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+        "resource_id": 790,
+        "class_id": 2012750639,
+        "offset": 6291664
+      },
+      "source_model_json": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_euraspen_fall_03_rendinst\\model.json",
+      "source_model_json_sha256": "84905d3ff51cfd9927cee2181a28d7d4efeed72fc3dcf18cfdda607b74a080bf",
+      "source_mesh_npz": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_euraspen_fall_03_rendinst\\mesh.npz",
+      "source_mesh_sha256": "d88233460aca254c4c309be236781e1b764430b106248b9a63e6911f2ba5d85f",
+      "vertices": 153,
+      "source_triangles": 104,
+      "leaf_vertices": 124,
+      "leaf_quads": 31,
+      "leaf_triangles": 62,
+      "original_instances": 593,
+      "original_npz_position_error_m": 0.0,
+      "original_uv0_exact": true,
+      "original_uv1_xy_exact": true,
+      "source_pivot_bounds_dagor_m": {
+        "lo": [
+          -6.6328125,
+          -2.26751708984375,
+          -5.953125
+        ],
+        "hi": [
+          6.40625,
+          26.1875,
+          5.52734375
+        ]
+      },
+      "source_declared_bounds_dagor_m": {
+        "lo": [
+          -11.957082748413086,
+          -2.26751708984375,
+          -6.848289966583252
+        ],
+        "hi": [
+          14.249307632446289,
+          31.37706756591797,
+          6.824201583862305
+        ]
+      },
+      "raw_delta_lo": [
+        -7.84375,
+        -7.5625,
+        -2.27734375,
+        0.0
+      ],
+      "raw_delta_hi": [
+        7.84375,
+        7.5625,
+        2.27734375,
+        9.0
+      ],
+      "wind_numbers": [
+        0,
+        3,
+        6,
+        9
+      ],
+      "draws": [
+        {
+          "stride": 24,
+          "vertices": 29,
+          "leaf": false,
+          "channels": [
+            {
+              "type_value": 131072,
+              "type": 2,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 3,
+              "dtype": "<f4"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "u1"
+            },
+            {
+              "type_value": 65536,
+              "type": 1,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 16,
+              "components": 2,
+              "dtype": "<f4"
+            }
+          ],
+          "raw_sha256": "b8095d8e0afc8db3d6a11264e8725b66a4491d57ad630fa4adade30ac7f3bfe6"
+        },
+        {
+          "stride": 24,
+          "vertices": 124,
+          "leaf": true,
+          "channels": [
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 393216,
+              "type": 6,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 8,
+              "components": 2,
+              "dtype": "<i2"
+            },
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 3,
+              "index": 1,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 20,
+              "components": 4,
+              "dtype": "u1"
+            }
+          ],
+          "raw_sha256": "09f7ebae55858f54ca373d5ac98cc06ff4168f36fc515a7790d7d59fe1d1cde0"
+        }
+      ],
+      "payload_file": "kh_gol_euraspen_fall_03_rendinst.npz",
+      "payload_sha256": "d85920ca948e2904935f1f7ee2b4417e4f5972b32fd0061fb16b9cf93a5cb738",
+      "mesh_id": "prop_kh_gol_euraspen_fall_03_rendinst",
+      "before_fbx_sha256": "fc7ca1435478642cee53d154cf5e5911392516f3cb26ac1a1e2629dfc11bda75",
+      "before_reference_bounds_m": {
+        "lo": [
+          -6.6328125,
+          -5.52734375,
+          -2.26751708984375
+        ],
+        "hi": [
+          6.40625,
+          5.953125,
+          26.1875
+        ]
+      },
+      "instances_sha256": "a823e13160df373d980fd94bf6ef122331d11ad790199501ec85964723935190",
+      "instance_count": 593,
+      "minimum_uniform_scale": 0.21875,
+      "maximum_uniform_scale": 0.9375,
+      "maximum_scale_anisotropy": 0.0,
+      "geometry": {
+        "original_npz_position_error_m": 0.0,
+        "trunk_positions_exact": true,
+        "original_uv0_exact": true,
+        "source_normals_preserved": true,
+        "source_pivot_bounds_ros_m": {
+          "lo": [
+            -6.6328125,
+            -5.52734375,
+            -2.26751708984375
+          ],
+          "hi": [
+            6.40625,
+            5.953125,
+            26.1875
+          ]
+        },
+        "reference_bounds_dagor_m": {
+          "lo": [
+            -11.95703125,
+            -2.26751708984375,
+            -6.85009765625
+          ],
+          "hi": [
+            14.25,
+            31.3828125,
+            6.8232421875
+          ]
+        },
+        "reference_bounds_ros_m": {
+          "lo": [
+            -11.95703125,
+            -6.8232421875,
+            -2.26751708984375
+          ],
+          "hi": [
+            14.25,
+            6.85009765625,
+            31.3828125
+          ]
+        },
+        "billboard_bounds_ros_m": {
+          "lo": [
+            -12.176146917541352,
+            -11.793483874675857,
+            -2.26751708984375
+          ],
+          "hi": [
+            14.52480306878412,
+            12.218365127379602,
+            31.569848293889784
+          ]
+        },
+        "minimum_leaf_triangle_area_m2": 24.86838722229004,
+        "leaf_triangles": 62,
+        "source_winding_corrections": 42,
+        "ue_vflip_reconstructed_raw_delta_max_error": 0.0
+      },
+      "after_fbx_sha256": "8fcb1b51ae2bd5ea6773b2e04fd22a07a7664d773ade65a42738160857018a57",
+      "backup_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\before\\meshes\\prop_kh_gol_euraspen_fall_03_rendinst.fbx",
+      "output_file": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\meshes\\prop_kh_gol_euraspen_fall_03_rendinst.fbx",
+      "roundtrip": {
+        "status": "passed",
+        "vertices": 153,
+        "triangles": 104,
+        "uv_layers": [
+          "UV0",
+          "UV1",
+          "UV2",
+          "UV3",
+          "UV4"
+        ],
+        "bounds_m": {
+          "lo": [
+            -11.95703125,
+            -6.823243618011475,
+            -2.26751708984375
+          ],
+          "hi": [
+            14.25,
+            6.850098609924316,
+            31.3828125
+          ]
+        },
+        "bounds_error_m": 1.430511474609375e-06,
+        "corner_position_error_m": 2.3245811462402344e-06,
+        "all_uv_corner_error": 0.0,
+        "topology_materials_and_uv0_to_uv4_verified": true
+      }
+    },
+    {
+      "name": "kh_gol_liveoak_03_rendinst",
+      "source": {
+        "group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+        "resource_id": 792,
+        "class_id": 2012750639,
+        "offset": 6298000
+      },
+      "source_model_json": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_liveoak_03_rendinst\\model.json",
+      "source_model_json_sha256": "2dc9dfb56d22a4b3d91b4d02437b811f0124bc839621da616c8b8e3f3f0319ee",
+      "source_mesh_npz": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_liveoak_03_rendinst\\mesh.npz",
+      "source_mesh_sha256": "adbc647991056416faee36d3d23b4d0000ba8be906652886aac61d6befc50763",
+      "vertices": 166,
+      "source_triangles": 84,
+      "leaf_vertices": 160,
+      "leaf_quads": 40,
+      "leaf_triangles": 80,
+      "original_instances": 1171,
+      "original_npz_position_error_m": 0.0,
+      "original_uv0_exact": true,
+      "original_uv1_xy_exact": true,
+      "source_pivot_bounds_dagor_m": {
+        "lo": [
+          -14.5859375,
+          -6.580469131469727,
+          -9.984375
+        ],
+        "hi": [
+          13.65625,
+          51.75,
+          13.171875
+        ]
+      },
+      "source_declared_bounds_dagor_m": {
+        "lo": [
+          -26.301742553710938,
+          -6.580469131469727,
+          -13.57672119140625
+        ],
+        "hi": [
+          24.3691463470459,
+          60.84062576293945,
+          15.988201141357422
+        ]
+      },
+      "raw_delta_lo": [
+        -11.7578125,
+        -11.5625,
+        -4.41796875,
+        0.0
+      ],
+      "raw_delta_hi": [
+        11.7578125,
+        11.5625,
+        4.41796875,
+        9.0
+      ],
+      "wind_numbers": [
+        0,
+        3,
+        6,
+        9
+      ],
+      "draws": [
+        {
+          "stride": 24,
+          "vertices": 6,
+          "leaf": false,
+          "channels": [
+            {
+              "type_value": 131072,
+              "type": 2,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 3,
+              "dtype": "<f4"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "u1"
+            },
+            {
+              "type_value": 65536,
+              "type": 1,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 16,
+              "components": 2,
+              "dtype": "<f4"
+            }
+          ],
+          "raw_sha256": "c77e15bbf8b604e785dc4c602ed6ae1d11fc974adebaf97220db5a0d936f969d"
+        },
+        {
+          "stride": 24,
+          "vertices": 160,
+          "leaf": true,
+          "channels": [
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 393216,
+              "type": 6,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 8,
+              "components": 2,
+              "dtype": "<i2"
+            },
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 3,
+              "index": 1,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 20,
+              "components": 4,
+              "dtype": "u1"
+            }
+          ],
+          "raw_sha256": "bb78cad7a0d174ad8f9d3b60b5924c0f77f045b809584460830a87334698cf23"
+        }
+      ],
+      "payload_file": "kh_gol_liveoak_03_rendinst.npz",
+      "payload_sha256": "34cf854d838ae1489e4e36fa004886aed39649c1f0bbee98ff763c84270c3756",
+      "mesh_id": "prop_kh_gol_liveoak_03_rendinst",
+      "before_fbx_sha256": "22cc0ea4a65488234ce965444dbfd93dd26c2e07b3376b99121101d5ad5cd542",
+      "before_reference_bounds_m": {
+        "lo": [
+          -14.5859375,
+          -13.171875,
+          -6.580469131469727
+        ],
+        "hi": [
+          13.65625,
+          9.984375,
+          51.75
+        ]
+      },
+      "instances_sha256": "b14044d1cc72eaf996f0f3eb15ef2824b30bd880777f3f8ddbad82eb65f3ba05",
+      "instance_count": 1171,
+      "minimum_uniform_scale": 0.25,
+      "maximum_uniform_scale": 0.4375,
+      "maximum_scale_anisotropy": 0.0,
+      "geometry": {
+        "original_npz_position_error_m": 0.0,
+        "trunk_positions_exact": true,
+        "original_uv0_exact": true,
+        "source_normals_preserved": true,
+        "source_pivot_bounds_ros_m": {
+          "lo": [
+            -14.5859375,
+            -13.171875,
+            -6.580469131469727
+          ],
+          "hi": [
+            13.65625,
+            9.984375,
+            51.75
+          ]
+        },
+        "reference_bounds_dagor_m": {
+          "lo": [
+            -26.296875,
+            -6.580469131469727,
+            -13.57421875
+          ],
+          "hi": [
+            24.3671875,
+            60.8515625,
+            15.984375
+          ]
+        },
+        "reference_bounds_ros_m": {
+          "lo": [
+            -26.296875,
+            -15.984375,
+            -6.580469131469727
+          ],
+          "hi": [
+            24.3671875,
+            13.57421875,
+            60.8515625
+          ]
+        },
+        "billboard_bounds_ros_m": {
+          "lo": [
+            -26.35117000351611,
+            -24.98739585648964,
+            -6.580469131469727
+          ],
+          "hi": [
+            25.471355978304402,
+            21.79815004925105,
+            63.56436840802047
+          ]
+        },
+        "minimum_leaf_triangle_area_m2": 75.68981170654297,
+        "leaf_triangles": 80,
+        "source_winding_corrections": 4,
+        "ue_vflip_reconstructed_raw_delta_max_error": 0.0
+      },
+      "after_fbx_sha256": "3f355840cefaa258852c281deacb0d9f5b2bf9cf72406f6faa921b773584b908",
+      "backup_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\before\\meshes\\prop_kh_gol_liveoak_03_rendinst.fbx",
+      "output_file": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\meshes\\prop_kh_gol_liveoak_03_rendinst.fbx",
+      "roundtrip": {
+        "status": "passed",
+        "vertices": 166,
+        "triangles": 84,
+        "uv_layers": [
+          "UV0",
+          "UV1",
+          "UV2",
+          "UV3",
+          "UV4"
+        ],
+        "bounds_m": {
+          "lo": [
+            -26.296875,
+            -15.984374046325684,
+            -6.580469131469727
+          ],
+          "hi": [
+            24.3671875,
+            13.57422161102295,
+            60.8515625
+          ]
+        },
+        "bounds_error_m": 2.86102294921875e-06,
+        "corner_position_error_m": 4.291534423828125e-06,
+        "all_uv_corner_error": 0.0,
+        "topology_materials_and_uv0_to_uv4_verified": true
+      }
+    },
+    {
+      "name": "kh_gol_tree_simple_a",
+      "source": {
+        "group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+        "resource_id": 794,
+        "class_id": 2012750639,
+        "offset": 6304832
+      },
+      "source_model_json": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_tree_simple_a\\model.json",
+      "source_model_json_sha256": "633b05f26fe979c54393282a2e9b060d14a02c69d84dbb51fb19c88429d4c4b4",
+      "source_mesh_npz": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\models-all-07\\kh_gol_tree_simple_a\\mesh.npz",
+      "source_mesh_sha256": "9f4b3d7a1bac19d4af20f5a388caba55970d7b6fbb663e6b5017c1616c3f76cb",
+      "vertices": 98,
+      "source_triangles": 64,
+      "leaf_vertices": 80,
+      "leaf_quads": 20,
+      "leaf_triangles": 40,
+      "original_instances": 605,
+      "original_npz_position_error_m": 0.0,
+      "original_uv0_exact": true,
+      "original_uv1_xy_exact": true,
+      "source_pivot_bounds_dagor_m": {
+        "lo": [
+          -3.1657888889312744,
+          -0.5137912034988403,
+          -2.935389518737793
+        ],
+        "hi": [
+          3.200260877609253,
+          2.810546875,
+          3.517669677734375
+        ]
+      },
+      "source_declared_bounds_dagor_m": {
+        "lo": [
+          -3.3248729705810547,
+          -0.5137912034988403,
+          -2.935389518737793
+        ],
+        "hi": [
+          3.415694236755371,
+          3.814974784851074,
+          3.517669677734375
+        ]
+      },
+      "raw_delta_lo": [
+        -1.2939453125,
+        -1.00390625,
+        -2.384185791015625e-07,
+        0.0
+      ],
+      "raw_delta_hi": [
+        1.2939453125,
+        1.00390625,
+        2.384185791015625e-07,
+        9.0
+      ],
+      "wind_numbers": [
+        0,
+        3,
+        6,
+        9
+      ],
+      "draws": [
+        {
+          "stride": 24,
+          "vertices": 80,
+          "leaf": true,
+          "channels": [
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 393216,
+              "type": 6,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 8,
+              "components": 2,
+              "dtype": "<i2"
+            },
+            {
+              "type_value": 1048576,
+              "type": 16,
+              "usage": 3,
+              "index": 1,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "<f2"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 20,
+              "components": 4,
+              "dtype": "u1"
+            }
+          ],
+          "raw_sha256": "d0740fbefc381a509de4b238151f85df5dcb941ccd084a95facf98019af9f98b"
+        },
+        {
+          "stride": 24,
+          "vertices": 18,
+          "leaf": false,
+          "channels": [
+            {
+              "type_value": 131072,
+              "type": 2,
+              "usage": 0,
+              "index": 0,
+              "stream": 0,
+              "offset": 0,
+              "components": 3,
+              "dtype": "<f4"
+            },
+            {
+              "type_value": 262144,
+              "type": 4,
+              "usage": 1,
+              "index": 0,
+              "stream": 0,
+              "offset": 12,
+              "components": 4,
+              "dtype": "u1"
+            },
+            {
+              "type_value": 65536,
+              "type": 1,
+              "usage": 3,
+              "index": 0,
+              "stream": 0,
+              "offset": 16,
+              "components": 2,
+              "dtype": "<f4"
+            }
+          ],
+          "raw_sha256": "ad82891c086c6c87f7df985ceb7e9140f4ebf089c3ff03b23b381ee213aeb5ed"
+        }
+      ],
+      "payload_file": "kh_gol_tree_simple_a.npz",
+      "payload_sha256": "823df1777805b89f92d9558cbcd2efec0fd102e8a161eddfc3c7d635c7afe206",
+      "mesh_id": "prop_kh_gol_tree_simple_a",
+      "before_fbx_sha256": "1823c2ac3f9559aca9f0107f376b41df7afd608b549fd1a6edb8d21e7cb3c4fc",
+      "before_reference_bounds_m": {
+        "lo": [
+          -3.1657888889312744,
+          -3.517669677734375,
+          -0.5137912034988403
+        ],
+        "hi": [
+          3.200260877609253,
+          2.935389518737793,
+          2.810546875
+        ]
+      },
+      "instances_sha256": "2e1615084fe29d9250b40d137c96db71ccf0da64e298bc2e88e4bd2b38467cda",
+      "instance_count": 605,
+      "minimum_uniform_scale": 1.28125,
+      "maximum_uniform_scale": 2.59375,
+      "maximum_scale_anisotropy": 0.0,
+      "geometry": {
+        "original_npz_position_error_m": 0.0,
+        "trunk_positions_exact": true,
+        "original_uv0_exact": true,
+        "source_normals_preserved": true,
+        "source_pivot_bounds_ros_m": {
+          "lo": [
+            -3.1657888889312744,
+            -3.517669677734375,
+            -0.5137912034988403
+          ],
+          "hi": [
+            3.200260877609253,
+            2.935389518737793,
+            2.810546875
+          ]
+        },
+        "reference_bounds_dagor_m": {
+          "lo": [
+            -3.32568359375,
+            -0.5137912034988403,
+            -2.935389518737793
+          ],
+          "hi": [
+            3.41552734375,
+            3.814453125,
+            3.517669677734375
+          ]
+        },
+        "reference_bounds_ros_m": {
+          "lo": [
+            -3.32568359375,
+            -3.517669677734375,
+            -0.5137912034988403
+          ],
+          "hi": [
+            3.41552734375,
+            2.935389518737793,
+            3.814453125
+          ]
+        },
+        "billboard_bounds_ros_m": {
+          "lo": [
+            -3.5559073065476925,
+            -3.7728103462596314,
+            -0.5137912034988403
+          ],
+          "hi": [
+            3.638321089339364,
+            3.4431592731786447,
+            4.448265480417239
+          ]
+        },
+        "minimum_leaf_triangle_area_m2": 0.7052664756774902,
+        "leaf_triangles": 40,
+        "source_winding_corrections": 24,
+        "ue_vflip_reconstructed_raw_delta_max_error": 0.0
+      },
+      "after_fbx_sha256": "8b6bb084b3dc5d9134915828fdaeb3fe9d95d96bb14a9e8d80b40f6c8d2e66c7",
+      "backup_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\leaf-adaptation-20261117-01\\before\\meshes\\prop_kh_gol_tree_simple_a.fbx",
+      "output_file": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\meshes\\prop_kh_gol_tree_simple_a.fbx",
+      "roundtrip": {
+        "status": "passed",
+        "vertices": 98,
+        "triangles": 64,
+        "uv_layers": [
+          "UV0",
+          "UV1",
+          "UV2",
+          "UV3",
+          "UV4"
+        ],
+        "bounds_m": {
+          "lo": [
+            -3.32568359375,
+            -3.517669439315796,
+            -0.5137912034988403
+          ],
+          "hi": [
+            3.41552734375,
+            2.935389518737793,
+            3.814453125
+          ]
+        },
+        "bounds_error_m": 2.384185791015625e-07,
+        "corner_position_error_m": 5.960464477539062e-07,
+        "all_uv_corner_error": 0.0,
+        "topology_materials_and_uv0_to_uv4_verified": true
+      }
+    }
+  ]
+}

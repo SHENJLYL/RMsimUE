@@ -152,3 +152,18 @@
 - Qt的TogglePattern曾只改勾选而未激活Nav2 Goal；测试采用QAction InvokePattern和实际OS地图鼠标，保持前台/PID/像素归属校验。读取实时相机投影，默认65px/m近车视图；GUI短路线与完整波浪action分别记录，不放宽25cm门限。
 - 导航偏航整形参考原95c66c2，最大目标转速1rad/s、加速度2rad/s²、输入200ms过期。扫描/获准自瞄优先，导航不开火。完整硬件云台电流环/Hub/视觉继续独立跟踪。
 - 新Mid360组合的实际R/断线恢复、Nav Through Poses按钮专项、更多出生点/全场、多车和原生Ubuntu保持后续验收。关闭RViz停止该会话；不得并行多个同项目UE做性能结论。大资源/截图/稠密轨迹保留本地。
+
+
+## 2026-11-18 弗兰德斯地图当前检查点
+
+- 用户明确要求继续 RMsimUE5 战雷原图接入；使用独立工作树 `D:/simulator-wt-vlaanderen` 与 `feat/wt-vlaanderen-20261117`，原 `D:/simulator` 导航工作树及其进程独立保留。feature 发布后，完整导航路线和稳定 1× 门槛仍决定 main 合并。
+- 原图 source SHA `427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f`；历史 import-06 World SHA `720931dad262197929863d553c2388c3de18131277498749ef31faa201f12253`，manifest SHA `ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9`。完整 import-06 原生 exit 0；独立 native-scene-03 21 项、native-materials-06 88 个真实资产通过，日志 Error 0。
+- 原生 1,365 网格/13,478,779 三角的差值由源 world_decal 34 个共点面逐材质证明；不能按宽泛容差接受未知丢面。保留 35,922 视觉 placements、20,033 碰撞 placements 和 1,089 Landscape 碰撞分量。完整坐标报告只留本地，以 summary SHA 绑定。
+- 地表贴花恢复源 short4n.position.w 到 UV1.x，全精度 2UV；world_decal 保留几何，仅绘入 RVT，由 Landscape/背景 landmesh 合成。源 height 公式和原生保存图连接均严格检查。RVT 物理池专配 DXT5/BC5/DXT5、264px物理页、256 MiB；与普通纹理 streaming pool 分开。
+- 普通树的 25 个 T1.r 分离遮罩实例按 7 对原 PNG 哈希限定；43 个实例包括 18 个保持原绑定的负例已真实核对。旧 facing-leaves 保留 5UV/half4、91 cards/182叶三角/2,369实例；源坐标与摄像机空间变换已独立证明。
+- 历史基础模块 `eceebaa1634a2df9c6314556efcc0190f5c5b4b926ef13299669ca461d68de76` 下，flanders-contact-03-rvt 与 rmuc-regression-02-final 各 5 项、8 PNG、exit 0。弗兰德斯前进 340.284 cm/横漂 0.070 cm，共用复位距离 0.0133 cm；复位调用共享路径，OS键盘观察独立记录。该历史检查点使用当时的 AIM 2000/140 悬挂与车辆包参数；后续组合模块的车辆与碰撞行为按各次实际报告绑定。
+- SceneRenderReadiness 以实际 asset/shader/streaming 计数等待；UE5.8 wanting-resource ID 真实可保持 0，freshness 来自 StreamAllResources 强制更新。RVT 88 为原生 allocation 请求矩形覆盖数量；同步调用完成后又等 2 个完成渲染帧。不得写成读到了 GPU 生产页计数。
+- 原始浮地块/黑树卡和首帧未完成材质的截图均保留。最新静止、行驶后、复位图已看见完整车体和树冠透明间隙。原 Land 五类颜色/权重、水色和七网格/13 层草已接入并完成实测；microdetail、grass-decal、small_grass billboard、风动与原随机位置继续按 SOURCE 与材质报告跟踪；原碰撞缺失/非实体资源保持清单。
+- 最新保存 World SHA `20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25`，manifest SHA `91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27`。grass-native-07-resume 在 c44d2c… 模块烘焙七网格/13 层，两视点 52,984 个真实 render instances；grass-reload-02-final 与 water-native-02 在 1bf4126e… 模块分别 27 项通过和 exit 0 / 14.17 s。
+- 后续 d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404 模块已通过 native-materials-08-final 的 104 资源、native-scene-04-final 的 21 项，以及 flanders-contact-04-final / rmuc-regression-03-final 各 5 项 / 8 PNG。GUI PID 43760 已实测绿褐地表、草与粉白花、小地图车辆标记和 M 大图；12 次真实 OS 动作、16 个驾驶输入边沿、4 次 M 切换、8 图绑定 `artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json`。最终车位 ROS `(1075.232351,-1012.656026)`，旋转后两图箭头同步，出生标记独立。
+- 大资源/UE Content/日志/稠密报告与截图留本地。compact 证据在 `artifacts/maps/wt-scene-20261118`；本轮代码、复现步骤、架构和当前进度随 feature 发布。此前“完整场景尚未导入”的历史条目以本检查点及 current.md 为准。

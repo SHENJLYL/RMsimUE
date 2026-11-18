@@ -1,0 +1,29 @@
+{
+  "schema": "wt_grass_resume_patch_v1",
+  "status": "applied",
+  "prepared_utc": "2026-11-18T05:18:37.438683+00:00",
+  "apply_requested": true,
+  "production_sources_modified": true,
+  "ue_assets_modified": false,
+  "old_sha256": {
+    "tools/unreal/author_wt_grass.py": "38b623df6ce26e083bf4078dfd6fa22ac5302579995f056214d82b3fd8bf5051",
+    "tools/unreal/Author-WTGrass.ps1": "1ec8249d9a214877aa456ac45ce6fdff86f5088f18bc5ec8a929b284c03dba64",
+    "tools/unreal/wt_grass.py": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a"
+  },
+  "new_sha256": {
+    "tools/unreal/author_wt_grass.py": "d5f68a5189975eaae06db2f1b4cbaaacf0c9f7e2daaec4b04e031631fd1bc32d",
+    "tools/unreal/Author-WTGrass.ps1": "9a5927f6995e3fd098c7ab470225734aa9349edda3f8e04fd40db1fd409c18e9"
+  },
+  "edited_files": [
+    "tools/unreal/author_wt_grass.py",
+    "tools/unreal/Author-WTGrass.ps1"
+  ],
+  "protected_file": "tools/unreal/wt_grass.py",
+  "python_candidate_ast": "passed",
+  "powershell_candidate_parse": "pending",
+  "native_bake_status": "pending",
+  "independent_material_104_gate": "pending",
+  "independent_grass_27_gate": "pending",
+  "scope": "Resume only saved source-bound authored assets, then retain all original native bake/save gates.",
+  "worker_configuration_changed": false
+}

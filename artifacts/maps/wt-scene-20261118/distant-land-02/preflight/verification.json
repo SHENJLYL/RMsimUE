@@ -1,0 +1,30 @@
+{
+  "schema": "wt_landclass_preflight_v1",
+  "status": "passed",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "landclass_manifest_sha256": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+  "verification_sha256": "087186b0095c1dd7ec08729ac1d4a6c0ea8895e3f6af6972fd49b534f77b1c9f",
+  "script_sha256": {
+    "tools/unreal/wt_landclass.py": "43414c4b78acef5e8f41ebc9baa33521640463befcc8a8717e11f2b6ffae7a7b",
+    "tools/maps/extract_wt_landclass.py": "31e96eb6559d3c1532b9e52f298c4e8cd3b53533efc9dcb410025722a5f69e67",
+    "tools/maps/prepare_wt_landclass.py": "5b4d05b0e290feeffca390a26af7c6059755d4225471ac8ad0642731519b2ad8",
+    "tools/unreal/wt_materials.py": "aaf92e4d12296ff0064a5016faf8566dc1ab09b4fc4faab2cecdcb130f8ba47c",
+    "tools/unreal/import_wt_scene.py": "3e43275579b200c59bcba25c1eb16e682acf12c5c05007dfcc621affee9cc00c",
+    "tools/unreal/verify_wt_materials.py": "55c02c4c0219adc962459dad95158d4322f3e2dd9ed80793243080549cb378ef",
+    "tests/map_tools/test_wt_landclass.py": "9d0c9839ba07c684c9c4961bf0628e0f7e9a8962b1c5d3f2d5e3d02bc9e5708f"
+  },
+  "original_world_sha256": "720931dad262197929863d553c2388c3de18131277498749ef31faa201f12253",
+  "checks": {
+    "python_ast": true,
+    "published_source_contract": true,
+    "source_classes": 5,
+    "source_cells": 1024,
+    "source_textures": 8
+  },
+  "unit_tests": {
+    "command": "python -B -m unittest discover -s tests/map_tools -p test_wt_landclass.py -v",
+    "passed": 6
+  },
+  "native_shader_verified": false,
+  "native_render_verified": false
+}

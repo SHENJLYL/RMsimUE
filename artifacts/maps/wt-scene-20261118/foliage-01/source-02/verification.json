@@ -1,0 +1,147 @@
+{
+  "schema": "wt_foliage_source_verification_v1",
+  "status": "prepared_source_inputs_pending_ue_foliage_adapter",
+  "source_config_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "foliage_source_sha256": "aebd7cbb66ce28f5b8f5ab2daeff7eb48dd1139dbb5f456bc874e6663014cbe9",
+  "model_count": 7,
+  "source_triangles": 56,
+  "texture_count": 16,
+  "layer_count": 13,
+  "mask_count": 10,
+  "small_grass_types": 9,
+  "bounds_dagor_xz_m": [
+    [
+      0,
+      0
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "generated_instances": 0,
+  "layers": [
+    {
+      "id": "layer_00",
+      "model": "grass_tulip_b",
+      "biome_ids": [
+        29
+      ],
+      "density": 5.0,
+      "eligible_pixels": 538986
+    },
+    {
+      "id": "layer_01",
+      "model": "grass_tulip_b",
+      "biome_ids": [
+        30
+      ],
+      "density": 5.0,
+      "eligible_pixels": 5117
+    },
+    {
+      "id": "layer_02",
+      "model": "grass_tulip_b",
+      "biome_ids": [
+        31
+      ],
+      "density": 5.0,
+      "eligible_pixels": 229724
+    },
+    {
+      "id": "layer_03",
+      "model": "grass_tulip_b",
+      "biome_ids": [
+        32
+      ],
+      "density": 5.0,
+      "eligible_pixels": 54708
+    },
+    {
+      "id": "layer_04",
+      "model": "grass_tulip_b",
+      "biome_ids": [
+        33
+      ],
+      "density": 5.0,
+      "eligible_pixels": 114883
+    },
+    {
+      "id": "layer_05",
+      "model": "grass_paigle_a",
+      "biome_ids": [
+        27
+      ],
+      "density": 2.0,
+      "eligible_pixels": 2551675
+    },
+    {
+      "id": "layer_06",
+      "model": "grass_fill_a",
+      "biome_ids": [
+        27
+      ],
+      "density": 5.0,
+      "eligible_pixels": 2551675
+    },
+    {
+      "id": "layer_07",
+      "model": "grass_blueberry_a",
+      "biome_ids": [
+        27
+      ],
+      "density": 1.0,
+      "eligible_pixels": 2551675
+    },
+    {
+      "id": "layer_08",
+      "model": "grass_daisies_a",
+      "biome_ids": [
+        0
+      ],
+      "density": 0.4000000059604645,
+      "eligible_pixels": 2281175
+    },
+    {
+      "id": "layer_09",
+      "model": "grass_heather_a",
+      "biome_ids": [
+        1
+      ],
+      "density": 1.0,
+      "eligible_pixels": 5364453
+    },
+    {
+      "id": "layer_10",
+      "model": "grass_simple_a",
+      "biome_ids": [
+        1
+      ],
+      "density": 6.0,
+      "eligible_pixels": 5364453
+    },
+    {
+      "id": "layer_11",
+      "model": "grass_simple_a",
+      "biome_ids": [
+        0,
+        1
+      ],
+      "density": 4.0,
+      "eligible_pixels": 7645628
+    },
+    {
+      "id": "layer_12",
+      "model": "grass_fill_a",
+      "biome_ids": [
+        0,
+        1,
+        2
+      ],
+      "density": 5.0,
+      "eligible_pixels": 9958466
+    }
+  ],
+  "original_game_and_extraction": "read only"
+}

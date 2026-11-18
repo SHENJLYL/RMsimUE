@@ -1,0 +1,90 @@
+{
+    "status":  "passed",
+    "scope":  "PowerShell AST and in-memory process/evidence mocks; no UE launch or external process termination",
+    "script_sha256":  "b72535082fe15cf333bbe45856b38130e7738128dfef93985b54f0502cc09758",
+    "checks":  [
+                   {
+                       "name":  "same_project_editor_rejected",
+                       "passed":  true,
+                       "start_calls":  0,
+                       "kill_calls":  0,
+                       "disposed":  0,
+                       "mutex":  ""
+                   },
+                   {
+                       "name":  "same_project_commandlet_rejected",
+                       "passed":  true,
+                       "start_calls":  0,
+                       "kill_calls":  0,
+                       "disposed":  0,
+                       "mutex":  ""
+                   },
+                   {
+                       "name":  "same_project_ubt_rejected",
+                       "passed":  true,
+                       "start_calls":  0,
+                       "kill_calls":  0,
+                       "disposed":  0,
+                       "mutex":  ""
+                   },
+                   {
+                       "name":  "same_project_build_batch_rejected",
+                       "passed":  true,
+                       "start_calls":  0,
+                       "kill_calls":  0,
+                       "disposed":  0,
+                       "mutex":  ""
+                   },
+                   {
+                       "name":  "different_worktree_allowed",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  0,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_3ef383cb7328b2169d8b9aa2b96f0e3cdc5fe1392b21eecf715bbc4715b99f4a"
+                   },
+                   {
+                       "name":  "post_launch_evidence_failure_cleans_owned",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  1,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_3ef383cb7328b2169d8b9aa2b96f0e3cdc5fe1392b21eecf715bbc4715b99f4a"
+                   },
+                   {
+                       "name":  "timeout_cleans_owned",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  1,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_3ef383cb7328b2169d8b9aa2b96f0e3cdc5fe1392b21eecf715bbc4715b99f4a"
+                   },
+                   {
+                       "name":  "already_exited_failure_not_killed",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  0,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_3ef383cb7328b2169d8b9aa2b96f0e3cdc5fe1392b21eecf715bbc4715b99f4a"
+                   },
+                   {
+                       "name":  "nonzero_exit_not_killed",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  0,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_3ef383cb7328b2169d8b9aa2b96f0e3cdc5fe1392b21eecf715bbc4715b99f4a"
+                   },
+                   {
+                       "name":  "distinct_project_mutex",
+                       "passed":  true,
+                       "start_calls":  1,
+                       "kill_calls":  0,
+                       "disposed":  1,
+                       "mutex":  "Local\\RMSimSceneImport_dfbf87de3f2dfd1856f013abc9ce8e0af78bc92fc17e62ff0408a4a6fe1840cb"
+                   }
+               ],
+    "initial_fixture_failure":  "Utility module autoload replaced Get-FileHash mock; fixture now imports module before installing mocks.",
+    "real_process_start_calls":  0,
+    "real_process_kill_calls":  0
+}

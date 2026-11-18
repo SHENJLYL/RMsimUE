@@ -1,0 +1,661 @@
+{
+  "schema": "wt_rvt_composition_review_v1",
+  "status": "passed",
+  "scope": "Read-only source review plus analytic replay of engine pack/blend/sign/unpack equations; no UE process, material authoring, or GPU rendering in this review.",
+  "reviewed_initial_wt_materials_sha256": "bcf5558342f51667e45136093175f8bc066c1695a1cac2023ff681c0ae344dc5",
+  "reviewed_fixed_wt_materials_sha256": "7695b7aa121c339ee80fccc221a3ba1d7d337db6a8eb67831adcb152dc06d5e1",
+  "engine_sources": [
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\VirtualTextureMaterial.usf",
+      "sha256": "4ae568ed157dc8945bb50cc12a6b8bea24d892972f6ac7178343ecc9c252e445"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\VirtualTextureCompress.usf",
+      "sha256": "bfdbc040ab3c879d9d59a4e021e2019c2e8315c8c8f4fca0c5fe1eb691d94c77"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\VirtualTextureCommon.ush",
+      "sha256": "1d5cc0de6e76819091cf65a9e6f38e21d666b741e1de81ffd50cb844cf2b8126"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\BlockCompressionCommon.ush",
+      "sha256": "973866277ea9c0e35bed2b638efc2d38690b43e22789c46a2714d520a47dd12c"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Renderer\\Private\\VT\\RuntimeVirtualTextureRender.cpp",
+      "sha256": "ef807c4ce84d8eb92d70c6276377b6fd7e80989f039213d7193b4d7481eb9e77"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\RHI\\Private\\RHI.cpp",
+      "sha256": "3d9ab3c7bd1d215929c983dd7298ef11525d5ebce1c741bd5ab458d46d963175"
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Materials\\MaterialExpressions.cpp",
+      "sha256": "66909943c30bdcea8f8bc47bd3b719093eeed4d11715b94cb120fb4f4330d815"
+    }
+  ],
+  "finding": {
+    "id": "packed_normal_z_is_sign_only",
+    "state": "fixed_by_material_native_fix_and_reread",
+    "initial_error": "Composite treated sampled normal Z as continuous packed Z. UE compression/copy rounds the packed Z channel before sampling.",
+    "source_references": [
+      "VirtualTextureMaterial.usf:59-62 pack normalized vector using127/255",
+      "VirtualTextureMaterial.usf:147-150 premultiplied outputs",
+      "VirtualTextureCompress.usf:344-347 and379 round packedZ",
+      "VirtualTextureCommon.ush:969-974 reconstruct sample Z from XY and sign",
+      "RuntimeVirtualTextureRender.cpp:647-650 One/InverseSourceAlpha blend",
+      "RuntimeVirtualTextureRender.cpp:1192-1197 black RGB and DefaultNormal8Bit auxiliary clears",
+      "RHI.cpp:128 defines DefaultNormal8Bit as128/255",
+      "MaterialExpressions.cpp:3443 and3710-3717 return native normal unpack without tangent conversion"
+    ],
+    "fixed_rule": "Remove clear bias and de-premultiply XY; reconstruct magnitude sqrt(saturate(1-dot(XY,XY))) with sampled Z sign."
+  },
+  "boundaries": {
+    "empty_area": "Mask clear128/255 gives coverage0; early return retains base color, world normal, roughness and metallic.",
+    "outside_writer_xy_bounds": "inside multiplier forces coverage0 and early base return.",
+    "color": "Inputs provide straight linear RGB. UE writer premultiplies exactly once, blend is One/InverseSourceAlpha, sample composition is RVTColor+BaseColor*(1-coverage).",
+    "roughness": "DecalRoughness+(BaseRoughness-clear128/255)*(1-coverage) removes auxiliary clear contribution and composites base.",
+    "normal_spaces": "Writer transforms tangent NormalOut to world; receiver transforms base tangent normal to world, combines in world and sets tangent_space_normal=False.",
+    "ordinary_unbound_scene_decal": "Standard translucent MP outputs remain connected; extra RVT output does not replace them. bind_rvt_world assigns this RVT and NEVER main pass only to the unique world_decal_000 HISM.",
+    "codec_limit": "Packed Z is rounded after blending, so its original continuous value is irrecoverable. Near grazing/low coverage even source sign can differ after clear-biased quantization. BC5/BC3 interpolation and GPU pixel rendering are outside this analytic replay."
+  },
+  "normal_numeric_cases": [
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        0.8
+      ],
+      "coverage": 1,
+      "packed_z_before_round": 0.8964705882352941,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.6000000000000001,
+        0.0,
+        0.7999999999999999
+      ],
+      "old_reconstructed": [
+        0.5115310664059625,
+        0.0,
+        0.8592647834640839
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000001,
+        0.0,
+        0.7999999999999999
+      ],
+      "fixed_composite": [
+        0.6000000000000001,
+        0.0,
+        0.7999999999999999
+      ],
+      "expected_composite": [
+        0.6,
+        0.0,
+        0.8
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 1.1102230246251565e-16
+    },
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        0.8
+      ],
+      "coverage": 0.5,
+      "packed_z_before_round": 0.6992156862745098,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.3039370078740158,
+        0.003937007874015741,
+        0.9526839954641783
+      ],
+      "old_reconstructed": [
+        0.28631357240638605,
+        -6.6223316739219085e-18,
+        0.9581359706512917
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000001,
+        -1.3877787807814457e-17,
+        0.7999999999999999
+      ],
+      "fixed_composite": [
+        0.316227766016838,
+        -7.314236392868128e-18,
+        0.9486832980505138
+      ],
+      "expected_composite": [
+        0.31622776601683794,
+        0.0,
+        0.9486832980505139
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 1.1102230246251565e-16
+    },
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        0.8
+      ],
+      "coverage": 0.1,
+      "packed_z_before_round": 0.5414117647058824,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.06708661417322848,
+        0.007086614173228423,
+        0.9977219883806973
+      ],
+      "old_reconstructed": [
+        0.0598453373806034,
+        7.613108190004889e-17,
+        0.9982076615583563
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000013,
+        7.632783294297951e-16,
+        0.7999999999999989
+      ],
+      "fixed_composite": [
+        0.06111006327950343,
+        7.773997835221389e-17,
+        0.9981310335652204
+      ],
+      "expected_composite": [
+        0.06111006327950329,
+        0.0,
+        0.9981310335652204
+      ],
+      "reconstruction_max_abs_error": 1.3322676295501878e-15,
+      "composite_max_abs_error": 1.3877787807814457e-16
+    },
+    {
+      "source_normal": [
+        -0.3,
+        0.4,
+        0.8660254037844386
+      ],
+      "coverage": 1,
+      "packed_z_before_round": 0.9293538285514655,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        -0.30000000000000004,
+        0.3999999999999999,
+        0.8660254037844386
+      ],
+      "old_reconstructed": [
+        -0.26664717576068536,
+        0.3555295676809137,
+        0.8958225327393103
+      ],
+      "fixed_reconstructed": [
+        -0.3000000000000001,
+        0.39999999999999997,
+        0.8660254037844387
+      ],
+      "fixed_composite": [
+        -0.3000000000000001,
+        0.39999999999999997,
+        0.8660254037844387
+      ],
+      "expected_composite": [
+        -0.30000000000000004,
+        0.4000000000000001,
+        0.8660254037844387
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 1.1102230246251565e-16
+    },
+    {
+      "source_normal": [
+        -0.3,
+        0.4,
+        0.8660254037844386
+      ],
+      "coverage": 0.5,
+      "packed_z_before_round": 0.7156573064325955,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        -0.14606299212598428,
+        0.2039370078740157,
+        0.9680264971324898
+      ],
+      "old_reconstructed": [
+        -0.1449840862303721,
+        0.19331211497382939,
+        0.9703659314631202
+      ],
+      "fixed_reconstructed": [
+        -0.3000000000000001,
+        0.39999999999999997,
+        0.8660254037844387
+      ],
+      "fixed_composite": [
+        -0.1552914270615125,
+        0.20705523608201656,
+        0.9659258262890682
+      ],
+      "expected_composite": [
+        -0.15529142706151244,
+        0.20705523608201662,
+        0.9659258262890682
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 5.551115123125783e-17
+    },
+    {
+      "source_normal": [
+        -0.3,
+        0.4,
+        0.8660254037844386
+      ],
+      "coverage": 0.1,
+      "packed_z_before_round": 0.5447000887374995,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        -0.022913385826771604,
+        0.04708661417322846,
+        0.9986279725281357
+      ],
+      "old_reconstructed": [
+        -0.029939054872488408,
+        0.03991873982998472,
+        0.9987542977147723
+      ],
+      "fixed_reconstructed": [
+        -0.2999999999999995,
+        0.4000000000000011,
+        0.8660254037844384
+      ],
+      "fixed_composite": [
+        -0.030368408205265655,
+        0.040491210940354384,
+        0.9987182894188241
+      ],
+      "expected_composite": [
+        -0.030368408205265703,
+        0.04049121094035428,
+        0.9987182894188241
+      ],
+      "reconstruction_max_abs_error": 1.0547118733938987e-15,
+      "composite_max_abs_error": 1.0408340855860843e-16
+    },
+    {
+      "source_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "coverage": 1,
+      "packed_z_before_round": 0.996078431372549,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "old_reconstructed": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "fixed_reconstructed": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "fixed_composite": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "expected_composite": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "reconstruction_max_abs_error": 0.0,
+      "composite_max_abs_error": 0.0
+    },
+    {
+      "source_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "coverage": 0.5,
+      "packed_z_before_round": 0.7490196078431373,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.003937007874015741,
+        0.003937007874015741,
+        0.9999844998488726
+      ],
+      "old_reconstructed": [
+        -6.911682555264455e-18,
+        -6.911682555264455e-18,
+        1.0
+      ],
+      "fixed_reconstructed": [
+        -1.3877787807814457e-17,
+        -1.3877787807814457e-17,
+        1.0
+      ],
+      "fixed_composite": [
+        -6.938893903907228e-18,
+        -6.938893903907228e-18,
+        1.0
+      ],
+      "expected_composite": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "reconstruction_max_abs_error": 1.3877787807814457e-17,
+      "composite_max_abs_error": 6.938893903907228e-18
+    },
+    {
+      "source_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "coverage": 0.1,
+      "packed_z_before_round": 0.5513725490196079,
+      "native_sign_z": 1.0,
+      "decoded_sample": [
+        0.007086614173228423,
+        0.007086614173228423,
+        0.9999497786384672
+      ],
+      "old_reconstructed": [
+        7.626777957323682e-17,
+        7.626777957323682e-17,
+        1.0
+      ],
+      "fixed_reconstructed": [
+        7.632783294297951e-16,
+        7.632783294297951e-16,
+        1.0
+      ],
+      "fixed_composite": [
+        7.632783294297951e-17,
+        7.632783294297951e-17,
+        1.0
+      ],
+      "expected_composite": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "reconstruction_max_abs_error": 7.632783294297951e-16,
+      "composite_max_abs_error": 7.632783294297951e-17
+    },
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        -0.8
+      ],
+      "coverage": 1,
+      "packed_z_before_round": 0.09960784313725488,
+      "native_sign_z": -1.0,
+      "decoded_sample": [
+        0.6000000000000001,
+        0.0,
+        -0.7999999999999999
+      ],
+      "old_reconstructed": [
+        0.5144957554275266,
+        0.0,
+        -0.8574929257125441
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000001,
+        0.0,
+        -0.7999999999999999
+      ],
+      "fixed_composite": [
+        0.6000000000000001,
+        0.0,
+        -0.7999999999999999
+      ],
+      "expected_composite": [
+        0.6,
+        0.0,
+        -0.8
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 1.1102230246251565e-16
+    },
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        -0.8
+      ],
+      "coverage": 0.5,
+      "packed_z_before_round": 0.3007843137254902,
+      "native_sign_z": -1.0,
+      "decoded_sample": [
+        0.3039370078740158,
+        0.003937007874015741,
+        -0.9526839954641783
+      ],
+      "old_reconstructed": [
+        0.28631357240638605,
+        -6.6223316739219085e-18,
+        -0.9581359706512917
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000001,
+        -1.3877787807814457e-17,
+        -0.7999999999999999
+      ],
+      "fixed_composite": [
+        0.9486832980505138,
+        -2.1942709178604376e-17,
+        0.316227766016838
+      ],
+      "expected_composite": [
+        0.9486832980505138,
+        0.0,
+        0.31622776601683783
+      ],
+      "reconstruction_max_abs_error": 1.1102230246251565e-16,
+      "composite_max_abs_error": 1.6653345369377348e-16
+    },
+    {
+      "source_normal": [
+        0.6,
+        0.0,
+        -0.8
+      ],
+      "coverage": 0.1,
+      "packed_z_before_round": 0.46172549019607845,
+      "native_sign_z": -1.0,
+      "decoded_sample": [
+        0.06708661417322848,
+        0.007086614173228423,
+        -0.9977219883806973
+      ],
+      "old_reconstructed": [
+        0.05947233970691291,
+        7.565658016462277e-17,
+        -0.9982299538732473
+      ],
+      "fixed_reconstructed": [
+        0.6000000000000013,
+        7.632783294297951e-16,
+        -0.7999999999999989
+      ],
+      "fixed_composite": [
+        0.07297563831157813,
+        9.283453883255699e-17,
+        0.9973337235915657
+      ],
+      "expected_composite": [
+        0.07297563831157797,
+        0.0,
+        0.9973337235915657
+      ],
+      "reconstruction_max_abs_error": 1.3322676295501878e-15,
+      "composite_max_abs_error": 1.6653345369377348e-16
+    }
+  ],
+  "normal_cases": 12,
+  "normal_max_reconstruction_error": 1.3322676295501878e-15,
+  "normal_max_composite_error": 1.6653345369377348e-16,
+  "color_numeric_cases": [
+    {
+      "source_alpha": 0,
+      "stored_mask": 0.5019607843137255,
+      "recovered_coverage": 0,
+      "stored_premultiplied_color": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "output_color": [
+        0.2,
+        0.4,
+        0.6
+      ],
+      "expected_color": [
+        0.2,
+        0.4,
+        0.6
+      ],
+      "output_roughness": 0.9,
+      "expected_roughness": 0.9,
+      "max_abs_color_error": 0.0
+    },
+    {
+      "source_alpha": 0.1,
+      "stored_mask": 0.5517647058823529,
+      "recovered_coverage": 0.1,
+      "stored_premultiplied_color": [
+        0.08000000000000002,
+        0.020000000000000004,
+        0.010000000000000002
+      ],
+      "output_color": [
+        0.26,
+        0.38000000000000006,
+        0.55
+      ],
+      "expected_color": [
+        0.26,
+        0.38000000000000006,
+        0.55
+      ],
+      "output_roughness": 0.8400000000000001,
+      "expected_roughness": 0.8400000000000001,
+      "max_abs_color_error": 0.0
+    },
+    {
+      "source_alpha": 0.5,
+      "stored_mask": 0.7509803921568627,
+      "recovered_coverage": 0.5,
+      "stored_premultiplied_color": [
+        0.4,
+        0.1,
+        0.05
+      ],
+      "output_color": [
+        0.5,
+        0.30000000000000004,
+        0.35
+      ],
+      "expected_color": [
+        0.5,
+        0.30000000000000004,
+        0.35
+      ],
+      "output_roughness": 0.6000000000000001,
+      "expected_roughness": 0.6,
+      "max_abs_color_error": 0.0
+    },
+    {
+      "source_alpha": 1,
+      "stored_mask": 1.0,
+      "recovered_coverage": 1,
+      "stored_premultiplied_color": [
+        0.8,
+        0.2,
+        0.1
+      ],
+      "output_color": [
+        0.8,
+        0.2,
+        0.1
+      ],
+      "expected_color": [
+        0.8,
+        0.2,
+        0.1
+      ],
+      "output_roughness": 0.3,
+      "expected_roughness": 0.3,
+      "max_abs_color_error": 0.0
+    }
+  ],
+  "overlap_case": {
+    "alphas": [
+      0.4,
+      0.25
+    ],
+    "combined_coverage": 0.55,
+    "output_color": [
+      0.3550000000000001,
+      0.435,
+      0.32499999999999996
+    ],
+    "expected_color": [
+      0.3550000000000001,
+      0.435,
+      0.325
+    ],
+    "max_abs_error": 5.551115123125783e-17
+  },
+  "native_sign_quantization_limit_example": {
+    "source_normal": [
+      0.999999499999875,
+      0.0,
+      -0.001
+    ],
+    "coverage": 0.1,
+    "packed_z_before_round": 0.5015188235294118,
+    "native_sign_z": 1.0,
+    "decoded_sample": [
+      0.10708656417321571,
+      0.007086614173228423,
+      0.9942244453206406
+    ],
+    "old_reconstructed": [
+      0.09942615627881068,
+      7.588986841106015e-17,
+      0.9950449434310097
+    ],
+    "fixed_reconstructed": [
+      0.9999994999998737,
+      7.632783294297951e-16,
+      0.0010000000012911343
+    ],
+    "fixed_composite": [
+      0.11041935232685222,
+      8.428074092114082e-17,
+      0.9938850872368086
+    ],
+    "expected_composite": [
+      0.11044359338217688,
+      0.0,
+      0.9938823937875308
+    ],
+    "reconstruction_max_abs_error": 0.0020000000012911343,
+    "composite_max_abs_error": 2.4241055324655814e-05
+  },
+  "native_render_validation": "pending_root_run"
+}

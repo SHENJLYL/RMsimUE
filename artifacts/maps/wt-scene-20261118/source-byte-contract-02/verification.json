@@ -1,0 +1,44 @@
+{
+  "schema": "rmsim_git_source_byte_contract_v1",
+  "status": "passed",
+  "observed_utc": "2026-11-18T05:24:49.217987+00:00",
+  "scope": "Six SHA256-bound source contracts have identical staged and prepared bytes; no source asset was rewritten",
+  "files": [
+    {
+      "path": "assets/maps/wt_vlaanderen/map.json",
+      "working_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "staged_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "exact_bytes_equal": true
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/overview.json",
+      "working_sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b",
+      "staged_sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b",
+      "exact_bytes_equal": true
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/overview/calibration.json",
+      "working_sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+      "staged_sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+      "exact_bytes_equal": true
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/landclass/landclass.json",
+      "working_sha256": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+      "staged_sha256": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+      "exact_bytes_equal": true
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/landclass/verification.json",
+      "working_sha256": "087186b0095c1dd7ec08729ac1d4a6c0ea8895e3f6af6972fd49b534f77b1c9f",
+      "staged_sha256": "087186b0095c1dd7ec08729ac1d4a6c0ea8895e3f6af6972fd49b534f77b1c9f",
+      "exact_bytes_equal": true
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage/foliage.json",
+      "working_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+      "staged_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+      "exact_bytes_equal": true
+    }
+  ]
+}

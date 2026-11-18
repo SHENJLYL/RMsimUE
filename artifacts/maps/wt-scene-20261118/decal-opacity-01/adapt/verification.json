@@ -1,0 +1,104 @@
+{
+  "schema": "wt_decal_opacity_adaptation_v1",
+  "status": "passed",
+  "unreal_executed": false,
+  "started_utc": "2026-11-18T02:17:25.858752+00:00",
+  "adapter_script_sha256": "3153a773348980114504ed4cb7aa0f7dba6ed08883ce2a3f79505aa3e058acab",
+  "package": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen",
+  "backups": [
+    {
+      "file": "scene-source.json",
+      "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\decal-opacity-01\\adapt\\before\\scene-source.json",
+      "sha256": "f428db2a02394a88dce11bc19b99ecadcb2e4f2ce6640a5247198d066ba85f1e"
+    },
+    {
+      "file": "meshes\\world_decal_000.fbx",
+      "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\decal-opacity-01\\adapt\\before\\meshes\\world_decal_000.fbx",
+      "sha256": "56bf3b0c4e50dadfd72b805e06a878a737ddff2b49b59b9694944575b078d18d"
+    },
+    {
+      "file": "geometry-audits\\world_decal_000.json",
+      "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\decal-opacity-01\\adapt\\before\\geometry-audits\\world_decal_000.json",
+      "sha256": "7bded936d254a76af3daee6f5cbdaa1f387e2ed4d641cfcf77278265a0efd83c"
+    }
+  ],
+  "before_manifest_sha256": "f428db2a02394a88dce11bc19b99ecadcb2e4f2ce6640a5247198d066ba85f1e",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "mesh_id": "world_decal_000",
+  "before_fbx_sha256": "56bf3b0c4e50dadfd72b805e06a878a737ddff2b49b59b9694944575b078d18d",
+  "after_fbx_sha256": "1f8cd0dd8c81d549047a7c4d7811747a9e16b4e9f907d897ce70a279a1d911fc",
+  "after_manifest_sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+  "raw_source_report_sha256": "e263cc195348852ffe2c1a7322fd54994c14ad9adbfe1332763ac91ce4a64627",
+  "raw_payload_sha256": "0f7b54fe70fff5433e3fd948c0c3c57f11297126cee663aa91d49038edb8bc6a",
+  "opacity_proof_file": "geometry-audits/world_decal_000-opacity.json",
+  "opacity_proof_sha256": "a76a3c1f1bce25d974d229020ae2eac6895f5f3dec77917f5624bd63701ade2a",
+  "geometry_proof_file": "geometry-audits/world_decal_000.json",
+  "geometry_proof_sha256": "060636744b12d2fd439bc313de1c356f97942e5f92778798c627c27c73c37bc1",
+  "source_triangles": 87864,
+  "fbx_triangles": 87864,
+  "source_vertices": 85418,
+  "fbx_vertices": 85424,
+  "source_loop_count": 263592,
+  "fbx_loop_count": 263592,
+  "uv1_max_abs_error": 0.0,
+  "uv1_y_max_abs_error": 0.0,
+  "geometry_arrays_unchanged": true,
+  "uv0_unchanged": true,
+  "material_slots_unchanged": true,
+  "unaffected_manifest_records_unchanged": true,
+  "existing_fbx_elements_sha256": "7ac872759f1a710def48c47df68e682f6978cee22efe81057bbe1ef4642e5c4a",
+  "strict_coincident": 34,
+  "expected_native_triangles": 87830,
+  "raw_opacity_min": 0.0,
+  "raw_opacity_max": 1.0,
+  "raw_w_unique_count": 6353,
+  "spawn_faces": [
+    {
+      "cell": 529,
+      "face": 14888,
+      "material": 7,
+      "material_id": "WT_6e25a8f73f405048601c",
+      "raw_short_w": [
+        32767,
+        32767,
+        32767
+      ],
+      "opacity_w": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "barycentric": [
+        0.02292323351352732,
+        0.30039756698462317,
+        0.6766791995018495
+      ],
+      "opacity_at_spawn": 1.0,
+      "source_y_at_spawn_m": -1.382606816071019
+    },
+    {
+      "cell": 529,
+      "face": 19952,
+      "material": 8,
+      "material_id": "WT_fd08e5ab7bca8dffbd0d",
+      "raw_short_w": [
+        32767,
+        32767,
+        32767
+      ],
+      "opacity_w": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "barycentric": [
+        0.13441033488050347,
+        0.7401102218440329,
+        0.12547944327546365
+      ],
+      "opacity_at_spawn": 1.0,
+      "source_y_at_spawn_m": -0.8025754735718744
+    }
+  ],
+  "finished_utc": "2026-11-18T02:17:27.391309+00:00"
+}

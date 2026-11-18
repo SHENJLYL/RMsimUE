@@ -1,0 +1,66 @@
+{
+  "schema": "wt_binary_fbx_coincident_scan_v1",
+  "status": "passed",
+  "complete": true,
+  "scope": "exact pairwise coincidence in binary FBX polygon/control-point arrays",
+  "native_unreal_verified": false,
+  "source_geometry_modified": false,
+  "blender_version": "5.1.2",
+  "argv": [
+    "E:\\blender\\blender.exe",
+    "--background",
+    "--factory-startup",
+    "--threads",
+    "1",
+    "--disable-autoexec",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "D:\\simulator-wt-vlaanderen\\tools\\maps\\scan_wt_fbx_coincidence.py",
+    "--",
+    "--scene-source",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+    "--output-dir",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\fbx-preflight-01"
+  ],
+  "audit_script_sha256": "dc8135ed15c4f9408f7256bbbb34df564a6c5e7195fc1bf55b2867dd36bcaeda",
+  "parser_file": "E:\\blender\\5.1\\scripts\\addons_core\\io_scene_fbx\\parse_fbx.py",
+  "parser_sha256": "96fe3f11b5c9b2950d9c434857e3b0db1a1b558510e2ad360b767643a69c2047",
+  "source_manifest": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+  "source_manifest_sha256": "f428db2a02394a88dce11bc19b99ecadcb2e4f2ce6640a5247198d066ba85f1e",
+  "started_utc": "2026-11-18T01:26:27.021412+00:00",
+  "excluded_already_audited": [
+    {
+      "id": "world_decal_000",
+      "fbx_sha256": "56bf3b0c4e50dadfd72b805e06a878a737ddff2b49b59b9694944575b078d18d",
+      "reason": "dedicated original-NPZ/FBX/native-target proof"
+    }
+  ],
+  "expected_collision_files": 639,
+  "expected_world_files": 4,
+  "scanned_files": 643,
+  "scanned_triangles": 1934088,
+  "strict_coincident": 0,
+  "suspicious_meshes": [],
+  "counts_by_category": {
+    "visual_world": {
+      "files": 4,
+      "triangles": 568723,
+      "strict_coincident": 0
+    },
+    "collision": {
+      "files": 639,
+      "triangles": 1365365,
+      "strict_coincident": 0
+    }
+  },
+  "memory": {
+    "working_set_bytes": 199372800,
+    "peak_working_set_bytes": 207396864,
+    "private_bytes": 284545024,
+    "peak_private_bytes": 293412864
+  },
+  "files_inventory_sha256": "535f21d44265c8de6028e803961c05ef8d10618512578f0e9f5caff2e4680ada",
+  "source_manifest_sha256_after": "f428db2a02394a88dce11bc19b99ecadcb2e4f2ce6640a5247198d066ba85f1e",
+  "finished_utc": "2026-11-18T01:26:38.314501+00:00"
+}

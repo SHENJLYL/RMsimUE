@@ -1,0 +1,238 @@
+{
+  "schema": "rmsim_grass_compile_batching_review_v1",
+  "status": "source_review_passed_native_pending",
+  "recorded_utc": "2026-11-18T05:01:06.142544+00:00",
+  "review_scope": "read-only production source review; this record does not assert native05 completion or compile performance improvement",
+  "previous_attempt": {
+    "verification": "artifacts\\maps\\wt-scene-20261118\\grass-native-04\\verification.json",
+    "verification_sha256": "8a2062d19c692154f85a6ab951b36c168b8b73f47f35c66ce0ac48e2ff96160d",
+    "native_status": "running",
+    "log": "artifacts\\maps\\wt-scene-20261118\\grass-native-04\\engine.log",
+    "log_sha256": "b788c3e98b52b30cd93ccfcac0827ecfb1e91071f9c9f05a291a1472ddfd7b19",
+    "distinct_shadermap_keys": {
+      "wt_terrain": 71,
+      "wt_grass": 30,
+      "all_material_key_pairs": 217
+    },
+    "cancel_removed_messages": 0,
+    "interpretation": "Distinct DDC keys record intermediate graph compilation submissions; they are not a count of completed jobs."
+  },
+  "change": {
+    "file": "tools/unreal/wt_grass.py",
+    "before_sha256": "14b1aa819f1ff921daf1b308400bb103047744b3279c37eb77cf30767f24fe45",
+    "after_sha256": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a",
+    "prior_source_reconstructed_sha256": "14b1aa819f1ff921daf1b308400bb103047744b3279c37eb77cf30767f24fe45",
+    "prior_hash_equal": true,
+    "review_command_shell_pid": 26228,
+    "changes": [
+      "_custom(defer_notifications=False) with guard rejecting extra outputs when deferred",
+      "NEVER for deferred Custom desc/code/output_type/inputs",
+      "Terrain node helper creates directly and sets all properties/desc with NEVER",
+      "GrassOutput.grass_types uses NEVER; four weight Custom calls enable deferred mode"
+    ]
+  },
+  "supporting_scripts_sha256": {
+    "wt_materials.py": "a2f6c906f872d0f153d66098c4c943baa352b97483d8042869825dae07efa784",
+    "author_wt_grass.py": "38b623df6ce26e083bf4078dfd6fa22ac5302579995f056214d82b3fd8bf5051",
+    "Author-WTGrass.ps1": "1ec8249d9a214877aa456ac45ce6fdff86f5088f18bc5ec8a929b284c03dba64"
+  },
+  "native_helper": {
+    "file": "unreal/RMSim/Source/RMSim/MapVegetationLibrary.cpp",
+    "sha256": "4fd61e5b803a934a0d3b9547c2f438cce3a466f3766084e2731e2e3a40a5af19",
+    "phase_logs": [
+      "finish_assets begin/end with shader_jobs",
+      "build_maps begin/end with component and outdated counts",
+      "update_instances begin/end"
+    ],
+    "report_duration_fields": [
+      "finish_assets_seconds",
+      "build_maps_seconds",
+      "update_instances_seconds"
+    ]
+  },
+  "checks": [
+    {
+      "name": "previous_hash_matches_native04_authoring",
+      "status": "source_review_passed",
+      "evidence": "Reverse the four notification batching changes in memory: reconstructed SHA equals the saved native04 importer SHA."
+    },
+    {
+      "name": "scope_only_terrain_batching",
+      "status": "source_review_passed",
+      "evidence": "Only local Terrain node properties, GrassTypes and four no-extra-output Custom weight nodes use NEVER."
+    },
+    {
+      "name": "custom_additional_outputs_preserved",
+      "status": "source_review_passed",
+      "evidence": "defer_notifications rejects extra outputs; grass surface retains normal AdditionalOutputs notification and its OpacityOut socket rebuild."
+    },
+    {
+      "name": "weight_custom_default_output_preserved",
+      "status": "source_review_passed",
+      "evidence": "UMaterialExpression constructor supplies a default unnamed output; no extra output is requested on the four weight Custom nodes."
+    },
+    {
+      "name": "grass_input_cache_safe",
+      "status": "source_review_passed",
+      "evidence": "Custom and LandscapeGrassOutput input views rebuild from actual arrays on access; all thirteen source layer names are unique."
+    },
+    {
+      "name": "mask_values_read_directly",
+      "status": "source_review_passed",
+      "evidence": "ComponentMask compiler reads R/G/B/A values directly; final texture sampler type, references and UV formula remain in the unchanged graph code."
+    },
+    {
+      "name": "final_compile_and_save_gate_preserved",
+      "status": "source_review_passed",
+      "evidence": "Both _save_parent(parent) and _save_parent(terrain) remain; final errors/save failure still reject the run."
+    },
+    {
+      "name": "native_phase_gate_preserved",
+      "status": "source_review_passed",
+      "evidence": "C++ keeps FinishAllCompilation, Flush, BuildGrassMaps, OutdatedMaps, force-sync UpdateGrass and collision/data checks; added logs/durations expose the phase."
+    },
+    {
+      "name": "no_global_cancellation_or_runtime_mutation",
+      "status": "source_review_passed",
+      "evidence": "Fix adds no global cancellation, no engine-source modification and no runtime physics change."
+    }
+  ],
+  "engine_source": [
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Plugins\\Experimental\\PythonScriptPlugin\\Source\\PythonScriptPlugin\\Private\\PyWrapperObject.cpp",
+      "sha256": "8516139c8bdbab783e9fae1167321d85b4520bb1c0a2ac6b19f54b5458c8e619",
+      "line_anchors": [
+        852,
+        863,
+        878,
+        905,
+        906,
+        935,
+        994,
+        997
+      ],
+      "source_conclusion": "set_editor_property supports notify_mode; default builds property change notifications. set_editor_properties still sends one PostEditChange per object."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\CoreUObject\\Public\\UObject\\PropertyAccessUtil.h",
+      "sha256": "befed031ea0150da175f82e6425b02934ca0324a94e095e2b1c02001c2e1f9d5",
+      "line_anchors": [
+        50,
+        51,
+        54,
+        56,
+        58
+      ],
+      "source_conclusion": "Public EPropertyAccessChangeNotifyMode includes Never."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Materials\\MaterialExpressions.cpp",
+      "sha256": "66909943c30bdcea8f8bc47bd3b719093eeed4d11715b94cb120fb4f4330d815",
+      "line_anchors": [
+        802,
+        810,
+        1583,
+        1587,
+        1593,
+        1596,
+        5438,
+        5451,
+        12817,
+        12838,
+        12842,
+        12858,
+        12873,
+        12893
+      ],
+      "source_conclusion": "Expression notifications recompile the owning non-preview material. Base constructor supplies one unnamed output. Custom input access and ComponentMask compilation read current fields. Additional Custom outputs require RebuildOutputs."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Editor\\MaterialEditor\\Private\\MaterialEditingLibrary.cpp",
+      "sha256": "96051980458dad86719f195072da4bd34eebd07a80d647ebb50bbbb0626e5565",
+      "line_anchors": [
+        284,
+        291,
+        295,
+        590,
+        634,
+        928,
+        939,
+        984,
+        998,
+        1035,
+        1056
+      ],
+      "source_conclusion": "Create/connect/delete only notify an open MaterialEditor. Explicit final RecompileMaterial posts final material change and returns compile errors."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Landscape\\Private\\LandscapeGrass.cpp",
+      "sha256": "0f4a88f363aaa88649e3deeced44f4f78ee8ad86458c8cbcbbef1cc5ed9460aa",
+      "line_anchors": [
+        1389,
+        1407,
+        1413,
+        1433
+      ],
+      "source_conclusion": "GrassOutput input enumeration reads GrassTypes directly. Per-edit handler validates names/rebuilds a GUI node; source layer names are already nonempty and unique."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Materials\\Material.cpp",
+      "sha256": "a1eb6dfa4f99158dcb14cad37d3a1871a318449a7803c12aa96253d9b9258084",
+      "line_anchors": [
+        2268,
+        2288,
+        2309,
+        5356,
+        5368,
+        5420,
+        5424,
+        6170,
+        6178
+      ],
+      "source_conclusion": "Final material change rebuilds cached expression analysis. Material already calls its scoped CancelOutstandingCompilation."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Materials\\MaterialShared.cpp",
+      "sha256": "31c43df402ef7efc73514b12ae265f03b0955d1dacedfac9867763ffd0143656",
+      "line_anchors": [
+        868,
+        874,
+        892,
+        911
+      ],
+      "source_conclusion": "Scoped cancellation gathers the current compiling shader-map ID for each resource."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\ShaderCompiler\\ShaderCompiler.cpp",
+      "sha256": "01cf29f3e0f8894f50d63dbd5ffebcc8216702ea2f08f1c46787037782d0056f",
+      "line_anchors": [
+        2729,
+        2747,
+        2749,
+        2758,
+        2769
+      ],
+      "source_conclusion": "Cancellation removes pending jobs for selected map IDs and suppresses obsolete results; it does not interrupt a running compiler task."
+    }
+  ],
+  "native_followup": {
+    "execution": "artifacts\\maps\\wt-scene-20261118\\grass-native-05\\execution.json",
+    "snapshot_status": "running",
+    "snapshot_sha256": "31341534ad84758c4955f16002e4719ef8f1b0c30e7990836b31f50bdff6e7e2",
+    "pid": 44568,
+    "module_sha256": "9fb005d8e200e35077be1f4f4d758f28c4c82d104abfe93160d4c1e2be4f98c5",
+    "result": "pending_separate_native_execution_report",
+    "required_result": [
+      "actual phase progress and bounded native exit",
+      "final material/grass map success",
+      "independent saved weight/mesh/scale readback"
+    ]
+  },
+  "actions_by_reviewer": {
+    "ue_launched": false,
+    "build_launched": false,
+    "production_source_modified": false,
+    "process_attached": false,
+    "process_terminated": false
+  }
+}

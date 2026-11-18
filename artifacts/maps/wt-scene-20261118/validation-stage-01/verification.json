@@ -1,0 +1,558 @@
+{
+  "schema": "rmsim_validation_stage_v1",
+  "status": "passed",
+  "recorded_utc": "2026-11-18T06:25:34.048581+00:00",
+  "functional_source_commit": "64fbe5a7862e6ec4d035f77589b52c46e3dd2edd",
+  "selected_path_count": 132,
+  "index_only_document_separation": [
+    {
+      "path": "docs/progress/current.md",
+      "working_sha256_preserved": "b77b06e08c5e317e10a6fc7e986be32cbde57af796142c3de72a57255011416b",
+      "index_candidate_sha256": "6df3855df925e760a0a7c0c62acc2a552a96c1993f9498da21c89f36d5b074f5",
+      "blob": "d50987cb9dedc2e1974c273662e1680b7397a84f",
+      "scope": "Keep parallel destruction-only text in the working tree while publishing independent map validation"
+    },
+    {
+      "path": "docs/changes/2026-11-18.md",
+      "working_sha256_preserved": "743df83fc868b3b1e30f065319a26aeb8c25f52cb1743b93f5a008aa1a96d324",
+      "index_candidate_sha256": "06302864ad772ae63b10b49f31c5a1380584051ecc6f52a952cbb884605185c5",
+      "blob": "5d739164b481fdd9b15c62fc32ca32255a3d7ca1",
+      "scope": "Keep parallel destruction-only text in the working tree while publishing independent map validation"
+    }
+  ],
+  "hash_bound_json_count": 99,
+  "json_bindings": [
+    {
+      "path": "artifacts/maps/wt-scene-20261117/audit-api-contract-01/verification.json",
+      "sha256": "1a8efb7c347654f97fd51c427c8b0fbf2b1c97b266b8571fec766d5d177f7a13"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/leaf-facing-math-01/verification.json",
+      "sha256": "652b28c2963fb1a84c87cce10a79c348fa80a16ed0aa1e287feecd57dac44e3d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/native-materials-01/verification.json",
+      "sha256": "e998984892d9e6004d09d05d79e61c2340e8ae7b162d8f42ccb053d72def4da4"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/native-materials-02/verification.json",
+      "sha256": "05a6febc69cd581cf58f38d90dd3cca8c11a887b8c4ba3e077a91c6e16b85253"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/native-mesh-01/verification.json",
+      "sha256": "1fcefaf52788f2b08b7756323dd5472b1885b9c5bc620cd5d918994a22aa6d53"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/native-mesh-02/verification.json",
+      "sha256": "7457eb22a33e9a948ab3d0eac5b66ba7246cba54c11c1b2d4e3ddf18dff80ef9"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261117/rmuc-regression-01/verification.json",
+      "sha256": "f68753d1ad4f77ffb26b45dda4e2c125aa8c1315f67b5ac71d0a656d74c3fca6"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/decal-opacity-01/adapt/verification.json",
+      "sha256": "e794aa4f361acff4cf45182ffbbf57102e3ceafb834d7a2c6d1f2f03db86218e"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/decal-proof-01/verification.json",
+      "sha256": "f92c6f0a3002b8047e6a0bec7d330ac5d20865682423b14c131aba0a3edccc0b"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke-02/verification.json",
+      "sha256": "783391029d8b29de9ef6247f616968a42afadf000c80e453da58ccad9517d44c"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke-03/verification.json",
+      "sha256": "3b73722917e7e50b6693d37d1eadbc0254b9061aef6d6509653a204ea4002017"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke/verification.json",
+      "sha256": "26dcec55cb0ef442864667ee781753b92190c8968d594973b6df885e70c4d562"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/distant-land-02/extracted/landclass/verification.json",
+      "sha256": "087186b0095c1dd7ec08729ac1d4a6c0ea8895e3f6af6972fd49b534f77b1c9f"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/distant-land-02/extracted/verification.json",
+      "sha256": "6849525393ce74b869adba3d4a8a40c7783e6ba860b3531edb3f63172230c859"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/distant-land-02/preflight/verification.json",
+      "sha256": "05ffeefc1f43a54fd7f9fbae40d8970c0f558636afd163a6e341668a365944e9"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/distant-land-02/publish/verification.json",
+      "sha256": "aa6b2ff7973836ca56c6488c064fc67e48a2876401ea7b02bc0a1f385c8c43cd"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/docs-main-01/verification.json",
+      "sha256": "89a3cb9d6c01e6391d9a492991ea6f8f36162010a765aa7e5849a56be94331a5"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/docs-main-02/verification.json",
+      "sha256": "621b519ff75259a1d0dd074298b912213c9459ee05591336f7c27a6c5a6f7eca"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/docs-main-03/verification.json",
+      "sha256": "5025b593e4d59640d38cc736db07d449a6a605477354b47681093257ef0b9708"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/fbx-preflight-01/verification.json",
+      "sha256": "17a804519e06247a5add42ff431673265338166e4111efd45121e284c376ecee"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/final-map-tools-01/verification.json",
+      "sha256": "85e41a65f42e5b264c7865de5613989ad57eae4e8c074f44ffd7990e7e95c261"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/final-native-pipeline-01/verification.json",
+      "sha256": "d2dedd95c0578d19f437a2107b012375c5b96c6306a7531dbe82867437044b2e"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/final-native-pipeline-02/verification.json",
+      "sha256": "2fce2fc7e33700045b721493d69b6d730b00b50bdc3f6c46dd72570e0361efca"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/final-native-pipeline-03/verification.json",
+      "sha256": "d85a8c912af8f7a9c1da1093f807f9569d3505efa40c07ab5b24c8d36b6aaec6"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/final-native-pipeline-04/verification.json",
+      "sha256": "5d3fe3b60fb44567593dc604f9726a5d1aba065fcb82700bdcbae1640df539c9"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-01/verification.json",
+      "sha256": "e36f2fd96ddcc29950d69c36a3df734cd4b998b6d1fb169cb196134c51b00278"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-02-render-ready/verification.json",
+      "sha256": "1ee7ba331a23c9a91be277f012fb77478c5eb4278c34e99d35c3ea8f9dbe5c44"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/summary.json",
+      "sha256": "cf4fe8ebea9ad3c45b0d849ae6f754e12318aa1998f0d0a3956c58d6b8f9489c"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/summary.json",
+      "sha256": "278a214c4eabb2c83436eaa729372a4acb40a629eb02d27ad77b6f991b5fbb76"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/audit-logic/verification.json",
+      "sha256": "828042da6dfa067136f3040eee5cb25fe335eb98760c2131fb6ca63159824219"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/guide-01/verification.json",
+      "sha256": "ce1fb5477df83d4d711f5867c8a4a5980d8051a50386e60d526bd5d00a3918ea"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/prepared-01/verification.json",
+      "sha256": "68215d5c9bf0b9b1001d08ba6f53fbe7ebc6599fad6d0b383208754bac301b22"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/source-01/verification.json",
+      "sha256": "a6425030137ef251aba846c568abbba9f7147db10c7e02d213864a30aaba6fe9"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/source-02/verification.json",
+      "sha256": "d0e31e33277e950910b28e8e039f2aab3b3563ea8fda587e028d8fd64570beb7"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/foliage-01/source-03/verification.json",
+      "sha256": "8cdf3a1f165d4e1a0c52d38c27fba990c093831c8a7d56cd72e28f968f8bbbfa"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-api-01/verification.json",
+      "sha256": "2b3bafae59692d0df88ffe23cd1efd2f6f2ffda23ff6233c0cb7fb62d57e6f20"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-compile-fix-01/verification.json",
+      "sha256": "af8cd673cbead1f95125170caf234cae459c3f8ab3e05d2816e7897f4afde864"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-compile-observation-01/verification.json",
+      "sha256": "d29e39a0e66ff676253d871960729677c095e4111bea9edc4abe76a4f02d2eb1"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-material-preflight-01/verification.json",
+      "sha256": "a45f917f6219cedfae2d86d7d4cbe242697342e1959285bb1624fa6f40c90945"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-01/verification.json",
+      "sha256": "38c13878c18b26f40642e82e5e5d019a95f1d256fe53d8a6ea345ee05acd3146"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-02/verification.json",
+      "sha256": "2ed643d2916ee9b57138907cc987d59ee8146be2c45d516667412c84adbff840"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-03/verification.json",
+      "sha256": "23639afd4e7fd2a11d28e3644d356a33f04788e98aa647504559adcddb0cfce3"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-04/summary.json",
+      "sha256": "174b1abe34027d398753b0f9432deb19e109085dfd6680a6a950477abd0db3bc"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-05/summary.json",
+      "sha256": "52ad6145320070482e6f590e80e9d1fdbe5dd0c14b4f7b6f7917663348d30330"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-06-resume/summary.json",
+      "sha256": "cc9749a5af9fcccf40addd06e28fe16ed96f2e3ceedd58069498493acdf1f57f"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-native-07-resume/summary.json",
+      "sha256": "6ef582efd248388127585bf4f3917cb918b3698c6b81e0e09c035a67e3d2ece5"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-reload-01/summary.json",
+      "sha256": "ccd13eccfbc94033f49b776d6ec68bfb77495627a1c3da4aa0de721385c52c05"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-reload-02-final/summary.json",
+      "sha256": "e9d73ab2836d8ae028582845fc8449c84c5f99c367d0d7d485a6d44f0b17c6bd"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-resume-applied-01/verification.json",
+      "sha256": "41969bdb9e05ad2c98b25e089c17267fc0f1ad0026069d44731d0753db9ba75a"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/grass-resume-patch-01/verification.json",
+      "sha256": "8ddb25d9fcf2a15066d5253e886b3b6f604b056b62f26755eb514a971f86c93e"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json",
+      "sha256": "55ae1263f92b5dcb82ca07fb2f5882bb2b07820cd37af2c718eb946357aeac3d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/gui-input-helper-01/verification.json",
+      "sha256": "0ae570d4614e4394fcb5d57e6f196d37877600432c9fcf85d61ef9ffd47642f5"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/import-07-land-ui/summary.json",
+      "sha256": "cd84d5b4674fc745ee90524f1810569296bd751bee7e070d20dc3a121b8d77e3"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/level-config-02/decoded/verification.json",
+      "sha256": "76e6a345fec4defa6610fbd076b0567063daccf4c547696abfebbf9a38ce6133"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/binary-fixtures-01/verification.json",
+      "sha256": "a8e91929abf3bc0f8b740ad7638de43edc12a41c2be92b6882e8627b7738b400"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/georef-01/verification.json",
+      "sha256": "1a393cb0c0a4ce580407fcffe515426588b469fb868c773fb01fd0d0073ef463"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/georef-02/verification.json",
+      "sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/parser-review-01/verification.json",
+      "sha256": "26c4d2093b79a3e35180d3116e55647da9a4d396b18c857dad37818fce527b9f"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/prepare-01/verification.json",
+      "sha256": "82c98d1433332d545d3f7e44b4a0870309e8df678ba5fd4d735640cda48fd99b"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/map-overview-01/prepare-02/verification.json",
+      "sha256": "19c4eb9385c77bef257f05dd8d88892ea2c06db99830e081429c2a2ec87dc03a"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/material-rebuild-01/verification.json",
+      "sha256": "cf9c994d79304a5bccc4f92cc693d216455e8ab7f8dea03c14f8f0d7c014edd0"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/material-source-preflight-01/verification.json",
+      "sha256": "3903004abb902afca6af972eae8ca202a32b6162d6be724fb3835f6f976f077d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/material-source-preflight-02/verification.json",
+      "sha256": "20ec0299c1d0a76c60b1e8254f39287373a4ea138cd8642b97505e658d252b3d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-03/verification.json",
+      "sha256": "fdbcf7b02f43a0fdd104174696a7edd9053d40b8f23f22f7b06a2a1d4046ef86"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-04/verification.json",
+      "sha256": "7967534a202f59a57e3da1addb90dbb0494f5a285f702523a02da12c5f761c24"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-05/verification.json",
+      "sha256": "bd17a3ed20346ed34ae89aecf6663d968d0929f9e2f298f9bf57cb08dc480856"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-06/summary.json",
+      "sha256": "30be201a9e54655c6ba044c3261348ea4c2e4504ed544c8cf98a7deec6d6f069"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-07-final/summary.json",
+      "sha256": "ea872757e83895302f7e8109671f68f4db1178b792998bac20da572be9876589"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-materials-08-final/summary.json",
+      "sha256": "b32bbdb322f105c90b80514156d36f85adce30566adb588d5f55b742c865b709"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-02/summary.json",
+      "sha256": "7f5941db5ffe6a92842fe25f3b427e30baa0b096dab8673400292f8cf89d6bb8"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-03/summary.json",
+      "sha256": "1e12bb702c774163a84829c9544f226d0fe2bafc66a0e91e95d76fa37e04d888"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/summary.json",
+      "sha256": "d4895104610a4568b5c7fb49428698e44ce0ab56d77eb3516c36e1d880a9056c"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/presentation-before-01/verification.json",
+      "sha256": "78d3b37eb2bf8d0c14127d57dce3229eb48d11ecf95e6cb56364a4f0501bed4b"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/release-summary.json",
+      "sha256": "a32a49255dae72b8c576e75f4afeee1f6c640f885df1378bc855b1e5bceaf226"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-02-final/verification.json",
+      "sha256": "4e96257e4c0f816837b3fbfe4540f9151b2b38ea31a9a8607206c8553f84c5c7"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/summary.json",
+      "sha256": "96c72098c58aa282cdc50c006a4e4ea3c20b3f32911fb5dacccf6851c4cf258d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rvt-composition-review-01/verification.json",
+      "sha256": "4ab2ecfe81fb7e6bb92f597ea147849c66615ea8368cf21388b4a0cc02b6fc14"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rvt-pin-review-01/verification.json",
+      "sha256": "fb2a17206d50866b343a626b714fbff43987127906295d30e199c735c87e287e"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/scene-contact-final-01/verification.json",
+      "sha256": "cd4b04cca5967a0af621740816eeb3c5f59871ce2a1dffdd5488e5dd82062fda"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-byte-contract-01/verification.json",
+      "sha256": "d6e5bfef4f11e027272d1d52ad3eae34a7f3549520eba61a23a1eee0a064766a"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-byte-contract-02/verification.json",
+      "sha256": "8b65cf4ecaaa5910aedeb0bc923ecbe1370aaceadaa143df6fc6f01dc10da4da"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-commit-01/verification.json",
+      "sha256": "b171f0beeede978859eb2054340db75acd9efef563b984b386f40394f273d8f2"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-index-audit-03/verification.json",
+      "sha256": "7da259401f2b9fb549116cee88c285038cac7d5c72a49dc858646a5ee7c76ca1"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-proof-binding-01/verification.json",
+      "sha256": "77c703dac61f9f98d6d6c87fd2c9a1ac41e4a4ae14faaddf88ba35b94d5f207b"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-stage-01/verification.json",
+      "sha256": "53ccfe33bf1396d07648206ea9a713e64f7f01fed9bdac59ced0312fe0f9f345"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-stage-02/verification.json",
+      "sha256": "bfbb7b64fc4cfad6604eeccfdec2818689d001bd0c732b8ad49fd46f5bc240c5"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/source-stage-03/verification.json",
+      "sha256": "0e6999315c6c47d2a2ab7f67626281bc035cb5f46d95739e56fdbda7657731ca"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/texture-pool-launch-01/verification.json",
+      "sha256": "6cbca9823756c891a91d089f08cb2ca85bcc53774433fa8067f503bc8f29d46d"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/tree-split-alpha-01/verification.json",
+      "sha256": "67f35df9251d377a92641d61481b697b0167c21b9d19b0b05bb268aa6b41f18f"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/tree-view-01/summary.json",
+      "sha256": "121ebe88ad57e7b180d1292bda20f0468736bde83377ec74441f81ce425e2053"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/water-native-01/summary.json",
+      "sha256": "6238e4d4ae77171add295a8ca95bd4ba067bb5b98e0e1263c306bc278ccc8f0a"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/water-native-02/summary.json",
+      "sha256": "d8f88f9fe1619f6fe0ca44cabeab257d00360d5585b90945037ef9c0731d8f07"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/water-source-01/preflight/verification.json",
+      "sha256": "490fbf5ec778565e7d772b0151151a03e7d9eb94d748bfca56d5ff39c41f021f"
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/water-source-01/verification.json",
+      "sha256": "83b8e07465427ec32048b667ccec72081eb52779ec170acbdffd0c64c2f56323"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/graphics-rhi-20261118-01/verification.json",
+      "sha256": "a40a3bb03a643b13e4e63ad6ce456690e0df502222afe61c41db05aca41f7496"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/import-wrapper-20261117-01/verification.json",
+      "sha256": "5109cf8cb8c06619d14f0dcba523243acbd6866e853c38a0ff1f9ad8fb13c406"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/leaf-adaptation-20261117-01/verification.json",
+      "sha256": "ec67f1ed602559a9c0384490728df05a9245220ccca3c2a67d7f84a3e47bdd42"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/prepared-launch-20261118-01/verification.json",
+      "sha256": "21034fb955a0bba975d838b29676d9126fac036eb3ff46f51131a5cbda1e05fd"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/scene-launch-20261117-01/verification.json",
+      "sha256": "52e4d658a729ab303c7355612d9c75ac231336a8832aa81e24ee68ac2de394e9"
+    }
+  ],
+  "paths": [
+    ".codestable/architecture/ARCHITECTURE.md",
+    ".codestable/attention.md",
+    ".codestable/features/2026-11-15-wt-existing-map/wt-existing-map-checklist.yaml",
+    "README.md",
+    "artifacts/maps/wt-scene-20261117/audit-api-contract-01/verification.json",
+    "artifacts/maps/wt-scene-20261117/leaf-facing-math-01/verification.json",
+    "artifacts/maps/wt-scene-20261117/native-materials-01/verification.json",
+    "artifacts/maps/wt-scene-20261117/native-materials-02/verification.json",
+    "artifacts/maps/wt-scene-20261117/native-mesh-01/verification.json",
+    "artifacts/maps/wt-scene-20261117/native-mesh-02/verification.json",
+    "artifacts/maps/wt-scene-20261117/rmuc-regression-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/decal-opacity-01/adapt/verification.json",
+    "artifacts/maps/wt-scene-20261118/decal-proof-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/decal-rvt-01/api-smoke/verification.json",
+    "artifacts/maps/wt-scene-20261118/distant-land-02/extracted/landclass/verification.json",
+    "artifacts/maps/wt-scene-20261118/distant-land-02/extracted/verification.json",
+    "artifacts/maps/wt-scene-20261118/distant-land-02/preflight/verification.json",
+    "artifacts/maps/wt-scene-20261118/distant-land-02/publish/verification.json",
+    "artifacts/maps/wt-scene-20261118/docs-main-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/docs-main-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/docs-main-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/fbx-preflight-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/final-map-tools-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/final-native-pipeline-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/final-native-pipeline-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/final-native-pipeline-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/final-native-pipeline-04/verification.json",
+    "artifacts/maps/wt-scene-20261118/flanders-contact-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/flanders-contact-02-render-ready/verification.json",
+    "artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/summary.json",
+    "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/audit-logic/verification.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/guide-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/prepared-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/source-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/source-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/foliage-01/source-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-api-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-compile-fix-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-compile-observation-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-material-preflight-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-04/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-05/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-06-resume/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-native-07-resume/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-reload-01/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-reload-02-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/grass-resume-applied-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/grass-resume-patch-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json",
+    "artifacts/maps/wt-scene-20261118/gui-input-helper-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/import-07-land-ui/summary.json",
+    "artifacts/maps/wt-scene-20261118/level-config-02/decoded/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/binary-fixtures-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/georef-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/georef-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/parser-review-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/prepare-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/map-overview-01/prepare-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/material-rebuild-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/material-source-preflight-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/material-source-preflight-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-04/verification.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-05/verification.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-06/summary.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-07-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/native-materials-08-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/native-scene-02/summary.json",
+    "artifacts/maps/wt-scene-20261118/native-scene-03/summary.json",
+    "artifacts/maps/wt-scene-20261118/native-scene-04-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/presentation-before-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/release-summary.json",
+    "artifacts/maps/wt-scene-20261118/rmuc-regression-02-final/verification.json",
+    "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/summary.json",
+    "artifacts/maps/wt-scene-20261118/rvt-composition-review-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/rvt-pin-review-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/scene-contact-final-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-byte-contract-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-byte-contract-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-commit-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-index-audit-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-proof-binding-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-stage-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-stage-02/verification.json",
+    "artifacts/maps/wt-scene-20261118/source-stage-03/verification.json",
+    "artifacts/maps/wt-scene-20261118/texture-pool-launch-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/tree-split-alpha-01/verification.json",
+    "artifacts/maps/wt-scene-20261118/tree-view-01/summary.json",
+    "artifacts/maps/wt-scene-20261118/water-native-01/summary.json",
+    "artifacts/maps/wt-scene-20261118/water-native-02/summary.json",
+    "artifacts/maps/wt-scene-20261118/water-source-01/preflight/verification.json",
+    "artifacts/maps/wt-scene-20261118/water-source-01/verification.json",
+    "artifacts/maps/wt_existing/graphics-rhi-20261118-01/verification.json",
+    "artifacts/maps/wt_existing/import-wrapper-20261117-01/verification.json",
+    "artifacts/maps/wt_existing/leaf-adaptation-20261117-01/verification.json",
+    "artifacts/maps/wt_existing/prepared-launch-20261118-01/verification.json",
+    "artifacts/maps/wt_existing/scene-launch-20261117-01/verification.json",
+    "assets/maps/wt_vlaanderen/SOURCE.md",
+    "docs/changes/2026-11-18.md",
+    "docs/guides/map-overview.md",
+    "docs/guides/map-packages.md",
+    "docs/guides/war-thunder-flanders.md",
+    "docs/progress/archive/2026-11-18-before-wt-scene.md",
+    "docs/progress/current.md",
+    "docs/research/wt-material-adapters.md",
+    "tests/map_tools/test_wt_binary_formats.py",
+    "tests/map_tools/test_wt_landclass.py",
+    "tests/map_tools/test_wt_material_slots.py",
+    "tests/map_tools/test_wt_mesh_geometry.py",
+    "tests/map_tools/test_wt_water.py",
+    "tools/maps/prepare_wt_grass_audit_samples.py",
+    "tools/maps/scan_wt_fbx_coincidence.py",
+    "tools/maps/verify_wt_leaf_payload.py",
+    "tools/maps/verify_wt_map_georeference.py",
+    "tools/unreal/Test-ManualControls.ps1",
+    "tools/unreal/Test-SceneMapLaunch.ps1",
+    "tools/unreal/check_wt_facing_leaves.py",
+    "tools/unreal/inspect_wt_visibility.py",
+    "tools/unreal/test_wt_material_rebuild.py",
+    "tools/unreal/test_wt_mesh_preservation.py",
+    "tools/unreal/test_wt_rvt_asset.py",
+    "tools/unreal/update_wt_water.py",
+    "tools/unreal/verify_wt_grass.py",
+    "tools/unreal/verify_wt_materials.py",
+    "tools/unreal/verify_wt_scene.py",
+    "unreal/RMSim/Source/RMSim/ContactProbe.cpp"
+  ],
+  "working_parallel_code_and_documents_preserved": true,
+  "native_ue_started": false
+}

@@ -1,0 +1,61 @@
+﻿{
+    "schema":  "rmsim_final_native_pipeline_v1",
+    "status":  "failed",
+    "started_utc":  "2026-11-18T05:46:11.0770592Z",
+    "module_sha256":  "1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a",
+    "prerequisites":  [
+                          {
+                              "scope":  "Saved assets authored with c44d2c module; independent reload and final runtime gates below bind the current module",
+                              "name":  "grass-native-07-resume",
+                              "verification_sha256":  "831ed9a2fb0bfcd5bafe5a2a81647ac1893e507302bf4100ea224f6b82f1294a"
+                          }
+                      ],
+    "steps":  [
+                  {
+                      "name":  "grass_reload",
+                      "started_utc":  "2026-11-18T05:46:11.3711602Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-grass-reload-02-final.ps1",
+                      "arguments":  [
+
+                                    ],
+                      "status":  "passed",
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:46:24.2882201Z"
+                  },
+                  {
+                      "name":  "source_water",
+                      "started_utc":  "2026-11-18T05:46:24.2942292Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-final-native-gate.ps1",
+                      "arguments":  [
+                                        "-Kind",
+                                        "water",
+                                        "-EvidenceName",
+                                        "water-native-02",
+                                        "-TimeoutSeconds",
+                                        600
+                                    ],
+                      "status":  "passed",
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:46:39.0942443Z"
+                  },
+                  {
+                      "name":  "materials",
+                      "started_utc":  "2026-11-18T05:46:39.0983017Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-final-native-gate.ps1",
+                      "arguments":  [
+                                        "-Kind",
+                                        "materials",
+                                        "-EvidenceName",
+                                        "native-materials-07-final",
+                                        "-TimeoutSeconds",
+                                        900
+                                    ],
+                      "status":  "failed",
+                      "exit_code":  3,
+                      "finished_utc":  "2026-11-18T05:47:01.3926156Z"
+                  }
+              ],
+    "module_scope":  "Current workspace including concurrent destruction development; this report validates only the named map, material, grass, and contact checks",
+    "error":  "Pipeline step failed: materials",
+    "finished_utc":  "2026-11-18T05:47:01.4046338Z"
+}

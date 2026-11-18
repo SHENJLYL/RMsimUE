@@ -1,0 +1,26 @@
+{
+  "schema": "wt_grass_native_reload_summary_v1",
+  "status": "passed",
+  "definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "module_sha256": "1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a",
+  "native_layers": 13,
+  "native_meshes": 7,
+  "field_points": 4,
+  "source_station_nonzero_layers": 0,
+  "positive_grass_field_layers": [
+    4,
+    8,
+    4
+  ],
+  "max_corner_error_byte": 1,
+  "max_interpolation_error_byte": 0.25,
+  "components_with_valid_data": 1089,
+  "components_with_weights": 986,
+  "check_count": 27,
+  "unchanged_saved_files": 58,
+  "verification_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\grass-reload-02-final\\verification.json",
+  "verification_sha256": "c487ffd506c281850d6b422da2dbde83ef3b9d293997abb7ebcb7d6ee720b5a7",
+  "scope": "saved native grass weights/types/geometry and four source-bound sampled fields; runtime population and appearance checked separately"
+}

@@ -1,0 +1,293 @@
+{
+  "schema": "wt_foliage_preparation_verification_v1",
+  "status": "passed",
+  "scope": "source bytes, mesh FBX roundtrip, source-mask preparation and contract; native UE validation separate",
+  "foliage_file": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\foliage\\foliage.json",
+  "foliage_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "source_inputs": {
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\foliage-01\\source-03\\foliage-source.json": "ddcc8b649a18a917adbbe69c3b294d08a5158d245b1470f997d51f9f9f86e8d9",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\foliage-01\\meshes-01\\mesh-preparation.json": "deb316e14492ddcf2972da936cf007f8b6ab6752162f12b7acac41839a9e51c6",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\landclass\\landclass.json": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\foliage-01\\source-03\\textures\\avg_vlaanderen_detailed_biome_tex_b.png": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\foliage-01\\source-03\\textures\\america_detailed_grass_masks.png": "7b31dea31c637027465a0c6871b4db51659e99990e073d8828fe1c9c2bd9c07e",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\landclass\\textures\\WT_LandWeights.png": "1b9c726c059d9439a689a8c15d8620373d5f878e6655f53829c78fffda610f7e",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\landclass\\textures\\avg_vlaanderen_detailed_biome_tex_d.png": "9f961b92696b646d79c84a43d5c3a3227a419ae6544fabfd4ebabf7ad6c75a0c"
+  },
+  "source_model_count": 7,
+  "source_triangles": 56,
+  "layer_count": 13,
+  "packed_weight_textures": 4,
+  "coverage_resolution": [
+    4096,
+    4096
+  ],
+  "coverage_pixel_m": 0.5,
+  "source_inputs_unchanged": true,
+  "mesh_roundtrips": [
+    {
+      "id": "grass_blueberry_a",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 5.960464477539063e-08
+    },
+    {
+      "id": "grass_daisies_a",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 2.9802322387695312e-08
+    },
+    {
+      "id": "grass_fill_a",
+      "triangles": 8,
+      "vertices": 15,
+      "uv_layers": 1,
+      "max_bound_error_m": 0.0
+    },
+    {
+      "id": "grass_heather_a",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 5.960464477539063e-08
+    },
+    {
+      "id": "grass_paigle_a",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 2.9802322387695312e-08
+    },
+    {
+      "id": "grass_simple_a",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 5.960464477539063e-08
+    },
+    {
+      "id": "grass_tulip_b",
+      "triangles": 8,
+      "vertices": 16,
+      "uv_layers": 1,
+      "max_bound_error_m": 5.960464477539063e-08
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer_00",
+      "eligible_pixels": 538986,
+      "nonzero_weight_pixels": 55897,
+      "max_weight": 1.0,
+      "mean_weight": 0.00272640073671937,
+      "weighted_area_m2": 11435.3539647758,
+      "uint8_max_error": 0.0017157196998596191
+    },
+    {
+      "id": "layer_01",
+      "eligible_pixels": 5117,
+      "nonzero_weight_pixels": 476,
+      "max_weight": 1.0,
+      "mean_weight": 2.1863728761672974e-05,
+      "weighted_area_m2": 91.703125,
+      "uint8_max_error": 0.0017156898975372314
+    },
+    {
+      "id": "layer_02",
+      "eligible_pixels": 229724,
+      "nonzero_weight_pixels": 25526,
+      "max_weight": 1.0,
+      "mean_weight": 0.001254294067621231,
+      "weighted_area_m2": 5260.890318725724,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_03",
+      "eligible_pixels": 54708,
+      "nonzero_weight_pixels": 5752,
+      "max_weight": 1.0,
+      "mean_weight": 0.00028049590764567256,
+      "weighted_area_m2": 1176.4850490354002,
+      "uint8_max_error": 0.0017156898975372314
+    },
+    {
+      "id": "layer_04",
+      "eligible_pixels": 114883,
+      "nonzero_weight_pixels": 14594,
+      "max_weight": 1.0,
+      "mean_weight": 0.0007066540420055389,
+      "weighted_area_m2": 2963.921875,
+      "uint8_max_error": 0.0017156898975372314
+    },
+    {
+      "id": "layer_05",
+      "eligible_pixels": 2551675,
+      "nonzero_weight_pixels": 276691,
+      "max_weight": 1.0,
+      "mean_weight": 0.013393428176641464,
+      "weighted_area_m2": 56176.111447836796,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_06",
+      "eligible_pixels": 2551675,
+      "nonzero_weight_pixels": 276691,
+      "max_weight": 1.0,
+      "mean_weight": 0.013393428176641464,
+      "weighted_area_m2": 56176.111447836796,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_07",
+      "eligible_pixels": 2551675,
+      "nonzero_weight_pixels": 276691,
+      "max_weight": 1.0,
+      "mean_weight": 0.013393428176641464,
+      "weighted_area_m2": 56176.111447836796,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_08",
+      "eligible_pixels": 2281175,
+      "nonzero_weight_pixels": 211341,
+      "max_weight": 1.0,
+      "mean_weight": 0.00978756695985794,
+      "weighted_area_m2": 41052.03202483078,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_09",
+      "eligible_pixels": 5364453,
+      "nonzero_weight_pixels": 468013,
+      "max_weight": 1.0,
+      "mean_weight": 0.02127125859260559,
+      "weighted_area_m2": 89218.12922800261,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_10",
+      "eligible_pixels": 5364453,
+      "nonzero_weight_pixels": 468013,
+      "max_weight": 1.0,
+      "mean_weight": 0.02127125859260559,
+      "weighted_area_m2": 89218.12922800261,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_11",
+      "eligible_pixels": 7645628,
+      "nonzero_weight_pixels": 679354,
+      "max_weight": 1.0,
+      "mean_weight": 0.03105882555246353,
+      "weighted_area_m2": 130270.16125283342,
+      "uint8_max_error": 0.0019608139991760254
+    },
+    {
+      "id": "layer_12",
+      "eligible_pixels": 9958466,
+      "nonzero_weight_pixels": 901068,
+      "max_weight": 1.0,
+      "mean_weight": 0.04145431146025658,
+      "weighted_area_m2": 173871.98232520104,
+      "uint8_max_error": 0.0019608139991760254
+    }
+  ],
+  "samples": [
+    {
+      "dagor_xz_m": [
+        1028,
+        1020
+      ],
+      "png_xy": [
+        2056,
+        2056
+      ],
+      "biome_id": 1,
+      "landclass_weight": 1.0,
+      "combined_grass_weight": 0.0,
+      "eligible_layers": [
+        "layer_09",
+        "layer_10",
+        "layer_11",
+        "layer_12"
+      ]
+    },
+    {
+      "dagor_xz_m": [
+        100,
+        1400
+      ],
+      "png_xy": [
+        200,
+        1296
+      ],
+      "biome_id": 1,
+      "landclass_weight": 1.0,
+      "combined_grass_weight": 1.0,
+      "eligible_layers": [
+        "layer_09",
+        "layer_10",
+        "layer_11",
+        "layer_12"
+      ]
+    },
+    {
+      "dagor_xz_m": [
+        1700,
+        500
+      ],
+      "png_xy": [
+        3400,
+        3096
+      ],
+      "biome_id": 24,
+      "landclass_weight": 1.0,
+      "combined_grass_weight": 0.0,
+      "eligible_layers": []
+    },
+    {
+      "dagor_xz_m": [
+        800,
+        1700
+      ],
+      "png_xy": [
+        1600,
+        696
+      ],
+      "biome_id": 0,
+      "landclass_weight": 1.0,
+      "combined_grass_weight": 0.0,
+      "eligible_layers": [
+        "layer_08",
+        "layer_11",
+        "layer_12"
+      ]
+    }
+  ],
+  "max_weight_quantization_error": 0.0019608139991760254,
+  "adaptation_scope": {
+    "geometry": "original RndGrass LOD0; seven meshes and 56 original triangles",
+    "coverage": "original 0.5m biome-ID texels times bilinear original grass_weight.R and lmap class-1 blend weight",
+    "color": "published billboard-grass mask composition, original layer colors and original macro-land color",
+    "sampling": "negative-V native biome texel centres; original height-dependent four-biome detail blend is not baked",
+    "unimplemented_source_operations": [
+      "microdetail-dependent grass-removal bits",
+      "grass-decal channel overrides and terrain displacement",
+      "small_grass procedural billboard system",
+      "Dagor random seed, wind and renderer-specific multi-LOD transitions"
+    ]
+  },
+  "generated_instances": 0,
+  "pure_contract_validation": {
+    "validator": "tools/unreal/wt_grass.py:validate_foliage",
+    "models": 7,
+    "weight_textures": 4,
+    "layers": 13
+  },
+  "tools": {
+    "extract_wt_foliage.py": "7e76f5a213668a072f32df98cd2c22166b67990f6e6f758881caa85458da1d83",
+    "prepare_wt_foliage_meshes.py": "a2d659c449a1eddf543b92c6fe7b546ebe4e1d7c684a436fe9b8f6adb068cf5a",
+    "prepare_wt_foliage.py": "38d7458b63845efbba6b31b5b34d05db10132a56f8eb79aa591eea4786a0d2b3"
+  }
+}

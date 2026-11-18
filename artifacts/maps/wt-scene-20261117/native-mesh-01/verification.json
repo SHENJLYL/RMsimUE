@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "complete": true,
+  "source_manifest_sha256": "f0cee3b0ba9debb62f614cf89e8792fd14a3869a1f4ae01cfc2c827a53b72996",
+  "results": [],
+  "scope": "native_original_mesh_reimport_material_identity_triangles_uvs_and_bounds",
+  "error": "PrepareSourceLeafMesh output contract changed; expected(return_value,error), got str",
+  "traceback": "Traceback (most recent call last):\n  File \"D:/simulator-wt-vlaanderen/tools/unreal/test_wt_mesh_preservation.py\", line 43, in <module>\n    result=import_mesh(package,folder+'/Meshes/'+name+'.'+name,spec,False,mats,cache,output/'cache.json',folder)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\simulator-wt-vlaanderen\\tools\\unreal\\import_wt_scene.py\", line 183, in import_mesh\n    if not unwrap(unreal.MapImportLibrary.prepare_source_leaf_mesh(mesh),'PrepareSourceLeafMesh'):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\simulator-wt-vlaanderen\\tools\\unreal\\import_wt_scene.py\", line 218, in unwrap\n    raise RuntimeError(label+' output contract changed; expected(return_value,error), got '+type(result).__name__)\nRuntimeError: PrepareSourceLeafMesh output contract changed; expected(return_value,error), got str\n"
+}
