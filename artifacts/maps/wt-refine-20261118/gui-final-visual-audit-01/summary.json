@@ -1,0 +1,988 @@
+{
+  "schema": "wt_final_gui_visual_and_input_audit_v1",
+  "status": "passed",
+  "module_sha256": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+  "world_sha256": "3311399568469e48d8580f1b41897ad5899321b51617638dd2c541e875ef1066",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_manifest": {
+    "path": "assets/maps/wt_vlaanderen/scene-source.json",
+    "bytes": 1677248,
+    "sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "map_descriptor": {
+    "path": "assets/maps/wt_vlaanderen/map.json",
+    "bytes": 710,
+    "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431"
+  },
+  "overview_definition": {
+    "path": "assets/maps/wt_vlaanderen/overview.json",
+    "bytes": 1883,
+    "sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b"
+  },
+  "current_native_evidence": [
+    {
+      "path": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/summary.json",
+      "bytes": 6477,
+      "sha256": "9eaf5fb33524577d94b9d85f62074cbe50678fe1e61104a5850e61b81109345b"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/summary.json",
+      "bytes": 9034,
+      "sha256": "6904ba0903746a37c186f60a1ea446be184558617e32322976c65b402c29efb4"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/materials-reload-04/summary.json",
+      "bytes": 34278,
+      "sha256": "985e9a77ce19262e875e5c56ca74129c2184420f32ca2670e2f25e4e4c115fe1"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/scene-reload-03/execution.json",
+      "bytes": 6287,
+      "sha256": "50d620a34f1b19f818ddb4e6d5938639fc5cabacc904df71a38fe6a01712f66f"
+    }
+  ],
+  "render_ready": {
+    "slope": {
+      "log": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-session-01/runtime.log",
+        "bytes": 512825,
+        "sha256": "ea4f4d406a585268e467b28599ff44f65c82ee34da4b6c226cb420cc596371ab"
+      },
+      "line": "[2026.11.18-11.20.52:058][379]LogRMSim: Display: SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0 streaming_id=0->0 completed_frames=2 elapsed=12.420s",
+      "remaining_counters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "completed_frames": 2,
+      "elapsed_seconds": 12.42,
+      "texture_pool_mb": 4096
+    },
+    "default": {
+      "log": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/live-runtime-snapshot.log",
+        "bytes": 509106,
+        "sha256": "ea4a904821a80d3e9405a49cb17b2e36a17f23cc63102718966d1e4fd2a38965"
+      },
+      "line": "[2026.11.18-11.22.49:120][ 25]LogRMSim: Display: SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0 streaming_id=0->0 completed_frames=2 elapsed=2.152s",
+      "remaining_counters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "completed_frames": 2,
+      "elapsed_seconds": 2.152,
+      "texture_pool_mb": 4096
+    }
+  },
+  "inputs": [
+    {
+      "name": "gui-final-slope-state-01",
+      "pid": 35712,
+      "key": "Space",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-state-01/execution.json",
+        "bytes": 1204,
+        "sha256": "43194fbec07f219fc54185a6fc0a185c9f9621c4f7d11ba5600e4789333cb9dd"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 120,
+      "actual_hold_ms": 143,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:21:24.4769910Z",
+      "finished_utc": "2026-11-18T11:21:24.6803098Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-state-01/before-live-input.json",
+        "bytes": 44186,
+        "sha256": "7e831a5387af07d852b6cc8883ddad3b5b0b77a4efddd5e28df6188cb5b9be34"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-state-01/after-live-input.json",
+        "bytes": 44222,
+        "sha256": "ede7d520b6ad2c1975048df92e250783c177e48bdf704acf2951a2dfb8d599d3"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "count_deltas": null,
+      "before_pose": {
+        "sample_utc": "2026-11-18T10:47:44.696Z",
+        "position_ros_m": [
+          1146.250053700683,
+          -942.2521497917318,
+          3.568793871034465
+        ],
+        "rotation_xyzw_ue": [
+          0.09999272887805724,
+          0.05164585963930665,
+          0.0032062839911256285,
+          0.9936417257224076
+        ],
+        "map_uv": [
+          0.5596924090335367,
+          0.5399159424845059
+        ],
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:21:24.682Z",
+        "position_ros_m": [
+          1146.2501284604232,
+          -942.2519569407721,
+          3.569628039309939
+        ],
+        "rotation_xyzw_ue": [
+          0.09794560008637203,
+          0.050555426285860815,
+          0.0030953453178953223,
+          0.9939020208924711
+        ],
+        "map_uv": [
+          0.559692445537316,
+          0.5399160366500136
+        ],
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "before_snapshot_scope": "Initial input for this process; per-session edge accounting begins at the after sample"
+    },
+    {
+      "name": "gui-final-default-state-01",
+      "pid": 22452,
+      "key": "Space",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-default-state-01/execution.json",
+        "bytes": 1168,
+        "sha256": "9bda737def404e51106574d1178cbd7cca5931eb6d21345c2700e676b6b0a4d8"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 120,
+      "actual_hold_ms": 146,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:22:57.9355605Z",
+      "finished_utc": "2026-11-18T11:22:58.1386097Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-default-state-01/before-live-input.json",
+        "bytes": 44222,
+        "sha256": "ede7d520b6ad2c1975048df92e250783c177e48bdf704acf2951a2dfb8d599d3"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-default-state-01/after-live-input.json",
+        "bytes": 44472,
+        "sha256": "d835e259d57e8a8be1fb740936b692d4f7ed39b8c8782866c42add9e173bf11c"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "count_deltas": null,
+      "before_pose": {
+        "sample_utc": "2026-11-18T11:21:24.682Z",
+        "position_ros_m": [
+          1146.2501284604232,
+          -942.2519569407721,
+          3.569628039309939
+        ],
+        "rotation_xyzw_ue": [
+          0.09794560008637203,
+          0.050555426285860815,
+          0.0030953453178953223,
+          0.9939020208924711
+        ],
+        "map_uv": [
+          0.559692445537316,
+          0.5399160366500136
+        ],
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:22:58.145Z",
+        "position_ros_m": [
+          1028.0001798150963,
+          -1020.0000249654223,
+          -1.3811349804487645
+        ],
+        "rotation_xyzw_ue": [
+          0.019633848270973937,
+          0.009437748255443459,
+          0.00026606227107355733,
+          0.9997626568945289
+        ],
+        "map_uv": [
+          0.50195321280034,
+          0.5019531128098524
+        ],
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "before_snapshot_scope": "Initial input for this process; per-session edge accounting begins at the after sample"
+    },
+    {
+      "name": "gui-final-motion-01-drive",
+      "pid": 22452,
+      "key": "W",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-motion-01-drive/execution.json",
+        "bytes": 1166,
+        "sha256": "125a3cfea6d875b466915063c52efbe1b51cb0d0d74332d61e5890674a6a3ea6"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 4500,
+      "actual_hold_ms": 4513,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:23:28.5702240Z",
+      "finished_utc": "2026-11-18T11:23:33.1417904Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-motion-01-drive/before-live-input.json",
+        "bytes": 44472,
+        "sha256": "d835e259d57e8a8be1fb740936b692d4f7ed39b8c8782866c42add9e173bf11c"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-motion-01-drive/after-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "count_deltas": {
+        "Space_press": 0,
+        "Space_release": 0,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "before_pose": {
+        "sample_utc": "2026-11-18T11:22:58.145Z",
+        "position_ros_m": [
+          1028.0001798150963,
+          -1020.0000249654223,
+          -1.3811349804487645
+        ],
+        "rotation_xyzw_ue": [
+          0.019633848270973937,
+          0.009437748255443459,
+          0.00026606227107355733,
+          0.9997626568945289
+        ],
+        "map_uv": [
+          0.50195321280034,
+          0.5019531128098524
+        ],
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      }
+    },
+    {
+      "name": "gui-final-map-open-01",
+      "pid": 22452,
+      "key": "M",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-open-01/execution.json",
+        "bytes": 1164,
+        "sha256": "58b468b0b22ec8083d77c75d934f5317e41ffdce73c3b84224751e2c0a04e9b4"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 120,
+      "actual_hold_ms": 141,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:25:44.8332779Z",
+      "finished_utc": "2026-11-18T11:25:45.0353675Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-open-01/before-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-open-01/after-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "count_deltas": {
+        "Space_press": 0,
+        "Space_release": 0,
+        "W_press": 0,
+        "W_release": 0
+      },
+      "before_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      }
+    },
+    {
+      "name": "gui-final-map-close-01",
+      "pid": 22452,
+      "key": "M",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-close-01/execution.json",
+        "bytes": 1164,
+        "sha256": "be9436640bb31516d18b635a0c5fa9ec2145aca173cab89c7945853ea5986592"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 120,
+      "actual_hold_ms": 149,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:27:13.0681705Z",
+      "finished_utc": "2026-11-18T11:27:13.2801984Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-close-01/before-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-close-01/after-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "count_deltas": {
+        "Space_press": 0,
+        "Space_release": 0,
+        "W_press": 0,
+        "W_release": 0
+      },
+      "before_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      }
+    },
+    {
+      "name": "gui-final-reset-01",
+      "pid": 22452,
+      "key": "R",
+      "execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-reset-01/execution.json",
+        "bytes": 1164,
+        "sha256": "eb02a64bef7f30327f312d435f3ec35e87dde5b2a61cbb3320f131b8a898947b"
+      },
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "requested_hold_ms": 120,
+      "actual_hold_ms": 162,
+      "key_up_sent": true,
+      "focus_checked_every_ms": 40,
+      "started_utc": "2026-11-18T11:27:14.1208048Z",
+      "finished_utc": "2026-11-18T11:27:14.2876819Z",
+      "before_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-reset-01/before-live-input.json",
+        "bytes": 50275,
+        "sha256": "c8c90a8ba59ad1a88e1023c6bcda7168a574a5b808135cd897fcfdb438d3af03"
+      },
+      "after_state": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-reset-01/after-live-input.json",
+        "bytes": 49278,
+        "sha256": "c39895b885dee78eedb0c8994c482cbf236867f452db23e0486a764ac90db322"
+      },
+      "before_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1
+      },
+      "after_counts": {
+        "Space_press": 1,
+        "Space_release": 1,
+        "W_press": 1,
+        "W_release": 1,
+        "RestartRound_press": 1,
+        "RestartRound_release": 1
+      },
+      "count_deltas": {
+        "RestartRound_press": 1,
+        "RestartRound_release": 1,
+        "Space_press": 0,
+        "Space_release": 0,
+        "W_press": 0,
+        "W_release": 0
+      },
+      "before_pose": {
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "position_ros_m": [
+          1032.925177750093,
+          -1020.0495268183499,
+          -1.4056967072575532
+        ],
+        "rotation_xyzw_ue": [
+          -0.05082378579744749,
+          -0.0036619487530414295,
+          0.8715038373778576,
+          0.48773414311919355
+        ],
+        "map_uv": [
+          0.5043579969482876,
+          0.5019289419832276
+        ],
+        "speed_cm_per_second": 1.9699845187033982,
+        "contact_recovery_count": 0,
+        "window_focused": true
+      },
+      "after_pose": {
+        "sample_utc": "2026-11-18T11:27:14.297Z",
+        "position_ros_m": [
+          1027.999933352335,
+          -1020.0001619546377,
+          -1.3849725713721615
+        ],
+        "rotation_xyzw_ue": [
+          0.01265846457865512,
+          0.006268866754693666,
+          0.0001835093259704074,
+          0.9999002104752505
+        ],
+        "map_uv": [
+          0.5019530924571948,
+          0.501953045920587
+        ],
+        "speed_cm_per_second": 0.23876557707451737,
+        "contact_recovery_count": 1,
+        "window_focused": true
+      }
+    }
+  ],
+  "input_scope": "Real focused Win32 SendInput and key-up. JSON snapshots update at supported key edges; screenshots can follow further settling. M is verified by its runtime toggle log.",
+  "actual_default_session_edge_counts": {
+    "Space_press": 1,
+    "Space_release": 1,
+    "W_press": 1,
+    "W_release": 1,
+    "RestartRound_press": 1,
+    "RestartRound_release": 1
+  },
+  "reset": {
+    "source_spawn_ros_m": [
+      1028,
+      -1020,
+      -1.3805752992630005
+    ],
+    "before": {
+      "sample_utc": "2026-11-18T11:23:33.158Z",
+      "position_ros_m": [
+        1032.925177750093,
+        -1020.0495268183499,
+        -1.4056967072575532
+      ],
+      "rotation_xyzw_ue": [
+        -0.05082378579744749,
+        -0.0036619487530414295,
+        0.8715038373778576,
+        0.48773414311919355
+      ],
+      "map_uv": [
+        0.5043579969482876,
+        0.5019289419832276
+      ],
+      "speed_cm_per_second": 1.9699845187033982,
+      "contact_recovery_count": 0,
+      "window_focused": true
+    },
+    "after_key_edge": {
+      "sample_utc": "2026-11-18T11:27:14.297Z",
+      "position_ros_m": [
+        1027.999933352335,
+        -1020.0001619546377,
+        -1.3849725713721615
+      ],
+      "rotation_xyzw_ue": [
+        0.01265846457865512,
+        0.006268866754693666,
+        0.0001835093259704074,
+        0.9999002104752505
+      ],
+      "map_uv": [
+        0.5019530924571948,
+        0.501953045920587
+      ],
+      "speed_cm_per_second": 0.23876557707451737,
+      "contact_recovery_count": 1,
+      "window_focused": true
+    },
+    "error_to_source_spawn_cm_xyz": [
+      -0.00666476651076664,
+      -0.016195463774693053,
+      -0.43972721091609657
+    ],
+    "horizontal_error_cm": 0.017513199579757877,
+    "three_dimensional_error_cm": 0.4400758254887102,
+    "handoff_hud_speed_km_h_reviewed": 0.0,
+    "speed_scope": "Exact R-release sample retains a small settling speed; later handoff HUD displays rounded0.0km/h"
+  },
+  "map_toggles": [
+    {
+      "expanded": 1,
+      "ros_m_from_log": [
+        1032.924,
+        -1020.05,
+        -1.404
+      ],
+      "uv": [
+        0.504357646,
+        0.501928783
+      ],
+      "uv_error_from_rounded_ros": 2.2412500000346114e-07,
+      "line": "[2026.11.18-11.25.44:897][122]LogTemp: Display: MAP_OVERVIEW_TOGGLE expanded=1 map=wt_vlaanderen vehicle_ros_m=(1032.924,-1020.050,-1.404) vehicle_uv=(0.504357646,0.501928783)"
+    },
+    {
+      "expanded": 0,
+      "ros_m_from_log": [
+        1032.924,
+        -1020.05,
+        -1.404
+      ],
+      "uv": [
+        0.504357646,
+        0.501928783
+      ],
+      "uv_error_from_rounded_ros": 2.2412500000346114e-07,
+      "line": "[2026.11.18-11.27.13:129][769]LogTemp: Display: MAP_OVERVIEW_TOGGLE expanded=0 map=wt_vlaanderen vehicle_ros_m=(1032.924,-1020.050,-1.404) vehicle_uv=(0.504357646,0.501928783)"
+    }
+  ],
+  "motion": {
+    "frames_file": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-final-motion-01-frames/frames.json",
+      "bytes": 21578380,
+      "sha256": "8f40e500f4f1ebf521fb90c927dd677347f7f818e6e2e3ce2a755310bb01222a"
+    },
+    "frame_inventory": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/frame-inventory.json",
+      "bytes": 26593,
+      "sha256": "0578d4d83d4bff43a528e7570964d7359cf71bfd64f8ae23c041d0adee354334"
+    },
+    "captured_pngs": 80,
+    "decoded_and_hashed_pngs": 80,
+    "dimensions_px": [
+      1616,
+      1039
+    ],
+    "recorded_utc": "2026-11-18T11:23:37.4342665Z",
+    "requested_interval_ms": 100,
+    "first_elapsed_ms": 173,
+    "last_elapsed_ms": 10148,
+    "interframe_ms_min_max": [
+      111,
+      153
+    ],
+    "time_scope": "Elapsed frame times; recorded_utc is series metadata",
+    "pose_sample_groups": [
+      {
+        "first_frame": 0,
+        "last_frame": 9,
+        "sample_utc": "2026-11-18T11:22:58.145Z",
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1
+        },
+        "pose_at_key_edge": {
+          "sample_utc": "2026-11-18T11:22:58.145Z",
+          "position_ros_m": [
+            1028.0001798150963,
+            -1020.0000249654223,
+            -1.3811349804487645
+          ],
+          "rotation_xyzw_ue": [
+            0.019633848270973937,
+            0.009437748255443459,
+            0.00026606227107355733,
+            0.9997626568945289
+          ],
+          "map_uv": [
+            0.50195321280034,
+            0.5019531128098524
+          ],
+          "speed_cm_per_second": 0,
+          "contact_recovery_count": 0,
+          "window_focused": true
+        }
+      },
+      {
+        "first_frame": 10,
+        "last_frame": 45,
+        "sample_utc": "2026-11-18T11:23:28.626Z",
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1,
+          "W_press": 1
+        },
+        "pose_at_key_edge": {
+          "sample_utc": "2026-11-18T11:23:28.626Z",
+          "position_ros_m": [
+            1028.0001798150963,
+            -1020.0000249654223,
+            -1.3811349804487645
+          ],
+          "rotation_xyzw_ue": [
+            0.019633848270973937,
+            0.009437748255443459,
+            0.00026606227107355733,
+            0.9997626568945289
+          ],
+          "map_uv": [
+            0.50195321280034,
+            0.5019531128098524
+          ],
+          "speed_cm_per_second": 0,
+          "contact_recovery_count": 0,
+          "window_focused": true
+        }
+      },
+      {
+        "first_frame": 46,
+        "last_frame": 79,
+        "sample_utc": "2026-11-18T11:23:33.158Z",
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1,
+          "W_press": 1,
+          "W_release": 1
+        },
+        "pose_at_key_edge": {
+          "sample_utc": "2026-11-18T11:23:33.158Z",
+          "position_ros_m": [
+            1032.925177750093,
+            -1020.0495268183499,
+            -1.4056967072575532
+          ],
+          "rotation_xyzw_ue": [
+            -0.05082378579744749,
+            -0.0036619487530414295,
+            0.8715038373778576,
+            0.48773414311919355
+          ],
+          "map_uv": [
+            0.5043579969482876,
+            0.5019289419832276
+          ],
+          "speed_cm_per_second": 1.9699845187033982,
+          "contact_recovery_count": 0,
+          "window_focused": true
+        }
+      }
+    ],
+    "pose_scope": "Embedded key-edge states; not continuous per-frame poses",
+    "visual_review": {
+      "root_original_frames": [
+        10,
+        35,
+        79
+      ],
+      "independent_preview_frames": [
+        25,
+        45,
+        65
+      ],
+      "distinct_reviewed_frames": 6,
+      "captured_frames": 80,
+      "reviewed_original_sha256": {
+        "10": "ce0c70b6ded548d165d64580db5f20ac5f00b69f6f453bbde3fbd05ac0fc9bf6",
+        "25": "de7e42bd8296f6ffc8ed2a5770f06e36cf34342c83ea4fbcc2bc257aed564cdf",
+        "35": "011ba1b7e113463ffeaed06a42bf43d66b2a6db6d160c25399f2bf4350831332",
+        "45": "48f694c6bc0d6fa888321dbe67d70edca6250d89e68659aeff51a0cfefa3f12d",
+        "65": "5933b3172def0507be81433771f53f7e563dc09194b7f0570f685435cfc03a14",
+        "79": "63a47b58ec4496fa761793f0a55935857e27ab2ff64a9c3ef2f062181ddebf66"
+      },
+      "independent_previews": [
+        {
+          "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/frame-025-preview.jpg",
+          "bytes": 256586,
+          "sha256": "037cb7472a4f7cd0836fd6b14251a3a95d0b0352a18871c63e1ca55d564ed54c"
+        },
+        {
+          "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/frame-045-preview.jpg",
+          "bytes": 262066,
+          "sha256": "c85dd234a5796c91719298e5f0cfaf7b8287cd4ab7278107f699d04f55e5bf03"
+        },
+        {
+          "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/frame-065-preview.jpg",
+          "bytes": 261772,
+          "sha256": "8a4e1e29978597045a8dd1d0dbc5720edc01d2dae2259139374752c1faf33f7b"
+        }
+      ],
+      "independent_observation": "25 shows movement beside the rail.45/65 show the car stopped at the rail edge. Gravel, platform and sleeper textures remain continuous in these reviewed frames; no broad black/white alternation observed.",
+      "root_observation": "10/35/79 preserve continuous gravel/platform/sleeper textures.35/79 show the car stopped at the rail near ROS X1032.9.",
+      "scope": "Six explicitly reviewed frames out of80; recorded movement reaches the rail edge"
+    }
+  },
+  "stills": [
+    {
+      "name": "gui-final-slope-view-01",
+      "pid": 35712,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-view-01/entry.png",
+        "bytes": 3318422,
+        "sha256": "c4d6ba31a456557ce1b7945cd3edc417bb69bea5d421c81f38819460380af103"
+      },
+      "dimensions_px": [
+        1616,
+        1039
+      ],
+      "context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-view-01/window-context.json",
+        "bytes": 1368,
+        "sha256": "381024b5e7921f0c9cf61c8a37bd3b319fb4f4355f484df6ea5980cb523edcc2"
+      },
+      "observed_utc": "2026-11-18T11:21:25.8926311Z",
+      "root_reviewed_original": true,
+      "root_observation": "Previous LC1 regular grid absent in this slope; grass, flowers and ferns retain variation; visible railway hard surface clean",
+      "independent_reviewer": "/root/wt_import_audit",
+      "independent_review": "aspect-preserving 1280px preview",
+      "preview": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-review-01/preview.jpg",
+        "bytes": 287122,
+        "sha256": "5392181dc4c662525c6667b4c8d10f6b6fb8a023d07b917a0e7bd74845c90ad6"
+      }
+    },
+    {
+      "name": "gui-final-default-view-01",
+      "pid": 22452,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-default-view-01/entry.png",
+        "bytes": 3247979,
+        "sha256": "02c85d9b372412e4aead9b526ec7e34159da8826f69b0c115aa43385a6c13fea"
+      },
+      "dimensions_px": [
+        1616,
+        1039
+      ],
+      "context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-default-view-01/window-context.json",
+        "bytes": 1332,
+        "sha256": "f020a84448bce6078dfed75150d4b8664cca616d99a2a295f3ccbe26eacb0bc9"
+      },
+      "observed_utc": "2026-11-18T11:22:59.3332077Z",
+      "root_reviewed_original": true,
+      "root_observation": "Continuous default gravel surface; previous diagonal dark stripes absent in the reviewed frame"
+    },
+    {
+      "name": "gui-final-map-view-01",
+      "pid": 22452,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-view-01/entry.png",
+        "bytes": 2010172,
+        "sha256": "e598c300f027dcf530846a2de25387ffbfc0eb1d90fd4105a2257099bded8c0d"
+      },
+      "dimensions_px": [
+        1616,
+        1039
+      ],
+      "context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-map-view-01/window-context.json",
+        "bytes": 1332,
+        "sha256": "2a2d90b2e1a74858144fb86de35cff6afec7465dc68d7f80fc17d7251d79aa89"
+      },
+      "observed_utc": "2026-11-18T11:25:46.2414606Z",
+      "root_reviewed_original": true,
+      "root_observation": "Actual M-expanded map shows vehicle arrow, separate spawn marker, coordinates and scale"
+    },
+    {
+      "name": "gui-final-handoff-view-01",
+      "pid": 22452,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-handoff-view-01/entry.png",
+        "bytes": 3248077,
+        "sha256": "73c78cdba1d043b0cffab5b7653908f6250c80e8dfff1e1e0dadc5086067edd5"
+      },
+      "dimensions_px": [
+        1616,
+        1039
+      ],
+      "context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-final-handoff-view-01/window-context.json",
+        "bytes": 1332,
+        "sha256": "f109a07fb3fa0e4bd61e06508eddf2f4f665ac009e17f72132e8968724778c2b"
+      },
+      "observed_utc": "2026-11-18T11:27:15.4601658Z",
+      "root_reviewed_original": true,
+      "root_observation": "R restores HUD X1028/Y-1020 and0.0km/h; small map restored; viewport available for driving"
+    }
+  ],
+  "slope_session": {
+    "close_execution": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-final-slope-session-01/execution.json",
+      "bytes": 1060,
+      "sha256": "acb50fbae92e9f10313ebbb8772a1c5afe25a2ba56ce0d1bc87db31e435295da"
+    },
+    "pid": 35712,
+    "exit_code": 0,
+    "forced": false
+  },
+  "default_session": {
+    "live_snapshot": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/live-session-snapshot.json",
+      "bytes": 1765,
+      "sha256": "674b705a3f47111e9eabb692536b0824c65d78684a78d687a5559bd504a4ede1"
+    },
+    "live_input_snapshot": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/live-input-snapshot.json",
+      "bytes": 49278,
+      "sha256": "c39895b885dee78eedb0c8994c482cbf236867f452db23e0486a764ac90db322"
+    },
+    "pid": 22452,
+    "status": "left_running_for_user",
+    "process_closed": false,
+    "exit_code": null,
+    "command": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator/unreal/RMSim/RMSim.uproject\" /Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -ForceDPCVars=r.Streaming.PoolSize=4096 -windowed -InputEvidence=\"D:/simulator/artifacts/gameplay/gyro-control/live-input.json\" -MapFile=\"D:/simulator/assets/maps/wt_vlaanderen/map.json\" -SpawnId=\"default\" -d3d11 -NoShaderWorker -ContactPhysics ",
+    "process_creation_utc": "2026-11-18T11:22:31.1969710Z",
+    "observed_utc": "2026-11-18T11:29:55.3808996Z",
+    "log_read_mode": "FileStream Open Read FileShare.ReadWrite; captured fixed initial Length",
+    "scope": "Fixed initial-length shared-read log; same live process present before/after copying"
+  },
+  "original_images_modified": false,
+  "scope": "Visible fixtures, six sampled motion frames, real M/R input sequence and live handoff",
+  "finished_utc": "2026-11-18T11:34:45.000897+00:00",
+  "helper": {
+    "path": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/build_summary.py",
+    "bytes": 13003,
+    "sha256": "36d943ccb6ccd4269ad9f6f4c732adf1b534e72e20a7c5803aa4fcd1ae0a63b2"
+  }
+}

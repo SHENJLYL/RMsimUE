@@ -1,0 +1,115 @@
+{
+  "schema": "wt_ground_refinement_preflight_summary_v1",
+  "status": "passed",
+  "exit_code": 0,
+  "seconds": 2.0964171,
+  "check_count": 78,
+  "native_engine_started": false,
+  "rendered_quality_verified": false,
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+  "source_proof_sha256": "327b433807856e123f1752e952652b47e35e7c346ac7a996d8de28b070d0f0b6",
+  "verification_sha256": "07c1dff4c12405ec2fa13b00f4be645b04c15e07541f21dbbb64753a639d2d66",
+  "execution_sha256": "4423e78d352cb971c49cbaf578157031b107a893d9b479c38df9ece1a522acdd",
+  "scripts_sha256": {
+    "wt_materials.py": "d76e0f6f21c88ba2807a374ce311673fd80cf8f348f69e3b77bc5ec61c6b5684",
+    "wt_height_decals.py": "6f7291ff8614fad4e480999a2633c0c07107efa144e41f817177acd5329aa5bb",
+    "wt_ground_microdetails.py": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+    "wt_ground_material_verify.py": "904e7e570f0a4bea513fde14c6a15f3c9aca472065deb38b2efc23d8b08d02d9",
+    "update_wt_materials.py": "7f5837106b817b300a85ace5559aa67800575891b004e3fc2f980d7baeca6231",
+    "verify_wt_materials.py": "b65caf8aac4645fa307020344efa76cee1b53f5fa1cc40c31fcd5fc5468deb62",
+    "check_wt_ground_materials.py": "1d4010d0478d6fe941b40920a05decf9969fcfea621151a190af4832818ec45d"
+  },
+  "source_slot_contract": {
+    "material_count": 34,
+    "source_texture_count": 64,
+    "diffuse_slot": 0,
+    "normal_slot": null,
+    "reflection_slot": 2,
+    "reflection_channels": {
+      "smoothness": "A",
+      "ambient_occlusion": "G",
+      "reflectance": "R",
+      "microdetail_id": "B"
+    },
+    "height_strength": 0.08
+  },
+  "numeric_checks": [
+    {
+      "name": "native_once_premultiplied_payload_roundtrip",
+      "passed": true,
+      "cases": 60,
+      "max_absolute_error": 9.388045896230324e-13
+    },
+    {
+      "name": "overlapping_source_ids_blend_continuously",
+      "passed": true,
+      "max_error": 1.7763568394002505e-15
+    },
+    {
+      "name": "actual_source_slice_interpolation_has_no_integer_jump",
+      "passed": true,
+      "asymmetric_pixel_points": 3,
+      "boundaries": 10,
+      "delta_index": 2e-07,
+      "max_rgba_delta": 5.215686266213382e-08
+    },
+    {
+      "name": "quantization_effect_is_coverage_bounded",
+      "passed": true,
+      "model": "R5 uniform nearest; exact mask",
+      "cases": 532,
+      "results": [
+        {
+          "coverage": 1.0,
+          "maximum_index_error": 0.20967741935483808,
+          "maximum_strength": 1.0
+        },
+        {
+          "coverage": 0.5,
+          "maximum_index_error": 0.41796331435800127,
+          "maximum_strength": 0.5
+        },
+        {
+          "coverage": 0.1,
+          "maximum_index_error": 2.0904807084123975,
+          "maximum_strength": 0.1
+        },
+        {
+          "coverage": 0.01,
+          "maximum_index_error": 8.0,
+          "maximum_strength": 0.01
+        }
+      ]
+    },
+    {
+      "name": "height_gradient_matches_analytic_plane_under_uv_rotation_and_reflection",
+      "passed": true,
+      "cases": 3,
+      "max_error": 1.1102230246251565e-16,
+      "strength_domain": "source UV height, not displaced geometry"
+    }
+  ],
+  "prior_asset_backup": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\ground-refine-01\\backup.json",
+    "sha256": "0c904bea9a78bf50bab259fa05f301c25c09e374bab130b47d14afc1909ac78b"
+  },
+  "planned_native_scope": {
+    "parent_count": 4,
+    "instance_count": 36,
+    "height_instances": 34,
+    "retained_grass_layers": 16,
+    "full_material_reload_expected": 307,
+    "world_mutation": false
+  },
+  "visual_baselines": {
+    "gui-wall-03-reset/entry.png": "a8b885f44a322b7ff7bbcd27490217130a1e35a7061d9bc504eafcb6d3219b52",
+    "gui-motion-before-01-frames/frames.json": "bd95f01e348574a5c76f8a80e8374adfd0b0eac8dceaf8fe725b09c4090f8e1e",
+    "contact-flanders-01/contact-rest/overview.png": "eefaf5fdac67182066b9b55fa80f284c58b31c471931d5a776d5031011dbe7b8"
+  },
+  "limits": [
+    "Source-backed UE post-RVT application; the original shipped land consumer is absent from the public checkout.",
+    "The R5 uniform quantization exercise is a numeric sensitivity model, not an actual BC3 codec or a rendered stability measurement.",
+    "Native shader, serialized pin, texture policy, array and GrassOutput closure gates must run after authoring."
+  ]
+}

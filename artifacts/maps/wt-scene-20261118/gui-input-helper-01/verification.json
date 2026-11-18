@@ -1,0 +1,14 @@
+{
+  "schema": "rmsim_gui_helper_failure_v1",
+  "status": "failed",
+  "process_id": 29024,
+  "owned_game_pid": 43760,
+  "scope": "First keyboard helper invocation, before any key-down",
+  "error": "Windows PowerShell does not resolve [ushort] as a type alias.",
+  "observed_effect": "Owned game window moved to the left; execution stopped before keyboard event or input evidence creation.",
+  "key_down_sent": false,
+  "fix": "Use [uint16] for PowerShell conversion while retaining C# ushort signatures.",
+  "successful_retry": "../gui-input-01-m-open/execution.json",
+  "exit_code": null,
+  "exit_code_scope": "The remote tool did not report an exit code for this failed invocation."
+}

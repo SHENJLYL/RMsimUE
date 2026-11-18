@@ -1,0 +1,813 @@
+{
+  "schema": "wt_lc1_height_gradient_grid_diagnosis_v1",
+  "status": "completed_readonly_source_analysis",
+  "generated_utc": "2026-11-18T11:00:42.568984+00:00",
+  "production_modified": false,
+  "native_visual_verified": false,
+  "script_sha256": "1a3588da79e206a47265cd790bab714b2f76993e3af27bd1c0b0155b881e1fad",
+  "source_definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+  "production_landdetail_sha256": "5babc96731e4f18c43682af5bb968119ed1f050d5be6a3fb1114a317be37f900",
+  "source_texture_files": [
+    {
+      "name": "avg_vlaanderen_detailed_biome_tex_f",
+      "sha256": "986743360784aff971979eeebfe6e6bd19acf94de404171f146fa8be754e4086"
+    },
+    {
+      "name": "biome_detail_grass_a_tex_d",
+      "sha256": "c1281fd2abb1d4ec0e70672810999f07d15b463d724fa5e6ebb16a09d5deb09c"
+    },
+    {
+      "name": "biome_detail_grass_b_tex_d",
+      "sha256": "5f007e4fd84be160ab0174f8877f432cc6ecd902ac211088ea677bd6375f227c"
+    },
+    {
+      "name": "biome_detail_grass_dead_a_tex_d",
+      "sha256": "691e6c0fc5a99cc11e3fd8d927fb13be87e3f6ae87e8c431530488169ce0c936"
+    },
+    {
+      "name": "biome_detail_sand_soil_a_tex_d",
+      "sha256": "1ebef3ddcd8d4cf2a0957ef797241fc2dad96e296bad5e3861e8a73f7f6de2f7"
+    },
+    {
+      "name": "biome_detail_slope_soil_a_tex_d",
+      "sha256": "e8bd12c13da38d6fcba7d3bbeca0e9d0983b92a1ef80fa9119ba63e103b8b861"
+    },
+    {
+      "name": "biome_detail_soil_a_tex_d",
+      "sha256": "2a7cf52ec910cb4e22a04302c69fe07ae4f884de9c21b7e4f6d0980c68b1cb4e"
+    }
+  ],
+  "source_index_sha256": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05",
+  "source_biome_records": [
+    {
+      "id": 1,
+      "layers": [
+        {
+          "name": "grass_b",
+          "slice": 6,
+          "albedo": "biome_detail_grass_b_tex_d",
+          "reflectance": "biome_detail_grass_b_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_a",
+          "slice": 5,
+          "albedo": "biome_detail_grass_a_tex_d",
+          "reflectance": "biome_detail_grass_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 16777216
+    },
+    {
+      "id": 2,
+      "layers": [
+        {
+          "name": "grass_soil_a",
+          "slice": 7,
+          "albedo": "biome_detail_grass_dead_a_tex_d",
+          "reflectance": "biome_detail_grass_dead_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_a",
+          "slice": 5,
+          "albedo": "biome_detail_grass_a_tex_d",
+          "reflectance": "biome_detail_grass_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 33554432
+    },
+    {
+      "id": 5,
+      "layers": [
+        {
+          "name": "sand_a",
+          "slice": 16,
+          "albedo": "biome_detail_sand_soil_a_tex_d",
+          "reflectance": "biome_detail_sand_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "sand_a",
+          "slice": 16,
+          "albedo": "biome_detail_sand_soil_a_tex_d",
+          "reflectance": "biome_detail_sand_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 0
+    },
+    {
+      "id": 9,
+      "layers": [
+        {
+          "name": "grass_a",
+          "slice": 5,
+          "albedo": "biome_detail_grass_a_tex_d",
+          "reflectance": "biome_detail_grass_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_b",
+          "slice": 6,
+          "albedo": "biome_detail_grass_b_tex_d",
+          "reflectance": "biome_detail_grass_b_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 0
+    },
+    {
+      "id": 14,
+      "layers": [
+        {
+          "name": "sand_a",
+          "slice": 16,
+          "albedo": "biome_detail_sand_soil_a_tex_d",
+          "reflectance": "biome_detail_sand_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "sand_a",
+          "slice": 16,
+          "albedo": "biome_detail_sand_soil_a_tex_d",
+          "reflectance": "biome_detail_sand_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 0
+    },
+    {
+      "id": 15,
+      "layers": [
+        {
+          "name": "soil_a",
+          "slice": 20,
+          "albedo": "biome_detail_soil_a_tex_d",
+          "reflectance": "biome_detail_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "soil_a",
+          "slice": 20,
+          "albedo": "biome_detail_soil_a_tex_d",
+          "reflectance": "biome_detail_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        0.5,
+        0.699999988079071
+      ],
+      "grass_microdetail_removal_bits": 0
+    },
+    {
+      "id": 20,
+      "layers": [
+        {
+          "name": "slope_soil_a",
+          "slice": 18,
+          "albedo": "biome_detail_slope_soil_a_tex_d",
+          "reflectance": "biome_detail_slope_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "slope_soil_a",
+          "slice": 18,
+          "albedo": "biome_detail_slope_soil_a_tex_d",
+          "reflectance": "biome_detail_slope_soil_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ],
+      "random_flowmap": [
+        -1.0,
+        -1.0
+      ],
+      "grass_microdetail_removal_bits": 50331648
+    }
+  ],
+  "grid_period_m": 0.5,
+  "source_formula": "sqrt bilinear neighbours; source color applies normalized fourth-power height weights",
+  "adapter_problem": "Current UE normal differentiates the scalar height mixed before fourth-power weights. It includes derivatives of categorical mixing weights and per-cell rotated sample differences. This is absent from the source normal-texture blending path.",
+  "two_line_candidate": "Use the already computed final fourth-power weights for both height blends before taking the UE fallback gradient; original output color, categorical IDs and UVs remain identical.",
+  "sampling_scope": "Original top-mip alpha with bilinear sampling and source float32 noise; offline 2mm central differences, no native BC/mip/GBuffer reproduction.",
+  "results": {
+    "green_slope": {
+      "center_source_XZ": [
+        1146.25,
+        942.25
+      ],
+      "line_y": 942.375,
+      "line_x_range": [
+        1145.25,
+        1147.25
+      ],
+      "step_m": 0.002,
+      "samples": 1001,
+      "ids": [
+        1,
+        9,
+        20
+      ],
+      "old_border_tilt": {
+        "0": 9.705051709920314,
+        "25": 22.787625686494774,
+        "50": 42.85270510567736,
+        "75": 58.72890523379664,
+        "90": 69.65774461693155,
+        "95": 77.91251088700281,
+        "99": 80.7005039595236,
+        "100": 81.61986386707841
+      },
+      "old_interior_tilt": {
+        "0": 0.3796740477719842,
+        "25": 5.226287516308713,
+        "50": 8.829022005891751,
+        "75": 15.850569145173118,
+        "90": 24.6186407972424,
+        "95": 30.079617367428977,
+        "99": 34.0471368691273,
+        "100": 36.37521778601556
+      },
+      "final_weights_border_tilt": {
+        "0": 2.5784873031024502,
+        "25": 9.319250116487668,
+        "50": 15.13872814677796,
+        "75": 17.323127015714405,
+        "90": 33.438737341056786,
+        "95": 43.47192682140518,
+        "99": 49.62195822273131,
+        "100": 50.308206020749324
+      },
+      "final_weights_interior_tilt": {
+        "0": 0.008513925824338225,
+        "25": 3.355446232251321,
+        "50": 11.704634040262441,
+        "75": 31.57004183984776,
+        "90": 55.21101608446896,
+        "95": 64.01549447402722,
+        "99": 67.34232103084724,
+        "100": 68.96233702436206
+      },
+      "approach_grid_line": [
+        {
+          "distance_from_grid_m": 0.02,
+          "old_tilt": 28.927448949659766,
+          "final_weights_tilt": 4.508224712514919
+        },
+        {
+          "distance_from_grid_m": 0.01,
+          "old_tilt": 49.84001117373467,
+          "final_weights_tilt": 3.9007535309505803
+        },
+        {
+          "distance_from_grid_m": 0.005,
+          "old_tilt": 61.31138128418768,
+          "final_weights_tilt": 1.9885550731277113
+        },
+        {
+          "distance_from_grid_m": 0.002,
+          "old_tilt": 72.90104112545245,
+          "final_weights_tilt": 10.775975888512772
+        },
+        {
+          "distance_from_grid_m": 0.001,
+          "old_tilt": 78.39305491574817,
+          "final_weights_tilt": 10.050608369523088
+        },
+        {
+          "distance_from_grid_m": 0.0005,
+          "old_tilt": 82.06131405038622,
+          "final_weights_tilt": 9.76440914111648
+        }
+      ],
+      "old_height_range": [
+        0.4801227124177615,
+        0.6934717149015054
+      ],
+      "candidate_height_range": [
+        0.5038078636472532,
+        0.7393533591296549
+      ]
+    },
+    "near_station_grass": {
+      "center_source_XZ": [
+        1084.75,
+        1029.75
+      ],
+      "line_y": 1029.875,
+      "line_x_range": [
+        1083.75,
+        1085.75
+      ],
+      "step_m": 0.002,
+      "samples": 1001,
+      "ids": [
+        1,
+        2
+      ],
+      "old_border_tilt": {
+        "0": 4.106069216949882,
+        "25": 25.536599642521516,
+        "50": 35.09724405806784,
+        "75": 44.5522337690733,
+        "90": 51.73817167898761,
+        "95": 62.84517782741539,
+        "99": 69.35912693752647,
+        "100": 69.42895228120014
+      },
+      "old_interior_tilt": {
+        "0": 1.7707389750378058,
+        "25": 13.919558549204073,
+        "50": 22.891696907549303,
+        "75": 34.35187332628155,
+        "90": 44.59622440603921,
+        "95": 53.9062227850508,
+        "99": 63.859991717403624,
+        "100": 71.09606779194071
+      },
+      "final_weights_border_tilt": {
+        "0": 0.21163920888833998,
+        "25": 11.376650501102933,
+        "50": 20.432683381191456,
+        "75": 77.84473504270609,
+        "90": 81.21078748906406,
+        "95": 81.30800452980996,
+        "99": 82.16432022122723,
+        "100": 82.49077169073523
+      },
+      "final_weights_interior_tilt": {
+        "0": 1.9777375772792956,
+        "25": 11.034474921161749,
+        "50": 26.583634340396706,
+        "75": 52.685617558530346,
+        "90": 68.37508584053585,
+        "95": 73.08026867508738,
+        "99": 78.64610238671166,
+        "100": 84.23635828852971
+      },
+      "approach_grid_line": [
+        {
+          "distance_from_grid_m": 0.02,
+          "old_tilt": 41.164785661546155,
+          "final_weights_tilt": 84.03137795939212
+        },
+        {
+          "distance_from_grid_m": 0.01,
+          "old_tilt": 33.25037223437053,
+          "final_weights_tilt": 47.819179691574284
+        },
+        {
+          "distance_from_grid_m": 0.005,
+          "old_tilt": 48.51035797485521,
+          "final_weights_tilt": 61.405754841337604
+        },
+        {
+          "distance_from_grid_m": 0.002,
+          "old_tilt": 63.56713024622648,
+          "final_weights_tilt": 74.04597307417224
+        },
+        {
+          "distance_from_grid_m": 0.001,
+          "old_tilt": 70.59277560144153,
+          "final_weights_tilt": 73.87932003008325
+        },
+        {
+          "distance_from_grid_m": 0.0005,
+          "old_tilt": 75.92366241581267,
+          "final_weights_tilt": 73.53851358152352
+        }
+      ],
+      "old_height_range": [
+        0.40911733944268297,
+        0.7273631996875687
+      ],
+      "candidate_height_range": [
+        0.2875554997980678,
+        0.7778159637405111
+      ]
+    },
+    "green_same_biome_neighbour": {
+      "center_source_XZ": [
+        1148.25,
+        940.25
+      ],
+      "line_y": 940.375,
+      "line_x_range": [
+        1147.25,
+        1149.25
+      ],
+      "step_m": 0.002,
+      "samples": 1001,
+      "ids": [
+        1,
+        5,
+        14,
+        20
+      ],
+      "old_border_tilt": {
+        "0": 10.191536121297753,
+        "25": 12.876444082123488,
+        "50": 16.354633935586207,
+        "75": 51.914245041998726,
+        "90": 63.30895942813894,
+        "95": 74.6454422693613,
+        "99": 76.85539721580992,
+        "100": 77.4902594454527
+      },
+      "old_interior_tilt": {
+        "0": 0.1714309845204204,
+        "25": 10.850900400252392,
+        "50": 16.221803895480942,
+        "75": 22.906400104774082,
+        "90": 29.289248650972013,
+        "95": 34.605219456903406,
+        "99": 40.980905032387774,
+        "100": 47.369693478643725
+      },
+      "final_weights_border_tilt": {
+        "0": 0.6088478254943919,
+        "25": 4.114559533828728,
+        "50": 9.24394892229944,
+        "75": 16.88090377301459,
+        "90": 44.51153299045046,
+        "95": 45.24070325201258,
+        "99": 45.5866828411878,
+        "100": 45.71219454848141
+      },
+      "final_weights_interior_tilt": {
+        "0": 0.6013433602458435,
+        "25": 5.753035254171795,
+        "50": 10.167486974137173,
+        "75": 24.058668546075914,
+        "90": 43.92330814593576,
+        "95": 51.03718793675504,
+        "99": 55.429011095613355,
+        "100": 56.67745500346126
+      },
+      "approach_grid_line": [
+        {
+          "distance_from_grid_m": 0.02,
+          "old_tilt": 16.161522158555954,
+          "final_weights_tilt": 15.579351759481355
+        },
+        {
+          "distance_from_grid_m": 0.01,
+          "old_tilt": 15.804144902460711,
+          "final_weights_tilt": 16.91375519696319
+        },
+        {
+          "distance_from_grid_m": 0.005,
+          "old_tilt": 15.671732173756011,
+          "final_weights_tilt": 16.916332452048813
+        },
+        {
+          "distance_from_grid_m": 0.002,
+          "old_tilt": 15.848164653334603,
+          "final_weights_tilt": 16.91474782636609
+        },
+        {
+          "distance_from_grid_m": 0.001,
+          "old_tilt": 17.531040729867637,
+          "final_weights_tilt": 16.914005184001777
+        },
+        {
+          "distance_from_grid_m": 0.0005,
+          "old_tilt": 21.882340533208044,
+          "final_weights_tilt": 16.913895849523325
+        }
+      ],
+      "old_height_range": [
+        0.46921358820994463,
+        0.7070336523390227
+      ],
+      "candidate_height_range": [
+        0.4682653561108577,
+        0.7535519421208076
+      ]
+    }
+  },
+  "actual_source_pixel_witnesses": [
+    {
+      "source_XZ": [
+        1146.25,
+        942.375
+      ],
+      "ids": [
+        9,
+        1,
+        1,
+        1
+      ],
+      "base_weights": [
+        0.8660254037844386,
+        0.0,
+        0.0,
+        0.5
+      ],
+      "layers": [
+        {
+          "alpha": [
+            0.8887513899852919,
+            0.20336841669489109,
+            0.20336841669489109,
+            0.21720098115396475
+          ],
+          "base_weights": [
+            0.8660254037844386,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "height_weights": [
+            0.8763112273924726,
+            0.0,
+            0.0,
+            0.12368877260752743
+          ],
+          "final_weights": [
+            0.9996032518546648,
+            0.0,
+            0.0,
+            0.00039674814533527755
+          ],
+          "sample_height": [
+            0.7554387026769824,
+            0.17286315903933833,
+            0.17286315903933833,
+            0.18462083915934496
+          ]
+        },
+        {
+          "alpha": [
+            0.17027849689110158,
+            0.8662214614644819,
+            0.8662214614644819,
+            0.8739863722000452
+          ],
+          "base_weights": [
+            0.8660254037844386,
+            0.0,
+            0.0,
+            0.5
+          ],
+          "height_weights": [
+            0.2524004356814447,
+            0.0,
+            0.0,
+            0.7475995643185555
+          ],
+          "final_weights": [
+            0.012825612087666702,
+            0.0,
+            0.0,
+            0.9871743879123333
+          ],
+          "sample_height": [
+            0.14473672641719207,
+            0.7362882628971386,
+            0.7362882628971386,
+            0.7428884372074973
+          ]
+        }
+      ]
+    },
+    {
+      "source_XZ": [
+        1146.251,
+        942.375
+      ],
+      "ids": [
+        9,
+        1,
+        1,
+        1
+      ],
+      "base_weights": [
+        0.865158944934418,
+        0.03872983346161625,
+        0.02236067977473352,
+        0.4994997497496989
+      ],
+      "layers": [
+        {
+          "alpha": [
+            0.8888745313090747,
+            0.2046886404937043,
+            0.2046886404937043,
+            0.21665902516676713
+          ],
+          "base_weights": [
+            0.865158944934418,
+            0.03872983346161625,
+            0.02236067977473352,
+            0.4994997497496989
+          ],
+          "height_weights": [
+            0.8642728131508371,
+            0.0089128607868853,
+            0.0051458425745578885,
+            0.12166848348771968
+          ],
+          "final_weights": [
+            0.9996073992351756,
+            1.0947316628205334e-08,
+            8.978728475313995e-10,
+            0.0003925889196349424
+          ],
+          "sample_height": [
+            0.7555433728051337,
+            0.17398534929980614,
+            0.17398534929980614,
+            0.18416017655730577
+          ]
+        },
+        {
+          "alpha": [
+            0.17036516302565963,
+            0.8664855297296328,
+            0.8664855297296328,
+            0.8741381777175575
+          ],
+          "base_weights": [
+            0.865158944934418,
+            0.03872983346161625,
+            0.02236067977473352,
+            0.4994997497496989
+          ],
+          "height_weights": [
+            0.23148507973635,
+            0.05268033474574809,
+            0.030415005446457255,
+            0.6854195800714448
+          ],
+          "final_weights": [
+            0.012842091251765502,
+            3.444503192814941e-05,
+            3.826430670736259e-06,
+            0.9871196372856357
+          ],
+          "sample_height": [
+            0.14481039263363268,
+            0.7365127209288127,
+            0.7365127209288127,
+            0.7430174719010021
+          ]
+        }
+      ]
+    },
+    {
+      "source_XZ": [
+        1146.255,
+        942.375
+      ],
+      "ids": [
+        9,
+        1,
+        1,
+        1
+      ],
+      "base_weights": [
+        0.8616843969806093,
+        0.08660254037938904,
+        0.0500000000005457,
+        0.49749371855325514
+      ],
+      "layers": [
+        {
+          "alpha": [
+            0.8896504363677583,
+            0.2103390396853196,
+            0.2103390396853196,
+            0.21627224163818648
+          ],
+          "base_weights": [
+            0.8616843969806093,
+            0.08660254037938904,
+            0.0500000000005457,
+            0.49749371855325514
+          ],
+          "height_weights": [
+            0.8489710953109578,
+            0.020180569060566214,
+            0.011651256979517738,
+            0.11919707864895822
+          ],
+          "final_weights": [
+            0.9996112083323839,
+            3.1876389201111605e-07,
+            3.507612290579009e-08,
+            0.00038843782760136585
+          ],
+          "sample_height": [
+            0.7562028921235139,
+            0.17878818874739516,
+            0.17878818874739516,
+            0.18383141054879057
+          ]
+        },
+        {
+          "alpha": [
+            0.1701793586138726,
+            0.8666666746139526,
+            0.8666666746139526,
+            0.8745098114013672
+          ],
+          "base_weights": [
+            0.8616843969806093,
+            0.08660254037938904,
+            0.0500000000005457,
+            0.49749371855325514
+          ],
+          "height_weights": [
+            0.20953751008937507,
+            0.10719743190332705,
+            0.06189046616582245,
+            0.6213745918414754
+          ],
+          "final_weights": [
+            0.012753561027426821,
+            0.0008736173712714056,
+            9.706742066022429e-05,
+            0.9862757541806415
+          ],
+          "sample_height": [
+            0.1446524588791838,
+            0.7366666940848035,
+            0.7366666940848035,
+            0.7433333605411008
+          ]
+        }
+      ]
+    }
+  ],
+  "candidate_native_verified": false,
+  "limits": [
+    "Derivative-of-mixed-height remains an explicit UE fallback. Source normal textures are blended separately in make_clipmap; no claim of the original packed normal consumer.",
+    "Final-weight blending removes the square-root boundary cusp, while spatial derivatives of the blend remain. Native same-view and movement must verify the practical result."
+  ]
+}

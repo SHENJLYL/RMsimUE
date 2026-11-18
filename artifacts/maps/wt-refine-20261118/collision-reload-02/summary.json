@@ -1,0 +1,17 @@
+{
+  "schema": "wt_generated_collision_native_audit_summary_v1",
+  "status": "failed",
+  "execution_sha256": "97f0f3c835aecebafca29611817dac2562d89a7e7b2ac4989f5025e646225301",
+  "verification_sha256": "0cd283fc0985f063f51685a57924911be766b2173838ef026e50823b17d42059",
+  "pid": 47696,
+  "exit_code": -1,
+  "duration_seconds": 10.603746,
+  "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+  "original_verifier_sha256": "47b9d40858d2d79e7d3a79e7ba86098d2311cd3d137609d4dba5d1549adb2562",
+  "failure": "CollisionResponse: Cannot cast type 'int' to 'CollisionResponse'",
+  "saved_assets_checked": 0,
+  "completed_boundary_checks": 0,
+  "completed_source_ray_checks": 0,
+  "protected_files_unchanged": true,
+  "next_step": "native collision enum inventory before correction; no gates loosened"
+}

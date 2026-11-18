@@ -1,0 +1,37 @@
+{
+  "schema": "wt_rvt_pin_source_review_v1",
+  "status": "passed",
+  "scope": "installed UE5.8 source/API contract and Python AST; native connection rerun is pending",
+  "cause": "RuntimeVirtualTextureSample GetInputName index1 overrides the raw property name with World Position in absolute mode",
+  "fixed_sample_world_position_pin": "World Position",
+  "writer_input_pins": [
+    "BaseColor",
+    "Normal",
+    "Roughness",
+    "Specular",
+    "Opacity",
+    "Mask"
+  ],
+  "sample_output_pins": [
+    "BaseColor",
+    "Normal",
+    "Roughness",
+    "Mask"
+  ],
+  "editing_library_contract": "exact FName comparison after UMaterialGraphNode GetShortenPinName; no shortening rule changes World Position",
+  "unconnected_input_enumeration": "GetInputsForMaterialExpression preserves null inputs in the same iterator order as GetMaterialExpressionInputNames",
+  "engine_source_sha256": {
+    "Runtime/Engine/Private/Materials/MaterialExpressions.cpp": "66909943c30bdcea8f8bc47bd3b719093eeed4d11715b94cb120fb4f4330d815",
+    "Runtime/Engine/Private/Materials/MaterialShared.cpp": "31c43df402ef7efc73514b12ae265f03b0955d1dacedfac9867763ffd0143656",
+    "Runtime/Engine/Public/Materials/MaterialExpressionRuntimeVirtualTextureSample.h": "8c3f96bd7d2c7dae4c9e59f84a38f405bba9a773c3988030e32be8819ec398a3",
+    "Runtime/Engine/Public/Materials/MaterialExpressionRuntimeVirtualTextureOutput.h": "8c4158a40e30ac3549caccf08af4c5acc54c88d359030f1834b7c599e4f6700d",
+    "Editor/MaterialEditor/Private/MaterialEditingLibrary.cpp": "96051980458dad86719f195072da4bd34eebd07a80d647ebb50bbbb0626e5565",
+    "Editor/UnrealEd/Private/MaterialGraphNode.cpp": "026d9a5c896af1e590e4bd8e42f1ec4788c8210198007d79c5051f8792716dd9"
+  },
+  "scripts_sha256": {
+    "wt_materials.py": "b4b5da15fe1434d71404467d145c94e64e43e3992e69d84399bdbab6878d6dd6",
+    "verify_wt_materials.py": "4af2050282de8a8d6324f7fe0f209e09741cb6b9a0894e6d5588d51442b54814"
+  },
+  "previous_native_failure": "artifacts/maps/wt-scene-20261118/import-05/engine.log",
+  "native_rerun_passed": false
+}

@@ -1,0 +1,1079 @@
+{
+  "schema": "rmsim_unified_control_summary_v2",
+  "status": "passed",
+  "run_id": "7299B23E41E58D65BB544F84CC1A2CD3",
+  "mode": "FlandersContact",
+  "map_id": "wt_vlaanderen",
+  "spawn_id": "default",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "engine_version": "5.8.4-58902052+++UE5+Release-5.8",
+  "os_input_verified": false,
+  "os_keyboard_test": false,
+  "rendered_appearance_acceptance": "not_assessed_by_this_programmatic_probe",
+  "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "map_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+  "execution": {
+    "schema": "rmsim_unified_control_execution_v1",
+    "mode": "FlandersContact",
+    "status": "passed",
+    "started_utc": "2026-11-18T10:11:45.7034592Z",
+    "finished_utc": "2026-11-18T10:12:22.8914477Z",
+    "wrapper_exit": 0,
+    "inputs_unchanged": true,
+    "unreal_process_exit": 0,
+    "recorded_wrapper_interval_seconds": 37.187988
+  },
+  "requested_rhi": "D3D11",
+  "single_shaderworker": true,
+  "map_runtime_arguments": [
+    "-ForceDPCVars=r.Streaming.PoolSize=4096"
+  ],
+  "recorded_inputs": [
+    {
+      "file": "unreal/RMSim/RMSim.uproject",
+      "before_sha256": "1b03168f20cc013510df70401f732695bc6d39976eba0dc4a0efff54fb7277ba",
+      "after_sha256": "1b03168f20cc013510df70401f732695bc6d39976eba0dc4a0efff54fb7277ba",
+      "unchanged": true
+    },
+    {
+      "file": "assets/maps/wt_vlaanderen/map.json",
+      "before_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "after_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "unchanged": true
+    },
+    {
+      "file": "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll",
+      "before_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+      "after_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+      "unchanged": true
+    },
+    {
+      "file": "assets/vehicles/aim_sentry/drive-profile.json",
+      "before_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "after_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "unchanged": true
+    },
+    {
+      "file": "assets/vehicles/aim_sentry/ue_mesh_rig.json",
+      "before_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "after_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "unchanged": true
+    },
+    {
+      "file": "unreal/RMSim/Config/DefaultGame.ini",
+      "before_sha256": "653f026acee09222d627f32850fc30175f8096d928defa08a6cd8c63f06c5e0c",
+      "after_sha256": "653f026acee09222d627f32850fc30175f8096d928defa08a6cd8c63f06c5e0c",
+      "unchanged": true
+    },
+    {
+      "file": "unreal/RMSim/Content/RMSim/Maps/wt_vlaanderen/World.umap",
+      "before_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+      "after_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+      "unchanged": true
+    }
+  ],
+  "check_count": 5,
+  "checks": [
+    {
+      "name": "physical_settle",
+      "passed": true,
+      "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99902",
+      "before": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102800.01694153015,
+            102000.00176440037,
+            -138.1322039060084
+          ],
+          "rotation_xyzw": [
+            0.01992264533321542,
+            0.009554734247647707,
+            0.0002449124824095023,
+            0.9997558378295474
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102800.01694153015,
+            102000.00176440037,
+            -138.1322039060084
+          ],
+          "rotation_xyzw": [
+            0.01992264533321542,
+            0.009554734247647707,
+            0.0002449124824095023,
+            0.9997558378295474
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      },
+      "after": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102800.01694153015,
+            102000.00176440037,
+            -138.1322039060084
+          ],
+          "rotation_xyzw": [
+            0.01992264533321542,
+            0.009554734247647707,
+            0.0002449124824095023,
+            0.9997558378295474
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102800.01694153015,
+            102000.00176440037,
+            -138.1322039060084
+          ],
+          "rotation_xyzw": [
+            0.01992264533321542,
+            0.009554734247647707,
+            0.0002449124824095023,
+            0.9997558378295474
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      }
+    },
+    {
+      "name": "physical_forward_route",
+      "passed": true,
+      "detail": "Motor/contact driven route progress 340.009/340.000cm, drift -0.022cm, time 4.030s",
+      "before": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            103140.02622075648,
+            102000.27537818956,
+            -139.69710229930905
+          ],
+          "rotation_xyzw": [
+            0.014216364919122416,
+            0.0051528218710992614,
+            0.0009277133842241407,
+            0.9998852347860367
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0.9991136658681616,
+          "command_yaw_rad_s": 0.0027845007972092596,
+          "brake": false,
+          "requested_linear_m_s": [
+            0.9991136658681616,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0.9991136623043202,
+            8.438818340589954e-05,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            103140.02622075648,
+            102000.27537818956,
+            -139.69710229930905
+          ],
+          "rotation_xyzw": [
+            0.014216364919122416,
+            0.0051528218710992614,
+            0.0009277133842241407,
+            0.9998852347860367
+          ],
+          "velocity_cm_s": [
+            99.49649047851562,
+            -0.7809534668922424,
+            -3.7948262691497803
+          ],
+          "angular_velocity_rad_s": [
+            0.0453852079808712,
+            0.01991691067814827,
+            -0.0021517733111977577
+          ],
+          "simulating": true
+        }
+      },
+      "after": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            103140.02622075648,
+            102000.27537818956,
+            -139.69710229930905
+          ],
+          "rotation_xyzw": [
+            0.014216364919122416,
+            0.0051528218710992614,
+            0.0009277133842241407,
+            0.9998852347860367
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0.9991136623043202,
+            8.438818340589954e-05,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            103140.02622075648,
+            102000.27537818956,
+            -139.69710229930905
+          ],
+          "rotation_xyzw": [
+            0.014216364919122416,
+            0.0051528218710992614,
+            0.0009277133842241407,
+            0.9998852347860367
+          ],
+          "velocity_cm_s": [
+            99.49649047851562,
+            -0.7809534668922424,
+            -3.7948262691497803
+          ],
+          "angular_velocity_rad_s": [
+            0.0453852079808712,
+            0.01991691067814827,
+            -0.0021517733111977577
+          ],
+          "simulating": true
+        }
+      }
+    },
+    {
+      "name": "physical_brake",
+      "passed": true,
+      "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s",
+      "before": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            103159.24192822007,
+            102000.23559852345,
+            -139.24702174081017
+          ],
+          "rotation_xyzw": [
+            0.014583342937453761,
+            0.00483477775142469,
+            0.002857372908049176,
+            0.9998778857705216
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            103159.24192822007,
+            102000.23559852345,
+            -139.24702174081017
+          ],
+          "rotation_xyzw": [
+            0.014583342937453761,
+            0.00483477775142469,
+            0.002857372908049176,
+            0.9998778857705216
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      },
+      "after": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            103159.24192822007,
+            102000.23559852345,
+            -139.24702174081017
+          ],
+          "rotation_xyzw": [
+            0.014583342937453761,
+            0.00483477775142469,
+            0.002857372908049176,
+            0.9998778857705216
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            103159.24192822007,
+            102000.23559852345,
+            -139.24702174081017
+          ],
+          "rotation_xyzw": [
+            0.014583342937453761,
+            0.00483477775142469,
+            0.002857372908049176,
+            0.9998778857705216
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      }
+    },
+    {
+      "name": "physical_reverse_route",
+      "passed": true,
+      "detail": "Reverse crosses same source route: remaining 8.402cm, drift -0.069cm",
+      "before": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102808.41853098062,
+            101999.93999550729,
+            -138.14806281260823
+          ],
+          "rotation_xyzw": [
+            0.013311535234557853,
+            0.010585465559555786,
+            -0.00018374540535532154,
+            0.9998553481310248
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": -0.9997717023767847,
+          "command_yaw_rad_s": 0.000717218135925142,
+          "brake": false,
+          "requested_linear_m_s": [
+            -0.9997717023767847,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            -0.9997717020925904,
+            -2.383818071485161e-05,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102808.41853098062,
+            101999.93999550729,
+            -138.14806281260823
+          ],
+          "rotation_xyzw": [
+            0.013311535234557853,
+            0.010585465559555786,
+            -0.00018374540535532154,
+            0.9998553481310248
+          ],
+          "velocity_cm_s": [
+            -99.56385803222656,
+            -0.07603640109300613,
+            0.5854057669639587
+          ],
+          "angular_velocity_rad_s": [
+            0.009938087314367294,
+            -0.006008795462548733,
+            -0.009276622906327248
+          ],
+          "simulating": true
+        }
+      },
+      "after": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 0,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0,
+        "gimbal_pitch_rad": 0,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102808.41853098062,
+            101999.93999550729,
+            -138.14806281260823
+          ],
+          "rotation_xyzw": [
+            0.013311535234557853,
+            0.010585465559555786,
+            -0.00018374540535532154,
+            0.9998553481310248
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_body_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            -0.9997717020925904,
+            -2.383818071485161e-05,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102808.41853098062,
+            101999.93999550729,
+            -138.14806281260823
+          ],
+          "rotation_xyzw": [
+            0.013311535234557853,
+            0.010585465559555786,
+            -0.00018374540535532154,
+            0.9998553481310248
+          ],
+          "velocity_cm_s": [
+            -99.56385803222656,
+            -0.07603640109300613,
+            0.5854057669639587
+          ],
+          "angular_velocity_rad_s": [
+            0.009938087314367294,
+            -0.006008795462548733,
+            -0.009276622906327248
+          ],
+          "simulating": true
+        }
+      }
+    },
+    {
+      "name": "physical_shared_reset_without_training",
+      "passed": true,
+      "detail": "Shared R restores source-map spawn: resets=1 distance=0.0129cm speed=0.0000cm/s",
+      "before": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 1,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0.0001093076669434882,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0.012282559410616699,
+        "gimbal_pitch_rad": 0.06619949677789164,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102800.01243072966,
+            102000.00362940393,
+            -138.1257301927231
+          ],
+          "rotation_xyzw": [
+            0.01992380584866024,
+            0.009538995869710824,
+            0.00025903724155203065,
+            0.9997559614315938
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_world_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102800.01243072966,
+            102000.00362940393,
+            -138.1257301927231
+          ],
+          "rotation_xyzw": [
+            0.01992380584866024,
+            0.009538995869710824,
+            0.00025903724155203065,
+            0.9997559614315938
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      },
+      "after": {
+        "speed_cm_per_second": 0,
+        "contact_recovery_count": 1,
+        "contact_physics": true,
+        "precision_drive": false,
+        "sight_mode": false,
+        "free_look": false,
+        "view_yaw_deg": 0.0001093076669434882,
+        "view_pitch_deg": -12,
+        "gimbal_yaw_rad": 0.012282559410616699,
+        "gimbal_pitch_rad": 0.06619949677789164,
+        "active_fov_deg": 55,
+        "actor": {
+          "position_cm": [
+            102800.01243072966,
+            102000.00362940393,
+            -138.1257301927231
+          ],
+          "rotation_xyzw": [
+            0.01992380584866024,
+            0.009538995869710824,
+            0.00025903724155203065,
+            0.9997559614315938
+          ]
+        },
+        "contact": {
+          "enabled": true,
+          "command_frame": "ROS_world_xy",
+          "command_forward_m_s": 0,
+          "command_yaw_rad_s": 0,
+          "brake": true,
+          "requested_linear_m_s": [
+            0,
+            0,
+            0
+          ],
+          "filtered_linear_m_s": [
+            0,
+            0,
+            0
+          ]
+        },
+        "chassis": {
+          "position_cm": [
+            102800.01243072966,
+            102000.00362940393,
+            -138.1257301927231
+          ],
+          "rotation_xyzw": [
+            0.01992380584866024,
+            0.009538995869710824,
+            0.00025903724155203065,
+            0.9997559614315938
+          ],
+          "velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "simulating": true
+        }
+      }
+    }
+  ],
+  "actual_drive_parameters": {
+    "MaxForwardSpeedMps": 5,
+    "MaxReverseSpeedMps": 2.5,
+    "MaxLateralSpeedMps": 4,
+    "LinearAccelerationMps2": 2,
+    "PrecisionSpeedMps": 0.35,
+    "LinearDecelerationMps2": 4,
+    "BrakeDecelerationMps2": 7,
+    "LinearJerkMps3": 6,
+    "DecelerationJerkMps3": 20,
+    "ManualYawRateRadS": 1.5707963267948966,
+    "LateralAccelerationMps2": 8,
+    "DirectionJerkMps3": 70,
+    "AngularAccelerationRadS2": 3,
+    "AngularDecelerationRadS2": 5,
+    "GyroDefaultRadS": 2,
+    "GyroMinRadS": 0.5,
+    "GyroMaxRadS": 4,
+    "GyroStepRadS": 0.5,
+    "SteeringRateRadS": 15.707963267948966,
+    "SteeringStiffnessNmRad": 80,
+    "SteeringDampingNmS": 8,
+    "SteeringTorqueNm": 8,
+    "MaxWheelSpeedMps": 6.5,
+    "WheelVelocityIntegralGainPerSecond": 3,
+    "WheelIntegralTorqueLimitNm": 2.5,
+    "YawVelocityFeedback": 0,
+    "LinearVelocityFeedback": 0
+  },
+  "actual_drive_parameter_snapshots": 74,
+  "actual_drive_parameter_variants": 1,
+  "sample_count": 64,
+  "actual_sample_first": {
+    "speed_cm_per_second": 0,
+    "contact_recovery_count": 0,
+    "contact_physics": true,
+    "precision_drive": false,
+    "sight_mode": false,
+    "free_look": false,
+    "view_yaw_deg": 0,
+    "view_pitch_deg": -12,
+    "gimbal_yaw_rad": 0,
+    "gimbal_pitch_rad": 0,
+    "active_fov_deg": 55,
+    "actor": {
+      "position_cm": [
+        102800,
+        102000,
+        -136.085497626554
+      ],
+      "rotation_xyzw": [
+        0.0004882837334325473,
+        0.000976775855319521,
+        4.769440457434511e-07,
+        0.9999994037436705
+      ]
+    },
+    "contact": {
+      "enabled": true,
+      "command_frame": "ROS_body_xy",
+      "command_forward_m_s": 0,
+      "command_yaw_rad_s": 0,
+      "brake": true,
+      "requested_linear_m_s": [
+        0,
+        0,
+        0
+      ],
+      "filtered_linear_m_s": [
+        0,
+        0,
+        0
+      ]
+    },
+    "chassis": {
+      "position_cm": [
+        102800,
+        102000,
+        -136.085497626554
+      ],
+      "rotation_xyzw": [
+        0.0004882837334325473,
+        0.000976775855319521,
+        4.769440457434511e-07,
+        0.9999994037436705
+      ],
+      "velocity_cm_s": [
+        0,
+        0,
+        0
+      ],
+      "angular_velocity_rad_s": [
+        0,
+        0,
+        0
+      ],
+      "simulating": true
+    }
+  },
+  "actual_sample_last": {
+    "speed_cm_per_second": 0,
+    "contact_recovery_count": 1,
+    "contact_physics": true,
+    "precision_drive": false,
+    "sight_mode": false,
+    "free_look": false,
+    "view_yaw_deg": 0.0001093076669434882,
+    "view_pitch_deg": -12,
+    "gimbal_yaw_rad": 0.012282559410616699,
+    "gimbal_pitch_rad": 0.06619949677789164,
+    "active_fov_deg": 55,
+    "actor": {
+      "position_cm": [
+        102800.01243072966,
+        102000.00362940393,
+        -138.1257301927231
+      ],
+      "rotation_xyzw": [
+        0.01992380584866024,
+        0.009538995869710824,
+        0.00025903724155203065,
+        0.9997559614315938
+      ]
+    },
+    "contact": {
+      "enabled": true,
+      "command_frame": "ROS_world_xy",
+      "command_forward_m_s": 0,
+      "command_yaw_rad_s": 0,
+      "brake": true,
+      "requested_linear_m_s": [
+        0,
+        0,
+        0
+      ],
+      "filtered_linear_m_s": [
+        0,
+        0,
+        0
+      ]
+    },
+    "chassis": {
+      "position_cm": [
+        102800.01243072966,
+        102000.00362940393,
+        -138.1257301927231
+      ],
+      "rotation_xyzw": [
+        0.01992380584866024,
+        0.009538995869710824,
+        0.00025903724155203065,
+        0.9997559614315938
+      ],
+      "velocity_cm_s": [
+        0,
+        0,
+        0
+      ],
+      "angular_velocity_rad_s": [
+        0,
+        0,
+        0
+      ],
+      "simulating": true
+    }
+  },
+  "sample_speed_cm_s_range": [
+    0,
+    0.11906090712887596
+  ],
+  "sample_recovery_counts": [
+    0,
+    1
+  ],
+  "observed_contact_body_component_pairs": [
+    {
+      "body": "Contact_wheel_l_01",
+      "other_component_name": "LandscapeHeightfieldCollisionComponent_544",
+      "recorded_state_occurrences": 72
+    },
+    {
+      "body": "Contact_wheel_l_02",
+      "other_component_name": "LandscapeHeightfieldCollisionComponent_544",
+      "recorded_state_occurrences": 72
+    },
+    {
+      "body": "Contact_wheel_r_01",
+      "other_component_name": "LandscapeHeightfieldCollisionComponent_544",
+      "recorded_state_occurrences": 72
+    },
+    {
+      "body": "Contact_wheel_r_02",
+      "other_component_name": "LandscapeHeightfieldCollisionComponent_544",
+      "recorded_state_occurrences": 72
+    }
+  ],
+  "contact_name_semantics": "Recorded component names identify the reported contact peer; names without asset/tag binding do not assign a source resource.",
+  "runtime_scene": {
+    "level_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "loaded_world": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "landscape_actors": 1,
+    "heightfield_collision_components": 1089,
+    "visual_instance_components": 735,
+    "collision_instance_components": 633,
+    "visual_instances": 40569,
+    "collision_instances": 15386,
+    "scene_collision_ready": true,
+    "generated_collision_components": 18,
+    "generated_collision_instances": 327,
+    "generated_collision_ready": true,
+    "streamed_grass_components": 4,
+    "streamed_grass_instances": 18,
+    "streamed_grass_collision_disabled": true,
+    "route_command_speed_m_s": 1
+  },
+  "decoded_captures": 8,
+  "captures": [
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-end/aim_camera.png",
+      "bytes": 1173227,
+      "sha256": "34884fcc42921c242eac4d685065ecd4103836341c9864524492a23d47c571a2",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-end/overview.png",
+      "bytes": 3090912,
+      "sha256": "b515041c9b659ab19af70e2317088676986d939ad6f4fb1c25796a3063569b9d",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-reset/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "73adf197d553729f88b03ca78849b68aab85029d4a84a04a7194708b90c68587",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-reset/overview.png",
+      "bytes": 3090912,
+      "sha256": "6841574306b74bb3a43e952435d4f7bbbd7435195775d1179054c128feb47b7d",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-rest/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "f1d013d10a13fabdfc06f7f70d3a3506206c5c791f13d07f8c4a10dd6817fd75",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-rest/overview.png",
+      "bytes": 3090912,
+      "sha256": "cda15f569d534f017a714483efe8ff54f045f7f34eefe46bef76dc7496d4a520",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-return/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "567ce737ea5900e96cb2ba11cae96e53272723e0d89645044f2c90222f148012",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/contact-return/overview.png",
+      "bytes": 3090912,
+      "sha256": "2ddc84f3947d460eb1bfb10b0ab8cc6c4debd0789d61cb770e8bad121578526c",
+      "width": 1600,
+      "height": 1000
+    }
+  ],
+  "evidence": {
+    "execution": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/execution.json",
+      "bytes": 2488,
+      "sha256": "59da24f097775ecca078d5fc714385229cd36b492d9b4a2eff18988af0615d19"
+    },
+    "control_result": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/control-result.json",
+      "bytes": 1890720,
+      "sha256": "8f0864333bb5187b8bdf7ccf3417fc8196989b5740c2a89eefc03ee5cfd2693f"
+    },
+    "verification": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/verification.json",
+      "bytes": 833,
+      "sha256": "3b89059d3af86a990aa6898f86e3d33d9321495d3555e00ddd7ea6efdd286ed9"
+    },
+    "runtime_log": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-02/runtime.log",
+      "bytes": 505213,
+      "sha256": "7ffc8ca0026d23e15ce040bdeab29d1b0f80a6eb4b52b888ed0a5665ac4906da"
+    }
+  },
+  "contact_scope_note": "This 3.4 m default-spawn route records wheel contacts with LandscapeHeightfieldCollisionComponent_544. Generated collision readiness/population is recorded separately; resource-specific generated hits and voids are bound by collision-reload-03.",
+  "summary_source": {
+    "file": "artifacts/maps/wt-refine-20261118/write-final-native-summaries.py",
+    "bytes": 10980,
+    "sha256": "f8fb64a9a9769c2a9ba6f4c2f47813a1214eedd9dd6eb87c22a4611d562871c4"
+  },
+  "summary_created_utc": "2026-11-18T10:20:29.274010+00:00"
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "wt_grass_enhancement_code_validation_v1",
+  "status": "passed",
+  "scope": "source contracts, actual prepared package validation, direct source triangle field fixture and Python AST; native appearance pending",
+  "source_code": [
+    {
+      "file": "prog/gameLibs/render/gpuGrass.cpp",
+      "sha256": "5b5a2f9aa85920aaa6c3e2bc9be2805a8bcbf6ee8e97dc01fe5532f2aabdf923",
+      "lines": [
+        350,
+        382
+      ],
+      "excerpt": "350:  for (auto name : diffuseList)\n351:    textureNames.diffuse.push_back(name);\n352:  for (auto name : normalList)\n353:    textureNames.normal.push_back(name);\n354:  for (auto name : alphaList)\n355:    textureNames.alpha.push_back(name);\n356:}\n357:\n358:void GPUGrassBase::updateGrassColors()\n359:{\n360:  for (int id = 0; id < grassColors.size(); id++)\n361:  {\n362:    GrassTypeDesc &desc = grassDescriptions[id];\n363:    if (!desc.isValid)\n364:      continue;\n365:\n366:    GrassColorVS &colors = grassColors[id];\n367:    colors.mask_r_color0 = srgb_color4(desc.colors[0].value);\n368:    colors.mask_r_color1 = srgb_color4(desc.colors[1].value);\n369:    colors.mask_g_color0 = srgb_color4(desc.colors[2].value);\n370:    colors.mask_g_color1 = srgb_color4(desc.colors[3].value);\n371:    colors.mask_b_color0 = srgb_color4(desc.colors[4].value);\n372:    colors.mask_b_color1 = srgb_color4(desc.colors[5].value);\n373:    colors.stiffness = desc.stiffness.value;\n374:    colors.tile_tc_x = desc.tile_tc_x.value;\n375:  }\n376:  GrassColorVS *destDataVS = 0;\n377:  bool ret = grassColorsVSCB->lock(0, 0, (void **)&destDataVS, VBLOCK_WRITEONLY | VBLOCK_DISCARD);\n378:  d3d_err(ret);\n379:  if (!ret || !destDataVS)\n380:    return;\n381:  memcpy(destDataVS, grassColors.data(), min<int>(sizeof(GrassColorVS) * GRASS_MAX_TYPES, data_size(grassColors)));\n382:  grassColorsVSCB->unlock();"
+    },
+    {
+      "file": "prog/daNetGame/shaders/grass_generate.dshl",
+      "sha256": "e637e8ab77a04d2e988fd834569ca8f4c7c3c1773b14176f0c7362811ac739b0",
+      "lines": [
+        790,
+        825
+      ],
+      "excerpt": "790:\n791:      ##if grass_pass == prepass_off || grass_pass == depth_prepass\n792:      half alpha = tex3Dbias(grass_texture_a, tc, mip_bias).r;\n793:      apply_burnt_grass_alpha(burntProgress, alpha);\n794:      clip(alpha-opacity);\n795:      //clip(grassAlbedo.a-0.01);\n796:      ##endif\n797:      ##if grass_pass != depth_prepass\n798:      half3 grassAlbedo = tex3Dbias(grass_texture, tc, mip_bias).rgb;\n799:      //== fill pixel shader\n800:      //input.normal.xyz = (dot(input.normal.xyz, input.p2e)<0) ? -input.normal.xyz : input.normal.xyz;\n801:\n802:      half3 landColor = input.color_height_from_ground.rgb;//==fixme\n803:\n804:      //input.normal.xyz = normalize(cross(ddx(input.p2e), ddy(input.p2e)));\n805:      //input.normal.xyz = MUL_VFACE(input.normal.xyz);\n806:      // this is dirty trick, that replaces vertex normal with more vertical (better be ground one!) one, based on sun light direction\n807:      // the issue is: our billboards are captured from side, and do not represent statistical picture when we look from above\n808:      // the same way it is not correctly represent when sun light is from above, and especially - if both\n809:      // better would be to render additional billboards and cross-dissolve them, but it is heavier.\n810:      // todo: to make trick look better and faster, we'd better:\n811:      //  * move MUL_VFACE(input.normal.xyz) to vertex shader (it can be done based on just position)\n812:      //  * move whole input.normal calculation to VS\n813:      //  * use ground normal\n814:      input.normal = normalize(input.normal);\n815:      ##if grass_texture_n != NULL\n816:      //half3 landColor =float3(1, 0, 0);//==fixme\n817:      half3 color = lerp( landColor, input.mask_r, grassAlbedo.r );\n818:      color = lerp( color.rgb, input.mask_b, grassAlbedo.b );\n819:      color = color * lerp( input.color_mask_g_from, input.color_mask_g_to__porosity.rgb, grassAlbedo.g ) * COLOR_CORRECTION_MULTIPLIER;\n820:      grassAlbedo.rgb = color;\n821:      half4 packedNormalMap = tex3Dbias(grass_texture_n, tc.xyz, mip_bias);\n822:      half3 normalMap = unpack_ag_normal(packedNormalMap);\n823:      half3 worldNormal = perturb_normal( normalMap, input.normal.xyz, input.p2e, tc.xy );//==\n824:      half translucency = packedNormalMap.b;\n825:      //half smoothness = lerp(lerp(input.color_mask_g_from.a, input.mask_r.a, grassAlbedo.r), input.mask_b.a, grassAlbedo.b);"
+    },
+    {
+      "file": "prog/gameLibs/render/fast_grass.cpp",
+      "sha256": "0d1c1fed88d72416ff697002a2f63dd827180b4414c2ec7a47d0b3d7976ef116",
+      "lines": [
+        40,
+        52
+      ],
+      "excerpt": "40:#define VAR(a) static int a = -1;\n41:SHADER_OPT_VARS_LIST\n42:#undef VAR\n43:\n44:static inline float3 srgb_color4(E3DCOLOR ec)\n45:{\n46:  Color3 c = color3(ec);\n47:  c.r = powf(c.r, 2.2f);\n48:  c.g = powf(c.g, 2.2f);\n49:  c.b = powf(c.b, 2.2f);\n50:  return float3(c.r, c.g, c.b);\n51:}\n52:"
+    }
+  ],
+  "files": {
+    "tools/unreal/wt_grass.py": "3dd7e10e2e91cdb51febd1f9f92e41b7edcd4dd1b85533a9b4ee5fc51306688e",
+    "tools/unreal/author_wt_grass.py": "3a93342dbee1dd10d6506f4683a5f7f165ff6468e6e0e69a66a76f7497e27bab",
+    "tools/unreal/verify_wt_grass.py": "79807de965488a05cc4acff697fb1006fa4d15b4faa74f85d6d586abda32c81f",
+    "tools/maps/extract_wt_small_grass.py": "773aada1ebb182c073d019914885fb5787f0791987bed72afa52f489f6c7b8ca",
+    "tools/maps/prepare_wt_small_grass_meshes.py": "079d411c391e7d6f8109039f70f78bc4ff9529d542da7a78425ed897fc03addf",
+    "tools/maps/prepare_wt_foliage_enhancement.py": "a5f8f5cf19d45c916566429e0916134285e6be288c6eeb683fc518f9108f075d",
+    "tools/maps/prepare_wt_grass_audit_samples.py": "d7a157ff2395bc164e607d3e7ea62a8facca66909f355e8088bd3956581553c7"
+  },
+  "source_srgb_half_to_linear": [
+    0.217637640824031,
+    0.217637640824031,
+    0.217637640824031,
+    1.0
+  ],
+  "definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99",
+  "enhancement_proof_sha256": "2803875259b99a051b8e5a28386a3aa4c5ba601a215932488f0abcee7218ee9e",
+  "fixture_sha256": "ab781d86f06ce28850473be819fe0d0dc26bc525047f1c9ca428650b9a811711",
+  "model_count": 10,
+  "layer_count": 16,
+  "weights": 4,
+  "field_points": [
+    {
+      "id": "previous_gui_station_grass",
+      "surface": "zero",
+      "source_witnesses": 5,
+      "nonzero_layers": 0
+    },
+    {
+      "id": "spawn",
+      "surface": "zero",
+      "source_witnesses": 8,
+      "nonzero_layers": 0
+    },
+    {
+      "id": "near_station_grass",
+      "surface": "positive",
+      "source_witnesses": 0,
+      "nonzero_layers": 4
+    },
+    {
+      "id": "green_slope",
+      "surface": "positive",
+      "source_witnesses": 0,
+      "nonzero_layers": 7
+    },
+    {
+      "id": "hard_road_edge",
+      "surface": "zero",
+      "source_witnesses": 4,
+      "nonzero_layers": 0
+    },
+    {
+      "id": "open_meadow",
+      "surface": "positive",
+      "source_witnesses": 0,
+      "nonzero_layers": 4
+    }
+  ]
+}

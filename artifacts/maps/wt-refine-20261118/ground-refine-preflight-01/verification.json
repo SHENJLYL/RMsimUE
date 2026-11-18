@@ -1,0 +1,991 @@
+{
+  "schema": "wt_ground_refinement_preflight_v1",
+  "status": "passed",
+  "native_run": false,
+  "rendered_quality_verified": false,
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+  "source_proof_sha256": "327b433807856e123f1752e952652b47e35e7c346ac7a996d8de28b070d0f0b6",
+  "checks": [
+    {
+      "name": "production_scripts_parse",
+      "passed": true,
+      "files": 6
+    },
+    {
+      "name": "original_height_material_layout",
+      "passed": true,
+      "material_ids": [
+        "WT_e82be167172b929d5356",
+        "WT_466d02cd484c38289a40",
+        "WT_43749e19cb4c7864f27f",
+        "WT_0239c3291954db20b99e",
+        "WT_5e8bd1ba5087efbc0fb2",
+        "WT_6e25a8f73f405048601c",
+        "WT_fd08e5ab7bca8dffbd0d",
+        "WT_56a8f9dad5f5fe075e90",
+        "WT_0b7ef0d076c7d422bf05",
+        "WT_ea12811419abf4413013",
+        "WT_318f5a3cd79c6587012f",
+        "WT_f71c86623ca459a14d14",
+        "WT_5d2527de3c642c981e93",
+        "WT_91dd399e4c661e36edb6",
+        "WT_9fb476f360cf8b8e16c5",
+        "WT_3ec283666d818a9f5b22",
+        "WT_caa2c0277417e6b3532a",
+        "WT_0c40964a3f663a7b3813",
+        "WT_d7e4fb5a31e1eae8b011",
+        "WT_643dc302c47030162765",
+        "WT_479901e2b6d99a5b7e0a",
+        "WT_bf5803a05ee67913ef3e",
+        "WT_9a07e05fc39d69ca4fbe",
+        "WT_ae32c3b40a762088d577",
+        "WT_9a32312dd7f5765f0476",
+        "WT_97af1d9a42e2f563dc16",
+        "WT_09e539132e421bc2b912",
+        "WT_35701bfc9a7d1810e224",
+        "WT_d0fcdcc930a581d590de",
+        "WT_f7ecd0c5176ec4ada5b6",
+        "WT_d7385ee67b5b9edc1fbf",
+        "WT_dc22849ac8fc033e5ffd",
+        "WT_8fb9ceff629e3e29ff60",
+        "WT_7592e2b78f1c5d52c332"
+      ],
+      "source_slots": {
+        "diffuse": 0,
+        "normal": null,
+        "reflection": 2
+      },
+      "microdetail_slots": 12
+    },
+    {
+      "name": "unchanged_original_decal_asphalt_road_worn_b_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_asphalt_road_worn_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_soil_d_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_soil_d_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_dirt_dark_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_dirt_dark_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_asphalt_holes_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_asphalt_holes_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_soil_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_soil_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_rail_gravel_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_rail_gravel_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_gravel_border_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_river_sand_gravel_coast_border_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_rail_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_rail_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_trampled_soil_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_trampled_soil_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_craters_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_craters_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_soil_errosion_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_soil_errosion_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_debris_bricks_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_debris_bricks_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_tank_trails_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_tank_trails_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_scorched_earth_a_burnt_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_scorched_earth_a_burnt_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_coal_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_coal_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_dirt_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_battlefield_dirt_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_desert_trampled_soil_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_desert_trampled_soil_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_scorched_earth_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_scorched_earth_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_oil_puddle_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_oil_puddle_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_tank_trails_sand_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_country_road_all_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_country_road_all_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_dirt_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_dirt_a_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_river_sand_gravel_coast_border_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_river_sand_soil_coast_border_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_soil_cliff_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_soil_cliff_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_debris_bricks_b_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_debris_bricks_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_ground_decal_tank_trails_dirt_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_sand_errosion_loft_a_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_soil_errosion_loft_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_sand_g_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_sand_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_asphalt_dmg_a_border_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_asphalt_dmg_a_border_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_park_sett_road_d_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_park_sett_road_d_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_tracks_b_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_road_tracks_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_concrete_plates_b_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_concrete_plates_b_tex_r",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_pavement_marking_d_tex_d",
+      "passed": true
+    },
+    {
+      "name": "unchanged_original_decal_pavement_marking_d_tex_r",
+      "passed": true
+    },
+    {
+      "name": "native_once_premultiplied_payload_roundtrip",
+      "passed": true,
+      "cases": 60,
+      "max_absolute_error": 9.388045896230324e-13
+    },
+    {
+      "name": "zero_coverage_ignores_clear_payload",
+      "passed": true
+    },
+    {
+      "name": "unverified_zero_payload_has_zero_strength",
+      "passed": true,
+      "maximum_strength": 0.0
+    },
+    {
+      "name": "overlapping_source_ids_blend_continuously",
+      "passed": true,
+      "max_error": 1.7763568394002505e-15
+    },
+    {
+      "name": "actual_source_slice_interpolation_has_no_integer_jump",
+      "passed": true,
+      "asymmetric_pixel_points": 3,
+      "boundaries": 10,
+      "delta_index": 2e-07,
+      "max_rgba_delta": 5.215686266213382e-08
+    },
+    {
+      "name": "quantization_effect_is_coverage_bounded",
+      "passed": true,
+      "model": "R5 uniform nearest; exact mask",
+      "cases": 532,
+      "results": [
+        {
+          "coverage": 1.0,
+          "maximum_index_error": 0.20967741935483808,
+          "maximum_strength": 1.0
+        },
+        {
+          "coverage": 0.5,
+          "maximum_index_error": 0.41796331435800127,
+          "maximum_strength": 0.5
+        },
+        {
+          "coverage": 0.1,
+          "maximum_index_error": 2.0904807084123975,
+          "maximum_strength": 0.1
+        },
+        {
+          "coverage": 0.01,
+          "maximum_index_error": 8.0,
+          "maximum_strength": 0.01
+        }
+      ]
+    },
+    {
+      "name": "height_gradient_matches_analytic_plane_under_uv_rotation_and_reflection",
+      "passed": true,
+      "cases": 3,
+      "max_error": 1.1102230246251565e-16,
+      "strength_domain": "source UV height, not displaced geometry"
+    },
+    {
+      "name": "receiver_rnm_neutral_normal_preserves_slope",
+      "passed": true
+    },
+    {
+      "name": "flat_receiver_preserves_microdetail_normal",
+      "passed": true
+    },
+    {
+      "name": "height_shader_uses_alpha_gradient_and_reflection_a_b",
+      "passed": true
+    },
+    {
+      "name": "ue_raw_specular_is_multiplied_once",
+      "passed": true
+    },
+    {
+      "name": "microdetail_mip_gradients_outside_coverage_branch",
+      "passed": true
+    }
+  ],
+  "scripts_sha256": {
+    "wt_materials.py": "d76e0f6f21c88ba2807a374ce311673fd80cf8f348f69e3b77bc5ec61c6b5684",
+    "wt_height_decals.py": "6f7291ff8614fad4e480999a2633c0c07107efa144e41f817177acd5329aa5bb",
+    "wt_ground_microdetails.py": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+    "wt_ground_material_verify.py": "904e7e570f0a4bea513fde14c6a15f3c9aca472065deb38b2efc23d8b08d02d9",
+    "update_wt_materials.py": "7f5837106b817b300a85ace5559aa67800575891b004e3fc2f980d7baeca6231",
+    "verify_wt_materials.py": "b65caf8aac4645fa307020344efa76cee1b53f5fa1cc40c31fcd5fc5468deb62",
+    "check_wt_ground_materials.py": "1d4010d0478d6fe941b40920a05decf9969fcfea621151a190af4832818ec45d"
+  },
+  "source_files": {
+    "ue_rvt_writer": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\VirtualTextureMaterial.usf",
+      "sha256": "4ae568ed157dc8945bb50cc12a6b8bea24d892972f6ac7178343ecc9c252e445"
+    },
+    "ue_rvt_compression": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\VirtualTextureCompress.usf",
+      "sha256": "bfdbc040ab3c879d9d59a4e021e2019c2e8315c8c8f4fca0c5fe1eb691d94c77"
+    },
+    "ue_rvt_blend_clear": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Renderer\\Private\\VT\\RuntimeVirtualTextureRender.cpp",
+      "sha256": "ef807c4ce84d8eb92d70c6276377b6fd7e80989f039213d7193b4d7481eb9e77"
+    },
+    "ue_clear_constant": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\RHI\\Private\\RHI.cpp",
+      "sha256": "3d9ab3c7bd1d215929c983dd7298ef11525d5ebce1c741bd5ab458d46d963175"
+    },
+    "ue_specular_read": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Materials\\MaterialExpressions.cpp",
+      "sha256": "66909943c30bdcea8f8bc47bd3b719093eeed4d11715b94cb120fb4f4330d815"
+    },
+    "ue_array_sample_grad": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Shaders\\Private\\Common.ush",
+      "sha256": "d6d43d5200e269bc38136cf644054e5c0ae372a61dce21d3a97ef6e9450ec8e5"
+    }
+  },
+  "limits": [
+    "Source-backed UE post-RVT application; the original shipped land consumer is absent from the public checkout.",
+    "The R5 uniform quantization exercise is a numeric sensitivity model, not an actual BC3 codec or a rendered stability measurement.",
+    "Native shader, serialized pin, texture policy, array and GrassOutput closure gates must run after authoring."
+  ],
+  "original_height_textures": {
+    "decal_asphalt_road_worn_b_tex_d": {
+      "sha256": "6412455a137221ef4ed086e13d5b46d8557af5f1c7eb39b49647b0efafb9e2f1",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "decal_asphalt_road_worn_b_tex_r": {
+      "sha256": "70306b1316242459b9ee63ef2b33c857536f4aa78b346c79c4c51a81641c0499",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "decal_road_soil_d_tex_d": {
+      "sha256": "f2edf36b383d93ae5ffd016a60dafd6e7936cb0405a4cfb54906dd1f7d0a6ad9",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "decal_road_soil_d_tex_r": {
+      "sha256": "d8e923bfa5076ec320dc59786b261924ec80a8cc692555746f05242e4b1cfb2e",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "ground_decal_battlefield_dirt_dark_tex_d": {
+      "sha256": "d27ebd8441ad20429b505f199b3e84d62613e59a35de7ca74603c2e82c74896b",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_battlefield_dirt_dark_tex_r": {
+      "sha256": "d3de7fedab440644205599b8212d2ab550412901faee329eab98eef6f2d09bf8",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_asphalt_holes_tex_d": {
+      "sha256": "567d5cbf68dbd071ab44b176235c28af23e86083cd0b1e0b7532cde436764acd",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_asphalt_holes_tex_r": {
+      "sha256": "cadd04cc73672187ae7f170cb04a3c60ed4f74dff273b1e458b827d7c2aa1871",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "decal_road_soil_a_tex_d": {
+      "sha256": "ebcbbfa825ce35e47be58a577c7c8c3802d2cf970c503ea0087bba8ba2c56d49",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "decal_road_soil_a_tex_r": {
+      "sha256": "6eb3c304c6d9d03573aa7dd241ed9212ae730b8234955b1b3e3b56a5d9f516a7",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "decal_road_rail_gravel_a_tex_d": {
+      "sha256": "706cd6b09a064509413f45585ae2fe60f4f498056762a192aced9c394ec64ec6",
+      "size": [
+        4096,
+        2048
+      ]
+    },
+    "decal_road_rail_gravel_a_tex_r": {
+      "sha256": "4b3e1c7aff00bf4ba69245285135cda8dfaad8378b56f4c0db5be56b2fa4cec0",
+      "size": [
+        4096,
+        2048
+      ]
+    },
+    "gravel_border_tex_d": {
+      "sha256": "d89eda130698a6724cefff12897bd10f6390ac2a69b3a7f4a531d896994b3f8a",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "river_sand_gravel_coast_border_tex_r": {
+      "sha256": "5521210dd3766243a961d1c8e2f45a0a907ef28533a2340bd121aa165672c563",
+      "size": [
+        1024,
+        512
+      ]
+    },
+    "decal_road_rail_tex_d": {
+      "sha256": "e7ad16763a0bd09a189056d331bf5d03f18d64a0b2d2977f89babc52304f446d",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "decal_road_rail_tex_r": {
+      "sha256": "f351746699ef0f70841e590a1df1845bc83ef661c3e7b2817634ff91dbd502c9",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "ground_decal_trampled_soil_tex_d": {
+      "sha256": "6fc1fb5277b669ae8fc7853d30b97a4086c7c9595f3b75ee93c06b40cd0e20bb",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "ground_decal_trampled_soil_tex_r": {
+      "sha256": "badf68b2a3c8b1e430758e5560f4757bcb443c3a43ceb6f45a60d6989456b1a2",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "ground_decal_battlefield_craters_tex_d": {
+      "sha256": "03ac3a6267d32fa0fa152dcd5523a45ab1463dde51400a5b66233dbd9f20b79a",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "ground_decal_battlefield_craters_tex_r": {
+      "sha256": "b11b7eda895045d7bd292beb68804632642c27a7a0d5748af3b5db6d6567fded",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "ground_decal_soil_errosion_a_tex_d": {
+      "sha256": "c09f179bca5994a43d30d2bae35a94f5be710c8f5b78b3b075a785b0903a1b22",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "ground_decal_soil_errosion_a_tex_r": {
+      "sha256": "c5333eae886dc8f184df9a4432cae1e7518539e7645f9c697d2a97aa1292e2b6",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "ground_decal_debris_bricks_a_tex_d": {
+      "sha256": "c96265bde254d429150dd1486992e46c882bbca037f6a361c3d0cc789b078f90",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_debris_bricks_a_tex_r": {
+      "sha256": "c3ee043882bd21592d0f709d3324c92b9959b9c9dc827d0819e969287fa14a27",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_tank_trails_tex_d": {
+      "sha256": "33280f7b7d537833dad29939c5a325e2d09bf99d33ee510a1814d87300bbc13f",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_tank_trails_tex_r": {
+      "sha256": "b2c54242f5f579c1821688bc4b90f8fdf1f2e7c3cf0fc7f420bfb8d707037f2f",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_scorched_earth_a_burnt_tex_d": {
+      "sha256": "16deb4b8c68e9b58431c4294925b4c76b8d9eb6edd292843048d20a67666c613",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_scorched_earth_a_burnt_tex_r": {
+      "sha256": "a33ce3d14031864380bc7721a18c95f135e9208c4faeb51783992ab1c4226201",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_coal_a_tex_d": {
+      "sha256": "175632ae2586230329f7ccc880fc485da3715a8ad4bb868cd990b09323d68b5c",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "ground_decal_coal_a_tex_r": {
+      "sha256": "cac30315dd9446d8be23de1d9129cd70e4b5ebd7363ea64f6170a618398305b0",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "ground_decal_battlefield_dirt_tex_d": {
+      "sha256": "04f8e556cebb81899cbc064ce88cd46f6de730276ffbf5f1028a4bbac3dcd8de",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_battlefield_dirt_tex_r": {
+      "sha256": "e2349832eb1f499be78a22aee3b9c6a5a0a76326ea2e961bb8ba4500130e6a0a",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_desert_trampled_soil_tex_d": {
+      "sha256": "c854103cc9a2417e4bc537934358f0e4062a87dac359b64c6b2a2612312d3c62",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_desert_trampled_soil_tex_r": {
+      "sha256": "acf0385d07e56cda12151f8a6392d0acceb410f7c40387ccecce7abe5fe90925",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_scorched_earth_tex_d": {
+      "sha256": "4dabde60885447b625508421e6ea3a95e70c0f0e36b02626a0f85238330d20b2",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_scorched_earth_tex_r": {
+      "sha256": "fafcb4aa30d252d6c3e132308dbbdc069c0a6e9aab3265851823719792ff2c18",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_oil_puddle_tex_d": {
+      "sha256": "85fa50069ce3095e1ed98ca12a14a099d075c157bff143dd4dd880ef4010e72d",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "ground_decal_oil_puddle_tex_r": {
+      "sha256": "d662fa7fcac111ac8118afcbb196bca735e4d7a59c67f5146a5355c9d5a7f5f2",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "ground_decal_tank_trails_sand_tex_d": {
+      "sha256": "78ed23d48aeb1e43663617d111b31b9ee3058db1f136bcb85aa2ade4150a5213",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "country_road_all_tex_d": {
+      "sha256": "fcf4013abfe9b5990ae6d48d75edc0eafff879afe199c3715b8f51956a7833d3",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "country_road_all_tex_r": {
+      "sha256": "95a475ac3a4689450f020c6abf0e81b6500565d9b5c8adcd910a5cbef56a7739",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "decal_road_dirt_a_tex_d": {
+      "sha256": "fbd200d08798e6f8efb5d117a8cd74c0616550cde1547789d644201c90c25c59",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "decal_road_dirt_a_tex_r": {
+      "sha256": "984ae585ecfc106ef80930ae23f19c0ec38f415e211bf80157f22329135e7c4f",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "river_sand_gravel_coast_border_tex_d": {
+      "sha256": "e02bc923451b9a16798402511897dc6c6a1fac4b1b4117b073794cfacc937758",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "river_sand_soil_coast_border_tex_d": {
+      "sha256": "30b7ae68e713aa801f427aea320230f12f0b35c227038f76db10eb8c73c22d93",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "ground_decal_soil_cliff_tex_d": {
+      "sha256": "f02d4295a10f24055d535abffb0415f0c0a8cf50f6e0692692439c9d0f73f142",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_soil_cliff_tex_r": {
+      "sha256": "ee379fa098b372c4a2eaaf9c4b68abc9c508d9eabeb1c599732fcbc5d65755c7",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_debris_bricks_b_tex_d": {
+      "sha256": "9aba9c109c9a66dd31228e4b423bb5061f2ebd4a51947b0b50157df8be8b4b8b",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_debris_bricks_b_tex_r": {
+      "sha256": "7aa685940b12d0c28756c62925e6571b8409ace45257d47760a2969213813edf",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "ground_decal_tank_trails_dirt_tex_d": {
+      "sha256": "272c7cefefa0bdfde12d4a8118e450eaa0dc098ac66769d4af06e7c8831fc12c",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "sand_errosion_loft_a_tex_d": {
+      "sha256": "c440ca9cc389458ec199d48f963c172f9defbf09cd0eb6fdaf33a79c98d0a14f",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "soil_errosion_loft_b_tex_r": {
+      "sha256": "84491c681549131c641c1889f22371f20df01b248e89e01ba159acf15655b43b",
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    "decal_road_sand_g_tex_d": {
+      "sha256": "080b82cd0b024836b78780ee34b90b1445c40c85753b9ae26950ae9aab8d204e",
+      "size": [
+        4096,
+        2048
+      ]
+    },
+    "decal_road_sand_b_tex_r": {
+      "sha256": "09f5e3076ba6edb9e211e2347b56c8e6a99137f599003c3b71159c3f1514cbc0",
+      "size": [
+        4096,
+        2048
+      ]
+    },
+    "decal_asphalt_dmg_a_border_tex_d": {
+      "sha256": "29f6f772d708c85a573fe215b8d191658f743f0fa3a531c8bf648bfaa14195f2",
+      "size": [
+        2048,
+        128
+      ]
+    },
+    "decal_asphalt_dmg_a_border_tex_r": {
+      "sha256": "a674cb540d687d84411a057ac4655b3498429919a3bb46716d71201b1cb13b9d",
+      "size": [
+        2048,
+        128
+      ]
+    },
+    "park_sett_road_d_tex_d": {
+      "sha256": "ffe7afe37ba3ddea0f4a5f5237411abd681e02ebe19eae69d4409cb6c155e9fa",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "park_sett_road_d_tex_r": {
+      "sha256": "7907f2f52488709522b18a1dece135b04d70fc4fbac039f45c632b12242dd1a9",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "decal_road_tracks_b_tex_d": {
+      "sha256": "dbe982afafc8b3f627dabe806d69c29256976c2c026856d0fec1aaba82385376",
+      "size": [
+        2048,
+        256
+      ]
+    },
+    "decal_road_tracks_b_tex_r": {
+      "sha256": "3731cbbcc5f90c27ae0b928a9fa9f6051ca872116cfca558edb743eb5532127a",
+      "size": [
+        2048,
+        256
+      ]
+    },
+    "decal_concrete_plates_b_tex_d": {
+      "sha256": "4689d3ed7944db80daa648c2f685110da20c8f3666fa0f64ed6495f9ee107f7e",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "decal_concrete_plates_b_tex_r": {
+      "sha256": "d95070fc805b9c7800f9ba9054bac192ea4dda46fda19aa8809ecef2c4ab8af7",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "decal_pavement_marking_d_tex_d": {
+      "sha256": "cbba912e58bf1fbd961430e75791076abc32cef3f0138c5206ca90fa6ec026cc",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "decal_pavement_marking_d_tex_r": {
+      "sha256": "bd41bd0caf3c330f835ae1b4f80ec54cc69b39b73be41c413c2a8bf843edf13e",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  },
+  "source_contract_example": {
+    "schema": "wt_height_decal_surface_v2",
+    "material_id": "WT_e82be167172b929d5356",
+    "source_shader": "land_mesh_height_decal",
+    "source_diffuse": "decal_asphalt_road_worn_b_tex_d",
+    "source_reflection": "decal_asphalt_road_worn_b_tex_r",
+    "source_normal": null,
+    "source_slots": {
+      "diffuse": 0,
+      "reflection": 2,
+      "normal": null
+    },
+    "public_reference_slots": {
+      "diffuse": 0,
+      "normal": 2,
+      "reflection": 3
+    },
+    "slot_mapping": "Explicit adaptation of original d/null/r/null resources to the published reflection-channel contract",
+    "reflection_channels": {
+      "smoothness": "A",
+      "ambient_occlusion": "G",
+      "reflectance": "R",
+      "microdetail_id": "B"
+    },
+    "normal": "Published no-normal alpha-height finite differences and perturb_normal_height2d; clipmap XY becomes UE world XY",
+    "normal_strength": 0.08,
+    "height_source": [
+      0.08,
+      11.086956977844238,
+      13,
+      0
+    ],
+    "normal_space": "world_aligned_clipmap; combined with receiver geometric normal by RNM",
+    "rvt_microdetail_payload": "(1 + clamp(T2.b * id_count_scale, 0, slot_count - 1)) / (slot_count + 1)",
+    "rvt_payload_channel": "Specular",
+    "rvt_mask": "coverage one before native opacity multiplication",
+    "textures": {
+      "T0": {
+        "srgb": true,
+        "compression": "TC_DEFAULT"
+      },
+      "T2": {
+        "srgb": false,
+        "compression": "TC_VECTOR_DISPLACEMENTMAP"
+      }
+    },
+    "ue_surface": {
+      "roughness": "clamp(1 - source_reflection.a, 0.04, 1)",
+      "metallic": 0
+    },
+    "source_reflectance_and_ao_rendered": false,
+    "original_geometry_and_png_unchanged": true,
+    "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "references": [
+      "prog/daNetGame/shaders/make_clipmap.dshl:1397-1435",
+      "prog/gameLibs/render/shaders/psh_derivate.hlsl:33-48"
+    ]
+  },
+  "old_reflection_as_normal_failure": {
+    "decal_road_rail_gravel_a_tex_r": {
+      "source_sha256": "4b3e1c7aff00bf4ba69245285135cda8dfaad8378b56f4c0db5be56b2fa4cec0",
+      "old_wrong_ag_normal_zero_z_fraction": 0.0011518001556396484,
+      "old_wrong_ag_normal_z_below_point_two_fraction": 0.0024123191833496094,
+      "channels_rgba_mean": [
+        14.925948500468552,
+        112.63540017735905,
+        222.48950241922591,
+        33.13308715395742
+      ]
+    },
+    "river_sand_gravel_coast_border_tex_r": {
+      "source_sha256": "5521210dd3766243a961d1c8e2f45a0a907ef28533a2340bd121aa165672c563",
+      "old_wrong_ag_normal_zero_z_fraction": 0.4860858917236328,
+      "old_wrong_ag_normal_z_below_point_two_fraction": 0.5044631958007812,
+      "channels_rgba_mean": [
+        10.437417984046734,
+        129.10753631532418,
+        232.76235008313554,
+        44.833469390679134
+      ]
+    }
+  },
+  "prior_asset_backup": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\ground-refine-01\\backup.json",
+    "sha256": "0c904bea9a78bf50bab259fa05f301c25c09e374bab130b47d14afc1909ac78b"
+  },
+  "visual_baselines": {
+    "gui-wall-03-reset/entry.png": "a8b885f44a322b7ff7bbcd27490217130a1e35a7061d9bc504eafcb6d3219b52",
+    "gui-motion-before-01-frames/frames.json": "bd95f01e348574a5c76f8a80e8374adfd0b0eac8dceaf8fe725b09c4090f8e1e",
+    "contact-flanders-01/contact-rest/overview.png": "eefaf5fdac67182066b9b55fa80f284c58b31c471931d5a776d5031011dbe7b8"
+  },
+  "planned_native_scope": {
+    "parent_count": 4,
+    "instance_count": 36,
+    "height_instances": 34,
+    "retained_grass_layers": 16,
+    "full_material_reload_expected": 307,
+    "world_mutation": false
+  },
+  "check_count": 78
+}

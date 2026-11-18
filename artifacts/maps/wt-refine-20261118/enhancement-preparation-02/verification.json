@@ -1,0 +1,242 @@
+{
+  "schema": "wt_foliage_enhancement_preparation_v1",
+  "status": "passed",
+  "definition": {
+    "file": "assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json",
+    "sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99"
+  },
+  "proof": {
+    "file": "assets/maps/wt_vlaanderen/foliage-enhanced/enhancement-proof.json",
+    "sha256": "2803875259b99a051b8e5a28386a3aa4c5ba601a215932488f0abcee7218ee9e"
+  },
+  "original_definition": {
+    "file": "assets/maps/wt_vlaanderen/foliage/foliage.json",
+    "sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e"
+  },
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "models": 10,
+  "layers": 16,
+  "weight_textures": 4,
+  "hard_overlap_pixels": 0,
+  "short_grass_area_m2": 2627195.75,
+  "samples": [
+    {
+      "id": "previous_gui_station_grass",
+      "ros_xy_m": [
+        1075.232351,
+        -1012.656026
+      ],
+      "png_xy": [
+        2150,
+        2070
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -0.3082923889160156,
+      "slope": 0.07437539100646973,
+      "expected_surface": "station rail/road exclusion or outside edge",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "spawn",
+      "ros_xy_m": [
+        1028,
+        -1020
+      ],
+      "png_xy": [
+        2056,
+        2056
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -1.380575180053711,
+      "slope": 0.00981433130800724,
+      "expected_surface": "source-resolved surface",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "near_station_grass",
+      "ros_xy_m": [
+        1084.75,
+        -1029.75
+      ],
+      "png_xy": [
+        2169,
+        2036
+      ],
+      "biome_id": 2,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 0.9397735595703125,
+      "slope": 0.21380020678043365,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 66,
+        "ue_short_grass_0": 211,
+        "ue_short_grass_1": 122,
+        "ue_short_grass_2": 90
+      }
+    },
+    {
+      "id": "green_slope",
+      "ros_xy_m": [
+        1146.25,
+        -942.25
+      ],
+      "png_xy": [
+        2292,
+        2211
+      ],
+      "biome_id": 9,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 3.5589523315429688,
+      "slope": 0.15023145079612732,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 230,
+        "ue_short_grass_1": 154,
+        "ue_short_grass_2": 58
+      }
+    },
+    {
+      "id": "hard_road_edge",
+      "ros_xy_m": [
+        1075.25,
+        -1012.75
+      ],
+      "png_xy": [
+        2150,
+        2070
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -0.3082923889160156,
+      "slope": 0.07437539100646973,
+      "expected_surface": "hard_clear",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "open_meadow",
+      "ros_xy_m": [
+        1163.25,
+        -1192.25
+      ],
+      "png_xy": [
+        2326,
+        1711
+      ],
+      "biome_id": 27,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 1.8274822235107422,
+      "slope": 0.05378357693552971,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 56,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 196,
+        "ue_short_grass_1": 75,
+        "ue_short_grass_2": 85
+      }
+    }
+  ],
+  "scope": "offline_source_bound_preparation",
+  "native_render_status": "pending; require station/green slope/hard edge views"
+}

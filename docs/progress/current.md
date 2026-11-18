@@ -1,8 +1,20 @@
 # 当前进度
 
-更新：2026-11-17，Asia/Shanghai。长期goal保持active，完整范围见`.codestable/goal.md`。Windows原生优先，保留Ubuntu同源、通用车辆包、可换地图、高画质、正式裁判与权威联机目标。
+更新：2026-11-18，Asia/Shanghai。长期goal保持active，完整范围见`.codestable/goal.md`。Windows原生优先，保留Ubuntu同源、通用车辆包、可换地图、高画质、正式裁判与权威联机目标。
 
-## 最新交付：可视化航点、原导航云台跟随与动态Mid-360
+## 当前接续：统一工程与弗兰德斯地图精修
+
+本次地图接入修正已完成。统一运行目录为 `D:/simulator`，正式入口 `Play-WarThunder.cmd`；地图与主模拟器共用同一 uproject、车辆包和设置。原地图工作树已归档到 `artifacts/archive/wt-vlaanderen-before-unified-20261118`，原导航/手动工作及并行场景改动保留各自来源。
+
+生成碰撞覆盖 14,349 个主铁路枕木、37 个横枕与 4,068 个路肩。203 个原生资产、128 条命中/空隙/量程查询通过；默认手动出生实际驻留 327 个补充刚体。跨 8 m 范围切换与实际 W/R 已验证。
+
+最终材质重载 307 项、完整场景 21 项通过。原贴花灰底、碎石强黑斜纹与草坡规则格线已在实景确认消除；23 张原地类细节图和 12 槽微细节参与最终地表合成。10 模型 / 16 层草地完成真实重新烘焙与 72 项独立重载，1,089 个地块缓存全部 valid/fresh，硬地三处样点均为 0 草权重。
+
+最新共享模块 `37daaf0e…` 的 C/Shift/5 m/s 控制 6 项、弗兰德斯与 RMUC 驾驶/复位各 5 项通过。车辆参数保持 AIM 5 m/s 与 2000/140 悬挂；导航速度和变速仍由所选 sentry_ws YAML 拥有。
+
+正式入口已完成坡地、默认碎石、80 帧真实 W、M 大地图开关和 R 复位检查；最终窗口回到默认出生点并保留试驾。最终 World 为 `33113995…`，每份证据绑定各自实际模块与资源。详细变更及入口见 [统一工程与弗兰德斯](../changes/2026-11-18-unified-flanders.md)。下列导航与并行工作段落保留其检查点和证据身份。
+
+## 已保存的导航验收：可视化航点、云台跟随与动态 Mid-360
 
 双击根目录 **Play-Navigation.cmd** 启动默认RMUC2027场景、原生ROS桥、Point-LIO、AMCL/Nav2和RViz。定位就绪后显示地图、障碍代价、实际规划路径、估计位姿、点云、云台和Mid-360坐标轴。RViz支持Nav2 Goal选点、Waypoint模式累积航点、Start Waypoint Following及Cancel。关闭RViz或运行Stop-Navigation.cmd结束本次拥有的进程。[完整操作说明](../guides/navigation-console.md)。
 
@@ -43,7 +55,7 @@ AIM悬挂保持2000N/m、140N·s/m，质量、50N预载、65mm行程、源轮胎
 
 后续继续扩大RMUC路线/恢复覆盖、通用车辆导入、多机器人隔离、完整感知决策/Hub/裁判、权威联机、Ubuntu原生运行及实车物理/传感器标定。弗兰德斯原图完整场景与画质验收继续保留。旧进度归档：`docs/progress/archive/2026-11-17-before-sentry-console.md`。
 
-## 当前窗口交接
+## 导航窗口交接记录（2026-11-17）
 
 console-08已实际观察到RViz地图/点云，Navigation与Localization均active，最后任务Feedback为canceled；action状态均已结束，未留活动目标。整套窗口保持打开，截图留本机，交接记录见artifacts/navigation/sentry-console-20261117/gui-handoff/verification.json。
 

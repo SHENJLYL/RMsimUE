@@ -1,0 +1,118 @@
+{
+  "schema": "wt_native_material_audit_v1",
+  "status": "failed",
+  "complete": true,
+  "started_utc": "2026-11-18T01:15:23.607421+00:00",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "source_manifest_sha256": "f0cee3b0ba9debb62f614cf89e8792fd14a3869a1f4ae01cfc2c827a53b72996",
+  "audit_script_sha256": "d1d678707700f8e3586b9640ab3037d2b754da9e23e68ea25c42ddd58bded95a",
+  "scope": "saved_parent_graphs_and_leaf_instance_native_shader_compilation",
+  "rendering_visual_quality_verified": false,
+  "in_memory_recompile": true,
+  "saved_assets_modified": false,
+  "parents": [
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal",
+      "file_sha256": "983c90568047c1555589c8ad018726756ce936d7e2c44c292e177be1e0ed5400",
+      "status": "passed",
+      "graph": {
+        "expression_count": 27,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionCustom_0",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionCustom_0",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_0",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_2",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_4",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_6",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_14",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_15",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_16",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_1",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_6",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_7",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_0",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_2",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_6",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionScalarParameter_1",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionScalarParameter_4"
+            }
+          }
+        ]
+      },
+      "recompile_errors": [],
+      "completed_shader_statistics": {
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 360,
+        "num_samplers": 5,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      "file_sha256_after": "983c90568047c1555589c8ad018726756ce936d7e2c44c292e177be1e0ed5400"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass",
+      "file_sha256": "0036eab12747cfe3592a7b18b36741c24c18185e114c620dd320ccdeb4db4391",
+      "status": "passed",
+      "graph": {
+        "expression_count": 27,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionCustom_0",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionCustom_0",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_0",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_2",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_4",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_6",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_14",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_15",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_16",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_1",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_6",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_7",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_0",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_2",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_6",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionScalarParameter_1",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionScalarParameter_4"
+            }
+          }
+        ]
+      },
+      "recompile_errors": [],
+      "completed_shader_statistics": {
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 360,
+        "num_samplers": 5,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      "file_sha256_after": "0036eab12747cfe3592a7b18b36741c24c18185e114c620dd320ccdeb4db4391"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves",
+      "file_sha256": "abb758fc55ce28fa309f0a210e8f46fd5ba71e5171235129806adcc9545c25aa",
+      "status": "running"
+    }
+  ],
+  "leaf_instances": [],
+  "api_evidence": {
+    "recompile_material": "UE 5.8 MaterialEditingLibrary.cpp:1035-1059; TArray<FString> compiler errors",
+    "get_statistics": "UE 5.8 MaterialEditingLibrary.cpp:2116-2159; target resource FinishCompilation and actual shader statistics"
+  },
+  "limitations": [
+    "Compilation target is the active RHI shader platform; platform coverage is recorded in the accompanying Unreal log.",
+    "This gate does not assess rendered appearance or wind animation."
+  ],
+  "error": "saved Custom input is disconnected: /Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_0",
+  "traceback": "Traceback (most recent call last):\n  File \"D:/simulator-wt-vlaanderen/tools/unreal/verify_wt_materials.py\", line 154, in verify\n    item['graph'] = graph_record(material, leaves=name == 'WT_Parent_Leaves')\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:/simulator-wt-vlaanderen/tools/unreal/verify_wt_materials.py\", line 55, in graph_record\n    raise RuntimeError('saved Custom input is disconnected: ' + expression.get_path_name())\nRuntimeError: saved Custom input is disconnected: /Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_0\n",
+  "finished_utc": "2026-11-18T01:15:36.139917+00:00"
+}

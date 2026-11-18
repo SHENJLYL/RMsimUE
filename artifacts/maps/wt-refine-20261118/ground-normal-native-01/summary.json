@@ -1,0 +1,1267 @@
+{
+  "schema": "wt_ground_normal_native_summary_v1",
+  "status": "passed",
+  "generated_utc": "2026-11-18T11:16:24.853757+00:00",
+  "execution": {
+    "pid": 42476,
+    "exit_code": 0,
+    "duration_seconds": 121.46926409999999,
+    "started_utc": "2026-11-18T11:12:49.4123887Z",
+    "finished_utc": "2026-11-18T11:14:50.8806409Z",
+    "project": "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+    "module_sha256": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+    "module_sha256_after": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+    "shader_workers": 4,
+    "rendering": true,
+    "world_mutation_allowed": false
+  },
+  "actual_asset_counts": {
+    "parents": 4,
+    "instances": 36,
+    "total": 40
+  },
+  "instance_flavors": {
+    "Land": 1,
+    "Decal": 1,
+    "HeightDecal": 34
+  },
+  "checks": {
+    "original_source_manifest_unchanged": true,
+    "original_world_unchanged": true,
+    "stable_material_identities": true,
+    "retained_grass_output_subgraph": true,
+    "native_material_graphs": true,
+    "completed_native_shader_statistics": true,
+    "source_height_texture_encoding": true,
+    "source_twelve_slot_array": true,
+    "actual_normal_and_payload_output_pins": true
+  },
+  "world_sha256_before": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "world_sha256_after": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "parents": [
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal",
+      "file_sha256": "34a1f9a73b728e51c4d4fc84f87291db270f38ba9816287a9629b568b43f925b",
+      "statistics": {
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 362,
+        "num_samplers": 7,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      "previous_v8_statistics": {
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 362,
+        "num_samplers": 7,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      "pixel_instruction_delta": 0
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal",
+      "file_sha256": "d1c1c354152a57624f3524879e53460eab5a4cb287e71070c2111bca1df5d8e3",
+      "statistics": {
+        "num_vertex_shader_instructions": 353,
+        "num_pixel_shader_instructions": 287,
+        "num_samplers": 2,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 4,
+        "num_interpolator_scalars": 0
+      },
+      "previous_v8_statistics": {
+        "num_vertex_shader_instructions": 353,
+        "num_pixel_shader_instructions": 287,
+        "num_samplers": 2,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 4,
+        "num_interpolator_scalars": 0
+      },
+      "pixel_instruction_delta": 0
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land",
+      "file_sha256": "52df108d498bea866d3fc5d9ea9bc523f335ced2c21bbc5187cb7b77cef643a9",
+      "statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 1196,
+        "num_samplers": 16,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      "previous_v8_statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 1056,
+        "num_samplers": 16,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      "pixel_instruction_delta": 140
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain",
+      "file_sha256": "a0b6b056eac2f58b23ba3764064e5699455fe54aea7b1454d942521b70a47485",
+      "statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 1073,
+        "num_samplers": 8,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      "previous_v8_statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 932,
+        "num_samplers": 8,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      "pixel_instruction_delta": 141
+    }
+  ],
+  "height_parent_contract": {
+    "height_surface": true,
+    "source_shader_code_sha256": "b9f8c1883f3cbe269fcbf1a0a0b523259fde5ab6e87200722453f3654572d8a0",
+    "output_pins": {
+      "BaseColor": {
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionReroute_7",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionCustom_1",
+        "output_pin": "return"
+      },
+      "Roughness": {
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionReroute_8",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionCustom_1",
+        "output_pin": "RoughnessOut"
+      },
+      "Opacity": {
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionReroute_9",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionCustom_1",
+        "output_pin": "OpacityOut"
+      },
+      "Normal": {
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionReroute_5",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionCustom_1",
+        "output_pin": "NormalOut"
+      },
+      "Specular": {
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionReroute_6",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionCustom_1",
+        "output_pin": "MicrodetailPayloadOut"
+      }
+    },
+    "height_source": [
+      0.07999999821186066,
+      11.086956977844238,
+      13.0,
+      0.0
+    ],
+    "height_normal_strength": 0.20000000298023224,
+    "height_normal_strength_node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal:MaterialExpressionScalarParameter_0",
+    "height_normal_adapter_metadata": {
+      "kind": "ue_no_normal_height_gradient_scale",
+      "parameter": "HeightNormalStrength",
+      "source_bump_scale": 0.08,
+      "source_height_domain": "normalized_source_uv_height",
+      "source_metres": false,
+      "value": 0.2
+    },
+    "raw_mask": 1,
+    "native_opacity_multiplication_count": 1,
+    "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54"
+  },
+  "height_instance_count": 34,
+  "height_actual_native_strength": 0.20000000298023224,
+  "height_instance_contracts": {
+    "WT_e82be167172b929d5356": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_466d02cd484c38289a40": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_43749e19cb4c7864f27f": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_0239c3291954db20b99e": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_5e8bd1ba5087efbc0fb2": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_6e25a8f73f405048601c": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_fd08e5ab7bca8dffbd0d": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_56a8f9dad5f5fe075e90": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_0b7ef0d076c7d422bf05": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_ea12811419abf4413013": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_318f5a3cd79c6587012f": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_f71c86623ca459a14d14": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_5d2527de3c642c981e93": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_91dd399e4c661e36edb6": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_9fb476f360cf8b8e16c5": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_3ec283666d818a9f5b22": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_caa2c0277417e6b3532a": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_0c40964a3f663a7b3813": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_d7e4fb5a31e1eae8b011": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_643dc302c47030162765": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_479901e2b6d99a5b7e0a": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_bf5803a05ee67913ef3e": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_9a07e05fc39d69ca4fbe": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_ae32c3b40a762088d577": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_9a32312dd7f5765f0476": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_97af1d9a42e2f563dc16": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_09e539132e421bc2b912": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_35701bfc9a7d1810e224": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_d0fcdcc930a581d590de": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_f7ecd0c5176ec4ada5b6": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_d7385ee67b5b9edc1fbf": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_dc22849ac8fc033e5ffd": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_8fb9ceff629e3e29ff60": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    },
+    "WT_7592e2b78f1c5d52c332": {
+      "actual_height_source": [
+        0.07999999821186066,
+        11.086956977844238,
+        13.0,
+        0.0
+      ],
+      "actual_height_blend": [
+        0.25,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "actual_height_normal_strength": 0.20000000298023224,
+      "height_normal_adapter_metadata": {
+        "kind": "ue_no_normal_height_gradient_scale",
+        "parameter": "HeightNormalStrength",
+        "source_bump_scale": 0.08,
+        "source_height_domain": "normalized_source_uv_height",
+        "source_metres": false,
+        "value": 0.2
+      }
+    }
+  },
+  "lc1_saved_normal_bindings": {
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land": {
+      "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+      "shader_code_sha256": "7ad45f449e4c28b312f846751d4ecc2df9bdd9158a4e05341ac4f8458f5fa71e",
+      "normal_adapter": {
+        "additional_samplers": 0,
+        "base_array_reads": 8,
+        "derivative_basis": "world_position_before_categorical_selection",
+        "height_scale_domain": "ue_adapter_multiplier_not_source_metres",
+        "kind": "ue_fixed_slice_rotation_alpha_gradient",
+        "local_alpha_array_reads": 16,
+        "normal_blending": "unit_normals_then_source_final_pow4_weights_both_levels",
+        "sample_offsets": "same_slice_rotation_lod_plus_two_continuous_uv_offsets",
+        "schema": "wt_lc1_local_alpha_normal_v2",
+        "source_normal_binding": null,
+        "weight_derivatives": false
+      },
+      "normal_binding": {
+        "consumer": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land:MaterialExpressionCustom_1",
+        "input": "DetailNormalWorld",
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land:MaterialExpressionReroute_12",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land:MaterialExpressionCustom_0",
+        "output_pin": "NormalOut"
+      }
+    },
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain": {
+      "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+      "shader_code_sha256": "7ad45f449e4c28b312f846751d4ecc2df9bdd9158a4e05341ac4f8458f5fa71e",
+      "normal_adapter": {
+        "additional_samplers": 0,
+        "base_array_reads": 8,
+        "derivative_basis": "world_position_before_categorical_selection",
+        "height_scale_domain": "ue_adapter_multiplier_not_source_metres",
+        "kind": "ue_fixed_slice_rotation_alpha_gradient",
+        "local_alpha_array_reads": 16,
+        "normal_blending": "unit_normals_then_source_final_pow4_weights_both_levels",
+        "sample_offsets": "same_slice_rotation_lod_plus_two_continuous_uv_offsets",
+        "schema": "wt_lc1_local_alpha_normal_v2",
+        "source_normal_binding": null,
+        "weight_derivatives": false
+      },
+      "normal_binding": {
+        "consumer": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionCustom_3",
+        "input": "BaseNormalWorld",
+        "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionReroute_12",
+        "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionCustom_0",
+        "output_pin": "NormalOut"
+      }
+    }
+  },
+  "native_source_arrays": {
+    "landdetail": {
+      "native_array": {
+        "width": 1024,
+        "height": 1024,
+        "slices": 23,
+        "mips": 11,
+        "source_width": 1024,
+        "source_height": 1024,
+        "source_slices": 23,
+        "source_textures": [
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_asphalt_a_tex_d_C.biome_detail_asphalt_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_asphalt_c_tex_d_C.biome_detail_asphalt_c_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_burnt_grass_a_tex_d_C.biome_detail_burnt_grass_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_city_tile_a_tex_d_C.biome_detail_city_tile_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_forest_floor_a_tex_d_C.biome_detail_forest_floor_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_a_tex_d_C.biome_detail_grass_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_b_tex_d_C.biome_detail_grass_b_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_dead_a_tex_d_C.biome_detail_grass_dead_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_moss_a_tex_d_C.biome_detail_moss_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_mud_b_tex_d_C.biome_detail_mud_b_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_pebbles_shore_a_tex_d_C.biome_detail_pebbles_shore_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rock_boulders_a_tex_d_C.biome_detail_rock_boulders_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rock_chunks_a_tex_d_C.biome_detail_rock_chunks_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rocks_smooth_tex_d_C.biome_detail_rocks_smooth_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_roots_b_tex_d_C.biome_detail_roots_b_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sand_d_tex_d_C.biome_detail_sand_d_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sand_soil_a_tex_d_C.biome_detail_sand_soil_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sett_small_old_tex_d_C.biome_detail_sett_small_old_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_slope_soil_a_tex_d_C.biome_detail_slope_soil_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_slope_soil_d_tex_d_C.biome_detail_slope_soil_d_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_soil_a_tex_d_C.biome_detail_soil_a_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_soil_b_tex_d_C.biome_detail_soil_b_tex_d_C",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_trampled_soil_a_tex_d_C.biome_detail_trampled_soil_a_tex_d_C"
+        ]
+      },
+      "array_sha256": "8c0e65e458687ff23f58dee90865b530833ba72c54e2fe2d9a247c284b36281f",
+      "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86"
+    },
+    "microdetail": {
+      "native_array": {
+        "width": 512,
+        "height": 512,
+        "slices": 12,
+        "mips": 10,
+        "source_width": 512,
+        "source_height": 512,
+        "source_slices": 12,
+        "source_textures": [
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_stone_a_tex_n_D.microdetail_stone_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_scan_asphalt_tex_n_D.microdetail_scan_asphalt_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_sand_a_tex_n_D.microdetail_sand_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_soil_a_tex_n_D.microdetail_soil_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_generic_granules_a_tex_n_D.microdetail_generic_granules_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_grass_a_tex_n_D.microdetail_grass_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_forest_floor_a_tex_n_D.microdetail_forest_floor_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_fabric_a_tex_n_D.microdetail_fabric_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_wood_b_tex_n_D.microdetail_wood_b_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_metal_a_tex_n_D.microdetail_metal_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_snow_a_tex_n_D.microdetail_snow_a_tex_n_D",
+          "/Game/RMSim/Maps/wt_vlaanderen/Textures/microdetail_generic_granules_a_tex_n_D.microdetail_generic_granules_a_tex_n_D"
+        ]
+      },
+      "array_file_sha256": "d493ee69512b4b40de83a204a2ee706b678791a2488a6aec85d4154bd42a4cdd",
+      "definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+      "source_proof_sha256": "327b433807856e123f1752e952652b47e35e7c346ac7a996d8de28b070d0f0b6",
+      "composition_order": "source_land_detail_then_RVT_source_over_then_source_microdetail",
+      "source_uv_scale_per_m": 0.5099999904632568,
+      "source_id_scale": 11.086956977844238
+    }
+  },
+  "grass_output_closure": {
+    "unchanged": true,
+    "nodes": 26,
+    "layers": 16,
+    "names_and_types": [
+      {
+        "name": "layer_00",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_00.WT_layer_00"
+      },
+      {
+        "name": "layer_01",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_01.WT_layer_01"
+      },
+      {
+        "name": "layer_02",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_02.WT_layer_02"
+      },
+      {
+        "name": "layer_03",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_03.WT_layer_03"
+      },
+      {
+        "name": "layer_04",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_04.WT_layer_04"
+      },
+      {
+        "name": "layer_05",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_05.WT_layer_05"
+      },
+      {
+        "name": "layer_06",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_06.WT_layer_06"
+      },
+      {
+        "name": "layer_07",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_07.WT_layer_07"
+      },
+      {
+        "name": "layer_08",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_08.WT_layer_08"
+      },
+      {
+        "name": "layer_09",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_09.WT_layer_09"
+      },
+      {
+        "name": "layer_10",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_10.WT_layer_10"
+      },
+      {
+        "name": "layer_11",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_11.WT_layer_11"
+      },
+      {
+        "name": "layer_12",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_12.WT_layer_12"
+      },
+      {
+        "name": "ue_short_grass_0",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_0.WT_ue_short_grass_0"
+      },
+      {
+        "name": "ue_short_grass_1",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_1.WT_ue_short_grass_1"
+      },
+      {
+        "name": "ue_short_grass_2",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_2.WT_ue_short_grass_2"
+      }
+    ],
+    "generation_freshness": "Requires independent current-vs-saved generation-hash check and actual rebake after Terrain modification."
+  },
+  "height_texture_encoding": {
+    "unique_assets": 64,
+    "native_before_after_unchanged": true
+  },
+  "engine_error_count": 0,
+  "material_compile_failure_count": 0,
+  "asset_sha256": {
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal": "34a1f9a73b728e51c4d4fc84f87291db270f38ba9816287a9629b568b43f925b",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal": "d1c1c354152a57624f3524879e53460eab5a4cb287e71070c2111bca1df5d8e3",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land": "52df108d498bea866d3fc5d9ea9bc523f335ced2c21bbc5187cb7b77cef643a9",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain": "a0b6b056eac2f58b23ba3764064e5699455fe54aea7b1454d942521b70a47485",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_22356521c26047d92cb7.WT_22356521c26047d92cb7": "96f3fbc906a2b7943d8fcad8b2e849e8360c0e7f431ba59641fe40d43aa283d3",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_9927cbb1afceb4164d23.WT_9927cbb1afceb4164d23": "6791063f6de6dcffb537c8bf94417d79073da3c9b9a8d8f6e40af5c9c4d17e49",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_e82be167172b929d5356.WT_e82be167172b929d5356": "b7952f1016980db91ecdc9a66307f5ae6979c04e2e0977fca4484758ccacbe77",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_466d02cd484c38289a40.WT_466d02cd484c38289a40": "cdbefb0393c1c3899895693f343393238fe46fdefce0dbd40bbbe78bacf2689c",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_43749e19cb4c7864f27f.WT_43749e19cb4c7864f27f": "38b5575c0eda5586f893392780510a32b71dcf7e4f54167046adf29ad3b19206",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_0239c3291954db20b99e.WT_0239c3291954db20b99e": "d1682490769a50eba5811b548b27485f6564394375fcd2f11d4e9433ea5b84c4",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_5e8bd1ba5087efbc0fb2.WT_5e8bd1ba5087efbc0fb2": "21bb4c002fc2c1aa7a02cc9dd9f9d0bbb22a8ec4940c6c44cef72157a01e0dff",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_6e25a8f73f405048601c.WT_6e25a8f73f405048601c": "81d52e682b5e706e63610e501c2738219dab90b26837a41282c35457eea91bee",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_fd08e5ab7bca8dffbd0d.WT_fd08e5ab7bca8dffbd0d": "ad503483fb18172160f8b790e29de53b0010c975a0b8c9e71fe503c03d39a674",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_56a8f9dad5f5fe075e90.WT_56a8f9dad5f5fe075e90": "73e7ab9c0751a171c0d9d0c2a8063e4dc36fd3d34540b650134aaa7bcbcdf6ec",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_0b7ef0d076c7d422bf05.WT_0b7ef0d076c7d422bf05": "86b5786b6bf01f1791760a995508fb4c4dc2239031feeff1bfbef692692318d7",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_ea12811419abf4413013.WT_ea12811419abf4413013": "90b334705cd316a2d88fbec35dd0063fb505f66d6f725f25c23504573425852a",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_318f5a3cd79c6587012f.WT_318f5a3cd79c6587012f": "db05e7b818fee352e70408ecbe2099e184b0a06e5203c3d494d6273ba6c95041",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_f71c86623ca459a14d14.WT_f71c86623ca459a14d14": "4b9925d19677bc6601c57c74b09a7ef0492eccc0aa68ddcb2e027f65df70cad8",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_5d2527de3c642c981e93.WT_5d2527de3c642c981e93": "90de17c7f15dcad5eae067fe9258bd39f66359b9ba95b5d41df78be705fbf7cc",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_91dd399e4c661e36edb6.WT_91dd399e4c661e36edb6": "6a6164813ea89e773d1f2d2cc6aa02bfd37c28b03561c2afc0cd99f8bd47443c",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_9fb476f360cf8b8e16c5.WT_9fb476f360cf8b8e16c5": "f2cde5ede658b07df2bd93f9a8997ece403f21ca7bd9a841c4b02c783e117064",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_3ec283666d818a9f5b22.WT_3ec283666d818a9f5b22": "fcf82bd8481f38e8a879ffcd8d1db52f714dbdb39a042042a900f69f3c9ad857",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_caa2c0277417e6b3532a.WT_caa2c0277417e6b3532a": "018d0befdcc2fa7592335df9ed25404982932fb8b6aad347c306e402b3b76171",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_0c40964a3f663a7b3813.WT_0c40964a3f663a7b3813": "c5450dc9d38cd9012ac4b0ff31d8c00a74b9d4994c5d434ac7f0abe71af9e1b8",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_d7e4fb5a31e1eae8b011.WT_d7e4fb5a31e1eae8b011": "e661cc4f79c59d993e43616db64fd005997790fac671ed9284f4758b821bcd2a",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_643dc302c47030162765.WT_643dc302c47030162765": "377d75dd5655a1feb0b184d6318734de96bb081eac6169a0c884f6895c653305",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_479901e2b6d99a5b7e0a.WT_479901e2b6d99a5b7e0a": "2a01f4d045562f1169826447324f7e1010958bbe709f1a9e8c918afa32143141",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_bf5803a05ee67913ef3e.WT_bf5803a05ee67913ef3e": "99f8a9d370b63366b8ef521dc8b5ef84ce02f256f5b7115daa055e79bffccbea",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_9a07e05fc39d69ca4fbe.WT_9a07e05fc39d69ca4fbe": "8742336afa0471308ce9667c09a409574d4d1e54c54dcba06533b7321ec58ac9",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_ae32c3b40a762088d577.WT_ae32c3b40a762088d577": "791333a7807cb340bb7ee783a954a65a2fa517d8fe300574f23ce8d573634129",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_9a32312dd7f5765f0476.WT_9a32312dd7f5765f0476": "31d0248e7a6adc99bc507e69fb27946b28ab88f40762d013054e445b86ec4908",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_97af1d9a42e2f563dc16.WT_97af1d9a42e2f563dc16": "22799b9429fab0a3f458e183a16474bf84afff2bd957022c5d3516bb0117ef36",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_09e539132e421bc2b912.WT_09e539132e421bc2b912": "43f5625c6ee2ce6e56b8ce9dbeaeeb48acf1cb67926df5df03f64d4e4b9ff5ef",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_35701bfc9a7d1810e224.WT_35701bfc9a7d1810e224": "1e30c0ec67cb7334a20164293096082d4f0717ed7e060041641c0d3ba1834f8e",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_d0fcdcc930a581d590de.WT_d0fcdcc930a581d590de": "68839a621ddbc6be19bb4637d98234be5ac0b0f96286abcb170ec037c7cbb796",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_f7ecd0c5176ec4ada5b6.WT_f7ecd0c5176ec4ada5b6": "ad1791d52af33676a4050918f8670054e3358dfa015a1d564955839d126f7bee",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_d7385ee67b5b9edc1fbf.WT_d7385ee67b5b9edc1fbf": "43e96cc7b9297d0d358121b52da88a833a08548e8099ecbec8f3de018cf4f250",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_dc22849ac8fc033e5ffd.WT_dc22849ac8fc033e5ffd": "540649b78f0ac285fdbc1a8c7995e71e560a1a0dcdc333884d41497b093835ec",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_8fb9ceff629e3e29ff60.WT_8fb9ceff629e3e29ff60": "402f6d8c6650e7252ddf43f954ac0aad38ee8a5a3683eac4d494177a574212dc",
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_7592e2b78f1c5d52c332.WT_7592e2b78f1c5d52c332": "aed616d72c81be78dc7589e02b316451db74febe60247678d53b0cc52ef29c29"
+  },
+  "scripts_sha256": {
+    "update_wt_materials.py": "7f5837106b817b300a85ace5559aa67800575891b004e3fc2f980d7baeca6231",
+    "wt_materials.py": "0317a5c10babbd17f7f7dec1f9c075de1737048ed3832482aedd35db975ead8b",
+    "wt_landclass.py": "5247438e08c2e03432b653935ffcb23c0fcd8974356a50b67bb1520f73cd1d65",
+    "wt_landdetail.py": "ebdc4b2c1c5fe6e99a5a78ea782d678aa6166b8e2a74a6cbecb3f22fa4656548",
+    "wt_rendinst_decals.py": "1a8941e15285493ec975fa93b09aea80d19145cb61c8446c4c68a343d71e7acc",
+    "wt_material_refine_verify.py": "4616a20aa6ab9847f35420e9dd5886c0c5c9feee5be638021f7e23860baee349",
+    "verify_wt_materials.py": "262ec5fa2f528526006455d2c24fbe9721b5927b7ac3f5f01883aa112f29f609",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "wt_height_decals.py": "b95021ec1216364c3276d3a38f587652107790a52eca57f1c0c71d37cd4e7e71",
+    "wt_ground_microdetails.py": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+    "wt_ground_material_verify.py": "e94372c7713595d53e1a1d345bab2efa05a374304121d13e317b5fa3303e4694"
+  },
+  "evidence": {
+    "artifacts\\maps\\wt-refine-20261118\\ground-normal-native-01\\audit\\verification.json": {
+      "sha256": "d4cc99046c9124cc64146c9d482d4ca718d15bf59750ac7241ca8468811c231e",
+      "bytes": 400155
+    },
+    "artifacts\\maps\\wt-refine-20261118\\ground-normal-native-01\\execution.json": {
+      "sha256": "33caab526351bb918d6a8560331d43341eb1de4975d146d195489f9c6444e226",
+      "bytes": 6697
+    },
+    "artifacts\\maps\\wt-refine-20261118\\ground-normal-native-01\\engine.log": {
+      "sha256": "43c677b9659fd719d510df23efcedb522765b916296dace190faa4ca1ef633f0",
+      "bytes": 317504
+    },
+    "artifacts\\maps\\wt-refine-20261118\\lc1-normal-local-candidate-01\\summary.json": {
+      "sha256": "eb7cf3621dc00bf5167bbbef231ef5ededcb1a9d76774b8227bfe375616032df",
+      "bytes": 10446
+    },
+    "artifacts\\maps\\wt-refine-20261118\\lc1-normal-local-validation-01\\verification.json": {
+      "sha256": "047208145edb2df87618709f3ff8d6edfe2bf6d119454537d9d8bf97ec31a044",
+      "bytes": 9859
+    },
+    "artifacts\\maps\\wt-refine-20261118\\ground-normal-preflight-02\\verification.json": {
+      "sha256": "14d9734d86f3b77a83d09f9e80adda5db655017103cea82e9062c8f29d9ebb12",
+      "bytes": 31481
+    }
+  },
+  "full_saved_material_reload_status": "pending",
+  "native_visual_quality_verified": false,
+  "scope": "VERSION9 original-height fallback strength0.2 plus fixed-source per-neighbor LC1 alpha normals; original colors, ID selection, UV/mip expressions and all source textures retained."
+}

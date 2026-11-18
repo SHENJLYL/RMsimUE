@@ -1,0 +1,544 @@
+{
+  "schema": "wt_native_runtime_acceptance_summary_v1",
+  "status": "passed",
+  "generated_utc": "2026-11-18T03:23:06.697435+00:00",
+  "run_id": "96999D344B995CE1CBD36B86F8F996CF",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "process": {
+    "pid": 25080,
+    "exit_code": 0,
+    "requested_rhi": "D3D11",
+    "single_shaderworker": true,
+    "root_observed_wall_seconds": 67.55,
+    "wall_seconds_source": "parent orchestration result"
+  },
+  "os_input_verified": false,
+  "map_id": "wt_vlaanderen",
+  "spawn_id": "default",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "level_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "current_source_identity_files": [
+    {
+      "file": "assets/maps/wt_vlaanderen/scene-source.json",
+      "sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+      "bytes": 1676875
+    },
+    {
+      "file": "assets/maps/wt_vlaanderen/map.json",
+      "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "bytes": 710
+    },
+    {
+      "file": "unreal/RMSim/Content/RMSim/Maps/wt_vlaanderen/World.umap",
+      "sha256": "720931dad262197929863d553c2388c3de18131277498749ef31faa201f12253",
+      "bytes": 97019465
+    },
+    {
+      "file": "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll",
+      "sha256": "eceebaa1634a2df9c6314556efcc0190f5c5b4b926ef13299669ca461d68de76",
+      "bytes": 1111040
+    },
+    {
+      "file": "unreal/RMSim/Config/DefaultEngine.ini",
+      "sha256": "b855505a79da553fd830ae63009f63935bea03293da78b9bad8e9998d6a90d12",
+      "bytes": 1012
+    },
+    {
+      "file": "assets/vehicles/aim_sentry/ue_mesh_rig.json",
+      "sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "bytes": 198880
+    },
+    {
+      "file": "assets/vehicles/aim_sentry/drive-profile.json",
+      "sha256": "1e6a678dc2fa730dd132b49ce9854a81ab826a7efa8ecadd25ea6eb856504895",
+      "bytes": 1505
+    }
+  ],
+  "identity_checks": {
+    "runtime_source_matches_map_and_scene": true,
+    "current_manifest_matches_scene_and_material_audits": true,
+    "current_world_matches_scene_and_material_audits": true,
+    "current_module_matches_runtime_and_scene_audit": true,
+    "current_map_descriptor_matches_runtime_provenance": true,
+    "current_vehicle_rig_and_drive_profile_match_runtime": true,
+    "current_scene_proof_bound_files_unchanged": true,
+    "current_saved_material_assets_match_native_material_audit": true,
+    "material_asset_count": 88,
+    "material_asset_hashes_canonical_json_sha256": "9e9886f53610a43bcf5104d6020f62952d67e8dbf8590fb34ce4201038ded900"
+  },
+  "prior_native_audits": [
+    {
+      "file": "artifacts/maps/wt-scene-20261118/native-scene-03/summary.json",
+      "sha256": "1e12bb702c774163a84829c9544f226d0fe2bafc66a0e91e95d76fa37e04d888",
+      "bytes": 18164
+    },
+    {
+      "file": "artifacts/maps/wt-scene-20261118/native-scene-03/verification.json",
+      "sha256": "cacaaec039929d9798cd673a438fa9c4f8c8214b6605623e75c375143a4d14b8",
+      "bytes": 2033630
+    },
+    {
+      "file": "artifacts/maps/wt-scene-20261118/native-materials-06/summary.json",
+      "sha256": "30be201a9e54655c6ba044c3261348ea4c2e4504ed544c8cf98a7deec6d6f069",
+      "bytes": 1476
+    },
+    {
+      "file": "artifacts/maps/wt-scene-20261118/native-materials-06/verification.json",
+      "sha256": "c6ad051e2f7d677bb84dab13d1def6179f05afa13c646a4831e06e85b25a55d3",
+      "bytes": 142893
+    }
+  ],
+  "full_control_report": {
+    "file": "artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/control-result.json",
+    "sha256": "a7b970078d68e0b8259bde24b715635aeb736198fb13b7eefb2197bb078289d9",
+    "bytes": 1962371
+  },
+  "wrapper_verification": {
+    "file": "artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/verification.json",
+    "sha256": "ed817baa47a68b6fdc96e1333f9a83f24d91552ca8e2bac2ba44c2963b653ec7",
+    "bytes": 689
+  },
+  "runtime_log": {
+    "file": "artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/runtime.log",
+    "sha256": "7213dfb109b2927863be8376ef9b8788ee0c41013ccf4f9b3ced1774badbb99e",
+    "bytes": 503404
+  },
+  "checks": [
+    {
+      "name": "physical_settle",
+      "passed": true,
+      "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99908"
+    },
+    {
+      "name": "physical_forward_route",
+      "passed": true,
+      "detail": "Motor/contact driven route progress 340.284/340.000cm, drift -0.070cm, time 4.401s"
+    },
+    {
+      "name": "physical_brake",
+      "passed": true,
+      "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+    },
+    {
+      "name": "physical_reverse_route",
+      "passed": true,
+      "detail": "Reverse crosses same source route: remaining 9.477cm, drift -0.025cm"
+    },
+    {
+      "name": "physical_shared_reset_without_training",
+      "passed": true,
+      "detail": "Shared R restores source-map spawn: resets=1 distance=0.0133cm speed=0.0000cm/s"
+    }
+  ],
+  "actual_physics_samples": 67,
+  "route_command_speed_m_s": 1,
+  "scene_inventory": {
+    "landscape_actors": 1,
+    "heightfield_collision_components": 1089,
+    "visual_instance_components": 726,
+    "collision_instance_components": 642,
+    "visual_instances": 35922,
+    "collision_instances": 20033,
+    "scene_collision_ready": true
+  },
+  "scene_render_readiness": {
+    "schema": "rm_scene_render_readiness_v1",
+    "status": "passed",
+    "started_utc": "2026-11-18T03:09:57.832Z",
+    "process_id": 25080,
+    "timeout_seconds": 300,
+    "streaming_wait_budget_seconds": 0.10000000149011612,
+    "required_completed_render_frames": 2,
+    "last_progress_log_seconds": 30.074277598410845,
+    "streaming_full_updates": 14,
+    "last_completed_render_frame": 1616,
+    "ready": true,
+    "compilation_complete": true,
+    "blocking_finish_all_compilation_used": false,
+    "editor_compilation_counters_available": true,
+    "streaming_id_change_required": false,
+    "streaming_freshness_evidence": "UE5.8 StreamAllResources performs UpdateResourceStreaming(0,true); legacy wanting-resource IDs are recorded and may remain unchanged",
+    "compilation_before": {
+      "assets": 66,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 66,
+      "shader_pending_jobs": 34,
+      "shader_compiling": true,
+      "shader_maps_pending_finalization": true
+    },
+    "runtime_virtual_texture": {
+      "required": true,
+      "complete": true,
+      "sync_attempts": 1,
+      "status": "synchronized",
+      "matching_volume_count": 1,
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_GroundDecalRVT.WT_GroundDecalRVT",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.RuntimeVirtualTextureVolume_0.VirtualTextureComponent",
+      "spawn_world_cm": [
+        102800,
+        102000,
+        -136.05753034353256
+      ],
+      "requested_world_min_cm": [
+        100800,
+        100000,
+        -136.05753034353256
+      ],
+      "requested_world_max_cm": [
+        104800,
+        104000,
+        -136.05753034353256
+      ],
+      "volume_world_min_cm": [
+        -111078.3935546875,
+        -912696.58203125,
+        -2100
+      ],
+      "volume_world_max_cm": [
+        702740.185546875,
+        1270263.76953125,
+        7786.274719238281
+      ],
+      "volume_scale_cm": [
+        813818.5791015625,
+        2182960.3515625,
+        9886.274719238281
+      ],
+      "requested_uv_min_x": 0.26035089268740524,
+      "requested_uv_min_y": 0.4639097459128797,
+      "requested_uv_max_x": 0.2652659930583207,
+      "requested_uv_max_y": 0.46574212000851406,
+      "requested_mip": 0,
+      "feature_level": 3,
+      "max_preload_tiles": 256,
+      "preload_api": "IRendererModule.RequestVirtualTextureTiles(region,mip0); avoids component sphere/aspect expansion",
+      "preload_and_flush_seconds": 0.0009547993540763855,
+      "native_allocation": {
+        "render_thread_executed": true,
+        "allocated": true,
+        "sync_virtual_texture_updates_returned": true,
+        "sync_seconds": 0.000507798045873642,
+        "virtual_width_pixels": 524288,
+        "virtual_height_pixels": 1048576,
+        "width_tiles": 2048,
+        "height_tiles": 4096,
+        "virtual_tile_size": 256,
+        "physical_tile_size_including_border": 264,
+        "tile_border_size": 4,
+        "space_id": 1,
+        "top_mip_request_tile_coverage": 88,
+        "request_tile_min_x": 533,
+        "request_tile_min_y": 1900,
+        "request_tile_max_x_exclusive": 544,
+        "request_tile_max_y_exclusive": 1908,
+        "physical_page_bytes_all_layers": 209088,
+        "physical_texture_bytes_all_layers": 256132800,
+        "request_count_scope": "exact request rectangle coverage using native allocation and UE5.8 float tile-range formula; not a GPU-produced-page counter",
+        "physical_layers": [
+          {
+            "layer": 0,
+            "physical_texture_size_pixels": 9240,
+            "format": "DXT5"
+          },
+          {
+            "layer": 1,
+            "physical_texture_size_pixels": 9240,
+            "format": "BC5"
+          },
+          {
+            "layer": 2,
+            "physical_texture_size_pixels": 9240,
+            "format": "DXT5"
+          }
+        ]
+      },
+      "synchronized_render_frame": 1614
+    },
+    "rendering_enabled": true,
+    "elapsed_seconds": 30.625922601670027,
+    "last_compilation_process_seconds": 1.4998018741607666e-05,
+    "compilation_current": {
+      "assets": 0,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 0,
+      "shader_pending_jobs": 0,
+      "shader_compiling": false,
+      "shader_maps_pending_finalization": false
+    },
+    "phase": "ready",
+    "completed_render_frames": 2,
+    "compilation_flush_seconds": 0.015505697578191757,
+    "compilation_after": {
+      "assets": 0,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 0,
+      "shader_pending_jobs": 0,
+      "shader_compiling": false,
+      "shader_maps_pending_finalization": false
+    },
+    "streaming_id_before": 0,
+    "submitted_views": [
+      {
+        "view": "player",
+        "location_cm": [
+          102310.9261996331,
+          102000,
+          49.81750809475079
+        ],
+        "width_pixels": 1280,
+        "fov_degrees": 55,
+        "fov_screen_size": 2458.857177734375
+      },
+      {
+        "view": "overview",
+        "location_cm": [
+          103020,
+          101740,
+          68.94246965646744
+        ],
+        "width_pixels": 1600,
+        "fov_degrees": 55,
+        "fov_screen_size": 3073.5712890625
+      },
+      {
+        "view": "aim_camera",
+        "location_cm": [
+          102817.53248167038,
+          102004.70079630613,
+          -104.07042652368546
+        ],
+        "width_pixels": 1280,
+        "fov_degrees": 30,
+        "fov_screen_size": 4777.02490234375
+      }
+    ],
+    "streaming_enabled": true,
+    "texture_streaming_enabled": true,
+    "last_streaming_update_seconds": 0.01976950094103813,
+    "streaming_pending_requests": 0,
+    "streaming_wanted_resources": 0,
+    "streaming_id_after": 0,
+    "streaming_active_views": 3,
+    "fresh_synchronous_streaming_evaluation": true,
+    "ready_view_render_frame_start": 1614,
+    "finished_utc": "2026-11-18T03:10:28.458Z"
+  },
+  "rvt_page_counter_scope": {
+    "native_requested_rectangle_coverage": 88,
+    "scope": "exact request rectangle coverage using native allocation and UE5.8 float tile-range formula; not a GPU-produced-page counter",
+    "gpu_produced_page_counter_observed": false,
+    "completion_evidence": "Native SyncVirtualTextureUpdates returned; render/RHI commands flushed; two subsequent completed render frames"
+  },
+  "capture_timing": {
+    "first_capture_seconds_after_render_ready": 3.452,
+    "capture_count": 8,
+    "texture_build_events_after_first_capture": 0,
+    "engine_error_lines": []
+  },
+  "captures": [
+    {
+      "file": "contact-end/aim_camera.png",
+      "bytes": 1173227,
+      "sha256": "3c2880bd6544f06a8c1990df1c6d0ad241a49cbc7a05cf84f805565a5ee667a5",
+      "width": 1280,
+      "height": 720,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 1149575,
+      "png_stream_sha256": "c93f109595e4b4c9a3ff1ec0d508bdef3dab507377024e1cddd614c41a8465fc",
+      "idat_sha256": "c4e24312b03c5ca067bbf331bb000172115aebaf1c6ff9337fb6a73736a5485e",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 3687120,
+      "trailing_bytes_after_iend": 23652,
+      "capture_log_line": 2982,
+      "capture_utc": "2026-11-18T03:10:36.827000+00:00"
+    },
+    {
+      "file": "contact-end/overview.png",
+      "bytes": 3090912,
+      "sha256": "cf7bf68d3e95ee32c2922d0979ba0e1c3f927c9993c212ea704838d18bf10dfb",
+      "width": 1600,
+      "height": 1000,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 2409183,
+      "png_stream_sha256": "44b3b06b6a4206510bdd184dca5a828229328d98218b5fa3277b3e1cc48bb0e5",
+      "idat_sha256": "ccf38322d0cf39a7b3cc3b16f982ed888239fcd87cdde23e687387c8fb7b86d8",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 6401000,
+      "trailing_bytes_after_iend": 681729,
+      "capture_log_line": 2983,
+      "capture_utc": "2026-11-18T03:10:37.009000+00:00"
+    },
+    {
+      "file": "contact-reset/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "4764a37e6121eab0900b8f25bbe86bd2e0217738d61f4557a5066ed15b111319",
+      "width": 1280,
+      "height": 720,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 1224523,
+      "png_stream_sha256": "0268851a70d3011d8ab6c2b4813d42b276a6cb081f801eb71a99850b7250c090",
+      "idat_sha256": "4a6736b39bbea4c20cba62f1242f107c71beb8149985e97bb81332000ef169fc",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 3687120,
+      "trailing_bytes_after_iend": 399924,
+      "capture_log_line": 2990,
+      "capture_utc": "2026-11-18T03:10:46.938000+00:00"
+    },
+    {
+      "file": "contact-reset/overview.png",
+      "bytes": 3090912,
+      "sha256": "006a68ba870a751bfbfb2a13c85219910b047bee485dade8ad07eb374582dd43",
+      "width": 1600,
+      "height": 1000,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 2398496,
+      "png_stream_sha256": "c92ba2e24b28b89617033bd5a04cb59d26d88e0755ad6740a5e8232bab855edf",
+      "idat_sha256": "dd1d9fecb8987c24f43167ebbbfdbb84694fdf5cad2cf1a70691bb5835c570b3",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 6401000,
+      "trailing_bytes_after_iend": 692416,
+      "capture_log_line": 2991,
+      "capture_utc": "2026-11-18T03:10:47.086000+00:00"
+    },
+    {
+      "file": "contact-rest/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "dd3b320b09329d724cf2f3c3db7b24e60f10a679688d334cbb35b80963d7dfe6",
+      "width": 1280,
+      "height": 720,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 1359381,
+      "png_stream_sha256": "656c02ff3ea0c3ea3366f8cfa9a47ac46c5010dae0b66b3608464e464ba42557",
+      "idat_sha256": "a32e5ae1c4dae5bb40f2c3a62a254d6877867bb4e25ba5fe9292b3c2b7f18b97",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 3687120,
+      "trailing_bytes_after_iend": 265066,
+      "capture_log_line": 2979,
+      "capture_utc": "2026-11-18T03:10:31.910000+00:00"
+    },
+    {
+      "file": "contact-rest/overview.png",
+      "bytes": 3090912,
+      "sha256": "fb2b3997e5f05668d1b4c74fabb0cb5592ffa554000b0897c86752360c5ee15e",
+      "width": 1600,
+      "height": 1000,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 2407514,
+      "png_stream_sha256": "b81d65bad7af54930c523acf0e7517d357447afba15f3756479bb7e40e83ca3b",
+      "idat_sha256": "dc4ea4125e1f92584ba8f82ded82ba140502e83d58ab7509966244ee43abe617",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 6401000,
+      "trailing_bytes_after_iend": 683398,
+      "capture_log_line": 2980,
+      "capture_utc": "2026-11-18T03:10:32.059000+00:00"
+    },
+    {
+      "file": "contact-return/aim_camera.png",
+      "bytes": 1624447,
+      "sha256": "e87fc16a20913fe099d2d8fc941c45da1fd95f6aa610943a29f7eeb9c0c9dc5f",
+      "width": 1280,
+      "height": 720,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 1377665,
+      "png_stream_sha256": "99dee37cc5a506c1206d081c0b757f1795f8c46adf91ddcea566d3d9fd0539e2",
+      "idat_sha256": "2279af4fcd867960ff3e347d55864443ea28a04f92de7409d990d6cb4b99e929",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 3687120,
+      "trailing_bytes_after_iend": 246782,
+      "capture_log_line": 2986,
+      "capture_utc": "2026-11-18T03:10:43.543000+00:00"
+    },
+    {
+      "file": "contact-return/overview.png",
+      "bytes": 3090912,
+      "sha256": "1833ac14b3e96fa33ce0d4a53ae670b652b9bd11b22a0052b206ed3069356f09",
+      "width": 1600,
+      "height": 1000,
+      "bit_depth": 8,
+      "color_type": "RGBA",
+      "png_stream_bytes": 2397436,
+      "png_stream_sha256": "bae901638d15fc1174969ec28e609d4de027bf33e7b90791b2aaf2ae5fbc9d95",
+      "idat_sha256": "fb4dc629f9056ce44a60b8bc32950609e275470b0c062d1a997fa3723480d4dc",
+      "png_chunks_crc_valid": true,
+      "decompressed_scanline_bytes": 6401000,
+      "trailing_bytes_after_iend": 693476,
+      "capture_log_line": 2987,
+      "capture_utc": "2026-11-18T03:10:43.693000+00:00"
+    }
+  ],
+  "root_reported_visual_observations": {
+    "scope": "root visual inspection of contact-rest overview/aim, contact-reset overview, and contact-end aim",
+    "floating_ground_mesh_no_longer_occludes_vehicle": true,
+    "left_tree_alpha_cutout_visible": true,
+    "capture_files": [
+      "contact-rest/overview.png",
+      "contact-rest/aim_camera.png",
+      "contact-reset/overview.png",
+      "contact-end/aim_camera.png"
+    ]
+  },
+  "legacy_rmuc_isolation_review": {
+    "scope": "read-only C++ branch review; legacy runtime regression is recorded separately",
+    "files": [
+      {
+        "file": "unreal/RMSim/Source/RMSim/SceneRenderReadiness.cpp",
+        "sha256": "e17a177d0855a61222b212033d2de52de2090a16ce3a80d1176fa9ce1e6122d2",
+        "bytes": 31233
+      },
+      {
+        "file": "unreal/RMSim/Source/RMSim/MapStage.cpp",
+        "sha256": "3dcff7a77d9e94f45f2b1592dbae482fd66ce89da669d8ffb498af84ada8c764",
+        "bytes": 15863
+      },
+      {
+        "file": "unreal/RMSim/Source/RMSim/SceneMap.cpp",
+        "sha256": "8d7a7fab2d0eded88ebb57422c61923aa3ec03532059a25ccf75388d3b7768e8",
+        "bytes": 8660
+      },
+      {
+        "file": "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp",
+        "sha256": "707a48555215637a26b60fc9a07a0613e4a8a4f3b657fe2ad72332efb67ff069",
+        "bytes": 60575
+      }
+    ],
+    "load_clears_saved_scene_state": true,
+    "non_saved_scene_render_readiness_returns_immediately": true,
+    "non_saved_scene_collision_gate_returns_true": true,
+    "legacy_sun_8_ambient_2_and_studio_fills_retained": true,
+    "rvt_stage_scoped_to_saved_wt_vlaanderen": true,
+    "additional_tests_or_source_changes_requested": false
+  },
+  "png_export_observation": {
+    "all_png_streams_crc_and_scanline_decode_valid": true,
+    "all_eight_png_streams_distinct": true,
+    "files_contain_bytes_after_iend": true,
+    "hashes_cover_whole_files_and_separate_png_streams": true,
+    "export_call_matches_existing_main": true,
+    "images_modified": false
+  },
+  "texture_pool_log_evidence": [
+    {
+      "line": 759,
+      "text": "[2026.11.18-03.09.43:882][  0]LogConfig: Set CVar [[r.Streaming.PoolSize:1000]]"
+    },
+    {
+      "line": 949,
+      "text": "[2026.11.18-03.09.45:233][  0]LogRHI: Texture pool is 11202 MB (70% of 16003 MB)"
+    },
+    {
+      "line": 2917,
+      "text": "[2026.11.18-03.09.57:546][  0]LogContentStreaming: Texture pool size now 1000 MB"
+    }
+  ]
+}

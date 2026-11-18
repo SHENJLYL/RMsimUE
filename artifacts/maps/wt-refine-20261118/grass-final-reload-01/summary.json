@@ -1,0 +1,176 @@
+{
+  "status": "passed",
+  "pid": 42976,
+  "exit_code": 0,
+  "started_utc": "2026-11-18T11:18:23.3145591Z",
+  "finished_utc": "2026-11-18T11:18:36.1251413Z",
+  "duration_seconds": 12.8125819,
+  "module_sha256": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+  "verification": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/audit/verification.json",
+    "bytes": 574355,
+    "sha256": "cb6db389464c5e743661f854b382a01df96ccd23bd624c015c9df5f009d27318"
+  },
+  "schema": "wt_grass_final_reload_summary_v1",
+  "scope": "saved native grass generation freshness/weights/types/geometry/linear colours and source-bound sampled surfaces; runtime population and appearance checked separately",
+  "readonly": true,
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+  "fixture_sha256": "5c35a4dc70133a0ba3e5441131de0936a1a97c707bde92e21262bff332a3f659",
+  "verifier_sha256": "b7d98caae63e9c4bb63b1fef3516771684d7ec5467f8abedad4313efbd9e291d",
+  "runner_script_hashes": {
+    "wt_height_decals.py": "b95021ec1216364c3276d3a38f587652107790a52eca57f1c0c71d37cd4e7e71",
+    "inspect_wt_visibility.py": "c0e728877deb51a611e483b749fa8e0fa8c7a3059b698864deda78343723db60",
+    "author_wt_collision.py": "756557dd235069abbd7d16999464f6fc760a3166e0de57596f86652ea3482ee6",
+    "wt_landdetail.py": "ebdc4b2c1c5fe6e99a5a78ea782d678aa6166b8e2a74a6cbecb3f22fa4656548",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "test_wt_rvt_asset.py": "becea754aa7894f7f7dbf590072b863162174be9005cd1d4f7fd8df344fceebe",
+    "test_wt_scene_api.py": "5270ade2b51da7a3666ae55d1879837d6ae7dab0ac6ffa68ed6c9f6778c560f2",
+    "author_wt_grass.py": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+    "wt_materials.py": "0317a5c10babbd17f7f7dec1f9c075de1737048ed3832482aedd35db975ead8b",
+    "wt_ground_material_verify.py": "e94372c7713595d53e1a1d345bab2efa05a374304121d13e317b5fa3303e4694",
+    "wt_overview.py": "f73aa3955604a2d4acd557ff6efda9ce72d3690a07dc6a1dc58c463239c15899",
+    "wt_material_refine_verify.py": "4616a20aa6ab9847f35420e9dd5886c0c5c9feee5be638021f7e23860baee349",
+    "import_wt_scene.py": "19fbe9abb6954771f961a44363c04c0c7868f6bdc6eb089305d545840e2fbe6a",
+    "update_wt_materials.py": "7f5837106b817b300a85ace5559aa67800575891b004e3fc2f980d7baeca6231",
+    "wt_mesh_geometry.py": "7f6f0c9718e30bfd500093924be8bb78fc590813167e6ccc287441e474f75832",
+    "update_wt_water.py": "354df975ef1fe483982f9549e18cc632527e927c4af28708c575d932650fafa1",
+    "verify_wt_scene.py": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+    "test_wt_material_rebuild.py": "b4298745bcd642303a51b1b62870d1d242fcbc16b64791584058c43dc558b4fd",
+    "verify_wt_materials.py": "262ec5fa2f528526006455d2c24fbe9721b5927b7ac3f5f01883aa112f29f609",
+    "prepare_wt_destruction_geometry.py": "75d5c531c1f4ba5e644f8490eb379fe1b4191be6de328394d09540f16c9dc273",
+    "wt_rendinst_decals.py": "1a8941e15285493ec975fa93b09aea80d19145cb61c8446c4c68a343d71e7acc",
+    "wt_material_slots.py": "c7669a92ab7bef73ebe02ed0e5ffe2f2343c021007ab83c97c267e28fa5d65cd",
+    "test_wt_mesh_preservation.py": "e359f32057ac735e7789fa26a699e2f9c4ce7ed55bef6a7ebf0e223363fcf8d6",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "wt_collision.py": "230dbe6c68415d88dd06ed60c3a3a540d93a2817635e46a6b6f0d15957541821",
+    "wt_ground_microdetails.py": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+    "inspect_wt_collision_enums.py": "103ae9c7146d707e1110133eb67b18d2aabeacb27699bb2f4170da9bb795c99b",
+    "check_wt_facing_leaves.py": "bcd5146600fa1bcd8770c2b60cc0d249ce817cd19888d4b37b1891757427a248",
+    "wt_landclass.py": "5247438e08c2e03432b653935ffcb23c0fcd8974356a50b67bb1520f73cd1d65",
+    "verify_wt_grass.py": "b7d98caae63e9c4bb63b1fef3516771684d7ec5467f8abedad4313efbd9e291d",
+    "test_wt_materials.py": "1ed4c1bb608cc6ac95700ba7c213da7f758b34c975ab9f4fd2a2266a38b46fdb",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "verify_wt_collision.py": "b8d74c4f7253f92fafc510c010acbfd3cf55cb7dcf6ac71fbd387349ab804f32",
+    "wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+  },
+  "world_sha256": "3311399568469e48d8580f1b41897ad5899321b51617638dd2c541e875ef1066",
+  "check_count": 72,
+  "generation_freshness": {
+    "method": "ULandscapeComponent::ComputeGrassMapGenerationHash",
+    "checked_components": 1089,
+    "valid_components": 1089,
+    "fresh_components": 1089,
+    "mismatch_components": 0,
+    "evidence": "Every saved/current uint32 pair and reported boolean was compared from the native report"
+  },
+  "native_layers": 16,
+  "native_meshes": 10,
+  "components_with_weights": 1015,
+  "native_weight_fields": [
+    {
+      "id": "previous_gui_station_grass",
+      "expected_grass": "zero",
+      "nonzero_native_layers": 0,
+      "max_corner_error_byte": 0.0,
+      "max_interpolation_error_byte": 0.0
+    },
+    {
+      "id": "spawn",
+      "expected_grass": "zero",
+      "nonzero_native_layers": 0,
+      "max_corner_error_byte": 0.0,
+      "max_interpolation_error_byte": 0.0
+    },
+    {
+      "id": "near_station_grass",
+      "expected_grass": "positive",
+      "nonzero_native_layers": 4,
+      "max_corner_error_byte": 0.0,
+      "max_interpolation_error_byte": 0.0
+    },
+    {
+      "id": "green_slope",
+      "expected_grass": "positive",
+      "nonzero_native_layers": 7,
+      "max_corner_error_byte": 1,
+      "max_interpolation_error_byte": 0.25
+    },
+    {
+      "id": "hard_road_edge",
+      "expected_grass": "zero",
+      "nonzero_native_layers": 0,
+      "max_corner_error_byte": 0.0,
+      "max_interpolation_error_byte": 0.0
+    },
+    {
+      "id": "open_meadow",
+      "expected_grass": "positive",
+      "nonzero_native_layers": 4,
+      "max_corner_error_byte": 0.0,
+      "max_interpolation_error_byte": 0.0
+    }
+  ],
+  "color_vector_count": 96,
+  "maximum_color_vector_error": 2.6246771644977684e-08,
+  "packed_normal_textures": [
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_small_a_PackedNormal.ue_generic_grass_small_a_PackedNormal",
+      "dimensions": [
+        512,
+        512
+      ],
+      "source_png_sha256": "6a7a8ca3b0c92a661efd9b3ea4781fef9af844821eb93a42df4e280d7b1fd927"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_a_PackedNormal.ue_generic_grass_tall_a_PackedNormal",
+      "dimensions": [
+        512,
+        512
+      ],
+      "source_png_sha256": "fdcf7b85c6d2d6b16692f3a6a8e590cf5821da611d80d15c423f9942219c9e7f"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_b_PackedNormal.ue_generic_grass_tall_b_PackedNormal",
+      "dimensions": [
+        512,
+        512
+      ],
+      "source_png_sha256": "feb888688e2cc181aeb41e9b70bca6f420d222a7a1c7f269701af2472b5e22d0"
+    }
+  ],
+  "source_normal_layers": 3,
+  "original_normal_layers": 13,
+  "source_normal_graph_verified": true,
+  "unchanged_saved_asset_and_source_files": 76,
+  "unchanged_file_scope": "Native verifier hashes before and after the read-only run; this summarizer reads that completed evidence",
+  "native_summary": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/audit/summary.json",
+    "bytes": 1540,
+    "sha256": "397552e1194a8b54e49a2f6a918ef02ed12ccd5ffcea71be450d95376e7a08b8"
+  },
+  "preceding_rebake": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/summary.json",
+    "bytes": 6477,
+    "sha256": "9eaf5fb33524577d94b9d85f62074cbe50678fe1e61104a5850e61b81109345b"
+  },
+  "execution": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/execution.json",
+    "bytes": 6507,
+    "sha256": "a173fddaaf119644949561833adfb6ff31d3c31378ae01036c6dd22aef67a376"
+  },
+  "summary_generator": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-evidence-tools-01/summarize_wt_grass_final.py",
+    "bytes": 17853,
+    "sha256": "d08483fcc549bcd20573a8577faa77d17ab1c34c22b86bb11a1f5c6a6bb9c481"
+  },
+  "summarized_utc": "2026-11-18T11:21:51.498709+00:00",
+  "engine_log": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/engine.log",
+    "bytes": 219485,
+    "sha256": "0c15b360d83eb00411d2b76d43b1808d8ec07564ff74541da7a1487e03a51217"
+  }
+}

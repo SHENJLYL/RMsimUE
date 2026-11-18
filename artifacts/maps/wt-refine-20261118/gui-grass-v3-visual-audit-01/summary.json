@@ -1,0 +1,354 @@
+{
+  "schema": "wt_grass_v3_scoped_gui_review_v1",
+  "status": "passed",
+  "scope": "Two actual foreground GUI views at source-height observation fixtures, with Space input and normal close evidence",
+  "reviewed_utc": "2026-11-18T11:00:33.663495+00:00",
+  "module_sha256_from_both_input_and_close_records": "b9278d1a8dab8cdcd27b3fa5b9e295c05fb042a4ea1bae7c6ab762b503af84b8",
+  "world_sha256_at_visual_sessions": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "visual_review_scope": {
+    "captured_original_pngs": 2,
+    "root_reviewed_original_pngs": 2,
+    "independent_reviewer": "/root/wt_import_audit",
+    "independently_reviewed_derived_previews": 2,
+    "preview_dimensions_px": [
+      1280,
+      823
+    ],
+    "preview_method": "PIL RGB conversion, aspect-preserving thumbnail(max1280x824), JPEG quality90; original PNG bytes unchanged",
+    "coverage": "The visible near-grass and green-slope frames; no whole-map visual claim"
+  },
+  "views": [
+    {
+      "name": "near",
+      "spawn_id": "near_station_grass",
+      "pid": 37804,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-view-01/entry.png",
+        "bytes": 3230174,
+        "sha256": "d56bfe85a0f200d7947661ea53b5c178b7f6848f9299e3507584d3e6384e0392"
+      },
+      "image_dimensions_px": [
+        1616,
+        1039
+      ],
+      "observed_utc": "2026-11-18T10:42:05.9091291Z",
+      "foreground_pid": 37804,
+      "window_context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-view-01/window-context.json",
+        "bytes": 1376,
+        "sha256": "6efe59f928a10b40cf5202eb7c6f817e975950a39ff9e63cbb26a457a4317b8e"
+      },
+      "input_execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-state-01/execution.json",
+        "bytes": 1211,
+        "sha256": "24300d7a3734c1bae3ada469fc85e08e276dc34262cb7e4aee130296ed42a5ab"
+      },
+      "input": {
+        "key": "Space",
+        "requested_duration_ms": 120,
+        "actual_hold_ms": 147,
+        "key_up_sent": true,
+        "focus_checked_every_ms": 40,
+        "started_utc": "2026-11-18T10:42:04.4656137Z",
+        "finished_utc": "2026-11-18T10:42:04.6811136Z"
+      },
+      "event_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "input_sample_utc": "2026-11-18T10:42:04.683Z",
+      "input_sample_scope": "Supported-key edge sample preceding screenshot; screenshot pose is not assumed to be a continuous telemetry sample",
+      "actor_position_ros_m": [
+        1084.7505737480656,
+        -1029.7507324197236,
+        0.9950261438494337
+      ],
+      "actor_rotation_xyzw_ue": [
+        0.039145871882698,
+        -0.12864583693173925,
+        -0.00034557998778105264,
+        0.9909176201527289
+      ],
+      "map_uv_from_sample": [
+        0.5296633660879226,
+        0.49719202518568184
+      ],
+      "speed_cm_per_second_at_sample": 0,
+      "contact_recovery_count": 0,
+      "camera": {
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "chase_distance_cm": 500,
+        "active_fov_deg": 55
+      },
+      "render_ready": {
+        "raw_log_line": "[2026.11.18-10.39.38:323][ 26]LogRMSim: Display: SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0 streaming_id=0->0 completed_frames=2 elapsed=2.280s",
+        "remaining_counters": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "completed_frames": 2,
+        "elapsed_seconds": 2.28,
+        "texture_pool_mb": 4096
+      },
+      "close": {
+        "method": "Process.CloseMainWindow",
+        "forced": false,
+        "close_message_sent": true,
+        "exit_code": 0,
+        "started_utc": "2026-11-18T10:47:01.4701066Z",
+        "finished_utc": "2026-11-18T10:47:03.7766837Z"
+      },
+      "close_timestamps_scope": "Close operation, not full-session duration",
+      "close_execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-session-01/execution.json",
+        "bytes": 1067,
+        "sha256": "37923f8bbd0f7c5f9c78163acb8a75cb8bcb9a8991203fb0ce578c228ac4827d"
+      },
+      "live_input": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-session-01/live-input.json",
+        "bytes": 44248,
+        "sha256": "72ab8f695aa91c70535caba662561f0fcf3859c90879d440c0d2eb49db930965"
+      },
+      "runtime_log": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-near-session-01/runtime.log",
+        "bytes": 515245,
+        "sha256": "f306e6edb8f440cd7d359c4092d6cbe967357e1202e4d3e51366048a175fa919"
+      },
+      "manual_review": {
+        "root_original_png": true,
+        "independent_derived_preview": true,
+        "preview": {
+          "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-visual-audit-01/near-preview.jpg",
+          "bytes": 249592,
+          "sha256": "51d3190b8b20e0675dfc62f74e5c18cc3e141ef1abdac8a75d761c5f3b53edab"
+        },
+        "preview_dimensions_px": [
+          1280,
+          823
+        ],
+        "observations": [
+          "Light green, tilted short grass and darker taller tufts are interspersed around the vehicle.",
+          "Pink and red flower clusters are smaller accents in the middle distance.",
+          "Ground remains visible between clusters; this view is less densely covered than the slope view."
+        ],
+        "root_comparison_to_pre_v3": "The previous dark, uniformly upright clumps are visibly improved."
+      }
+    },
+    {
+      "name": "slope",
+      "spawn_id": "green_slope",
+      "pid": 22484,
+      "image": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-view-01/entry.png",
+        "bytes": 3395161,
+        "sha256": "eb07b37d44d36791c30faa0e0b725e165a891b8054db8aad841f9b8358a3aee4"
+      },
+      "image_dimensions_px": [
+        1616,
+        1039
+      ],
+      "observed_utc": "2026-11-18T10:47:45.8699919Z",
+      "foreground_pid": 22484,
+      "window_context": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-view-01/window-context.json",
+        "bytes": 1369,
+        "sha256": "3d56aa395660aeb7424f81ce8c5fffd427b30dfe6ab812cbce8b3f8a879100aa"
+      },
+      "input_execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-state-01/execution.json",
+        "bytes": 1204,
+        "sha256": "b8b081e8788b085636624077e3d57fb711a9133c555bed6a6f393df9d96ea499"
+      },
+      "input": {
+        "key": "Space",
+        "requested_duration_ms": 120,
+        "actual_hold_ms": 141,
+        "key_up_sent": true,
+        "focus_checked_every_ms": 40,
+        "started_utc": "2026-11-18T10:47:44.4811304Z",
+        "finished_utc": "2026-11-18T10:47:44.6879763Z"
+      },
+      "event_counts": {
+        "Space_press": 1,
+        "Space_release": 1
+      },
+      "input_sample_utc": "2026-11-18T10:47:44.696Z",
+      "input_sample_scope": "Supported-key edge sample preceding screenshot; screenshot pose is not assumed to be a continuous telemetry sample",
+      "actor_position_ros_m": [
+        1146.250053700683,
+        -942.2521497917318,
+        3.568793871034465
+      ],
+      "actor_rotation_xyzw_ue": [
+        0.09999272887805724,
+        0.05164585963930665,
+        0.0032062839911256285,
+        0.9936417257224076
+      ],
+      "map_uv_from_sample": [
+        0.5596924090335367,
+        0.5399159424845059
+      ],
+      "speed_cm_per_second_at_sample": 0,
+      "contact_recovery_count": 0,
+      "camera": {
+        "view_yaw_deg": 0,
+        "view_pitch_deg": -12,
+        "chase_distance_cm": 500,
+        "active_fov_deg": 55
+      },
+      "render_ready": {
+        "raw_log_line": "[2026.11.18-10.47.22:852][ 22]LogRMSim: Display: SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0 streaming_id=0->0 completed_frames=2 elapsed=1.928s",
+        "remaining_counters": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "completed_frames": 2,
+        "elapsed_seconds": 1.928,
+        "texture_pool_mb": 4096
+      },
+      "close": {
+        "method": "Process.CloseMainWindow",
+        "forced": false,
+        "close_message_sent": true,
+        "exit_code": 0,
+        "started_utc": "2026-11-18T10:49:18.0169711Z",
+        "finished_utc": "2026-11-18T10:49:19.7126549Z"
+      },
+      "close_timestamps_scope": "Close operation, not full-session duration",
+      "close_execution": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-session-01/execution.json",
+        "bytes": 1060,
+        "sha256": "1e4f8bf174fbf433c60e4f11f579f2f69323b0c33541f376b32e526b39686533"
+      },
+      "live_input": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-session-01/live-input.json",
+        "bytes": 44186,
+        "sha256": "7e831a5387af07d852b6cc8883ddad3b5b0b77a4efddd5e28df6188cb5b9be34"
+      },
+      "runtime_log": {
+        "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-slope-session-01/runtime.log",
+        "bytes": 514668,
+        "sha256": "f392d244325a328caaf470681edc2e4fe32e54713ecfb95c3f0e7c32302e8236"
+      },
+      "manual_review": {
+        "root_original_png": true,
+        "independent_derived_preview": true,
+        "preview": {
+          "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-visual-audit-01/slope-preview.jpg",
+          "bytes": 292106,
+          "sha256": "448643ed9de4480c45a92672245aab43d7f1bc2d3e56960f06bce5857f363510"
+        },
+        "preview_dimensions_px": [
+          1280,
+          823
+        ],
+        "observations": [
+          "The visible slope has denser mixed short grass, taller grass, flowers and ferns.",
+          "The visible railway running surface and adjacent hard road remain free of the grass clusters.",
+          "Bright green ferns from the original layers remain visible among the smaller grass."
+        ],
+        "ground_observation": "Regular grid and diagonal surface patterns remain visible on the LC1 ground; material diagnosis is separate from this vegetation review."
+      }
+    }
+  ],
+  "grass_source_bindings": {
+    "definition": {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json",
+      "bytes": 137274,
+      "sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc"
+    },
+    "enhancement_proof": {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/enhancement-proof.json",
+      "bytes": 87995,
+      "sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5"
+    },
+    "sample_fixture": {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/native-sample-fixture.json",
+      "bytes": 52767,
+      "sha256": "5c35a4dc70133a0ba3e5441131de0936a1a97c707bde92e21262bff332a3f659"
+    },
+    "authoring_module": {
+      "path": "tools/unreal/wt_grass.py",
+      "bytes": 32397,
+      "sha256": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+    },
+    "observation_map": {
+      "path": "artifacts/maps/wt-refine-20261118/material-observation-01/map.json",
+      "bytes": 1338,
+      "sha256": "cc75b7b9010d5cec2e5f17aba64fc579c9f0958dc40e28aa34d23b382f85b587"
+    }
+  },
+  "saved_world_observed_after_sessions": {
+    "path": "unreal/RMSim/Content/RMSim/Maps/wt_vlaanderen/World.umap",
+    "bytes": 292255419,
+    "sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419"
+  },
+  "companion_native_evidence": [
+    {
+      "path": "artifacts/maps/wt-refine-20261118/grass-visual-native-01/summary.json",
+      "bytes": 3314,
+      "sha256": "23a71aeb4634b1b3507e79ad5f45ef4e05d6dfd7a2e9e6ad39b95ee3c8e436fb"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/grass-visual-reload-01/summary.json",
+      "bytes": 4216,
+      "sha256": "42fc70b1975f5fec5ee3eb7c009815d36a55fc069401d32a2a6554f9954ee5bf"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/materials-reload-03/summary.json",
+      "bytes": 19890,
+      "sha256": "acc7d247a99747e27d20a277e0e01973ae963d3761dd1c3350416951199fb946"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/gui-v8-motion-audit-01/summary.json",
+      "bytes": 12654,
+      "sha256": "84072e127b57136e15529f75ad4f1e4ccfeee959f789bf76870c32023a34c002"
+    }
+  ],
+  "accepted_vegetation_decision": {
+    "keep_new_layer_density_per_100m2": [
+      200,
+      150,
+      120
+    ],
+    "keep_models": 10,
+    "keep_layers": 16,
+    "basis": "Root reviewed both original images; independent review of the two reduced previews agrees on visible variation and visible railway exclusion",
+    "native_count_scope": "Instance totals and layer coverage come from linked native audits, not pixel counting in these images"
+  },
+  "ground_surface_followup": {
+    "status": "separate_material_diagnosis",
+    "observed": "Grid/diagonal LC1 surface patterns in the slope view and large near-surface texture features remain visible",
+    "owner": "/root/material_native_fix",
+    "v9_native_ground_validation": "pending_at_this_review"
+  },
+  "generation_freshness_followup": {
+    "status": "new_read_only_native_gate_pending",
+    "required": "All 1089 saved GenerationHash values equal current engine ComputeGrassMapGenerationHash; 72-check grass audit after any required true rebake"
+  },
+  "prior_orchestration": {
+    "execution": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-visual-sequence-01/execution.json",
+      "bytes": 2338,
+      "sha256": "5d0259b82a2db0655b0f47776ec5ed73ec275916dc23957e658b53c41ccc8fef"
+    },
+    "status": "failed_file_sharing_read",
+    "scope": "Preserved earlier orchestration record; successful near/slope input and close records are independently bound above"
+  },
+  "summary_generator": {
+    "path": "artifacts/maps/wt-refine-20261118/gui-grass-v3-visual-audit-01/build_summary.py",
+    "bytes": 11155,
+    "sha256": "be34668accabd7399eba20bf9594735484a5951029bad62745731726a6aafc21"
+  }
+}

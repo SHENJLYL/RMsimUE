@@ -1,0 +1,509 @@
+{
+  "schema": "rmsim_contact_runtime_compact_summary_v2",
+  "status": "passed",
+  "module_scope": "Current combined workspace including concurrent destruction development",
+  "module_sha256": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+  "evidence": {
+    "full_report": {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/control-result.json",
+      "sha256": "9ae56da0e437cffb311b01ba18020ba8b6b6e2a0ab1f2dda26c17d02e2ac76c4",
+      "bytes": 1967141
+    },
+    "wrapper_verification": {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/verification.json",
+      "sha256": "3049dff77ea9bae34cdeadeffe7a3b26cd03bd7690bf5bdb667ace0c64923f99",
+      "bytes": 833
+    },
+    "runtime_log": {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/runtime.log",
+      "sha256": "fd8645cf251ad390b1b915b3604f03c9da5d7b02c0435cdd35d8436b3d5bb873",
+      "bytes": 504164
+    },
+    "final_gate_chain": {
+      "path": "artifacts/maps/wt-scene-20261118/scene-contact-final-01/verification.json",
+      "sha256": "cd4b04cca5967a0af621740816eeb3c5f59871ce2a1dffdd5488e5dd82062fda",
+      "bytes": 4446
+    }
+  },
+  "execution": {
+    "process_exit": 0,
+    "owner_observed_engine_pid": 44052,
+    "started_utc": "2026-11-18T05:49:23.6535113Z",
+    "finished_utc": "2026-11-18T05:50:02.7920476Z",
+    "wrapper_step_duration_seconds": 39.138536,
+    "report_started_utc": "2026-11-18T05:49:35.488Z",
+    "report_finished_utc": "2026-11-18T05:49:59.850Z",
+    "command_line": "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -RenderOffScreen -unattended -NoSplash -NoSound -ContactProbe -MapFile=D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json -SpawnId=default -MeshRigFile=D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json -EvidenceDir=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/flanders-contact-04-final -abslog=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/flanders-contact-04-final/runtime.log -ForceDPCVars=r.Streaming.PoolSize=4096 -d3d11 -NoShaderWorker -ContactReset -ContactDistanceCm=340 -ContactSpeedMps=1",
+    "requested_rhi": "D3D11",
+    "single_shaderworker": true
+  },
+  "run_id": "AA9DDA274A623BDBB1C8D3984337CA78",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "map_id": "wt_vlaanderen",
+  "spawn_id": "default",
+  "map_definition": {
+    "path": "assets/maps/wt_vlaanderen/map.json",
+    "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+    "bytes": 710
+  },
+  "module_stable_through_gate": true,
+  "drive_profile_sha256": "1e6a678dc2fa730dd132b49ce9854a81ab826a7efa8ecadd25ea6eb856504895",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "script_source_snapshot": {
+    "observed_utc": "2026-11-18T05:56:05.854569+00:00",
+    "scope": "current file bytes read during summary; execution report binds the compiled module and recorded command",
+    "files": [
+      {
+        "path": "tools/unreal/Test-ManualControls.ps1",
+        "sha256": "11fe6993fc71295c0014704d4694d6cfb94c85c85be1a2a173be0a2ac97e7929",
+        "bytes": 11480
+      },
+      {
+        "path": "tools/unreal/SceneMap.ps1",
+        "sha256": "1ddd74d47f0e1019ef34bf205a18174dc381b161586699226eabd244fe752cc3",
+        "bytes": 5718
+      },
+      {
+        "path": "tools/unreal/Run-ImportLab.ps1",
+        "sha256": "e41f023f5abf44c5d440ed6954c82451327a3f0c2654b43f7f3b1c3f293d2bf0",
+        "bytes": 6761
+      },
+      {
+        "path": "unreal/RMSim/Source/RMSim/ContactProbe.cpp",
+        "sha256": "4b0c776c630e841bc33e5cd8486b4126541e1e23c21ce6c6c179f4e28d50c368",
+        "bytes": 13147
+      },
+      {
+        "path": "artifacts/maps/wt-scene-20261118/run-scene-contact-final-01.ps1",
+        "sha256": "05024b5cbddb061653e81dd5d954204cf538c28c50216704fae05a74c6050cba",
+        "bytes": 2853
+      }
+    ]
+  },
+  "check_count": 5,
+  "checks": [
+    {
+      "name": "physical_settle",
+      "passed": true,
+      "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99903"
+    },
+    {
+      "name": "physical_forward_route",
+      "passed": true,
+      "detail": "Motor/contact driven route progress 340.037/340.000cm, drift -0.064cm, time 4.430s"
+    },
+    {
+      "name": "physical_brake",
+      "passed": true,
+      "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+    },
+    {
+      "name": "physical_reverse_route",
+      "passed": true,
+      "detail": "Reverse crosses same source route: remaining 8.956cm, drift -0.021cm"
+    },
+    {
+      "name": "physical_shared_reset_without_training",
+      "passed": true,
+      "detail": "Shared R restores source-map spawn: resets=1 distance=0.0131cm speed=0.0000cm/s"
+    }
+  ],
+  "sample_count": 67,
+  "contact_metrics": {
+    "route_command_speed_m_s": 1,
+    "metric_derivation": "forward/reverse projections recomputed from actual check states using ContactProbe.cpp settled-forward/side axes; reset XY from actual final state and source spawn; elapsed copied from native check detail",
+    "forward": {
+      "progress_cm": 340.03671601483967,
+      "lateral_drift_cm": -0.06435355749409527,
+      "position_cm": [
+        103140.05361077939,
+        102000.22527190103,
+        -139.19150803385185
+      ],
+      "target_cm": 340.0,
+      "reported_elapsed_seconds": 4.43
+    },
+    "reverse": {
+      "progress_cm": 8.956230873753162,
+      "lateral_drift_cm": -0.020996023421276835,
+      "position_cm": [
+        102808.97320441874,
+        101999.99279566374,
+        -138.15801018823822
+      ]
+    },
+    "brake_speed_cm_s": 0.0,
+    "shared_reset_count": 1,
+    "reset_distance_xy_cm": 0.013061395284896013,
+    "reset_speed_cm_s": 0.0
+  },
+  "contact_parameters": {
+    "ChassisMassKg": 20,
+    "WheelMassKg": 1,
+    "SliderMassKg": 0.15,
+    "SteeringMassKg": 0.2,
+    "SuspensionTravelCm": 6.5,
+    "SpringStiffnessNPerM": 2000,
+    "SpringDampingNsPerM": 140,
+    "SpringPreloadN": 50,
+    "SpringForceLimitN": 1000,
+    "WheelFriction": 1.8,
+    "ChassisFriction": 0.5,
+    "MotorTorqueNm": 4,
+    "BrakeTorqueNm": 8,
+    "MotorDampingNmS": 2,
+    "LinearDamping": 0.05,
+    "AngularDamping": 0.05
+  },
+  "drive_parameters": {
+    "MaxForwardSpeedMps": 3,
+    "MaxReverseSpeedMps": 1.5,
+    "MaxLateralSpeedMps": 2,
+    "LinearAccelerationMps2": 0.8,
+    "PrecisionSpeedMps": 0.35,
+    "LinearDecelerationMps2": 3,
+    "BrakeDecelerationMps2": 6,
+    "LinearJerkMps3": 4,
+    "DecelerationJerkMps3": 20,
+    "ManualYawRateRadS": 1.5707963267948966,
+    "LateralAccelerationMps2": 10,
+    "DirectionJerkMps3": 100,
+    "AngularAccelerationRadS2": 3,
+    "AngularDecelerationRadS2": 5,
+    "GyroDefaultRadS": 2,
+    "GyroMinRadS": 0.5,
+    "GyroMaxRadS": 4,
+    "GyroStepRadS": 0.5,
+    "SteeringRateRadS": 15.707963267948966,
+    "SteeringStiffnessNmRad": 80,
+    "SteeringDampingNmS": 8,
+    "SteeringTorqueNm": 8,
+    "MaxWheelSpeedMps": 4,
+    "WheelVelocityIntegralGainPerSecond": 3,
+    "WheelIntegralTorqueLimitNm": 2.5,
+    "YawVelocityFeedback": 0,
+    "LinearVelocityFeedback": 0
+  },
+  "runtime_scene_classification_as_reported": {
+    "level_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "loaded_world": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "landscape_actors": 1,
+    "heightfield_collision_components": 1089,
+    "visual_instance_components": 735,
+    "collision_instance_components": 633,
+    "visual_instances": 40569,
+    "collision_instances": 15386,
+    "scene_collision_ready": true,
+    "streamed_grass_components": 16,
+    "streamed_grass_instances": 939,
+    "streamed_grass_collision_disabled": true
+  },
+  "captures": [
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-end/aim_camera.png",
+      "sha256": "588e27c906d69964980cdac788d749042ed32ab23bcf9399ab2440777d71de70",
+      "bytes": 1173227,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-end/overview.png",
+      "sha256": "5b796c8edd783680012df3b82627a9bf034bd3a801c23c0663f109e2edd40d8f",
+      "bytes": 3090912,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-reset/aim_camera.png",
+      "sha256": "566ec45eafd9b17b0067b832c177091ff1d3bfec991fff923482ccc7d3718c09",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-reset/overview.png",
+      "sha256": "864021e50adf42c6c18787f57057bec93718e951f518bf7781437dc2fabbc729",
+      "bytes": 3090912,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-rest/aim_camera.png",
+      "sha256": "8401a715a781052b7cd2e1d605884ce38fd50bcc0f96c17c8a42948bf6ee5578",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-rest/overview.png",
+      "sha256": "2e22dd4672fbddd4f29413045daac7ed51f03e908ccf89b914ccf6e283bab621",
+      "bytes": 3090912,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-return/aim_camera.png",
+      "sha256": "d16bda88d0ffb4f41ba7b7ecf6b8046f2dcae2aff8c1fee75a518c67f8d741cc",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/flanders-contact-04-final/contact-return/overview.png",
+      "sha256": "8e7095f9d6ccf197b00ce11f00816d30f6d3baee3fe1bdd31c37ec63ec12d577",
+      "bytes": 3090912,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    }
+  ],
+  "capture_count": 8,
+  "capture_visual_review_performed_by_this_summary": false,
+  "full_report_ignored": true,
+  "os_keyboard_input_verified": false,
+  "world_pose_injection_used_for_route": false,
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "saved_world": {
+    "asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+    "binding_evidence": {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/audit/verification.json",
+      "sha256": "ca36a9a7f346dc7bbfcdd210194ab2efb556fe2dd55eda962b4bc4c32b17b09f",
+      "bytes": 2033630
+    },
+    "binding_scope": "saved world was independently reloaded and hash-verified immediately before this runtime step"
+  },
+  "source_inventory": {
+    "visual_groups": 726,
+    "collision_groups": 642,
+    "visual_placements": 35922,
+    "collision_placements": 20033
+  },
+  "scene_render_readiness": {
+    "schema": "rm_scene_render_readiness_v1",
+    "status": "passed",
+    "started_utc": "2026-11-18T05:49:38.152Z",
+    "process_id": 44052,
+    "timeout_seconds": 300,
+    "streaming_wait_budget_seconds": 0.10000000149011612,
+    "required_completed_render_frames": 2,
+    "last_progress_log_seconds": 0.08662700280547142,
+    "streaming_full_updates": 23,
+    "last_completed_render_frame": 26,
+    "ready": true,
+    "compilation_complete": true,
+    "blocking_finish_all_compilation_used": false,
+    "editor_compilation_counters_available": true,
+    "streaming_id_change_required": false,
+    "streaming_freshness_evidence": "UE5.8 StreamAllResources performs UpdateResourceStreaming(0,true); legacy wanting-resource IDs are recorded and may remain unchanged",
+    "compilation_before": {
+      "assets": 11,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 0,
+      "shader_pending_jobs": 0,
+      "shader_compiling": true,
+      "shader_maps_pending_finalization": true
+    },
+    "runtime_virtual_texture": {
+      "required": true,
+      "complete": true,
+      "sync_attempts": 1,
+      "status": "synchronized",
+      "matching_volume_count": 1,
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_GroundDecalRVT.WT_GroundDecalRVT",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.RuntimeVirtualTextureVolume_0.VirtualTextureComponent",
+      "spawn_world_cm": [
+        102800,
+        102000,
+        -136.05753034353256
+      ],
+      "requested_world_min_cm": [
+        100800,
+        100000,
+        -136.05753034353256
+      ],
+      "requested_world_max_cm": [
+        104800,
+        104000,
+        -136.05753034353256
+      ],
+      "volume_world_min_cm": [
+        -111078.3935546875,
+        -912696.58203125,
+        -2100
+      ],
+      "volume_world_max_cm": [
+        702740.185546875,
+        1270263.76953125,
+        7786.274719238281
+      ],
+      "volume_scale_cm": [
+        813818.5791015625,
+        2182960.3515625,
+        9886.274719238281
+      ],
+      "requested_uv_min_x": 0.26035089268740524,
+      "requested_uv_min_y": 0.4639097459128797,
+      "requested_uv_max_x": 0.2652659930583207,
+      "requested_uv_max_y": 0.46574212000851406,
+      "requested_mip": 0,
+      "feature_level": 3,
+      "max_preload_tiles": 256,
+      "preload_api": "IRendererModule.RequestVirtualTextureTiles(region,mip0); avoids component sphere/aspect expansion",
+      "preload_and_flush_seconds": 0.0007001012563705444,
+      "native_allocation": {
+        "render_thread_executed": true,
+        "allocated": true,
+        "sync_virtual_texture_updates_returned": true,
+        "sync_seconds": 0.0003095008432865143,
+        "virtual_width_pixels": 524288,
+        "virtual_height_pixels": 1048576,
+        "width_tiles": 2048,
+        "height_tiles": 4096,
+        "virtual_tile_size": 256,
+        "physical_tile_size_including_border": 264,
+        "tile_border_size": 4,
+        "space_id": 1,
+        "top_mip_request_tile_coverage": 88,
+        "request_tile_min_x": 533,
+        "request_tile_min_y": 1900,
+        "request_tile_max_x_exclusive": 544,
+        "request_tile_max_y_exclusive": 1908,
+        "physical_page_bytes_all_layers": 209088,
+        "physical_texture_bytes_all_layers": 256132800,
+        "request_count_scope": "exact request rectangle coverage using native allocation and UE5.8 float tile-range formula; not a GPU-produced-page counter",
+        "physical_layers": [
+          {
+            "layer": 0,
+            "physical_texture_size_pixels": 9240,
+            "format": "DXT5"
+          },
+          {
+            "layer": 1,
+            "physical_texture_size_pixels": 9240,
+            "format": "BC5"
+          },
+          {
+            "layer": 2,
+            "physical_texture_size_pixels": 9240,
+            "format": "DXT5"
+          }
+        ]
+      },
+      "synchronized_render_frame": 24
+    },
+    "rendering_enabled": true,
+    "elapsed_seconds": 3.11501369997859,
+    "last_compilation_process_seconds": 1.2200325727462769e-05,
+    "compilation_current": {
+      "assets": 0,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 0,
+      "shader_pending_jobs": 0,
+      "shader_compiling": false,
+      "shader_maps_pending_finalization": false
+    },
+    "compilation_flush_seconds": 0.04299130290746689,
+    "compilation_after": {
+      "assets": 0,
+      "textures": 0,
+      "static_meshes": 0,
+      "shader_jobs": 0,
+      "shader_pending_jobs": 0,
+      "shader_compiling": false,
+      "shader_maps_pending_finalization": false
+    },
+    "phase": "ready",
+    "completed_render_frames": 2,
+    "streaming_id_before": 0,
+    "submitted_views": [
+      {
+        "view": "player",
+        "location_cm": [
+          102310.9261996331,
+          102000,
+          49.81750809475079
+        ],
+        "width_pixels": 1280,
+        "fov_degrees": 55,
+        "fov_screen_size": 2458.857177734375
+      },
+      {
+        "view": "overview",
+        "location_cm": [
+          103020,
+          101740,
+          68.94246965646744
+        ],
+        "width_pixels": 1600,
+        "fov_degrees": 55,
+        "fov_screen_size": 3073.5712890625
+      },
+      {
+        "view": "aim_camera",
+        "location_cm": [
+          102817.53248167038,
+          102004.70079630613,
+          -104.07042652368546
+        ],
+        "width_pixels": 1280,
+        "fov_degrees": 30,
+        "fov_screen_size": 4777.02490234375
+      }
+    ],
+    "streaming_enabled": true,
+    "texture_streaming_enabled": true,
+    "last_streaming_update_seconds": 0.026613298803567886,
+    "streaming_pending_requests": 0,
+    "streaming_wanted_resources": 0,
+    "streaming_id_after": 0,
+    "streaming_active_views": 3,
+    "fresh_synchronous_streaming_evaluation": true,
+    "ready_view_render_frame_start": 24,
+    "finished_utc": "2026-11-18T05:49:41.268Z"
+  },
+  "runtime_classification_scope": "SceneMap classifies by current collision-enabled state; concurrent crush disables matched soft shrub colliders, so runtime NoCollision counts include hidden source collider components.",
+  "combined_crush_runtime_log": [
+    "[2026.11.18-05.49.41:607][ 26]LogTemp: Display: WT_DESTRUCTION_READY groups=31 soft_visuals=4647 soft_colliders_disabled=4647 rigid_breakables=1498"
+  ],
+  "texture_pool_log": [
+    "[2026.11.18-05.49.37:676][  0]LogContentStreaming: Texture pool size now 4096 MB"
+  ],
+  "created_utc": "2026-11-18T05:56:05.854569+00:00"
+}

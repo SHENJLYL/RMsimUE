@@ -1,0 +1,204 @@
+{
+  "schema": "rmsim_shader_compile_observation_v1",
+  "status": "passed",
+  "scope": "two pre-existing read-only thread samples; no additional diagnosis sampling",
+  "recorded_utc": "2026-11-18T04:49:40.111282+00:00",
+  "device_id": "55b84a3d-6169-4d19-b7b9-f308ef477a50",
+  "pid": 36532,
+  "native_execution": {
+    "path": "artifacts/maps/wt-scene-20261118/grass-native-04/execution.json",
+    "snapshot_status": "running",
+    "snapshot_sha256": "bfb9ca296784863da5c4e7359e28eea88794a81d5465cc501238b81a3d644d15",
+    "snapshot_sha_scope": "execution.json is mutable until the owning runner exits",
+    "started_utc": "2026-11-18T04:33:46.8400908Z",
+    "module_sha256": "c605d0a2145d8ab78bb49fb31bfa78e89352641dbbe370ef51f71e82f557975e"
+  },
+  "method": {
+    "cpu": "System.Diagnostics.Process.CPU and ProcessThread.TotalProcessorTime",
+    "thread_name": "OpenThread(THREAD_QUERY_LIMITED_INFORMATION=0x0800) then GetThreadDescription; CloseHandle; no suspend",
+    "second_sample_names": "matched first-sample thread IDs",
+    "observer_shell_pids": [
+      30948,
+      46404
+    ],
+    "debugger_attached": false,
+    "etw_recording_started": false,
+    "processes_suspended": [],
+    "processes_terminated": [],
+    "additional_ue_processes_started": [],
+    "source_files_modified": false
+  },
+  "samples": [
+    {
+      "time_utc": "2026-11-18T04:41:54.1541585Z",
+      "pid": 36532,
+      "process_cpu_seconds": 600.234375,
+      "threads": [
+        {
+          "id": 28136,
+          "name": "ShaderCompilingThread",
+          "cpu_seconds": 464.234375,
+          "state": "Running",
+          "wait_reason": ""
+        },
+        {
+          "id": 38324,
+          "name": "GameThread",
+          "cpu_seconds": 13.140625,
+          "state": "Wait",
+          "wait_reason": "ExecutionDelay"
+        },
+        {
+          "id": 46128,
+          "name": "RenderThread 0",
+          "cpu_seconds": 9.640625,
+          "state": "Wait",
+          "wait_reason": "UserRequest"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-18T04:42:54.6901521Z",
+      "pid": 36532,
+      "process_cpu_seconds": 653.609375,
+      "threads": [
+        {
+          "id": 28136,
+          "name": "ShaderCompilingThread",
+          "cpu_seconds": 516.890625,
+          "state": "Running",
+          "wait_reason": ""
+        },
+        {
+          "id": 38324,
+          "name": "GameThread",
+          "cpu_seconds": 13.5,
+          "state": "Wait",
+          "wait_reason": "ExecutionDelay"
+        },
+        {
+          "id": 46128,
+          "name": "RenderThread 0",
+          "cpu_seconds": 9.71875,
+          "state": "Wait",
+          "wait_reason": "UserRequest"
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "wall_seconds": 60.535994,
+    "process_cpu_delta_seconds": 53.375,
+    "thread_cpu_delta_seconds": {
+      "ShaderCompilingThread": 52.65625,
+      "GameThread": 0.359375,
+      "RenderThread 0": 0.078125
+    },
+    "shader_cpu_fraction_of_one_core": 0.8698337389157267
+  },
+  "checks": [
+    {
+      "name": "same_owned_native_pid",
+      "passed": true
+    },
+    {
+      "name": "shader_thread_running_both_samples",
+      "passed": true
+    },
+    {
+      "name": "shader_thread_consumed_cpu_between_samples",
+      "passed": true
+    },
+    {
+      "name": "game_and_render_threads_waiting_both_samples",
+      "passed": true
+    }
+  ],
+  "conclusion": {
+    "observed": "in-process ShaderCompilingThread actively consumed CPU while GameThread and RenderThread waited",
+    "likely_call_scope": [
+      "FAssetCompilingManager::FinishAllCompilation",
+      "grass-map forced shader compilation"
+    ],
+    "completed_shader_job_count": null,
+    "precise_current_call": null,
+    "compilation_success": null,
+    "limits": "CPU activity does not measure completed shader jobs. This record verifies observation only; native authoring completion remains with its owning execution report. Process non-interference fields describe actions by this observer."
+  },
+  "engine_source": [
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\ShaderCompiler\\ShaderCompiler.cpp",
+      "sha256": "01cf29f3e0f8894f50d63dbd5ffebcc8216702ea2f08f1c46787037782d0056f",
+      "symbols": [
+        "FShaderCompilingManager::BlockOnAllShaderMapCompletion",
+        "FShaderCompilingManager::FinishAllCompilation"
+      ],
+      "line_anchors": [
+        821,
+        823,
+        1257,
+        1961,
+        2042,
+        2827,
+        2863
+      ],
+      "observed_behavior": "NoShaderWorker selects one in-process compile thread; pending shader jobs make GameThread sleep 0.01s."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\AssetCompilingManager.cpp",
+      "sha256": "f51a492689fa834df98a0e803fcb9e3408301b3f9babfa84ad886b66ceeb7c30",
+      "symbols": [
+        "FAssetCompilingManager::FinishAllCompilation"
+      ],
+      "line_anchors": [
+        674,
+        684
+      ],
+      "observed_behavior": "Calls registered asset compiler managers synchronously; no local timeout."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Landscape\\Private\\LandscapeGrassMapsBuilder.cpp",
+      "sha256": "ac9b76abe8e074bf09b215b17cc290abc6cc0ba97a88621724890665e42518b0",
+      "symbols": [
+        "FLandscapeGrassMapsBuilder::BuildGrassMapsNowForComponents"
+      ],
+      "line_anchors": [
+        99,
+        103,
+        1053,
+        1250
+      ],
+      "observed_behavior": "Blocking grass-map generation defaults to six components per batch; 30s guard measures time since state progress, not total runtime; can force grass shaders."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Landscape\\Private\\LandscapeTextureStreamingManager.cpp",
+      "sha256": "3d9f743fe20919e36007b5c92db8124707148bf94f3f90484b9452010e28100f",
+      "symbols": [
+        "EnforceTextureIsFullyStreamedInNow",
+        "FLandscapeTextureStreamingManager::WaitForTextureStreaming"
+      ],
+      "line_anchors": [
+        31,
+        55,
+        149,
+        174
+      ],
+      "observed_behavior": "Wait path calls BlockOnAnyAsyncBuild and Texture.WaitForStreaming synchronously."
+    },
+    {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Landscape\\Private\\LandscapeGrass.cpp",
+      "sha256": "0f4a88f363aaa88649e3deeced44f4f78ee8ad86458c8cbcbbef1cc5ed9460aa",
+      "symbols": [
+        "ALandscapeProxy::UpdateGrass",
+        "ALandscapeProxy::ProcessAsyncGrassInstanceTasks"
+      ],
+      "line_anchors": [
+        2848,
+        2870,
+        3357,
+        3430
+      ],
+      "observed_behavior": "ForceSync waits for grass instance tasks via EnsureCompletion."
+    }
+  ]
+}

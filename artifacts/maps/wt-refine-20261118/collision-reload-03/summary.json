@@ -1,0 +1,428 @@
+{
+  "schema": "wt_generated_collision_native_audit_summary_v1",
+  "status": "passed",
+  "execution_sha256": "d34a9ef5acd7de1d4680b0aadbe77a9f50602aecb2a1fb92704d5ac771c93274",
+  "verification_sha256": "91bb2546aa1c91e1daf24c15fc07e3041eddb1fb09ebc50f8868e115488b0ba8",
+  "script_sha256": "b8d74c4f7253f92fafc510c010acbfd3cf55cb7dcf6ac71fbd387349ab804f32",
+  "fixtures_sha256": "1da4242447415c9d9068ebb900278fbba2c616d35a6b287b5c97f370a649004c",
+  "pid": 42236,
+  "exit_code": 0,
+  "duration_seconds": 13.994396199999999,
+  "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+  "contract": {
+    "manifest_sha256": "28dd4b9d3afc2ab8f8b978482391a1c6358139770957b94ade07ab0d81a0a8dd",
+    "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+    "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "source_instances": 18454,
+    "physical_instance_slots": 15751,
+    "mesh_assets": 203,
+    "spatial_cells": 917,
+    "scene_source_current_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "scene_source_preparation_snapshot_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_counts": {
+      "russia_rails_sleeper_a": 14349,
+      "rail_crosstie": 37,
+      "pavement_border_a": 1013,
+      "pavement_border_a_secondlayer": 334,
+      "pavement_border_a_white_secondlayer": 514,
+      "pavement_border_b": 651,
+      "pavement_border_b_secondlayer": 294,
+      "pavement_border_b_white_secondlayer": 423,
+      "pavement_border_c": 355,
+      "pavement_border_d": 242,
+      "pavement_border_e": 226,
+      "pavement_border_g": 4,
+      "sicily_pavement_border_a": 4,
+      "sicily_pavement_border_b": 8
+    }
+  },
+  "native_enum_bindings": {
+    "Visibility": {
+      "name": "ECC_VISIBILITY",
+      "value": 0,
+      "display_name": "Visibility"
+    },
+    "RMSimLidar": {
+      "name": "ECC_RM_SIM_LIDAR",
+      "value": 2,
+      "display_name": "RMSimLidar"
+    },
+    "lidar_collision_channel": {
+      "name": "ECC_RM_SIM_LIDAR",
+      "value": 14,
+      "display_name": "RMSimLidar"
+    },
+    "block_response": {
+      "name": "ECR_BLOCK",
+      "value": 2,
+      "display_name": "Block"
+    }
+  },
+  "native_mesh_assets": 203,
+  "native_query_checks": 128,
+  "native_hits": 120,
+  "native_verified_voids": 8,
+  "max_source_ray_error_cm": 0.001987410103339471,
+  "source_results": [
+    {
+      "name": "pavement_border_a_top",
+      "source_model": "pavement_border_a",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 0.001987410103339471
+    },
+    {
+      "name": "pavement_border_a_secondlayer_top",
+      "source_model": "pavement_border_a_secondlayer",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 9.16264603745276e-07
+    },
+    {
+      "name": "pavement_border_a_white_secondlayer_top",
+      "source_model": "pavement_border_a_white_secondlayer",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 7.199376080674084e-07
+    },
+    {
+      "name": "pavement_border_b_top",
+      "source_model": "pavement_border_b",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 0.0019716138937440064
+    },
+    {
+      "name": "pavement_border_b_secondlayer_top",
+      "source_model": "pavement_border_b_secondlayer",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 5.493979466919541e-06
+    },
+    {
+      "name": "pavement_border_b_white_secondlayer_top",
+      "source_model": "pavement_border_b_white_secondlayer",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 2.714032711181653e-06
+    },
+    {
+      "name": "pavement_border_c_top",
+      "source_model": "pavement_border_c",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 1.0151524321599936e-05
+    },
+    {
+      "name": "pavement_border_d_top",
+      "source_model": "pavement_border_d",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 5.2751538291317956e-05
+    },
+    {
+      "name": "pavement_border_e_top",
+      "source_model": "pavement_border_e",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 4.495324409958812e-05
+    },
+    {
+      "name": "pavement_border_g_top",
+      "source_model": "pavement_border_g",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 8.11667462130572e-08
+    },
+    {
+      "name": "rail_crosstie_top",
+      "source_model": "rail_crosstie",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 2.2821289064722805e-05
+    },
+    {
+      "name": "russia_rails_sleeper_a_top",
+      "source_model": "russia_rails_sleeper_a",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 9.027275685822379e-07
+    },
+    {
+      "name": "sicily_pavement_border_a_top",
+      "source_model": "sicily_pavement_border_a",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 2.430766574690324e-06
+    },
+    {
+      "name": "sicily_pavement_border_b_top",
+      "source_model": "sicily_pavement_border_b",
+      "expected_hit": true,
+      "queries": 4,
+      "max_error_cm": 7.419643178963042e-06
+    },
+    {
+      "name": "between_sleepers",
+      "source_model": null,
+      "expected_hit": false,
+      "queries": 4,
+      "max_error_cm": 0.0
+    },
+    {
+      "name": "curved_curb_hull_void",
+      "source_model": null,
+      "expected_hit": false,
+      "queries": 4,
+      "max_error_cm": 0.0
+    }
+  ],
+  "boundary": [
+    {
+      "name": "initial",
+      "position_ros_m": [
+        1028.0,
+        -1020.0,
+        -1.3805753
+      ],
+      "refresh_performed": true,
+      "native": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 28,
+        "active_native_bodies": 498,
+        "active_shapes": 498,
+        "active_source_instances": 791,
+        "peak_native_bodies": 498,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 1,
+        "cells_created": 28,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.0052278004586696625,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "queries": 12,
+      "max_source_ray_error_cm": 0.00010939265097536352
+    },
+    {
+      "name": "before_8m_trigger",
+      "position_ros_m": [
+        1035.99,
+        -1020.0,
+        -1.3805753
+      ],
+      "refresh_performed": false,
+      "native": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 28,
+        "active_native_bodies": 498,
+        "active_shapes": 498,
+        "active_source_instances": 791,
+        "peak_native_bodies": 498,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 1,
+        "cells_created": 28,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.0052278004586696625,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "queries": 12,
+      "max_source_ray_error_cm": 8.546341735150858e-05
+    },
+    {
+      "name": "after_8m_trigger",
+      "position_ros_m": [
+        1036.01,
+        -1020.0,
+        -1.3805753
+      ],
+      "refresh_performed": true,
+      "native": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 28,
+        "active_native_bodies": 498,
+        "active_shapes": 498,
+        "active_source_instances": 791,
+        "peak_native_bodies": 498,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 2,
+        "cells_created": 28,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.0052278004586696625,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "queries": 12,
+      "max_source_ray_error_cm": 0.00020551971234551827
+    },
+    {
+      "name": "outside_spawn_footprint",
+      "position_ros_m": [
+        1188.0,
+        -1020.0,
+        -1.3805753
+      ],
+      "refresh_performed": true,
+      "native": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 45,
+        "active_native_bodies": 1152,
+        "active_shapes": 1152,
+        "active_source_instances": 1445,
+        "peak_native_bodies": 1152,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 3,
+        "cells_created": 45,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.005866102874279022,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "queries": 16,
+      "max_source_ray_error_cm": 3.4421798821406105e-05
+    },
+    {
+      "name": "return_to_spawn",
+      "position_ros_m": [
+        1028.0,
+        -1020.0,
+        -1.3805753
+      ],
+      "refresh_performed": true,
+      "native": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 31,
+        "active_native_bodies": 623,
+        "active_shapes": 623,
+        "active_source_instances": 916,
+        "peak_native_bodies": 1152,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 4,
+        "cells_created": 45,
+        "cells_released": 14,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.005866102874279022,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "queries": 12,
+      "max_source_ray_error_cm": 0.00010939265097536352
+    }
+  ],
+  "profiles": [
+    {
+      "query_range_m": 40.0,
+      "runtime": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 37,
+        "active_native_bodies": 634,
+        "active_shapes": 634,
+        "active_source_instances": 995,
+        "peak_native_bodies": 1152,
+        "query_range_with_mount_m": 40,
+        "load_radius_m": 72,
+        "retain_radius_m": 104,
+        "activation_passes": 20,
+        "cells_created": 251,
+        "cells_released": 214,
+        "initial_asset_load_seconds": 0.11374440044164658,
+        "max_refresh_seconds": 0.005866102874279022,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      }
+    },
+    {
+      "query_range_m": 200.0,
+      "runtime": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 82,
+        "active_native_bodies": 1838,
+        "active_shapes": 1838,
+        "active_source_instances": 2431,
+        "peak_native_bodies": 1838,
+        "query_range_with_mount_m": 200,
+        "load_radius_m": 232,
+        "retain_radius_m": 264,
+        "activation_passes": 1,
+        "cells_created": 82,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.12115029990673065,
+        "max_refresh_seconds": 0.015940800309181213,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      },
+      "expected_population": {
+        "active_cells": 82,
+        "active_native_bodies": 1838,
+        "active_shapes": 1838,
+        "active_source_instances": 2431
+      }
+    }
+  ],
+  "protected_files": 206,
+  "protected_files_unchanged": true,
+  "world_sha256": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+  "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "timing_scope": "Native component timings in an audit process that already loaded and validated 203 assets; gameplay startup recorded separately.",
+  "runtime_phase": "GameMode TG_PostPhysics; synchronous refresh completed for next physics frame",
+  "scope": "Saved native assets, actual simple/complex Visibility+RMSimLidar source/gap queries, synchronous cell populations and pinned-spawn queries.",
+  "vehicle_driving_verified": false
+}

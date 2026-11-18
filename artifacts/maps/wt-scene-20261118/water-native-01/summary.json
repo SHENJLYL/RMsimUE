@@ -1,0 +1,92 @@
+{
+  "schema": "wt_native_water_failure_summary_v1",
+  "status": "failed",
+  "observed_utc": "2026-11-18T05:44:09.503463+00:00",
+  "attempt": "water-native-01",
+  "execution": {
+    "pid": 40000,
+    "exit_code": -1,
+    "duration_seconds": 14.2925086,
+    "started_utc": "2026-11-18T05:34:16.5476325Z",
+    "finished_utc": "2026-11-18T05:34:30.8366214Z",
+    "module_sha256": "c44d2c079aeaa597be3a5a5076787f89dce1f261ca77c29da26fba08cb263e18",
+    "execution_file": "execution.json",
+    "execution_sha256": "6475ef85f6d3a018ee80f10a9f296ecae0a44228daf010a59fa7cb61121a86d6",
+    "verification_file": "audit/verification.json",
+    "verification_sha256": "6ceb7af3f10f481188e221767eb8fd2af91d168ed286f3a11489b3c27323adce"
+  },
+  "failure": {
+    "message": "water source RGB parameter was not found on its parent",
+    "location": "wt_materials.py:make_instance Water branch, setter boolean guard",
+    "parent_saved_before_failure": true,
+    "parent_graph_native_verification_completed": false,
+    "instance_save_reached": false
+  },
+  "asset_state": {
+    "parent": {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Water.WT_Parent_Water",
+      "existed_before": false,
+      "saved_file_sha256": "2667a168c9f083484fdea41ac5ee8d1aa786680ef3fe4aad79455dcbe1315743"
+    },
+    "original_water_instance": {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_3baf052e10b5a3ecdbf7.WT_3baf052e10b5a3ecdbf7",
+      "file_sha256_before": "3652b3556d638b279065028a8f07d80c8108fa1508d1ccb4af7d5f67b17ac952",
+      "file_sha256_after_failure": "3652b3556d638b279065028a8f07d80c8108fa1508d1ccb4af7d5f67b17ac952",
+      "unchanged": true,
+      "backup_file": "audit/before/WT_3baf052e10b5a3ecdbf7.uasset",
+      "backup_sha256": "3652b3556d638b279065028a8f07d80c8108fa1508d1ccb4af7d5f67b17ac952"
+    },
+    "world_sha256_before": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+    "world_sha256_after": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+    "world_unchanged": true,
+    "source_manifest_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_manifest_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_manifest_unchanged": true
+  },
+  "confirmed_root_cause": {
+    "kind": "incorrect interpretation of local UE API return value",
+    "engine": "5.8.4-58902052+++UE5+Release-5.8",
+    "source_file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Editor\\MaterialEditor\\Private\\MaterialEditingLibrary.cpp",
+    "source_sha256": "96051980458dad86719f195072da4bd34eebd07a80d647ebb50bbbb0626e5565",
+    "setter_lines": [
+      1573,
+      1581
+    ],
+    "finding": "SetMaterialInstanceVectorParameterValue initializes bResult=false, calls SetVectorParameterValueEditorOnly and UpdateMaterialInstance, then returns bResult without setting it true.",
+    "application_error": "The Water adapter treated that false return as a missing SourceWaterColor parameter and raised before saving the material instance.",
+    "override_readback_lines": [
+      1616,
+      1637
+    ],
+    "override_readback_finding": "IsMaterialInstanceParameterOverridden queries GetParameterOverrideValue and returns true for an installed override.",
+    "export_header": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Editor\\MaterialEditor\\Public\\MaterialEditingLibrary.h",
+    "export_header_sha256": "5201a2be4ed754246bca79d115626dd3b59471989366f87cd7110a206047375f",
+    "export_header_line": 475
+  },
+  "minimal_source_fix": {
+    "file": "tools/unreal/wt_materials.py",
+    "before_sha256": "a2f6c906f872d0f153d66098c4c943baa352b97483d8042869825dae07efa784",
+    "after_sha256": "6118aa0b5de326818f4a106445d28beff21bd46f20efadf89e0a786f03eab9fd",
+    "scope": "Water make_instance branch only",
+    "behavior": "Call the setter, require the actual parameter override, read RGBA and require every channel to match source within 1e-7 before saving.",
+    "expected_source_rgba": [
+      0.20000000298023224,
+      0.20000000298023224,
+      0.0,
+      1.0
+    ],
+    "validation": {
+      "python_ast": "passed",
+      "git_diff_check": "passed",
+      "native_run_after_fix": "pending"
+    },
+    "source_contract_parent_graph_shader_stats_and_independent_verifier_retained": true
+  },
+  "follow_up": {
+    "attempt": "water-native-02",
+    "status": "pending",
+    "independent_material_104_gate": "pending",
+    "rendering_visual_quality_verified": false,
+    "summary_scope": "Failure and source-code fix only; the replacement native run has not been accepted."
+  }
+}

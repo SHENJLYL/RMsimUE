@@ -1,0 +1,106 @@
+{
+  "schema": "wt_landclass_extraction_v1",
+  "status": "passed",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "manifest_sha256": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+  "verification_sha256": "087186b0095c1dd7ec08729ac1d4a6c0ea8895e3f6af6972fd49b534f77b1c9f",
+  "class_count": 5,
+  "cell_count": 1024,
+  "texture_count": 8,
+  "atlas_pages": 448,
+  "negative_v_samples": [
+    {
+      "dagor_xz_m": [
+        128.0,
+        640.0
+      ],
+      "previous_positive_v_uv": [
+        0.0625,
+        0.3125
+      ],
+      "source_negative_v_uv": [
+        0.0625,
+        -0.3125
+      ],
+      "previous_rgb": [
+        0.30490197241306305,
+        0.3176470696926117,
+        0.18333333730697632
+      ],
+      "source_rgb": [
+        0.25784315168857574,
+        0.30000001192092896,
+        0.12549020163714886
+      ]
+    },
+    {
+      "dagor_xz_m": [
+        510.0,
+        1530.0
+      ],
+      "previous_positive_v_uv": [
+        0.2490234375,
+        0.7470703125
+      ],
+      "source_negative_v_uv": [
+        0.2490234375,
+        -0.7470703125
+      ],
+      "previous_rgb": [
+        0.34117648005485535,
+        0.35098040103912354,
+        0.2088235318660736
+      ],
+      "source_rgb": [
+        0.332352951169014,
+        0.3696078509092331,
+        0.25294118374586105
+      ]
+    },
+    {
+      "dagor_xz_m": [
+        1790.0,
+        360.0
+      ],
+      "previous_positive_v_uv": [
+        0.8740234375,
+        0.17578125
+      ],
+      "source_negative_v_uv": [
+        0.8740234375,
+        -0.17578125
+      ],
+      "previous_rgb": [
+        0.3245098143815994,
+        0.33529412746429443,
+        0.19509804248809814
+      ],
+      "source_rgb": [
+        0.2294117659330368,
+        0.20000000298023224,
+        0.21176470816135406
+      ]
+    }
+  ],
+  "weight_checks": {
+    "samples": 17408,
+    "class_weight_min": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "class_weight_max": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "source_sum_min": 1.0,
+    "source_sum_max": 1.0661196383221587,
+    "packed_lookup_roundtrip_max_error": 0,
+    "formula": "last=saturate(1-sum(preceding page channels)); no renormalization"
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "schema": "rmsim_unified_flanders_release_summary_v1",
+  "status": "passed",
+  "created_utc": "2026-11-18T11:37:10.792005+00:00",
+  "scope": "unified_workspace_generated_collision_ground_materials_grass_and_map_ui",
+  "active_root": "D:/simulator",
+  "entry": "Play-WarThunder.cmd",
+  "archived_map_worktree": "artifacts/archive/wt-vlaanderen-before-unified-20261118",
+  "latest_module_sha256": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+  "final_world_sha256": "3311399568469e48d8580f1b41897ad5899321b51617638dd2c541e875ef1066",
+  "shared_drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "requested_work": {
+    "unified_settings": "same uproject, vehicle package and runtime settings; navigation YAML ownership retained",
+    "generated_collision": {
+      "source_instances": 18454,
+      "main_sleepers": 14349,
+      "other_cross_ties": 37,
+      "curbs": 4068,
+      "saved_assets": 203,
+      "index_cells": 917,
+      "native_geometry_queries": 128,
+      "default_manual_bodies": 327,
+      "maximum_source_hit_error_mm": 0.0198741
+    },
+    "materials": {
+      "modulate_instances": 157,
+      "diffuse_instances": 39,
+      "normal_only_instances": 1,
+      "height_decal_instances": 34,
+      "native_saved_ground_targets": 40,
+      "reload_targets": 307,
+      "compiled_parent_materials": 12,
+      "height_normal_adapter_strength": 0.2,
+      "lc_normal_adapter": "fixed slice/rotation/mip local finite differences before source-weighted normal blending"
+    },
+    "ground_detail": {
+      "land_classes": 65,
+      "land_detail_array_layers": 23,
+      "land_detail_dimensions_px": [
+        1024,
+        1024
+      ],
+      "microdetail_slots": 12,
+      "microdetail_unique_textures": 11,
+      "microdetail_dimensions_px": [
+        512,
+        512
+      ],
+      "source_microdetail_period_m": 1.9607843503917173
+    },
+    "vegetation": {
+      "models": 10,
+      "layers": 16,
+      "reload_checks": 72,
+      "fresh_saved_landscape_components": 1089,
+      "stale_saved_landscape_components": 0,
+      "decorative_collision": false,
+      "hard_surface_mask_nonzero": 0,
+      "authoring_render_instances_snapshot": 109108,
+      "authoring_render_HISM_snapshot": 536
+    },
+    "map_ui": {
+      "minimap_span_m": 512,
+      "full_map_span_m": 2048,
+      "toggle_key": "M",
+      "position": "current Rig pose",
+      "heading": true,
+      "spawn_marker": true
+    },
+    "latest_control_checks": {
+      "shared": 6,
+      "flanders": 5,
+      "rmuc": 5,
+      "scene": 21
+    },
+    "visual_review": {
+      "final_views": [
+        "green_slope",
+        "canonical_default",
+        "full_map",
+        "reset_handoff"
+      ],
+      "motion_frames_captured": 80,
+      "motion_frames_visually_reviewed": 6,
+      "observed_fixes": [
+        "slope categorical grid lines removed",
+        "gravel strong dark diagonal pattern removed",
+        "station paving and curbs retained",
+        "mixed grass flowers and ferns with railway exclusion"
+      ],
+      "motion_scope": "default spawn to railway edge, followed by stop and shared reset"
+    }
+  },
+  "evidence": {
+    "generated_collision": {
+      "file": "artifacts/maps/wt-refine-20261118/collision-evidence/summary.json",
+      "sha256": "62159d4cba07954c29ad8608688f06a2078572a223579ca1db64b4572b78bee5",
+      "bytes": 9166
+    },
+    "ground_authoring": {
+      "file": "artifacts/maps/wt-refine-20261118/ground-normal-native-01/summary.json",
+      "sha256": "f18e88f4a5f53aa2d764b70d3735da3d49b52abf8a96090366ca78048dcd246d",
+      "bytes": 50494
+    },
+    "materials_reload": {
+      "file": "artifacts/maps/wt-refine-20261118/materials-reload-04/summary.json",
+      "sha256": "985e9a77ce19262e875e5c56ca74129c2184420f32ca2670e2f25e4e4c115fe1",
+      "bytes": 34278
+    },
+    "grass_rebake": {
+      "file": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/summary.json",
+      "sha256": "9eaf5fb33524577d94b9d85f62074cbe50678fe1e61104a5850e61b81109345b",
+      "bytes": 6477
+    },
+    "grass_reload": {
+      "file": "artifacts/maps/wt-refine-20261118/grass-final-reload-01/summary.json",
+      "sha256": "6904ba0903746a37c186f60a1ea446be184558617e32322976c65b402c29efb4",
+      "bytes": 9034
+    },
+    "scene_reload": {
+      "file": "artifacts/maps/wt-refine-20261118/scene-reload-03/summary.json",
+      "sha256": "ab07a627afe5fbffad7f86df0661999ff39ddee5fc4538e986a0bef44beaaa12",
+      "bytes": 9380
+    },
+    "shared_controls": {
+      "file": "artifacts/maps/wt-refine-20261118/controls-shared-03/summary.json",
+      "sha256": "bbe87b285b2b16d2ec2519e6c36b1a1e68869419d0a47ea9c2e6ce3ce690ec1c",
+      "bytes": 34059
+    },
+    "flanders_contact": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-flanders-03/summary.json",
+      "sha256": "9d2925182c87a35f3afe90d8b2093f93fd93d1386a697b727b23feb2562614b4",
+      "bytes": 30446
+    },
+    "rmuc_contact": {
+      "file": "artifacts/maps/wt-refine-20261118/contact-rmuc-03/summary.json",
+      "sha256": "9637a9fae4e6013712d614fa5dfca7c01b49bb7accb466ee91f7a7b36cfb350d",
+      "bytes": 29153
+    },
+    "final_gui": {
+      "file": "artifacts/maps/wt-refine-20261118/gui-final-visual-audit-01/summary.json",
+      "sha256": "d0ebfdb72a58005056facd259b784a7a41cdb927bbace7c770a7a6173dc0e0bb",
+      "bytes": 34292
+    }
+  },
+  "documentation": [
+    "docs/changes/2026-11-18-unified-flanders.md",
+    "docs/guides/war-thunder-flanders.md",
+    "docs/guides/war-thunder-generated-collision.md",
+    "docs/guides/war-thunder-grass.md",
+    "docs/research/wt-material-adapters.md"
+  ],
+  "evidence_identity_notes": [
+    "Generated-collision asset/query and earlier GUI proofs retain their recorded module/world hashes.",
+    "Controls 03 use the latest module and pre-rebake World. Subsequent changes are visual materials and saved grass cache; final scene geometry was independently reloaded.",
+    "The integrated native module also contains separately owned Arena/destruction work; source commit groups preserve that ownership.",
+    "Final GUI session remains running for user handoff; its log evidence is a shared-read snapshot, not a process-exit claim.",
+    "Feature checkpoint; main retains its independent navigation and realtime release gates."
+  ]
+}

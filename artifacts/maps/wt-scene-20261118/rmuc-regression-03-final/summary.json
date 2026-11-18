@@ -1,0 +1,293 @@
+{
+  "schema": "rmsim_contact_runtime_compact_summary_v2",
+  "status": "passed",
+  "module_scope": "Current combined workspace including concurrent destruction development",
+  "module_sha256": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+  "evidence": {
+    "full_report": {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/control-result.json",
+      "sha256": "44b8bb9c18753df73ce10569a85363e8f48e7e2f4faab9d00cafd9f717925948",
+      "bytes": 1972298
+    },
+    "wrapper_verification": {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/verification.json",
+      "sha256": "437c132b4d8e10f0f12910b0d28031aa39dcb8e5eb7f726f5948f7049af54536",
+      "bytes": 758
+    },
+    "runtime_log": {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/runtime.log",
+      "sha256": "9b290568dd8a84c2e1d4171afb9853d72a5fb48c29ffc9331cb840dd96930b4f",
+      "bytes": 197232
+    },
+    "final_gate_chain": {
+      "path": "artifacts/maps/wt-scene-20261118/scene-contact-final-01/verification.json",
+      "sha256": "cd4b04cca5967a0af621740816eeb3c5f59871ce2a1dffdd5488e5dd82062fda",
+      "bytes": 4446
+    }
+  },
+  "execution": {
+    "process_exit": 0,
+    "owner_observed_engine_pid": 38288,
+    "started_utc": "2026-11-18T05:50:02.7980505Z",
+    "finished_utc": "2026-11-18T05:50:38.6631117Z",
+    "wrapper_step_duration_seconds": 35.865061,
+    "report_started_utc": "2026-11-18T05:50:15.838Z",
+    "report_finished_utc": "2026-11-18T05:50:36.570Z",
+    "command_line": "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode -game -RenderOffScreen -unattended -NoSplash -NoSound -ContactProbe -MapFile=D:/simulator-wt-vlaanderen/assets/maps/rmuc2027/map.json -SpawnId=default -MeshRigFile=D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json -EvidenceDir=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/rmuc-regression-03-final -abslog=D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/runtime.log -d3d11 -NoShaderWorker -ContactReset -ContactDistanceCm=340 -ContactSpeedMps=1",
+    "requested_rhi": "D3D11",
+    "single_shaderworker": true
+  },
+  "run_id": "DF0F55DF426C440BB7EFE198B5643DA8",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "scope": "native_Chaos_world_ticks_and_wheel_motor_commands",
+  "map_id": "rmuc2027",
+  "spawn_id": "default",
+  "map_definition": {
+    "path": "assets/maps/rmuc2027/map.json",
+    "sha256": "6d0661a2ac33493c9678e323183a081b35421fa533b6b764e409a62fab4022da",
+    "bytes": 4285
+  },
+  "module_stable_through_gate": true,
+  "drive_profile_sha256": "1e6a678dc2fa730dd132b49ce9854a81ab826a7efa8ecadd25ea6eb856504895",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "script_source_snapshot": {
+    "observed_utc": "2026-11-18T05:56:05.854569+00:00",
+    "scope": "current file bytes read during summary; execution report binds the compiled module and recorded command",
+    "files": [
+      {
+        "path": "tools/unreal/Test-ManualControls.ps1",
+        "sha256": "11fe6993fc71295c0014704d4694d6cfb94c85c85be1a2a173be0a2ac97e7929",
+        "bytes": 11480
+      },
+      {
+        "path": "tools/unreal/SceneMap.ps1",
+        "sha256": "1ddd74d47f0e1019ef34bf205a18174dc381b161586699226eabd244fe752cc3",
+        "bytes": 5718
+      },
+      {
+        "path": "tools/unreal/Run-ImportLab.ps1",
+        "sha256": "e41f023f5abf44c5d440ed6954c82451327a3f0c2654b43f7f3b1c3f293d2bf0",
+        "bytes": 6761
+      },
+      {
+        "path": "unreal/RMSim/Source/RMSim/ContactProbe.cpp",
+        "sha256": "4b0c776c630e841bc33e5cd8486b4126541e1e23c21ce6c6c179f4e28d50c368",
+        "bytes": 13147
+      },
+      {
+        "path": "artifacts/maps/wt-scene-20261118/run-scene-contact-final-01.ps1",
+        "sha256": "05024b5cbddb061653e81dd5d954204cf538c28c50216704fae05a74c6050cba",
+        "bytes": 2853
+      }
+    ]
+  },
+  "check_count": 5,
+  "checks": [
+    {
+      "name": "physical_settle",
+      "passed": true,
+      "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99986"
+    },
+    {
+      "name": "physical_forward_route",
+      "passed": true,
+      "detail": "Motor/contact driven route progress 340.422/340.000cm, drift 0.005cm, time 4.369s"
+    },
+    {
+      "name": "physical_brake",
+      "passed": true,
+      "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+    },
+    {
+      "name": "physical_reverse_route",
+      "passed": true,
+      "detail": "Reverse crosses same source route: remaining 9.956cm, drift 0.011cm"
+    },
+    {
+      "name": "physical_shared_reset_without_training",
+      "passed": true,
+      "detail": "Shared R restores source-map spawn: resets=1 distance=0.0181cm speed=0.0000cm/s"
+    }
+  ],
+  "sample_count": 67,
+  "contact_metrics": {
+    "route_command_speed_m_s": 1,
+    "metric_derivation": "forward/reverse projections recomputed from actual check states using ContactProbe.cpp settled-forward/side axes; reset XY from actual final state and source spawn; elapsed copied from native check detail",
+    "forward": {
+      "progress_cm": 340.4218121016919,
+      "lateral_drift_cm": 0.00536933594782206,
+      "position_cm": [
+        -459.5630699875155,
+        200.06327842759035,
+        -6.0377429328576095
+      ],
+      "target_cm": 340.0,
+      "reported_elapsed_seconds": 4.369
+    },
+    "reverse": {
+      "progress_cm": 9.955594266663658,
+      "lateral_drift_cm": 0.010994898844950751,
+      "position_cm": [
+        -790.0292820485417,
+        200.00124720844,
+        -6.036117564145564
+      ]
+    },
+    "brake_speed_cm_s": 0.0,
+    "shared_reset_count": 1,
+    "reset_distance_xy_cm": 0.018075704625678684,
+    "reset_speed_cm_s": 0.0
+  },
+  "contact_parameters": {
+    "ChassisMassKg": 20,
+    "WheelMassKg": 1,
+    "SliderMassKg": 0.15,
+    "SteeringMassKg": 0.2,
+    "SuspensionTravelCm": 6.5,
+    "SpringStiffnessNPerM": 2000,
+    "SpringDampingNsPerM": 140,
+    "SpringPreloadN": 50,
+    "SpringForceLimitN": 1000,
+    "WheelFriction": 1.8,
+    "ChassisFriction": 0.5,
+    "MotorTorqueNm": 4,
+    "BrakeTorqueNm": 8,
+    "MotorDampingNmS": 2,
+    "LinearDamping": 0.05,
+    "AngularDamping": 0.05
+  },
+  "drive_parameters": {
+    "MaxForwardSpeedMps": 3,
+    "MaxReverseSpeedMps": 1.5,
+    "MaxLateralSpeedMps": 2,
+    "LinearAccelerationMps2": 0.8,
+    "PrecisionSpeedMps": 0.35,
+    "LinearDecelerationMps2": 3,
+    "BrakeDecelerationMps2": 6,
+    "LinearJerkMps3": 4,
+    "DecelerationJerkMps3": 20,
+    "ManualYawRateRadS": 1.5707963267948966,
+    "LateralAccelerationMps2": 10,
+    "DirectionJerkMps3": 100,
+    "AngularAccelerationRadS2": 3,
+    "AngularDecelerationRadS2": 5,
+    "GyroDefaultRadS": 2,
+    "GyroMinRadS": 0.5,
+    "GyroMaxRadS": 4,
+    "GyroStepRadS": 0.5,
+    "SteeringRateRadS": 15.707963267948966,
+    "SteeringStiffnessNmRad": 80,
+    "SteeringDampingNmS": 8,
+    "SteeringTorqueNm": 8,
+    "MaxWheelSpeedMps": 4,
+    "WheelVelocityIntegralGainPerSecond": 3,
+    "WheelIntegralTorqueLimitNm": 2.5,
+    "YawVelocityFeedback": 0,
+    "LinearVelocityFeedback": 0
+  },
+  "runtime_scene_classification_as_reported": {},
+  "captures": [
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-end/aim_camera.png",
+      "sha256": "0dd25f811775f28652acda303db7dca76072bc842b93135525eabad8a51f91f0",
+      "bytes": 846093,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-end/overview.png",
+      "sha256": "d40b5b11a2f96c4de88d6c3c4037b4422ecb22710aba1d6ddc77bfe25d853889",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-reset/aim_camera.png",
+      "sha256": "bfa302cf7ef7808e9b9dcd8bb3e03eff06835d8b6ace5ec57d978740d6188119",
+      "bytes": 1173227,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-reset/overview.png",
+      "sha256": "a05d63b1cc9faf0850fa4f16b8c7651fc43e29f43889572f506f38640d393381",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-rest/aim_camera.png",
+      "sha256": "84d15b0812df73d1ccf3ef497fc997069a361b4bf8e45634578b1804059b8967",
+      "bytes": 846093,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-rest/overview.png",
+      "sha256": "fa1c384491ce688e46f700f6a90abd6e0ad5660776038cceb26be7ceeeb10731",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-return/aim_camera.png",
+      "sha256": "5fd96cab6a8c5d53a8be26b7f17e9fc02df5c371aedf89cc4245438e56bbae9d",
+      "bytes": 846093,
+      "dimensions_pixels": [
+        1280,
+        720
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/contact-return/overview.png",
+      "sha256": "718b6dd048fa35f1ea4e8e453501e343de68ceb7ff47820977da800861b60e00",
+      "bytes": 1624447,
+      "dimensions_pixels": [
+        1600,
+        1000
+      ],
+      "mode": "RGBA",
+      "decoded": true
+    }
+  ],
+  "capture_count": 8,
+  "capture_visual_review_performed_by_this_summary": false,
+  "full_report_ignored": true,
+  "os_keyboard_input_verified": false,
+  "world_pose_injection_used_for_route": false,
+  "level_asset": "/Engine/Maps/Entry",
+  "saved_world_sha256": null,
+  "world_binding_scope": "RMUC rm_mesh_map is assembled in Entry from its map definition; this run has no saved Flanders World binding",
+  "saved_scene_render_readiness_applicable": false,
+  "destruction_runtime_initialized": false,
+  "texture_pool_log": [
+    "[2026.11.18-05.50.18:413][  0]LogContentStreaming: Texture pool size now 1000 MB"
+  ],
+  "created_utc": "2026-11-18T05:56:05.854569+00:00"
+}

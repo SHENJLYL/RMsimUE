@@ -1,0 +1,49 @@
+﻿{
+    "schema":  "rmsim_grass_freshness_build_summary_v1",
+    "status":  "passed",
+    "pid":  46000,
+    "exit_code":  0,
+    "exit_code_observed":  true,
+    "process_handle_retained":  true,
+    "timed_out":  false,
+    "started_utc":  "2026-11-18T10:54:55.0539923Z",
+    "finished_utc":  "2026-11-18T10:55:08.3829734Z",
+    "duration_seconds":  13.329987899999999,
+    "module_sha256_before":  "b9278d1a8dab8cdcd27b3fa5b9e295c05fb042a4ea1bae7c6ab762b503af84b8",
+    "module_sha256_after":  "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+    "protected_inputs_unchanged":  true,
+    "source_input_count":  65,
+    "module_mutation_allowed":  true,
+    "errors":  [
+
+               ],
+    "execution_file":  "execution.json",
+    "execution_sha256":  "7329f2cc4f805b32cb071d46d06059c6e1edcfb7ef1db3496d6fe880394d5a2b",
+    "inputs_before_file":  "inputs-before.json",
+    "inputs_before_sha256":  "3b8f855e216fee175ad34e181f0869abc7b3e0e5529b4f0b40185c21717b4392",
+    "inputs_after_file":  "inputs-after.json",
+    "inputs_after_sha256":  "d83e9118394a6d7fa48d8c3bd545abd68d61dc101f2d0a4b1aa24e65c0503f0b",
+    "logs":  {
+                 "stderr.log":  {
+                                    "path":  "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\build-grass-freshness-01\\stderr.log",
+                                    "exists":  true,
+                                    "bytes":  0,
+                                    "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                                    "last_write_utc":  "2026-11-18T10:54:55.7635846Z"
+                                },
+                 "build.log":  {
+                                   "path":  "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\build-grass-freshness-01\\build.log",
+                                   "exists":  true,
+                                   "bytes":  7799,
+                                   "sha256":  "e1784f32192595b01076af0928d68c46e7fb85724de58ee24961b8efe50f0024",
+                                   "last_write_utc":  "2026-11-18T10:55:07.9399555Z"
+                               },
+                 "stdout.log":  {
+                                    "path":  "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\build-grass-freshness-01\\stdout.log",
+                                    "exists":  true,
+                                    "bytes":  2695,
+                                    "sha256":  "c197affacb3a31b9672660a1673e46668e2be61ff32309dfb7a203046628ec00",
+                                    "last_write_utc":  "2026-11-18T10:55:07.9414163Z"
+                                }
+             }
+}

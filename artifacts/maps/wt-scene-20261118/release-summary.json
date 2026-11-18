@@ -1,0 +1,202 @@
+{
+  "schema": "rmsim_wt_flanders_release_v2",
+  "status": "passed",
+  "scope": "Requested distant terrain, original grass, vehicle minimap and M-key full-map features; native Windows D3D11 and live OS-input acceptance",
+  "recorded_utc": "2026-11-18T06:15:14.194105+00:00",
+  "user_timezone": "Asia/Shanghai",
+  "branch": "feat/wt-vlaanderen-20261117",
+  "functional_source_commit": "64fbe5a7862e6ec4d035f77589b52c46e3dd2edd",
+  "source_bindings": {
+    "map": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+      "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431"
+    },
+    "overview": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\overview.json",
+      "sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b"
+    },
+    "calibration": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\overview\\calibration.json",
+      "sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d"
+    },
+    "landclass": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\landclass\\landclass.json",
+      "sha256": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46"
+    },
+    "foliage": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\foliage\\foliage.json",
+      "sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e"
+    },
+    "source_manifest": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+      "sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+    },
+    "world": {
+      "path": "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\World.umap",
+      "sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25"
+    },
+    "profile": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\drive-profile.json",
+      "sha256": "1e6a678dc2fa730dd132b49ce9854a81ab826a7efa8ecadd25ea6eb856504895"
+    },
+    "mesh_rig": {
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+      "sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308"
+    },
+    "source_level": {
+      "sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+      "scope": "Original read-only level identity verified by scene import and native reload"
+    }
+  },
+  "features": [
+    {
+      "name": "distant_source_land",
+      "status": "passed",
+      "implementation": "Five source land classes with original cell weights, textures and coordinates replace the unassigned distant Land slots",
+      "native_evidence": "native-materials-08-final/summary.json",
+      "visual_evidence": "gui-final-05-grass-field/entry.png",
+      "visual_scope": "Observed green/brown terrain in the live station and grass-field views"
+    },
+    {
+      "name": "original_grass_and_flowers",
+      "status": "passed",
+      "source_meshes": 7,
+      "layers": 13,
+      "valid_landscape_components": 1089,
+      "weighted_landscape_components": 986,
+      "preview_render_instances": 52984,
+      "preview_count_scope": "Two synchronous native authoring viewpoints; not a full-map population count",
+      "saved_reload_checks": 27,
+      "visual_evidence": "gui-final-05-grass-field/entry.png",
+      "nearby_original_sample_ros_m": [
+        1074.25,
+        -1011.75
+      ]
+    },
+    {
+      "name": "vehicle_minimap",
+      "status": "passed",
+      "near_view_width_m": 512,
+      "vehicle_marker": "cyan heading arrow",
+      "spawn_marker": "gold diamond",
+      "source": "Original calibrated Flanders overview",
+      "actual_vehicle_motion_and_heading_verified": true,
+      "evidence": "gui-final-acceptance/verification.json"
+    },
+    {
+      "name": "m_key_full_map",
+      "status": "passed",
+      "full_map_extent_m": [
+        2048,
+        2048
+      ],
+      "observed_toggle_sequence": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "input": "Real Win32 keyboard events through the focused UE viewport",
+      "evidence": "gui-final-acceptance/verification.json"
+    }
+  ],
+  "verification": {
+    "offline_map_tools": {
+      "path": "final-map-tools-01/verification.json",
+      "sha256": "85e41a65f42e5b264c7865de5613989ad57eae4e8c074f44ffd7990e7e95c261",
+      "status": "passed"
+    },
+    "grass_authoring": {
+      "path": "grass-native-07-resume/summary.json",
+      "sha256": "6ef582efd248388127585bf4f3917cb918b3698c6b81e0e09c035a67e3d2ece5",
+      "status": "passed"
+    },
+    "grass_saved_reload": {
+      "path": "grass-reload-02-final/summary.json",
+      "sha256": "e9d73ab2836d8ae028582845fc8449c84c5f99c367d0d7d485a6d44f0b17c6bd",
+      "status": "passed"
+    },
+    "source_water": {
+      "path": "water-native-02/summary.json",
+      "sha256": "d8f88f9fe1619f6fe0ca44cabeab257d00360d5585b90945037ef9c0731d8f07",
+      "status": "passed"
+    },
+    "materials": {
+      "path": "native-materials-08-final/summary.json",
+      "sha256": "b32bbdb322f105c90b80514156d36f85adce30566adb588d5f55b742c865b709",
+      "status": "passed"
+    },
+    "saved_scene": {
+      "path": "native-scene-04-final/summary.json",
+      "sha256": "d4895104610a4568b5c7fb49428698e44ce0ab56d77eb3516c36e1d880a9056c",
+      "status": "passed"
+    },
+    "flanders_contact": {
+      "path": "flanders-contact-04-final/summary.json",
+      "sha256": "278a214c4eabb2c83436eaa729372a4acb40a629eb02d27ad77b6f991b5fbb76",
+      "status": "passed"
+    },
+    "rmuc_contact": {
+      "path": "rmuc-regression-03-final/summary.json",
+      "sha256": "96c72098c58aa282cdc50c006a4e4ea3c20b3f32911fb5dacccf6851c4cf258d",
+      "status": "passed"
+    },
+    "live_gui": {
+      "path": "gui-final-acceptance/verification.json",
+      "sha256": "55ae1263f92b5dcb82ca07fb2f5882bb2b07820cd37af2c718eb946357aeac3d",
+      "status": "passed"
+    }
+  },
+  "acceptance_counts": {
+    "offline_tests": 57,
+    "native_material_assets": 104,
+    "grass_reload_checks": 27,
+    "saved_scene_checks": 21,
+    "flanders_contact_checks": 5,
+    "rmuc_contact_checks": 5,
+    "live_gui_inputs": 12,
+    "reviewed_gui_images": 8
+  },
+  "runtime_bindings": {
+    "grass_authoring_module": "c44d2c079aeaa597be3a5a5076787f89dce1f261ca77c29da26fba08cb263e18",
+    "water_and_grass_reload_module": "1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a",
+    "final_material_scene_contact_gui_module": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+    "combined_workspace_notice": "The tested Windows binary also includes concurrently developed destruction code. Map source commit and separate runtime hashes are recorded explicitly.",
+    "platform": "Windows native UE 5.8.4 D3D11",
+    "flanders_texture_pool_mib": 4096,
+    "physics_parameters": {
+      "spring_n_per_m": 2000,
+      "damping_ns_per_m": 140,
+      "preload_n": 50,
+      "travel_mm": 65
+    }
+  },
+  "handoff": {
+    "process_id": 43760,
+    "launch": "D:\\simulator-wt-vlaanderen\\Play-WarThunder.cmd",
+    "window_left_open": true,
+    "full_map_open": false,
+    "vehicle_ros_xy_m": [
+      1075.232351,
+      -1012.656026
+    ],
+    "vehicle_location": "Source grass field east of the default station spawn",
+    "screenshot": "gui-final-08-handoff/entry.png",
+    "screenshot_sha256": "8d6def2075d33a7a6a96c578142b7f8527c1058b6e7d67d56c9d4a616728877e"
+  },
+  "preserved_failed_attempts": [
+    "grass-native-04/summary.json",
+    "grass-native-05/summary.json",
+    "grass-native-06-resume/summary.json",
+    "water-native-01/summary.json",
+    "native-materials-07-final/summary.json",
+    "final-native-pipeline-03/verification.json",
+    "final-native-pipeline-04/verification.json"
+  ],
+  "remaining_scope": [
+    "Complete navigation-route and stable 1x acceptance before main merge",
+    "Original Dagor wind, small-grass billboards, microdetail removal and grass decal/displacement semantics listed in SOURCE.md"
+  ],
+  "main_merge_performed": false,
+  "publication_status": "ready_for_feature_branch_push"
+}

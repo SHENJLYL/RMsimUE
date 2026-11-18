@@ -1,0 +1,245 @@
+{
+  "schema": "wt_material_observation_fixture_v1",
+  "status": "passed",
+  "created_utc": "2026-11-18T08:45:54.310770+00:00",
+  "baseline": {
+    "image": "artifacts\\archive\\wt-vlaanderen-before-unified-20261118\\artifacts\\maps\\wt-scene-20261118\\gui-final-05-grass-field\\entry.png",
+    "image_sha256": "8ebe6b3381ac074936d85f540d19d808b41b3a7254b97aa70daf4785ba4f1771",
+    "capture_utc": "2026-11-18T06:04:58.5929853Z",
+    "telemetry_file": "artifacts\\archive\\wt-vlaanderen-before-unified-20261118\\artifacts\\maps\\wt-scene-20261118\\gui-input-08-grass-brake\\after-live-input.json",
+    "telemetry_sha256": "c7e5abc447a72b9727b1ee0cfe5008a7282ffefedcc836647858bcf15bcffe22",
+    "sample_utc": "2026-11-18T06:04:56.837Z",
+    "vehicle_ros_m": [
+      1075.2319418063933,
+      -1012.6564368808924,
+      -0.3058570480710192
+    ],
+    "actor_rotation_xyzw": [
+      -0.00041061173016406806,
+      -0.03602494202193974,
+      -0.0787835174399877,
+      0.9962405293552888
+    ],
+    "camera_ros_m": [
+      1070.3412038027243,
+      -1012.6564368808924,
+      1.5528933363118143
+    ],
+    "ue_view_yaw_deg": 0,
+    "ue_view_pitch_deg": -12,
+    "chase_distance_cm": 500,
+    "fov_deg": 55,
+    "mode": "CHASE",
+    "station_wall_image_region_xyxy": [
+      752,
+      96,
+      1289,
+      310
+    ],
+    "appearance_observation": "Large flat gray rectangular decal background around black wall dirt; pale block patches on station facade; blurred ground and bright grass in this earlier image."
+  },
+  "map_file": "map.json",
+  "map_sha256": "cc75b7b9010d5cec2e5f17aba64fc579c9f0958dc40e28aa34d23b382f85b587",
+  "original_map_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+  "source_identity": {
+    "map_id": "wt_vlaanderen",
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "level_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+    "scene_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "source_height": {
+    "metadata_sha256": "9726bdc20626819425786d0cf707eef29cbebd491935f8be9ec2cecadd5f14eb",
+    "samples_sha256": "b6d82aa5bdb6473398f1fd07af0f67ef46da6b8705a31677b6f2f95ec4b9a1a6",
+    "minimum_m": -20.0,
+    "range_m": 64.0,
+    "cell_m": 0.5
+  },
+  "grass_fixture_sha256": "ab781d86f06ce28850473be819fe0d0dc26bc525047f1c9ca428650b9a811711",
+  "points": [
+    {
+      "id": "wall_baseline",
+      "purpose": "Earlier station wall black/gray rectangle and bare-ground baseline",
+      "spawn": {
+        "id": "wall_baseline",
+        "team": "neutral",
+        "position_m": [
+          1075.2319418063933,
+          -1012.6564368808924,
+          -0.29930711214489136
+        ],
+        "yaw_rad": 0
+      },
+      "source_grid_xy": [
+        2150.4638836127865,
+        2025.3128737617849
+      ],
+      "fractions": [
+        0.46388361278650336,
+        0.3128737617848856
+      ],
+      "raw_height_corners": [
+        [
+          20164,
+          20198
+        ],
+        [
+          20143,
+          20177
+        ]
+      ],
+      "bilinear_uint16_value": 20173.201693837258,
+      "source_ground_z_m": -0.29930711214489136,
+      "world_to_source_grid": "(ROS x / 0.5, -ROS y / 0.5)",
+      "source_height_formula": "minimum_m + bilinear_uint16 * range_m / 65535"
+    },
+    {
+      "id": "near_station_grass",
+      "purpose": "Nearby source-supported bare-ground/short-grass transition",
+      "spawn": {
+        "id": "near_station_grass",
+        "team": "neutral",
+        "position_m": [
+          1084.75,
+          -1029.75,
+          1.0005645838101778
+        ],
+        "yaw_rad": 0
+      },
+      "source_grid_xy": [
+        2169.5,
+        2059.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "raw_height_corners": [
+        [
+          21442,
+          21549
+        ],
+        [
+          21458,
+          21568
+        ]
+      ],
+      "bilinear_uint16_value": 21504.25,
+      "source_ground_z_m": 1.0005645838101778,
+      "world_to_source_grid": "(ROS x / 0.5, -ROS y / 0.5)",
+      "source_height_formula": "minimum_m + bilinear_uint16 * range_m / 65535",
+      "nonzero_grass_layers": 4,
+      "independent_source_footprint_witnesses": [],
+      "grass_sample_id": "near_station_grass"
+    },
+    {
+      "id": "green_slope",
+      "purpose": "Source-supported green slope and distance/mip transition",
+      "spawn": {
+        "id": "green_slope",
+        "team": "neutral",
+        "position_m": [
+          1146.25,
+          -942.25,
+          3.5718928816662867
+        ],
+        "yaw_rad": 0
+      },
+      "source_grid_xy": [
+        2292.5,
+        1884.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "raw_height_corners": [
+        [
+          24124,
+          24082
+        ],
+        [
+          24184,
+          24159
+        ]
+      ],
+      "bilinear_uint16_value": 24137.25,
+      "source_ground_z_m": 3.5718928816662867,
+      "world_to_source_grid": "(ROS x / 0.5, -ROS y / 0.5)",
+      "source_height_formula": "minimum_m + bilinear_uint16 * range_m / 65535",
+      "nonzero_grass_layers": 7,
+      "independent_source_footprint_witnesses": [],
+      "grass_sample_id": "green_slope"
+    }
+  ],
+  "runtime_sidecars": {
+    "files": 921,
+    "total_bytes": 2595501,
+    "inventory": "runtime-sidecar-files.json",
+    "inventory_sha256": "d2036f3f6915ce154a616610081b88d8c682052740442a35b65c63349061ab49",
+    "scope": "Original generated-collision manifest/RMI runtime inputs and original overview sidecars; existing Content assets are referenced. This fixture is not a source import package."
+  },
+  "same_view": {
+    "spawn_id": "wall_baseline",
+    "yaw_rad": 0,
+    "reason": "Startup OrbitYaw follows spawn yaw; baseline camera stayed at UE yaw 0 while old chassis settled near -9.05 degrees.",
+    "defaults": {
+      "pitch_deg": -12,
+      "chase_distance_cm": 500,
+      "fov_deg": 55,
+      "window_resolution": [
+        1600,
+        1000
+      ]
+    },
+    "limitations": "Contact settling/camera collision may change the final camera position slightly; compare new input telemetry before judging pixel alignment."
+  },
+  "full_material_gate": {
+    "script": "tools/unreal/verify_wt_materials.py",
+    "report_argument": "MaterialAuditOutput",
+    "expected_asset_counts": {
+      "parents": 11,
+      "leaf_instances": 2,
+      "height_decal_instances": 34,
+      "land_instances": 1,
+      "ground_other_instances": 1,
+      "tree_instances": 43,
+      "water_instances": 1,
+      "grass_parents": 1,
+      "grass_instances": 16,
+      "rendinst_decal_instances": 197
+    },
+    "expected_total": 307,
+    "actual_count_is_native_report": true,
+    "actual_completed_evidence": {
+      "summary": "../materials-reload-01/summary.json",
+      "summary_sha256": "d7c461909c9e8918d0ab0681ef6d1deebbfdf55319106151677bc05cd0918520",
+      "actual_total": 307,
+      "status": "passed",
+      "world_sha256": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+      "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c"
+    }
+  },
+  "original_map_unchanged": true,
+  "production_code_or_assets_modified": false,
+  "ue_started": false,
+  "scope": "Source-height-derived observation spawns and pure launch contract preparation; runtime and visual review pending",
+  "map_contract": {
+    "file": "map-contract.json",
+    "sha256": "a90b5145c19436f4e266f2226c257d17ebb751c3b8c6d95694c9ed17a7d09e94",
+    "status": "passed",
+    "spawn_count": 3
+  },
+  "tools_sha256": {
+    "tools/unreal/SceneMap.ps1": "1ddd74d47f0e1019ef34bf205a18174dc381b161586699226eabd244fe752cc3",
+    "tools/unreal/Start-PreparedVehicle.ps1": "08885a50dcf10d0d04238fc308c8012db1613e81a6322d320759e960fa7d02f4",
+    "tools/unreal/Run-ImportLab.ps1": "e41f023f5abf44c5d440ed6954c82451327a3f0c2654b43f7f3b1c3f293d2bf0",
+    "Play-WarThunder.cmd": "05927a7a1c7c29fd0cafe899a1cf03bb56f3bc4672396913bea2e76013d3b6fe",
+    "artifacts/maps/wt-refine-20261118/prepare-material-observation.py": "d4c8a9f7ce852ca9e5be1a727f77044e931066777431723c8cfc3968b5f73280"
+  },
+  "launch_commands": {
+    "wall_baseline": "& 'D:\\simulator\\tools\\unreal\\Start-PreparedVehicle.ps1' -EngineRoot 'E:\\simulator-tools\\UE_5.8' -MapFile 'D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\material-observation-01\\map.json' -SpawnId 'wall_baseline' -GraphicsRhi D3D11 -SingleShaderWorker",
+    "near_station_grass": "& 'D:\\simulator\\tools\\unreal\\Start-PreparedVehicle.ps1' -EngineRoot 'E:\\simulator-tools\\UE_5.8' -MapFile 'D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\material-observation-01\\map.json' -SpawnId 'near_station_grass' -GraphicsRhi D3D11 -SingleShaderWorker",
+    "green_slope": "& 'D:\\simulator\\tools\\unreal\\Start-PreparedVehicle.ps1' -EngineRoot 'E:\\simulator-tools\\UE_5.8' -MapFile 'D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\material-observation-01\\map.json' -SpawnId 'green_slope' -GraphicsRhi D3D11 -SingleShaderWorker"
+  },
+  "visual_quality_verified": false
+}

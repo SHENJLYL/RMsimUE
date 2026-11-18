@@ -1,0 +1,101 @@
+{
+  "schema": "wt_facing_leaves_math_v1",
+  "status": "passed",
+  "scope": "independent_source_basis_vs_ue_wpo_equivalence",
+  "unreal_executed": false,
+  "native_shader_compiled": false,
+  "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "source_evidence": [
+    "prog/engine/libFx/leavesWind.cpp:setShaderVars/setNoAnimShaderVars",
+    "prog/engine/coreUtil/flyMode.cpp:keys.fwd/right/cameraUp/getInvViewMatrix",
+    "prog/gameLibs/ecs/camera/sphereCam.cpp.inl:SphereCamera.updateItm",
+    "prog/gameLibs/bvh/shaders/bvh_process_leaves_vertices.dshl:tc2/delta_w/normalized-instance-basis"
+  ],
+  "ue_evidence": [
+    "Engine/Source/Runtime/Engine/Private/SceneView.cpp:UpdateViewMatrix/CameraViewToTranslatedWorld",
+    "Engine/Source/Runtime/Engine/Private/Materials/HLSLMaterialTranslator.cpp:MCB_Camera/MCB_Instance",
+    "Engine/Shaders/Private/MaterialTemplate.ush:GetInstanceToWorldDF"
+  ],
+  "dagor_to_ue_axes": "(x,z,y), determinant -1",
+  "ue_reference_delta_cm": "100*(dx,-dz,dy)",
+  "ue_camera_delta_cm": "100*(-dx,dy,-dz)",
+  "ue_wpo": "length(InstanceToWorld(1,0,0))*CameraToWorld(ue_camera_delta_cm)-InstanceToWorld(ue_reference_delta_cm)",
+  "identity_source_camera_ue_axes": {
+    "right": [
+      -1,
+      0,
+      0
+    ],
+    "up": [
+      0,
+      0,
+      1
+    ],
+    "forward": [
+      0,
+      1,
+      0
+    ]
+  },
+  "camera_cases": [
+    "source_identity_to_ue_yaw_90",
+    "source_yaw_90",
+    "source_pitch_90",
+    "source_roll_90",
+    "source_oblique"
+  ],
+  "instance_rotations": 3,
+  "large_world_translation_dagor_m": [
+    16368.0,
+    -27.9447632,
+    -16384.0
+  ],
+  "max_error_tolerance_cm": 1e-07,
+  "max_abs_error_cm": 4.656612873077393e-10,
+  "reference_camera_max_wpo_cm": 0.0,
+  "wrong_right_axis_max_error_cm": 1470.703125,
+  "cases": 10920,
+  "source_vertices": 364,
+  "wind_groups": [
+    0,
+    3,
+    6,
+    9
+  ],
+  "models": [
+    {
+      "model": "kh_gol_euraspen_fall_03_rendinst",
+      "raw_payload_sha256": "d85920ca948e2904935f1f7ee2b4417e4f5972b32fd0061fb16b9cf93a5cb738",
+      "source_leaf_vertices": 124,
+      "instance_scale_range": [
+        0.21875,
+        0.9375
+      ],
+      "max_abs_error_cm": 4.656612873077393e-10,
+      "cases": 3720
+    },
+    {
+      "model": "kh_gol_liveoak_03_rendinst",
+      "raw_payload_sha256": "34cf854d838ae1489e4e36fa004886aed39649c1f0bbee98ff763c84270c3756",
+      "source_leaf_vertices": 160,
+      "instance_scale_range": [
+        0.25,
+        0.4375
+      ],
+      "max_abs_error_cm": 2.3283064365386963e-10,
+      "cases": 4800
+    },
+    {
+      "model": "kh_gol_tree_simple_a",
+      "raw_payload_sha256": "823df1777805b89f92d9558cbcd2efec0fd102e8a161eddfc3c7d635c7afe206",
+      "source_leaf_vertices": 80,
+      "instance_scale_range": [
+        1.28125,
+        2.59375
+      ],
+      "max_abs_error_cm": 4.656612873077393e-10,
+      "cases": 2400
+    }
+  ],
+  "material_source_sha256": "62ded08700fa1042cf5710c5bd92b94b4618075998e6f8a8181ed1ed044b7ea8"
+}

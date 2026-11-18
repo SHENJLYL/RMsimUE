@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "rmsim_scene_contact_final_v1",
+    "status":  "passed",
+    "started_utc":  "2026-11-18T05:49:08.8783530Z",
+    "module_sha256":  "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+    "module_scope":  "Current combined workspace including concurrent destruction development",
+    "steps":  [
+                  {
+                      "name":  "scene_reload",
+                      "status":  "passed",
+                      "started_utc":  "2026-11-18T05:49:09.0058705Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-final-native-gate.ps1",
+                      "arguments":  [
+                                        "-Kind",
+                                        "scene",
+                                        "-EvidenceName",
+                                        "native-scene-04-final",
+                                        "-TimeoutSeconds",
+                                        600
+                                    ],
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:49:23.6455063Z"
+                  },
+                  {
+                      "name":  "flanders_contact",
+                      "status":  "passed",
+                      "started_utc":  "2026-11-18T05:49:23.6535113Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Test-ManualControls.ps1",
+                      "arguments":  [
+                                        "-EngineRoot",
+                                        "E:\\simulator-tools\\UE_5.8",
+                                        "-MapFile",
+                                        "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                        "-Contact",
+                                        "-ContactReset",
+                                        "-ContactDistanceCm",
+                                        340,
+                                        "-ContactSpeedMps",
+                                        1,
+                                        "-GraphicsRhi",
+                                        "D3D11",
+                                        "-SingleShaderWorker",
+                                        "-TimeoutSeconds",
+                                        600,
+                                        "-EvidenceDirectory",
+                                        "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\flanders-contact-04-final"
+                                    ],
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:50:02.7920476Z"
+                  },
+                  {
+                      "name":  "rmuc_contact",
+                      "status":  "passed",
+                      "started_utc":  "2026-11-18T05:50:02.7980505Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Test-ManualControls.ps1",
+                      "arguments":  [
+                                        "-EngineRoot",
+                                        "E:\\simulator-tools\\UE_5.8",
+                                        "-MapFile",
+                                        "D:\\simulator-wt-vlaanderen\\assets\\maps\\rmuc2027\\map.json",
+                                        "-Contact",
+                                        "-ContactReset",
+                                        "-ContactDistanceCm",
+                                        340,
+                                        "-ContactSpeedMps",
+                                        1,
+                                        "-GraphicsRhi",
+                                        "D3D11",
+                                        "-SingleShaderWorker",
+                                        "-TimeoutSeconds",
+                                        600,
+                                        "-EvidenceDirectory",
+                                        "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\rmuc-regression-03-final"
+                                    ],
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:50:38.6631117Z"
+                  }
+              ],
+    "finished_utc":  "2026-11-18T05:50:38.6671036Z"
+}

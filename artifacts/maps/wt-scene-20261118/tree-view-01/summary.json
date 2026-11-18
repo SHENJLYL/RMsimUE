@@ -1,0 +1,529 @@
+{
+  "schema": "wt_tree_view_mapping_v1",
+  "status": "passed",
+  "scope": "Spatial candidates from source instance bounds and settled body pose plus neutral aim rig hierarchy; occlusion untested.",
+  "scene_source_sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+  "control_result_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\flanders-contact-02-render-ready\\control-result.json",
+  "control_result_sha256": "1cc07b64f2a452944abe2381f9153e5753b18bff7a7f1ccf5fa24a04f4ed4f58",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "reference_image": "flanders-contact-02-render-ready/contact-rest/aim_camera.png",
+  "image_sha256": "53f29cbd8f6e6bdf3e6b642932dd6ae37480478bf1a705b4f79ec49b1aa47c5f",
+  "camera_world_ue_m": [
+    1028.1814923688792,
+    1020.0348129167162,
+    -1.0630520678537112
+  ],
+  "camera_quaternion_xyzw": [
+    0.01931405245400347,
+    0.009377154481308075,
+    0.0003054980466505393,
+    0.9997694449334714
+  ],
+  "camera_origin_ros_m": [
+    0.17532481670379638,
+    -0.0470079630613327,
+    0.31987103819847107
+  ],
+  "width": 1280,
+  "height": 720,
+  "horizontal_fov_degrees": 30,
+  "fov_reference": "ImportLabGameMode.cpp UpdatePlayerView sets Aim FOVAngle to ScopeBaseFov=30 in physical_settle state; rig default60 is overridden during manual preview.",
+  "candidate_count": 15,
+  "candidates": [
+    {
+      "mesh_id": "prop_tree_cypress_large_b",
+      "instance_index_zero_based": 44,
+      "position_ros_m": [
+        1137.84716796875,
+        -999.999267578125,
+        4.204779148101807
+      ],
+      "distance_xy_m": 111.65316658369443,
+      "bearing_left_degrees": 10.319245715238692,
+      "world_height_m": 29.187750816345215,
+      "projected_pivot_px": [
+        207.24759920809743,
+        183.48872375185704
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          108.72778600095751,
+          -447.06403557925717
+        ],
+        "hi": [
+          329.7025729117175,
+          231.35860153154738
+        ]
+      },
+      "projected_height_px": 678.4226371108045,
+      "foliage_material_ids": [
+        "WT_86f74a7afa62f85d902e",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_large_b.rmi",
+      "instances_file_sha256": "258df6da1630b9cd65744b90af8ea0439bcaee2be456ca9c1f3faa42d0eda55d"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_a",
+      "instance_index_zero_based": 46,
+      "position_ros_m": [
+        1117.8778076171875,
+        -1004.5931396484375,
+        2.9703664779663086
+      ],
+      "distance_xy_m": 91.18876930831294,
+      "bearing_left_degrees": 9.727105533141971,
+      "world_height_m": 22.327675491571426,
+      "projected_pivot_px": [
+        232.1832919982695,
+        191.80368017582967
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          109.25868856501268,
+          -383.1289208675196
+        ],
+        "hi": [
+          371.30445070217576,
+          256.849690974247
+        ]
+      },
+      "projected_height_px": 639.9786118417666,
+      "foliage_material_ids": [
+        "WT_3bc7913a1a2590a83acd",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_a.rmi",
+      "instances_file_sha256": "38d753746e45012bdaf15d116ed8403e6df7d7dde08623cbbd68cfcfd1e75d63"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 49,
+      "position_ros_m": [
+        1148.8162841796875,
+        -996.8116455078125,
+        4.204779148101807
+      ],
+      "distance_xy_m": 123.0214384042162,
+      "bearing_left_degrees": 10.864696089461845,
+      "world_height_m": 23.195947408676147,
+      "projected_pivot_px": [
+        183.43051251475293,
+        193.03072812753004
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          91.97879050596032,
+          -237.34748027539
+        ],
+        "hi": [
+          287.0009940770309,
+          247.63851975933102
+        ]
+      },
+      "projected_height_px": 484.98600003472103,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 52,
+      "position_ros_m": [
+        1177.598388671875,
+        -986.9988403320312,
+        4.204779148101807
+      ],
+      "distance_xy_m": 153.19515146587423,
+      "bearing_left_degrees": 12.440115374081632,
+      "world_height_m": 20.29645398259163,
+      "projected_pivot_px": [
+        114.40149857331721,
+        210.50669572617167
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          38.703579116621086,
+          -92.07409981144502
+        ],
+        "hi": [
+          201.11360049214835,
+          248.76924730508642
+        ]
+      },
+      "projected_height_px": 340.84334711653145,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_a",
+      "instance_index_zero_based": 48,
+      "position_ros_m": [
+        1198.50537109375,
+        -982.1549682617188,
+        4.204779148101807
+      ],
+      "distance_xy_m": 174.6548825515305,
+      "bearing_left_degrees": 12.514380685085259,
+      "world_height_m": 22.327675491571426,
+      "projected_pivot_px": [
+        110.93905022576905,
+        220.73572887680223
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          37.35785049175547,
+          -72.00949011510727
+        ],
+        "hi": [
+          189.98730367134004,
+          255.689385606979
+        ]
+      },
+      "projected_height_px": 327.69887572208626,
+      "foliage_material_ids": [
+        "WT_3bc7913a1a2590a83acd",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_a.rmi",
+      "instances_file_sha256": "38d753746e45012bdaf15d116ed8403e6df7d7dde08623cbbd68cfcfd1e75d63"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_large_a",
+      "instance_index_zero_based": 91,
+      "position_ros_m": [
+        1293.7894287109375,
+        -1046.813232421875,
+        -1.7406232357025146
+      ],
+      "distance_xy_m": 267.138484399751,
+      "bearing_left_degrees": -5.760594111305494,
+      "world_height_m": 33.27879413962364,
+      "projected_pivot_px": [
+        879.8065926684449,
+        330.57232162479227
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          841.2799881783628,
+          45.32433213500991
+        ],
+        "hi": [
+          930.2215890185616,
+          351.9473314974857
+        ]
+      },
+      "projected_height_px": 306.6229993624758,
+      "foliage_material_ids": [
+        "WT_5e87f6737452b5e124e9",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_large_a.rmi",
+      "instances_file_sha256": "0ebadc8a98b37f50ae6855ca86f3096eeb9401c0fa392cb16c533a2dceb04b38"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_large_b",
+      "instance_index_zero_based": 93,
+      "position_ros_m": [
+        1279.2890625,
+        -1086.345703125,
+        -1.928128957748413
+      ],
+      "distance_xy_m": 259.89987544298583,
+      "bearing_left_degrees": -14.789826628630642,
+      "world_height_m": 30.647138357162476,
+      "projected_pivot_px": [
+        1269.2692724164663,
+        347.76514971120696
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          1217.221005245701,
+          70.34583891409136
+        ],
+        "hi": [
+          1332.7473842174081,
+          369.6012438486431
+        ]
+      },
+      "projected_height_px": 299.25540493455173,
+      "foliage_material_ids": [
+        "WT_86f74a7afa62f85d902e",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_large_b.rmi",
+      "instances_file_sha256": "258df6da1630b9cd65744b90af8ea0439bcaee2be456ca9c1f3faa42d0eda55d"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_large_a",
+      "instance_index_zero_based": 44,
+      "position_ros_m": [
+        1242.1317138671875,
+        -969.1233520507812,
+        4.275094032287598
+      ],
+      "distance_xy_m": 220.09276269393277,
+      "bearing_left_degrees": 13.36537672722673,
+      "world_height_m": 24.597369581460953,
+      "projected_pivot_px": [
+        73.26720300068644,
+        233.59048942864007
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          33.185402858305224,
+          -29.47420108886007
+        ],
+        "hi": [
+          121.68907376259551,
+          253.65231753097277
+        ]
+      },
+      "projected_height_px": 283.12651861983284,
+      "foliage_material_ids": [
+        "WT_5e87f6737452b5e124e9",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_large_a.rmi",
+      "instances_file_sha256": "0ebadc8a98b37f50ae6855ca86f3096eeb9401c0fa392cb16c533a2dceb04b38"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 50,
+      "position_ros_m": [
+        1253.2257080078125,
+        -964.9356689453125,
+        4.43916130065918
+      ],
+      "distance_xy_m": 231.85922475096962,
+      "bearing_left_degrees": 13.7384666508181,
+      "world_height_m": 24.645694121718407,
+      "projected_pivot_px": [
+        56.79317779564599,
+        234.1523937809427
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          -4.562073582692278,
+          -7.467226074330597
+        ],
+        "hi": [
+          127.01560127345749,
+          264.89077378984905
+        ]
+      },
+      "projected_height_px": 272.35799986417965,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 51,
+      "position_ros_m": [
+        1228.1312255859375,
+        -972.9359130859375,
+        4.220404624938965
+      ],
+      "distance_xy_m": 205.59069952598497,
+      "bearing_left_degrees": 13.233571553526875,
+      "world_height_m": 21.74620069563389,
+      "projected_pivot_px": [
+        79.13579755816465,
+        230.28993583289613
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          22.936139151730004,
+          -10.787008079113832
+        ],
+        "hi": [
+          137.5021228278943,
+          259.9877189846566
+        ]
+      },
+      "projected_height_px": 270.77472706377046,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_large_b",
+      "instance_index_zero_based": 94,
+      "position_ros_m": [
+        1291.6019287109375,
+        -1070.78271484375,
+        -1.928128957748413
+      ],
+      "distance_xy_m": 268.44899133173845,
+      "bearing_left_degrees": -10.904397953188692,
+      "world_height_m": 24.809588193893433,
+      "projected_pivot_px": [
+        1098.872831875044,
+        340.7931761577892
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          1062.576797140326,
+          128.28254665180475
+        ],
+        "hi": [
+          1141.801411779878,
+          357.2158483530779
+        ]
+      },
+      "projected_height_px": 228.93330170127314,
+      "foliage_material_ids": [
+        "WT_86f74a7afa62f85d902e",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_large_b.rmi",
+      "instances_file_sha256": "258df6da1630b9cd65744b90af8ea0439bcaee2be456ca9c1f3faa42d0eda55d"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 55,
+      "position_ros_m": [
+        1322.0404052734375,
+        -934.8722534179688,
+        6.626728057861328
+      ],
+      "distance_xy_m": 306.115163249882,
+      "bearing_left_degrees": 16.14627819803791,
+      "world_height_m": 23.920820765197277,
+      "projected_pivot_px": [
+        -50.52720171324893,
+        225.88582424506674
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          -96.66955873295854,
+          47.37633785913408
+        ],
+        "hi": [
+          2.0817677957110163,
+          248.81253661158084
+        ]
+      },
+      "projected_height_px": 201.43619875244676,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_a",
+      "instance_index_zero_based": 53,
+      "position_ros_m": [
+        1293.7269287109375,
+        -947.9039306640625,
+        6.3376569747924805
+      ],
+      "distance_xy_m": 275.3336954603268,
+      "bearing_left_degrees": 15.179850275685558,
+      "world_height_m": 20.166932702064514,
+      "projected_pivot_px": [
+        -6.959925576820751,
+        223.49738293256166
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          -50.02740077877036,
+          56.22250553352569
+        ],
+        "hi": [
+          39.26068695176332,
+          243.79771316456495
+        ]
+      },
+      "projected_height_px": 187.57520763103926,
+      "foliage_material_ids": [
+        "WT_3bc7913a1a2590a83acd",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_a.rmi",
+      "instances_file_sha256": "38d753746e45012bdaf15d116ed8403e6df7d7dde08623cbbd68cfcfd1e75d63"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_a",
+      "instance_index_zero_based": 50,
+      "position_ros_m": [
+        1303.352294921875,
+        -1022.7186889648438,
+        -1.686025619506836
+      ],
+      "distance_xy_m": 275.3657160730631,
+      "bearing_left_degrees": -0.5656910978821575,
+      "world_height_m": 20.88718029856682,
+      "projected_pivot_px": [
+        662.4790139993952,
+        321.4845037708616
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          622.4019662354287,
+          155.60437227225435
+        ],
+        "hi": [
+          706.6985557469533,
+          341.5380785052881
+        ]
+      },
+      "projected_height_px": 185.93370623303377,
+      "foliage_material_ids": [
+        "WT_3bc7913a1a2590a83acd",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_a.rmi",
+      "instances_file_sha256": "38d753746e45012bdaf15d116ed8403e6df7d7dde08623cbbd68cfcfd1e75d63"
+    },
+    {
+      "mesh_id": "prop_tree_cypress_medium_b",
+      "instance_index_zero_based": 103,
+      "position_ros_m": [
+        1425.66845703125,
+        -1127.315673828125,
+        0.9625843167304993
+      ],
+      "distance_xy_m": 411.89422861555084,
+      "bearing_left_degrees": -15.10221451413324,
+      "world_height_m": 23.920820765197277,
+      "projected_pivot_px": [
+        1284.0552417152562,
+        327.91839757692617
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          1255.760876167984,
+          197.89856451931237
+        ],
+        "hi": [
+          1319.7284888499203,
+          344.5128643377991
+        ]
+      },
+      "projected_height_px": 146.61429981848673,
+      "foliage_material_ids": [
+        "WT_4a9616a400138db67d15",
+        "WT_5e5e4a882c2f813fd5b5"
+      ],
+      "instances_file": "instances/prop_tree_cypress_medium_b.rmi",
+      "instances_file_sha256": "5cb66a48909a43607537cc8836daf51ddc687731eecdcd9b2dafe0f22f616a1e"
+    }
+  ]
+}

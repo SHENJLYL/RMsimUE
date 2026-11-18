@@ -1,0 +1,1200 @@
+{
+  "schema": "rmsim_wt_generated_collision_gui_summary_v1",
+  "status": "passed",
+  "scope": "two_owned_W_and_R_SendInput_operations_with_focused_viewport_telemetry_and_whole_session_collision_final",
+  "created_utc": "2026-11-18T09:23:38.676300+00:00",
+  "process_id": 47912,
+  "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+  "process_exit": 0,
+  "source_map_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "generated_manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+  "canonical_recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+  "map_id": "wt_vlaanderen",
+  "selected_spawn": {
+    "id": "wall_baseline",
+    "team": "neutral",
+    "position_m": [
+      1075.2319418063933,
+      -1012.6564368808924,
+      -0.29930711214489136
+    ],
+    "yaw_rad": 0
+  },
+  "spawn_ue_cm": [
+    107523.19418063933,
+    101265.64368808924,
+    -29.930711214489136
+  ],
+  "command": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator/unreal/RMSim/RMSim.uproject\" /Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -ForceDPCVars=r.Streaming.PoolSize=4096 -windowed -InputEvidence=\"D:/simulator/artifacts/gameplay/gyro-control/live-input.json\" -MapFile=\"D:/simulator/artifacts/maps/wt-refine-20261118/material-observation-01/map.json\" -SpawnId=\"wall_baseline\" -d3d11 -NoShaderWorker -ContactPhysics ",
+  "observation_map_snapshot": {
+    "path": "artifacts/maps/wt-refine-20261118/material-observation-01/map.json",
+    "bytes": 1338,
+    "sha256": "cc75b7b9010d5cec2e5f17aba64fc579c9f0958dc40e28aa34d23b382f85b587"
+  },
+  "os_input_verified": true,
+  "os_input_verified_scope": [
+    "one W press/release held for 4502 ms",
+    "one RestartRound press/release from physical R key held for 153 ms"
+  ],
+  "full_visual_acceptance": "separately_owned_by_root_and_material_validation",
+  "drive": {
+    "execution": {
+      "schema": "rmsim_owned_gui_input_v1",
+      "status": "sent",
+      "pid": 47912,
+      "command": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator/unreal/RMSim/RMSim.uproject\" /Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -ForceDPCVars=r.Streaming.PoolSize=4096 -windowed -InputEvidence=\"D:/simulator/artifacts/gameplay/gyro-control/live-input.json\" -MapFile=\"D:/simulator/artifacts/maps/wt-refine-20261118/material-observation-01/map.json\" -SpawnId=\"wall_baseline\" -d3d11 -NoShaderWorker -ContactPhysics ",
+      "key": "W",
+      "requested_duration_ms": 4500,
+      "started_utc": "2026-11-18T09:11:53.4728714Z",
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "focus_checked_every_ms": 40,
+      "moved_owned_window_to_left": false,
+      "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+      "actual_hold_ms": 4502,
+      "key_up_sent": true,
+      "finished_utc": "2026-11-18T09:11:58.0429635Z"
+    },
+    "received_input_edge_delta": {
+      "W_press": 1,
+      "W_release": 1
+    },
+    "fresh_press_frame": 11,
+    "fresh_press_updated_utc": "2026-11-18T09:11:53.539Z",
+    "fresh_press_before": {
+      "contact_recovery_count": 3,
+      "speed_cm_per_second": 0,
+      "contact_physics": true,
+      "window_focused": true,
+      "actor": {
+        "position_cm": [
+          107523.1717476999,
+          101265.61860015828,
+          -29.968296033396083
+        ],
+        "rotation_xyzw": [
+          -0.0073714361993987045,
+          -0.03545454077395237,
+          0.001155219251784105,
+          0.9993434359294843
+        ]
+      }
+    },
+    "release_frame": 44,
+    "release_updated_utc": "2026-11-18T09:11:58.051Z",
+    "release_after": {
+      "contact_recovery_count": 3,
+      "speed_cm_per_second": 0.4806901032308454,
+      "contact_physics": true,
+      "window_focused": true,
+      "actor": {
+        "position_cm": [
+          108580.9655252747,
+          101284.40124873134,
+          54.897267046100474
+        ],
+        "rotation_xyzw": [
+          0.1378379628546771,
+          -0.0664856217772215,
+          -0.6403530907582526,
+          0.7526807273003091
+        ]
+      }
+    },
+    "horizontal_displacement_m": 10.579605208907294,
+    "crossed_refresh_threshold_m": 8,
+    "recovery_count_delta": 0,
+    "copied_pre_action_snapshot": {
+      "updated_utc": "2026-11-18T09:02:14.575Z",
+      "state": {
+        "contact_recovery_count": 3,
+        "speed_cm_per_second": 0.28211458234410924,
+        "contact_physics": true,
+        "window_focused": true,
+        "actor": {
+          "position_cm": [
+            107523.23731495497,
+            101265.61034463256,
+            -30.357881099197716
+          ],
+          "rotation_xyzw": [
+            -0.014826089376071305,
+            -0.03464282358332308,
+            0.0008595008537742795,
+            0.9992894090834098
+          ]
+        }
+      },
+      "horizontal_displacement_to_release_m": 10.578951105771502
+    },
+    "pose_basis": "The W-press telemetry from frame 11 supplies the current start pose; the copied pre-action JSON still contains the previous 09:02 input event."
+  },
+  "reset": {
+    "execution": {
+      "schema": "rmsim_owned_gui_input_v1",
+      "status": "sent",
+      "pid": 47912,
+      "command": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator/unreal/RMSim/RMSim.uproject\" /Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -ForceDPCVars=r.Streaming.PoolSize=4096 -windowed -InputEvidence=\"D:/simulator/artifacts/gameplay/gyro-control/live-input.json\" -MapFile=\"D:/simulator/artifacts/maps/wt-refine-20261118/material-observation-01/map.json\" -SpawnId=\"wall_baseline\" -d3d11 -NoShaderWorker -ContactPhysics ",
+      "key": "R",
+      "requested_duration_ms": 120,
+      "started_utc": "2026-11-18T09:15:30.0631260Z",
+      "input_api": "Win32 SendInput through the live focused UE viewport",
+      "focus_checked_every_ms": 40,
+      "moved_owned_window_to_left": false,
+      "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+      "actual_hold_ms": 153,
+      "key_up_sent": true,
+      "finished_utc": "2026-11-18T09:15:30.2891471Z"
+    },
+    "received_input_edge_delta": {
+      "RestartRound_press": 1,
+      "RestartRound_release": 1
+    },
+    "last_observed_pre_reset": {
+      "contact_recovery_count": 3,
+      "speed_cm_per_second": 0.4806901032308454,
+      "contact_physics": true,
+      "window_focused": true,
+      "actor": {
+        "position_cm": [
+          108580.9655252747,
+          101284.40124873134,
+          54.897267046100474
+        ],
+        "rotation_xyzw": [
+          0.1378379628546771,
+          -0.0664856217772215,
+          -0.6403530907582526,
+          0.7526807273003091
+        ]
+      }
+    },
+    "last_observed_pre_reset_updated_utc": "2026-11-18T09:11:58.051Z",
+    "release_after": {
+      "contact_recovery_count": 4,
+      "speed_cm_per_second": 0.29995094308520687,
+      "contact_physics": true,
+      "window_focused": true,
+      "actor": {
+        "position_cm": [
+          107523.23062188194,
+          101265.61587674728,
+          -30.35678328651953
+        ],
+        "rotation_xyzw": [
+          -0.013645674885737143,
+          -0.0347020212532757,
+          0.000933317050021774,
+          0.9993041049636163
+        ]
+      }
+    },
+    "release_updated_utc": "2026-11-18T09:15:30.290Z",
+    "recovery_count_delta": 1,
+    "horizontal_error_to_selected_map_spawn_cm": 0.04584141037282892,
+    "position_error_to_selected_map_spawn_cm": 0.42853103209597676,
+    "position_error_to_previous_settled_snapshot_cm": 0.008752526063652084,
+    "previous_settled_snapshot_updated_utc": "2026-11-18T09:02:14.575Z",
+    "selected_spawn_error_semantics": "Actor position compared with the map-selected wall_baseline position; the measured post-release speed is retained.",
+    "snapshot": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-view-01/live-input.json",
+      "bytes": 49560,
+      "sha256": "a182a333027d8f39a4484a8c84e0dfc8bd6406e379143345fe5786fa176fd1c0"
+    },
+    "capture": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-view-01/entry.png",
+      "bytes": 2941416,
+      "sha256": "9b8531206e6281b0252c7a6d9eec2ae3bc524fbb1c3cb956423d61ce8096b79d",
+      "width": 1616,
+      "height": 1039
+    },
+    "window_context": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-view-01/window-context.json",
+      "bytes": 1372,
+      "sha256": "741fa1ced8f8c500a15630d7e52e294cb3827aaf4b623f845a8afc32d41579c8"
+    },
+    "window_focused_pid": 47912,
+    "capture_visual_acceptance_assessed_here": false
+  },
+  "session_runtime": {
+    "counter_scope": "Entire UE47912 session, including earlier external driving and the two recorded root operations.",
+    "per_owned_operation_activation_count_recorded": false,
+    "prior_input_event_counts": {
+      "D_press": 29,
+      "W_press": 29,
+      "A_press": 21,
+      "A_release": 21,
+      "D_release": 29,
+      "LeftShift_press": 6,
+      "LeftShift_release": 6,
+      "WheelDown_press": 8,
+      "WheelDown_release": 8,
+      "W_release": 29,
+      "S_press": 9,
+      "S_release": 9,
+      "RestartRound_press": 3,
+      "RestartRound_release": 3,
+      "Fire_press": 3,
+      "Fire_release": 3,
+      "Space_press": 4,
+      "Space_release": 4
+    },
+    "final_input_event_counts": {
+      "D_press": 29,
+      "W_press": 30,
+      "A_press": 21,
+      "A_release": 21,
+      "D_release": 29,
+      "LeftShift_press": 6,
+      "LeftShift_release": 6,
+      "WheelDown_press": 8,
+      "WheelDown_release": 8,
+      "W_release": 30,
+      "S_press": 9,
+      "S_release": 9,
+      "RestartRound_press": 4,
+      "RestartRound_release": 4,
+      "Fire_press": 3,
+      "Fire_release": 3,
+      "Space_press": 4,
+      "Space_release": 4
+    },
+    "ready": {
+      "line": 2973,
+      "log_prefix": "[2026.11.18-08.53.16:254][  0]LogRMSim: Display:",
+      "report": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 12,
+        "active_native_bodies": 264,
+        "active_shapes": 264,
+        "active_source_instances": 290,
+        "peak_native_bodies": 264,
+        "query_range_with_mount_m": 0,
+        "load_radius_m": 48,
+        "retain_radius_m": 80,
+        "activation_passes": 1,
+        "cells_created": 12,
+        "cells_released": 0,
+        "initial_asset_load_seconds": 0.7207413017749786,
+        "max_refresh_seconds": 0.002291496843099594,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      }
+    },
+    "final": {
+      "line": 3164,
+      "log_prefix": "[2026.11.18-09.15.33:539][257]LogRMSim: Display:",
+      "report": {
+        "schema": "rmsim_generated_collision_runtime_v1",
+        "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+        "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+        "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+        "source_instances": 18454,
+        "mesh_assets": 203,
+        "total_cells": 917,
+        "active_cells": 22,
+        "active_native_bodies": 512,
+        "active_shapes": 512,
+        "active_source_instances": 694,
+        "peak_native_bodies": 555,
+        "query_range_with_mount_m": 0,
+        "load_radius_m": 48,
+        "retain_radius_m": 80,
+        "activation_passes": 39,
+        "cells_created": 36,
+        "cells_released": 14,
+        "initial_asset_load_seconds": 0.7207413017749786,
+        "max_refresh_seconds": 0.002291496843099594,
+        "spawn_footprint_pinned": true,
+        "physics_ready": true
+      }
+    },
+    "whole_session_peak_native_bodies": 555,
+    "whole_session_max_refresh_ms": 2.291496843099594,
+    "initial_asset_load_seconds": 0.7207413017749786,
+    "post_reset_final_ready": true,
+    "spawn_footprint_pinned": true
+  },
+  "frame_series": {
+    "raw": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frames.json",
+      "bytes": 21753210,
+      "sha256": "bd95f01e348574a5c76f8a80e8374adfd0b0eac8dceaf8fe725b09c4090f8e1e"
+    },
+    "requested_interval_ms": 100,
+    "captured_frames": 80,
+    "recorded_elapsed_ms_range": [
+      189,
+      10673
+    ],
+    "captures": [
+      {
+        "frame": 0,
+        "elapsed_ms": 189,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-000.png",
+        "bytes": 2941999,
+        "sha256": "dc9bfb9d139f6b5b05d9520a721914fff8493491cb2f62b82958c422706e2f80",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 1,
+        "elapsed_ms": 329,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-001.png",
+        "bytes": 2942359,
+        "sha256": "5d8df4eb9d9317fac21b27606e6ef04fa2583f67cd7649b20705257d26ad9d98",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 2,
+        "elapsed_ms": 473,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-002.png",
+        "bytes": 2940620,
+        "sha256": "91423111775bfaad29bcfd5d1647d5c9cb3cee060f1b7b05eac4b92c938dfc3e",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 3,
+        "elapsed_ms": 599,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-003.png",
+        "bytes": 2941547,
+        "sha256": "d1e67e784f60e52ba1b4f31b75005e6f9f7e9791638e6eb36b06721ba25e61ee",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 4,
+        "elapsed_ms": 747,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-004.png",
+        "bytes": 2941821,
+        "sha256": "0160aa9bb3ac560e30dcad8db961788af7f3648de802e255b2ceef96cf5fabce",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 5,
+        "elapsed_ms": 874,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-005.png",
+        "bytes": 2942118,
+        "sha256": "86660f3b34f846368b01901bf66e1192924eb6315be0afacc5bcac5fda11e650",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 6,
+        "elapsed_ms": 994,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-006.png",
+        "bytes": 2942572,
+        "sha256": "d3e44b4f2e7f4f3e07c4c00eb3d53367fb7cb01d1f6030736fabb69331c050ac",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 7,
+        "elapsed_ms": 1123,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-007.png",
+        "bytes": 2942445,
+        "sha256": "12a71cf7ab9ebb073efbcbf2255c59fb04bbf3e3dc864e47797709bf6a66d6e4",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 8,
+        "elapsed_ms": 1241,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-008.png",
+        "bytes": 2940759,
+        "sha256": "4445936931d572a290986c7342c6c0ed6a879dcb34a5082cfb88db49b3760d7b",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 9,
+        "elapsed_ms": 1353,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-009.png",
+        "bytes": 2941339,
+        "sha256": "d8f3130598fe148aa792fe752b3e3109eaa6de92c5dce4ea83d8703a3c542da3",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 10,
+        "elapsed_ms": 1475,
+        "input_updated_utc": "2026-11-18T09:02:14.575Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-010.png",
+        "bytes": 2941931,
+        "sha256": "81b2c58969140d1a33ac4fb55be58b2ce1adc0949fe91c2dd79ee019228a88a4",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 11,
+        "elapsed_ms": 1593,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-011.png",
+        "bytes": 2942193,
+        "sha256": "1f0f4e8854a62de0bdb2384a0e44abcb6e8349f6440f929aa8dcd815bc259657",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 12,
+        "elapsed_ms": 1725,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-012.png",
+        "bytes": 2955572,
+        "sha256": "dbadec32549e9746f0f65dd12727afbd6ca1f349fd0fee31c2f41251e6852655",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 13,
+        "elapsed_ms": 1852,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-013.png",
+        "bytes": 2993746,
+        "sha256": "86076f8ba6a8e849153dcb1622c0642ef5df3bf178658f524ad55f3be22984c4",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 14,
+        "elapsed_ms": 1997,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-014.png",
+        "bytes": 2997737,
+        "sha256": "22e8c514b8db7d6edbdea2b2f39a16b8290981b37d91a61fc2b766b0080db36b",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 15,
+        "elapsed_ms": 2132,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-015.png",
+        "bytes": 2987337,
+        "sha256": "bcdbf9993d2ec0a62ea2980d73eae9e83c7cca503f15a3e4463d1cf0e2496339",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 16,
+        "elapsed_ms": 2263,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-016.png",
+        "bytes": 2975764,
+        "sha256": "459e38015555a5f35238aa99e57332e057ba46b6271a8eff834bf49af194c0df",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 17,
+        "elapsed_ms": 2402,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-017.png",
+        "bytes": 2970530,
+        "sha256": "e6f88baa67cd830f0e4615ac0ee40996a907398d525a167a4618863458c21283",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 18,
+        "elapsed_ms": 2554,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-018.png",
+        "bytes": 2963517,
+        "sha256": "ec64fe7e1cc24c0fbf40f6caa9655555d9c9bf299cd02b4dddf2f0fada748cd8",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 19,
+        "elapsed_ms": 2690,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-019.png",
+        "bytes": 2955214,
+        "sha256": "02523c73b68075aa37f64417a7005be5c988da4443b3a3943b30077b96bc014e",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 20,
+        "elapsed_ms": 2820,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-020.png",
+        "bytes": 2943310,
+        "sha256": "f58b096d511d48f57a3c74fb7ec759f516ae9eb492f3bb13f03e0b0f58bc5b56",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 21,
+        "elapsed_ms": 2950,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-021.png",
+        "bytes": 2935705,
+        "sha256": "6f9fe3ee8667a03da242d868f8faf59c8109f18e03f09699ba3addfafb2a506f",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 22,
+        "elapsed_ms": 3084,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-022.png",
+        "bytes": 2929697,
+        "sha256": "5d68cfb8958dd869bde189f8f2d13be12230415f626b9f307e310a0a88d34e63",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 23,
+        "elapsed_ms": 3218,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-023.png",
+        "bytes": 2918663,
+        "sha256": "95bb41d5b0a15eba9deb1e711c1fe8f47629eb00eb3ebb2005975dc13cf9ee01",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 24,
+        "elapsed_ms": 3350,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-024.png",
+        "bytes": 2922022,
+        "sha256": "bb2be1ddcccdfee3406a94724dfac46b1698816ddcae755476737ff4872eba04",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 25,
+        "elapsed_ms": 3485,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-025.png",
+        "bytes": 2908953,
+        "sha256": "cc3288d16ab7f1628b237373311bb6649eeaf3d667914025565ef9d0300a2dfb",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 26,
+        "elapsed_ms": 3618,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-026.png",
+        "bytes": 2891979,
+        "sha256": "a958ed08d49f5f9c3a051041151efd5039b631d3d9efb63f5f70fb282a977385",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 27,
+        "elapsed_ms": 3755,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-027.png",
+        "bytes": 2862328,
+        "sha256": "a67f20731c6399989945287f430d7256c47a7b2f692a6d58c57d92acb388c68f",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 28,
+        "elapsed_ms": 3903,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-028.png",
+        "bytes": 2835351,
+        "sha256": "ccdc8567c7b1f6823d00f087ee63647ca899ad6671456b429eb5a300c0e38159",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 29,
+        "elapsed_ms": 4034,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-029.png",
+        "bytes": 2795068,
+        "sha256": "c110eb24cc09af4485148a7f3c22daacf0ea875baab91b7306bd18000983c3d6",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 30,
+        "elapsed_ms": 4166,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-030.png",
+        "bytes": 2760004,
+        "sha256": "40bad3d4d0ad66056b7635609e4f8822ad1efcbb2bf51f1cc1f240832fba3799",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 31,
+        "elapsed_ms": 4299,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-031.png",
+        "bytes": 2731898,
+        "sha256": "5833016cd608210423f9f74bef81d69850abcedb4dd4fc30a226bc7aa65a7b9c",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 32,
+        "elapsed_ms": 4435,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-032.png",
+        "bytes": 2716960,
+        "sha256": "c7cecffcdc666026e23d878e58ee96ef27f3151f975688c5555ff6116426b4fe",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 33,
+        "elapsed_ms": 4564,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-033.png",
+        "bytes": 2705560,
+        "sha256": "4d404bb64d09130af6b364b2a625d2297c6b9f6c01765dc47562288252103522",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 34,
+        "elapsed_ms": 4704,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-034.png",
+        "bytes": 2713804,
+        "sha256": "e0b7e2db5132dd71508412d3595b1c84a7b58f40ef19a91726f324cf2f284d26",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 35,
+        "elapsed_ms": 4836,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-035.png",
+        "bytes": 2728368,
+        "sha256": "21c121cbd70d03ba1d85bef00d601fa9f9c663e92ec12e6015fcf05091bdd5bb",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 36,
+        "elapsed_ms": 4970,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-036.png",
+        "bytes": 2746580,
+        "sha256": "8bd4ffbb5ac3910c97ecdaa1cca9c263c30b37f32275d25d860e3f0d52c47c85",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 37,
+        "elapsed_ms": 5101,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-037.png",
+        "bytes": 2750298,
+        "sha256": "5d883f6b2464db9d24cffcc8f49a49aadebee0604c111b333302df09a5972192",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 38,
+        "elapsed_ms": 5251,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-038.png",
+        "bytes": 2767746,
+        "sha256": "b2e6b64e313a118dd46aa5fc7efab4be4dc51f963211ee3e0225ea289937fe38",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 39,
+        "elapsed_ms": 5387,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-039.png",
+        "bytes": 2779724,
+        "sha256": "a258bea4593cbb65eef297c20bcc7f05826f42d669e5d74b0207b5cfe51dc123",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 40,
+        "elapsed_ms": 5520,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-040.png",
+        "bytes": 2791859,
+        "sha256": "35f5aafff18aa394db85414149f469801a05ea505102e3bcb06f77e0fb957313",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 41,
+        "elapsed_ms": 5652,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-041.png",
+        "bytes": 2793494,
+        "sha256": "d9e7122da06a540274bbdf2ea7d8c5b24a533af73430e5ae92ca3713a5b6d25a",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 42,
+        "elapsed_ms": 5786,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-042.png",
+        "bytes": 2784303,
+        "sha256": "8640849285e859b396ed93321fc9908e8f5d2958640b2ef46c132a81e76a3eca",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 43,
+        "elapsed_ms": 5923,
+        "input_updated_utc": "2026-11-18T09:11:53.539Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-043.png",
+        "bytes": 2792796,
+        "sha256": "32ab33c45a5d88fb349e2f45ad8e0bcb8d0d318c58146d1016983d40fe8a9377",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 44,
+        "elapsed_ms": 6054,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-044.png",
+        "bytes": 2793300,
+        "sha256": "90b004b73462bb5a3e09f3e7883c50a7ae5ad408d7ed377377ab90f1306608fb",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 45,
+        "elapsed_ms": 6185,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-045.png",
+        "bytes": 2793833,
+        "sha256": "c3148b8db7535d53b01edc41e9b650884bb151cdcdb5d2c02c84f1a3027b1597",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 46,
+        "elapsed_ms": 6318,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-046.png",
+        "bytes": 2791496,
+        "sha256": "51ee37ac16ca98e8a16f7cbeca5703ad20204c109573abcac87a740f3fd4eb00",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 47,
+        "elapsed_ms": 6452,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-047.png",
+        "bytes": 2786863,
+        "sha256": "c76b82bfa47d702ece60ec75f842bdb7c54802eb87be061c9c84a7b0b88107b6",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 48,
+        "elapsed_ms": 6583,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-048.png",
+        "bytes": 2779432,
+        "sha256": "e3a480ca0d60a51a10bc797f41a0d2786e8fcc47c8fef93d05fc360de2382621",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 49,
+        "elapsed_ms": 6731,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-049.png",
+        "bytes": 2780925,
+        "sha256": "8318f96c3b39ace31316aac9235448486cd7927f36ed9d97005481416f7c2ddb",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 50,
+        "elapsed_ms": 6867,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-050.png",
+        "bytes": 2779601,
+        "sha256": "6b835a3ef340f4294d02cb1ccb1d9bddbf1ae3f67b7c0e1ecf3a90a784415f2b",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 51,
+        "elapsed_ms": 6999,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-051.png",
+        "bytes": 2779469,
+        "sha256": "bc1abc08975907810889679c8d221fb3a731db7d0ec49fec84db94581de6c26e",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 52,
+        "elapsed_ms": 7139,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-052.png",
+        "bytes": 2778937,
+        "sha256": "18a8f992ee9e09e01b2d3cb40c3cbd393679ecf938b328657675fd81c51986a9",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 53,
+        "elapsed_ms": 7272,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-053.png",
+        "bytes": 2794605,
+        "sha256": "fe245dc1e74fda6873a6e94c537000ff143a0f8f38dcba92153557cf6ed0338a",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 54,
+        "elapsed_ms": 7408,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-054.png",
+        "bytes": 2797389,
+        "sha256": "7e8d9ad73150e53746310d8e0d7428d0559e5edb7f45cf064d3cebab9de8cf9d",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 55,
+        "elapsed_ms": 7542,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-055.png",
+        "bytes": 2788923,
+        "sha256": "924f879a4d8e20be379d841771ed34575482e29b8284e073325c7c3fd1305b79",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 56,
+        "elapsed_ms": 7674,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-056.png",
+        "bytes": 2788835,
+        "sha256": "a75c00499c2be0592f73058760f0dca80e9dcf00b6e713c12674e394d4cadb6a",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 57,
+        "elapsed_ms": 7805,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-057.png",
+        "bytes": 2777002,
+        "sha256": "0646bb4627c19befcbf4f090e6fa19bd18a6053e3ea994b1c281697ab7bdb3a9",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 58,
+        "elapsed_ms": 7938,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-058.png",
+        "bytes": 2769706,
+        "sha256": "2ed48e92fef0cb5a081b8e4dd6f1c662e091e60f3e3afc781ac6e58302878c0b",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 59,
+        "elapsed_ms": 8083,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-059.png",
+        "bytes": 2772398,
+        "sha256": "5acbe69cfdb4185f4eb68f2cad0aef643763abaff1fb63f1dadd81d858b1602e",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 60,
+        "elapsed_ms": 8218,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-060.png",
+        "bytes": 2767828,
+        "sha256": "a9ab61512b0eade5af9243539fea5fa8f7bbf5be48fd1c9cfc7b647fb6907e09",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 61,
+        "elapsed_ms": 8354,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-061.png",
+        "bytes": 2765433,
+        "sha256": "953e2f0ccc0aee1c286b15b9f217f946cc3db164569ad293b8d8545b931e9c65",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 62,
+        "elapsed_ms": 8487,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-062.png",
+        "bytes": 2762786,
+        "sha256": "b9fba9c08e53a28654f6fbacdc799a68849cdd6b14c11b7c8fc6b4940fd3d1ec",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 63,
+        "elapsed_ms": 8618,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-063.png",
+        "bytes": 2760194,
+        "sha256": "1226f77d8f7b78bb5ea696788464b2eeb371f848e7a834dd8e39528e13529ddd",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 64,
+        "elapsed_ms": 8747,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-064.png",
+        "bytes": 2760156,
+        "sha256": "107b65923d62f1fc6c571118ac6e9da20623532c3dd4d415f8d5a0116db4f5c8",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 65,
+        "elapsed_ms": 8862,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-065.png",
+        "bytes": 2759924,
+        "sha256": "2d6e4adbcbb0d183efd541c35e9363bb4161a67ff6e5a70c9b387f7cab22b960",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 66,
+        "elapsed_ms": 8973,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-066.png",
+        "bytes": 2760046,
+        "sha256": "98e118ac66ff05e809b8e2b324d511bb9839c7aebaaec38330c412d0428cfb89",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 67,
+        "elapsed_ms": 9089,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-067.png",
+        "bytes": 2759022,
+        "sha256": "48db73f8557b5357801f301676547aefda5f7c3264ec6cd8ab0970651460d96f",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 68,
+        "elapsed_ms": 9222,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-068.png",
+        "bytes": 2758576,
+        "sha256": "0384bb74ec022ccf4e8c8683900d52001aa8a338b4de4e6fad5ea5da8d78bf01",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 69,
+        "elapsed_ms": 9339,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-069.png",
+        "bytes": 2758980,
+        "sha256": "d11b2ab43d1ea0881487c03acce7b09de31435b9898b788619467d5882039aa9",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 70,
+        "elapsed_ms": 9484,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-070.png",
+        "bytes": 2759832,
+        "sha256": "3882f9c6d44d08b3e7b03648598884f91206d9f4b3dc44823657dc83062c93eb",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 71,
+        "elapsed_ms": 9618,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-071.png",
+        "bytes": 2760444,
+        "sha256": "2fbd2632b400189ecb03f71e0c5dea5e813111ab040bc76286b9c73c04abd897",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 72,
+        "elapsed_ms": 9751,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-072.png",
+        "bytes": 2759005,
+        "sha256": "373a76d4d6740eb80aa390e7c9fe7cb8840ede383a92cfbd264f41630d27b391",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 73,
+        "elapsed_ms": 9883,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-073.png",
+        "bytes": 2759021,
+        "sha256": "fd57577f791eb65c1d20167f353369498f30bec1fc539debeb9fb0633a10359e",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 74,
+        "elapsed_ms": 10014,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-074.png",
+        "bytes": 2758873,
+        "sha256": "02bb6cd0995879c43993075dc812884bcee22becc7a2e917d645440501019bf0",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 75,
+        "elapsed_ms": 10132,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-075.png",
+        "bytes": 2759635,
+        "sha256": "a0b5382eada87f88d4ec7bf77bb06b27dee7b221781121df8e95c80b148b5d3a",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 76,
+        "elapsed_ms": 10250,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-076.png",
+        "bytes": 2759530,
+        "sha256": "2c45bde1b04a0412c0201e4aacbd354200a24ea6212db2c46b8257959a7da335",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 77,
+        "elapsed_ms": 10390,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-077.png",
+        "bytes": 2759011,
+        "sha256": "7769007d7a80ca4a149e0aed8ba1348ac669fa271b9930e32bbbea6eda520717",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 78,
+        "elapsed_ms": 10533,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-078.png",
+        "bytes": 2759068,
+        "sha256": "6c2b4dd67c371630c4d24274a1aa5c1e4202ae461a1300a848cd805b5f863b29",
+        "width": 1616,
+        "height": 1039
+      },
+      {
+        "frame": 79,
+        "elapsed_ms": 10673,
+        "input_updated_utc": "2026-11-18T09:11:58.051Z",
+        "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-frames/frame-079.png",
+        "bytes": 2758968,
+        "sha256": "174609212a7a83bc328b2a39dc35a96ebac576692c989014fa764729637e08c9",
+        "width": 1616,
+        "height": 1039
+      }
+    ]
+  },
+  "evidence": {
+    "drive_execution": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-drive/execution.json",
+      "bytes": 1204,
+      "sha256": "ea8d81e85ba0c01955574c98e8b1c3e080bc1e6758c8bdf9817b3ae853fca74b"
+    },
+    "drive_before": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-drive/before-live-input.json",
+      "bytes": 49530,
+      "sha256": "b207513d8ff01cd3718d7106de9b808dcdd75c5aab82d6d46fe40c143b498af6"
+    },
+    "drive_after": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-motion-before-01-drive/after-live-input.json",
+      "bytes": 50555,
+      "sha256": "7d51fa9c0c6fd2848afcf59e55cf1f52ff8dd4675a013243f6e2f506a3bd122d"
+    },
+    "reset_execution": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-01/execution.json",
+      "bytes": 1202,
+      "sha256": "f802bf5d8064100c577e129eba42a81d496bb143037af423108965e2e8b68387"
+    },
+    "reset_before": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-01/before-live-input.json",
+      "bytes": 50555,
+      "sha256": "7d51fa9c0c6fd2848afcf59e55cf1f52ff8dd4675a013243f6e2f506a3bd122d"
+    },
+    "reset_after": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-after-stream-reset-01/after-live-input.json",
+      "bytes": 49560,
+      "sha256": "a182a333027d8f39a4484a8c84e0dfc8bd6406e379143345fe5786fa176fd1c0"
+    },
+    "session_close": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-wall-session-01/execution.json",
+      "bytes": 1062,
+      "sha256": "be9617f67902b7f756025ffae03ea4ecb8ddf7fc82fd5847ba808d608074a125"
+    },
+    "session_log": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-wall-session-01/runtime.log",
+      "bytes": 525876,
+      "sha256": "7390dfb2647822ac90f544f6c239e047849435381c9d961212e01ba8fb2ca0ee"
+    },
+    "session_final_input": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-wall-session-01/live-input.json",
+      "bytes": 49560,
+      "sha256": "a182a333027d8f39a4484a8c84e0dfc8bd6406e379143345fe5786fa176fd1c0"
+    },
+    "native_source_query_summary": {
+      "path": "artifacts/maps/wt-refine-20261118/collision-reload-03/summary.json",
+      "bytes": 15073,
+      "sha256": "47fb577080f43c647fdb6bf2d1e7c3acc27a5e2ff3d5f0eb1196a245af610fb4"
+    },
+    "default_spawn_contact_summary": {
+      "path": "artifacts/maps/wt-refine-20261118/contact-flanders-01/summary.json",
+      "bytes": 30717,
+      "sha256": "c44f0568deffd7df914433af36ba234f29a2b6fcddc7f23126b103d41f91ea4d"
+    },
+    "summary_generator": {
+      "path": "artifacts/maps/wt-refine-20261118/write-gui-collision-summary.py",
+      "bytes": 15274,
+      "sha256": "897a81e8571ac78bff4ec34842d54343e25f799135b2c5f4543e323805354443"
+    }
+  }
+}

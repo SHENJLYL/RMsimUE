@@ -1,0 +1,49 @@
+{
+  "schema": "wt_ground_normal_strength_preflight_summary_v1",
+  "status": "passed",
+  "material_version": 9,
+  "actual_checks": 80,
+  "exit_code": 0,
+  "duration_seconds": 2.1612028000090504,
+  "started_utc": "2026-11-18T10:50:32.599360+00:00",
+  "finished_utc": "2026-11-18T10:50:34.760615+00:00",
+  "verification_file": "verification.json",
+  "verification_sha256": "67418d384fddebed4c6e12b4bfe08720f95b71129629432afd4fded54775d477",
+  "execution_sha256": "dbcc71dfe53b5ddb628c7e4af6a74c1469a66a6860a56e6dfc4ed0e564ce7c01",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "world_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "source_and_world_unchanged": true,
+  "adapter": {
+    "kind": "ue_no_normal_height_gradient_scale",
+    "parameter": "HeightNormalStrength",
+    "value": 0.2,
+    "source_bump_scale": 0.08,
+    "source_height_domain": "normalized_source_uv_height",
+    "source_metres": false
+  },
+  "source_bump_scale": 0.08,
+  "source_height_instances": 34,
+  "original_height_textures_unchanged": 64,
+  "scripts_sha256": {
+    "tools/unreal/wt_height_decals.py": "b95021ec1216364c3276d3a38f587652107790a52eca57f1c0c71d37cd4e7e71",
+    "tools/unreal/wt_materials.py": "62937a3f7a2ee93fb3eeb9db59b40f41eacec62f546dcaf8952ccef4d2568c93",
+    "tools/unreal/wt_ground_material_verify.py": "e94372c7713595d53e1a1d345bab2efa05a374304121d13e317b5fa3303e4694",
+    "tools/maps/check_wt_ground_materials.py": "a8ddf83355c1a8dfc3c6e5162515a75c8e14f6197290525fffb0081e95330c55"
+  },
+  "git_diff_check_exit_code": 0,
+  "guarded_application_file": "../ground-normal-strength-candidate-01/application.json",
+  "guarded_application_sha256": "40e79aca3e2e4678a3e58e898bbad93855d872f2da01256b45f1fa99f18346e7",
+  "source_roi_analysis_file": "../ground-normal-diagnosis-01/verification.json",
+  "source_roi_analysis_sha256": "44ec9ab52b97e28584f552836004affb959a8a04d8d83bc8429c405d8df7c789",
+  "planned_native_scope": {
+    "parent_count": 4,
+    "instance_count": 36,
+    "height_instances": 34,
+    "retained_grass_layers": 16,
+    "full_material_reload_expected": 307,
+    "world_mutation": false
+  },
+  "native_run": false,
+  "visual_verified": false,
+  "grass_freshness_requirement": "After WT_Terrain authoring, independently compare all 1089 saved/current generation hashes; if outdated, perform the real existing grass bake and revalidate."
+}

@@ -1,0 +1,186 @@
+{
+  "schema": "wt_indexed_landdetail_source_verification_v1",
+  "status": "passed",
+  "completed_utc": "2026-11-18T07:46:34.448816+00:00",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "resource_sha256": "8cf1aa8f23f927e07c5034bc91d485c35102bc9d46655d458126da30ecbb6b80",
+  "source_resource_bytes": 195056,
+  "source_json_sha256": "66cb40e875ef86b612bd89bdc38a561a419061ce8e4597538ae3ee6f6640ade7",
+  "texture_inventory_sha256": "0380fe2a3f722c33a140b8eda34ea9a9687efdb6cf5dd416606f489c89c6c79b",
+  "texture_count": 26,
+  "albedo_count": 23,
+  "biome_count": 65,
+  "source_albedo_size": [
+    1024,
+    1024
+  ],
+  "source_detail_meters": [
+    11.119999885559082,
+    11.229999542236328
+  ],
+  "source_texel_meters": [
+    0.010859374888241291,
+    0.010966796427965164
+  ],
+  "used_biomes": {
+    "0": 2281175,
+    "1": 5364453,
+    "2": 2312838,
+    "4": 26781,
+    "5": 146305,
+    "6": 34599,
+    "7": 17724,
+    "8": 12688,
+    "9": 141747,
+    "10": 25792,
+    "11": 7288,
+    "12": 3761,
+    "13": 25334,
+    "14": 72261,
+    "15": 14076,
+    "16": 7374,
+    "17": 1517,
+    "18": 235066,
+    "19": 228620,
+    "20": 193465,
+    "21": 103681,
+    "22": 244200,
+    "23": 45238,
+    "24": 413108,
+    "25": 101936,
+    "26": 5489,
+    "27": 2551675,
+    "28": 1976,
+    "29": 538986,
+    "30": 5117,
+    "31": 229724,
+    "32": 54708,
+    "33": 114883,
+    "34": 554493,
+    "35": 659138
+  },
+  "asymmetric_samples": [
+    {
+      "ros_xy_m": [
+        1028.0,
+        -1020.0
+      ],
+      "source_uv": [
+        0.501953125,
+        0.501953125
+      ],
+      "pixel": [
+        2056,
+        2056
+      ],
+      "biome": 1,
+      "layers": [
+        {
+          "name": "grass_b",
+          "slice": 6,
+          "albedo": "biome_detail_grass_b_tex_d",
+          "reflectance": "biome_detail_grass_b_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_a",
+          "slice": 5,
+          "albedo": "biome_detail_grass_a_tex_d",
+          "reflectance": "biome_detail_grass_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ]
+    },
+    {
+      "ros_xy_m": [
+        1075.232351,
+        -1012.656026
+      ],
+      "source_uv": [
+        0.5250157963867188,
+        0.5055390498046874
+      ],
+      "pixel": [
+        2150,
+        2070
+      ],
+      "biome": 1,
+      "layers": [
+        {
+          "name": "grass_b",
+          "slice": 6,
+          "albedo": "biome_detail_grass_b_tex_d",
+          "reflectance": "biome_detail_grass_b_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_a",
+          "slice": 5,
+          "albedo": "biome_detail_grass_a_tex_d",
+          "reflectance": "biome_detail_grass_a_tex_r",
+          "height_scale": 0.8500000238418579,
+          "invert_height": 0.0,
+          "normal_scale": 1.0,
+          "weight_mul": 1.0
+        }
+      ]
+    },
+    {
+      "ros_xy_m": [
+        131.25,
+        -675.75
+      ],
+      "source_uv": [
+        0.0640869140625,
+        0.6700439453125
+      ],
+      "pixel": [
+        262,
+        2744
+      ],
+      "biome": 27,
+      "layers": [
+        {
+          "name": "grass_dead",
+          "slice": 7,
+          "albedo": "biome_detail_grass_dead_a_tex_d",
+          "reflectance": "biome_detail_grass_dead_a_tex_r",
+          "height_scale": 0.4000000059604645,
+          "invert_height": 0.0,
+          "normal_scale": 0.0,
+          "weight_mul": 1.0
+        },
+        {
+          "name": "grass_city_a",
+          "slice": 7,
+          "albedo": "biome_detail_grass_dead_a_tex_d",
+          "reflectance": "biome_detail_grass_dead_a_tex_r",
+          "height_scale": 0.4000000059604645,
+          "invert_height": 0.0,
+          "normal_scale": 5.0,
+          "weight_mul": 1.0
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "original_grp_bytes_match": true,
+    "original_texture_bytes_match": true,
+    "all_source_definitions_present": true,
+    "all_source_indices_in_range": true
+  },
+  "scope": "Original source bytes and offline mapping; UE compilation/rendering remain pending.",
+  "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+  "target": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\terrain-details",
+  "scene_manifest_unchanged": true
+}

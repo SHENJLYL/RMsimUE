@@ -1,0 +1,59 @@
+{
+  "schema": "wt_generated_collision_native_author_summary_v1",
+  "status": "passed",
+  "execution_sha256": "db94f8fc7e86ace7824fc3abf860b2ee8e555113f931a86d5059efc45dd29b1c",
+  "verification_sha256": "c0ff39011f41fc12fdcc69bdbac96b2af7c9b481fbbed66c10499df164c25dd6",
+  "pid": 42056,
+  "exit_code": 0,
+  "duration_seconds": 25.184208299999998,
+  "module_sha256": "2aee857b4c0feac27d034a3fd022a979e44be576086d3aa6b6f2e8ef4c38c49f",
+  "script_sha256": "756557dd235069abbd7d16999464f6fc760a3166e0de57596f86652ea3482ee6",
+  "contract": {
+    "manifest_sha256": "28dd4b9d3afc2ab8f8b978482391a1c6358139770957b94ade07ab0d81a0a8dd",
+    "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+    "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "source_instances": 18454,
+    "physical_instance_slots": 15751,
+    "mesh_assets": 203,
+    "spatial_cells": 917,
+    "scene_source_current_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "scene_source_preparation_snapshot_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_counts": {
+      "russia_rails_sleeper_a": 14349,
+      "rail_crosstie": 37,
+      "pavement_border_a": 1013,
+      "pavement_border_a_secondlayer": 334,
+      "pavement_border_a_white_secondlayer": 514,
+      "pavement_border_b": 651,
+      "pavement_border_b_secondlayer": 294,
+      "pavement_border_b_white_secondlayer": 423,
+      "pavement_border_c": 355,
+      "pavement_border_d": 242,
+      "pavement_border_e": 226,
+      "pavement_border_g": 4,
+      "sicily_pavement_border_a": 4,
+      "sicily_pavement_border_b": 8
+    }
+  },
+  "native_mesh_assets": 203,
+  "modes": {
+    "triangle_bvh": 201,
+    "convex": 2
+  },
+  "native_asset_triangles": 178849,
+  "max_import_bounds_error_cm": 0.00061798095703125,
+  "every_asset_one_cooked_shape": true,
+  "protected_before": {
+    "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+    "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "protected_after": {
+    "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+    "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "protected_files_unchanged": true,
+  "independent_source_rays_pending": true,
+  "vehicle_driving_pending": true,
+  "scope": "203 saved derived assets; source identities, exact imported triangle counts, native cooked one-shape geometry and bounds"
+}

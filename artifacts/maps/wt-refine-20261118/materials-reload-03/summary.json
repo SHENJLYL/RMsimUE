@@ -1,0 +1,465 @@
+{
+  "schema": "wt_saved_materials_compact_summary_v3",
+  "status": "passed",
+  "scope": "saved_parent_graphs_all_source_rendinst_decals_leaf_tree_ground_water_and_grass_native_shader_compilation",
+  "generated_utc": "2026-11-18T10:24:31.594625+00:00",
+  "evidence": {
+    "execution_file": "execution.json",
+    "execution_sha256": "16aa2ccfc84816c5984dbf62a0e4dbf5e73380c75c753a61cdb63c137eed0cf2",
+    "verification_file": "audit/verification.json",
+    "verification_sha256": "51df04c1c0a8d5595c8695c45d953c8f392c29f5f9e8fb45e2b8f901602972ee",
+    "engine_log_sha256": "f45a7b280495c324d256f0f6e1a62b7e9444332f83c0288bb98b16add1671563"
+  },
+  "execution": {
+    "started_utc": "2026-11-18T10:17:23.3363676Z",
+    "finished_utc": "2026-11-18T10:18:53.4784801Z",
+    "pid": 32780,
+    "exit_code": 0,
+    "duration_seconds": 90.1431163,
+    "rendering": true,
+    "shader_workers": 4
+  },
+  "bindings": {
+    "world_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+    "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+    "audit_script_sha256": "262ec5fa2f528526006455d2c24fbe9721b5927b7ac3f5f01883aa112f29f609",
+    "source_before_after_unchanged": true,
+    "world_before_after_unchanged": true,
+    "module_before_after_unchanged": true,
+    "module_scope": "Shared canonical module includes separately owned changes; this gate covers material source bindings, saved graphs and active-RHI shader compilation."
+  },
+  "counts": {
+    "parents": 11,
+    "leaf_instances": 2,
+    "height_decal_instances": 34,
+    "land_instances": 1,
+    "ground_other_instances": 1,
+    "tree_instances": 43,
+    "water_instances": 1,
+    "grass_parents": 1,
+    "grass_instances": 16,
+    "rendinst_decal_instances": 197,
+    "total": 307
+  },
+  "target_status_passed": 307,
+  "target_uasset_before_after_unchanged": 307,
+  "sorted_asset_sha256_manifest_digest": "757ff17b560de343cf28a4cdd681961bab31434bdcf2e6ae1a2ebf0135c33465",
+  "shader_validation": {
+    "active_rhi": "D3D11",
+    "parent_error_lists_empty": 12,
+    "engine_error_lines": 0,
+    "material_compile_failure_lines": 0,
+    "targets_with_completed_shader_statistics": 307,
+    "maximum_sampler_count": 16,
+    "parents": [
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal",
+        "asset_file_sha256": "8a6bf665e78cb5261cdcec2cc7690ab959ff7d00ede998df53578807aadacf1a",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 362,
+        "num_samplers": 7,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalDiffuse.WT_Parent_DecalDiffuse",
+        "asset_file_sha256": "5746ecd1bce8d2de9982e0fecc70b085d1e05d9a85f05677e7bfe585432a0fe4",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 373,
+        "num_pixel_shader_instructions": 335,
+        "num_samplers": 3,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 1,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 2,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalModulate.WT_Parent_DecalModulate",
+        "asset_file_sha256": "a9de934e285717298c6028895f4e2f86a570e3dae53ea84f919f916cb24712fb",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 321,
+        "num_pixel_shader_instructions": 161,
+        "num_samplers": 3,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 1,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 2,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalNormal.WT_Parent_DecalNormal",
+        "asset_file_sha256": "0349bbf5cf477df345b1a31eb82d2a9f5a6d40ae6246eb8e61b96958882c4637",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 373,
+        "num_pixel_shader_instructions": 323,
+        "num_samplers": 2,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 1,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 2,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass",
+        "asset_file_sha256": "b4560dfebc054f4b315511cc8180996c863eeeb5118c540d870111a107e9209e",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 355,
+        "num_pixel_shader_instructions": 362,
+        "num_samplers": 5,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_HeightDecal.WT_Parent_HeightDecal",
+        "asset_file_sha256": "161f1602559666f9ae4a148e741dad1133e92ee38ff27ba16adda353f002ee79",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 353,
+        "num_pixel_shader_instructions": 287,
+        "num_samplers": 2,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 4,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land",
+        "asset_file_sha256": "7a13e5b2f356d470196f6861cb3914022120eab194bc4015220269727102f9e1",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 1056,
+        "num_samplers": 16,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves",
+        "asset_file_sha256": "26befeb35f67a753f3c4d0618405b4e9facd8812946a34ba31e3b1fdf3e4b3b0",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 204,
+        "num_pixel_shader_instructions": 424,
+        "num_samplers": 10,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface",
+        "asset_file_sha256": "1eb9b130aec6cb523afdfa27586397c3d062c6ad9336abbbd3a8bfe393a77a34",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 146,
+        "num_pixel_shader_instructions": 424,
+        "num_samplers": 10,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 6,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Water.WT_Parent_Water",
+        "asset_file_sha256": "59c72d73f0cf4aa21918804855f86d09fe2cf232c8d68893698100941ca69108",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 260,
+        "num_samplers": 3,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 3,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain",
+        "asset_file_sha256": "9c77cda4136e3b0e192c64431f2a1f44d7f9d1879dbf4be5172c9a0e185803d8",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 932,
+        "num_samplers": 8,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 18,
+        "num_virtual_texture_samples": 15,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/WT_Grass.WT_Grass",
+        "asset_file_sha256": "d7937c6c482b002cd23598f75ef088377783a96f1383f6d49ead29a30feeefbe",
+        "recompile_errors": [],
+        "num_vertex_shader_instructions": 168,
+        "num_pixel_shader_instructions": 407,
+        "num_samplers": 6,
+        "num_vertex_texture_samples": 3,
+        "num_pixel_texture_samples": 0,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 2,
+        "num_interpolator_scalars": 0
+      }
+    ]
+  },
+  "rendinst_decals": {
+    "instance_count": 197,
+    "families": {
+      "DecalNormal": 1,
+      "DecalModulate": 157,
+      "DecalDiffuse": 39
+    },
+    "all_source_contracts_and_bindings_passed": true
+  },
+  "ground_v8": {
+    "height_instances": 34,
+    "unique_height_textures": 64,
+    "height_source_parameter": [
+      0.07999999821186066,
+      11.086956977844238,
+      13.0,
+      0.0
+    ],
+    "height_writer_output_pins": {
+      "BaseColor": "return",
+      "Roughness": "RoughnessOut",
+      "Opacity": "OpacityOut",
+      "Normal": "NormalOut",
+      "Specular": "MicrodetailPayloadOut"
+    },
+    "height_normal_in_world_space": true,
+    "native_opacity_multiplication_count": 1,
+    "microdetail_array": {
+      "width": 512,
+      "height": 512,
+      "slices": 12,
+      "mips": 10,
+      "source_width": 512,
+      "source_height": 512,
+      "source_slices": 12,
+      "source_textures_in_order": [
+        "microdetail_stone_a_tex_n_D",
+        "microdetail_scan_asphalt_tex_n_D",
+        "microdetail_sand_a_tex_n_D",
+        "microdetail_soil_a_tex_n_D",
+        "microdetail_generic_granules_a_tex_n_D",
+        "microdetail_grass_a_tex_n_D",
+        "microdetail_forest_floor_a_tex_n_D",
+        "microdetail_fabric_a_tex_n_D",
+        "microdetail_wood_b_tex_n_D",
+        "microdetail_metal_a_tex_n_D",
+        "microdetail_snow_a_tex_n_D",
+        "microdetail_generic_granules_a_tex_n_D"
+      ],
+      "array_file_sha256": "d493ee69512b4b40de83a204a2ee706b678791a2488a6aec85d4154bd42a4cdd",
+      "definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54"
+    },
+    "duplicate_slot4_and11_retained": true,
+    "composition_order": "source_land_detail_then_RVT_source_over_then_source_microdetail",
+    "transport": "raw_specular_payload_native_opacity_then_clear_recovery",
+    "selection": "continuous_floor_next_fraction_with_coverage_and_valid_payload_fade",
+    "uv_scale_per_m": 0.5099999904632568,
+    "id_scale": 11.086956977844238,
+    "terrain_source_output_pins": {
+      "BaseNormalWorld": "NormalOut",
+      "BaseRoughness": "RoughnessOut",
+      "BaseMetallic": "MetallicOut",
+      "DecalMask": "Mask",
+      "DecalIdPayload": "Specular",
+      "composite_DecalColor": "BaseColor",
+      "composite_DecalNormalWorld": "Normal",
+      "composite_DecalRoughness": "Roughness",
+      "composite_DecalMask": "Mask"
+    },
+    "both_land_and_terrain_graphs_verified": true
+  },
+  "landdetail": {
+    "array": {
+      "width": 1024,
+      "height": 1024,
+      "slices": 23,
+      "mips": 11,
+      "source_width": 1024,
+      "source_height": 1024,
+      "source_slices": 23,
+      "source_textures_in_order": [
+        "biome_detail_asphalt_a_tex_d_C",
+        "biome_detail_asphalt_c_tex_d_C",
+        "biome_detail_burnt_grass_a_tex_d_C",
+        "biome_detail_city_tile_a_tex_d_C",
+        "biome_detail_forest_floor_a_tex_d_C",
+        "biome_detail_grass_a_tex_d_C",
+        "biome_detail_grass_b_tex_d_C",
+        "biome_detail_grass_dead_a_tex_d_C",
+        "biome_detail_moss_a_tex_d_C",
+        "biome_detail_mud_b_tex_d_C",
+        "biome_detail_pebbles_shore_a_tex_d_C",
+        "biome_detail_rock_boulders_a_tex_d_C",
+        "biome_detail_rock_chunks_a_tex_d_C",
+        "biome_detail_rocks_smooth_tex_d_C",
+        "biome_detail_roots_b_tex_d_C",
+        "biome_detail_sand_d_tex_d_C",
+        "biome_detail_sand_soil_a_tex_d_C",
+        "biome_detail_sett_small_old_tex_d_C",
+        "biome_detail_slope_soil_a_tex_d_C",
+        "biome_detail_slope_soil_d_tex_d_C",
+        "biome_detail_soil_a_tex_d_C",
+        "biome_detail_soil_b_tex_d_C",
+        "biome_detail_trampled_soil_a_tex_d_C"
+      ],
+      "array_file_sha256": "8c0e65e458687ff23f58dee90865b530833ba72c54e2fe2d9a247c284b36281f",
+      "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86"
+    },
+    "source_biome_count": 65,
+    "normal_adapter": "UE surface gradient from original alpha height, height_scale and normal_scale; no geometry displacement"
+  },
+  "grass_v3": {
+    "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+    "parent_count": 1,
+    "instance_count": 16,
+    "source_color_vectors_verified": 96,
+    "surface_code_sha256": "a0be87bf4bb32fd4f0c1cb089a42101cc270f2dfef394e7e8f2b2fb927ec2c35",
+    "normal_code_sha256": "9573d72de22b04e3a70678fff836a3b6e50c899857f621313d9a6e1d6419f8c3",
+    "properties": {
+      "blend_mode": "<BlendMode.BLEND_MASKED: 1>",
+      "two_sided": true,
+      "shading_model": "<MaterialShadingModel.MSM_TWO_SIDED_FOLIAGE: 6>",
+      "opacity_mask_clip_value": 0.3333333432674408,
+      "tangent_space_normal": false
+    },
+    "output_pins": {
+      "<MaterialProperty.MP_BASE_COLOR: 5>": "return",
+      "<MaterialProperty.MP_OPACITY_MASK: 2>": "OpacityOut",
+      "<MaterialProperty.MP_ROUGHNESS: 8>": "RoughnessOut",
+      "<MaterialProperty.MP_NORMAL: 10>": "",
+      "source_normal_transform": "NormalOut"
+    },
+    "surface_input_names": [
+      "Masks",
+      "Alpha",
+      "Land",
+      "UV",
+      "World",
+      "Random",
+      "Fade",
+      "Correction",
+      "PackedNormal",
+      "UseSourceNormal",
+      "DefaultRoughness",
+      "DefaultTransmission",
+      "RMin",
+      "RMax",
+      "GMin",
+      "GMax",
+      "BMin",
+      "BMax"
+    ],
+    "normal_input_names": [
+      "NormalWorld",
+      "InstanceUp",
+      "Side",
+      "UseSourceNormal",
+      "MinimumUp"
+    ],
+    "use_source_normal_counts": {
+      "0": 13,
+      "1": 3
+    },
+    "normal_models": [
+      {
+        "layer": "ue_short_grass_0",
+        "model": "ue_generic_grass_small_a",
+        "texture_binding": {
+          "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_small_a_PackedNormal.ue_generic_grass_small_a_PackedNormal",
+          "source_png_sha256": "6a7a8ca3b0c92a661efd9b3ea4781fef9af844821eb93a42df4e280d7b1fd927",
+          "file_sha256": "1f8a269e079bffb0aaa570b4f6923a00e818b14934541342df5881acf030eaf0",
+          "file_sha256_after": "1f8a269e079bffb0aaa570b4f6923a00e818b14934541342df5881acf030eaf0",
+          "srgb": false,
+          "address": "clamp",
+          "native_dimensions": [
+            512,
+            512
+          ]
+        }
+      },
+      {
+        "layer": "ue_short_grass_1",
+        "model": "ue_generic_grass_tall_a",
+        "texture_binding": {
+          "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_a_PackedNormal.ue_generic_grass_tall_a_PackedNormal",
+          "source_png_sha256": "fdcf7b85c6d2d6b16692f3a6a8e590cf5821da611d80d15c423f9942219c9e7f",
+          "file_sha256": "600c322ba939d6158f956c16eb49bba2e02a0c2e75b157d82e07b1ae7132babd",
+          "file_sha256_after": "600c322ba939d6158f956c16eb49bba2e02a0c2e75b157d82e07b1ae7132babd",
+          "srgb": false,
+          "address": "clamp",
+          "native_dimensions": [
+            512,
+            512
+          ]
+        }
+      },
+      {
+        "layer": "ue_short_grass_2",
+        "model": "ue_generic_grass_tall_b",
+        "texture_binding": {
+          "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_b_PackedNormal.ue_generic_grass_tall_b_PackedNormal",
+          "source_png_sha256": "feb888688e2cc181aeb41e9b70bca6f420d222a7a1c7f269701af2472b5e22d0",
+          "file_sha256": "a7fcec964a2890106edbc7d74c90c73cde970387020cbe821714a50a5a8cdd1b",
+          "file_sha256_after": "a7fcec964a2890106edbc7d74c90c73cde970387020cbe821714a50a5a8cdd1b",
+          "srgb": false,
+          "address": "clamp",
+          "native_dimensions": [
+            512,
+            512
+          ]
+        }
+      }
+    ],
+    "normal_output_uses_single_unnamed_custom_output": true
+  },
+  "preserved_failure": {
+    "directory": "../materials-reload-02",
+    "execution_sha256": "5c49cefa32c8a7d707dd2a54695ecfb8a786535928d8e5a4af8f0d513e610411",
+    "verification_sha256": "5a00927c841184981e7984b59c4af4f31ebd9273086652c27fb82af9c289817b",
+    "pid": 47544,
+    "exit_code": -1,
+    "duration_seconds": 92.0948564,
+    "error": "grass source material output pin differs: <MaterialProperty.MP_NORMAL: 10>",
+    "fix_evidence_file": "../materials-reload-02/source-pin-fix.json",
+    "fix_evidence_sha256": "89c646639da63a96219f82322e17ceb325799d25cb02e2cad7b8b13a3cb51a0e",
+    "root_cause": "UE Custom nodes with zero AdditionalOutputs expose an unnamed primary output; verifier previously expected return. The fix retains exact normal node/code/type/connection checks and expects the native empty output name. No asset rebuild was needed."
+  },
+  "supporting_scripts_sha256": {
+    "wt_materials.py": "d76e0f6f21c88ba2807a374ce311673fd80cf8f348f69e3b77bc5ec61c6b5684",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "wt_landclass.py": "5247438e08c2e03432b653935ffcb23c0fcd8974356a50b67bb1520f73cd1d65",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917",
+    "wt_landdetail.py": "5babc96731e4f18c43682af5bb968119ed1f050d5be6a3fb1114a317be37f900",
+    "wt_rendinst_decals.py": "1a8941e15285493ec975fa93b09aea80d19145cb61c8446c4c68a343d71e7acc",
+    "wt_material_refine_verify.py": "57489b2c8192cc1b5934a63008416f87a7b7c481375b5c9cd99b27639af80c4e",
+    "wt_height_decals.py": "6f7291ff8614fad4e480999a2633c0c07107efa144e41f817177acd5329aa5bb",
+    "wt_ground_microdetails.py": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+    "wt_ground_material_verify.py": "904e7e570f0a4bea513fde14c6a15f3c9aca472065deb38b2efc23d8b08d02d9"
+  },
+  "visual_acceptance": {
+    "verified_by_this_gate": false,
+    "observed_separate_contact_pair": "contact-flanders-01 versus contact-flanders-02",
+    "pending": "Local lower-left gravel diagonal/fragment response is under source-height and microdetail-normal review; moving and GUI evidence is reviewed separately."
+  },
+  "limitations": [
+    "Compilation target is the active RHI shader platform; platform coverage is recorded in the accompanying Unreal log.",
+    "This gate does not assess rendered appearance or wind animation."
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "schema": "wt_native_material_refine_summary_v1",
+  "status": "passed",
+  "created_utc": "2026-11-18T08:25:46.765786+00:00",
+  "scope": "Incremental authoring with native graph/source-binding checks and completed shader statistics; independent reload and visual acceptance remain separate.",
+  "execution": {
+    "pid": 20492,
+    "exit_code": 0,
+    "duration_seconds": 197.7521351,
+    "started_utc": "2026-11-18T08:18:30.6178172Z",
+    "finished_utc": "2026-11-18T08:21:48.3659492Z",
+    "module_sha256": "028c4791c5a637d66544c229e3336a11c63b4a92e5d36ce452f3d17b7000b3d7",
+    "module_sha256_after": "028c4791c5a637d66544c229e3336a11c63b4a92e5d36ce452f3d17b7000b3d7",
+    "shader_workers": 4,
+    "rendering": true
+  },
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "rhi": "D3D11 PCD3D_SM5",
+  "texture_streaming_pool_mib": 4096,
+  "actual_asset_counts": {
+    "parents": 5,
+    "instances": 198,
+    "total": 203
+  },
+  "instance_adapter_counts": {
+    "DecalNormal": 1,
+    "DecalModulate": 157,
+    "DecalDiffuse": 39,
+    "Land": 1
+  },
+  "source_landdetail": {
+    "definition_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+    "verification_sha256": "3e97ef946fc55286d3453bdd30704872a673245277328cc91bd24f3e5c719092",
+    "biome_count": 65,
+    "detail_texture_count": 23
+  },
+  "texture_array": {
+    "asset": "/Game/RMSim/Maps/wt_vlaanderen/Textures/WT_LandDetailAlbedo.WT_LandDetailAlbedo",
+    "native": {
+      "width": 1024,
+      "height": 1024,
+      "slices": 23,
+      "mips": 11,
+      "source_width": 1024,
+      "source_height": 1024,
+      "source_slices": 23,
+      "source_textures": [
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_asphalt_a_tex_d_C.biome_detail_asphalt_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_asphalt_c_tex_d_C.biome_detail_asphalt_c_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_burnt_grass_a_tex_d_C.biome_detail_burnt_grass_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_city_tile_a_tex_d_C.biome_detail_city_tile_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_forest_floor_a_tex_d_C.biome_detail_forest_floor_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_a_tex_d_C.biome_detail_grass_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_b_tex_d_C.biome_detail_grass_b_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_grass_dead_a_tex_d_C.biome_detail_grass_dead_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_moss_a_tex_d_C.biome_detail_moss_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_mud_b_tex_d_C.biome_detail_mud_b_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_pebbles_shore_a_tex_d_C.biome_detail_pebbles_shore_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rock_boulders_a_tex_d_C.biome_detail_rock_boulders_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rock_chunks_a_tex_d_C.biome_detail_rock_chunks_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_rocks_smooth_tex_d_C.biome_detail_rocks_smooth_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_roots_b_tex_d_C.biome_detail_roots_b_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sand_d_tex_d_C.biome_detail_sand_d_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sand_soil_a_tex_d_C.biome_detail_sand_soil_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_sett_small_old_tex_d_C.biome_detail_sett_small_old_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_slope_soil_a_tex_d_C.biome_detail_slope_soil_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_slope_soil_d_tex_d_C.biome_detail_slope_soil_d_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_soil_a_tex_d_C.biome_detail_soil_a_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_soil_b_tex_d_C.biome_detail_soil_b_tex_d_C",
+        "/Game/RMSim/Maps/wt_vlaanderen/Textures/biome_detail_trampled_soil_a_tex_d_C.biome_detail_trampled_soil_a_tex_d_C"
+      ]
+    },
+    "source_order_matches_definition": true,
+    "file_sha256": "8c0e65e458687ff23f58dee90865b530833ba72c54e2fe2d9a247c284b36281f",
+    "native_reports_agree_for_land_and_terrain": true
+  },
+  "shader_compilation": {
+    "parent_completed_recompile_guard_passed": true,
+    "target_count": 203,
+    "statistics_ranges": {
+      "num_vertex_shader_instructions": {
+        "min": 136,
+        "max": 373
+      },
+      "num_pixel_shader_instructions": {
+        "min": 161,
+        "max": 979
+      },
+      "num_samplers": {
+        "min": 2,
+        "max": 15
+      }
+    },
+    "failed_compile_or_engine_error_lines": [],
+    "parents": [
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalDiffuse.WT_Parent_DecalDiffuse",
+        "statistics": {
+          "num_vertex_shader_instructions": 373,
+          "num_pixel_shader_instructions": 335,
+          "num_samplers": 3,
+          "num_vertex_texture_samples": 3,
+          "num_pixel_texture_samples": 1,
+          "num_virtual_texture_samples": 0,
+          "num_uv_scalars": 2,
+          "num_interpolator_scalars": 0
+        },
+        "file_sha256": "5746ecd1bce8d2de9982e0fecc70b085d1e05d9a85f05677e7bfe585432a0fe4"
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalModulate.WT_Parent_DecalModulate",
+        "statistics": {
+          "num_vertex_shader_instructions": 321,
+          "num_pixel_shader_instructions": 161,
+          "num_samplers": 3,
+          "num_vertex_texture_samples": 3,
+          "num_pixel_texture_samples": 1,
+          "num_virtual_texture_samples": 0,
+          "num_uv_scalars": 2,
+          "num_interpolator_scalars": 0
+        },
+        "file_sha256": "a9de934e285717298c6028895f4e2f86a570e3dae53ea84f919f916cb24712fb"
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_DecalNormal.WT_Parent_DecalNormal",
+        "statistics": {
+          "num_vertex_shader_instructions": 373,
+          "num_pixel_shader_instructions": 323,
+          "num_samplers": 2,
+          "num_vertex_texture_samples": 3,
+          "num_pixel_texture_samples": 1,
+          "num_virtual_texture_samples": 0,
+          "num_uv_scalars": 2,
+          "num_interpolator_scalars": 0
+        },
+        "file_sha256": "0349bbf5cf477df345b1a31eb82d2a9f5a6d40ae6246eb8e61b96958882c4637"
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Land.WT_Parent_Land",
+        "statistics": {
+          "num_vertex_shader_instructions": 136,
+          "num_pixel_shader_instructions": 979,
+          "num_samplers": 15,
+          "num_vertex_texture_samples": 0,
+          "num_pixel_texture_samples": 15,
+          "num_virtual_texture_samples": 12,
+          "num_uv_scalars": 0,
+          "num_interpolator_scalars": 0
+        },
+        "file_sha256": "9c59c53356fe99d936e16dd7c3e7125b79da38670eea001a42800649989a34b5"
+      },
+      {
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain",
+        "statistics": {
+          "num_vertex_shader_instructions": 136,
+          "num_pixel_shader_instructions": 855,
+          "num_samplers": 7,
+          "num_vertex_texture_samples": 0,
+          "num_pixel_texture_samples": 15,
+          "num_virtual_texture_samples": 12,
+          "num_uv_scalars": 0,
+          "num_interpolator_scalars": 0
+        },
+        "file_sha256": "f2b3440f45458e6bfce202f462a9744d8cd7bad92424a65fc9f46a2ef52e13b8"
+      }
+    ]
+  },
+  "grass_closure": {
+    "unchanged": true,
+    "upstream_node_count": 23,
+    "layer_count": 13,
+    "types": [
+      {
+        "name": "layer_00",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_00.WT_layer_00"
+      },
+      {
+        "name": "layer_01",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_01.WT_layer_01"
+      },
+      {
+        "name": "layer_02",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_02.WT_layer_02"
+      },
+      {
+        "name": "layer_03",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_03.WT_layer_03"
+      },
+      {
+        "name": "layer_04",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_04.WT_layer_04"
+      },
+      {
+        "name": "layer_05",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_05.WT_layer_05"
+      },
+      {
+        "name": "layer_06",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_06.WT_layer_06"
+      },
+      {
+        "name": "layer_07",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_07.WT_layer_07"
+      },
+      {
+        "name": "layer_08",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_08.WT_layer_08"
+      },
+      {
+        "name": "layer_09",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_09.WT_layer_09"
+      },
+      {
+        "name": "layer_10",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_10.WT_layer_10"
+      },
+      {
+        "name": "layer_11",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_11.WT_layer_11"
+      },
+      {
+        "name": "layer_12",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_12.WT_layer_12"
+      }
+    ],
+    "closure_sha256": "6a6d64a670be28e4541955eb08bd8da3e8deea66e885d82cc2b70978bd48e625",
+    "scope": "Preserved the existing 13-layer graph; enhanced 16-layer grass authoring is a separate stage."
+  },
+  "checks": {
+    "original_source_manifest_unchanged": true,
+    "original_world_unchanged": true,
+    "stable_material_identities": true,
+    "retained_grass_output_subgraph": true,
+    "native_material_graphs": true,
+    "completed_native_shader_statistics": true
+  },
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "world_unchanged": true,
+  "source_manifest_unchanged": true,
+  "material_report_sha256": "0f5090fd1d5f4bd0294b6ba8e13cc0e8fe1536e77ddbb4ee9a29a8dc5ced572c",
+  "scripts_sha256": {
+    "update_wt_materials.py": "01701894d55ebbe202030ba69e63c153c637a199b219af3a668895a59ec4e602",
+    "wt_materials.py": "c0fbcf28abadf6cc3b04c1ba67701eb1dd4be12d4e97968ef369a71e343a4c6e",
+    "wt_landclass.py": "5247438e08c2e03432b653935ffcb23c0fcd8974356a50b67bb1520f73cd1d65",
+    "wt_landdetail.py": "5babc96731e4f18c43682af5bb968119ed1f050d5be6a3fb1114a317be37f900",
+    "wt_rendinst_decals.py": "1a8941e15285493ec975fa93b09aea80d19145cb61c8446c4c68a343d71e7acc",
+    "wt_material_refine_verify.py": "57489b2c8192cc1b5934a63008416f87a7b7c481375b5c9cd99b27639af80c4e",
+    "verify_wt_materials.py": "071a251322b5fa7e973734fd1db9c5f24fc9eae25806fc66678952d56b859598",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952"
+  },
+  "evidence": {
+    "audit/verification.json": {
+      "file": "audit/verification.json",
+      "sha256": "537015f820a94785a848fde42f1d7088922dc77f928f637d0963643e91679797"
+    },
+    "execution.json": {
+      "file": "execution.json",
+      "sha256": "dc62f3fee9d16e5803d116fa9ec9d657569f576d0cfe93326b16fb5a04b5152d"
+    },
+    "engine.log": {
+      "file": "engine.log",
+      "sha256": "246701e985142dd78aba3570f40001a85c5ac0bdcdac22d9914d8cce2ffab8aa"
+    }
+  },
+  "independent_reload_verified": false,
+  "rendering_visual_quality_verified": false,
+  "adaptation_scope": {
+    "modulate": "Source linear color/intensity/depth and camera offset via UE Surface Unlit Modulate; applies to lit scene color.",
+    "normal_only": "Native mesh DeferredDecal with no BaseColor output.",
+    "ground": "Source 65-biome dual-layer color-height table, source noise/flow and 23 original albedo-height textures.",
+    "normal": "UE surface gradient from original alpha height, height_scale and normal_scale; no geometry displacement.",
+    "remaining": [
+      "Original decal smoothness/metalness multiplication",
+      "Independent diffuse-decal normal opacity",
+      "Per-section source draw_order and painting palettes",
+      "Packed ground reflectance/self-color/wetness and other landclass microdetails",
+      "Vegetation wind and native Dagor lighting/postprocessing"
+    ]
+  }
+}

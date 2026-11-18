@@ -1,0 +1,101 @@
+{
+  "schema": "wt_generated_collision_gameplay_summary_v1",
+  "status": "passed",
+  "execution_sha256": "6d981202a3d1538328a0968f145571f2e9e2841a65a438d691c975290ff907b5",
+  "verification_sha256": "1051cda765b72f4023821ccde5073abe800db58d0da52f83af906e47ce5c4d44",
+  "control_result_sha256": "d1dec13cb826cba562ba39d68128f579001322360a9db2547a21c8754cbd9356",
+  "runtime_log_sha256": "85deb5c57be40edf0620ce205221364c2410a738ff5ea037e77d84f2ffc6e54a",
+  "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+  "native_process_exit": 0,
+  "wrapper_exit": 0,
+  "execution_record_elapsed_seconds": 60.654871,
+  "inputs_unchanged": true,
+  "checks": [
+    {
+      "name": "physical_settle",
+      "passed": true,
+      "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99904"
+    },
+    {
+      "name": "physical_forward_route",
+      "passed": true,
+      "detail": "Motor/contact driven route progress 340.681/340.000cm, drift -0.073cm, time 4.085s"
+    },
+    {
+      "name": "physical_brake",
+      "passed": true,
+      "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+    },
+    {
+      "name": "physical_reverse_route",
+      "passed": true,
+      "detail": "Reverse crosses same source route: remaining 9.675cm, drift -0.007cm"
+    },
+    {
+      "name": "physical_shared_reset_without_training",
+      "passed": true,
+      "detail": "Shared R restores source-map spawn: resets=1 distance=0.0134cm speed=0.0000cm/s"
+    }
+  ],
+  "decoded_captures": 8,
+  "requested_rhi": "D3D11",
+  "single_shaderworker": true,
+  "os_input_verified": false,
+  "generated_collision_components": 18,
+  "generated_collision_instances": 327,
+  "generated_collision_ready": true,
+  "runtime": {
+    "WT_GENERATED_COLLISION_READY": {
+      "schema": "rmsim_generated_collision_runtime_v1",
+      "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+      "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+      "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+      "source_instances": 18454,
+      "mesh_assets": 203,
+      "total_cells": 917,
+      "active_cells": 18,
+      "active_native_bodies": 327,
+      "active_shapes": 327,
+      "active_source_instances": 486,
+      "peak_native_bodies": 327,
+      "query_range_with_mount_m": 0,
+      "load_radius_m": 48,
+      "retain_radius_m": 80,
+      "activation_passes": 1,
+      "cells_created": 18,
+      "cells_released": 0,
+      "initial_asset_load_seconds": 0.7879953980445862,
+      "max_refresh_seconds": 0.0036838017404079437,
+      "spawn_footprint_pinned": true,
+      "physics_ready": true
+    },
+    "WT_GENERATED_COLLISION_FINAL": {
+      "schema": "rmsim_generated_collision_runtime_v1",
+      "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+      "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+      "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+      "source_instances": 18454,
+      "mesh_assets": 203,
+      "total_cells": 917,
+      "active_cells": 18,
+      "active_native_bodies": 327,
+      "active_shapes": 327,
+      "active_source_instances": 486,
+      "peak_native_bodies": 327,
+      "query_range_with_mount_m": 0,
+      "load_radius_m": 48,
+      "retain_radius_m": 80,
+      "activation_passes": 1,
+      "cells_created": 18,
+      "cells_released": 0,
+      "initial_asset_load_seconds": 0.7879953980445862,
+      "max_refresh_seconds": 0.0036838017404079437,
+      "spawn_footprint_pinned": true,
+      "physics_ready": true
+    }
+  },
+  "generated_collider_contact_names": [],
+  "generated_collider_contact_name_scope": "Control result contains no named generated-collider contact event; this run proves default-route physical driving and shared reset with generated bodies active. Native source hit identity is checked by collision-reload-03.",
+  "timing_scope": "Actual gameplay Initialize before vehicle contact activation, with no preceding collision asset audit in this process.",
+  "real_continuous_drive_over_8m_pending": true
+}
