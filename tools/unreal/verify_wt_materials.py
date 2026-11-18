@@ -26,6 +26,11 @@ from wt_tree_alpha import tree_alpha_contract
 from wt_landclass import LANDCLASS_CODE, validate_landclass_surface, shader_vectors
 from wt_water import water_surface_contract, COLOR_RGBA as WATER_COLOR_RGBA, UE_ROUGHNESS as WATER_ROUGHNESS, UE_METALLIC as WATER_METALLIC, UE_SPECULAR as WATER_SPECULAR
 from wt_vertex_opacity import HEIGHT_DECAL_SHADER, validate_scene_vertex_opacity
+import wt_rendinst_decals as rendinst_decals
+import wt_landdetail
+from wt_material_refine_verify import decal_parent, decal_instance, landdetail_graph
+import wt_ground_microdetails
+from wt_ground_material_verify import height_instance, rvt_writer, microdetail_graph, _output_pin
 
 
 STAT_FIELDS = (
@@ -89,7 +94,7 @@ def landclass_texture_record(texture, entry, material_folder):
                 srgb=entry['srgb'], nearest=entry['nearest'], no_mips=entry['no_mips'], address=entry['address'])
 
 
-def graph_record(material, leaves=False, landclass=None):
+def graph_record(material, leaves=False, landclass=None, landdetail=None, package=None, microdetails=None):
     edit = unreal.MaterialEditingLibrary
     expressions = list(edit.get_material_expressions(material))
     custom_inputs = []
@@ -113,13 +118,21 @@ def graph_record(material, leaves=False, landclass=None):
                                ': ' + json.dumps(dict(names=names, nodes=[node.get_path_name() if node else None for node in nodes])))
         custom_inputs.append(dict(expression=expression.get_path_name(),
                                   inputs={name: node.get_path_name() for name, node in zip(names, nodes)}))
-    base = edit.get_material_property_input_node(material, unreal.MaterialProperty.MP_BASE_COLOR)
-    if not base:
-        raise RuntimeError('saved material has no BaseColor graph: ' + material.get_path_name())
-    result = dict(expression_count=len(expressions), base_color=base.get_path_name(),
-                  custom_inputs=custom_inputs, parameters=parameters)
     name = material.get_name()
-    if name not in ('WT_Parent_HeightDecal', 'WT_Terrain', 'WT_Parent_Land', 'WT_Parent_Water'):
+    if name in ('WT_Parent_HeightDecal','WT_Parent_Decal','WT_Parent_Land','WT_Terrain') and microdetails is None:
+        if package is None:
+            raise RuntimeError('ground material gate requires its original microdetail package')
+        microdetails = wt_ground_microdetails.validate(package)
+    base = edit.get_material_property_input_node(material, unreal.MaterialProperty.MP_BASE_COLOR)
+    if not base and name not in ('WT_Parent_DecalModulate', 'WT_Parent_DecalNormal'):
+        raise RuntimeError('saved material has no BaseColor graph: ' + material.get_path_name())
+    result = dict(expression_count=len(expressions), base_color=base.get_path_name() if base else None,
+                  custom_inputs=custom_inputs, parameters=parameters)
+    source_decal = decal_parent(material)
+    if source_decal is not None:
+        result['source_rendinst_decal'] = source_decal
+    if name not in ('WT_Parent_HeightDecal', 'WT_Terrain', 'WT_Parent_Land', 'WT_Parent_Water',
+                    'WT_Parent_DecalModulate', 'WT_Parent_DecalDiffuse', 'WT_Parent_DecalNormal'):
         if not any(isinstance(node, unreal.MaterialExpressionCustom) and str(node.get_editor_property('code')) == OBJECT_CODE for node in expressions):
             raise RuntimeError('saved source surface graph differs from its current alpha/texture adapter')
     if name == 'WT_Parent_Water':
@@ -173,12 +186,12 @@ def graph_record(material, leaves=False, landclass=None):
         result['source_landclass_surface'] = dict(code_sha256=hashlib.sha256(LANDCLASS_CODE.encode()).hexdigest(),
             verification_sha256=landclass['verification_sha256'], texture_bindings=binding,
             shader_vectors=shader_vectors(landclass))
-    if name == 'WT_Terrain':
-        codes = [str(node.get_editor_property('code')) for node in expressions if isinstance(node, unreal.MaterialExpressionCustom)]
-        if not any('float2 mapUV=float2(World.x,-World.y)/204800.0;' in code
-                   and 'float2 detailUV=World.xy/100.0/11.12;' in code for code in codes):
-            raise RuntimeError('terrain source macro/index negative-V or detail positive-XZ mapping differs')
-        result['terrain_source_uv'] = dict(macro_index='(x,-z)/2048', detail='(x,z)/11.12')
+    if name in ('WT_Terrain', 'WT_Parent_Land'):
+        if landdetail is None or package is None:
+            raise RuntimeError('ground detail graph requires its original source definition')
+        result['source_landdetail'] = landdetail_graph(material, landdetail, package)
+        result['terrain_source_uv'] = dict(macro_index='(x,-z)/2048',
+            detail_meters=landdetail['table']['source_parameters'])
     if name == 'WT_Parent_HeightDecal':
         opacity = edit.get_material_property_input_node(material, unreal.MaterialProperty.MP_OPACITY)
         if opacity != base or str(base.get_editor_property('code')) != HEIGHT_DECAL_CODE:
@@ -207,9 +220,12 @@ def graph_record(material, leaves=False, landclass=None):
         if not isinstance(mask, unreal.MaterialExpressionConstant) or mask.get_editor_property('r') != 1.0:
             raise RuntimeError('ground decal RVT coverage mask must write one before opacity blending')
         result['rvt_writer'] = {field: upstream[field].get_path_name() for field in required}
+        result['source_ground_writer'] = rvt_writer(material, microdetails)
     if name in ('WT_Parent_Land', 'WT_Terrain'):
         samples = [node for node in expressions if isinstance(node, unreal.MaterialExpressionRuntimeVirtualTextureSample)]
-        if len(samples) != 1 or str(base.get_editor_property('code')) != RVT_COMPOSITE_CODE:
+        composites = [node for node in expressions if isinstance(node,unreal.MaterialExpressionCustom)
+                      and str(node.get_editor_property('code'))==RVT_COMPOSITE_CODE]
+        if len(samples) != 1 or len(composites) != 1:
             raise RuntimeError('ground receiver must use one RVT and the premultiplied source-over composition')
         sample = samples[0]
         fields = [str(field) for field in edit.get_material_expression_input_names(sample)]
@@ -229,6 +245,7 @@ def graph_record(material, leaves=False, landclass=None):
             raise RuntimeError('RVT sampling layout, feedback or world-normal contract differs')
         result['rvt_receiver'] = dict(asset=texture.get_path_name(), world_position_input=position.get_path_name(),
             input_names=fields, composition_code_sha256=hashlib.sha256(RVT_COMPOSITE_CODE.encode()).hexdigest())
+        result['source_ground_microdetails'] = microdetail_graph(material,microdetails,RVT_COMPOSITE_CODE)
     if leaves:
         wpo = edit.get_material_property_input_node(material, unreal.MaterialProperty.MP_WORLD_POSITION_OFFSET)
         if not wpo:
@@ -282,8 +299,9 @@ def _float32(value):
 
 
 def _grass_vector(value, expected, label):
+    from wt_grass import source_color_linear
     actual = [float(value.get_editor_property(c)) for c in ('r', 'g', 'b', 'a')]
-    if actual != [_float32(v) for v in expected]:
+    if actual != [_float32(v) for v in source_color_linear(expected)]:
         raise RuntimeError('grass source color differs: ' + label)
     return actual
 
@@ -291,14 +309,30 @@ def _grass_vector(value, expected, label):
 def grass_texture_bindings(checked, model_id):
     model = checked['models'][model_id]
     material = model['material']
-    return {
+    address = material.get('texture_address','wrap')
+    result = {
         'Masks': dict(name=model_id+'_Masks', path=model['mask_path'],
-                      sha256=material['texture_sha256'], srgb=False),
+                      sha256=material['texture_sha256'], srgb=False, address=address),
         'Alpha': dict(name=model_id+'_Alpha', path=model['alpha_path'],
-                      sha256=material['alpha_texture_sha256'], srgb=False),
+                      sha256=material['alpha_texture_sha256'], srgb=False, address=address),
         'Land': dict(name='WT_GrassLandColor', path=checked['land_path'],
-                     sha256=checked['definition']['land_color']['texture_sha256'], srgb=True),
+                     sha256=checked['definition']['land_color']['texture_sha256'], srgb=True, address='wrap'),
     }
+    normals = [(name,item) for name,item in checked['models'].items() if item.get('normal_path') is not None]
+    if model.get('normal_path') is not None:
+        normal_id,normal_model = model_id,model
+    elif normals:
+        normal_id,normal_model = normals[0]
+    else:
+        first = next(iter(checked['models']))
+        fallback = checked['models'][first]
+        result['PackedNormal'] = dict(name=first+'_Masks',path=fallback['mask_path'],
+            sha256=fallback['material']['texture_sha256'],srgb=False,
+            address=fallback['material'].get('texture_address','wrap'))
+        return result
+    result['PackedNormal'] = dict(name=normal_id+'_PackedNormal',path=normal_model['normal_path'],
+        sha256=normal_model['material']['normal_texture_sha256'],srgb=False,address='clamp')
+    return result
 
 
 def grass_texture_record(texture, expected, root):
@@ -318,14 +352,14 @@ def grass_texture_record(texture, expected, root):
     dimensions = completed_texture_size(texture)
     if dimensions != _png_dimensions(expected['path'])[0]:
         raise RuntimeError('grass texture native/source dimensions differ: ' + path)
-    if expected['srgb'] and (texture.get_editor_property('address_x') != unreal.TextureAddress.TA_WRAP
-                            or texture.get_editor_property('address_y') != unreal.TextureAddress.TA_WRAP):
-        raise RuntimeError('grass macro land color must retain original wrapped addressing')
+    address = unreal.TextureAddress.TA_CLAMP if expected['address']=='clamp' else unreal.TextureAddress.TA_WRAP
+    if texture.get_editor_property('address_x') != address or texture.get_editor_property('address_y') != address:
+        raise RuntimeError('grass source atlas addressing differs: '+path)
     after = digest(asset_file(path))
     if after != before:
         raise RuntimeError('grass texture audit modified a saved asset')
     return dict(asset=path, source_png_sha256=expected['sha256'], file_sha256=before,
-                file_sha256_after=after, srgb=expected['srgb'], native_dimensions=dimensions)
+                file_sha256_after=after, srgb=expected['srgb'], address=expected['address'], native_dimensions=dimensions)
 
 
 def grass_surface_properties(material, checked, instance=False):
@@ -348,82 +382,142 @@ def grass_surface_properties(material, checked, instance=False):
             result['override_'+key] = enabled
     if not parent.get_editor_property('used_with_instanced_static_meshes'):
         raise RuntimeError('grass parent has no instanced-static-mesh shader usage')
+    if parent.get_editor_property('tangent_space_normal'):
+        raise RuntimeError('grass V3 must output its verified world-space normal')
+    result['tangent_space_normal']=False
     if instance and int(overrides.get_editor_property('override_usage_flags')) != 0:
         raise RuntimeError('grass instance must inherit its parent HISM usage')
     return result
 
 
 def grass_graph_record(material, checked, root):
-    from wt_grass import GRASS_CODE
-    edit, prop = unreal.MaterialEditingLibrary, unreal.MaterialProperty
-    expressions = list(edit.get_material_expressions(material))
-    custom = [node for node in expressions if isinstance(node, unreal.MaterialExpressionCustom)]
-    if len(custom) != 1 or str(custom[0].get_editor_property('code')) != GRASS_CODE:
-        raise RuntimeError('saved grass surface code differs from source RGB masks and separate alpha')
-    surface = custom[0]
-    output_names = {}
-    for property_name, expected in ((prop.MP_BASE_COLOR, 'return'), (prop.MP_OPACITY_MASK, 'OpacityOut')):
-        output_name = str(edit.get_material_property_input_node_output_name(material, property_name))
-        if edit.get_material_property_input_node(material, property_name) != surface or output_name != expected:
-            raise RuntimeError('grass source color/alpha output pin differs: ' + str(property_name))
-        output_names[str(property_name)] = output_name
-    fields = [str(name) for name in edit.get_material_expression_input_names(surface)]
-    nodes = list(edit.get_inputs_for_material_expression(material, surface))
-    if len(fields) != len(nodes) or len(set(fields)) != len(fields) or any(node is None for node in nodes):
-        raise RuntimeError('grass Custom input is disconnected or duplicated')
-    upstream = dict(zip(fields, nodes))
-    expected_names = {'Masks', 'Alpha', 'Land', 'UV', 'World', 'Random', 'Fade', 'Correction',
-                      'RMin', 'RMax', 'GMin', 'GMax', 'BMin', 'BMax'}
-    if set(upstream) != expected_names:
+    from wt_grass import GRASS_CODE, GRASS_NORMAL_CODE
+    edit,prop=unreal.MaterialEditingLibrary,unreal.MaterialProperty
+    expressions=list(edit.get_material_expressions(material))
+    custom=[node for node in expressions if isinstance(node,unreal.MaterialExpressionCustom)]
+    surfaces=[node for node in custom if str(node.get_editor_property('code'))==GRASS_CODE]
+    normals=[node for node in custom if str(node.get_editor_property('code'))==GRASS_NORMAL_CODE]
+    if len(custom)!=2 or len(surfaces)!=1 or len(normals)!=1:
+        raise RuntimeError('saved grass source surface and world-normal code differ')
+    surface,normal=surfaces[0],normals[0]
+    # UE5.8 Custom::RebuildOutputs names a sole primary output with an empty string.
+    # Only Custom nodes with AdditionalOutputs name their primary output 'return'.
+    if (list(normal.get_editor_property('additional_outputs'))
+            or normal.get_editor_property('output_type')!=unreal.CustomMaterialOutputType.CMOT_FLOAT3):
+        raise RuntimeError('grass world-normal Custom must retain exactly its sole float3 output')
+    output_names={}
+    for property_name,node,expected in (
+            (prop.MP_BASE_COLOR,surface,'return'),(prop.MP_OPACITY_MASK,surface,'OpacityOut'),
+            (prop.MP_ROUGHNESS,surface,'RoughnessOut'),(prop.MP_NORMAL,normal,'')):
+        output_name=str(edit.get_material_property_input_node_output_name(material,property_name))
+        if edit.get_material_property_input_node(material,property_name)!=node or output_name!=expected:
+            raise RuntimeError('grass source material output pin differs: '+str(property_name)+
+                               ': expected='+repr(expected)+', actual='+repr(output_name))
+        output_names[str(property_name)]=output_name
+    expected_outputs={'OpacityOut':unreal.CustomMaterialOutputType.CMOT_FLOAT1,
+        'NormalOut':unreal.CustomMaterialOutputType.CMOT_FLOAT3,
+        'TransmissionOut':unreal.CustomMaterialOutputType.CMOT_FLOAT1,
+        'RoughnessOut':unreal.CustomMaterialOutputType.CMOT_FLOAT1}
+    actual_outputs={str(x.get_editor_property('output_name')):x.get_editor_property('output_type')
+                    for x in surface.get_editor_property('additional_outputs')}
+    if actual_outputs!=expected_outputs:
+        raise RuntimeError('grass source normal/transmission/roughness output types differ')
+    def inputs(node):
+        fields=[str(name) for name in edit.get_material_expression_input_names(node)]
+        nodes=list(edit.get_inputs_for_material_expression(material,node))
+        if len(fields)!=len(nodes) or len(set(fields))!=len(fields) or any(node is None for node in nodes):
+            raise RuntimeError('grass Custom input is disconnected or duplicated')
+        return dict(zip(fields,nodes))
+    upstream=inputs(surface)
+    expected_names={'Masks','Alpha','Land','UV','World','Random','Fade','Correction',
+                    'RMin','RMax','GMin','GMax','BMin','BMax','PackedNormal',
+                    'UseSourceNormal','DefaultRoughness','DefaultTransmission'}
+    if set(upstream)!=expected_names:
         raise RuntimeError('grass Custom inputs differ from its source contract')
-    classes = {'UV': unreal.MaterialExpressionTextureCoordinate, 'World': unreal.MaterialExpressionWorldPosition,
-               'Random': unreal.MaterialExpressionPerInstanceRandom, 'Fade': unreal.MaterialExpressionPerInstanceFadeAmount}
-    for name, cls in classes.items():
-        if not isinstance(upstream[name], cls):
-            raise RuntimeError('grass source coordinate/instance input differs: ' + name)
-    if upstream['UV'].get_editor_property('coordinate_index') != 0:
+    classes={'UV':unreal.MaterialExpressionTextureCoordinate,'World':unreal.MaterialExpressionWorldPosition,
+             'Random':unreal.MaterialExpressionPerInstanceRandom,'Fade':unreal.MaterialExpressionPerInstanceFadeAmount}
+    for name,cls in classes.items():
+        if not isinstance(upstream[name],cls):
+            raise RuntimeError('grass source coordinate/instance input differs: '+name)
+    if upstream['UV'].get_editor_property('coordinate_index')!=0:
         raise RuntimeError('grass must sample its original UV0')
-    bindings = {}
-    first_model = next(iter(checked['models']))
-    for parameter, expected in grass_texture_bindings(checked, first_model).items():
-        node = upstream[parameter]
-        sampler = unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if expected['srgb'] else unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR
-        if (not isinstance(node, unreal.MaterialExpressionTextureObjectParameter)
-                or str(node.get_editor_property('parameter_name')) != parameter
-                or node.get_editor_property('sampler_type') != sampler):
-            raise RuntimeError('grass texture parameter/sampler differs: ' + parameter)
-        bindings[parameter] = grass_texture_record(node.get_editor_property('texture'), expected, root)
-    colors = {}
-    first_layer = next(iter(checked['layers'].values()))
-    for channel in ('r', 'g', 'b'):
-        for endpoint in ('min', 'max'):
-            name = channel.upper()+endpoint.title()
-            node = upstream[name]
-            if (not isinstance(node, unreal.MaterialExpressionVectorParameter)
-                    or str(node.get_editor_property('parameter_name')) != name):
-                raise RuntimeError('grass color endpoint is disconnected: ' + name)
-            colors[name] = _grass_vector(node.get_editor_property('default_value'), first_layer['color_masks'][channel][endpoint], name)
-    correction = upstream['Correction']
-    if (not isinstance(correction, unreal.MaterialExpressionScalarParameter)
-            or str(correction.get_editor_property('parameter_name')) != 'Correction'
-            or float(correction.get_editor_property('default_value')) != _float32(checked['definition']['color_correction_multiplier'])):
-        raise RuntimeError('grass original color correction differs')
-    for property_name, name, expected in ((prop.MP_ROUGHNESS, 'Roughness', .9), (prop.MP_SPECULAR, 'Specular', .15)):
-        node = edit.get_material_property_input_node(material, property_name)
-        if (not isinstance(node, unreal.MaterialExpressionScalarParameter)
-                or str(node.get_editor_property('parameter_name')) != name
-                or float(node.get_editor_property('default_value')) != _float32(expected)):
-            raise RuntimeError('grass recorded UE surface parameter differs: ' + name)
-    if edit.get_material_property_input_node(material, prop.MP_WORLD_POSITION_OFFSET):
+    bindings={}
+    first_model=next(iter(checked['models']))
+    for parameter,expected in grass_texture_bindings(checked,first_model).items():
+        node=upstream[parameter]
+        sampler=unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if expected['srgb'] else unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR
+        if (not isinstance(node,unreal.MaterialExpressionTextureObjectParameter)
+                or str(node.get_editor_property('parameter_name'))!=parameter
+                or node.get_editor_property('sampler_type')!=sampler):
+            raise RuntimeError('grass texture parameter/sampler differs: '+parameter)
+        bindings[parameter]=grass_texture_record(node.get_editor_property('texture'),expected,root)
+    colors={}
+    first_layer=next(iter(checked['layers'].values()))
+    for channel in ('r','g','b'):
+        for endpoint in ('min','max'):
+            name=channel.upper()+endpoint.title()
+            node=upstream[name]
+            if (not isinstance(node,unreal.MaterialExpressionVectorParameter)
+                    or str(node.get_editor_property('parameter_name'))!=name):
+                raise RuntimeError('grass color endpoint is disconnected: '+name)
+            colors[name]=_grass_vector(node.get_editor_property('default_value'),first_layer['color_masks'][channel][endpoint],name)
+    def scalar(node,name,expected):
+        if (not isinstance(node,unreal.MaterialExpressionScalarParameter)
+                or str(node.get_editor_property('parameter_name'))!=name
+                or float(node.get_editor_property('default_value'))!=_float32(expected)):
+            raise RuntimeError('grass source scalar differs: '+name)
+        return float(node.get_editor_property('default_value'))
+    scalars={}
+    for input_name,name,expected in (
+            ('Correction','Correction',checked['definition']['color_correction_multiplier']),
+            ('UseSourceNormal','UseSourceNormal',0),('DefaultRoughness','Roughness',.9),
+            ('DefaultTransmission','Transmission',.35)):
+        scalars[name]=scalar(upstream[input_name],name,expected)
+    scalar(edit.get_material_property_input_node(material,prop.MP_SPECULAR),'Specular',.15)
+    normal_inputs=inputs(normal)
+    if set(normal_inputs)!={'NormalWorld','InstanceUp','Side','UseSourceNormal','MinimumUp'}:
+        raise RuntimeError('grass world-normal inputs differ')
+    normal_world=normal_inputs['NormalWorld']
+    instance_up=normal_inputs['InstanceUp']
+    for node,source_space in (
+            (normal_world,unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT),
+            (instance_up,unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE)):
+        if (not isinstance(node,unreal.MaterialExpressionTransform)
+                or node.get_editor_property('transform_source_type')!=source_space
+                or node.get_editor_property('transform_type')!=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD):
+            raise RuntimeError('grass normal/up transform space differs')
+    transformed=list(edit.get_inputs_for_material_expression(material,normal_world))
+    if transformed!=[surface]:
+        raise RuntimeError('grass source NormalOut transform is disconnected')
+    output_names['source_normal_transform']=_output_pin(normal_world,surface,'NormalOut')
+    up_nodes=list(edit.get_inputs_for_material_expression(material,instance_up))
+    if len(up_nodes)!=1 or not isinstance(up_nodes[0],unreal.MaterialExpressionConstant3Vector):
+        raise RuntimeError('grass instance-up constant is absent')
+    up_value=up_nodes[0].get_editor_property('constant')
+    if [float(up_value.get_editor_property(c)) for c in ('r','g','b')]!=[0.,0.,1.]:
+        raise RuntimeError('grass instance-up axis differs')
+    if (not isinstance(normal_inputs['Side'],unreal.MaterialExpressionTwoSidedSign)
+            or normal_inputs['UseSourceNormal']!=upstream['UseSourceNormal']):
+        raise RuntimeError('grass face-sign/source-normal branch is disconnected')
+    scalars['MinimumNormalUp']=scalar(normal_inputs['MinimumUp'],'MinimumNormalUp',.20)
+    subsurface=edit.get_material_property_input_node(material,prop.MP_SUBSURFACE_COLOR)
+    if (not isinstance(subsurface,unreal.MaterialExpressionMultiply)
+            or list(edit.get_inputs_for_material_expression(material,subsurface))!=[surface,surface]):
+        raise RuntimeError('grass source color/transmission subsurface product is disconnected')
+    if edit.get_material_property_input_node(material,prop.MP_WORLD_POSITION_OFFSET):
         raise RuntimeError('source grass no-wind adapter has unexpected vertex displacement')
-    return dict(expression_count=len(expressions), code_sha256=hashlib.sha256(GRASS_CODE.encode()).hexdigest(),
-                inputs={name:node.get_path_name() for name,node in upstream.items()}, output_pins=output_names,
-                properties=grass_surface_properties(material, checked), texture_bindings=bindings,
-                source_colors=colors, color_correction=float(correction.get_editor_property('default_value')))
+    return dict(expression_count=len(expressions),code_sha256=hashlib.sha256(GRASS_CODE.encode()).hexdigest(),
+                normal_code_sha256=hashlib.sha256(GRASS_NORMAL_CODE.encode()).hexdigest(),
+                inputs={name:node.get_path_name() for name,node in upstream.items()},
+                normal_inputs={name:node.get_path_name() for name,node in normal_inputs.items()},
+                output_pins=output_names,properties=grass_surface_properties(material,checked),
+                texture_bindings=bindings,source_colors=colors,scalar_parameters=scalars,
+                color_correction=scalars['Correction'])
 
 
 def prepare_grass_materials(source_file, report):
-    foliage_file = source_file.parent / 'foliage' / 'foliage.json'
+    enhanced_file = source_file.parent / 'foliage-enhanced' / 'foliage.json'
+    foliage_file = enhanced_file if enhanced_file.is_file() else source_file.parent / 'foliage' / 'foliage.json'
     report['grass_materials'] = dict(status='not_present', definition_present=foliage_file.is_file(),
                                      parent_count=0, instance_count=0, native_compilation_verified=False)
     if not foliage_file.is_file():
@@ -436,6 +530,7 @@ def prepare_grass_materials(source_file, report):
     paths = [root+'/Materials/WT_Grass'] + [root+'/Materials/'+name for name in checked['layers']]
     report['grass_materials'].update(status='authored_pending_compile',
         definition_sha256=checked['definition_sha256'], target_count=len(paths), target_paths=paths,
+        source_normal_models=[name for name,model in checked['models'].items() if model.get('normal_path') is not None],
         missing_assets=[])
     missing = [path for path in paths if not unreal.EditorAssetLibrary.does_asset_exist(path)]
     if missing:
@@ -493,8 +588,10 @@ def audit_grass_materials(checked, report, evidence):
                 value = edit.get_material_instance_vector_parameter_value(instance, parameter)
                 item['source_colors'][parameter] = _grass_vector(value, layer['color_masks'][channel][endpoint], name+'.'+parameter)
         item['scalar_parameters'] = {}
+        has_normal=checked['models'][layer['model_id']].get('normal_path') is not None
         for parameter, expected in (('Correction', checked['definition']['color_correction_multiplier']),
-                                    ('Roughness', .9), ('Specular', .15)):
+                                    ('Roughness', .9), ('Specular', .15),('Transmission', .35),
+                                    ('MinimumNormalUp', .20),('UseSourceNormal',float(has_normal))):
             value = float(edit.get_material_instance_scalar_parameter_value(instance, parameter))
             if value != _float32(expected):
                 raise RuntimeError('grass layer scalar differs: '+name+'.'+parameter)
@@ -523,12 +620,13 @@ def verify(source_file, output):
         started_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         engine=unreal.SystemLibrary.get_engine_version(),
         source_manifest_sha256=digest(source_file), audit_script_sha256=digest(Path(__file__)),
-        scope='saved_parent_graphs_leaf_tree_ground_water_and_grass_native_shader_compilation',
+        scope='saved_parent_graphs_all_source_rendinst_decals_leaf_tree_ground_water_and_grass_native_shader_compilation',
         rendering_visual_quality_verified=False, in_memory_recompile=True,
         saved_assets_modified=False, parents=[], leaf_instances=[], height_decal_instances=[],
         land_instances=[], ground_other_instances=[], tree_instances=[], water_instances=[],
-        grass_parents=[], grass_instances=[],
-        supporting_scripts_sha256={name:digest(Path(__file__).with_name(name)) for name in ('wt_materials.py','wt_vertex_opacity.py','wt_tree_alpha.py','wt_runtime_virtual_texture.py','wt_landclass.py','wt_water.py','wt_grass.py')},
+        grass_parents=[], grass_instances=[], rendinst_decal_instances=[],
+        supporting_scripts_sha256={name:digest(Path(__file__).with_name(name)) for name in ('wt_materials.py','wt_vertex_opacity.py','wt_tree_alpha.py','wt_runtime_virtual_texture.py','wt_landclass.py','wt_water.py','wt_grass.py','wt_landdetail.py','wt_rendinst_decals.py','wt_material_refine_verify.py',
+            'wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py')},
         api_evidence={
             'recompile_material': 'UE 5.8 MaterialEditingLibrary.cpp:1035-1059; TArray<FString> compiler errors',
             'get_statistics': 'UE 5.8 MaterialEditingLibrary.cpp:2116-2159; target resource FinishCompilation and actual shader statistics',
@@ -545,6 +643,23 @@ def verify(source_file, output):
         folder = '/Game/RMSim/Maps/' + source['id'] + '/Materials/'
         report['source_vertex_opacity'] = validate_scene_vertex_opacity(source_file.parent, source)
         landclass = validate_landclass_surface(source_file.parent, source)
+        landdetail = wt_landdetail.validate(source_file.parent, source)
+        microdetails = wt_ground_microdetails.validate(source_file.parent)
+        report['source_ground_microdetails'] = dict(definition_sha256=wt_ground_microdetails.DEFINITION_SHA256,
+            proof_sha256=microdetails['proof_sha256'],slot_count=microdetails['slot_count'],
+            unique_texture_count=microdetails['unique_texture_count'],uv_scale_per_m=microdetails['uv_scale_per_m'],
+            id_count_scale=microdetails['id_count_scale'],adaptation_scope=microdetails['adaptation_scope'])
+        report['source_landdetail'] = dict(definition_sha256=digest(source_file.parent / wt_landdetail.DEFINITION_FILE),
+            biome_count=len(landdetail['table']['biomes']), albedo_count=len(landdetail['table']['albedo_names']),
+            verification_sha256=landdetail['verification_sha256'])
+        extraction = Path(source['extraction_root'])
+        if not extraction.is_absolute():
+            extraction = (source_file.parent / extraction).resolve()
+        inventories = sorted(extraction.glob('textures-*/result.json'))
+        if not inventories:
+            raise RuntimeError('source decal texture inventory is missing')
+        inventory = {entry['name']:entry for entry in json.loads(inventories[-1].read_text(encoding='utf-8'))['exported']}
+        report['source_texture_inventory_sha256'] = digest(inventories[-1])
         report['source_landclass_surface'] = source.get('source_landclass_surface')
         report['source_water_surface'] = water_surface_contract(source, source_file.parent)
         grass = prepare_grass_materials(source_file, report)
@@ -563,7 +678,8 @@ def verify(source_file, output):
                 raise RuntimeError('saved parent is absent: ' + path)
             item = dict(asset=material.get_path_name(), file_sha256=before, status='running')
             report['parents'].append(item)
-            item['graph'] = graph_record(material, leaves=name == 'WT_Parent_Leaves', landclass=landclass)
+            item['graph'] = graph_record(material, leaves=name == 'WT_Parent_Leaves', landclass=landclass,
+                                         landdetail=landdetail, package=source_file.parent, microdetails=microdetails)
             # The sole native return is an array, not bool+out. Empty = no errors.
             errors = unreal.MaterialEditingLibrary.recompile_material(material)
             if errors is None or isinstance(errors, (str, bool)):
@@ -572,6 +688,8 @@ def verify(source_file, output):
             if item['recompile_errors']:
                 raise RuntimeError('final saved graph compilation failed: ' + json.dumps(item['recompile_errors']))
             item['completed_shader_statistics'] = statistics(material, texture_free=name == 'WT_Parent_Water')
+            if name in ('WT_Terrain', 'WT_Parent_Land') and item['completed_shader_statistics']['num_samplers'] > 16:
+                raise RuntimeError('ground detail material exceeds the SM5 texture sampler budget')
             item['file_sha256_after'] = digest(filename)
             if item['file_sha256_after'] != before:
                 report['saved_assets_modified'] = True
@@ -584,6 +702,7 @@ def verify(source_file, output):
                            'land_mesh': 'land_instances', 'land_mesh_combined_detailed_decal': 'ground_other_instances',
                            'water_aces': 'water_instances',
                            'rendinst_tree': 'tree_instances', 'rendinst_tree_colored': 'tree_instances'}
+        instance_groups.update({shader:'rendinst_decal_instances' for shader in rendinst_decals.SHADERS})
         for spec in source['materials']:
             if spec['shader'] not in instance_groups:
                 continue
@@ -603,6 +722,8 @@ def verify(source_file, output):
                 raise RuntimeError('saved source instance parent differs: ' + path)
             item = dict(asset=material.get_path_name(), parent=parent.get_path_name(),
                         source_shader=spec['shader'], file_sha256=before, completed_shader_statistics=statistics(material, texture_free=group == 'water_instances'))
+            if group == 'rendinst_decal_instances':
+                item['source_rendinst_decal'] = decal_instance(material, spec, source_file.parent, inventory)
             if group == 'water_instances':
                 vector = unreal.MaterialEditingLibrary.get_material_instance_vector_parameter_value(material, 'SourceWaterColor')
                 rgba = [float(vector.get_editor_property(c)) for c in ('r','g','b','a')]
@@ -645,16 +766,8 @@ def verify(source_file, output):
                 if any(abs(a-b)>1e-7 for a,b in zip(actual, expected)):
                     raise RuntimeError('source height-blend parameters differ: ' + path)
                 item['height_blend_parameters'] = actual
-                item['texture_bindings'] = {}
-                for index, color, fallback in [(0, True, 'White'), (2, False, 'NormalAG')]:
-                    texture = unreal.MaterialEditingLibrary.get_material_instance_texture_parameter_value(material, 'T'+str(index))
-                    raw_name = spec['texture_slots'][index]
-                    source_name = raw_name.split('*')[0].split('$')[0] if raw_name else '_Default'+fallback
-                    name = re.sub('[^A-Za-z0-9_]', '_', source_name) + ('_C' if color else '_D')
-                    expected_texture = folder.rsplit('/Materials/', 1)[0] + '/Textures/' + name + '.' + name
-                    if not texture or texture.get_path_name() != expected_texture:
-                        raise RuntimeError('source height-decal texture binding differs: ' + path)
-                    item['texture_bindings']['T'+str(index)] = texture.get_path_name()
+                item['source_height_surface'] = height_instance(material,spec,source_file.parent,inventory,microdetails)
+                item['texture_bindings'] = item['source_height_surface']['texture_bindings']
             item['file_sha256_after'] = digest(filename)
             if item['file_sha256_after'] != before:
                 report['saved_assets_modified'] = True
@@ -664,7 +777,7 @@ def verify(source_file, output):
             save(evidence/'verification.json', report)
         audit_grass_materials(grass, report, evidence)
         groups = ('parents','leaf_instances','height_decal_instances','land_instances','ground_other_instances',
-                  'tree_instances','water_instances','grass_parents','grass_instances')
+                  'tree_instances','water_instances','grass_parents','grass_instances','rendinst_decal_instances')
         targets = [item for group in groups for item in report[group]]
         if any(item['status'] != 'passed' for item in targets) or len({item['asset'] for item in targets}) != len(targets):
             raise RuntimeError('material target list contains incomplete or duplicate shader assets')

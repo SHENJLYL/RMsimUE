@@ -1,7 +1,8 @@
 """Pure source contract and shader for Flanders' original global landclass colors.
 
-The lmap packed weight atlas and class records are transported losslessly. This
-adapter restores global macro colors; it does not implement Dagor microdetails.
+The lmap packed weight atlas and class records are transported losslessly. The
+five original macro colors retain their source weights. The core Flanders class
+also receives wt_landdetail's source-bound dual-layer color/height adaptation.
 """
 import hashlib
 import json
@@ -148,11 +149,13 @@ float w2=dot(weights,float4(ids.x==2,ids.y==2,ids.z==2,ids.w==2));
 float w3=dot(weights,float4(ids.x==3,ids.y==3,ids.z==3,ids.w==3));
 float w4=dot(weights,float4(ids.x==4,ids.y==4,ids.z==4,ids.w==4));
 float3 color=Texture2DSample(LC0,LC0Sampler,worldXZ*LCMap0.xy+LCMap0.zw).rgb*w0;
-color+=Texture2DSample(LC1,LC1Sampler,worldXZ*LCMap1.xy+LCMap1.zw).rgb*w1;
+float inside=step(0,worldXZ.x)*step(0,worldXZ.y)*step(worldXZ.x,2048)*step(worldXZ.y,2048);
+float3 lc1=Texture2DSample(LC1,LC1Sampler,worldXZ*LCMap1.xy+LCMap1.zw).rgb;
+color+=lerp(lc1,DetailColor,inside)*w1;
 color+=Texture2DSample(LC2,LC2Sampler,worldXZ*LCMap2.xy+LCMap2.zw).rgb*w2;
 color+=Texture2DSample(LC3,LC3Sampler,worldXZ*LCMap3.xy+LCMap3.zw).rgb*w3;
 color+=Texture2DSample(LC4,LC4Sampler,worldXZ*LCMap4.xy+LCMap4.zw).rgb*w4;
-NormalOut=float3(0,0,1);RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;
+NormalOut=normalize(VertexNormalWorld*(w0+w2+w3+w4+w1*(1-inside))+DetailNormalWorld*w1*inside);RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;
 return color;
 '''
 

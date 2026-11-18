@@ -1,0 +1,823 @@
+{
+  "schema": "wt_ground_microdetails_preparation_v1",
+  "status": "passed",
+  "script_sha256": "b0a0b6747f022b77be30db0d5c9d99d933d5b50cef3bff8413e9fa91f87daba3",
+  "command": [
+    "D:\\simulator\\tools\\maps\\prepare_wt_ground_microdetails.py",
+    "--level-json",
+    "D:\\simulator\\artifacts\\archive\\wt-vlaanderen-before-unified-20261118\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+    "--source-record",
+    "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\source-baseline\\foliage-source.json",
+    "--map-package",
+    "D:\\simulator\\assets\\maps\\wt_vlaanderen",
+    "--game-root",
+    "D:\\steamlaptop\\steamapps\\common\\War Thunder",
+    "--dagor-root",
+    "D:\\simulator\\third_party\\dagor_engine",
+    "--dae-root",
+    "D:\\simulator\\third_party\\dagor_asset_explorer\\src\\dae",
+    "--oodle-library",
+    "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\runtimes\\win-x64\\native\\oo2core.dll",
+    "--output",
+    "D:\\simulator\\assets\\maps\\wt_vlaanderen\\ground-microdetails",
+    "--evidence",
+    "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\ground-microdetails-prepare-01"
+  ],
+  "checks": [
+    {
+      "name": "source_map_identity",
+      "passed": true
+    },
+    {
+      "name": "verified_level_config_bytes",
+      "passed": true
+    },
+    {
+      "name": "original_archive_binding",
+      "passed": true
+    },
+    {
+      "name": "source_slots_and_duplicate",
+      "passed": true
+    },
+    {
+      "name": "pinned_public_source",
+      "passed": true
+    },
+    {
+      "name": "unmodified_public_source:prog/gameLibs/landMesh/landMicroDetails.cpp",
+      "passed": true
+    },
+    {
+      "name": "unmodified_public_source:prog/gameLibs/landMesh/shaders/land_micro_detail.dshl",
+      "passed": true
+    },
+    {
+      "name": "unmodified_public_source:prog/daNetGame/shaders/clipmap.dshl",
+      "passed": true
+    },
+    {
+      "name": "unmodified_public_source:prog/daNetGame/shaders/land_aces.dshl",
+      "passed": true
+    },
+    {
+      "name": "unmodified_public_source:prog/daNetGame/shaders/make_clipmap.dshl",
+      "passed": true
+    },
+    {
+      "name": "all_original_textures_found",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_fabric_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_fabric_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_fabric_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_forest_floor_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_forest_floor_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_forest_floor_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_generic_granules_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_generic_granules_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_generic_granules_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_grass_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_grass_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_grass_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_metal_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_metal_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_metal_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_sand_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_sand_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_sand_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_scan_asphalt_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_scan_asphalt_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_scan_asphalt_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_snow_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_snow_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_snow_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_soil_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_soil_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_soil_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_stone_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_stone_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_stone_a_tex_n",
+      "passed": true
+    },
+    {
+      "name": "original_rgba8:microdetail_wood_b_tex_n",
+      "passed": true
+    },
+    {
+      "name": "decoded_rgba_bytes_unchanged:microdetail_wood_b_tex_n",
+      "passed": true
+    },
+    {
+      "name": "complete_original_payload:microdetail_wood_b_tex_n",
+      "passed": true
+    },
+    {
+      "name": "uniform_original_slice_dimensions",
+      "passed": true,
+      "dimensions": [
+        [
+          512,
+          512
+        ]
+      ]
+    },
+    {
+      "name": "native_source_resolution",
+      "passed": true,
+      "dimensions": [
+        [
+          512,
+          512
+        ]
+      ]
+    },
+    {
+      "name": "duplicate_slot_same_pixels",
+      "passed": true
+    },
+    {
+      "name": "scene_source_unchanged",
+      "passed": true
+    },
+    {
+      "name": "source_config_unchanged",
+      "passed": true
+    }
+  ],
+  "textures": [
+    {
+      "name": "microdetail_fabric_a_tex_n",
+      "file": "textures/microdetail_fabric_a_tex_n.png",
+      "sha256": "a1992dcd983589df34bf862012f942802ea61767620e5b866a0191aa976d71e7",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "dc63ed8b0d323a1d316d3fe158a4b253aae770ac0d391f6695bda8cd5f4e0e35",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 176154264,
+      "source_bytes": 328552,
+      "source_packed_sha256": "07c6e874a8676e3cfc1435c755af7f27e39131f6e615849aae269c680e4d2361",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_forest_floor_a_tex_n",
+      "file": "textures/microdetail_forest_floor_a_tex_n.png",
+      "sha256": "5f428c27c11e442588c10dca337e8a31b866181677287013641d8301077d843c",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "41f68f7ffc33565f3c659ac2ddb6806ac0d6b5552b553badb850e63d2b7d993c",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 176769856,
+      "source_bytes": 349552,
+      "source_packed_sha256": "8630e86168734ecda2c1a10a522b1cf111e4607db3792142be03f21455372abb",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_generic_granules_a_tex_n",
+      "file": "textures/microdetail_generic_granules_a_tex_n.png",
+      "sha256": "f2ebf62d0c38dba3d36417fa3fdad6a47ddb3a508ede3fd68093ba54656d86fe",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "0bdbe8be402adb1df92244de7e85d82e8a0c5edcd03578cd0c184e70baa146c7",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 177762480,
+      "source_bytes": 349552,
+      "source_packed_sha256": "2512b7aff308af21f08ad7ec32148038ae62ca6a69f47422f11a54fcb95a129d",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_grass_a_tex_n",
+      "file": "textures/microdetail_grass_a_tex_n.png",
+      "sha256": "0dabc65f1468efb61e3692652667c91969da325743ffecd6bdd962e4b86064f6",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "0fb1c6d25805094f97dac717897093a4a54960fae94e463bda6995e0c91f9233",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 178112032,
+      "source_bytes": 349552,
+      "source_packed_sha256": "ceb52b77a91a9b8f55fa8b6cb4e99bd4ad7beb1a337b87a61ba94a5b4a60de78",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_metal_a_tex_n",
+      "file": "textures/microdetail_metal_a_tex_n.png",
+      "sha256": "42363260b816bf21934dc54b701cf671633eef98025f5c02d3d47c3fbfa94020",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "3cfaaa41becdda3809d0de00207b08fcccab4ef71c6c74186a4376660e1282aa",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 180217072,
+      "source_bytes": 241744,
+      "source_packed_sha256": "02498054cda0ae022f10f3bfa0df5fd8e3d7fdbf008c0f8088f1c71b051cca2c",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_sand_a_tex_n",
+      "file": "textures/microdetail_sand_a_tex_n.png",
+      "sha256": "a079faa38c79227aab1635e19ecb10b2d6a9d322d287a422d50748b1320156c5",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "165582676381ad107240363bf644c679daacb24ef6cb23f996dc36c88fac4d46",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 182097408,
+      "source_bytes": 323216,
+      "source_packed_sha256": "12c6e8231d08157bdbc80e28ddce6b3117c468f7716e78d18d38505cfd3fe6b1",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_scan_asphalt_tex_n",
+      "file": "textures/microdetail_scan_asphalt_tex_n.png",
+      "sha256": "b8f313b509f93894d146d986675eb6ab69d0c1a3a5107e295e50b77c193632ad",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "2ebcdf4b519cc9b76ab580cfaea74e9a9b85b9d8a2ea6e233e0312a9ffec091c",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 183991640,
+      "source_bytes": 330352,
+      "source_packed_sha256": "6c7fce809dfe3bdf8edb38c6fc0ff8b2b1d341d61d41c416a8751e90a52f07d3",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_snow_a_tex_n",
+      "file": "textures/microdetail_snow_a_tex_n.png",
+      "sha256": "51e318864b110c9f85a47c336e26e965d91a9759bf8fce6167349a21700aec47",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "9ba10230a23baff9f337d5fd0233ac3a72bf57a281a136b7338f9b9dd513c074",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 185692792,
+      "source_bytes": 296744,
+      "source_packed_sha256": "969cc2e3c176c15935c9659240f20eab9038962795edcb847c20c7ee92384eea",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_soil_a_tex_n",
+      "file": "textures/microdetail_soil_a_tex_n.png",
+      "sha256": "0e6c0865bf20ba5d446a32fcef91b107e41598bc8037eb07681fbdb3bb048b28",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "eeba6a132c9d76d816bac4eb2492ea60094fe7da1977c198ca8ac3354df97023",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 186821112,
+      "source_bytes": 349552,
+      "source_packed_sha256": "434521fe287939f4ce5475928c96f166a311bc124c2be41ab1d145abb056251a",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_stone_a_tex_n",
+      "file": "textures/microdetail_stone_a_tex_n.png",
+      "sha256": "6d90367fdda7ec090afa79db525212597e06a12c73465e782620adbe0c10da1c",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "51c58c98ad952f51474a00e6684bcbaa7eefcb0654a750e34922d5fc6f978e5e",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 187869768,
+      "source_bytes": 322144,
+      "source_packed_sha256": "8a832a8d25ecfb184f34df28a698970211b6a00c5af806fd60a813fe119967d8",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    },
+    {
+      "name": "microdetail_wood_b_tex_n",
+      "file": "textures/microdetail_wood_b_tex_n.png",
+      "sha256": "cf22776eb8a17a68da50cbdeed3479026a1674ba27402116f84331f2e810b68e",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "rgba_sha256": "9248fbc9297a17aa03ceb9b8442fe4b0ec57d3a814936141161252d55ec0a58b",
+      "source_pack": "content/base/res/landscape_extra.dxp.bin",
+      "source_pack_sha256": "2b67fa3f4f57a98e4354e306c8ec9a2c90416ad080439d28713caaa57da2fff2",
+      "source_offset": 189881056,
+      "source_bytes": 317096,
+      "source_packed_sha256": "cb2f1e22b9ccd27f5f795133ffc1a25ec8150a3c174df25497d9406835a413ce",
+      "source_format": "BC7 ",
+      "source_mip_levels": 10
+    }
+  ],
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_config_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+  "source_record_sha256": "ddcc8b649a18a917adbbe69c3b294d08a5158d245b1470f997d51f9f9f86e8d9",
+  "archive_sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+  "source_entry": {
+    "name": "levels/avg_vlaanderen.blk",
+    "source_sha256": "2de8930e9f443ab6218567378514ff76b8ce86fd7cf2f06428c94e878fa23b9c",
+    "output": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+    "output_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+    "format_label": 5,
+    "decoded_bytes": 4563,
+    "local_names": 0,
+    "shared_names": 220116,
+    "blocks": 48,
+    "parameters": 514,
+    "complex_bytes": 216
+  },
+  "official_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "official_references": [
+    {
+      "path": "prog/gameLibs/landMesh/landMicroDetails.cpp",
+      "sha256": "7c38e621ad7de4cb82e0d205e220019a180f1273b5ab20bd5e85070820c3fe8e",
+      "lines": "85-121",
+      "purpose": "slot parameter indices, parameter defaults, ID count scale and UV scale"
+    },
+    {
+      "path": "prog/gameLibs/landMesh/shaders/land_micro_detail.dshl",
+      "sha256": "539133ea43a15938e14ada3f5636008abea06f5e226e1f966732062e5a630e2d",
+      "lines": "244-253, 257-335",
+      "purpose": "linear RGBA channel semantics, ID sampling and unrotated world XZ UV"
+    },
+    {
+      "path": "prog/daNetGame/shaders/clipmap.dshl",
+      "sha256": "1d2a00e3e50d8920f60cbb63853ba67e409c3f2edb18ed11f795bf9b58941ef7",
+      "lines": "110-178",
+      "purpose": "public clipmap decode returns DetailDesc and does not apply the microdetail helper"
+    },
+    {
+      "path": "prog/daNetGame/shaders/land_aces.dshl",
+      "sha256": "daa40d8d6fd60832981149b765e826ae3f55a97390a889a057edcd802c8f3040",
+      "lines": "294-380",
+      "purpose": "public terrain path applies effects metadata, with no full microdetail color/normal application"
+    },
+    {
+      "path": "prog/daNetGame/shaders/make_clipmap.dshl",
+      "sha256": "5287e03f13a9e4c96a4a72c2bdbe5fe033d7223356df12dd59a657066075543f",
+      "lines": "1395-1423",
+      "purpose": "normal-present decal reflection AGRB stores microdetail ID in B; normal-absent branch emits ID zero"
+    }
+  ],
+  "source_micro_details": {
+    "name": "micro_details",
+    "params": [
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_stone_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_scan_asphalt_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_sand_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_soil_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_generic_granules_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_grass_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_forest_floor_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_fabric_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_wood_b_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_metal_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_snow_a_tex_n*"
+      },
+      {
+        "name": "micro_detail",
+        "type": "string",
+        "value": "microdetail_generic_granules_a_tex_n*"
+      },
+      {
+        "name": "land_micro_details_uv_scale",
+        "type": "real",
+        "value": 0.5099999904632568
+      }
+    ],
+    "children": [
+      {
+        "name": "microdetail_stone_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.30000001192092896
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_scan_asphalt_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_sand_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.800000011920929
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_soil_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_forest_floor_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_grass_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_moss_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "microdetail_scan_grass_a_tex_n*",
+        "params": [
+          {
+            "name": "coloring",
+            "type": "real",
+            "value": 0.8999999761581421
+          }
+        ],
+        "children": []
+      }
+    ]
+  },
+  "texture_candidates": {
+    "microdetail_fabric_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 176154264,
+        "bytes": 328552,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79842552,
+        "bytes": 1200,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_forest_floor_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 176769856,
+        "bytes": 349552,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79845144,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_generic_granules_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 177762480,
+        "bytes": 349552,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79849320,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_grass_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 178112032,
+        "bytes": 349552,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79850712,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_metal_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 180217072,
+        "bytes": 241744,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79860048,
+        "bytes": 704,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_sand_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 182097408,
+        "bytes": 323216,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79868416,
+        "bytes": 1216,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_scan_asphalt_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 183991640,
+        "bytes": 330352,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79875840,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_snow_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 185692792,
+        "bytes": 296744,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79882656,
+        "bytes": 952,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_soil_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 186821112,
+        "bytes": 349552,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79886448,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_stone_a_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 187869768,
+        "bytes": 322144,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79890624,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ],
+    "microdetail_wood_b_tex_n": [
+      {
+        "pack": "content/base/res/landscape_extra.dxp.bin",
+        "offset": 189881056,
+        "bytes": 317096,
+        "pixel_count": 262144
+      },
+      {
+        "pack": "content/base/res/zzz-tq_pack.dxp.bin",
+        "offset": 79898976,
+        "bytes": 1392,
+        "pixel_count": 1024
+      }
+    ]
+  },
+  "slot_count": 12,
+  "unique_texture_count": 11,
+  "dimensions": [
+    512,
+    512
+  ],
+  "uv_scale_per_m": 0.5099999904632568,
+  "id_count_scale": 11.086956977844238,
+  "id_integer_denominator": 23,
+  "adaptation_scope": {
+    "kind": "source_backed_ue_post_rvt_microdetail_adaptation",
+    "original_assets_and_slot_parameters": true,
+    "public_full_land_apply_helper_available": true,
+    "public_land_aces_apply_call_available": false,
+    "interpretation": "Apply the public land microdetail helper after the UE RVT composition using the original level array and IDs.",
+    "renderer_mapping": "UE RVT ID transport, compression, interpolation and normal combination are adapter behavior."
+  },
+  "original_image_resampling": false,
+  "original_image_pixel_changes": 0,
+  "native_validation": "pending_parent_material_and_runtime_gates"
+}

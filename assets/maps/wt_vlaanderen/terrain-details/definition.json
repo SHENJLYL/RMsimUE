@@ -1,0 +1,2369 @@
+{
+  "schema": "wt_indexed_landdetail_v1",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "source_definition": {
+    "file": "terrain-details/source-landclass.json",
+    "sha256": "66cb40e875ef86b612bd89bdc38a561a419061ce8e4597538ae3ee6f6640ade7"
+  },
+  "source_resource": {
+    "name": "avg_vlaanderen_detailed_biome",
+    "sha256": "8cf1aa8f23f927e07c5034bc91d485c35102bc9d46655d458126da30ecbb6b80"
+  },
+  "table": {
+    "source_parameters": {
+      "detailMul1": 11.119999885559082,
+      "detailMul2": 11.229999542236328,
+      "randomRotatePeriod": 73.0,
+      "randomVariationPeriod": 0.880979597568512
+    },
+    "source_textures": {
+      "indices": "avg_vlaanderen_detailed_biome_tex_b",
+      "grass_weight": "america_detailed_grass_masks",
+      "flowmap": "avg_vlaanderen_detailed_biome_tex_f"
+    },
+    "definitions": {
+      "soil_a": {
+        "albedo": "biome_detail_soil_a_tex_d",
+        "reflectance": "biome_detail_soil_a_tex_r"
+      },
+      "soil_b": {
+        "albedo": "biome_detail_soil_b_tex_d",
+        "reflectance": "biome_detail_soil_b_tex_r"
+      },
+      "sand_a": {
+        "albedo": "biome_detail_sand_soil_a_tex_d",
+        "reflectance": "biome_detail_sand_soil_a_tex_r"
+      },
+      "sand_d": {
+        "albedo": "biome_detail_sand_d_tex_d",
+        "reflectance": "biome_detail_sand_d_tex_r"
+      },
+      "grass_a": {
+        "albedo": "biome_detail_grass_a_tex_d",
+        "reflectance": "biome_detail_grass_a_tex_r"
+      },
+      "grass_b": {
+        "albedo": "biome_detail_grass_b_tex_d",
+        "reflectance": "biome_detail_grass_b_tex_r"
+      },
+      "grass_dead": {
+        "albedo": "biome_detail_grass_dead_a_tex_d",
+        "reflectance": "biome_detail_grass_dead_a_tex_r"
+      },
+      "grass_city_a": {
+        "albedo": "biome_detail_grass_dead_a_tex_d",
+        "reflectance": "biome_detail_grass_dead_a_tex_r"
+      },
+      "grass_city_b": {
+        "albedo": "biome_detail_grass_b_tex_d",
+        "reflectance": "biome_detail_grass_b_tex_r"
+      },
+      "grass_soil_a": {
+        "albedo": "biome_detail_grass_dead_a_tex_d",
+        "reflectance": "biome_detail_grass_dead_a_tex_r"
+      },
+      "ground_rocks_a": {
+        "albedo": "biome_detail_pebbles_shore_a_tex_d",
+        "reflectance": "biome_detail_pebbles_shore_a_tex_r"
+      },
+      "rock_chunks_a": {
+        "albedo": "biome_detail_rock_chunks_a_tex_d",
+        "reflectance": "biome_detail_rock_chunks_a_tex_r"
+      },
+      "soil_rough_a": {
+        "albedo": "biome_detail_mud_b_tex_d",
+        "reflectance": "biome_detail_mud_b_tex_r"
+      },
+      "slope_soil_a": {
+        "albedo": "biome_detail_slope_soil_a_tex_d",
+        "reflectance": "biome_detail_slope_soil_a_tex_r"
+      },
+      "forest_a": {
+        "albedo": "biome_detail_moss_a_tex_d",
+        "reflectance": "biome_detail_moss_a_tex_r"
+      },
+      "forest_b": {
+        "albedo": "biome_detail_forest_floor_a_tex_d",
+        "reflectance": "biome_detail_forest_floor_a_tex_r"
+      },
+      "rock_boulders_a": {
+        "albedo": "biome_detail_rock_boulders_a_tex_d",
+        "reflectance": "biome_detail_rock_boulders_a_tex_r"
+      },
+      "cliff_a": {
+        "albedo": "biome_detail_rocks_smooth_tex_d",
+        "reflectance": "biome_detail_rocks_smooth_tex_r"
+      },
+      "asphalt_a": {
+        "albedo": "biome_detail_asphalt_c_tex_d",
+        "reflectance": "biome_detail_asphalt_c_tex_r"
+      },
+      "asphalt_b": {
+        "albedo": "biome_detail_asphalt_a_tex_d",
+        "reflectance": "biome_detail_asphalt_a_tex_r"
+      },
+      "burnt_grass": {
+        "albedo": "biome_detail_burnt_grass_a_tex_d",
+        "reflectance": "biome_detail_burnt_grass_a_tex_r"
+      },
+      "roots_b": {
+        "albedo": "biome_detail_roots_b_tex_d",
+        "reflectance": "biome_detail_roots_b_tex_r"
+      },
+      "trench_soil": {
+        "albedo": "biome_detail_slope_soil_d_tex_d",
+        "reflectance": "biome_detail_slope_soil_d_tex_r"
+      },
+      "citytile_a": {
+        "albedo": "biome_detail_city_tile_a_tex_d",
+        "reflectance": "biome_detail_city_tile_a_tex_r"
+      },
+      "concrete_cracked_a": {
+        "albedo": "biome_detail_trampled_soil_a_tex_d",
+        "reflectance": "biome_detail_trampled_soil_a_tex_r"
+      },
+      "sett_a": {
+        "albedo": "biome_detail_sett_small_old_tex_d",
+        "reflectance": "biome_detail_sett_small_old_tex_r"
+      },
+      "pebbles": {
+        "albedo": "biome_detail_pebbles_shore_a_tex_d",
+        "reflectance": "biome_detail_pebbles_shore_a_tex_r"
+      },
+      "empty_a": {
+        "albedo": "",
+        "reflectance": ""
+      }
+    },
+    "albedo_names": [
+      "biome_detail_asphalt_a_tex_d",
+      "biome_detail_asphalt_c_tex_d",
+      "biome_detail_burnt_grass_a_tex_d",
+      "biome_detail_city_tile_a_tex_d",
+      "biome_detail_forest_floor_a_tex_d",
+      "biome_detail_grass_a_tex_d",
+      "biome_detail_grass_b_tex_d",
+      "biome_detail_grass_dead_a_tex_d",
+      "biome_detail_moss_a_tex_d",
+      "biome_detail_mud_b_tex_d",
+      "biome_detail_pebbles_shore_a_tex_d",
+      "biome_detail_rock_boulders_a_tex_d",
+      "biome_detail_rock_chunks_a_tex_d",
+      "biome_detail_rocks_smooth_tex_d",
+      "biome_detail_roots_b_tex_d",
+      "biome_detail_sand_d_tex_d",
+      "biome_detail_sand_soil_a_tex_d",
+      "biome_detail_sett_small_old_tex_d",
+      "biome_detail_slope_soil_a_tex_d",
+      "biome_detail_slope_soil_d_tex_d",
+      "biome_detail_soil_a_tex_d",
+      "biome_detail_soil_b_tex_d",
+      "biome_detail_trampled_soil_a_tex_d"
+    ],
+    "biomes": [
+      {
+        "id": 0,
+        "layers": [
+          {
+            "name": "grass_soil_a",
+            "slice": 7,
+            "albedo": "biome_detail_grass_dead_a_tex_d",
+            "reflectance": "biome_detail_grass_dead_a_tex_r",
+            "height_scale": 0.10000000149011612,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.10000000149011612,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 50331648
+      },
+      {
+        "id": 1,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 16777216
+      },
+      {
+        "id": 2,
+        "layers": [
+          {
+            "name": "grass_soil_a",
+            "slice": 7,
+            "albedo": "biome_detail_grass_dead_a_tex_d",
+            "reflectance": "biome_detail_grass_dead_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 33554432
+      },
+      {
+        "id": 3,
+        "layers": [
+          {
+            "name": "forest_a",
+            "slice": 8,
+            "albedo": "biome_detail_moss_a_tex_d",
+            "reflectance": "biome_detail_moss_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 16777216
+      },
+      {
+        "id": 4,
+        "layers": [
+          {
+            "name": "forest_b",
+            "slice": 4,
+            "albedo": "biome_detail_forest_floor_a_tex_d",
+            "reflectance": "biome_detail_forest_floor_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 33554432
+      },
+      {
+        "id": 5,
+        "layers": [
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 6,
+        "layers": [
+          {
+            "name": "soil_b",
+            "slice": 21,
+            "albedo": "biome_detail_soil_b_tex_d",
+            "reflectance": "biome_detail_soil_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "soil_b",
+            "slice": 21,
+            "albedo": "biome_detail_soil_b_tex_d",
+            "reflectance": "biome_detail_soil_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 16777216
+      },
+      {
+        "id": 7,
+        "layers": [
+          {
+            "name": "rock_boulders_a",
+            "slice": 11,
+            "albedo": "biome_detail_rock_boulders_a_tex_d",
+            "reflectance": "biome_detail_rock_boulders_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "rock_boulders_a",
+            "slice": 11,
+            "albedo": "biome_detail_rock_boulders_a_tex_d",
+            "reflectance": "biome_detail_rock_boulders_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 8,
+        "layers": [
+          {
+            "name": "asphalt_a",
+            "slice": 1,
+            "albedo": "biome_detail_asphalt_c_tex_d",
+            "reflectance": "biome_detail_asphalt_c_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "asphalt_b",
+            "slice": 0,
+            "albedo": "biome_detail_asphalt_a_tex_d",
+            "reflectance": "biome_detail_asphalt_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 9,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 10,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 11,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 12,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 13,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 14,
+        "layers": [
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 15,
+        "layers": [
+          {
+            "name": "soil_a",
+            "slice": 20,
+            "albedo": "biome_detail_soil_a_tex_d",
+            "reflectance": "biome_detail_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "soil_a",
+            "slice": 20,
+            "albedo": "biome_detail_soil_a_tex_d",
+            "reflectance": "biome_detail_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 16,
+        "layers": [
+          {
+            "name": "forest_a",
+            "slice": 8,
+            "albedo": "biome_detail_moss_a_tex_d",
+            "reflectance": "biome_detail_moss_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "forest_a",
+            "slice": 8,
+            "albedo": "biome_detail_moss_a_tex_d",
+            "reflectance": "biome_detail_moss_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 17,
+        "layers": [
+          {
+            "name": "soil_b",
+            "slice": 21,
+            "albedo": "biome_detail_soil_b_tex_d",
+            "reflectance": "biome_detail_soil_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "soil_rough_a",
+            "slice": 9,
+            "albedo": "biome_detail_mud_b_tex_d",
+            "reflectance": "biome_detail_mud_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 18,
+        "layers": [
+          {
+            "name": "slope_soil_a",
+            "slice": 18,
+            "albedo": "biome_detail_slope_soil_a_tex_d",
+            "reflectance": "biome_detail_slope_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          -1.0,
+          -1.0
+        ],
+        "grass_microdetail_removal_bits": 33554432
+      },
+      {
+        "id": 19,
+        "layers": [
+          {
+            "name": "slope_soil_a",
+            "slice": 18,
+            "albedo": "biome_detail_slope_soil_a_tex_d",
+            "reflectance": "biome_detail_slope_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 20,
+        "layers": [
+          {
+            "name": "slope_soil_a",
+            "slice": 18,
+            "albedo": "biome_detail_slope_soil_a_tex_d",
+            "reflectance": "biome_detail_slope_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "slope_soil_a",
+            "slice": 18,
+            "albedo": "biome_detail_slope_soil_a_tex_d",
+            "reflectance": "biome_detail_slope_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          -1.0,
+          -1.0
+        ],
+        "grass_microdetail_removal_bits": 50331648
+      },
+      {
+        "id": 21,
+        "layers": [
+          {
+            "name": "rock_chunks_a",
+            "slice": 12,
+            "albedo": "biome_detail_rock_chunks_a_tex_d",
+            "reflectance": "biome_detail_rock_chunks_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "slope_soil_a",
+            "slice": 18,
+            "albedo": "biome_detail_slope_soil_a_tex_d",
+            "reflectance": "biome_detail_slope_soil_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          -1.0,
+          -1.0
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 22,
+        "layers": [
+          {
+            "name": "rock_chunks_a",
+            "slice": 12,
+            "albedo": "biome_detail_rock_chunks_a_tex_d",
+            "reflectance": "biome_detail_rock_chunks_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "ground_rocks_a",
+            "slice": 10,
+            "albedo": "biome_detail_pebbles_shore_a_tex_d",
+            "reflectance": "biome_detail_pebbles_shore_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          -1.0,
+          -1.0
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 23,
+        "layers": [
+          {
+            "name": "cliff_a",
+            "slice": 13,
+            "albedo": "biome_detail_rocks_smooth_tex_d",
+            "reflectance": "biome_detail_rocks_smooth_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "cliff_a",
+            "slice": 13,
+            "albedo": "biome_detail_rocks_smooth_tex_d",
+            "reflectance": "biome_detail_rocks_smooth_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          -1.0,
+          -1.0
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 24,
+        "layers": [
+          {
+            "name": "burnt_grass",
+            "slice": 2,
+            "albedo": "biome_detail_burnt_grass_a_tex_d",
+            "reflectance": "biome_detail_burnt_grass_a_tex_r",
+            "height_scale": 0.15000000596046448,
+            "invert_height": 0.0,
+            "normal_scale": 5.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "roots_b",
+            "slice": 14,
+            "albedo": "biome_detail_roots_b_tex_d",
+            "reflectance": "biome_detail_roots_b_tex_r",
+            "height_scale": 0.15000000596046448,
+            "invert_height": 0.0,
+            "normal_scale": 0.5,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 25,
+        "layers": [
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.20000000298023224,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "sand_a",
+            "slice": 16,
+            "albedo": "biome_detail_sand_soil_a_tex_d",
+            "reflectance": "biome_detail_sand_soil_a_tex_r",
+            "height_scale": 0.20000000298023224,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 26,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 27,
+        "layers": [
+          {
+            "name": "grass_dead",
+            "slice": 7,
+            "albedo": "biome_detail_grass_dead_a_tex_d",
+            "reflectance": "biome_detail_grass_dead_a_tex_r",
+            "height_scale": 0.4000000059604645,
+            "invert_height": 0.0,
+            "normal_scale": 0.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_city_a",
+            "slice": 7,
+            "albedo": "biome_detail_grass_dead_a_tex_d",
+            "reflectance": "biome_detail_grass_dead_a_tex_r",
+            "height_scale": 0.4000000059604645,
+            "invert_height": 0.0,
+            "normal_scale": 5.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 28,
+        "layers": [
+          {
+            "name": "trench_soil",
+            "slice": 19,
+            "albedo": "biome_detail_slope_soil_d_tex_d",
+            "reflectance": "biome_detail_slope_soil_d_tex_r",
+            "height_scale": 0.20000000298023224,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "trench_soil",
+            "slice": 19,
+            "albedo": "biome_detail_slope_soil_d_tex_d",
+            "reflectance": "biome_detail_slope_soil_d_tex_r",
+            "height_scale": 0.20000000298023224,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 29,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 30,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 31,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 32,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 33,
+        "layers": [
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 34,
+        "layers": [
+          {
+            "name": "soil_rough_a",
+            "slice": 9,
+            "albedo": "biome_detail_mud_b_tex_d",
+            "reflectance": "biome_detail_mud_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "soil_rough_a",
+            "slice": 9,
+            "albedo": "biome_detail_mud_b_tex_d",
+            "reflectance": "biome_detail_mud_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 35,
+        "layers": [
+          {
+            "name": "sett_a",
+            "slice": 17,
+            "albedo": "biome_detail_sett_small_old_tex_d",
+            "reflectance": "biome_detail_sett_small_old_tex_r",
+            "height_scale": 0.30000001192092896,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "concrete_cracked_a",
+            "slice": 22,
+            "albedo": "biome_detail_trampled_soil_a_tex_d",
+            "reflectance": "biome_detail_trampled_soil_a_tex_r",
+            "height_scale": 0.20000000298023224,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.0,
+          0.0
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 36,
+        "layers": [
+          {
+            "name": "grass_city_a",
+            "slice": 7,
+            "albedo": "biome_detail_grass_dead_a_tex_d",
+            "reflectance": "biome_detail_grass_dead_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 50331648
+      },
+      {
+        "id": 37,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 38,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 39,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 40,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 41,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 42,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 43,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 44,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 45,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 46,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 47,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 48,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 49,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 50,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 51,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 52,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 53,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 54,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 55,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 56,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 57,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 58,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 59,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 60,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 61,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 62,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 63,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      },
+      {
+        "id": 64,
+        "layers": [
+          {
+            "name": "grass_a",
+            "slice": 5,
+            "albedo": "biome_detail_grass_a_tex_d",
+            "reflectance": "biome_detail_grass_a_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          },
+          {
+            "name": "grass_b",
+            "slice": 6,
+            "albedo": "biome_detail_grass_b_tex_d",
+            "reflectance": "biome_detail_grass_b_tex_r",
+            "height_scale": 0.8500000238418579,
+            "invert_height": 0.0,
+            "normal_scale": 1.0,
+            "weight_mul": 1.0
+          }
+        ],
+        "random_flowmap": [
+          0.5,
+          0.699999988079071
+        ],
+        "grass_microdetail_removal_bits": 0
+      }
+    ]
+  },
+  "textures": {
+    "biome_detail_asphalt_a_tex_d": {
+      "name": "biome_detail_asphalt_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_asphalt_a_tex_d.png",
+      "sha256": "cb87ac1b53bf93e0864f13a29d7f14f32d59e756b03933c3b2ed4a81a432729a",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_asphalt_c_tex_d": {
+      "name": "biome_detail_asphalt_c_tex_d",
+      "file": "terrain-details/textures/biome_detail_asphalt_c_tex_d.png",
+      "sha256": "d9331e50dbab8e29690c5d232dbf0c02ab1eb5ef8d970ab4e5e9e8e9fcab59be",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_burnt_grass_a_tex_d": {
+      "name": "biome_detail_burnt_grass_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_burnt_grass_a_tex_d.png",
+      "sha256": "cb558b4da720cfbbb46beb39883bf9ec8bc76163882975a0d5f931a07977f770",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_city_tile_a_tex_d": {
+      "name": "biome_detail_city_tile_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_city_tile_a_tex_d.png",
+      "sha256": "d6658c64a82c41964670415ffc125f953a8eed3384d4db3bfb11511069144c67",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_forest_floor_a_tex_d": {
+      "name": "biome_detail_forest_floor_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_forest_floor_a_tex_d.png",
+      "sha256": "e480ca87b8be3d3d84fe2d8fb3ecd63ba77215770ac1a20f46e1ff36e5239bb8",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_grass_a_tex_d": {
+      "name": "biome_detail_grass_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_grass_a_tex_d.png",
+      "sha256": "c1281fd2abb1d4ec0e70672810999f07d15b463d724fa5e6ebb16a09d5deb09c",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_grass_b_tex_d": {
+      "name": "biome_detail_grass_b_tex_d",
+      "file": "terrain-details/textures/biome_detail_grass_b_tex_d.png",
+      "sha256": "5f007e4fd84be160ab0174f8877f432cc6ecd902ac211088ea677bd6375f227c",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_grass_dead_a_tex_d": {
+      "name": "biome_detail_grass_dead_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_grass_dead_a_tex_d.png",
+      "sha256": "691e6c0fc5a99cc11e3fd8d927fb13be87e3f6ae87e8c431530488169ce0c936",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_moss_a_tex_d": {
+      "name": "biome_detail_moss_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_moss_a_tex_d.png",
+      "sha256": "0d142402afdc9ad3783a709e3d89c5d00a137f74421b34a5925dd87952ef1b0e",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_mud_b_tex_d": {
+      "name": "biome_detail_mud_b_tex_d",
+      "file": "terrain-details/textures/biome_detail_mud_b_tex_d.png",
+      "sha256": "5021b53d726f9323f3266fb57441cc94b31dcf3abf82876e952fcdcca4a845a9",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_pebbles_shore_a_tex_d": {
+      "name": "biome_detail_pebbles_shore_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_pebbles_shore_a_tex_d.png",
+      "sha256": "eb2845641f30ab237f28f2b69e878addc55cfce970473464e6a4ee0b2a0c6240",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_rock_boulders_a_tex_d": {
+      "name": "biome_detail_rock_boulders_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_rock_boulders_a_tex_d.png",
+      "sha256": "e4483ecf1aee0bd8497316259a111b19b13a703849dd1708ae524cda46180d4f",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_rock_chunks_a_tex_d": {
+      "name": "biome_detail_rock_chunks_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_rock_chunks_a_tex_d.png",
+      "sha256": "61cd9d994304afe433e00e1e7d00a26c8ee10ea7886c415d76c16cd72c70ff74",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_rocks_smooth_tex_d": {
+      "name": "biome_detail_rocks_smooth_tex_d",
+      "file": "terrain-details/textures/biome_detail_rocks_smooth_tex_d.png",
+      "sha256": "121b1f23ea7d2932453e3afac0a65727f2dd70529bf5fb541f575aa744bf5d37",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_roots_b_tex_d": {
+      "name": "biome_detail_roots_b_tex_d",
+      "file": "terrain-details/textures/biome_detail_roots_b_tex_d.png",
+      "sha256": "f4ada5210ca12cdd6fda9f45222d1a01e6e14f6f42535659e2bb916f851ce4b2",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_sand_d_tex_d": {
+      "name": "biome_detail_sand_d_tex_d",
+      "file": "terrain-details/textures/biome_detail_sand_d_tex_d.png",
+      "sha256": "3c7957733edd3bc9bce3f071957c3221b60aba5b70113875aecc543b9629436e",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_sand_soil_a_tex_d": {
+      "name": "biome_detail_sand_soil_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_sand_soil_a_tex_d.png",
+      "sha256": "1ebef3ddcd8d4cf2a0957ef797241fc2dad96e296bad5e3861e8a73f7f6de2f7",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_sett_small_old_tex_d": {
+      "name": "biome_detail_sett_small_old_tex_d",
+      "file": "terrain-details/textures/biome_detail_sett_small_old_tex_d.png",
+      "sha256": "bc6e8a03a189f44a3d10b45fdea2e8cd84095d23d9fab2c241a7f827411bb95e",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_slope_soil_a_tex_d": {
+      "name": "biome_detail_slope_soil_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_slope_soil_a_tex_d.png",
+      "sha256": "e8bd12c13da38d6fcba7d3bbeca0e9d0983b92a1ef80fa9119ba63e103b8b861",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_slope_soil_d_tex_d": {
+      "name": "biome_detail_slope_soil_d_tex_d",
+      "file": "terrain-details/textures/biome_detail_slope_soil_d_tex_d.png",
+      "sha256": "95ff32cc723b204a9f936e062535f876731e786750de7c12a8f09a6b62638cfc",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_soil_a_tex_d": {
+      "name": "biome_detail_soil_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_soil_a_tex_d.png",
+      "sha256": "2a7cf52ec910cb4e22a04302c69fe07ae4f884de9c21b7e4f6d0980c68b1cb4e",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_soil_b_tex_d": {
+      "name": "biome_detail_soil_b_tex_d",
+      "file": "terrain-details/textures/biome_detail_soil_b_tex_d.png",
+      "sha256": "396881dadadc8aa2ce92654372be1dc675a809191bfc4a059d31f15bcf912bbe",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "biome_detail_trampled_soil_a_tex_d": {
+      "name": "biome_detail_trampled_soil_a_tex_d",
+      "file": "terrain-details/textures/biome_detail_trampled_soil_a_tex_d.png",
+      "sha256": "a5d7f684217eea10a5fbbff1946e3e43d7d6119fcd91b8ab9493648252b5ebfd",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    "avg_vlaanderen_detailed_biome_tex_b": {
+      "name": "avg_vlaanderen_detailed_biome_tex_b",
+      "file": "terrain-details/textures/avg_vlaanderen_detailed_biome_tex_b.png",
+      "sha256": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "avg_vlaanderen_detailed_biome_tex_d": {
+      "name": "avg_vlaanderen_detailed_biome_tex_d",
+      "file": "terrain-details/textures/avg_vlaanderen_detailed_biome_tex_d.png",
+      "sha256": "9f961b92696b646d79c84a43d5c3a3227a419ae6544fabfd4ebabf7ad6c75a0c",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    "avg_vlaanderen_detailed_biome_tex_f": {
+      "name": "avg_vlaanderen_detailed_biome_tex_f",
+      "file": "terrain-details/textures/avg_vlaanderen_detailed_biome_tex_f.png",
+      "sha256": "986743360784aff971979eeebfe6e6bd19acf94de404171f146fa8be754e4086",
+      "size": [
+        512,
+        512
+      ]
+    }
+  },
+  "verification_file": "terrain-details/verification.json",
+  "verification_sha256": "3e97ef946fc55286d3453bdd30704872a673245277328cc91bd24f3e5c719092",
+  "adapter": {
+    "color": "source dual-layer height blend times original macro; microdetail self-color flags not applied",
+    "normal": "UE surface gradient from original alpha height, height_scale and normal_scale; no geometry displacement",
+    "roughness": 0.9,
+    "metallic": 0,
+    "packed_reflectance": "source names retained; packed channel semantics not inferred",
+    "categorical_index": "nearest, mip 0",
+    "source_extent_m": [
+      0,
+      0,
+      2048,
+      2048
+    ]
+  }
+}

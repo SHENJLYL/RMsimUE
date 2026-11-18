@@ -15,13 +15,18 @@ import zlib
 import unreal
 from import_vehicle_assets import import_asset
 from wt_vertex_opacity import HEIGHT_DECAL_SHADER, validate_scene_vertex_opacity
+from wt_height_decals import (HEIGHT_DECAL_CODE, HEIGHT_SOURCE, HEIGHT_NORMAL_STRENGTH,
+                              HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata,
+                              contract as height_surface_contract)
+import wt_ground_microdetails as ground_microdetails
 from wt_tree_alpha import tree_alpha_contract, SOURCE_AUDIT_SHA256 as TREE_ALPHA_AUDIT_SHA256
 from wt_landclass import LANDCLASS_CODE, validate_landclass_surface, shader_vectors
+from wt_rendinst_decals import flavor as rendinst_decal_flavor, contract as rendinst_decal_contract, FLAVORS as RENDINST_DECAL_FLAVORS, author_parent as author_rendinst_decal_parent, author_instance as author_rendinst_decal_instance
 from wt_water import water_surface_contract, COLOR_RGBA as WATER_COLOR_RGBA, UE_ROUGHNESS as WATER_ROUGHNESS, UE_METALLIC as WATER_METALLIC, UE_SPECULAR as WATER_SPECULAR
 
 EDIT = unreal.MaterialEditingLibrary
 P = unreal.MaterialProperty
-VERSION = 6
+VERSION = 9
 
 
 def _load_existing(path):
@@ -36,6 +41,9 @@ def material_id(spec):
 
 
 def material_flavor(shader):
+    decal = rendinst_decal_flavor(shader)
+    if decal is not None:
+        return decal
     if shader == 'water_aces':
         return 'Water'
     if shader == HEIGHT_DECAL_SHADER:
@@ -99,7 +107,7 @@ class Textures:
         self.directory = package / 'textures'
         self.directory.mkdir(exist_ok=True)
         self.default_paths = {}
-        for name, rgba in [('White', (255,255,255,255)), ('NormalAG', (0,128,0,128)), ('Black', (0,0,0,255))]:
+        for name, rgba in [('White', (255,255,255,255)), ('NormalAG', (0,128,0,128)), ('Black', (0,0,0,255)), ('MidGray', (128,128,128,255))]:
             path = self.directory / ('WT_Default' + name + '.png')
             if not path.exists():
                 _png(path, rgba)
@@ -155,13 +163,15 @@ class Textures:
         return texture
 
 
-def _clear_graph(material):
+def _clear_graph(material, keep=()):
     # UE 5.8 DeleteAllMaterialExpressions iterates the live expression array
     # while DeleteMaterialExpression removes from it. Snapshot first so a
     # rebuild cannot retain disconnected old nodes or duplicate parameters.
+    keep_paths={node.get_path_name() for node in keep}
     for expression in list(EDIT.get_material_expressions(material)):
-        EDIT.delete_material_expression(material, expression)
-    if EDIT.get_num_material_expressions(material) != 0:
+        if expression.get_path_name() not in keep_paths:
+            EDIT.delete_material_expression(material, expression)
+    if EDIT.get_num_material_expressions(material) != len(keep_paths):
         raise RuntimeError('material graph was not fully cleared: ' + material.get_path_name())
 
 
@@ -207,11 +217,12 @@ def _texture(material, name, texture, color):
                  sampler_type=unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if color else unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR)
 
 
-def _custom(material, code, inputs, terrain=False):
+def _custom(material, code, inputs, terrain=False, bind_base_color=True, additional_outputs=()):
     outputs = [('NormalOut', unreal.CustomMaterialOutputType.CMOT_FLOAT3),
                ('RoughnessOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1),
                ('MetallicOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1),
                ('OpacityOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1)]
+    outputs.extend(additional_outputs)
     extra = []
     for name, kind in outputs:
         output = unreal.CustomOutput()
@@ -229,7 +240,8 @@ def _custom(material, code, inputs, terrain=False):
                  description='Source texture adapter; renderer parity limitations in material-import-report.json')
     for name, (expression, output) in inputs.items():
         _wire(expression, output, node, name)
-    _prop(node, '', P.MP_BASE_COLOR)
+    if bind_base_color:
+        _prop(node, '', P.MP_BASE_COLOR)
     _prop(node, 'NormalOut', P.MP_NORMAL)
     _prop(node, 'RoughnessOut', P.MP_ROUGHNESS)
     _prop(node, 'MetallicOut', P.MP_METALLIC)
@@ -289,21 +301,7 @@ return max(result,0);
 '''
 
 
-# DagorEngine 9639942de5a8e5b01d91977f60ed82cda22d5f41,
-# prog/daNetGame/shaders/make_clipmap.dshl:1198-1209, 1429-1435.
-# The source color alpha is a height threshold; original short4n position.w
-# supplies the vertex coverage through the verified full-precision UV1.x.
-HEIGHT_DECAL_CODE = r'''
-float4 c=Texture2DSample(T0,T0Sampler,UV0);
-float4 n=Texture2DSample(T2,T2Sampler,UV0);
-float2 normalXY=n.ag*2-1;
-NormalOut=normalize(float3(normalXY,sqrt(saturate(1-dot(normalXY,normalXY)))));
-RoughnessOut=clamp(1-n.r,0.04,1);MetallicOut=saturate(n.b);
-float sourceAlpha=(1-2*HeightBlend.z)*c.a+HeightBlend.z;
-float vertexAlpha=pow(OpacityUV.x,HeightBlend.y);
-OpacityOut=saturate((vertexAlpha-sourceAlpha)/(0.0001+HeightBlend.x));
-return max(c.rgb,0);
-'''
+# Height-decal code and source layout contract live in wt_height_decals.py.
 
 
 def _leaf_custom(material, code, inputs, additional_outputs=()):
@@ -384,17 +382,29 @@ def _ground_decal_rvt(textures):
     return textures.ground_decal_rvt
 
 
-def _write_ground_decal_rvt(material, surface):
+def _write_ground_decal_rvt(material, surface, normal_is_world=False, microdetail_pin=None):
     output = _expr(material, unreal.MaterialExpressionRuntimeVirtualTextureOutput)
-    normal = _expr(material, unreal.MaterialExpressionTransform,
-        transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT,
-        transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
+    if normal_is_world:
+        normal = _expr(material, unreal.MaterialExpressionReroute)
+    else:
+        normal = _expr(material, unreal.MaterialExpressionTransform,
+            transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT,
+            transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
     _wire(surface, 'NormalOut', normal, '')
     one = _expr(material, unreal.MaterialExpressionConstant, r=1.0)
-    specular = _expr(material, unreal.MaterialExpressionConstant, r=.5)
+    if microdetail_pin:
+        payload = _expr(material, unreal.MaterialExpressionReroute)
+        _wire(surface, microdetail_pin, payload, '')
+    else:
+        payload = _expr(material, unreal.MaterialExpressionConstant, r=0.0)
+    # UE's RVT shader multiplies all raw attributes by Opacity exactly once.
     for node, pin, socket in [(surface, '', 'BaseColor'), (surface, 'RoughnessOut', 'Roughness'),
                               (normal, '', 'Normal'), (surface, 'OpacityOut', 'Opacity'),
-                              (one, '', 'Mask'), (specular, '', 'Specular')]:
+                              (one, '', 'Mask'), (payload, '', 'Specular')]:
+        if node == surface:
+            value = _expr(material, unreal.MaterialExpressionReroute)
+            _wire(node, pin, value, '')
+            node, pin = value, ''
         _wire(node, pin, output, socket)
     return output
 
@@ -416,13 +426,17 @@ float2 decalXY=(DecalNormalWorld.xy-(1-coverage)/127.0)*invAlpha;
 // from the recovered XY, retaining the sign returned by the native sample.
 float decalZ=sqrt(saturate(1-dot(decalXY,decalXY)))*(DecalNormalWorld.z<0 ? -1.0 : 1.0);
 float3 decalNormal=normalize(float3(decalXY,decalZ));
-NormalOut=normalize(lerp(BaseNormalWorld,decalNormal,coverage));
+// Dagor land_aces combines the heightfield normal with the clipmap normal by RNM.
+float3 t=normalize(BaseGeometricNormal)+float3(0,0,1);
+float3 u=decalNormal*float3(-1,-1,1);
+float3 projectedNormal=normalize(t*(dot(t,u)/max(t.z,1.e-5))-u);
+NormalOut=normalize(lerp(BaseNormalWorld,projectedNormal,coverage));
 RoughnessOut=clamp(DecalRoughness+(BaseRoughness-clearValue)*(1-coverage),0.04,1);
 return max(DecalColor+BaseColor*(1-coverage),0);
 '''
 
 
-def _read_ground_decal_rvt(material, surface, textures):
+def _read_ground_decal_rvt(material, surface, textures, base_normal_is_world=False):
     source = json.loads((textures.package/'scene-source.json').read_text(encoding='utf-8-sig'))
     decals = [mesh for mesh in source.get('meshes', []) if mesh['id']=='world_decal_000']
     if not decals:
@@ -436,28 +450,44 @@ def _read_ground_decal_rvt(material, surface, textures):
     world = _expr(material, unreal.MaterialExpressionWorldPosition)
     # UE 5.8 overrides GetInputName(1) with the spaced absolute-position pin.
     _wire(world, '', sample, 'World Position')
-    normal = _expr(material, unreal.MaterialExpressionTransform,
-        transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT,
-        transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
-    _wire(surface, 'NormalOut', normal, '')
+    if base_normal_is_world:
+        normal_input=(surface, 'NormalOut')
+    else:
+        normal = _expr(material, unreal.MaterialExpressionTransform,
+            transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT,
+            transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
+        _wire(surface, 'NormalOut', normal, '')
+        normal_input=(normal, '')
     low = (bounds['lo'][0]*100, -bounds['hi'][1]*100, bounds['lo'][2]*100, 0)
     high = (bounds['hi'][0]*100, -bounds['lo'][1]*100, bounds['hi'][2]*100, 0)
-    inputs = {'BaseColor': (surface, ''), 'BaseNormalWorld': (normal, ''),
+    inputs = {'BaseColor': (surface, ''), 'BaseNormalWorld': normal_input,
+              'BaseGeometricNormal': (_expr(material, unreal.MaterialExpressionVertexNormalWS), ''),
               'BaseRoughness': (surface, 'RoughnessOut'), 'BaseMetallic': (surface, 'MetallicOut'),
               'DecalColor': (sample, 'BaseColor'), 'DecalNormalWorld': (sample, 'Normal'),
               'DecalRoughness': (sample, 'Roughness'), 'DecalMask': (sample, 'Mask'),
               'World': (world, ''),
               'BoundsMin': (_expr(material, unreal.MaterialExpressionConstant3Vector, constant=unreal.LinearColor(*low)), ''),
               'BoundsMax': (_expr(material, unreal.MaterialExpressionConstant3Vector, constant=unreal.LinearColor(*high)), '')}
+    for name in ('BaseNormalWorld','BaseRoughness','BaseMetallic',
+                 'DecalColor','DecalNormalWorld','DecalRoughness','DecalMask'):
+        value = _expr(material, unreal.MaterialExpressionReroute)
+        _wire(inputs[name][0], inputs[name][1], value, '')
+        inputs[name] = (value, '')
     node = _custom(material, RVT_COMPOSITE_CODE, inputs)
     material.set_editor_property('tangent_space_normal', False)
-    return node
+    return ground_microdetails.author_post_layer(material, textures, node, sample, world, inputs)
 
 
 def _landclass_surface(material, textures):
     if textures.landclass is None:
         raise ValueError('land_mesh requires its verified original global landclass data')
-    inputs = {'World': (_expr(material, unreal.MaterialExpressionWorldPosition), '')}
+    from wt_landdetail import author_surface
+    detail, _ = author_surface(material, textures)
+    detail_normal = _expr(material, unreal.MaterialExpressionReroute)
+    _wire(detail, 'NormalOut', detail_normal, '')
+    inputs = {'World': (_expr(material, unreal.MaterialExpressionWorldPosition), ''),
+              'DetailColor': (detail, ''), 'DetailNormalWorld': (detail_normal, ''),
+              'VertexNormalWorld': (_expr(material, unreal.MaterialExpressionVertexNormalWS), '')}
     for parameter, entry in textures.landclass['textures'].items():
         texture = textures.get(entry['name'], entry['srgb'], nearest=entry['nearest'])
         inputs[parameter] = (_texture(material, parameter, texture, entry['srgb']), '')
@@ -470,6 +500,8 @@ def parent_material(folder, flavor, textures):
     name = 'WT_Parent_' + flavor
     material = _load_existing(f'{folder}/Materials/{name}') or unreal.AssetToolsHelpers.get_asset_tools().create_asset(name, folder+'/Materials', unreal.Material, unreal.MaterialFactoryNew())
     _clear_graph(material)
+    if flavor in RENDINST_DECAL_FLAVORS:
+        return author_rendinst_decal_parent(material, textures, flavor)
     translucent = flavor in ('Decal', 'Glass', 'HeightDecal')
     material.set_editor_property('blend_mode', unreal.BlendMode.BLEND_TRANSLUCENT if translucent else unreal.BlendMode.BLEND_MASKED)
     material.set_editor_property('two_sided', True)
@@ -487,20 +519,26 @@ def parent_material(folder, flavor, textures):
         _save_parent(material)
         return material
     if flavor == 'HeightDecal':
+        ground_microdetails.definition(textures)
         inputs['T0'] = (_texture(material, 'T0', textures.get(None, True, 'White'), True), '')
-        inputs['T2'] = (_texture(material, 'T2', textures.get(None, False, 'NormalAG'), False), '')
+        inputs['T2'] = (_texture(material, 'T2', textures.get(None, False, 'Black'), False), '')
         inputs['UV0'] = (_expr(material, unreal.MaterialExpressionTextureCoordinate, coordinate_index=0), '')
         inputs['OpacityUV'] = (_expr(material, unreal.MaterialExpressionTextureCoordinate, coordinate_index=1), '')
         inputs['HeightBlend'] = (_vector(material, 'HeightBlend', (.25, 1, 0, 0)), 'RGBA')
-        node = _custom(material, HEIGHT_DECAL_CODE, inputs)
+        inputs['HeightSource'] = (_vector(material, 'HeightSource', HEIGHT_SOURCE), 'RGBA')
+        inputs['HeightNormalStrength'] = (_scalar(material, 'HeightNormalStrength', HEIGHT_NORMAL_STRENGTH), '')
+        node = _custom(material, HEIGHT_DECAL_CODE, inputs, additional_outputs=[
+            ('MicrodetailPayloadOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1)])
+        material.set_editor_property('tangent_space_normal', False)
         _prop(node, 'OpacityOut', P.MP_OPACITY)
-        _write_ground_decal_rvt(material, node)
+        _write_ground_decal_rvt(material, node, normal_is_world=True, microdetail_pin='MicrodetailPayloadOut')
+        unreal.EditorAssetLibrary.set_metadata_tag(material, HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata())
         _save_parent(material)
         return material
     if flavor == 'Land' and textures.landclass is not None:
         node = _landclass_surface(material, textures)
         _prop(node, 'OpacityOut', P.MP_OPACITY_MASK)
-        _read_ground_decal_rvt(material, node, textures)
+        _read_ground_decal_rvt(material, node, textures, base_normal_is_world=True)
         _save_parent(material)
         return material
     for i in range(7):
@@ -540,6 +578,11 @@ def make_instance(folder, spec, parent, textures):
     instance = _load_existing(f'{folder}/Materials/{identity}') or unreal.AssetToolsHelpers.get_asset_tools().create_asset(identity, folder+'/Materials', unreal.MaterialInstanceConstant, unreal.MaterialInstanceConstantFactoryNew())
     EDIT.set_material_instance_parent(instance,parent)
     shader = spec['shader']; params=parameters(spec['parameters']); slots=list(spec['texture_slots'])
+    if rendinst_decal_flavor(shader) is not None:
+        if parent.get_name() != 'WT_Parent_' + rendinst_decal_flavor(shader):
+            raise ValueError('source mesh decal requires its dedicated parent')
+        author_rendinst_decal_instance(instance, spec, textures)
+        return identity, instance
     def values(name,default):
         v=params.get(name,default)
         return (v+list(default[len(v):]))[:len(default)]
@@ -565,11 +608,20 @@ def make_instance(folder, spec, parent, textures):
     if shader == HEIGHT_DECAL_SHADER:
         if parent.get_name() != 'WT_Parent_HeightDecal':
             raise ValueError('source height-decal requires its dedicated parent')
+        height_surface_contract(spec, ground_microdetails.definition(textures))
         EDIT.set_material_instance_vector_parameter_value(instance, 'HeightBlend', unreal.LinearColor(*height_blend_parameters(spec)))
-        for index, color, fallback in [(0, True, 'White'), (2, False, 'NormalAG')]:
+        EDIT.set_material_instance_vector_parameter_value(instance, 'HeightSource', unreal.LinearColor(*HEIGHT_SOURCE))
+        EDIT.set_material_instance_scalar_parameter_value(instance, 'HeightNormalStrength', HEIGHT_NORMAL_STRENGTH)
+        unreal.EditorAssetLibrary.set_metadata_tag(instance, HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata())
+        for index, color, fallback in [(0, True, 'White'), (2, False, 'Black')]:
             texture = textures.get(slots[index] if index < len(slots) else None, color, fallback)
             EDIT.set_material_instance_texture_parameter_value(instance, 'T' + str(index), texture)
         EDIT.update_material_instance(instance)
+        if not EDIT.is_material_instance_parameter_overridden(instance, 'HeightNormalStrength'):
+            raise RuntimeError('height-decal UE normal-strength override was not installed: ' + identity)
+        actual_strength = EDIT.get_material_instance_scalar_parameter_value(instance, 'HeightNormalStrength')
+        if abs(float(actual_strength)-HEIGHT_NORMAL_STRENGTH) > 1.e-7:
+            raise RuntimeError('height-decal UE normal-strength value differs: ' + identity)
         if not unreal.EditorAssetLibrary.save_loaded_asset(instance):
             raise RuntimeError('failed to save height-decal instance: ' + identity)
         return identity, instance
@@ -611,45 +663,23 @@ def make_instance(folder, spec, parent, textures):
     return identity,instance
 
 
-TERRAIN_DETAILS = [
-    'biome_detail_grass_b_tex_d', 'biome_detail_moss_a_tex_d', 'biome_detail_sand_soil_a_tex_d',
-    'biome_detail_rock_boulders_a_tex_d', 'biome_detail_asphalt_c_tex_d', 'biome_detail_slope_soil_d_tex_d',
-    'biome_detail_mud_b_tex_d', 'biome_detail_sett_small_old_tex_d', 'biome_detail_burnt_grass_a_tex_d',
-]
-
-
-def terrain_material(folder,textures):
+def terrain_material(folder,textures,preserve_grass=False):
+    from wt_landdetail import author_surface
     material=_load_existing(folder+'/Materials/WT_Terrain') or unreal.AssetToolsHelpers.get_asset_tools().create_asset('WT_Terrain',folder+'/Materials',unreal.Material,unreal.MaterialFactoryNew())
-    _clear_graph(material)
+    keep=[]
+    if preserve_grass:
+        pending=[node for node in EDIT.get_material_expressions(material) if isinstance(node,unreal.MaterialExpressionLandscapeGrassOutput)]
+        seen=set()
+        while pending:
+            node=pending.pop()
+            if node.get_path_name() in seen:continue
+            seen.add(node.get_path_name());keep.append(node)
+            pending.extend(x for x in EDIT.get_inputs_for_material_expression(material,node) if x)
+    _clear_graph(material,keep=keep)
     material.set_editor_property('blend_mode',unreal.BlendMode.BLEND_MASKED)
     material.set_editor_property('two_sided',True)
-    inputs={'World':(_expr(material,unreal.MaterialExpressionWorldPosition),'')}
-    inputs['Macro']=(_texture(material,'Macro',textures.get('avg_vlaanderen_detailed_biome_tex_d',True),True),'')
-    inputs['Index']=(_texture(material,'Index',textures.get('avg_vlaanderen_detailed_biome_tex_b',False,nearest=True),False),'')
-    for i,name in enumerate(TERRAIN_DETAILS):
-        inputs['D'+str(i)]=(_texture(material,'D'+str(i),textures.get(name,True),True),'')
-    samples='\n'.join(f'float3 c{i}=Texture2DSample(D{i},D{i}Sampler,detailUV).rgb;' for i in range(len(TERRAIN_DETAILS)))
-    code='''// Dagor lmeshRenderer.cpp uses (tile,-tile) for macro/index coordinates.
-float2 mapUV=float2(World.x,-World.y)/204800.0;
-float2 detailUV=World.xy/100.0/11.12;
-float4 macro=Texture2DSample(Macro,MacroSampler,mapUV);
-int index=(int)round(Texture2DSample(Index,IndexSampler,mapUV).r*255);
-'''+samples+'''
-float3 detail=c0;
-if(index==3 || index==4)detail=c1;
-else if(index==5 || index==25)detail=c2;
-else if(index==6 || index==7)detail=c3;
-else if(index==8)detail=c4;
-else if(index==28)detail=c5;
-else if(index==34)detail=c6;
-else if(index==35)detail=c7;
-else if(index==24)detail=c8;
-NormalOut=float3(0,0,1);RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;
-// Original macro color and mapped source microdetail. Full Dagor dual-layer flowmap blending is pending.
-return macro.rgb*lerp(float3(1,1,1),detail*4.59479342,0.45);
-'''
-    surface=_custom(material,code,inputs,terrain=True)
-    _read_ground_decal_rvt(material,surface,textures)
+    surface,_=author_surface(material,textures)
+    _read_ground_decal_rvt(material,surface,textures,base_normal_is_world=True)
     mask=_expr(material,unreal.MaterialExpressionLandscapeVisibilityMask)
     _prop(mask,'',P.MP_OPACITY_MASK)
     _save_parent(material)
@@ -681,7 +711,11 @@ def create_materials(source_directory, ue_folder):
             unresolved='Dagor supplies terrain/water base data outside the image slots; neutral base remains under projected ground decals' if external else '')
         split_alpha=tree_alpha_contract(spec,textures.source)
         if split_alpha is not None:record['source_split_alpha']=split_alpha
+        source_decal=rendinst_decal_contract(spec)
+        if source_decal is not None:record['source_rendinst_decal']=source_decal
         if spec['shader']=='water_aces':record['source_water_surface']=water_source
+        if spec['shader']==HEIGHT_DECAL_SHADER:
+            record['source_height_surface']=height_surface_contract(spec,ground_microdetails.definition(textures))
         if spec['shader']=='land_mesh' and landclass is not None:
             record['source_landclass_surface']=dict(manifest_sha256=manifest['source_landclass_surface']['manifest_sha256'],
                 verification_sha256=landclass['verification_sha256'], class_count=len(landclass['classes']),
@@ -693,7 +727,10 @@ def create_materials(source_directory, ue_folder):
         native_render_parity=False,
         source_landclass_surface=manifest.get('source_landclass_surface'),
         source_water_surface=water_source,
-        terrain_macro_index_mapping='float2(World.x,-World.y)/204800; microdetail keeps positive World.xy',
+        source_ground_microdetails=dict(definition_sha256=ground_microdetails.DEFINITION_SHA256,
+            slot_count=12, original_texture_count=11, post_rvt=True,
+            adaptation='source-backed UE post-RVT; original public land consumer is not available'),
+        terrain_macro_index_mapping='float2(World.x,-World.y)/204800; categorical index mip0; source detail scales 11.12/11.23m on positive World.xy',
         ordinary_tree_split_alpha=dict(source_audit_sha256=TREE_ALPHA_AUDIT_SHA256,
             material_ids=[record['id'] for record in records if 'source_split_alpha' in record],
             sampling='T1.r for audited opaque-color/separate-gray-alpha source pairs with original atest',
@@ -708,7 +745,10 @@ def create_materials(source_directory, ue_folder):
             receiver_parent_flavors=['Land','Terrain'],writer_parent_flavors=['HeightDecal','Decal'],
             writer_meshes=['world_decal_000'],main_pass='Never',
             coverage='saturate((Mask-128/255)/(1-128/255))',
-            color_composition='RVTColor+BaseColor*(1-coverage)'),
+            color_composition='RVTColor+BaseColor*(1-coverage)',
+            normal='alpha-height UV gradient and receiver geometric-normal RNM',
+            reflection_channels='T2 _r: A smoothness, G AO, R reflectance, B microdetail ID; no AG normal decoding',
+            microdetail_transport='RVT Specular raw payload (1+clampedID)/13; native opacity multiplication; continuous floor/next layer blend'),
         facing_leaves=dict(source_shader='rendinst_facing_leaves', mode='camera_no_wind',
             delta_xy_uv=3, delta_z_wind_uv=4, uv_units='original metres and wind group',
             reference_local_ue_cm='100*(dx,-dz,dy)', camera_ue_cm='100*(-dx,dy,-dz)',
@@ -724,10 +764,13 @@ def create_materials(source_directory, ue_folder):
             'PBR adapter from original source textures and UVs; not native Dagor shader parity',
             'layered source UV1 overlay, UV2 detail tiling and AG normals retained; random UV/palette paint/microdetail wetness omitted',
             'perlin family uses original height-weighted layers, without original spatial Perlin modulation',
-            'ground decal geometry writes source color/opacity into RVT read by terrain and outer landmesh; remaining rendinst decals use surface translucency',
+            'ground decal geometry writes source color/opacity into RVT; rendinst diffuse/normal decals use native mesh DeferredDecal, and modulate2x uses linear Surface/Unlit/Modulate color multiplication',
+            'modulate2x multiplies lit scene color; original smoothness/metalness multiplication, independent diffuse normal opacity, source per-section draw_order and palette painting remain unadapted',
             'rendinst_facing_leaves uses recovered source half4 offsets and dynamic no-wind camera-facing cards; wind/rustling animation remains pending',
-            'terrain uses original macro and index map with source negative-V mapping and grouped microdetail; original dual-layer flowmaps and physical material mapping pending',
-            'outer land_mesh restores original five macro color classes and packed source weights; landclass microdetail, derivative normals and vertical-cliff shading remain separate',
+            'terrain and core LC1 use original 65-biome dual-layer color/height rules, 23 original detail textures, source flow rotation and categorical mip0 sampling; normals use an explicit UE alpha-height surface-gradient adapter',
+            'outer land_mesh retains five macro classes/packed source weights and the core LC1 detail adapter; other landclass details, wetness and vertical-cliff shading remain separate',
+            'source height decals use reflection A for roughness and B for the original 12-slot microdetail array; reflectance R/AO G and self-color/wetness are retained as source scope without independent UE PBR transmission',
+            'post-RVT microdetail application is a UE adaptation using public color/AG-normal/smoothness helpers and original level textures; RVT BC compression/filtering can alter ID mixing weights',
             'water_aces binds verified level RGB to the original three pond surfaces; density/params, waves, reflection and refraction remain unbound source semantics',
             'glass/interior mapping and emissive shader-specific effects are not equivalent to source renderer'])
     (package/'material-import-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

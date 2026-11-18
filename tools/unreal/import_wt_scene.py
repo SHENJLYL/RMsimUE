@@ -269,7 +269,7 @@ def import_scene(source_file):
         manifest_sha256=digest(source_file),source_manifest=str(source_file),engine=str(unreal.SystemLibrary.get_engine_version()),
         import_version=IMPORT_VERSION,
         importer_scripts_sha256={name:digest(Path(__file__).resolve().with_name(name)) for name in
-                                 ('import_wt_scene.py','wt_materials.py','wt_material_slots.py','wt_mesh_geometry.py','wt_vertex_opacity.py','wt_runtime_virtual_texture.py','wt_tree_alpha.py','wt_landclass.py','wt_overview.py','wt_water.py')},
+                                 ('import_wt_scene.py','wt_materials.py','wt_material_slots.py','wt_mesh_geometry.py','wt_vertex_opacity.py','wt_runtime_virtual_texture.py','wt_tree_alpha.py','wt_landclass.py','wt_overview.py','wt_water.py','wt_rendinst_decals.py','wt_landdetail.py','wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py')},
         map_asset=world_path,mesh_results=[],runtime_verified=False,source_limits=source['limitations'])
     def record():save_json(evidence/'report.json',report)
     record()
