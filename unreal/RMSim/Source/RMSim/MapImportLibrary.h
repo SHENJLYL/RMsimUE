@@ -16,6 +16,12 @@ public:
     static bool SetConvexCollision(UStaticMesh* Mesh, const TArray<FVector>& Vertices, FString& Error);
     UFUNCTION(BlueprintCallable, Category="RMSim|MapImport")
     static FString DescribeConvexCollision(UStaticMesh* Mesh);
+    UFUNCTION(BlueprintCallable, Category="RMSim|MapImport")
+    static bool PrepareSourceLeafMesh(UStaticMesh* Mesh, FString& Error);
+    UFUNCTION(BlueprintCallable, Category="RMSim|MapImport")
+    static bool PrepareSourcePrecisionMesh(UStaticMesh* Mesh, int32 ExpectedUVChannels, FString& Error);
+    UFUNCTION(BlueprintCallable, Category="RMSim|MapImport")
+    static FString DescribeMapMesh(UStaticMesh* Mesh);
     UFUNCTION(BlueprintCallable, Category="RMSim|MapImport", meta=(WorldContext="WorldContextObject"))
     static ALandscape* ImportHeightfield(UObject* WorldContextObject, const FString& DescriptionFile, FString& Error);
 

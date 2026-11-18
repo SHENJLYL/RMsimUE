@@ -14,6 +14,8 @@ class AStaticMeshActor;
 class FJsonObject;
 class FJsonValue;
 class URosBridgeComponent;
+class UMapOverview;
+struct FMapOverviewFrame;
 struct FManualRigState;
 
 // The live player-controller adapter and deterministic control probe share raw mouse counts.
@@ -48,6 +50,7 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     FString GetControlHudText() const;
     bool GetGunWorldPoint(FVector& OutPoint) const;
+    bool GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
 private:
     UPROPERTY() AVehicleRig* Rig = nullptr;
@@ -99,6 +102,12 @@ private:
     int32 SpawnValidationFrames = 0;
     double SpawnValidationElapsed = 0;
     bool bSpawnValidated = false;
+    bool UpdateSceneRenderingReadiness();
+    bool bSceneRenderReady = false;
+    double SceneRenderStartSeconds = 0;
+    int32 SceneRenderStableFrames = 0;
+    int32 SceneStreamingStartId = INDEX_NONE;
+    TSharedPtr<FJsonObject> SceneRenderReport;
     UPROPERTY() ACameraActor* ChaseCamera = nullptr;
     UPROPERTY() ACameraActor* SightCamera = nullptr;
     FString CaptureDirectory;
@@ -177,4 +186,6 @@ class RMSIM_API AImportLabHUD : public AHUD
     GENERATED_BODY()
 public:
     virtual void DrawHUD() override;
+private:
+    UPROPERTY() UMapOverview* MapOverview = nullptr;
 };

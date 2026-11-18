@@ -11,6 +11,8 @@ param(
     [string]$InputEvidence = '',
     [string]$MapFile = '',
     [string]$SpawnId = 'default',
+    [ValidateSet('Default','D3D11','D3D12')][string]$GraphicsRhi = 'Default',
+    [switch]$SingleShaderWorker,
     [string]$MapReport = '',
     [switch]$MapOverview,
     [switch]$TrainingMode,
@@ -28,6 +30,7 @@ param(
     [int]$TimeoutSeconds = 90
 )
 . (Join-Path $PSScriptRoot 'Common.ps1')
+. (Join-Path $PSScriptRoot 'SceneMap.ps1')
 try {
     $ue = Get-UnrealTools -EngineRoot $EngineRoot
     # Canonical primitive preview has no imported wheel supports yet; retain its flat lab.
@@ -48,16 +51,20 @@ try {
             throw 'Use a fresh evidence directory; an existing probe-result.json must not be overwritten or reused.'
         }
     }
+    if (-not $MapFile) { $MapFile = Join-Path $PSScriptRoot '../../assets/maps/rmuc2027/map.json' }
+    $mapLaunch=Get-RMSimMapLaunch -MapFile $MapFile -Project $ue.Project -SpawnId $SpawnId
+    $MapFile=$mapLaunch.MapFile
     $flag = if ($InputType -eq 'MeshRig') { '-MeshRigFile=' } else { '-VehicleFile=' }
     $culture = [Globalization.CultureInfo]::InvariantCulture
     $arguments = @(
         (Quote-UnrealArgument $ue.Project),
-        '/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode',
+        $mapLaunch.WorldUrl,
         '-game', '-ResX=1600', '-ResY=1000', '-NoSplash',
         ($flag + (Quote-UnrealArgument $inputPath)),
         ('-GimbalYaw=' + $GimbalYaw.ToString($culture)),
         ('-GimbalPitch=' + $GimbalPitch.ToString($culture))
     )
+    $arguments += @($mapLaunch.RuntimeArguments)
     if ($ManualProbe) {
         $arguments += @('-RenderOffScreen', '-unattended', '-ManualProbe=basic',
             ('-EvidenceDir=' + (Quote-UnrealArgument $probeDirectory)))
@@ -74,6 +81,9 @@ try {
     $arguments += '-SpawnId=' + (Quote-UnrealArgument $SpawnId)
     if ($MapReport) { $arguments += '-MapReport=' + (Quote-UnrealArgument ([IO.Path]::GetFullPath($MapReport))) }
     if ($MapOverview) { $arguments += '-MapOverview' }
+    if ($GraphicsRhi -eq 'D3D11') { $arguments += '-d3d11' }
+    elseif ($GraphicsRhi -eq 'D3D12') { $arguments += '-d3d12' }
+    if ($SingleShaderWorker) { $arguments += '-NoShaderWorker' }
     if ($TrainingMode) { $arguments += '-TrainingMode' }
     if ($RosBridge -or $RosControl -or $RosMotorControl -or $RosAimControl -or $RosImu -or $ImuProfile -or $RosLidar -or $LidarProfile) { $arguments += @('-RosBridge',('-RosPort='+$RosPort)) }
     if ($RosControl) { $arguments += '-RosControl' }

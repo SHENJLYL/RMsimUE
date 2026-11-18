@@ -20,3 +20,16 @@
 *.umap binary
 *.fbx binary
 *.png binary
+
+# These source contracts bind one another by SHA256; preserve exact prepared bytes.
+assets/maps/wt_vlaanderen/map.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview/calibration.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the original bytes of this map integration's hash-bound evidence.
+artifacts/maps/wt-scene-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261117-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261118-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

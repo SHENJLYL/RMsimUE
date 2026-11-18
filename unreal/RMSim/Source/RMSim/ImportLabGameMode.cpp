@@ -1,4 +1,5 @@
 #include "ImportLabGameMode.h"
+#include "MapOverview.h"
 #include "TrainingRange.h"
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
@@ -10,6 +11,7 @@
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/SkyLightComponent.h"
+#include "Components/SkyAtmosphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SkyLight.h"
@@ -283,17 +285,31 @@ bool AImportLabGameMode::CreateStage()
         RosCoordinates::Rotation(FVector(0,0,Spawn->YawRadians)));
     if (ProbeReport.IsValid()) { ProbeReport->SetStringField(TEXT("map_id"),StageMap.Id); ProbeReport->SetStringField(TEXT("spawn_id"),SpawnId); }
     if (ControlReport.IsValid()) { ControlReport->SetStringField(TEXT("map_id"),StageMap.Id); ControlReport->SetStringField(TEXT("spawn_id"),SpawnId); }
-    const FVector FloorOffset(0,0,StageMap.FloorZ*100.0);
+    const FVector FloorOffset=StageMap.bSavedScene ? RosCoordinates::Position(Spawn->GroundMetres) : FVector(0,0,StageMap.FloorZ*100.0);
     ADirectionalLight* Sun = GetWorld()->SpawnActor<ADirectionalLight>(FVector(0, 0, 500)+FloorOffset, FRotator(-45, -30, 0));
     Sun->GetLightComponent()->SetMobility(EComponentMobility::Movable);
-    Sun->GetLightComponent()->SetIntensity(8.0f);
+    Sun->GetLightComponent()->SetIntensity(StageMap.bSavedScene ? 4.0f : 8.0f);
+    if (StageMap.bSavedScene)
+    {
+        // Outdoor scene lighting is an explicit UE adaptation. Keep the existing
+        // indoor presentation unchanged and anchor the atmosphere below source terrain.
+        UDirectionalLightComponent* SunComponent = CastChecked<UDirectionalLightComponent>(Sun->GetLightComponent());
+        SunComponent->SetAtmosphereSunLight(true);
+        SunComponent->SetAtmosphereSunLightIndex(0);
+        ASkyAtmosphere* Atmosphere = GetWorld()->SpawnActor<ASkyAtmosphere>(
+            FVector(0,0,StageMap.SourceBoundsMetres.Min.Z*100.0-100.0),FRotator::ZeroRotator);
+        Atmosphere->GetComponent()->TransformMode = ESkyAtmosphereTransformMode::PlanetTopAtComponentTransform;
+        Atmosphere->GetComponent()->MarkRenderStateDirty();
+        UE_LOG(LogRMSim,Display,TEXT("SCENE_LIGHTING sky_atmosphere=true sun=4 ambient=0.8 studio_fills=0"));
+    }
     ASkyLight* Sky = GetWorld()->SpawnActor<ASkyLight>();
     Sky->GetLightComponent()->SetMobility(EComponentMobility::Movable);
     Sky->GetLightComponent()->SourceType = ESkyLightSourceType::SLS_SpecifiedCubemap;
     Sky->GetLightComponent()->SetCubemap(LoadObject<UTextureCube>(nullptr,
         TEXT("/Engine/MapTemplates/Sky/DaylightAmbientCubemap.DaylightAmbientCubemap")));
-    Sky->GetLightComponent()->SetIntensity(2.0f);
+    Sky->GetLightComponent()->SetIntensity(StageMap.bSavedScene ? 0.8f : 2.0f);
     Sky->GetLightComponent()->SetLowerHemisphereColor(FLinearColor(0.25f, 0.28f, 0.32f));
+    if (!StageMap.bSavedScene)
     for (const FVector Position : {FVector(200, -250, 250), FVector(100, 300, 200), FVector(-250, 50, 250)})
     {
         ARectLight* Fill = GetWorld()->SpawnActor<ARectLight>(Position+FloorOffset, (FVector(0, 0, 45) - Position).Rotation());
@@ -331,7 +347,13 @@ void AImportLabGameMode::UpdateOverview()
     if (!Rig || !Overview) return;
     if (bMapOverview)
     {
-        Overview->SetActorLocation(FVector(0,0,(StageMap.FloorZ+50.0)*100));
+        FVector OverviewLocation(0,0,(StageMap.FloorZ+50.0)*100);
+        if(StageMap.bSavedScene)
+        {
+            OverviewLocation=RosCoordinates::Position(StageMap.SourceBoundsMetres.GetCenter());
+            OverviewLocation.Z=(StageMap.SourceBoundsMetres.Max.Z+500.0)*100.0;
+        }
+        Overview->SetActorLocation(OverviewLocation);
         Overview->SetActorRotation(FRotator(-90,-90,0));
         Overview->GetCameraComponent()->SetProjectionMode(ECameraProjectionMode::Orthographic);
         Overview->GetCameraComponent()->SetOrthoWidth(FMath::Max(StageMap.FloorSizeMetres.X,
@@ -362,15 +384,17 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
             if (Mesh->GetCollisionEnabled() != ECollisionEnabled::NoCollision)
                 PhysicsReady &= Mesh->IsPhysicsStateCreated() && Mesh->GetBodyInstance() && Mesh->GetBodyInstance()->IsValidBodyInstance();
         }
+        PhysicsReady &= StageMap.IsSceneCollisionReady(GetWorld());
         if (!PhysicsReady)
         {
             if (SpawnValidationElapsed > 15.0) Abort(TEXT("map collision bodies did not become ready"));
             return;
         }
+        if (!UpdateSceneRenderingReadiness()) return;
         FString TerrainError;
         if (StageMap.bMeshTerrain && !Rig->SnapToTerrain(TerrainError)) { Abort(TerrainError); return; }
         const bool Overlapping = Rig->GetManualState().bBlockingOverlap;
-        if (!MapReportFile.IsEmpty() && !StageMap.WriteReport(MapReportFile,SelectedSpawn,MapBoxes,Rig->GetActorLocation(),Overlapping))
+        if (!MapReportFile.IsEmpty() && !StageMap.WriteReport(MapReportFile,SelectedSpawn,MapBoxes,Rig->GetActorLocation(),Overlapping,GetWorld()))
         { Abort(TEXT("cannot write fresh map report")); return; }
         if (Overlapping) { Abort(TEXT("vehicle collision proxy overlaps geometry at selected spawn")); return; }
         if(bContactMode)
@@ -390,9 +414,11 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         {
             RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
             if(!RosBridge->Initialize(Rig,GetAimCapture(),Training,bRosControl,BridgeError)){Abort(BridgeError);return;}
-            RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain);
+            RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain,StageMap.bSavedScene);
         }
         bSpawnValidated = true;
+        if(ControlReport.IsValid())StageMap.AddSceneReport(GetWorld(),ControlReport.ToSharedRef());
+        if(ProbeReport.IsValid())StageMap.AddSceneReport(GetWorld(),ProbeReport.ToSharedRef());
         UE_LOG(LogRMSim,Display,TEXT("MAP_STAGE_READY %s spawn=%s obstacles=%d regions=%d"),*StageMap.Id,*SelectedSpawn.Id,StageMap.Obstacles.Num(),StageMap.Regions.Num());
         UE_LOG(LogRMSim,Display,TEXT("IMPORT_LAB_READY W/S throttle, A/D steer, Space brake, mouse aim, C free-look, Shift sight, RMB zoom"));
     }
@@ -761,6 +787,9 @@ void AImportLabHUD::DrawHUD()
     Super::DrawHUD();
     const AImportLabGameMode* Mode = GetWorld()->GetAuthGameMode<AImportLabGameMode>();
     if (!Canvas || !Mode || !Mode->IsControlHudVisible()) return;
+    if (!MapOverview) MapOverview = NewObject<UMapOverview>(this);
+    FMapOverviewFrame MapFrame;
+    if (Mode->GetMapOverviewFrame(MapFrame) && MapOverview->Draw(this, Canvas, MapFrame)) return;
     DrawRect(FLinearColor(0, 0, 0, 0.55f), 16, 16, FMath::Min(900.0f, Canvas->SizeX - 32.0f), 112);
     DrawText(Mode->GetControlHudText(), FLinearColor::White, 26, 24, GEngine ? GEngine->GetMediumFont() : nullptr, 1.0f);
     const float X = Canvas->SizeX * 0.5f, Y = Canvas->SizeY * 0.5f;

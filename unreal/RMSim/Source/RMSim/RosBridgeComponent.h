@@ -26,7 +26,7 @@ public:
     void SetOperatorBrake(bool Brake);
     FString StatusText() const;
     bool HasClient() const { return Client!=nullptr; }
-    void SetMapIdentity(const FString& Id,const FString& Source,bool Mesh);
+    void SetMapIdentity(const FString& Id,const FString& Source,bool Mesh,bool SavedScene=false);
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;

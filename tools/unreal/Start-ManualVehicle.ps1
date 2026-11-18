@@ -19,6 +19,7 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'SceneMap.ps1')
 $repo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 if ([string]::IsNullOrWhiteSpace($Manifest)) {
     $Manifest = Join-Path $repo 'assets/vehicles/aim_sentry/asset_import.json'
@@ -46,13 +47,20 @@ function Invoke-Step {
 }
 
 try {
+    # Saved scenes are imported explicitly once; this entry never repeats a full scene import.
+    $project=Join-Path $repo 'unreal/RMSim/RMSim.uproject'
+    $mapLaunch=$null
+    if(Test-Path -LiteralPath $MapFile -PathType Leaf){
+        $mapLaunch=Get-RMSimMapLaunch -MapFile $MapFile -Project $project -SpawnId $SpawnId
+        $MapFile=$mapLaunch.MapFile
+    }
     Invoke-Step 'Check-Engine.ps1' @('-EngineRoot', $EngineRoot)
     Invoke-Step 'Build-ImportLab.ps1' @('-EngineRoot', $EngineRoot)
     $importArgs=@('-EngineRoot', $EngineRoot, '-Manifest', $manifestPath)
     if (-not $KinematicPreview) { $importArgs += '-ContactCollision' }
     Invoke-Step 'Import-VehicleAssets.ps1' $importArgs
     $mapSource = Join-Path (Split-Path -Parent ([IO.Path]::GetFullPath($MapFile))) 'mesh-source.json'
-    if (Test-Path -LiteralPath $mapSource) { Invoke-Step 'Import-MeshMap.ps1' @('-EngineRoot', $EngineRoot, '-SourceFile', $mapSource) }
+    if (($null -eq $mapLaunch -or -not $mapLaunch.IsSavedScene) -and (Test-Path -LiteralPath $mapSource)) { Invoke-Step 'Import-MeshMap.ps1' @('-EngineRoot', $EngineRoot, '-SourceFile', $mapSource) }
     $rig = Join-Path (Split-Path -Parent $manifestPath) 'ue_mesh_rig.json'
     if (-not (Test-Path -LiteralPath $rig -PathType Leaf)) { throw "Importer did not create $rig" }
     $runArgs = @('-EngineRoot', $EngineRoot, '-InputType', 'MeshRig', '-InputFile', $rig)

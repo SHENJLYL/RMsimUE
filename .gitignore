@@ -119,3 +119,21 @@ Thumbs.db
 /assets/**/*.jsonl
 /assets/maps/wt_vlaanderen/terrain/
 /assets/maps/wt_vlaanderen/instances/
+
+# Full scene import journals reference local generated assets; compact acceptance lives in artifacts.
+/assets/maps/wt_vlaanderen/ue-mesh-import-cache.json
+/assets/maps/wt_vlaanderen/ue-scene-import-report.json
+/assets/maps/wt_vlaanderen/material-import-report.json
+
+# Generated source-face audits contain original geometry evidence and stay local.
+/assets/maps/wt_vlaanderen/geometry-audits/
+
+# Dense per-mesh scene audit stays local; the adjacent summary binds its SHA256.
+/artifacts/maps/wt-scene-*/native-scene-*/verification.json
+
+# Full raw draw declarations remain local; the adaptation summary binds this report.
+/artifacts/maps/wt-scene-*/decal-opacity-*/raw/verification.json
+
+# Grass import journals and full nested scene audits remain local.
+/assets/maps/wt_vlaanderen/ue-grass-import-report.json
+/artifacts/maps/wt-scene-*/native-scene-*/**/verification.json

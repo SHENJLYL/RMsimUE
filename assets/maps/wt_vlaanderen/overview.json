@@ -1,0 +1,56 @@
+{
+  "schema": "rmsim_map_overview_v1",
+  "map_id": "wt_vlaanderen",
+  "display_name": "War Thunder - Flanders",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "texture_asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapOverview.WT_MapOverview",
+  "image_file": "overview/avg_vlaanderen_tankmap.png",
+  "image_sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851",
+  "image_width": 1024,
+  "image_height": 1024,
+  "image_ros_corners_m": {
+    "top_left": [
+      0.0,
+      -2048.0
+    ],
+    "top_right": [
+      2048.0,
+      -2048.0
+    ],
+    "bottom_left": [
+      0.0,
+      0.0
+    ]
+  },
+  "corner_semantics": "continuous texture edges UV(0,0), UV(1,0), UV(0,1); not texel centers",
+  "minimap_span_m": 512,
+  "calibration_file": "overview/calibration.json",
+  "calibration_sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+  "provenance": {
+    "texture_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\locations_maps.dxp.bin",
+    "texture_pack_sha256": "3c59c32fc52ee94f6a538830ac71d398a28805c25b8e07f394f5fed77f58ab97",
+    "texture_name": "avg_vlaanderen_tankmap",
+    "texture_offset": 79843872,
+    "texture_packed_bytes": 278624,
+    "level_archive": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\aces.vromfs.bin",
+    "level_archive_sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+    "level_entry": "levels/avg_vlaanderen.blk",
+    "level_entry_sha256": "2de8930e9f443ab6218567378514ff76b8ce86fd7cf2f06428c94e878fa23b9c",
+    "original_level_coordinates": {
+      "tankMapCoord0": [
+        0.0,
+        0.0
+      ],
+      "tankMapCoord1": [
+        2048.0,
+        2048.0
+      ]
+    },
+    "orientation": {
+      "transpose": false,
+      "flip_u": false,
+      "flip_v": true
+    },
+    "landmark_count": 5
+  }
+}
