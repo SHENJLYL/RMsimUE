@@ -1,4 +1,5 @@
 #include "ImportLabGameMode.h"
+#include "ArenaShell.h"
 #include "TrainingRange.h"
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
@@ -277,6 +278,7 @@ bool AImportLabGameMode::CreateStage()
     if (!Spawn) { Abort(TEXT("requested spawn id does not exist in map")); return false; }
     SelectedSpawn = *Spawn;
     if (!StageMap.SpawnGeometry(GetWorld(), MapBoxes, MapError)) { Abort(MapError); return false; }
+    if (StageMap.bMeshTerrain && !FArenaShell::Spawn(GetWorld(),StageMap,MapBoxes,MapError)) { Abort(MapError); return false; }
     ProbeObstacle = MapBoxes.FindRef(TEXT("obstacle_") + StageMap.InspectionObstacleId);
     const FBox LocalBounds = Rig->GetLocalCollisionBounds();
     Rig->SetActorLocationAndRotation(RosCoordinates::Position(Spawn->GroundMetres) + FVector(0,0,2.0-LocalBounds.Min.Z),
