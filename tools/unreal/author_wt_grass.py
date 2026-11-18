@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+import time
 import traceback
 
 import unreal
@@ -73,8 +74,8 @@ def resume_authored_grass(checked, package, folder, content, landscape):
         raise ValueError('resume requires the completed source grass authoring report')
     if any(authored.get(key) != value for key, value in expected.items()):
         raise ValueError('authored grass source definition, level or importer SHA differs')
-    if (len(checked['models']), len(checked['weights']), len(checked['layers'])) != (7, 4, 13):
-        raise ValueError('resume requires the seven-model/four-weight/thirteen-layer source contract')
+    if len(authored.get('source_models', [])) != len(checked['models']) or len(authored.get('grass_types', [])) != len(checked['layers']):
+        raise ValueError('resume model/layer inventory differs from the bound foliage contract')
     evidence = dict(status='saved_assets_verified', authored_report_file=str(authored_file),
         authored_report_sha256=sha(authored_file), **expected)
     root = folder + '/Foliage'
@@ -92,11 +93,11 @@ def resume_authored_grass(checked, package, folder, content, landscape):
     output = outputs[0]
     grass_inputs = list(output.get_editor_property('grass_types'))
     names = [str(item.get_editor_property('name')) for item in grass_inputs]
-    if len(names) != 13 or len(set(names)) != 13 or set(names) != set(checked['layers']):
+    if len(names) != len(checked['layers']) or len(set(names)) != len(names) or set(names) != set(checked['layers']):
         raise ValueError('saved Terrain grass names are missing, duplicated or differ from source')
     output_names = [str(name) for name in edit.get_material_expression_input_names(output)]
     input_nodes = list(edit.get_inputs_for_material_expression(terrain, output))
-    if output_names != names or len(input_nodes) != 13 or any(node is None for node in input_nodes):
+    if output_names != names or len(input_nodes) != len(names) or any(node is None for node in input_nodes):
         raise ValueError('saved Terrain grass output is disconnected')
     evidence['terrain'] = terrain_path
     evidence['grass_output'] = output.get_path_name()
@@ -170,6 +171,55 @@ def resume_authored_grass(checked, package, folder, content, landscape):
     return authored, evidence
 
 
+def build_complete_grass(landscape, cameras, report, output):
+    """Drain a progressing UE 5.8 synchronous grass-map build, then apply all gates.
+
+    BuildGrassMapsNowForComponents keeps a call-local FailedComponents set while
+    NotReady states can return to Pending after lazy grass shaders finish. The
+    count-based loop can therefore return with streaming/rendering still active.
+    A fresh native call clears that transient set and advances those real jobs.
+    Never accept stale maps, retry a stalled count, or rebuild authored assets.
+    """
+    started = time.monotonic()
+    previous_outdated = None
+    report['native_bake_attempts'] = []
+    report['native_bake_policy'] = dict(max_attempts=3, retry_budget_seconds=300,
+        require_strictly_decreasing_outdated=True, fixed_sleep_seconds=0)
+    for attempt in range(1, 4):
+        native = json.loads(unreal.MapVegetationLibrary.build_landscape_grass(landscape, cameras))
+        elapsed = time.monotonic() - started
+        report['native_bake'] = native
+        fields = ('status', 'landscape_components', 'components_with_valid_data',
+            'components_with_weights', 'outdated_grass_maps_after_build',
+            'generated_hism_components', 'generated_instances',
+            'collision_enabled_grass_components', 'finish_assets_seconds',
+            'build_maps_seconds', 'update_instances_seconds')
+        record = {field: native.get(field) for field in fields}
+        record.update(attempt=attempt, elapsed_seconds=elapsed)
+        report['native_bake_attempts'].append(record)
+        save(output, report)
+        total = native.get('landscape_components')
+        outdated = native.get('outdated_grass_maps_after_build')
+        if (type(total) is not int or total <= 0 or type(outdated) is not int or
+                not 0 <= outdated <= total or native.get('collision_enabled_grass_components') != 0):
+            raise RuntimeError('grass bake returned invalid counts or enabled collision')
+        if native.get('status') == 'built':
+            if outdated != 0 or native.get('components_with_valid_data') != total:
+                raise RuntimeError('native grass built status conflicts with stale or invalid data')
+            return native
+        if native.get('status') != 'incomplete' or outdated == 0:
+            raise RuntimeError('native grass bake failed: ' + str(native.get('error', native.get('status'))))
+        baseline = total if previous_outdated is None else previous_outdated
+        if outdated >= baseline:
+            raise RuntimeError('grass maps stopped progressing: outdated=' + str(outdated))
+        if attempt == 3 or elapsed >= 300:
+            raise RuntimeError('grass maps did not complete within the bounded native build attempts')
+        previous_outdated = outdated
+        unreal.log('WT_GRASS_BAKE_CONTINUE attempt=' + str(attempt) +
+            ' outdated=' + str(outdated) + ' elapsed_s=' + format(elapsed, '.3f'))
+    raise RuntimeError('grass bake exhausted its native attempts')
+
+
 def main():
     resume = bool(re.search(r'(?:^|\s)-ResumeAuthoredAssets(?=\s|$)',
         unreal.SystemLibrary.get_command_line(), re.IGNORECASE))
@@ -227,8 +277,7 @@ def main():
         spawn = default_spawn['position_m']
         cameras = [unreal.Vector(spawn[0]*100, -spawn[1]*100, spawn[2]*100+1500),
                    unreal.Vector(107425, 101175, spawn[2]*100+1500)]
-        native = json.loads(unreal.MapVegetationLibrary.build_landscape_grass(landscape[0], cameras))
-        report['native_bake'] = native
+        native = build_complete_grass(landscape[0], cameras, report, output)
         if resume:
             check_resume_assets(content, folder, report, 'after_bake')
         save(output, report)

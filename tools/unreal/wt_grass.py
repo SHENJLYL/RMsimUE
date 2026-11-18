@@ -11,19 +11,40 @@ from pathlib import Path
 import re
 import struct
 
-VERSION = 1
+VERSION = 3
 NODE_PREFIX = 'RMSim source grass:'
 GRASS_CODE = """
 float4 masks=Texture2DSample(Masks,MasksSampler,UV);
 float alpha=Texture2DSample(Alpha,AlphaSampler,UV).r;
 float3 land=Texture2DSample(Land,LandSampler,float2(World.x,-World.y)/204800.0).rgb;
 float3 red=lerp(RMin.rgb,RMax.rgb,Random);
-float3 blue=lerp(BMin.rgb,BMax.rgb,frac(Random*17.0+0.61803398875));
+float3 blue=lerp(BMin.rgb,BMax.rgb,Random);
 float3 green=lerp(GMin.rgb,GMax.rgb,masks.g);
 float3 color=lerp(land,red,masks.r);
 color=lerp(color,blue,masks.b);
 OpacityOut=alpha*Fade;
+float4 packed=Texture2DSample(PackedNormal,PackedNormalSampler,UV);
+float2 normalXY=packed.ag*2.0-1.0;
+float3 sourceNormal=float3(normalXY,sqrt(saturate(1.0-dot(normalXY,normalXY))));
+NormalOut=normalize(lerp(float3(0,0,1),sourceNormal,UseSourceNormal));
+TransmissionOut=lerp(DefaultTransmission,packed.b,UseSourceNormal);
+RoughnessOut=lerp(DefaultRoughness,saturate(1.0-packed.r),UseSourceNormal);
 return color*green*Correction;
+"""
+
+GRASS_NORMAL_CODE = """
+float3 n=normalize(NormalWorld);
+float3 up=normalize(InstanceUp);
+float elevation=dot(n,up);
+float3 horizontal=n-up*elevation;
+float h2=dot(horizontal,horizontal);
+float3 adapted=n;
+if(elevation<MinimumUp)
+    adapted=h2>1e-8 ? horizontal*rsqrt(h2)*sqrt(saturate(1-MinimumUp*MinimumUp))+up*MinimumUp : up;
+// World-space normals are not automatically flipped by UE's two-sided path.
+// Original meshes retain the standard face-sign behavior; source grass cards
+// keep their terrain-up roots and source normal details in the upper hemisphere.
+return normalize(lerp(n*Side,adapted,UseSourceNormal));
 """
 
 
@@ -63,13 +84,20 @@ def _finite(values, count, message):
              all(isinstance(v, (int, float)) and math.isfinite(v) for v in values), message)
 
 
-def validate_foliage(package):
+def source_color_linear(values):
+    """gpuGrass.cpp srgb_color4 / fast_grass.cpp: preserve alpha, pow RGB by 2.2."""
+    return [float(v)**2.2 for v in values[:3]] + [float(values[3])]
+
+
+def validate_foliage(package, foliage_base=None):
     package = Path(package).resolve(strict=True)
-    base = package / 'foliage'
+    base = (Path(foliage_base).resolve(strict=True) if foliage_base is not None else
+            package / ('foliage-enhanced' if (package/'foliage-enhanced/foliage.json').is_file() else 'foliage'))
     path = base / 'foliage.json'
     definition = _read(path)
     source, descriptor = _read(package/'scene-source.json'), _read(package/'map.json')
-    _require(definition.get('schema') == 'wt_source_foliage_v1', 'unsupported foliage schema')
+    enhanced = definition.get('schema') == 'wt_enhanced_foliage_v1'
+    _require(enhanced or definition.get('schema') == 'wt_source_foliage_v1', 'unsupported foliage schema')
     _require(definition.get('coordinate_system') == 'ros_rh_m', 'foliage must use ROS metres')
     _require(definition['source_level_sha256'] == source['source_sha256'] == descriptor['source_sha256'],
              'foliage source level identity differs')
@@ -98,7 +126,10 @@ def validate_foliage(package):
                  'grass model needs a source FBX and triangle count')
         _require(item.get('fbx_import_scale', 1) == 1, 'grass FBX carries metre units; import scale must be one')
         material = item['material']
-        _require(material['shader'] == 'random_grass', 'unsupported source grass shader')
+        _require(material['shader'] == 'random_grass' or (enhanced and
+                 material['shader'] == 'ue_small_grass_card' and
+                 item.get('geometry_adapter', {}).get('schema') == 'wt_ue_grass_crossed_card_v1'),
+                 'unsupported source grass shader or unbound card adaptation')
         mask = _file(base, material['texture'], material['texture_sha256'])
         alpha = _file(base, material['alpha_texture'], material['alpha_texture_sha256'])
         _require(_png_dimensions(mask)[0] == _png_dimensions(alpha)[0], 'grass masks/alpha dimensions differ')
@@ -106,7 +137,19 @@ def validate_foliage(package):
         for edge in ('lo', 'hi'):
             _finite(bounds[edge], 3, 'invalid source grass bounds')
         _require(all(bounds['lo'][i] <= bounds['hi'][i] for i in range(3)), 'inverted source grass bounds')
-        models[identity] = dict(item, path=filename, mask_path=mask, alpha_path=alpha)
+        normal = None
+        if material.get('normal_texture'):
+            normal = _file(base, material['normal_texture'], material['normal_texture_sha256'])
+            dimensions, color_type = _png_dimensions(normal)
+            _require(dimensions == material['normal_size'] == [512, 512] and color_type == 6 and
+                     material.get('source_gamma_equal_one') is True and
+                     material['normal_semantics']['x'] == 'A' and material['normal_semantics']['y'] == 'G' and
+                     material['normal_semantics']['translucency'] == 'B' and
+                     material['normal_semantics']['smoothness'] == 'R',
+                     'source small-grass normal/illumination channels differ')
+            _require(item.get('geometry_adapter', {}).get('version') == 2 and
+                     material.get('texture_address') == 'clamp', 'source-lit grass requires the varied card adapter')
+        models[identity] = dict(item, path=filename, mask_path=mask, alpha_path=alpha, normal_path=normal)
     for item in definition['layers']:
         identity = item['id']
         _require(re.fullmatch('[A-Za-z0-9_]+', identity) and identity not in layers, 'invalid grass layer identity')
@@ -137,16 +180,44 @@ def validate_foliage(package):
              'invalid source grass alpha threshold')
     land = definition['land_color']
     land_path = _file(base, land['texture'], land['texture_sha256'])
+    visual = definition.get('visual_adapter')
+    if visual:
+        _require(visual['schema'] == 'wt_grass_visual_adapter_v2' and
+                 visual['source_gamma_conversion_count'] == 1 and
+                 visual['minimum_normal_up_component'] == .20 and
+                 sum(model['normal_path'] is not None for model in models.values()) == 3,
+                 'source-lit grass visual adapter differs')
+    proof = None
+    if enhanced:
+        spec = definition['enhancement_proof']
+        proof_path = _file(base, spec['file'], spec['sha256'])
+        proof = _read(proof_path)
+        _require(proof.get('schema') == 'wt_foliage_enhancement_proof_v1' and proof.get('status') == 'passed',
+                 'enhancement requires passed source-bound preparation')
+        _require(proof['source_level_sha256'] == definition['source_level_sha256'] and
+                 proof['original_foliage_sha256'] == _sha(package/'foliage/foliage.json'),
+                 'original foliage source changed after enhancement preparation')
+        _require((proof['total_models'], proof['total_layers'], proof['weight_texture_count']) ==
+                 (len(models), len(layers), len(weights)), 'enhancement resource inventory differs')
+        _require(proof['weight_textures'] == definition['weight_textures'] and
+                 {x['id'] for x in proof['layers']} == set(layers) and
+                 all(x['hard_overlap_pixels'] == 0 for x in proof['layers']),
+                 'enhancement weights or hard footprint exclusion proof differs')
+        for mask in proof['masks'].values():
+            _file(base, mask['file'], mask['sha256'])
+        repo = package.parents[2]
+        for relative, digest in proof['source_inputs'].items():
+            _file(repo, relative, digest)
     return dict(package=package, base=base, definition=definition, definition_path=path,
                 definition_sha256=_sha(path), weights=weights, models=models, layers=layers,
-                land_path=land_path, map_id=descriptor['id'])
+                land_path=land_path, map_id=descriptor['id'], enhancement_proof=proof)
 
 
 def _asset(unreal, path):
     return unreal.load_asset(path) if unreal.EditorAssetLibrary.does_asset_exist(path) else None
 
 
-def _texture_asset(unreal, filename, folder, name, srgb, weights=False):
+def _texture_asset(unreal, filename, folder, name, srgb, weights=False, clamp=False):
     from import_vehicle_assets import import_asset
     asset_path = folder + '/' + name
     texture = _asset(unreal, asset_path)
@@ -162,6 +233,9 @@ def _texture_asset(unreal, filename, folder, name, srgb, weights=False):
         settings.update(mip_gen_settings=unreal.TextureMipGenSettings.TMGS_NO_MIPMAPS, never_stream=True,
                         address_x=unreal.TextureAddress.TA_CLAMP, address_y=unreal.TextureAddress.TA_CLAMP,
                         filter=unreal.TextureFilter.TF_BILINEAR)
+    else:
+        settings.update(address_x=unreal.TextureAddress.TA_CLAMP if clamp else unreal.TextureAddress.TA_WRAP,
+                        address_y=unreal.TextureAddress.TA_CLAMP if clamp else unreal.TextureAddress.TA_WRAP)
     for key, value in settings.items():
         texture.set_editor_property(key, value)
     unreal.EditorAssetLibrary.set_metadata_tag(texture, 'RMSimGrassSourceSHA256', digest)
@@ -173,7 +247,8 @@ def _custom(unreal, material, code, inputs, output_type, extra=(), defer_notific
     edit = unreal.MaterialEditingLibrary
     # Weight outputs have no extra socket cache. Build their graph without
     # compiling every intermediate property; _save_parent compiles the final graph.
-    _require(not defer_notifications or not extra, 'extra custom outputs require their native rebuild notification')
+    # Additional output sockets require one real RebuildOutputs notification.
+    # Other edits are quiet; the complete material is compiled by _save_parent.
     notify = {'notify_mode': unreal.PropertyAccessChangeNotifyMode.NEVER} if defer_notifications else {}
     node = edit.create_material_expression(material, unreal.MaterialExpressionCustom)
     node.set_editor_property('desc', NODE_PREFIX+'weight or surface', **notify)
@@ -203,32 +278,51 @@ def install_grass(package, folder, terrain=None):
     import unreal
     from import_vehicle_assets import import_asset
     from import_wt_scene import fbx_options, bounds_record
-    from wt_materials import _clear_graph, _save_parent, _expr, _texture, _vector, _scalar, _wire
+    from wt_materials import _clear_graph, _save_parent, _wire
     edit, prop = unreal.MaterialEditingLibrary, unreal.MaterialProperty
+    quiet = {'notify_mode': unreal.PropertyAccessChangeNotifyMode.NEVER}
+    def _expr(material, cls, **values):
+        expression = edit.create_material_expression(material, cls)
+        for key, value in values.items():
+            expression.set_editor_property(key, value, **quiet)
+        return expression
+    def _texture(material, name, texture, color):
+        return _expr(material, unreal.MaterialExpressionTextureObjectParameter, parameter_name=name,
+            texture=texture, sampler_type=unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if color else
+            unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR)
+    def _vector(material, name, value):
+        return _expr(material, unreal.MaterialExpressionVectorParameter, parameter_name=name,
+            default_value=unreal.LinearColor(*source_color_linear(value)))
+    def _scalar(material, name, value):
+        return _expr(material, unreal.MaterialExpressionScalarParameter, parameter_name=name, default_value=value)
     _require(folder == '/Game/RMSim/Maps/'+checked['map_id'], 'grass destination differs from source map')
     root = folder + '/Foliage'
     definition = checked['definition']
     terrain = terrain or _asset(unreal, folder+'/Materials/WT_Terrain')
     _require(isinstance(terrain, unreal.Material), 'grass output needs the original terrain parent')
-    mask_textures, alpha_textures, weight_textures = {}, {}, {}
+    mask_textures, alpha_textures, normal_textures, weight_textures = {}, {}, {}, {}
     for name, model in checked['models'].items():
-        mask_textures[name] = _texture_asset(unreal, model['mask_path'], root+'/Textures', name+'_Masks', False)
-        alpha_textures[name] = _texture_asset(unreal, model['alpha_path'], root+'/Textures', name+'_Alpha', False)
+        clamp = model['material'].get('texture_address') == 'clamp'
+        mask_textures[name] = _texture_asset(unreal, model['mask_path'], root+'/Textures', name+'_Masks', False, clamp=clamp)
+        alpha_textures[name] = _texture_asset(unreal, model['alpha_path'], root+'/Textures', name+'_Alpha', False, clamp=clamp)
+        if model['normal_path'] is not None:
+            normal_textures[name] = _texture_asset(unreal, model['normal_path'], root+'/Textures', name+'_PackedNormal', False, clamp=True)
     for name, weight in checked['weights'].items():
         weight_textures[name] = _texture_asset(unreal, weight['path'], root+'/Textures', name, False, True)
     land_texture = _texture_asset(unreal, checked['land_path'], root+'/Textures', 'WT_GrassLandColor', True)
     parent = _asset(unreal, root+'/Materials/WT_Grass') or unreal.AssetToolsHelpers.get_asset_tools().create_asset(
         'WT_Grass', root+'/Materials', unreal.Material, unreal.MaterialFactoryNew())
     _clear_graph(parent)
-    parent.set_editor_property('blend_mode', unreal.BlendMode.BLEND_MASKED)
-    parent.set_editor_property('two_sided', True)
+    parent.set_editor_property('blend_mode', unreal.BlendMode.BLEND_MASKED, **quiet)
+    parent.set_editor_property('two_sided', True, **quiet)
     foliage_models = [getattr(unreal.MaterialShadingModel, name) for name in dir(unreal.MaterialShadingModel)
                       if name.endswith('_FOLIAGE')]
     _require(len(foliage_models) == 1, 'native enum must expose one two-sided foliage shading model')
-    parent.set_editor_property('shading_model', foliage_models[0])
-    parent.set_editor_property('opacity_mask_clip_value', definition['alpha_clip_value'])
-    edit.set_material_usage(parent, unreal.MaterialUsage.MATUSAGE_INSTANCED_STATIC_MESHES)
+    parent.set_editor_property('shading_model', foliage_models[0], **quiet)
+    parent.set_editor_property('opacity_mask_clip_value', definition['alpha_clip_value'], **quiet)
+    parent.set_editor_property('tangent_space_normal', False, **quiet)
     first = next(iter(checked['models']))
+    normal_default = next(iter(normal_textures.values())) if normal_textures else mask_textures[first]
     inputs = {
         'Masks': (_texture(parent, 'Masks', mask_textures[first], False), ''),
         'Alpha': (_texture(parent, 'Alpha', alpha_textures[first], False), ''),
@@ -238,6 +332,10 @@ def install_grass(package, folder, terrain=None):
         'Random': (_expr(parent, unreal.MaterialExpressionPerInstanceRandom), ''),
         'Fade': (_expr(parent, unreal.MaterialExpressionPerInstanceFadeAmount), ''),
         'Correction': (_scalar(parent, 'Correction', definition['color_correction_multiplier']), ''),
+        'PackedNormal': (_texture(parent, 'PackedNormal', normal_default, False), ''),
+        'UseSourceNormal': (_scalar(parent, 'UseSourceNormal', 0), ''),
+        'DefaultRoughness': (_scalar(parent, 'Roughness', .9), ''),
+        'DefaultTransmission': (_scalar(parent, 'Transmission', .35), ''),
     }
     first_layer = next(iter(checked['layers'].values()))
     for channel in ('r', 'g', 'b'):
@@ -245,14 +343,35 @@ def install_grass(package, folder, terrain=None):
             name = channel.upper()+endpoint.title()
             inputs[name] = (_vector(parent, name, first_layer['color_masks'][channel][endpoint]), '')
     surface = _custom(unreal, parent, GRASS_CODE, inputs, unreal.CustomMaterialOutputType.CMOT_FLOAT3,
-                      [('OpacityOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1)])
+                      [('OpacityOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1),
+                       ('NormalOut', unreal.CustomMaterialOutputType.CMOT_FLOAT3),
+                       ('TransmissionOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1),
+                       ('RoughnessOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1)], defer_notifications=True)
     _require(edit.connect_material_property(surface, '', prop.MP_BASE_COLOR), 'grass base colour connection failed')
     _require(edit.connect_material_property(surface, 'OpacityOut', prop.MP_OPACITY_MASK), 'grass opacity connection failed')
-    subsurface = _expr(parent, unreal.MaterialExpressionMultiply, const_b=0.35)
+    subsurface = _expr(parent, unreal.MaterialExpressionMultiply)
     _wire(surface, '', subsurface, 'A')
+    _wire(surface, 'TransmissionOut', subsurface, 'B')
     edit.connect_material_property(subsurface, '', prop.MP_SUBSURFACE_COLOR)
-    edit.connect_material_property(_scalar(parent, 'Roughness', .9), '', prop.MP_ROUGHNESS)
+    edit.connect_material_property(surface, 'RoughnessOut', prop.MP_ROUGHNESS)
     edit.connect_material_property(_scalar(parent, 'Specular', .15), '', prop.MP_SPECULAR)
+    normal_world = _expr(parent, unreal.MaterialExpressionTransform,
+        transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_TANGENT,
+        transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
+    _wire(surface, 'NormalOut', normal_world, '')
+    up = _expr(parent, unreal.MaterialExpressionConstant3Vector, constant=unreal.LinearColor(0,0,1,0))
+    instance_up = _expr(parent, unreal.MaterialExpressionTransform,
+        transform_source_type=unreal.MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE,
+        transform_type=unreal.MaterialVectorCoordTransform.TRANSFORM_WORLD)
+    _wire(up, '', instance_up, '')
+    normal = _custom(unreal, parent, GRASS_NORMAL_CODE, {
+        'NormalWorld': (normal_world, ''), 'InstanceUp': (instance_up, ''),
+        'Side': (_expr(parent, unreal.MaterialExpressionTwoSidedSign), ''),
+        'UseSourceNormal': inputs['UseSourceNormal'],
+        'MinimumUp': (_scalar(parent, 'MinimumNormalUp', .20), '')},
+        unreal.CustomMaterialOutputType.CMOT_FLOAT3, defer_notifications=True)
+    _require(edit.connect_material_property(normal, '', prop.MP_NORMAL), 'grass world normal connection failed')
+    edit.set_material_usage(parent, unreal.MaterialUsage.MATUSAGE_INSTANCED_STATIC_MESHES)
     _save_parent(parent)
     materials = {}
     for name, layer in checked['layers'].items():
@@ -261,10 +380,14 @@ def install_grass(package, folder, terrain=None):
         edit.set_material_instance_parent(material, parent)
         edit.set_material_instance_texture_parameter_value(material, 'Masks', mask_textures[layer['model_id']])
         edit.set_material_instance_texture_parameter_value(material, 'Alpha', alpha_textures[layer['model_id']])
+        has_source_normal = layer['model_id'] in normal_textures
+        edit.set_material_instance_scalar_parameter_value(material, 'UseSourceNormal', 1 if has_source_normal else 0)
+        edit.set_material_instance_texture_parameter_value(material, 'PackedNormal',
+            normal_textures[layer['model_id']] if has_source_normal else normal_default)
         for channel in ('r', 'g', 'b'):
             for endpoint in ('min', 'max'):
                 edit.set_material_instance_vector_parameter_value(material, channel.upper()+endpoint.title(),
-                    unreal.LinearColor(*layer['color_masks'][channel][endpoint]))
+                    unreal.LinearColor(*source_color_linear(layer['color_masks'][channel][endpoint])))
         edit.update_material_instance(material)
         _require(unreal.EditorAssetLibrary.save_loaded_asset(material), 'grass layer material save failed')
         materials[name] = material
@@ -355,13 +478,19 @@ def install_grass(package, folder, terrain=None):
     _save_parent(terrain)
     report = dict(schema='wt_grass_native_import_v1', status='authored_pending_weight_bake', version=VERSION,
         source_level_sha256=definition['source_level_sha256'], definition_sha256=checked['definition_sha256'],
+        definition_file=checked['definition_path'].relative_to(checked['package']).as_posix(),
+        enhancement_proof_sha256=definition.get('enhancement_proof', {}).get('sha256'),
         importer_sha256=_sha(__file__), source_models=mesh_reports, grass_types=type_reports,
         weight_assets={name: texture.get_path_name() for name, texture in weight_textures.items()},
         terrain=terrain.get_path_name(), grass_parent=parent.get_path_name(),
         allocation='native Landscape Grass streams clusters around rendered views',
         cull_distance_conversion='source distance rounded to nearest UE centimetre',
         source_collision=False, wind_animation=False, instance_distribution='UE Halton with deterministic per-instance variation',
-        layer_colour_formula='source RGB masks; independently sourced T0_a.r alpha; source per-layer colour ranges',
+        layer_colour_formula='source RGB masks and T0_a.r alpha; pow(source RGB endpoints,2.2), original alpha retained',
+        visual_adapter=definition.get('visual_adapter'),
+        source_normal_assets={name: texture.get_path_name() for name, texture in normal_textures.items()},
+        source_normal_channels='AG normal XY, B translucency, R smoothness; source linear DDSx GAMMA_EQ_1',
+        source_colour_contract='gpuGrass.cpp srgb_color4; grass_generate.dshl:817-819; fast_grass.cpp:44-51/140-145',
         limitations=definition.get('limitations', []))
     target = checked['package']/'ue-grass-import-report.json'
     target.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')

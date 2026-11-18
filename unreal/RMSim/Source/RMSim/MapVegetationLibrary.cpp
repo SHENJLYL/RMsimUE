@@ -38,13 +38,36 @@ TSharedRef<FJsonObject> GrassReport(ALandscapeProxy* Landscape)
     Report->SetStringField(TEXT("landscape"), Landscape->GetPathName());
     Report->SetNumberField(TEXT("landscape_components"), Landscape->LandscapeComponents.Num());
     int32 ValidComponents = 0, WeightedComponents = 0;
+    int32 GenerationChecked = 0, FreshComponents = 0, GenerationMismatches = 0;
+    TArray<TSharedPtr<FJsonValue>> GenerationRows;
     int64 DataBytes = 0;
     TMap<FName, TSharedPtr<FJsonObject>> Layers;
     for (ULandscapeComponent* Component : Landscape->LandscapeComponents)
     {
         if (!Component) continue;
         const auto& Data = Component->GrassData;
-        ValidComponents += Data->NumElements >= 0 ? 1 : 0;
+        // HasValidData is NumElements >= 0; the non-exported method is not called across modules.
+        const bool bValidData = Data->NumElements >= 0;
+        ValidComponents += bValidData ? 1 : 0;
+#if WITH_EDITOR && WITH_EDITORONLY_DATA
+        // Compare the serialized cache with the same exported computation used by
+        // ULandscapeComponent::IsGrassMapOutdated. Never assign GenerationHash.
+        const uint32 SavedGeneration = Data->GenerationHash;
+        const uint32 CurrentGeneration = Component->ComputeGrassMapGenerationHash();
+        const bool bGenerationMatches = SavedGeneration == CurrentGeneration;
+        const bool bFreshData = bValidData && bGenerationMatches;
+        ++GenerationChecked;
+        FreshComponents += bFreshData ? 1 : 0;
+        GenerationMismatches += bGenerationMatches ? 0 : 1;
+        auto GenerationRow = MakeShared<FJsonObject>();
+        GenerationRow->SetStringField(TEXT("component"), Component->GetPathName());
+        GenerationRow->SetNumberField(TEXT("saved_generation_hash"), static_cast<double>(SavedGeneration));
+        GenerationRow->SetNumberField(TEXT("current_generation_hash"), static_cast<double>(CurrentGeneration));
+        GenerationRow->SetBoolField(TEXT("valid_data"), bValidData);
+        GenerationRow->SetBoolField(TEXT("matches_current_generation"), bGenerationMatches);
+        GenerationRow->SetBoolField(TEXT("fresh_data"), bFreshData);
+        GenerationRows.Add(MakeShared<FJsonValueObject>(GenerationRow));
+#endif
         WeightedComponents += !Data->WeightOffsets.IsEmpty() ? 1 : 0;
         DataBytes += Data->HeightWeightData.Num();
         for (const auto& Pair : Component->GetNamedGrassTypes())
@@ -93,6 +116,19 @@ TSharedRef<FJsonObject> GrassReport(ALandscapeProxy* Landscape)
             }
         }
     }
+    auto Generation = MakeShared<FJsonObject>();
+#if WITH_EDITOR && WITH_EDITORONLY_DATA
+    Generation->SetBoolField(TEXT("available"), true);
+#else
+    Generation->SetBoolField(TEXT("available"), false);
+#endif
+    Generation->SetStringField(TEXT("method"), TEXT("ULandscapeComponent::ComputeGrassMapGenerationHash"));
+    Generation->SetStringField(TEXT("scope"), TEXT("Saved GenerationHash compared with current engine state; no grass build or cache mutation"));
+    Generation->SetNumberField(TEXT("checked_components"), GenerationChecked);
+    Generation->SetNumberField(TEXT("fresh_components"), FreshComponents);
+    Generation->SetNumberField(TEXT("mismatch_components"), GenerationMismatches);
+    Generation->SetArrayField(TEXT("components"), GenerationRows);
+    Report->SetObjectField(TEXT("generation_freshness"), Generation);
     Report->SetNumberField(TEXT("components_with_valid_data"), ValidComponents);
     Report->SetNumberField(TEXT("components_with_weights"), WeightedComponents);
     Report->SetNumberField(TEXT("height_weight_bytes"), static_cast<double>(DataBytes));
