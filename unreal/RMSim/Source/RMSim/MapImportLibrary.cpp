@@ -5,6 +5,7 @@
 #include "Dom/JsonObject.h"
 #include "Engine/Engine.h"
 #include "Engine/StaticMesh.h"
+#include "StaticMeshResources.h"
 #include "Engine/World.h"
 #include "HAL/FileManager.h"
 #include "Landscape.h"
@@ -198,4 +199,63 @@ int32 UMapImportLibrary::ImportInstances(UObject* WorldContextObject,const FStri
 #else
     Error=TEXT("instance authoring requires the editor; runtime loads the saved map");return -1;
 #endif
+}
+
+// Source payloads use full-precision UVs: leaf offsets in UV3/UV4 and
+// landmesh height-decal opacity in UV1.x. Edit derived project assets only.
+bool UMapImportLibrary::PrepareSourceLeafMesh(UStaticMesh* Mesh,FString& Error)
+{
+    return PrepareSourcePrecisionMesh(Mesh,5,Error);
+}
+
+bool UMapImportLibrary::PrepareSourcePrecisionMesh(UStaticMesh* Mesh,int32 ExpectedUVChannels,FString& Error)
+{
+    Error.Reset();
+#if WITH_EDITOR
+    if(ExpectedUVChannels<1 || ExpectedUVChannels>8 || !Mesh || !AssetPath(Mesh->GetPathName()) ||
+        Mesh->GetNumSourceModels()!=1 || Mesh->GetNumUVChannels(0)!=ExpectedUVChannels)
+    {Error=TEXT("source payload mesh requires one LOD and its declared UV channel count");return false;}
+    auto& Settings=Mesh->GetSourceModel(0).BuildSettings;
+    if(!Settings.bUseFullPrecisionUVs || Settings.bRemoveDegenerates)
+    {
+        Mesh->Modify();Settings.bUseFullPrecisionUVs=true;Settings.bRemoveDegenerates=false;
+        TArray<FText> Errors;Mesh->Build(false,&Errors);
+        if(!Errors.IsEmpty())
+        {
+            Error=TEXT("source payload mesh build reported: ");
+            for(const FText& Message:Errors)Error+=Message.ToString()+TEXT("; ");
+            return false;
+        }
+        Mesh->MarkPackageDirty();
+    }
+    if(!Mesh->GetRenderData() || Mesh->GetRenderData()->LODResources.IsEmpty() ||
+        Mesh->GetNumUVChannels(0)!=ExpectedUVChannels || Mesh->GetNumTriangles(0)<=0 ||
+        !Mesh->GetRenderData()->LODResources[0].VertexBuffers.StaticMeshVertexBuffer.GetUseFullPrecisionUVs())
+    {Error=TEXT("native source payload mesh does not retain its full-precision UV contract");return false;}
+    return true;
+#else
+    Error=TEXT("source payload authoring requires the editor");return false;
+#endif
+}
+
+FString UMapImportLibrary::DescribeMapMesh(UStaticMesh* Mesh)
+{
+    if(!Mesh || !AssetPath(Mesh->GetPathName()) || !Mesh->GetRenderData() || Mesh->GetRenderData()->LODResources.IsEmpty())return FString();
+    const auto& Lod=Mesh->GetRenderData()->LODResources[0];
+    auto Report=MakeShared<FJsonObject>();
+    Report->SetNumberField(TEXT("triangles"),Mesh->GetNumTriangles(0));
+    Report->SetNumberField(TEXT("uv_channels"),Lod.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords());
+    Report->SetBoolField(TEXT("full_precision_uvs"),Lod.VertexBuffers.StaticMeshVertexBuffer.GetUseFullPrecisionUVs());
+    TArray<TSharedPtr<FJsonValue>> Sections;
+    for(const auto& Section:Lod.Sections)
+    {
+        auto Entry=MakeShared<FJsonObject>();
+        Entry->SetNumberField(TEXT("triangles"),Section.NumTriangles);
+        Entry->SetNumberField(TEXT("material_index"),Section.MaterialIndex);
+        Entry->SetStringField(TEXT("material_slot"),Mesh->GetStaticMaterials().IsValidIndex(Section.MaterialIndex)?
+            Mesh->GetStaticMaterials()[Section.MaterialIndex].MaterialSlotName.ToString():TEXT("INVALID"));
+        Sections.Add(MakeShared<FJsonValueObject>(Entry));
+    }
+    Report->SetArrayField(TEXT("sections"),Sections);
+    FString Result;FJsonSerializer::Serialize(Report,TJsonWriterFactory<>::Create(&Result));return Result;
 }

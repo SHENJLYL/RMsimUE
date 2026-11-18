@@ -14,6 +14,9 @@ class AStaticMeshActor;
 class FJsonObject;
 class FJsonValue;
 class URosBridgeComponent;
+class UWTFoliageCrushComponent;
+class UMapOverview;
+struct FMapOverviewFrame;
 struct FManualRigState;
 
 // The live player-controller adapter and deterministic control probe share raw mouse counts.
@@ -49,12 +52,14 @@ public:
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     FString GetControlHudText() const;
     bool GetGunWorldPoint(FVector& OutPoint) const;
+    bool GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
     bool IsGunReticleVisible() const { return bSightMode && !bFreeLook; }
 private:
     UPROPERTY() AVehicleRig* Rig = nullptr;
     UPROPERTY() ATrainingRange* Training = nullptr;
     UPROPERTY() URosBridgeComponent* RosBridge=nullptr;
+    UPROPERTY() UWTFoliageCrushComponent* SoftFoliage=nullptr;
     bool bRosBridgeEnabled=false,bRosControl=false,bRosAimControl=false;
     FString ImuFixture;
     double ImuFixtureElapsed=0;
@@ -104,6 +109,12 @@ private:
     int32 SpawnValidationFrames = 0;
     double SpawnValidationElapsed = 0;
     bool bSpawnValidated = false;
+    bool UpdateSceneRenderingReadiness();
+    bool bSceneRenderReady = false;
+    double SceneRenderStartSeconds = 0;
+    int32 SceneRenderStableFrames = 0;
+    int32 SceneStreamingStartId = INDEX_NONE;
+    TSharedPtr<FJsonObject> SceneRenderReport;
     UPROPERTY() ACameraActor* ChaseCamera = nullptr;
     UPROPERTY() ACameraActor* SightCamera = nullptr;
     FString CaptureDirectory;
@@ -112,6 +123,8 @@ private:
     bool bCaptured = false;
     bool bExitAfterCapture = false;
     bool bReady = false;
+    bool bDestructionProbeStarted = false;
+    double DestructionProbeSeconds = 0;
     bool bMapOverview = false;
     bool bProbeActive = false;
     int32 ProbePhase = 0;
@@ -182,4 +195,6 @@ class RMSIM_API AImportLabHUD : public AHUD
     GENERATED_BODY()
 public:
     virtual void DrawHUD() override;
+private:
+    UPROPERTY() UMapOverview* MapOverview = nullptr;
 };

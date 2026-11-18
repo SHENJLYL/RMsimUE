@@ -68,6 +68,16 @@ public:
     double GetDriveParameter(const TCHAR* Name) const { return DriveParameters.FindRef(Name); }
     double GetMeasuredYawRate() const;
     FVector GetCommandOriginVelocity() const;
+    FVector GetRequestedDriveWorldVelocityCmS() const
+    {
+        if(bContactBrake)return FVector::ZeroVector;
+        const double Heading=-FMath::DegreesToRadians(GetActorRotation().Yaw);
+        const FVector2D Forward(FMath::Cos(Heading),FMath::Sin(Heading)),Left(-Forward.Y,Forward.X);
+        const FVector2D Target=bDriveWorldFrame?DriveRequestedLinear:Forward*DriveRequestedLinear.X+Left*DriveRequestedLinear.Y;
+        return FVector(Target.X,-Target.Y,0)*100.;
+    }
+    // Live Chaos contact from our rigid bodies; caller still checks its own distance and drive intent.
+    bool GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const;
     bool SampleChassisImu(const FTransform& Mount,FTransform& SensorWorld,FVector& PointVelocityCm,FVector& AngularVelocityRad) const;
     bool GetSensorParentWorld(const FString& Parent,FTransform& Pose) const;
     void EnableArticulatedSensorQueries();
@@ -174,7 +184,7 @@ private:
     double ContactMotorDamping=2,ContactMotorTorqueNm=4,ContactBrakeTorqueNm=8;
     double ContactDriveForward=0,ContactDriveYaw=0;
     bool bContactBrake=true;
-    struct FContactObservation { FVector Point,Normal,Impulse; double Time=0; FString Other; };
+    struct FContactObservation { FVector Point,Normal,Impulse; double Time=0; FString Other; TWeakObjectPtr<UPrimitiveComponent> OtherComponent; };
     TMap<FString,FContactObservation> ContactObservations;
     UFUNCTION() void ObserveContact(UPrimitiveComponent* Component,AActor* OtherActor,
         UPrimitiveComponent* OtherComponent,FVector NormalImpulse,const FHitResult& Hit);

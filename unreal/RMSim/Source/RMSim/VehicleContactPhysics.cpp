@@ -368,12 +368,29 @@ TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
     State->SetArrayField(TEXT("wheels"),Wheels);return State;
 }
 
+bool AVehicleRig::GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,
+    double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const
+{
+    ImpulseNs=0;
+    if(!Other||!GetWorld())return false;
+    bool Found=false;
+    for(const auto& Entry:ContactObservations)
+    {
+        const FContactObservation& Contact=Entry.Value;
+        if(Contact.OtherComponent.Get()!=Other || GetWorld()->GetTimeSeconds()-Contact.Time>MaxAgeSeconds ||
+            FVector::DistSquared(Contact.Point,NearPointCm)>FMath::Square(RadiusCm))continue;
+        ImpulseNs=FMath::Max(ImpulseNs,Contact.Impulse.Size()/100.0); // kg*cm/s to N*s.
+        Found=true;
+    }
+    return Found;
+}
+
 void AVehicleRig::ObserveContact(UPrimitiveComponent* Component,AActor* OtherActor,
     UPrimitiveComponent* OtherComponent,FVector NormalImpulse,const FHitResult& Hit)
 {
     if(!Component||!OtherActor||OtherActor==this)return;
     ContactObservations.Add(Component->GetName(),{Hit.ImpactPoint,Hit.ImpactNormal,NormalImpulse,
-        GetWorld()->GetTimeSeconds(),OtherComponent?OtherComponent->GetName():OtherActor->GetName()});
+        GetWorld()->GetTimeSeconds(),OtherComponent?OtherComponent->GetName():OtherActor->GetName(),OtherComponent});
 }
 
 void AVehicleRig::EndPlay(const EEndPlayReason::Type EndPlayReason)

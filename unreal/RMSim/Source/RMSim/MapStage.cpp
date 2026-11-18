@@ -67,7 +67,10 @@ bool FMapStage::Load(const FString& Filename, FString& Error)
     FObj Root;
     if (Size < 0 || Size > 1024 * 1024 || !FFileHelper::LoadFileToString(Text, *SourceFile) ||
         !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text), Root)) return Fail(TEXT("map JSON unavailable, invalid or larger than 1MiB"));
+    bSavedScene=false;LevelAsset.Reset();SceneSourceHash.Reset();
     FString RequestedKind;
+    if (Root.IsValid() && Root->TryGetStringField(TEXT("kind"),RequestedKind) && RequestedKind==TEXT("rm_scene_map"))
+        return LoadSceneMap(Root,Error);
     if (Root.IsValid() && Root->TryGetStringField(TEXT("kind"),RequestedKind) && RequestedKind==TEXT("rm_mesh_map"))
         return LoadMeshMap(Root,Error);
     bMeshTerrain=false;
@@ -153,6 +156,7 @@ bool FMapStage::Load(const FString& Filename, FString& Error)
 
 bool FMapStage::SpawnGeometry(UWorld* World, TMap<FString,AStaticMeshActor*>& Boxes, FString& Error) const
 {
+    if (bSavedScene)return ValidateLoadedScene(World,Error);
     if (bMeshTerrain)
     {
         for (const FMapMesh& Part : Meshes)
@@ -212,7 +216,7 @@ TArray<FString> FMapStage::RegionsAt(const FVector& World) const
     return Result;
 }
 
-bool FMapStage::WriteReport(const FString& Filename,const FMapSpawn& Spawn,const TMap<FString,AStaticMeshActor*>& Boxes,const FVector& Location,bool Overlapping) const
+bool FMapStage::WriteReport(const FString& Filename,const FMapSpawn& Spawn,const TMap<FString,AStaticMeshActor*>& Boxes,const FVector& Location,bool Overlapping,UWorld* World) const
 {
     // Evidence is written to a fresh path, never over an input map or a previous run.
     if (IFileManager::Get().FileExists(*Filename)) return false;
@@ -222,7 +226,8 @@ bool FMapStage::WriteReport(const FString& Filename,const FMapSpawn& Spawn,const
     Report->SetArrayField(TEXT("vehicle_position_cm"),JsonVector(Location)); Report->SetBoolField(TEXT("initial_overlap"),Overlapping);
     Report->SetNumberField(TEXT("obstacle_count"),Obstacles.Num()); Report->SetNumberField(TEXT("region_count"),Regions.Num());
     Report->SetNumberField(TEXT("mesh_pairs"),Meshes.Num());
-    Report->SetStringField(TEXT("map_kind"),bMeshTerrain ? TEXT("rm_mesh_map") : TEXT("rm_flat_map"));
+    Report->SetStringField(TEXT("map_kind"),bSavedScene ? TEXT("rm_scene_map") : bMeshTerrain ? TEXT("rm_mesh_map") : TEXT("rm_flat_map"));
+    AddSceneReport(World,Report);
     TArray<TSharedPtr<FJsonValue>> Entries, CurrentRegions;
     for (const auto& Pair : Boxes)
     {

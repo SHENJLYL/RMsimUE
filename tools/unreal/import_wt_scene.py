@@ -19,8 +19,14 @@ import unreal
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from import_vehicle_assets import import_asset, local_path
 from wt_materials import create_materials, material_id
+from wt_material_slots import material_bindings
+from wt_mesh_geometry import triangle_accounting, verify_native_material_triangles
+from wt_vertex_opacity import validate_scene_vertex_opacity, validate_vertex_opacity
+from wt_runtime_virtual_texture import bind_rvt_world
+from wt_landclass import validate_landclass_surface
+from wt_overview import import_overview
 
-IMPORT_VERSION = 1
+IMPORT_VERSION = 3
 
 
 def read(path):
@@ -74,9 +80,12 @@ def validate_source(package,source,folder):
             path=local_path(package,spec['file'])
             if digest(path)!=spec['sha256']:
                 raise ValueError('source FBX hash mismatch: '+str(path))
+            triangle_accounting(package,spec,source['source_sha256'])
             if label=='Meshes' and any(s not in material_ids for s in spec['material_slots']):
                 raise ValueError('visual references unknown material')
             target[folder+'/'+label+'/'+name+'.'+name]=spec
+    validate_scene_vertex_opacity(package,source)
+    validate_landclass_surface(package,source)
     instance_path=local_path(package,source['instances']);instances=read(instance_path)
     seen=set();count=0;collision_paths=set();instance_hashes={}
     for part in instances['parts']:
@@ -113,7 +122,8 @@ def fbx_options():
     settings=options.get_editor_property('static_mesh_import_data')
     for key,value in dict(combine_meshes=True,convert_scene=True,convert_scene_unit=True,
         force_front_x_axis=True,transform_vertex_to_absolute=True,bake_pivot_in_vertex=False,
-        auto_generate_collision=False,reorder_material_to_fbx_order=True,generate_lightmap_u_vs=False).items():
+        auto_generate_collision=False,reorder_material_to_fbx_order=True,generate_lightmap_u_vs=False,
+        remove_degenerates=False).items():
         settings.set_editor_property(key,value)
     settings.set_editor_property('normal_import_method',unreal.FBXNormalImportMethod.FBXNIM_IMPORT_NORMALS)
     return options
@@ -133,12 +143,41 @@ def bounds_record(mesh,spec):
     return dict(ue_bounds_cm=actual,source_bounds_m=spec['bounds_m'],max_error_cm=error,tolerance_cm=tolerance)
 
 
-def import_mesh(package,asset_path,spec,collision,mats,cache,cache_file,folder):
+def extend_billboard_bounds(mesh,spec):
+    """Cover every no-wind view rotation using source centre +/- offset length."""
+    source_bounds=spec.get('billboard_bounds_m')
+    if source_bounds is None:return None
+    expected={edge:[source_bounds[('hi' if edge=='lo' else 'lo') if axis==1 else edge][axis]*(-100 if axis==1 else 100)
+                    for axis in range(3)] for edge in ('lo','hi')}
+    base=mesh.get_bounding_box()
+    low=[base.min.x,base.min.y,base.min.z];high=[base.max.x,base.max.y,base.max.z]
+    negative=[max(0,low[i]-expected['lo'][i]) for i in range(3)]
+    positive=[max(0,expected['hi'][i]-high[i]) for i in range(3)]
+    mesh.set_editor_property('negative_bounds_extension',unreal.Vector(*negative))
+    mesh.set_editor_property('positive_bounds_extension',unreal.Vector(*positive))
+    final=mesh.get_bounding_box()
+    actual=dict(lo=[final.min.x,final.min.y,final.min.z],hi=[final.max.x,final.max.y,final.max.z])
+    if any(actual['lo'][i]>expected['lo'][i]+.01 or actual['hi'][i]<expected['hi'][i]-.01 for i in range(3)):
+        raise ValueError('billboard culling bounds do not contain the source offset sphere')
+    return dict(source_bounds_m=source_bounds,ue_bounds_cm=actual,
+                negative_extension_cm=negative,positive_extension_cm=positive)
+
+
+def import_mesh(package,asset_path,spec,collision,mats,cache,cache_file,folder,scene_source_sha256=None):
     destination,name=safe_asset_path(asset_path,folder)
+    geometry_accounting=triangle_accounting(package,spec,scene_source_sha256)
+    vertex_opacity=validate_vertex_opacity(package,spec,scene_source_sha256)
     signature=dict(fbx_sha256=spec['sha256'],import_version=IMPORT_VERSION,
                    material_slots=spec['material_slots'],triangle_collision=collision)
+    if geometry_accounting['geometry_audit_sha256'] is not None:
+        signature['geometry_audit_sha256']=geometry_accounting['geometry_audit_sha256']
+    if vertex_opacity is not None:
+        signature['source_vertex_opacity']=spec['source_vertex_opacity']
+    if 'billboard_bounds_m' in spec:
+        signature['billboard_bounds_m']=spec['billboard_bounds_m']
+        signature['leaf_adapter']=spec['leaf_adapter']
     old=cache['assets'].get(asset_path,{})
-    mesh=unreal.load_asset(asset_path)
+    mesh=unreal.load_asset(asset_path) if unreal.EditorAssetLibrary.does_asset_exist(asset_path) else None
     saved_file=asset_file(asset_path)
     reuse=isinstance(mesh,unreal.StaticMesh) and old.get('signature')==signature and saved_file.is_file() and old.get('ue_file_sha256')==digest(saved_file)
     if not reuse:
@@ -148,25 +187,62 @@ def import_mesh(package,asset_path,spec,collision,mats,cache,cache_file,folder):
         mesh=meshes[0]
     if not isinstance(mesh,unreal.StaticMesh):raise ValueError('mesh unavailable '+asset_path)
     slots=mesh.get_editor_property('static_materials')
-    if len(slots)!=len(spec['material_slots']):raise ValueError('FBX material slot count differs '+name)
-    for i,slot in enumerate(slots):
-        actual=str(slot.get_editor_property('material_slot_name'));expected=spec['material_slots'][i]
-        if actual!=expected:raise ValueError(f'{name}: slot{i} got{actual}, expected{expected}')
-        if expected in mats:mesh.set_material(i,mats[expected])
-        elif expected=='WT_SourceCollision':mesh.set_material(i,None)
-        else:raise ValueError('unresolved imported material slot '+expected)
+    actual_slots=[str(slot.get_editor_property('material_slot_name')) for slot in slots]
+    bindings=material_bindings(spec['material_slots'],actual_slots)
+    for i,identity in enumerate(bindings):
+        if identity in mats:
+            target_material=mats[identity]
+        elif identity=='WT_SourceCollision':
+            target_material=None
+        else:
+            raise ValueError('unresolved imported material slot '+identity)
+        current_material=mesh.get_material(i)
+        current_path=current_material.get_path_name() if current_material else None
+        target_path=target_material.get_path_name() if target_material else None
+        if current_path!=target_path:
+            mesh.set_material(i,target_material)
+    if spec.get('leaf_adapter'):
+        # UE Python omits a bool success return when packing out parameters:
+        # true + FString& yields the error string, false yields None.
+        leaf_error=unreal.MapImportLibrary.prepare_source_leaf_mesh(mesh)
+        if not isinstance(leaf_error,str) or leaf_error:
+            raise RuntimeError('source leaf mesh precision preparation failed: '+str(leaf_error))
+    if vertex_opacity is not None:
+        opacity_error=unreal.MapImportLibrary.prepare_source_precision_mesh(mesh,2)
+        if not isinstance(opacity_error,str) or opacity_error:
+            raise RuntimeError('source vertex opacity precision preparation failed: '+str(opacity_error))
+    native_geometry=json.loads(unreal.MapImportLibrary.describe_map_mesh(mesh))
+    if vertex_opacity is not None and (native_geometry['uv_channels']!=2 or not native_geometry['full_precision_uvs']):
+        raise ValueError('native vertex opacity did not retain two full-precision UVs')
+    imported_triangles=native_geometry['triangles']
+    if spec.get('leaf_adapter') and (native_geometry['uv_channels']!=5 or not native_geometry['full_precision_uvs']):
+        raise ValueError('native leaf offset channels did not retain five full-precision UVs')
+    expected_triangles=geometry_accounting['expected_native_triangles']
+    if imported_triangles!=expected_triangles:
+        raise ValueError(f'{name}: imported {imported_triangles} triangles, expected {expected_triangles}; '
+                         f'original={spec["triangles"]}, proven_coincident={geometry_accounting["strictly_coincident_source_triangles"]}')
+    verified_material_triangles=verify_native_material_triangles(geometry_accounting,native_geometry)
+    if verified_material_triangles is not None:
+        geometry_accounting['verified_native_material_triangles']=verified_material_triangles
     body=mesh.get_editor_property('body_setup')
     if collision:
         if body is None:raise ValueError('no mesh BodySetup for source collision')
         body.set_editor_property('collision_trace_flag',unreal.CollisionTraceFlag.CTF_USE_COMPLEX_AS_SIMPLE)
         body.set_editor_property('double_sided_geometry',True)
+    if 'billboard_bounds_m' in spec:
+        mesh.set_editor_property('negative_bounds_extension',unreal.Vector(0,0,0))
+        mesh.set_editor_property('positive_bounds_extension',unreal.Vector(0,0,0))
     record=bounds_record(mesh,spec)
+    billboard_bounds=extend_billboard_bounds(mesh,spec)
     if not unreal.EditorAssetLibrary.save_loaded_asset(mesh,only_if_is_dirty=False):raise RuntimeError('failed to save mesh '+name)
     if not saved_file.is_file():raise RuntimeError('saved asset file absent '+str(saved_file))
     cache['assets'][asset_path]=dict(signature=signature,ue_file_sha256=digest(saved_file),bounds=record)
     save_json(cache_file,cache)
     return dict(id=name,asset=asset_path,reused=reuse,source_sha256=spec['sha256'],
-                triangle_collision=collision,source_triangles=spec['triangles'],**record)
+                triangle_collision=collision,source_triangles=spec['triangles'],imported_triangles=imported_triangles,
+                geometry_accounting=geometry_accounting,source_vertex_opacity=vertex_opacity,
+                source_material_slots=spec['material_slots'],imported_material_slots=actual_slots,
+                billboard_bounds=billboard_bounds,native_geometry=native_geometry,**record)
 
 
 def unwrap(result,label):
@@ -191,28 +267,47 @@ def import_scene(source_file):
     evidence.mkdir(parents=True,exist_ok=False)
     report=dict(status='running',started_utc=started.isoformat(),source_sha256=source['source_sha256'],
         manifest_sha256=digest(source_file),source_manifest=str(source_file),engine=str(unreal.SystemLibrary.get_engine_version()),
+        import_version=IMPORT_VERSION,
+        importer_scripts_sha256={name:digest(Path(__file__).resolve().with_name(name)) for name in
+                                 ('import_wt_scene.py','wt_materials.py','wt_material_slots.py','wt_mesh_geometry.py','wt_vertex_opacity.py','wt_runtime_virtual_texture.py','wt_tree_alpha.py','wt_landclass.py','wt_overview.py','wt_water.py')},
         map_asset=world_path,mesh_results=[],runtime_verified=False,source_limits=source['limitations'])
     def record():save_json(evidence/'report.json',report)
     record()
     try:
+        report['overview']=import_overview(package,folder)
         mats,terrain=create_materials(package,folder)
         if terrain.get_path_name()!=read(height_path)['material']:raise ValueError('terrain material path differs from heightfield declaration')
         for i,(asset,spec) in enumerate([*visual.items(),*collision.items()]):
-            report['mesh_results'].append(import_mesh(package,asset,spec,asset in collision_paths,mats,cache,cache_file,folder))
+            report['mesh_results'].append(import_mesh(package,asset,spec,asset in collision_paths,mats,cache,cache_file,folder,
+                                                      scene_source_sha256=source['source_sha256']))
             record()
-            if (i+1)%25==0:unreal.log(f'WT_SCENE_MESHES {i+1}/{len(visual)+len(collision)}')
+            if (i+1)%25==0:
+                unreal.log(f'WT_SCENE_MESHES {i+1}/{len(visual)+len(collision)}')
+                # The report holds only scalar evidence. Release unused editor
+                # import objects before the next large baked source mesh.
+                unreal.SystemLibrary.collect_garbage()
         world=unreal.EditorLoadingAndSavingUtils.new_blank_map(False)
         if world is None:raise RuntimeError('cannot create empty editor world')
         imported_count=unwrap(unreal.MapImportLibrary.import_instances(world,str(instance_path)),'ImportInstances')
         if imported_count!=instance_count:raise ValueError(f'instance count mismatch {imported_count} vs {instance_count}')
         landscape=unwrap(unreal.MapImportLibrary.import_heightfield(world,str(height_path)),'ImportHeightfield')
         if not isinstance(landscape,unreal.Landscape):raise RuntimeError('heightfield did not produce Landscape')
+        report['ground_decal_rvt']=bind_rvt_world(world,source)
+        record()
+        settings=unreal.GameplayStatics.get_all_actors_of_class(world,unreal.WorldSettings)
+        if len(settings)!=1:raise RuntimeError('scene must contain exactly one WorldSettings actor')
+        tags=[str(tag) for tag in settings[0].get_editor_property('tags')
+              if not str(tag).startswith(('RMSimMapId=','RMSimSourceSha256='))]
+        tags.extend(['RMSimMapId='+source['id'],'RMSimSourceSha256='+source['source_sha256']])
+        settings[0].set_editor_property('tags',tags)
         if not unreal.EditorLoadingAndSavingUtils.save_map(world,world_path):raise RuntimeError('cannot save imported map')
         material_report=read(package/'material-import-report.json')
         report.update(status='imported_pending_runtime_validation',finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             visual_assets=len(visual),collision_assets=len(collision),collision_referenced_assets=len(collision_paths),
             instances_imported=imported_count,instance_file_sha256=instance_hashes,
             source_stored_instances=source['source_coverage']['source_instances'],
+            world_identity_tags=tags,
+            map_file_sha256=digest(Path(unreal.Paths.project_content_dir()).resolve()/('RMSim/Maps/'+source['id']+'/World.umap')),
             landscape_actor=landscape.get_path_name(),heightfield=read(height_path),
             material_count=len(mats),native_shader_parity=False,
             unresolved_shader_bindings=material_report['unresolved_shader_bindings'],

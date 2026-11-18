@@ -417,8 +417,8 @@ void URosBridgeComponent::ResetEpoch()
     if(Lidar)Lidar->Reset();
 }
 
-void URosBridgeComponent::SetMapIdentity(const FString& Id,const FString& Source,bool Mesh)
-{MapId=Id;MapHash=LexToString(FMD5Hash::HashFile(*Source));MapKind=Mesh?TEXT("rm_mesh_map"):TEXT("rm_flat_map");}
+void URosBridgeComponent::SetMapIdentity(const FString& Id,const FString& Source,bool Mesh,bool SavedScene)
+{MapId=Id;MapHash=LexToString(FMD5Hash::HashFile(*Source));MapKind=SavedScene?TEXT("rm_scene_map"):Mesh?TEXT("rm_mesh_map"):TEXT("rm_flat_map");}
 
 void URosBridgeComponent::SetOperatorBrake(bool Brake)
 {

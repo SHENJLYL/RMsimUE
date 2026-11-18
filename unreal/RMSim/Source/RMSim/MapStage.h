@@ -39,13 +39,19 @@ struct FMapStage
     TArray<FMapSpawn> Spawns;
     TArray<FMapRegion> Regions;
     bool bMeshTerrain = false;
+    bool bSavedScene = false;
+    FString LevelAsset, SceneSourceHash;
     TArray<FMapMesh> Meshes;
     FBox SourceBoundsMetres = FBox(ForceInit);
 
     bool Load(const FString& Filename, FString& Error);
     bool LoadMeshMap(const TSharedPtr<FJsonObject>& Root, FString& Error);
+    bool LoadSceneMap(const TSharedPtr<FJsonObject>& Root, FString& Error);
+    bool ValidateLoadedScene(UWorld* World, FString& Error) const;
+    bool IsSceneCollisionReady(UWorld* World) const;
+    void AddSceneReport(UWorld* World, const TSharedRef<FJsonObject>& Report) const;
     bool SpawnGeometry(UWorld* World, TMap<FString, AStaticMeshActor*>& Boxes, FString& Error) const;
     TArray<FString> RegionsAt(const FVector& WorldCentimetres) const;
     bool WriteReport(const FString& Filename, const FMapSpawn& Spawn,
-        const TMap<FString, AStaticMeshActor*>& Boxes, const FVector& VehicleLocation, bool Overlapping) const;
+        const TMap<FString, AStaticMeshActor*>& Boxes, const FVector& VehicleLocation, bool Overlapping, UWorld* World = nullptr) const;
 };
