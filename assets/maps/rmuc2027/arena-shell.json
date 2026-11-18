@@ -1,0 +1,93 @@
+{
+  "schema": "rmsim_arena_shell_v1",
+  "map_id": "rmuc2027",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "bounds_m": {
+    "lo": [
+      -13.999996185302734,
+      -8.001565933227539,
+      -0.3009999990463257
+    ],
+    "hi": [
+      13.999996185302734,
+      8.001565933227539,
+      3.497683048248291
+    ]
+  },
+  "perimeter": {
+    "inset_m": 0.25,
+    "wall_thickness_m": 0.48,
+    "collision_bottom_m": -1.25,
+    "collision_top_m": 4.8,
+    "facade_top_m": 1.65,
+    "facade_bottom_m": -0.5
+  },
+  "stadium": {
+    "tiers": 4,
+    "first_row_setback_m": 1.15,
+    "tier_depth_m": 1.35,
+    "first_row_height_m": 2.1,
+    "tier_rise_m": 0.8,
+    "canopy_height_m": 8.9,
+    "canopy_depth_m": 3.4,
+    "minimum_detail_distance_m": 12.0,
+    "texture_mode": "flat_color_low_frequency",
+    "dynamic_shadows": false,
+    "collision": false,
+    "long_distance_ornament": false
+  },
+  "models": {
+    "wall": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/wall.wall",
+    "stairs": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/stairs.stairs",
+    "column": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/column.column",
+    "banner": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/banner.banner",
+    "border-straight": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/border_straight.border_straight",
+    "wall-gate": "/Game/RMSim/Maps/rmuc2027/Arena/Kenney/wall_gate.wall_gate"
+  },
+  "colors": {
+    "facade": [
+      0.075,
+      0.105,
+      0.14
+    ],
+    "seats": [
+      0.21,
+      0.26,
+      0.33
+    ],
+    "upper_seats": [
+      0.17,
+      0.19,
+      0.22
+    ],
+    "supports": [
+      0.25,
+      0.28,
+      0.34
+    ],
+    "roof": [
+      0.06,
+      0.08,
+      0.105
+    ],
+    "accent_red": [
+      0.76,
+      0.1,
+      0.115
+    ],
+    "accent_blue": [
+      0.1,
+      0.33,
+      0.82
+    ],
+    "accent_light": [
+      0.74,
+      0.83,
+      0.91
+    ]
+  },
+  "asset_source": "arena/kenney-mini-arena/SOURCE.json",
+  "notes": "Collision is 4 continuous static walls, all large off-field stands are no-collision instanced meshes; no off-field visual geometry enters navigation raster.",
+  "verified_source_map_semantic_sha256": "05d10bd2e1b42e9d9a2ec4d37f36c6f35ae044059f2f234aaf0906e68cd32dbd"
+}

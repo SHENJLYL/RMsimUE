@@ -1,0 +1,54 @@
+{
+  "status": "validated_arena_standalone",
+  "scope": "Arena branch from 13f1961 with isolated native UE build+guard tests; combined current WIP ROS performance reported separately, not an accepted standalone speed release",
+  "source_commit_parent": "13f196199ad03d8a4048d77f30bec0b6a1b45b27",
+  "source_hashes": {
+    "arena_cpp_sha256": "b7dedf839f527333ea1abeade4f4f6298ea1bb7adf6b4bc46fe72e0b57acba47",
+    "arena_manifest_sha256": "1d7e63faa3d01d7574aae3abc34a588667add4f692532e46178697c38a610370",
+    "map_semantic_sha256": "05d10bd2e1b42e9d9a2ec4d37f36c6f35ae044059f2f234aaf0906e68cd32dbd",
+    "cc0_source_sha256": "e8feb0ca02511407bc0fd75324d268d8621837a9e0ae798f10631d7f7e54c46b"
+  },
+  "open_source": {
+    "author": "Kenney",
+    "license": "CC0-1.0",
+    "source_page": "https://kenney.nl/assets/mini-arena",
+    "imported_static_meshes": 6,
+    "palette_materials": 8
+  },
+  "isolated_clean_baseline": {
+    "UE_module_build": "passed",
+    "module_sha256": "559b4af4f75d1fedbda38dd0344182a59cd1870cb0dfe0c95dc38324c35dc414",
+    "native_probes": 8,
+    "native_probe_status": "passed",
+    "guard_sweeps": 28,
+    "guard_sweeps_passed": 28,
+    "visual_instances": 216,
+    "instanced_groups": 15,
+    "screenshot_sha256": {
+      "aim_camera.png": "898127429532482990a5dad259ef3979e8bdfbf2fdb683136409b9ed70982f29",
+      "overview.png": "e0f3deb17154c26886e528d6ef06f795d4106317e48ed2fb8adb0b87cb58516f"
+    },
+    "evidence_location": "artifacts/maps/rmuc-arena-20261118/clean-baseline-native-01 (original machine, complete local logs/screenshots)"
+  },
+  "integrated_current_worktree": {
+    "navigation_checks": 14,
+    "time_sensor_checks": 32,
+    "realtime_factor_90s": 0.9999813836958594,
+    "single_goal_error_m": 0.1541270866917167,
+    "waypoint_error_m": 0.11160356681374005,
+    "cancel_braking_m": 0.1000691733118871,
+    "cancel_drift_m": 0.0,
+    "runtime_inputs_unchanged": true,
+    "evidence_location": "artifacts/maps/rmuc-arena-20261118/realtime-matte-02 (current 2026-11-18 speed/navigation worktree)"
+  },
+  "current_combined_offline": {
+    "passed": 291,
+    "skipped": 2,
+    "total": 293
+  },
+  "limitations": [
+    "Unreleased navigation/sentry_ws 5m/s and visual WT assets remain in the other working tree",
+    "Physics barriers tested with 12cm radius native sweeps; high-energy vehicle collision trial not independently recorded",
+    "Windows validated; Linux standalone not yet executed"
+  ]
+}
