@@ -20,3 +20,46 @@
 *.umap binary
 *.fbx binary
 *.png binary
+
+# These source contracts bind one another by SHA256; preserve exact prepared bytes.
+assets/maps/wt_vlaanderen/map.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview/calibration.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the original bytes of this map integration's hash-bound evidence.
+artifacts/maps/wt-scene-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261117-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261118-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve exact CC0 license package bytes referenced by SHA256.
+assets/maps/rmuc2027/arena/kenney-mini-arena/LICENSE.txt -text
+
+# Preserve the exact prepared bytes of the unified Flanders source contracts and evidence.
+assets/maps/wt_vlaanderen/foliage-enhanced/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/generated-collision/recipe.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt-refine-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve raw bytes of every mutually hash-bound compact evidence record.
+artifacts/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Unified diff empty-context markers are a required single space; preserve the original patch.
+third_party/patches/point-lio-native.patch whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/enhancement-proof.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/native-sample-fixture.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/source/foliage-source.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/source/small-grass-source.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/definition.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/proof.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/source/level.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/source/provenance.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/definition.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/source-landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/vehicles/aim_sentry/drive-profile.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

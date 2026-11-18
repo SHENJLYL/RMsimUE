@@ -119,3 +119,40 @@ Thumbs.db
 /assets/**/*.jsonl
 /assets/maps/wt_vlaanderen/terrain/
 /assets/maps/wt_vlaanderen/instances/
+
+# Disposable nested repositories used to verify upstream patches.
+/artifacts/**/patch-check/
+
+# Full scene import journals reference local generated assets; compact acceptance lives in artifacts.
+/assets/maps/wt_vlaanderen/ue-mesh-import-cache.json
+/assets/maps/wt_vlaanderen/ue-scene-import-report.json
+/assets/maps/wt_vlaanderen/material-import-report.json
+
+# Generated source-face audits contain original geometry evidence and stay local.
+/assets/maps/wt_vlaanderen/geometry-audits/
+
+# Dense per-mesh scene audit stays local; the adjacent summary binds its SHA256.
+/artifacts/maps/wt-scene-*/native-scene-*/verification.json
+
+# Full raw draw declarations remain local; the adaptation summary binds this report.
+/artifacts/maps/wt-scene-*/decal-opacity-*/raw/verification.json
+
+# Grass import journals and full nested scene audits remain local.
+/assets/maps/wt_vlaanderen/ue-grass-import-report.json
+/artifacts/maps/wt-scene-*/native-scene-*/**/verification.json
+
+# Local integration rollback snapshots and copied legacy workspace.
+/artifacts/integration/unified-20261118/*
+!/artifacts/integration/unified-20261118/final-documents-01/
+/artifacts/integration/unified-20261118/final-documents-01/*
+!/artifacts/integration/unified-20261118/final-documents-01/summary.json
+/artifacts/archive/
+
+# Generated collision geometry, dense spatial manifests and local authoring journals.
+/assets/maps/wt_vlaanderen/generated-collision/*
+!/assets/maps/wt_vlaanderen/generated-collision/recipe.json
+
+# Detailed native asset readbacks are bound by compact summaries alongside each run.
+/artifacts/maps/wt-refine-*/**/audit/verification.json
+/artifacts/maps/wt-refine-*/grass-native-*/verification.json
+/artifacts/maps/wt-refine-*/grass-reload-*/verification.json
