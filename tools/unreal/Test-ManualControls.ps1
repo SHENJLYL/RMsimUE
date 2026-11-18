@@ -11,6 +11,7 @@ param(
     [double]$ContactSpeedMps = 1,
     [switch]$ContactIntegration,
     [switch]$Gyro,
+    [switch]$CameraDrive,
     [switch]$GyroRoute,
     [double]$GyroSpinRadS=2,
     [switch]$SteeringResponse,
@@ -53,6 +54,7 @@ try {
     if ($Contact -or $Gyro) { $arguments += '-ContactDistanceCm=' + $ContactDistanceCm.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($Contact -or $Gyro) { $arguments += '-ContactSpeedMps=' + $ContactSpeedMps.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($GyroRoute) { if(-not $Gyro){throw 'GyroRoute needs Gyro.'};$arguments += '-GyroRoute' }
+    if ($CameraDrive) { if(-not $Gyro){throw 'CameraDrive needs Gyro.'};$arguments += '-CameraDriveProbe' }
     if ($GyroRoute) { $arguments += '-GyroSpinRadS='+$GyroSpinRadS.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($SteeringResponse) { if(-not $Gyro){throw 'SteeringResponse needs Gyro.'};$arguments += '-SteeringResponse' }
     if ($PrecisionTrace) { if(-not $SteeringResponse){throw 'PrecisionTrace needs SteeringResponse.'};$arguments += '-PrecisionTrace' }
@@ -86,6 +88,7 @@ try {
     if ($SteeringResponse) { $expected=@('steering_response_rest_pose','steering_step_response','moving_turn_initial_velocity','moving_direction_response','precision_key_speed_cap') }
     if ($PrecisionTrace) { $expected+='precision_steady_spin' }
     if ($GyroRoute) { $expected=@('gyro_supported_spawn','gyro_spin_up','gyro_forward_wave_route','gyro_route_brake','gyro_reverse_wave_route') }
+    if ($CameraDrive) { $expected=@('camera_drive_ready','c_orbit_drives_turret_heading','shift_scope_drives_turret_heading','shift_exit_clears_sticky_scope','five_mps_speed_profile','five_mps_brake_to_stop') }
     if ($Traction) { $expected=@('traction_supported_slope','parallel_wheels_free_roll','transverse_wheels_settle','transverse_contact_grip','traction_reset_for_hold','released_keys_hold_slope','downhill_drive_before_release','downhill_key_release_brake','parked_external_impulse_wakes_body','parked_external_impulse_recovery') }
     if ($report.status -ne 'passed' -or $report.complete -ne $true -or @($report.checks).Count -ne $expected.Count) {
         throw 'Control report incomplete or failed.'
@@ -102,6 +105,7 @@ try {
     if ($Gyro) { $phases=@('gyro-start','gyro-moving','gyro-aim','gyro-camera-relative','gyro-response','moving-response') }
     if ($SteeringResponse) { $phases=@('gyro-response','moving-response') }
     if ($GyroRoute) { $phases=@('gyro-start','gyro-end','gyro-return') }
+    if ($CameraDrive) { $phases=@('gyro-start','gyro-c-free-look','gyro-scope','gyro-chase') }
     if ($Traction) { $phases=@('traction-cross','traction-hold') }
     foreach ($phase in $phases) {
         foreach ($camera in @('overview','aim_camera')) {

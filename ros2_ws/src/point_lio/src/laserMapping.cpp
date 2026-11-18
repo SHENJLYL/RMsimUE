@@ -1,4 +1,5 @@
 // #include <so3_math.h>
+#include <chrono>
 #include <malloc.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/io/pcd_io.h>
@@ -382,8 +383,11 @@ int main(int argc, char ** argv)
       lid_topic, rclcpp::SensorDataQoS(),
       [](const sensor_msgs::msg::PointCloud2::SharedPtr msg) { standard_pcl_cbk(msg); });
   }
+  auto imu_qos = rclcpp::SensorDataQoS();
+  imu_qos.keep_last(static_cast<std::size_t>(imu_qos_depth));
+  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=best_effort history=keep_last", imu_qos_depth);
   auto sub_imu =
-    nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, rclcpp::SensorDataQoS(), imu_cbk);
+    nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, imu_qos, imu_cbk);
   auto pub_laser_cloud_full_res =
     nh->create_publisher<sensor_msgs::msg::PointCloud2>("cloud_registered", 20);
   auto pub_laser_cloud_full_res_body =
@@ -399,9 +403,14 @@ int main(int argc, char ** argv)
   //------------------------------------------------------------------------------------------------------
   signal(SIGINT, SigHandle);
   rclcpp::Rate rate(500);
+  RCLCPP_INFO(
+    LOGGER,
+    "POINTLIO_CALLBACK_DRAIN mode=spin_all budget_ms=1 execution=same_thread loop_rate_hz=500");
   while (rclcpp::ok()) {
     if (flg_exit) break;
-    executor.spin_some();
+    // Drain burst arrivals on the mapping thread; spin_some takes only one
+    // message per ready subscription and can retain a full IMU history.
+    executor.spin_all(std::chrono::milliseconds(1));
     if (sync_packages(Measures)) {
       if (flg_reset) {
         RCLCPP_WARN(LOGGER, "reset when rosbag play back");

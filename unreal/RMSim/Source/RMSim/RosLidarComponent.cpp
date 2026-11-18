@@ -1,4 +1,6 @@
 #include "RosLidarComponent.h"
+#include "Async/ParallelFor.h"
+#include "PhysicsEngine/ClusterUnionComponent.h"
 #include "VehicleRig.h"
 #include "RosCoordinates.h"
 #include "Dom/JsonObject.h"
@@ -7,6 +9,9 @@
 #include "Materials/MaterialInterface.h"
 #include "Misc/FileHelper.h"
 #include "Misc/SecureHash.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+#include "HAL/PlatformTime.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
@@ -59,6 +64,13 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
     FTransform ParentPose;if(!Vehicle->GetSensorParentWorld(Parent,ParentPose)){Error=TEXT("unknown LiDAR parent joint");return false;}
     if(bArticulated)Vehicle->EnableArticulatedSensorQueries();
     Rig=Vehicle;Mount=FTransform(RosCoordinates::Rotation(Rpy),RosCoordinates::Position(Origin));
+    bProfileTiming=FParse::Param(FCommandLine::Get(),TEXT("ProfileSensorTiming"));
+    bSerialQuery=FParse::Param(FCommandLine::Get(),TEXT("LidarSerialQuery"));
+    bVerifyQueries=FParse::Param(FCommandLine::Get(),TEXT("VerifyLidarQueries"));
+    if(bSerialQuery&&bVerifyQueries)
+    {Error=TEXT("VerifyLidarQueries requires the parallel query path");return false;}
+    UE_LOG(LogRMSim,Display,TEXT("LIDAR_QUERY_MODE mode=%s verify_first_rays=%lld"),
+        bSerialQuery?TEXT("serial"):TEXT("parallel_staged"),bVerifyQueries?MaxVerificationRays:0);
     Seed=int32(SeedValue);Reflectivity=int32(ReflectivityValue);Random.Initialize(Seed);
     ProfileHash=LexToString(FMD5Hash::HashFile(*Profile));MotionGeneration=Rig->GetMotionGeneration();
     UE_LOG(LogRMSim,Display,TEXT("LIDAR_READY pattern=spherical_fibonacci rays_s=%.0f frame_hz=%.1f mount_uncalibrated=true"),RaysPerSecond,FrameHz);
@@ -66,12 +78,13 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
 }
 
 void URosLidarComponent::DiscardPending()
-{Pending.Reset();Building.Reset();PreviousTime=-1;FrameStart=-1;RayRemainder=0;}
+{Pending.Reset();Building.Reset();PreviousTime=-1;FrameStart=-1;RayRemainder=0;Cadence.Reset();}
 
 void URosLidarComponent::Reset()
 {
     DiscardPending();RayIndex=0;Traced=0;Hits=0;MissedRays=0;DroppedScans=0;ScanSequence=0;HistoryResets=0;MaxStep=0;
     MotionGeneration=Rig->GetMotionGeneration();Random.Initialize(Seed);WindowPasses=0;SelfBlocked=0;
+    VerifiedRays=0;VerifiedQueries=0;VerificationMaxErrorCm=0;
 }
 
 void URosLidarComponent::FinishScan()
@@ -87,12 +100,16 @@ void URosLidarComponent::Advance(double Time,bool Connected)
     if(MotionGeneration!=Rig->GetMotionGeneration())
     {MotionGeneration=Rig->GetMotionGeneration();DiscardPending();++HistoryResets;}
     if(!Connected){DiscardPending();return;}
-    if(PreviousTime<0){PreviousTime=Time;FrameStart=Time;FrameEnd=Time;return;}
+    if(PreviousTime<0){PreviousTime=Time;FrameStart=Time;FrameEnd=Time;Cadence.Start(Time,FrameHz);return;}
     const double Dt=Time-PreviousTime;PreviousTime=Time;
     if(Dt<=0)return;
     MaxStep=FMath::Max(MaxStep,Dt);
-    if(Time-FrameStart+1.e-9>=1./FrameHz)
-    {FinishScan();FrameStart=Time;FrameEnd=Time;}
+    if(Cadence.Advance(Time))
+    {
+        // Header/end and point offsets retain actual sampled physics times;
+        // only the window deadline is phase-locked to the scan epoch.
+        FinishScan();FrameStart=Time;FrameEnd=Time;
+    }
     // All rays in this physical frame share its actual pose/time. No invented subframe poses.
     const double Requested=Dt*RaysPerSecond+RayRemainder;
     const int64 Due=FMath::FloorToInt64(Requested);RayRemainder=Requested-Due;
@@ -101,43 +118,124 @@ void URosLidarComponent::Advance(double Time,bool Connected)
     FTransform ParentPose;if(!Rig->GetSensorParentWorld(ParentFrame,ParentPose))return;
     const FTransform WorldMount=Mount*ParentPose;
     const FVector Start=WorldMount.GetLocation();
+    // The game thread waits for each stage after synchronous Chaos has completed.
+    // UE 5.8 SceneQuery.cpp holds FScopedSceneReadLock around each ray query;
+    // workers only read that scene and write their own result. UObject/material
+    // inspection, optical decisions, random noise and serialization stay here.
+    check(IsInGameThread());
+    UWorld* World=GetWorld();
     FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimLidar),true);
     Query.bReturnFaceIndex=bArticulated;
-    // Self geometry is deliberately not ignored: placement and occlusion must be physical.
+    const ECollisionChannel Channel=bArticulated?ECC_GameTraceChannel1:ECC_Visibility;
+    struct FRay
+    {
+        int64 Index=0;
+        FVector Local,Direction,RayStart,End;
+        FHitResult Hit;
+        bool bHit=false,bFound=false;
+    };
+    TArray<FRay> Rays;Rays.SetNum(Count);
+    TArray<int32> Active,Next;Active.Reserve(Count);Next.Reserve(Count);
+    const double RayWallStart=bProfileTiming?FPlatformTime::Seconds():0;
     for(int32 I=0;I<Count;++I)
     {
-        const int64 Index=RayIndex++;
-        const double Azimuth=2*PI*FMath::Frac((Index+.5)*.6180339887498949);
-        const double Z=FMath::Lerp(FMath::Sin(MinElevation),FMath::Sin(MaxElevation),FMath::Frac((Index+.5)*.7548776662466927));
+        FRay& Ray=Rays[I];Ray.Index=RayIndex++;
+        const double Azimuth=2*PI*FMath::Frac((Ray.Index+.5)*.6180339887498949);
+        const double Z=FMath::Lerp(FMath::Sin(MinElevation),FMath::Sin(MaxElevation),FMath::Frac((Ray.Index+.5)*.7548776662466927));
         const double XY=FMath::Sqrt(FMath::Max(0.,1-Z*Z));
-        const FVector Local(XY*FMath::Cos(Azimuth),-XY*FMath::Sin(Azimuth),Z);
-        const FVector Direction=WorldMount.TransformVectorNoScale(Local);
-        FHitResult Hit;++Traced;
-        FVector RayStart=Start;bool Found=false;
-        for(int Pass=0;Pass<(bArticulated?16:1);++Pass)
+        Ray.Local=FVector(XY*FMath::Cos(Azimuth),-XY*FMath::Sin(Azimuth),Z);
+        Ray.Direction=WorldMount.TransformVectorNoScale(Ray.Local);
+        Ray.RayStart=Start;Ray.End=Start+Ray.Direction*(MaxRange*100);
+        Active.Add(I);
+    }
+    Traced+=Count;
+    const int32 VerifyCount=bVerifyQueries?int32(FMath::Min<int64>(Count,MaxVerificationRays-VerifiedRays)):0;
+    int32 FaceLogBudget=int32(FMath::Max<int64>(0,8-SelfBlocked));
+    // Preserve all optical intersections, including opaque parts of this robot.
+    for(int32 Pass=0;Pass<(bArticulated?16:1)&&!Active.IsEmpty();++Pass)
+    {
+        const bool Parallel=!bSerialQuery&&Active.Num()>=128;
+        auto Trace=[&](int32 ActiveIndex)
         {
-            if(!GetWorld()->LineTraceSingleByChannel(Hit,RayStart,Start+Direction*(MaxRange*100),bArticulated?ECC_GameTraceChannel1:ECC_Visibility,Query))break;
+            FRay& Ray=Rays[Active[ActiveIndex]];
+            FCollisionQueryParams LocalQuery=Query;
+            // Cluster union sub-tracing invokes GT-only component methods. Query
+            // their outer shape here, then repeat those rare hits on GT below.
+            if(Parallel)LocalQuery.bTraceIntoSubComponents=false;
+            Ray.bHit=World->LineTraceSingleByChannel(Ray.Hit,Ray.RayStart,Ray.End,Channel,LocalQuery);
+        };
+        if(Parallel)ParallelFor(TEXT("RMSimLidarQueries"),Active.Num(),32,Trace,EParallelForFlags::Unbalanced);
+        else for(int32 I=0;I<Active.Num();++I)Trace(I);
+        Next.Reset();
+        for(int32 I:Active)
+        {
+            FRay& Ray=Rays[I];
+            if(Parallel&&Ray.bHit&&Cast<UClusterUnionComponent>(Ray.Hit.GetComponent()))
+                Ray.bHit=World->LineTraceSingleByChannel(Ray.Hit,Ray.RayStart,Ray.End,Channel,Query);
+            if(I<VerifyCount)
+            {
+                FHitResult SerialHit;
+                const bool SerialFound=World->LineTraceSingleByChannel(SerialHit,Ray.RayStart,Ray.End,Channel,Query);
+                const double ErrorCm=Ray.bHit&&SerialFound?(SerialHit.ImpactPoint-Ray.Hit.ImpactPoint).Size():0.;
+                VerificationMaxErrorCm=FMath::Max(VerificationMaxErrorCm,ErrorCm);
+                ++VerifiedQueries;
+                const bool Same=SerialFound==Ray.bHit&&(!SerialFound||
+                    (SerialHit.GetActor()==Ray.Hit.GetActor()&&SerialHit.GetComponent()==Ray.Hit.GetComponent()&&
+                     SerialHit.FaceIndex==Ray.Hit.FaceIndex&&SerialHit.bBlockingHit==Ray.Hit.bBlockingHit&&
+                     SerialHit.bStartPenetrating==Ray.Hit.bStartPenetrating&&ErrorCm<=1.e-4&&
+                     FMath::Abs(double(SerialHit.Distance)-double(Ray.Hit.Distance))<=1.e-4));
+                if(!Same)
+                    UE_LOG(LogRMSim,Fatal,TEXT("LIDAR_QUERY_VERIFICATION result=failed ray=%lld pass=%d parallel_hit=%d serial_hit=%d parallel_face=%d serial_face=%d impact_error_cm=%.9f"),
+                        Ray.Index,Pass,Ray.bHit,SerialFound,Ray.Hit.FaceIndex,SerialHit.FaceIndex,ErrorCm);
+            }
+            if(!Ray.bHit)continue;
+            const FHitResult& Hit=Ray.Hit;
             bool Window=false;
             if(bArticulated&&Hit.GetActor()==Rig&&Hit.GetComponent()&&Hit.FaceIndex!=INDEX_NONE)
             {
                 int32 Section=INDEX_NONE;const auto* Material=Hit.GetComponent()->GetMaterialFromCollisionFaceIndex(Hit.FaceIndex,Section);
-                // Audited sensor window and its source protective optical dome only.
                 Window=Material&&(Material->GetName()==TEXT("aim_sentry_mid360_blue_glass")||Material->GetName()==TEXT("aim_sentry_radar_glass"));
-                if(SelfBlocked<8)UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_FACE comp=%s face=%d section=%d material=%s distance_cm=%.6f window=%d"),*Hit.GetComponent()->GetName(),Hit.FaceIndex,Section,Material?*Material->GetName():TEXT("none"),Hit.Distance,Window);
+                if(FaceLogBudget>0)
+                {--FaceLogBudget;UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_FACE comp=%s face=%d section=%d material=%s distance_cm=%.6f window=%d"),*Hit.GetComponent()->GetName(),Hit.FaceIndex,Section,Material?*Material->GetName():TEXT("none"),Hit.Distance,Window);}
             }
-            if(!Window){Found=true;break;}
-            ++WindowPasses;RayStart=Hit.ImpactPoint+Direction*.02; // 0.2mm step past this optical face only.
+            if(!Window){Ray.bFound=true;continue;}
+            ++WindowPasses;Ray.RayStart=Hit.ImpactPoint+Ray.Direction*.02;
+            Next.Add(I);
         }
-        if(!Found)continue;
+        Swap(Active,Next);
+    }
+    // Original ray order retains deterministic return order and seeded noise.
+    for(const FRay& Ray:Rays)
+    {
+        if(!Ray.bFound)continue;
+        const FHitResult& Hit=Ray.Hit;
         double Distance=(Hit.ImpactPoint-Start).Size()/100.;
         if(Hit.GetActor()==Rig){if(SelfBlocked<8)UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_BLOCK comp=%s face=%d distance_m=%.6f penetrating=%d"),*Hit.GetComponent()->GetName(),Hit.FaceIndex,Distance,Hit.bStartPenetrating);++SelfBlocked;}
         if(Distance<MinRange||Distance>MaxRange)continue;
         if(NoiseStd>0)Distance+=NoiseStd*FMath::Sqrt(-2*FMath::Loge(FMath::Max(double(Random.FRand()),1.e-12)))*FMath::Cos(2*PI*Random.FRand());
         if(Distance<MinRange||Distance>MaxRange)continue;
-        const FVector Point(Local.X*Distance,-Local.Y*Distance,Local.Z*Distance);
+        const FVector Point(Ray.Local.X*Distance,-Ray.Local.Y*Distance,Ray.Local.Z*Distance);
         LidarU32(Building,uint32(FMath::RoundToInt64((Time-FrameStart)*1.e9)));
         LidarFloat(Building,float(Point.X));LidarFloat(Building,float(Point.Y));LidarFloat(Building,float(Point.Z));
-        Building.Add(uint8(Reflectivity));Building.Add(0);Building.Add(uint8(Index%4));Building.Add(0);++Hits;
+        Building.Add(uint8(Reflectivity));Building.Add(0);Building.Add(uint8(Ray.Index%4));Building.Add(0);++Hits;
+    }
+    if(VerifyCount>0)
+    {
+        VerifiedRays+=VerifyCount;
+        if(VerifiedRays==MaxVerificationRays)
+            UE_LOG(LogRMSim,Display,TEXT("LIDAR_QUERY_VERIFICATION result=passed rays=%lld scene_queries=%lld max_impact_error_cm=%.9f"),
+                VerifiedRays,VerifiedQueries,VerificationMaxErrorCm);
+    }
+    if(bProfileTiming)
+    {
+        ProfileRayWall+=FPlatformTime::Seconds()-RayWallStart;ProfileRayCount+=Count;
+        if(ProfileStartSim==0)ProfileStartSim=Time;
+        if(Time-ProfileStartSim>=5.)
+        {
+            UE_LOG(LogRMSim,Display,TEXT("RMSIM_LIDAR_TIMING rays=%lld wall_total_ms=%.3f wall_us_per_ray=%.3f sim_elapsed=%.3f query_mode=%s"),
+                ProfileRayCount,ProfileRayWall*1000.,ProfileRayWall*1.e6/FMath::Max(1.,double(ProfileRayCount)),Time-ProfileStartSim,bSerialQuery?TEXT("serial"):TEXT("parallel_staged"));
+            ProfileRayCount=0;ProfileRayWall=0;ProfileStartSim=Time;
+        }
     }
     RayIndex+=Due-Count;FrameEnd=Time;
 }

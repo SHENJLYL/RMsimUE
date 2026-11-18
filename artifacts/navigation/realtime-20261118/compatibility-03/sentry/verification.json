@@ -1,0 +1,31 @@
+﻿{
+    "scope":  "sequential actual native engine tests; individual results retain their own checks and hashes",
+    "status":  "passed",
+    "runs":  [
+                 {
+                     "process_exit":  0,
+                     "name":  "mid360",
+                     "passed":  true
+                 },
+                 {
+                     "process_exit":  0,
+                     "name":  "manual",
+                     "passed":  true
+                 },
+                 {
+                     "process_exit":  0,
+                     "name":  "ros",
+                     "passed":  true
+                 },
+                 {
+                     "process_exit":  0,
+                     "name":  "aim",
+                     "passed":  true
+                 },
+                 {
+                     "process_exit":  0,
+                     "name":  "lidar-lk",
+                     "passed":  true
+                 }
+             ]
+}

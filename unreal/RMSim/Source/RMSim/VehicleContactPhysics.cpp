@@ -161,6 +161,9 @@ bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Erro
         B->SetMobility(EComponentMobility::Movable);B->SetStaticMesh(Shapes[Part]);B->SetWorldTransform(InitialWorld[Part]);
         B->SetCollisionProfileName(TEXT("PhysicsActor"));B->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         B->SetCollisionResponseToAllChannels(ECR_Block);B->SetCanEverAffectNavigation(false);
+        // Contact observations use OnComponentHit; no overlap-volume events are consumed.
+        // Skip redundant scene overlap queries when Chaos synchronizes each moving body.
+        B->SetGenerateOverlapEvents(false);
         B->SetNotifyRigidBodyCollision(true);B->OnComponentHit.AddDynamic(this,&AVehicleRig::ObserveContact);
         B->SetHiddenInGame(true);B->SetVisibility(false);B->SetCastShadow(false);
         B->SetPhysMaterialOverride(Material);B->SetMassOverrideInKg(NAME_None,Mass);
@@ -295,6 +298,7 @@ TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
     const FVector2D FilteredInFrame=bDriveWorldFrame?DriveFilteredWorld:FVector2D(FVector2D::DotProduct(DriveFilteredWorld,Forward),FVector2D::DotProduct(DriveFilteredWorld,Left));
     State->SetArrayField(TEXT("filtered_linear_m_s"),ContactVector(FVector(FilteredInFrame.X,FilteredInFrame.Y,0)));
     State->SetNumberField(TEXT("speed_acceleration_m_s2"),DriveSpeedAcceleration);
+    State->SetStringField(TEXT("velocity_command_mode"),bExternalVelocityTracking?TEXT("external_shaped_velocity"):TEXT("manual_input_shaper"));
     State->SetNumberField(TEXT("direction_rate_rad_s"),DriveDirectionRate);
     State->SetArrayField(TEXT("filtered_world_linear_m_s"),ContactVector(FVector(DriveFilteredWorld.X,DriveFilteredWorld.Y,0)));
     State->SetNumberField(TEXT("filtered_yaw_rad_s"),DriveFilteredYaw);State->SetNumberField(TEXT("measured_yaw_rad_s"),GetMeasuredYawRate());

@@ -1,0 +1,37 @@
+{
+  "status": "generated_not_native_validated",
+  "production_inputs_unchanged": true,
+  "input_checks": {
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\map.pgm": true,
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\map.yaml": true,
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\SOURCE.json": true,
+    "D:\\simulator\\assets\\maps\\rmuc2027\\mesh-source.json": true
+  },
+  "candidates": [
+    {
+      "role": "offline_geometry_candidate",
+      "status": "generated_not_native_validated",
+      "raster_sha256": "f1425f211b794516899db29b876eec3bcad4d1f8e917c503c7e7028e509fd001",
+      "selected_triangles": 702776,
+      "occupied_cells": 25371,
+      "free_cells": 141559,
+      "unknown_cells": 13390,
+      "occupied_over_prior_free_cells": 13925,
+      "directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\steep75",
+      "category": "steep75"
+    },
+    {
+      "role": "offline_geometry_candidate",
+      "status": "generated_not_native_validated",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "selected_triangles": 523265,
+      "occupied_cells": 24262,
+      "free_cells": 141767,
+      "unknown_cells": 14291,
+      "occupied_over_prior_free_cells": 13717,
+      "directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85",
+      "category": "vertical85"
+    }
+  ],
+  "wall_seconds": 4.473342400000547
+}

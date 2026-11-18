@@ -1,0 +1,832 @@
+{
+  "status": "failed",
+  "analysis_completed": true,
+  "scope": "Offline diagnosis; original action, precision and realtime results remain unchanged",
+  "created_utc": "2026-11-18T04:23:08.844149+00:00",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14",
+  "script_sha256": "c97c480874de2c7e655a17d38538a84d19931505acccc4e0dae9a20529b154de",
+  "inputs": {
+    "actions\\trace.json": "4f2811713ed938721addde04031c2c2af5843cccc5228ce97c137e6cf4c678ea",
+    "actions\\verification.json": "f1c22caf4ca8376dbbf8841fbf9088bb78e9cab71f4fcb70850e00bb66d388f4",
+    "actions\\precision\\verification.json": "fb6c1958dffb321c5132c3dfd72ea015b916a35cd01b17c8f83ae641ae40d4ce",
+    "clock\\verification.json": "61b54acd2efc50e274a3d3f5cf9019a9770d0762b9840353cda24dad9afdd90e",
+    "runtime-provenance.json": "ed301301b8f36c6f2dbfc34df31804fbf9415c5f53225dfd767d7b0694002802",
+    "status.json": "e3fd06c81844a008cfcfb85ee91275cda2a590da17702927f930b50296ca42a8"
+  },
+  "checks": [
+    {
+      "name": "owned_session_completed",
+      "passed": true
+    },
+    {
+      "name": "trace_bound_to_runtime_provenance",
+      "passed": true
+    },
+    {
+      "name": "original_fourteen_navigation_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "original_clock_checks_passed",
+      "passed": false
+    },
+    {
+      "name": "independent_precision_checks_passed",
+      "passed": false
+    }
+  ],
+  "endpoints": [
+    {
+      "mode": "single_goal",
+      "actual_endpoint_m": [
+        9.388682225190916,
+        6.498668185689714,
+        0.017323963928334418
+      ],
+      "requested_goal_m": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "actual_error_m": 0.11616918857785492,
+      "plan_endpoint_m": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_minus_requested_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_request_offset_m": 0.03535494024490077,
+      "amcl_at_own_stamp": {
+        "pose_m": [
+          9.374026389790815,
+          6.366397567647069,
+          0.0
+        ],
+        "truth_interpolation": {
+          "stamp_s": 39.46499912,
+          "position_m": [
+            9.388731274457692,
+            6.498674648089063,
+            0.017326536714337943
+          ],
+          "bracket_s": [
+            39.449999118,
+            39.474999118
+          ],
+          "gap_s": 0.02499999999999858,
+          "fraction": 0.6000000800000634,
+          "orientation_xyzw": [
+            -0.030126136462504432,
+            0.008120052889426447,
+            0.27316303555708693,
+            0.9614616147554479
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.014704884666876694,
+          -0.1322770804419937
+        ],
+        "norm_m": 0.13309192178086474
+      },
+      "endpoint_snapshot_monotonic_s": 47329.5396809,
+      "scope": "TF reconstruction uses only transforms already received at this endpoint; truth is interpolated offline",
+      "tf_navigation_origin": {
+        "stamp_s": 39.46499912,
+        "position_m": [
+          9.376641784470541,
+          6.366566870668097,
+          -0.008074076230921483
+        ],
+        "edge_samples": [
+          {
+            "stamp_s": 39.46499912,
+            "position_m": [
+              5.792753551251925,
+              6.247202438181641,
+              -0.03203426112380025
+            ],
+            "bracket_s": [
+              39.364999129000005,
+              39.464999127000006
+            ],
+            "gap_s": 0.09999999800000126,
+            "fraction": 0.9999999299999572,
+            "orientation_xyzw": [
+              4.2423994341138363e-19,
+              7.861191954083113e-18,
+              0.006885558610651667,
+              0.9999762942603286
+            ]
+          },
+          {
+            "stamp_s": 39.46499912,
+            "position_m": [
+              3.5851921449855286,
+              0.07000013914077197,
+              0.023960184892878822
+            ],
+            "bracket_s": [
+              39.46499912,
+              39.46499912
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              -0.03077420738777595,
+              -2.040141727674316e-05,
+              0.2729157103006002,
+              0.9615456114062169
+            ]
+          },
+          {
+            "stamp_s": 39.46499912,
+            "position_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "bracket_s": [
+              39.46499912,
+              39.46499912
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              0.03077420738777595,
+              2.040141727674316e-05,
+              -0.2729157103006002,
+              0.9615456114062169
+            ]
+          }
+        ],
+        "truth_interpolation": {
+          "stamp_s": 39.46499912,
+          "position_m": [
+            9.388731274457692,
+            6.498674648089063,
+            0.017326536714337943
+          ],
+          "bracket_s": [
+            39.449999118,
+            39.474999118
+          ],
+          "gap_s": 0.02499999999999858,
+          "fraction": 0.6000000800000634,
+          "orientation_xyzw": [
+            -0.030126136462504432,
+            0.008120052889426447,
+            0.27316303555708693,
+            0.9614616147554479
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.01208948998715087,
+          -0.13210777742096536
+        ],
+        "norm_m": 0.13265979279064455,
+        "plan_minus_estimated_xy_m": [
+          0.04835856458915977,
+          0.008433344281152166
+        ],
+        "plan_remaining_m": 0.04908841069833469,
+        "requested_remaining_m": 0.08061762786506546,
+        "observed_common_stamp_age_to_latest_clock_s": 0.034999996999999894
+      },
+      "last_command_zero_before_recorded_arrival": {
+        "controller": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 47329.2927716,
+          "zero_sim_stamp_s": 39.229999123,
+          "position_at_zero_m": [
+            9.38582886181354,
+            6.499632507005079,
+            0.017555747208049456
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.00301190938818206,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "smoothed": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 47329.3072785,
+          "zero_sim_stamp_s": 39.229999123,
+          "position_at_zero_m": [
+            9.38582886181354,
+            6.499632507005079,
+            0.017555747208049456
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.00301190938818206,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "vehicle": {
+          "stamp_basis": "message_header",
+          "zero_received_monotonic_s": 47329.3078937,
+          "zero_sim_stamp_s": 39.229999123,
+          "position_at_zero_m": [
+            9.38582886181354,
+            6.499632507005079,
+            0.017555747208049456
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.00301190938818206,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        }
+      }
+    },
+    {
+      "mode": "waypoints",
+      "actual_endpoint_m": [
+        9.476375151276299,
+        6.499210415096057,
+        0.017726653302634378
+      ],
+      "requested_goal_m": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "actual_error_m": 0.10265649062957256,
+      "plan_endpoint_m": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_minus_requested_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_request_offset_m": 0.03535494024490077,
+      "amcl_at_own_stamp": {
+        "pose_m": [
+          9.400618682638685,
+          6.326623561788413,
+          0.0
+        ],
+        "truth_interpolation": {
+          "stamp_s": 58.169998702,
+          "position_m": [
+            9.4763751512763,
+            6.499210415096057,
+            0.017726653302634378
+          ],
+          "bracket_s": [
+            58.1599987,
+            58.189998699
+          ],
+          "gap_s": 0.0299999989999975,
+          "fraction": 0.33333341111108067,
+          "orientation_xyzw": [
+            -0.03685627121023251,
+            0.013241594615514826,
+            0.32452186839689423,
+            0.9450671046950609
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.07575646863761598,
+          -0.172586853307644
+        ],
+        "norm_m": 0.1884814698453838
+      },
+      "endpoint_snapshot_monotonic_s": 47348.8886213,
+      "scope": "TF reconstruction uses only transforms already received at this endpoint; truth is interpolated offline",
+      "tf_navigation_origin": {
+        "stamp_s": 58.569998693,
+        "position_m": [
+          9.399400451814191,
+          6.374344816677753,
+          0.0016436730421950894
+        ],
+        "edge_samples": [
+          {
+            "stamp_s": 58.569998693,
+            "position_m": [
+              5.725036710684462,
+              6.262833666307595,
+              -0.030561833189419404
+            ],
+            "bracket_s": [
+              58.469998702000005,
+              58.569998700000006
+            ],
+            "gap_s": 0.09999999800000126,
+            "fraction": 0.9999999299999572,
+            "orientation_xyzw": [
+              -2.037186494887583e-17,
+              4.645967833507318e-19,
+              0.0056326180811385315,
+              0.9999841366809535
+            ]
+          },
+          {
+            "stamp_s": 58.569998693,
+            "position_m": [
+              3.675386772077881,
+              0.07011215601215093,
+              0.0322055062316145
+            ],
+            "bracket_s": [
+              58.569998693,
+              58.569998693
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              -0.03381018755512184,
+              0.00402226713457496,
+              0.32149815452416153,
+              0.9462978543894855
+            ]
+          },
+          {
+            "stamp_s": 58.569998693,
+            "position_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "bracket_s": [
+              58.569998693,
+              58.569998693
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              0.03381018755512184,
+              -0.00402226713457496,
+              -0.32149815452416153,
+              0.9462978543894855
+            ]
+          }
+        ],
+        "truth_interpolation": {
+          "stamp_s": 58.569998693,
+          "position_m": [
+            9.476375151276299,
+            6.499210415096057,
+            0.017726653302634378
+          ],
+          "bracket_s": [
+            58.554998691,
+            58.58999869
+          ],
+          "gap_s": 0.03499999900000006,
+          "fraction": 0.4285714979592059,
+          "orientation_xyzw": [
+            -0.0368562712102325,
+            0.013241594615514824,
+            0.32452186839689423,
+            0.9450671046950608
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.07697469946210767,
+          -0.12486559841830402
+        ],
+        "norm_m": 0.14668511180635535,
+        "plan_minus_estimated_xy_m": [
+          0.025599897245509595,
+          0.0006553982714967432
+        ],
+        "plan_remaining_m": 0.02560828549268636,
+        "requested_remaining_m": 0.056731849149362544,
+        "observed_common_stamp_age_to_latest_clock_s": 0.04999999700000046
+      },
+      "last_command_zero_before_recorded_arrival": {
+        "controller": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 47347.8500078,
+          "zero_sim_stamp_s": 57.229998721,
+          "position_at_zero_m": [
+            9.471939145160574,
+            6.500388693424151,
+            0.01762619855610595
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.004589824623796153,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "smoothed": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 47347.8959093,
+          "zero_sim_stamp_s": 57.27999872,
+          "position_at_zero_m": [
+            9.474552346884835,
+            6.499485612704619,
+            0.017882515001860267
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.001843461302360372,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "vehicle": {
+          "stamp_basis": "message_header",
+          "zero_received_monotonic_s": 47347.8963007,
+          "zero_sim_stamp_s": 57.27999872,
+          "position_at_zero_m": [
+            9.474552346884835,
+            6.499485612704619,
+            0.017882515001860267
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.001843461302360372,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        }
+      }
+    }
+  ],
+  "cancellation": {
+    "request_to_observed_stop_xy_m": 0.11142888389353323,
+    "command_zeros": {
+      "controller": {
+        "zero_received_after_request_wall_s": 0.059883999994781334,
+        "zero_sim_stamp_s": 59.399998672,
+        "stamp_basis": "latest_received_clock_unstamped_topic",
+        "truth_interpolation": {
+          "stamp_s": 59.399998672,
+          "position_m": [
+            9.29841241438555,
+            6.496893903868241,
+            0.017427120277394775
+          ],
+          "bracket_s": [
+            59.399998672,
+            59.399998672
+          ],
+          "gap_s": 0.0,
+          "fraction": 0.0,
+          "orientation_xyzw": [
+            -0.01072457876686034,
+            0.011488456046346032,
+            0.32358833492040334,
+            0.9460674332685728
+          ]
+        },
+        "zero_to_observed_stop_xy_m": 0.09100601696227929
+      },
+      "smoothed": {
+        "zero_received_after_request_wall_s": 0.24430179999762913,
+        "zero_sim_stamp_s": 59.619998667000004,
+        "stamp_basis": "latest_received_clock_unstamped_topic",
+        "truth_interpolation": {
+          "stamp_s": 59.619998667000004,
+          "position_m": [
+            9.209984042982581,
+            6.509168779318125,
+            0.017737534356703204
+          ],
+          "bracket_s": [
+            59.619998667000004,
+            59.619998667000004
+          ],
+          "gap_s": 0.0,
+          "fraction": 0.0,
+          "orientation_xyzw": [
+            -0.057012464172971324,
+            -0.013012918488863226,
+            0.32400494428511434,
+            0.9442462808823385
+          ]
+        },
+        "zero_to_observed_stop_xy_m": 0.0017926124755951699
+      },
+      "vehicle": {
+        "zero_received_after_request_wall_s": 0.24418270000023767,
+        "zero_sim_stamp_s": 59.619998667,
+        "stamp_basis": "message_header",
+        "truth_interpolation": {
+          "stamp_s": 59.619998667,
+          "position_m": [
+            9.209984042982581,
+            6.509168779318125,
+            0.017737534356703204
+          ],
+          "bracket_s": [
+            59.619998667000004,
+            59.619998667000004
+          ],
+          "gap_s": 0.0,
+          "fraction": 0.0,
+          "orientation_xyzw": [
+            -0.057012464172971324,
+            -0.013012918488863226,
+            0.32400494428511434,
+            0.9442462808823385
+          ]
+        },
+        "zero_to_observed_stop_xy_m": 0.0017926124755951699
+      }
+    }
+  },
+  "clock": {
+    "status": "failed",
+    "mean_factor": 0.999918314652429,
+    "rolling_min": 0.929854217018913,
+    "rolling_max": 1.1342769971685427,
+    "failed_windows": [
+      {
+        "start_seconds": 0.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9321841055030642
+      },
+      {
+        "start_seconds": 10.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9363712062244438
+      },
+      {
+        "start_seconds": 30.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1194099975245018
+      }
+    ],
+    "failed_rolling_windows": [
+      {
+        "start_seconds": 0.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9321841055030642
+      },
+      {
+        "start_seconds": 1.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9393669616887366
+      },
+      {
+        "start_seconds": 2.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9425530928638682
+      },
+      {
+        "start_seconds": 3.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9549165174416302
+      },
+      {
+        "start_seconds": 4.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9646969624488329
+      },
+      {
+        "start_seconds": 5.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9692340210189645
+      },
+      {
+        "start_seconds": 6.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9554410597790458
+      },
+      {
+        "start_seconds": 7.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9360790105862271
+      },
+      {
+        "start_seconds": 8.0,
+        "duration_seconds": 10.0,
+        "factor": 0.929854217018913
+      },
+      {
+        "start_seconds": 9.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9351214034210955
+      },
+      {
+        "start_seconds": 10.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9363712062244438
+      },
+      {
+        "start_seconds": 11.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9370712814646772
+      },
+      {
+        "start_seconds": 12.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9446571132792506
+      },
+      {
+        "start_seconds": 13.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9406843318372701
+      },
+      {
+        "start_seconds": 14.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9420518066127663
+      },
+      {
+        "start_seconds": 15.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9491702720560582
+      },
+      {
+        "start_seconds": 16.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9540277003648967
+      },
+      {
+        "start_seconds": 17.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9579385444656594
+      },
+      {
+        "start_seconds": 18.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9678637159099168
+      },
+      {
+        "start_seconds": 23.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0300965294098532
+      },
+      {
+        "start_seconds": 24.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0413287052642743
+      },
+      {
+        "start_seconds": 25.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0388993896607346
+      },
+      {
+        "start_seconds": 26.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0727247653863194
+      },
+      {
+        "start_seconds": 27.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1119515617672904
+      },
+      {
+        "start_seconds": 28.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1342769971685427
+      },
+      {
+        "start_seconds": 29.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1293800014772095
+      },
+      {
+        "start_seconds": 30.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1194099975245018
+      },
+      {
+        "start_seconds": 31.0,
+        "duration_seconds": 10.0,
+        "factor": 1.1074697722774438
+      },
+      {
+        "start_seconds": 32.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0956806846227665
+      },
+      {
+        "start_seconds": 33.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0747036050894743
+      },
+      {
+        "start_seconds": 34.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0542798105188163
+      },
+      {
+        "start_seconds": 35.0,
+        "duration_seconds": 10.0,
+        "factor": 1.042436658200367
+      }
+    ],
+    "same_wall_window_full_rate_comparison": [
+      {
+        "start_seconds": 6.0,
+        "console_factor": 0.9554410597790458,
+        "full_rate_receipt_factor": 0.9555398351078388
+      },
+      {
+        "start_seconds": 7.0,
+        "console_factor": 0.9360790105862271,
+        "full_rate_receipt_factor": 0.9339093685063318
+      },
+      {
+        "start_seconds": 8.0,
+        "console_factor": 0.929854217018913,
+        "full_rate_receipt_factor": 0.9309097612645303
+      },
+      {
+        "start_seconds": 9.0,
+        "console_factor": 0.9351214034210955,
+        "full_rate_receipt_factor": 0.9359334845506112
+      },
+      {
+        "start_seconds": 10.0,
+        "console_factor": 0.9363712062244438,
+        "full_rate_receipt_factor": 0.9371246751867404
+      },
+      {
+        "start_seconds": 11.0,
+        "console_factor": 0.9370712814646772,
+        "full_rate_receipt_factor": 0.9387627872056499
+      },
+      {
+        "start_seconds": 12.0,
+        "console_factor": 0.9446571132792506,
+        "full_rate_receipt_factor": 0.9442586567387451
+      },
+      {
+        "start_seconds": 13.0,
+        "console_factor": 0.9406843318372701,
+        "full_rate_receipt_factor": 0.9392604611857998
+      },
+      {
+        "start_seconds": 14.0,
+        "console_factor": 0.9420518066127663,
+        "full_rate_receipt_factor": 0.9425253243556788
+      },
+      {
+        "start_seconds": 15.0,
+        "console_factor": 0.9491702720560582,
+        "full_rate_receipt_factor": 0.9486981809683535
+      },
+      {
+        "start_seconds": 16.0,
+        "console_factor": 0.9540277003648967,
+        "full_rate_receipt_factor": 0.9545846117763098
+      },
+      {
+        "start_seconds": 17.0,
+        "console_factor": 0.9579385444656594,
+        "full_rate_receipt_factor": 0.9581899710476748
+      },
+      {
+        "start_seconds": 18.0,
+        "console_factor": 0.9678637159099168,
+        "full_rate_receipt_factor": 0.9671450959855903
+      },
+      {
+        "start_seconds": 19.0,
+        "console_factor": 0.9948997357138992,
+        "full_rate_receipt_factor": 0.9950098159778051
+      },
+      {
+        "start_seconds": 20.0,
+        "console_factor": 1.010660458523909,
+        "full_rate_receipt_factor": 1.0098763799264874
+      },
+      {
+        "start_seconds": 21.0,
+        "console_factor": 1.016213965170163,
+        "full_rate_receipt_factor": 1.013521984516715
+      },
+      {
+        "start_seconds": 22.0,
+        "console_factor": 1.0156920830053857,
+        "full_rate_receipt_factor": 1.0165738505995328
+      },
+      {
+        "start_seconds": 23.0,
+        "console_factor": 1.0300965294098532,
+        "full_rate_receipt_factor": 1.0310814189310278
+      },
+      {
+        "start_seconds": 24.0,
+        "console_factor": 1.0413287052642743,
+        "full_rate_receipt_factor": 1.0407647112867053
+      },
+      {
+        "start_seconds": 25.0,
+        "console_factor": 1.0388993896607346,
+        "full_rate_receipt_factor": 1.0381666153599602
+      },
+      {
+        "start_seconds": 26.0,
+        "console_factor": 1.0727247653863194,
+        "full_rate_receipt_factor": 1.07087965024011
+      },
+      {
+        "start_seconds": 27.0,
+        "console_factor": 1.1119515617672904,
+        "full_rate_receipt_factor": 1.1118015562945651
+      },
+      {
+        "start_seconds": 28.0,
+        "console_factor": 1.1342769971685427,
+        "full_rate_receipt_factor": 1.1351130245120467
+      },
+      {
+        "start_seconds": 29.0,
+        "console_factor": 1.1293800014772095,
+        "full_rate_receipt_factor": 1.1297356455756458
+      },
+      {
+        "start_seconds": 30.0,
+        "console_factor": 1.1194099975245018,
+        "full_rate_receipt_factor": 1.119820269903768
+      }
+    ],
+    "scope": "Both observations use native simulation stamps paired with separate subscriber receipt clocks; no native producer wall-time/CSV was recorded"
+  }
+}

@@ -54,3 +54,9 @@ console-08已实际观察到RViz地图/点云，Navigation与Localization均acti
 **目前是实验阶段：** 7 项来源契约测试通过，离线 127 通过、2 权限跳过，原生桥源码/安装哈希一致；最后一次完整 3m/s 配置试验中单点实际误差 0.200725m 通过，完整往返终点 0.388199m 超出 0.25m 门限。5ms 动态路段曾观察到约 0.437× 仿真倍率，稳定 1× 实时运行尚待性能优化。失败证据与完整表格见 `artifacts/navigation/nav-speed-20261117/checkpoint-summary.json` 和 `.codestable/issues/2026-11-17-navigation-source-realtime/sentry-nav-speed.md`。
 
 本实验未标记为正式版本，已验收的 `main` 保持先前导航基线；进一步完成高速度完整路线与真实实时性后才合并。
+
+## 2026-11-18 AIM 手动驾驶 5 m/s 与独立环绕观察（工作分支）
+
+`assets/vehicles/aim_sentry/drive-profile.json` 已将 AIM 手动前进目标速度改为 **5 m/s**，车轮目标上限 6.5 m/s，同时调整纵向起步/松键/刹车为 2/4/7 m/s²，jerk 6 m/s³，以及横向改向平滑限制；原悬挂、轮地接触与驱动执行器保持。C 长按时只独立环绕观察镜头，WASD 持续使用真实云台水平朝向；Shift 退出瞄准做一次目标重投影、清理旧瞄准锁定，橙色枪口瞄准框只在瞄准镜显示。
+
+UE5.8.4 原生编译成功；`artifacts/control/manual-5m-camera-20261118`：原手动输入 18/18 + 10 PNG、C/Shift/速度 6/6 + 8 PNG、完整 gyro/方向/低速输入 19/19 + 12 PNG。Chaos 平地全油门 3s：请求/过滤 5.0m/s、实际 4.9511m/s；主动制动后 0.0000m/s。详细变更及失败保留：`docs/changes/2026-11-18-manual-control.md`。以上是手动 AIM 配置，不改变上面 `sentry_ws` 自治导航速度来源；用户交互式键盘手感和高车速崎岖地形另行验收。

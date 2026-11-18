@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "scope": "cross-process Windows QPC domain consistency; no clock offset fitted",
+  "python": "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+  "python_clock": {
+    "implementation": "QueryPerformanceCounter()",
+    "monotonic": true,
+    "adjustable": false,
+    "resolution": 1e-07
+  },
+  "command": [
+    "powershell",
+    "-NoProfile",
+    "-Command",
+    "([Diagnostics.Stopwatch]::GetTimestamp()/[double][Diagnostics.Stopwatch]::Frequency).ToString('R',[Globalization.CultureInfo]::InvariantCulture)"
+  ],
+  "samples": [
+    {
+      "python_before_s": 49397.3096588,
+      "dotnet_qpc_s": 49397.5609592,
+      "python_after_s": 49397.6419482,
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "python_before_s": 49397.6419587,
+      "dotnet_qpc_s": 49397.8634899,
+      "python_after_s": 49397.94336,
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "python_before_s": 49397.9433719,
+      "dotnet_qpc_s": 49398.1597594,
+      "python_after_s": 49398.2386118,
+      "exit_code": 0,
+      "passed": true
+    }
+  ],
+  "script_sha256": "cf478881581f3322f5b41f7cd9c3195852591cf4d2fa927b85d1a43811421cc0"
+}

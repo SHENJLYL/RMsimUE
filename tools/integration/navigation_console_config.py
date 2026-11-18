@@ -3,9 +3,13 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
+import re
 import os
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import time
 
 def atomic_json(path: Path, data: dict, attempts: int = 8) -> bool:
@@ -33,11 +37,115 @@ def scene_geometry(scene: dict) -> str:
     data = {k: v for k, v in scene.items() if k not in ('spawns', 'display_name', 'limitations', 'regions')}
     return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
 
-def prepare_scene(scene_name: str, output: Path) -> dict:
+def scene_spawn_prior(scene: dict, initial_pose_offset=None) -> tuple[list[float], dict]:
+    """Read one declared UE spawn in map axes and form a one-time planar AMCL prior."""
+    if not isinstance(scene, dict):
+        raise ValueError("Initial pose requires a scene object")
+    if scene.get("units") != "m" or scene.get("coordinate_system") != "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP":
+        raise ValueError("Initial pose requires scene metres and ROS right-handed coordinates")
+    spawns = scene.get("spawns")
+    if not isinstance(spawns, list) or not spawns:
+        raise ValueError("Initial pose requires a nonempty scene spawns array")
+    selected, seen = None, set()
+    for index, spawn in enumerate(spawns):
+        if not isinstance(spawn, dict):
+            raise ValueError(f"scene.spawns[{index}] must be an object")
+        identifier = spawn.get("id")
+        if not isinstance(identifier, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", identifier):
+            raise ValueError(f"scene.spawns[{index}].id is not a valid map identifier")
+        if identifier in seen:
+            raise ValueError(f"scene.spawns contains duplicate id: {identifier}")
+        seen.add(identifier)
+        if identifier == "default":
+            selected = spawn
+    if selected is None:
+        raise ValueError("Initial pose requires exactly one scene spawn with id 'default'")
+
+    def finite_number(value, label):
+        if type(value) not in (int, float):
+            raise ValueError(f"{label} must be a finite number")
+        try:
+            value = float(value)
+        except OverflowError as exc:
+            raise ValueError(f"{label} must be a finite number") from exc
+        if not math.isfinite(value):
+            raise ValueError(f"{label} must be a finite number")
+        return value
+
+    def triple(value, label):
+        if not isinstance(value, (list, tuple)) or len(value) != 3:
+            raise ValueError(f"{label} must contain exactly three finite numbers")
+        return [finite_number(item, f"{label}[{index}]") for index, item in enumerate(value)]
+
+    def shortest_angle(value):
+        value = math.remainder(value, math.tau)
+        return value - math.tau if value >= math.pi else value
+
+    position = triple(selected.get("position_m"), "scene default spawn.position_m")
+    yaw = finite_number(selected.get("yaw_rad"), "scene default spawn.yaw_rad")
+    requested = None if initial_pose_offset is None else triple(initial_pose_offset, "initial_pose_offset")
+    applied = [0., 0., 0.] if requested is None else [requested[0], requested[1], shortest_angle(requested[2])]
+    initial = [finite_number(position[0] + applied[0], "initial_pose.x"),
+               finite_number(position[1] + applied[1], "initial_pose.y"),
+               shortest_angle(shortest_angle(yaw) + applied[2])]
+    prior = {
+        "schema": "rmsim_scene_spawn_prior_v1",
+        "mode": "scene_spawn" if requested is None else "scene_spawn_with_explicit_offset",
+        "spawn_id": "default",
+        "scene_units": scene["units"],
+        "scene_coordinate_system": scene["coordinate_system"],
+        "spawn_position_m": position,
+        "spawn_yaw_rad": yaw,
+        "requested_offset": requested,
+        "applied_offset": applied,
+        "initial_pose": initial.copy(),
+        "frame_semantics": {
+            "world_frame": "map",
+            "reference_origin": "base_link_and_base_stabilized_common_origin",
+            "translation_offset_axes": "map",
+            "yaw_unit": "rad",
+            "yaw_range": "[-pi, pi)",
+            "ground_z_use": "provenance_only_planar_prior",
+            "source": "declared_scene_spawn_once",
+        },
+    }
+    return initial, prior
+
+
+def select_localization_map(package_directory, specification, explicit=None, restore=None):
+    """Explicit vehicle/map selection wins; absent package defaults retain one map."""
+    if explicit:
+        return str(Path(explicit).resolve()), "explicit"
+    if package_directory is None:
+        return "", "single_map"
+    from rmsim_bridge.navigation_map_identity import packaged_localization_map
+    selected = packaged_localization_map(package_directory, specification, allow_missing_derived=True)
+    if selected is None:
+        return "", "single_map"
+    if selected["missing_derived"]:
+        if restore is None:
+            raise ValueError("Packaged localization binaries are missing; run the declared export recipe")
+        restore(Path(package_directory) / "SOURCE.json")
+        selected = packaged_localization_map(package_directory, specification)
+    return selected["yaml_path"], selected["selection"]
+
+
+def restore_packaged_map(manifest: Path) -> None:
+    """Rebuild only declared missing generated files before launching native nodes."""
+    result = subprocess.run([sys.executable, str(ROOT / "tools/maps/export_localization_surface_map.py"),
+                             "--restore-package", str(manifest)], capture_output=True, text=True,
+                            encoding="utf-8", errors="replace", check=False)
+    if result.returncode:
+        raise ValueError("Cannot restore packaged localization map: " +
+                         (result.stderr or result.stdout)[-3000:])
+
+
+def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, initial_pose_offset=None) -> dict:
     if scene_name not in ('rmuc2027', 'import_lab'):
         raise ValueError('Unknown console scene')
     output.mkdir(parents=True, exist_ok=False)
     nav = output / 'navigation'
+    source, specification = None, {}
     if scene_name == 'rmuc2027':
         source = ROOT / 'assets/maps/rmuc2027/navigation-console'
         specification = json.loads((source / 'SOURCE.json').read_text(encoding='utf-8-sig'))
@@ -51,12 +159,16 @@ def prepare_scene(scene_name: str, output: Path) -> dict:
         shutil.copyfile(raster, nav / 'map.pgm')
         shutil.copyfile(source / 'map.yaml', nav / 'map.yaml')
         metadata = copy.deepcopy(specification['map_metadata'])
-        initial = [6.4, 6.0, .15]
+        descriptor_file = source.parent / 'mesh-source.json'
+        descriptor = json.loads(descriptor_file.read_text(encoding='utf-8-sig'))
+        metadata['scene_geometry_sha256'] = specification['scene_geometry_sha256']
+        metadata['descriptor_sha256'] = digest(descriptor_file)
+        metadata['source_to_sim_translation_m'] = descriptor['source_to_sim_translation_m']
         view = dict(x=7.5, y=6.4, scale=65.)
     else:
         scene = json.loads((ROOT / 'assets/maps/import_lab/map.json').read_text(encoding='utf-8-sig'))
-        initial = [.6, -.4, .15]
         view = dict(x=1., y=0., scale=45.)
+    initial, initial_prior = scene_spawn_prior(scene, initial_pose_offset)
     scene_file = output / 'scene.json'
     scene_file.write_text(json.dumps(scene, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     if scene_name == 'import_lab':
@@ -69,8 +181,14 @@ def prepare_scene(scene_name: str, output: Path) -> dict:
         metadata['source_sha256'] = digest(scene_file)
         metadata['scope'] = 'Geometry-derived RMUC raster; native validation covers the red wave route. Other regions remain experimental.'
         (nav / 'metadata.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
+    selected_map, selection = select_localization_map(source, specification, localization_map_yaml,
+                                                       restore=restore_packaged_map)
+    package_identity = ({'manifest_path': str((source / 'SOURCE.json').resolve()),
+                         'manifest_sha256': digest(source / 'SOURCE.json')} if selection == 'package_default' else None)
     return dict(scene=scene_name, scene_file=str(scene_file), map_yaml=str(nav / 'map.yaml'),
-                initial_pose=initial, view=view, scene_sha256=digest(scene_file), raster_sha256=digest(nav / 'map.pgm'))
+                initial_pose=initial, initial_pose_prior=initial_prior, view=view, scene_sha256=digest(scene_file), raster_sha256=digest(nav / 'map.pgm'),
+                localization_map_yaml=selected_map, localization_map_selection=selection,
+                localization_map_package=package_identity)
 
 def rviz_configuration(view: dict) -> dict:
     def topic(name, transient=False, sensor=False):

@@ -1,0 +1,400 @@
+{
+  "status": "passed",
+  "scope": "Existing compatibility and clock-domain evidence audit; no new native tests, no release acceptance",
+  "created_utc": "2026-11-18T04:56:19.225576+00:00",
+  "checks": [
+    {
+      "name": "compatibility_frozen_and_final_inputs_match_current",
+      "passed": true
+    },
+    {
+      "name": "compatibility_three_original_case_groups_passed",
+      "passed": true,
+      "observed_cases": [
+        {
+          "name": "sentry",
+          "exit_code": 0,
+          "inputs_unchanged": true
+        },
+        {
+          "name": "manual-waves",
+          "exit_code": 0,
+          "inputs_unchanged": true
+        },
+        {
+          "name": "suspension",
+          "exit_code": 0,
+          "inputs_unchanged": true
+        }
+      ]
+    },
+    {
+      "name": "compatibility_sentry_original_command_matches",
+      "passed": true
+    },
+    {
+      "name": "compatibility_manual_waves_original_command_matches",
+      "passed": true
+    },
+    {
+      "name": "compatibility_suspension_original_command_matches",
+      "passed": true
+    },
+    {
+      "name": "compatibility_sentry_five_original_cases_passed",
+      "passed": true
+    },
+    {
+      "name": "compatibility_sentry_manual_route_selection_passed",
+      "passed": true
+    },
+    {
+      "name": "compatibility_manual-waves_route_selection_passed",
+      "passed": true
+    },
+    {
+      "name": "compatibility_sentry_manual_default_complete_native_control_passed",
+      "passed": true,
+      "expected_checks": 19,
+      "observed_checks": 19,
+      "check_names": [
+        "camera_turn_release_brake",
+        "gyro_camera_forward_direction",
+        "gyro_faster_key",
+        "gyro_faster_maximum",
+        "gyro_mouse_pitch_world_aim",
+        "gyro_slower_minimum",
+        "gyro_supported_spawn",
+        "gyro_toggle_off_brakes_spin",
+        "moving_direction_response",
+        "moving_turn_initial_velocity",
+        "normal_camera_forward_smooth",
+        "normal_camera_left_strafe",
+        "normal_forward_after_camera_turn",
+        "normal_right_after_camera_turn",
+        "normal_strafe_brake",
+        "precision_key_speed_cap",
+        "released_keys_active_brake",
+        "steering_response_rest_pose",
+        "steering_step_response"
+      ]
+    },
+    {
+      "name": "compatibility_manual-waves_wave_red_complete_native_control_passed",
+      "passed": true,
+      "expected_checks": 5,
+      "observed_checks": 5,
+      "check_names": [
+        "gyro_forward_wave_route",
+        "gyro_reverse_wave_route",
+        "gyro_route_brake",
+        "gyro_spin_up",
+        "gyro_supported_spawn"
+      ]
+    },
+    {
+      "name": "compatibility_manual-waves_wave_blue_complete_native_control_passed",
+      "passed": true,
+      "expected_checks": 5,
+      "observed_checks": 5,
+      "check_names": [
+        "gyro_forward_wave_route",
+        "gyro_reverse_wave_route",
+        "gyro_route_brake",
+        "gyro_spin_up",
+        "gyro_supported_spawn"
+      ]
+    },
+    {
+      "name": "compatibility_sentry_mid360_tcp_native_checks_passed",
+      "passed": true,
+      "expected_checks": 9,
+      "observed_checks": 9
+    },
+    {
+      "name": "compatibility_sentry_ros_ros_native_checks_passed",
+      "passed": true,
+      "expected_checks": 11,
+      "observed_checks": 11
+    },
+    {
+      "name": "compatibility_sentry_aim_aim_native_checks_passed",
+      "passed": true,
+      "expected_checks": 20,
+      "observed_checks": 20
+    },
+    {
+      "name": "compatibility_sentry_lidar-lk_ros_native_checks_passed",
+      "passed": true,
+      "expected_checks": 11,
+      "observed_checks": 11
+    },
+    {
+      "name": "compatibility_suspension_four_native_checks_passed",
+      "passed": true,
+      "expected_checks": 4,
+      "observed_checks": 4,
+      "check_names": [
+        "suspension_baseline_settled",
+        "suspension_impulse_recovered",
+        "suspension_loaded_equilibrium",
+        "suspension_release_recovered"
+      ]
+    },
+    {
+      "name": "compatibility_suspension_inputs_and_fixture_match",
+      "passed": true
+    },
+    {
+      "name": "compatibility_suspension_analysis_and_capture_counts_passed",
+      "passed": true
+    },
+    {
+      "name": "compatibility_suspension_original_trace_analysis_reproduced",
+      "passed": true,
+      "analyzer_sha256": "42c5646389ca293d0f5fb37ff2fb3b1c20ebe40f1a29c0d9e8e5bb815b32fb67"
+    },
+    {
+      "name": "compatibility_each_native_control_case_has_distinct_run_id",
+      "passed": true
+    },
+    {
+      "name": "compatibility_all_native_leaf_gates_complete",
+      "passed": true,
+      "group_check_totals": {
+        "sentry": {
+          "expected_checks": 70,
+          "observed_checks": 70,
+          "passed_checks": 70
+        },
+        "manual-waves": {
+          "expected_checks": 10,
+          "observed_checks": 10,
+          "passed_checks": 10
+        },
+        "suspension": {
+          "expected_checks": 4,
+          "observed_checks": 4,
+          "passed_checks": 4
+        }
+      },
+      "expected_total_checks": 84
+    },
+    {
+      "name": "current_engine_build06_binds_all_45_inputs_and_same_module_profile",
+      "passed": true,
+      "input_count": 45
+    },
+    {
+      "name": "three_qpc_cross_process_samples_within_python_bounds",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03",
+    "groups": {
+      "sentry": {
+        "expected_checks": 70,
+        "observed_checks": 70,
+        "passed_checks": 70
+      },
+      "manual-waves": {
+        "expected_checks": 10,
+        "observed_checks": 10,
+        "passed_checks": 10
+      },
+      "suspension": {
+        "expected_checks": 4,
+        "observed_checks": 4,
+        "passed_checks": 4
+      }
+    },
+    "expected_total_checks": 84,
+    "leaves": [
+      {
+        "group": "sentry",
+        "path": "sentry/manual/default",
+        "expected_checks": 19,
+        "observed_checks": 19,
+        "passed_checks": 19,
+        "passed": true
+      },
+      {
+        "group": "manual-waves",
+        "path": "manual-waves/wave_red",
+        "expected_checks": 5,
+        "observed_checks": 5,
+        "passed_checks": 5,
+        "passed": true
+      },
+      {
+        "group": "manual-waves",
+        "path": "manual-waves/wave_blue",
+        "expected_checks": 5,
+        "observed_checks": 5,
+        "passed_checks": 5,
+        "passed": true
+      },
+      {
+        "group": "sentry",
+        "path": "sentry/mid360/tcp",
+        "expected_checks": 9,
+        "observed_checks": 9,
+        "passed_checks": 9,
+        "passed": true
+      },
+      {
+        "group": "sentry",
+        "path": "sentry/ros/ros",
+        "expected_checks": 11,
+        "observed_checks": 11,
+        "passed_checks": 11,
+        "passed": true
+      },
+      {
+        "group": "sentry",
+        "path": "sentry/aim/aim",
+        "expected_checks": 20,
+        "observed_checks": 20,
+        "passed_checks": 20,
+        "passed": true
+      },
+      {
+        "group": "sentry",
+        "path": "sentry/lidar-lk/ros",
+        "expected_checks": 11,
+        "observed_checks": 11,
+        "passed_checks": 11,
+        "passed": true
+      },
+      {
+        "group": "suspension",
+        "path": "suspension",
+        "expected_checks": 4,
+        "observed_checks": 4,
+        "passed_checks": 4,
+        "passed": true
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "role": "compatibility_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\verification.json",
+      "sha256": "72f650a1cfe83cd8ef71e1b6ff2ec799e649f156b0fd7e398c92162f814734e7",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\verification.json",
+      "sha256": "237066fe50bff7f4f5a4ed14488a1a49b0de91bdfe29e2b62ce4cfe798719429",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_manual_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\manual\\verification.json",
+      "sha256": "f55573651f25b500849f4c08886e41b27478893c20a0d7b638255553a0b966a2",
+      "status": null
+    },
+    {
+      "role": "compatibility_manual-waves_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves\\verification.json",
+      "sha256": "d643c30b7c7f3c41b4a54c5fbbae1bc193f64667ba5dde3f568eb4661d896325",
+      "status": null
+    },
+    {
+      "role": "compatibility_sentry_manual_default_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\manual\\default\\verification.json",
+      "sha256": "26319266e386ca6baffe65e2b5fc8a179aa11d89c3c0d496c8f2fc88f19278f0",
+      "status": null
+    },
+    {
+      "role": "compatibility_sentry_manual_default_control-result",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\manual\\default\\control-result.json",
+      "sha256": "666931328cafee9a4a711b4641fd9b780db7d22d0eea7931211b3785c92e21b2",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_manual-waves_wave_red_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves\\wave_red\\verification.json",
+      "sha256": "baad4833a3077839a38bf557ed4e282b566605bfde2b42ede2a8745fba56f96d",
+      "status": null
+    },
+    {
+      "role": "compatibility_manual-waves_wave_red_control-result",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves\\wave_red\\control-result.json",
+      "sha256": "736843012ba590d3f03491e2c3c37b34213458cb5b64a2478e743fb640f1f6f5",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_manual-waves_wave_blue_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves\\wave_blue\\verification.json",
+      "sha256": "805508397101ee683e72f03fa843a9e277833912b2febe99c0cb8f82ff7c5df9",
+      "status": null
+    },
+    {
+      "role": "compatibility_manual-waves_wave_blue_control-result",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves\\wave_blue\\control-result.json",
+      "sha256": "e2f326d434b3a86c1189e3ff4403967106d7231ca87aa98c69ea773de4386c77",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_mid360_tcp_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\mid360\\tcp\\verification.json",
+      "sha256": "241adf054aacb3da5222010ef8293b622bfa18229db2b854ca6ba3667a5a4feb",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_ros_ros_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\ros\\ros\\verification.json",
+      "sha256": "90866a7f1ac847e3ddc8cecbcb8ffcf9eb7144138fb884f0174193eba0e1e0b9",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_aim_aim_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\aim\\aim\\verification.json",
+      "sha256": "2d2da0c2fe55031a2cae69f170db60ffb4e05c6941b6459534f1fc8014feee68",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_sentry_lidar-lk_ros_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry\\lidar-lk\\ros\\verification.json",
+      "sha256": "9736ada9f717f0c1d12e00fe04ba929ceb8a0742a12410e77aa3efae9023555a",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_suspension_verification",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\suspension\\verification.json",
+      "sha256": "9b68f3bf23f3e307b09614cf9cb22c21c95cdb4557434f7527f2315f3b6f5958",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_suspension_control-result",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\suspension\\control-result.json",
+      "sha256": "6407368b23f2b76810e8eb5f8bccf928193d899b8d12df8617b6fffdea3ae0e7",
+      "status": "passed"
+    },
+    {
+      "role": "compatibility_suspension_runtime-provenance",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\suspension\\runtime-provenance.json",
+      "sha256": "dfaf0e8e9cd935a61e6d45a7d3afe5e54330bf85c7168711ad345ae13640d310",
+      "status": null
+    },
+    {
+      "role": "engine_build06",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\engine-build-06\\verification.json",
+      "sha256": "f0e372711136d1c7cf1e221401215bd53a6749fd8e0df733ccafbb79078bded0"
+    },
+    {
+      "role": "clock_domain",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\clock-domain-01\\verification.json",
+      "sha256": "59ca8e9d4dc97034b325f7213628f35a05f53fc938e01a497fa2b00e3169a141"
+    }
+  ],
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "summarizer_sha256": "c6323ef03877c9e5788cf57c9cea42239df81ee6308ae76a18a986f074bcfa57",
+  "script_sha256": "28415f27bfd418453a5c1ff9d11e70200810e1a5549be9151de4eac0c068f392",
+  "source_navigation_scope": "This manual/ROS/LK/suspension bundle does not establish final 5m/s Nav2 performance"
+}

@@ -1,4 +1,79 @@
 #include "li_initialization.h"
+
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+
+namespace
+{
+// Observe actual subscription delivery without changing messages, timestamps,
+// acceptance, QoS, queue operations, or filter state. No new callback threads.
+struct ImuReceiptDiagnostics
+{
+  using Clock = std::chrono::steady_clock;
+  std::uint64_t received = 0, accepted = 0, duplicates = 0, backwards = 0;
+  std::uint64_t gaps = 0, inferred_missing = 0;
+  double first_stamp = 0.0, previous_stamp = 0.0;
+  double min_positive_dt = std::numeric_limits<double>::infinity();
+  double max_header_dt = 0.0, max_wall_gap = 0.0;
+  double window_max_header_dt = 0.0, window_max_wall_gap = 0.0;
+  std::size_t queue_peak = 0;
+  Clock::time_point first_wall, previous_wall, last_log;
+
+  void observe(double raw_stamp, double adjusted_stamp, bool was_accepted, std::size_t queue_size)
+  {
+    const auto now = Clock::now();
+    if (received == 0) {
+      first_stamp = raw_stamp;
+      first_wall = previous_wall = last_log = now;
+    } else {
+      const double dt = raw_stamp - previous_stamp;
+      const double wall_gap = std::chrono::duration<double>(now - previous_wall).count();
+      max_wall_gap = std::max(max_wall_gap, wall_gap);
+      window_max_wall_gap = std::max(window_max_wall_gap, wall_gap);
+      if (dt < 0.0) ++backwards;
+      else if (dt == 0.0) ++duplicates;
+      else {
+        min_positive_dt = std::min(min_positive_dt, dt);
+        max_header_dt = std::max(max_header_dt, dt);
+        window_max_header_dt = std::max(window_max_header_dt, dt);
+        if (std::isfinite(imu_time_inte) && imu_time_inte > 0.0 && dt > 1.5 * imu_time_inte) {
+          ++gaps;
+          inferred_missing += static_cast<std::uint64_t>(
+            std::max(0.0, std::floor(dt / imu_time_inte + 0.5) - 1.0));
+        }
+      }
+    }
+    ++received;
+    if (was_accepted) ++accepted;
+    queue_peak = std::max(queue_peak, queue_size);
+    previous_stamp = raw_stamp;
+    previous_wall = now;
+    if (std::chrono::duration<double>(now - last_log).count() < 5.0) return;
+    RCLCPP_INFO(
+      rclcpp::get_logger("li_initialization"),
+      "POINTLIO_IMU_RX received=%llu accepted=%llu duplicates=%llu backwards=%llu "
+      "header_gaps=%llu inferred_missing=%llu nominal_period_s=%.9f "
+      "first_stamp_s=%.9f raw_stamp_s=%.9f adjusted_stamp_s=%.9f "
+      "min_header_dt_s=%.9f max_header_dt_s=%.9f max_wall_gap_s=%.6f "
+      "window_max_header_dt_s=%.9f window_max_wall_gap_s=%.6f "
+      "queue_size=%llu queue_peak=%llu wall_elapsed_s=%.6f",
+      static_cast<unsigned long long>(received), static_cast<unsigned long long>(accepted),
+      static_cast<unsigned long long>(duplicates), static_cast<unsigned long long>(backwards),
+      static_cast<unsigned long long>(gaps), static_cast<unsigned long long>(inferred_missing),
+      imu_time_inte, first_stamp, raw_stamp, adjusted_stamp,
+      std::isfinite(min_positive_dt) ? min_positive_dt : 0.0, max_header_dt, max_wall_gap,
+      window_max_header_dt, window_max_wall_gap,
+      static_cast<unsigned long long>(queue_size), static_cast<unsigned long long>(queue_peak),
+      std::chrono::duration<double>(now - first_wall).count());
+    last_log = now;
+    window_max_header_dt = window_max_wall_gap = 0.0;
+  }
+};
+}  // namespace
+
 bool data_accum_finished = false, data_accum_start = false, online_calib_finish = false,
      refine_print = false;
 int frame_num_init = 0;
@@ -152,6 +227,8 @@ void livox_pcl_cbk(const livox_ros_driver2::msg::CustomMsg::SharedPtr & msg)
 
 void imu_cbk(const sensor_msgs::msg::Imu::ConstSharedPtr & msg_in)
 {
+  static ImuReceiptDiagnostics receipt_diagnostics;
+  const double raw_stamp = get_time_sec(msg_in->header.stamp);
   // mtx_buffer.lock();
 
   sensor_msgs::msg::Imu::SharedPtr msg(new sensor_msgs::msg::Imu(*msg_in));
@@ -164,6 +241,7 @@ void imu_cbk(const sensor_msgs::msg::Imu::ConstSharedPtr & msg_in)
   // printf("time_diff%f, %f, %f\n", last_timestamp_imu - timestamp, last_timestamp_imu, timestamp);
 
   if (timestamp < last_timestamp_imu) {
+    receipt_diagnostics.observe(raw_stamp, timestamp, false, imu_deque.size());
     RCLCPP_ERROR(rclcpp::get_logger("li_initialization"), "imu loop back, clear deque");
     // imu_deque.shrink_to_fit();
     // std::cout << "check time:" << timestamp << ";" << last_timestamp_imu << '\n';
@@ -175,6 +253,7 @@ void imu_cbk(const sensor_msgs::msg::Imu::ConstSharedPtr & msg_in)
   }
   imu_deque.emplace_back(msg);
   last_timestamp_imu = timestamp;
+  receipt_diagnostics.observe(raw_stamp, timestamp, true, imu_deque.size());
   // mtx_buffer.unlock();
   // sig_buffer.notify_all();
 }

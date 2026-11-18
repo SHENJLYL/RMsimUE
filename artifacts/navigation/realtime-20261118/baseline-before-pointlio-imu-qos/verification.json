@@ -1,0 +1,56 @@
+{
+  "status": "source_applied_offline_passed_native_pending",
+  "timestamp_utc": "2026-11-18T02:19:40.771527+00:00",
+  "source_depth": 128,
+  "legacy_default_depth": 5,
+  "range": [
+    1,
+    4096
+  ],
+  "publisher_and_estimator_math_unchanged": true,
+  "third_party_patch_applied_to_clean_original_and_matched": true,
+  "patch_paths": [
+    "CMakeLists.txt",
+    "include/ivox/ivox3d.h",
+    "include/ivox/ivox3d_node.hpp",
+    "package.xml",
+    "src/laserMapping.cpp",
+    "src/li_initialization.cpp",
+    "src/parameters.cpp",
+    "src/parameters.h",
+    "src/preprocess.h"
+  ],
+  "files": {
+    "ros2_ws/src/point_lio/src/parameters.cpp": {
+      "before_sha256": "3d3f36968fdc2c5f4644150895fd0e9fb9ef7a0430f77c137eecdfe4846870c5",
+      "after_sha256": "85c01228ae1aefadc3889ac906a628a77e904cb83b9602e77b9c7d2c313e188d"
+    },
+    "ros2_ws/src/point_lio/src/parameters.h": {
+      "before_sha256": "5fa20244105738f1785da6c3423dcf36eb52f059da83c1312286cc7ad46c2fc0",
+      "after_sha256": "627ac08caeae369941e57868f4e9868e5d5a2645ff6d222eb23b0047a9a6f173"
+    },
+    "ros2_ws/src/point_lio/src/laserMapping.cpp": {
+      "before_sha256": "687f6481abb5280e2f733ed211e5388a8d7b50e347c0adde1cf7c83181bf046c",
+      "after_sha256": "1e608fc2b4ee6db5998b932f189ae57156375fc8dcdc556f46bb41f18b85e18b"
+    },
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/sentry_pointlio_source.py": {
+      "before_sha256": "e274935efc8fcf22d4598f7ecadef4dad0ba33d0c98b3cad1f9ec5e937427e32",
+      "after_sha256": "82873ca1a1593cf8e1f6fc0e27df89009b550878992f532e96264a02b1fed811"
+    },
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/point_lio_runner.py": {
+      "before_sha256": "5072f2d841def79b87d91b52ba539b8cd0188b3517f1f4f2d15ca3abd4975d37",
+      "after_sha256": "4c42f3d2f80703d3cb457e3578d9de16896b6dd11c05d0b18330036052da8973"
+    },
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": {
+      "before_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f",
+      "after_sha256": "51577ad32454c72996773dcdde4ce254266c1a0d49d78228da07a1c75adc22f1"
+    },
+    "third_party/patches/point-lio-native.patch": {
+      "before_sha256": "352e33500c8d10db71b8d915c7d6cfb30e796e9ce2aecdf1af9246cab1d4098a",
+      "after_sha256": "09a71b30479a16df5ec54c3c88cf5d57fc0b319c0d450951b054d92827010786"
+    }
+  },
+  "offline_verification": "artifacts\\navigation\\realtime-20261118\\pointlio-imu-qos-offline\\verification.json",
+  "offline_sha256": "d8f1dba707744d56c02e4dec3586de8f172e08fb36b3c81b4d5455c11d2f10c4",
+  "offline_tests_passed": 10
+}

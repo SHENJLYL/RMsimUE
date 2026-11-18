@@ -1,0 +1,280 @@
+{
+  "status": "failed",
+  "scope": "Read-only completed rmuc-10 endpoint/clock/cancel audit; precision and rolling realtime failures retained",
+  "created_utc": "2026-11-18T03:47:51.763909+00:00",
+  "checks": [
+    {
+      "name": "native_original_fourteen_action_gates_passed",
+      "passed": true
+    },
+    {
+      "name": "both_endpoints_within_actual_ten_cm",
+      "passed": false
+    },
+    {
+      "name": "all_rolling_clock_windows_passed",
+      "passed": false
+    }
+  ],
+  "trace_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-10\\actions\\trace.json",
+  "trace_sha256": "ebba749ed13f4a77b956ff517b84dcfb2bcff145c2e9761b500813be54763d54",
+  "precision_verification_sha256": "e8986c5a66624159dfe5318bd208163dae3a05444eaf25419a5e3f1b50ca3cd7",
+  "clock_verification_sha256": "2d127a18c22f4dd02cc17e42d220f3a461173035d5f18d3821364402da2800b0",
+  "runtime_provenance_sha256": "ee8336d6768d95263c31dcfbc16f52612a69bad1484c496b109d06259c718ed1",
+  "endpoints": [
+    {
+      "mode": "single_goal",
+      "actual_endpoint_error_m": 0.16007074535189927,
+      "requested_xyz": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "plan_endpoint_xyz": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_endpoint_offset_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_endpoint_offset_m": 0.035354940244900775,
+      "amcl_stamp_s": 34.984999219,
+      "terminal_truth_stamp_s": 35.819999199,
+      "same_stamp_truth": {
+        "position_m": [
+          9.294589986122464,
+          6.51051999909002,
+          0.017330648607651166
+        ],
+        "left_stamp_ns": 34974999218,
+        "right_stamp_ns": 34999999218,
+        "interpolation_weight": 0.40000004,
+        "bracket_width_s": 0.025
+      },
+      "amcl_xy_m": [
+        9.359752170614014,
+        6.406104629455284
+      ],
+      "same_stamp_amcl_minus_truth_xy_m": [
+        0.06516218449154998,
+        -0.10441536963473563
+      ],
+      "same_stamp_amcl_position_error_m": 0.12307997279683348
+    },
+    {
+      "mode": "waypoints",
+      "actual_endpoint_error_m": 0.19297634624102616,
+      "requested_xyz": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "plan_endpoint_xyz": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_endpoint_offset_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_endpoint_offset_m": 0.035354940244900775,
+      "amcl_stamp_s": 54.789998777,
+      "terminal_truth_stamp_s": 54.974998771,
+      "same_stamp_truth": {
+        "position_m": [
+          9.327290887098282,
+          6.548937382209472,
+          0.016369438308313226
+        ],
+        "left_stamp_ns": 54784998775,
+        "right_stamp_ns": 54819998775,
+        "interpolation_weight": 0.1428572,
+        "bracket_width_s": 0.035
+      },
+      "amcl_xy_m": [
+        9.398256261133646,
+        6.355657361072561
+      ],
+      "same_stamp_amcl_minus_truth_xy_m": [
+        0.07096537403536374,
+        -0.19328002113691056
+      ],
+      "same_stamp_amcl_position_error_m": 0.20589621386189613
+    }
+  ],
+  "cancel_zero_to_stop": {
+    "controller": {
+      "observed": true,
+      "first_zero_received_monotonic_s": 45388.2297866,
+      "first_zero_stamp_s": 55.734998754,
+      "stamp_basis": "latest_received_clock_unstamped_topic",
+      "seconds_after_cancel_request": 0.05000029999791877,
+      "truth_at_first_zero": {
+        "position_m": [
+          9.168934088664715,
+          6.525708482091069,
+          0.01680388130682955
+        ],
+        "left_stamp_ns": 55734998754,
+        "right_stamp_ns": 55759998754,
+        "interpolation_weight": 0.0,
+        "bracket_width_s": 0.025
+      },
+      "settled_endpoint_xyz": [
+        9.082573671889232,
+        6.536403268482434,
+        0.01622553465282115
+      ],
+      "zero_to_settled_endpoint_xy_m": 0.08702011285669517,
+      "zero_to_settled_endpoint_xyz_m": 0.08702203471790444,
+      "first_observed_sustained_stop_stamp_s": 56.144998745,
+      "stop_definition": "truth finite-difference XY speed <=.02m/s for observed >=.2s; diagnostic only"
+    },
+    "smoothed": {
+      "observed": true,
+      "first_zero_received_monotonic_s": 45388.4123984,
+      "first_zero_stamp_s": 55.934998750000005,
+      "stamp_basis": "latest_received_clock_unstamped_topic",
+      "seconds_after_cancel_request": 0.23261210000055144,
+      "truth_at_first_zero": {
+        "position_m": [
+          9.085468239119443,
+          6.536599374779542,
+          0.0170814506120235
+        ],
+        "left_stamp_ns": 55934998750,
+        "right_stamp_ns": 55959998749,
+        "interpolation_weight": 0.0,
+        "bracket_width_s": 0.024999999000000002
+      },
+      "settled_endpoint_xyz": [
+        9.082573671889232,
+        6.536403268482434,
+        0.01622553465282115
+      ],
+      "zero_to_settled_endpoint_xy_m": 0.0029012027040480406,
+      "zero_to_settled_endpoint_xyz_m": 0.0030248254923537225,
+      "first_observed_sustained_stop_stamp_s": 56.144998745,
+      "stop_definition": "truth finite-difference XY speed <=.02m/s for observed >=.2s; diagnostic only"
+    },
+    "vehicle": {
+      "observed": true,
+      "first_zero_received_monotonic_s": 45388.4128768,
+      "first_zero_stamp_s": 55.93499875,
+      "stamp_basis": "message_header",
+      "seconds_after_cancel_request": 0.2330904999980703,
+      "truth_at_first_zero": {
+        "position_m": [
+          9.085468239119443,
+          6.536599374779542,
+          0.0170814506120235
+        ],
+        "left_stamp_ns": 55934998750,
+        "right_stamp_ns": 55959998749,
+        "interpolation_weight": 0.0,
+        "bracket_width_s": 0.024999999000000002
+      },
+      "settled_endpoint_xyz": [
+        9.082573671889232,
+        6.536403268482434,
+        0.01622553465282115
+      ],
+      "zero_to_settled_endpoint_xy_m": 0.0029012027040480406,
+      "zero_to_settled_endpoint_xyz_m": 0.0030248254923537225,
+      "first_observed_sustained_stop_stamp_s": 56.144998745,
+      "stop_definition": "truth finite-difference XY speed <=.02m/s for observed >=.2s; diagnostic only"
+    }
+  },
+  "cancel_request_to_stop_xyz_m": 0.09697664124843365,
+  "failed_clock_window_crosscheck": [
+    {
+      "start_seconds": 9.0,
+      "status_factor": 1.0241224091762262,
+      "independent_performance_factor": 1.025156972374748,
+      "independent_passed": false,
+      "boundaries": [
+        {
+          "sim_s": 31.1968741745303,
+          "left_wall": 45363.9129037,
+          "right_wall": 45363.9319186,
+          "left_sim_ns": 31189999303,
+          "right_sim_ns": 31214999302
+        },
+        {
+          "sim_s": 41.44844389827778,
+          "left_wall": 45373.8908644,
+          "right_wall": 45373.9199415,
+          "left_sim_ns": 41424999074,
+          "right_sim_ns": 41449999074
+        }
+      ]
+    },
+    {
+      "start_seconds": 26.0,
+      "status_factor": 1.0217782352965243,
+      "independent_performance_factor": 1.0247857282744839,
+      "independent_passed": false,
+      "boundaries": [
+        {
+          "sim_s": 48.205161958510566,
+          "left_wall": 45380.9110335,
+          "right_wall": 45380.9385336,
+          "left_sim_ns": 48199998923,
+          "right_sim_ns": 48219998922
+        },
+        {
+          "sim_s": 58.453019241255404,
+          "left_wall": 45390.9129442,
+          "right_wall": 45390.9472989,
+          "left_sim_ns": 58449998694,
+          "right_sim_ns": 58469998693
+        }
+      ]
+    },
+    {
+      "start_seconds": 27.0,
+      "status_factor": 1.0296751486742644,
+      "independent_performance_factor": 1.0317532413838457,
+      "independent_passed": false,
+      "boundaries": [
+        {
+          "sim_s": 49.119774795227826,
+          "left_wall": 45381.8909891,
+          "right_wall": 45381.9184403,
+          "left_sim_ns": 49099998903,
+          "right_sim_ns": 49119998902
+        },
+        {
+          "sim_s": 59.43730720906628,
+          "left_wall": 45391.898463,
+          "right_wall": 45391.9224338,
+          "left_sim_ns": 59424998672,
+          "right_sim_ns": 59439998671
+        }
+      ]
+    }
+  ],
+  "matching_native_stamp_callback_differences_s": {
+    "samples": 68,
+    "min": -0.006382300001860131,
+    "median": -3.429999924264848e-05,
+    "max": 0.00040690000605536625,
+    "max_absolute": 0.006382300001860131
+  },
+  "native_reported_one_second_rate_range": [
+    0.8272680123342496,
+    1.1865419125263215
+  ],
+  "richtrace_counts": {
+    "plan_samples": 74,
+    "truth_poses": 1482,
+    "amcl_poses": 126,
+    "odometry_poses": 352,
+    "selected_transforms": 9868,
+    "obstacle_scans": 351,
+    "performance": 1478
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "status": "passed",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+  "events": [
+    {
+      "name": "console",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\environment\\Start-NavigationConsole.ps1",
+        "-Scene",
+        "rmuc2027",
+        "-NoRviz",
+        "-Offscreen",
+        "-PaceRealTime",
+        "-ControlProfile",
+        "simulation",
+        "-VerifyLidarQueries",
+        "-ProfileSensorTiming",
+        "-ProfileFrames",
+        "0",
+        "-CpuPolicy",
+        "performance",
+        "-OutputDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+        "-LocalizationMapYaml",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml"
+      ],
+      "pid": 41352,
+      "started_monotonic_s": 48809.1978809
+    },
+    {
+      "name": "clock",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\measure_console_clock.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+        "--output",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\clock",
+        "--seconds",
+        "90.0",
+        "--ready-timeout-seconds",
+        "240.0"
+      ],
+      "pid": 41640,
+      "started_monotonic_s": 48811.8116979
+    },
+    {
+      "name": "actions",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "& 'D:\\simulator\\tools\\environment\\run-env.ps1' -Command @('powershell','-NoProfile','-File','D:\\simulator\\tools\\integration\\Run-HighSpeedDiagnostics.ps1','-OutputDirectory','D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions','-CaptureLocalizationClouds')"
+      ],
+      "pid": 44024,
+      "started_monotonic_s": 48859.8361138
+    }
+  ],
+  "script_sha256": "7c38c06bee92f66a74af4de6faec4b83cebd5acb8e4ede4ec0fe5d0efcbada15",
+  "keep_session_requested": false,
+  "capture_localization_clouds_requested": true,
+  "cleanup": [
+    {
+      "name": "actions",
+      "pid": 44024,
+      "status": "already_exited",
+      "exit_code": 0
+    },
+    {
+      "name": "clock",
+      "pid": 41640,
+      "status": "already_exited",
+      "exit_code": 0
+    },
+    {
+      "name": "console",
+      "status": "owned_stop_requested",
+      "exit_code": 0
+    }
+  ],
+  "cleanup_errors": [],
+  "clock_at_action_launch": {
+    "phase": "measuring",
+    "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+    "observer_started_monotonic_s": 48811.8961049,
+    "observer_started_utc": "2026-11-18T04:42:01.092689+00:00",
+    "updated_monotonic_s": 48859.7935053,
+    "updated_utc": "2026-11-18T04:42:48.990089+00:00",
+    "requested_wall_seconds": 90.0,
+    "session_identity": [
+      "BF9133274D7F69C12010EB8E175AC233",
+      0
+    ],
+    "window_start_monotonic_s": 48859.2552078,
+    "window_end_monotonic_s": 48949.2552078,
+    "window_start_sim_time_s": 22.409999499
+  },
+  "result_statuses": {
+    "clock": "passed",
+    "actions": "passed"
+  },
+  "action_interval": {
+    "valid": true,
+    "samples": 1397,
+    "session_identity": [
+      "BF9133274D7F69C12010EB8E175AC233",
+      0
+    ],
+    "start_monotonic_s": 48863.2399947,
+    "end_monotonic_s": 48898.4507528,
+    "start_sim_time_s": 26.364999411000003,
+    "end_sim_time_s": 61.594998623,
+    "phases": [
+      "cancel_settle",
+      "cancel_test",
+      "single_goal",
+      "waiting",
+      "waypoints"
+    ]
+  },
+  "complete_action_covered_by_clock": true,
+  "stop_request_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\stop.request",
+  "kept_session": false,
+  "exit_codes": {
+    "console": 0,
+    "clock": 0,
+    "actions": 0
+  },
+  "finished_monotonic_s": 48951.5594289
+}

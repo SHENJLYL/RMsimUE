@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "scope": "offline clock gate regression and historical action timing audit; no native runtime started",
+  "created_utc": "2026-11-18T02:11:24.938255+00:00",
+  "tests_run": 15,
+  "failures": 0,
+  "errors": 0,
+  "checks": [
+    {
+      "name": "rmuc03_actual_action_interval_valid",
+      "passed": true
+    },
+    {
+      "name": "rmuc03_late_static_window_rejected_for_action_coverage",
+      "passed": true
+    },
+    {
+      "name": "synthetic_full_coverage_boundaries_accepted",
+      "passed": true
+    },
+    {
+      "name": "missing_simulation_boundary_cannot_pass_coverage",
+      "passed": true
+    },
+    {
+      "name": "engine_config_part_of_all_provenance_identity_comparisons",
+      "passed": true
+    },
+    {
+      "name": "git_diff_check_clean",
+      "passed": true,
+      "output": ""
+    }
+  ],
+  "files": [
+    {
+      "path": "tools/integration/measure_console_clock.py",
+      "sha256": "dafc2756c609786bd7d895f028069abae9f891e9bb9917210e50734551912173"
+    },
+    {
+      "path": "tools/integration/summarize_navigation_realtime.py",
+      "sha256": "617f95fe9b5627dfcd4d3014835395f0397da8fdcd122c548ff49524b56b6908"
+    },
+    {
+      "path": "tests/control/test_console_clock.py",
+      "sha256": "db1423b8b51b3fefc85601c54aa067b56b4a7b2e0d92b7f29247cc484c9319ac"
+    }
+  ],
+  "prior_evidence": "artifacts/navigation/realtime-20261118/offline-motion-clock-01/verification.json",
+  "fix_for_prior_failure": "Normalize tuple/list session identity in coverage helper; JSON evidence and in-memory analysis now compare equally.",
+  "historical_action_interval": {
+    "valid": true,
+    "samples": 869,
+    "session_identity": [
+      "B5991A984236B4D9FD00E4B7E96B5A27",
+      0
+    ],
+    "start_monotonic_s": 39143.528677,
+    "end_monotonic_s": 39163.1688415,
+    "start_sim_time_s": 13.674999694,
+    "end_sim_time_s": 33.194999258,
+    "phases": [
+      "single_goal",
+      "waiting"
+    ]
+  },
+  "historical_clock_interval": {
+    "status": "passed",
+    "window_start_monotonic_s": 39313.5641193,
+    "window_end_monotonic_s": 39373.5641193,
+    "window_start_sim_time_s": 183.749995893,
+    "window_end_sim_time_s": 243.721455876973,
+    "measured_realtime_factor": 0.9995243330662168
+  }
+}

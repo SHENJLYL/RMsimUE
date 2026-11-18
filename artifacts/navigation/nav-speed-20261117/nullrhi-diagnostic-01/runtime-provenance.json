@@ -1,0 +1,98 @@
+{
+  "scene": {
+    "scene": "rmuc2027",
+    "scene_file": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\nullrhi-diagnostic-01\\scene\\scene.json",
+    "map_yaml": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\nullrhi-diagnostic-01\\scene\\navigation\\map.yaml",
+    "initial_pose": [
+      6.4,
+      6.0,
+      0.15
+    ],
+    "view": {
+      "x": 7.5,
+      "y": 6.4,
+      "scale": 65.0
+    },
+    "scene_sha256": "264de7b1b2e629580fa1dd54efc48b2f1b14cefbeacaab917349ed80e61d5f75",
+    "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+  },
+  "transport": {
+    "mode": "loopback_udp",
+    "allowed_interfaces": [
+      "127.0.0.1"
+    ],
+    "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+    "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+  },
+  "git_head": "13f196199ad03d8a4048d77f30bec0b6a1b45b27",
+  "module_sha256": "24747cde7dac878658ff5a8e4a993cd2569cfa3dc325f1a6640c1f7a75a85689",
+  "drive_profile_sha256": "d1db3392b972fe6bb70aea5c0fffa9fc998e0c687ec3a09b9ba6d6b5ce142057",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "lidar_sha256": "484d0088296d3c69861e6f3b14907da03f99ef9f1472fb6fb41994c096762229",
+  "imu_sha256": "9fc5bf3e274229b19f15d6d4533470d398b54bba2c08da2579583a43f190cbc1",
+  "navigation_follow_sha256": "d5bf930b85ce0668db1d434b271fab5dfebce8c6ddc2907329c45897af122aef",
+  "navigation_follow_profile": "D:\\simulator\\assets\\vehicles\\aim_sentry\\navigation-follow.json",
+  "source_control_config_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f",
+  "navigation_source": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+  "control_profile": "simulation",
+  "sim_step_seconds": 0.005,
+  "no_rhi_diagnostic": true,
+  "bridge_inputs": {
+    "node.py": {
+      "source_sha256": "ebeb5170571abab54d2a2a256d0e3f04e3615a3e141693fa43961631d202aaa8",
+      "installed_sha256": "ebeb5170571abab54d2a2a256d0e3f04e3615a3e141693fa43961631d202aaa8"
+    },
+    "protocol.py": {
+      "source_sha256": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08",
+      "installed_sha256": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08"
+    },
+    "imu.py": {
+      "source_sha256": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484",
+      "installed_sha256": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484"
+    },
+    "lidar.py": {
+      "source_sha256": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa",
+      "installed_sha256": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa"
+    },
+    "aim_adapter.py": {
+      "source_sha256": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26",
+      "installed_sha256": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26"
+    },
+    "navigation_follow.py": {
+      "source_sha256": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3",
+      "installed_sha256": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3"
+    },
+    "navigation_follow_adapter.py": {
+      "source_sha256": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13",
+      "installed_sha256": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13"
+    },
+    "navigation_config.py": {
+      "source_sha256": "de523bcc4f93b06e6a95ac403b2c878c0112b94bf6cad1b860ff55ac7b82cb74",
+      "installed_sha256": "de523bcc4f93b06e6a95ac403b2c878c0112b94bf6cad1b860ff55ac7b82cb74"
+    },
+    "navigation_runner.py": {
+      "source_sha256": "6a8c7f63553f0f2ef0e77acd2ccdcf1df198a029d657ada8da9f7d0495fa1af6",
+      "installed_sha256": "6a8c7f63553f0f2ef0e77acd2ccdcf1df198a029d657ada8da9f7d0495fa1af6"
+    },
+    "point_lio_runner.py": {
+      "source_sha256": "47323510604448ac6988d0761714b68f565cd28206356341b842843642ff611c",
+      "installed_sha256": "47323510604448ac6988d0761714b68f565cd28206356341b842843642ff611c"
+    },
+    "pointlio_units.py": {
+      "source_sha256": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1",
+      "installed_sha256": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1"
+    },
+    "sentry_pointlio_source.py": {
+      "source_sha256": "c8995b7782619338174f9f64730daf46084b49110ab9ca5af8038f0c1289e224",
+      "installed_sha256": "c8995b7782619338174f9f64730daf46084b49110ab9ca5af8038f0c1289e224"
+    }
+  },
+  "native_navigation": {
+    "loam_interface.dll": "559c74d3a3e34a4e6f9619c17419869cdeb0c2ef85dd4a2db50c2fdcd99e119b",
+    "sensor_scan_generation.dll": "39b055f340978d82e3f7ce3b9deb48efc788f8ec04fa76ec901eea44299e656e",
+    "fake_vel_transform.dll": "9d5e6efc86d1d6e5568a13bc1b38b0506ef01a36189e8d9e3527c801fa7abc96"
+  },
+  "console_source_sha256": "32dcdb2b4b29357ac6275d7774c3f42722d48dd30bd57830252d422c579af881",
+  "dependency_lock_sha256": "476551dd4cc0a80340b959422b08f7b2a6ce29834f5db712e1e757da9e88642e",
+  "capture_scope": "inputs captured before process launch; source/installed Python text compared"
+}

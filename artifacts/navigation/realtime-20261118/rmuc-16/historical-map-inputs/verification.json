@@ -1,0 +1,48 @@
+{
+  "status": "preserved_before_LF_canonicalization",
+  "runtime_provenance_sha256": "2d9deaa4f091ec4f030c557838f44c93b95b6717c39fe04d53c5b09262bf8cd6",
+  "snapshot_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf",
+  "files": {
+    "assets/maps/rmuc2027/mesh-source.json": {
+      "sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "crlf_count": 2337,
+      "size": 52693
+    },
+    "assets/maps/rmuc2027/navigation-console/SOURCE.json": {
+      "sha256": "6684af7ab92c428ef71d5eea8d31d227453d2c411c3b20af070736265a3327b6",
+      "crlf_count": 0,
+      "size": 6990
+    },
+    "assets/maps/rmuc2027/navigation-console/map.yaml": {
+      "sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "crlf_count": 6,
+      "size": 132
+    },
+    "assets/maps/rmuc2027/navigation-console/localization/vertical85/map.yaml": {
+      "sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "crlf_count": 6,
+      "size": 132
+    },
+    "assets/maps/rmuc2027/navigation-console/localization/vertical85/metadata.json": {
+      "sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+      "crlf_count": 120,
+      "size": 4665
+    },
+    "assets/maps/rmuc2027/navigation-console/localization/vertical85/map.pgm": {
+      "sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "crlf_count": 0,
+      "size": 180335
+    },
+    "assets/maps/rmuc2027/navigation-console/localization/vertical85/surface-provenance.npz": {
+      "sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035",
+      "crlf_count": 3,
+      "size": 136939
+    },
+    "tools/maps/export_localization_surface_map.py": {
+      "sha256": "2bf0fb67f0d34c5028ed674370c50d1f5a1439233c9d5a256804df33e2e3f332",
+      "crlf_count": 0,
+      "size": 20612
+    }
+  },
+  "scope": "rmuc-16 retains original raw input identities; later LF package is a separate configuration"
+}

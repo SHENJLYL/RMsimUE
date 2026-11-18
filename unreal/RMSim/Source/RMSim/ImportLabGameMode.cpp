@@ -31,6 +31,8 @@
 #include "HAL/PlatformMisc.h"
 #include "HAL/PlatformProperties.h"
 #include "HAL/PlatformTime.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/CoreDelegates.h"
 #include "ImageUtils.h"
 #include "InputCoreTypes.h"
 #include "Misc/CommandLine.h"
@@ -147,7 +149,20 @@ void AImportLabGameMode::BeginPlay()
         if(FixedStep>0&&!FMath::IsNearlyEqual(FixedStep,.001,1.e-9)){Abort(TEXT("original LK motor mode requires1ms physics"));return;}
         FixedStep=.001;
     }
-    if(FixedStep>0){FApp::SetFixedDeltaTime(FixedStep);FApp::SetUseFixedTimeStep(true);}
+    if(FixedStep>0)
+    {
+        FApp::SetFixedDeltaTime(FixedStep);FApp::SetUseFixedTimeStep(true);
+        if(FParse::Param(FCommandLine::Get(),TEXT("SimRealTimePace")))
+        {
+            // Fixed-time engine updates bypass the normal MaxFPS sleep path.
+            // Pace actual solver ticks against a monotonic absolute deadline.
+            // Overruns retain every physical step and remain visible in /clock.
+            RealTimeStepSeconds=FixedStep;
+            if(GEngine)GEngine->SetMaxFPS(0);
+            RealTimePaceHandle=FCoreDelegates::OnBeginFrame.AddUObject(this,&AImportLabGameMode::PacePhysicsFrame);
+            UE_LOG(LogRMSim,Display,TEXT("SIM_REALTIME_PACE fixed_step_s=%.6f mode=monotonic_deadline"),FixedStep);
+        }
+    }
 #if WITH_DEV_AUTOMATION_TESTS
     FParse::Value(FCommandLine::Get(),TEXT("ImuFixture="),ImuFixture);
     if(!ImuFixture.IsEmpty()&&ImuFixture!=TEXT("freefall")&&ImuFixture!=TEXT("incline"))
@@ -343,6 +358,25 @@ void AImportLabGameMode::UpdateOverview()
     Overview->SetActorRotation((Focus - Overview->GetActorLocation()).Rotation());
 }
 
+void AImportLabGameMode::PacePhysicsFrame()
+{
+    if(RealTimeStepSeconds<=0)return;
+    if(NextPhysicsFrameWall<0){NextPhysicsFrameWall=FPlatformTime::Seconds();return;}
+    NextPhysicsFrameWall+=RealTimeStepSeconds;
+    for(double Remaining=NextPhysicsFrameWall-FPlatformTime::Seconds();Remaining>0;
+        Remaining=NextPhysicsFrameWall-FPlatformTime::Seconds())
+    {
+        // Sleep most of the budget, yielding the final sub-millisecond tail.
+        FPlatformProcess::SleepNoStats(Remaining>.001?float(Remaining-.0005):0.f);
+    }
+}
+
+void AImportLabGameMode::EndPlay(const EEndPlayReason::Type Reason)
+{
+    FCoreDelegates::OnBeginFrame.Remove(RealTimePaceHandle);
+    Super::EndPlay(Reason);
+}
+
 void AImportLabGameMode::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
@@ -446,13 +480,6 @@ void AImportLabGameMode::UpdatePlayerView(APlayerController* PC)
 {
     if (!ChaseCamera || !SightCamera || !Rig || !PC) return;
     const FVector Pivot = Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
-    if (!bSightMode && !bFreeLook && bHoldAimAfterFreeLook && bAimTargetValid)
-    {
-        // The same target needs a different ray from the raised chase pivot than from the muzzle.
-        const FRotator Reprojected = (AimWorldTarget - Pivot).Rotation();
-        OrbitYaw = Reprojected.Yaw;
-        OrbitPitch = Reprojected.Pitch;
-    }
     const FRotator Look(OrbitPitch, OrbitYaw, 0.0);
     FVector Position = Pivot - Look.Vector() * ChaseDistanceCm;
     FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimChaseCamera), false, Rig);
@@ -570,14 +597,19 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     if (Input.ToggleSight)
     {
         bSightMode = !bSightMode;
-        bHoldAimAfterFreeLook = true; // A view switch must not replace the selected world target.
-        if (bSightMode && !bFreeLook && bAimTargetValid)
-            if (USceneCaptureComponent2D* Aim = GetAimCapture())
-            {
-                const FRotator Desired = (AimWorldTarget - Aim->GetComponentLocation()).Rotation();
-                OrbitYaw = Desired.Yaw;
-                OrbitPitch = Desired.Pitch;
-            }
+        // On scope exit resume live chase aiming: the old scope hit must not
+        // continue steering the turret (and hence the chassis drive basis).
+        bHoldAimAfterFreeLook = bFreeLook || bSightMode;
+        if (!bFreeLook && bAimTargetValid)
+        {
+            // Reproject once at the transition. Reprojecting every subsequent tick
+            // leaves the chase view stuck to a stale scope target while driving.
+            const FVector Origin = bSightMode && GetAimCapture() ?
+                GetAimCapture()->GetComponentLocation() : Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
+            const FRotator Desired = (AimWorldTarget - Origin).Rotation();
+            OrbitYaw = Desired.Yaw;
+            OrbitPitch = Desired.Pitch;
+        }
     }
     bSightZoom = bSightMode && Input.Zoom;
     const double Sensitivity = MouseSensitivity * (bSightMode && !bFreeLook ? (bSightZoom ? 15.0 : ScopeBaseFov) / 55.0 : 1.0);
@@ -613,8 +645,14 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
         const double DriveSpeed=Throttle*(bPrecisionDrive?FMath::Min(MaximumDriveSpeed,Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):MaximumDriveSpeed);
         if(Rig->HasSteeringModules())
         {
-            const double Heading=-FMath::DegreesToRadians(OrbitYaw);
-            const FVector2D Forward(FMath::Cos(Heading),FMath::Sin(Heading)),Left(-Forward.Y,Forward.X);
+            // Movement belongs to the physical turret, never to the C orbit camera
+            // or to a scope/chase reticle that may outlive a Shift transition.
+            const USceneCaptureComponent2D* Aim=GetAimCapture();
+            const FVector GunForward=Aim?Aim->GetForwardVector():Rig->GetActorForwardVector();
+            const FVector2D HorizontalGun(GunForward.X,-GunForward.Y); // UE right-handed view -> ROS left-positive.
+            const FVector2D Forward=HorizontalGun.IsNearlyZero(1.e-6)?
+                FVector2D(Rig->GetActorForwardVector().X,-Rig->GetActorForwardVector().Y).GetSafeNormal():HorizontalGun.GetSafeNormal();
+            const FVector2D Left(-Forward.Y,Forward.X);
             const double LateralSpeed=bPrecisionDrive?FMath::Min(Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps")),Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));
             FVector2D WorldVelocity=Forward*DriveSpeed+Left*FMath::Clamp(Input.Strafe,-1.,1.)*LateralSpeed;
             if(bPrecisionDrive&&WorldVelocity.Size()>Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")))WorldVelocity=WorldVelocity.GetSafeNormal()*Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"));
@@ -736,8 +774,8 @@ FString AImportLabGameMode::GetControlHudText() const
     const FString BlockReason=Rig?Rig->GetTerrainBlockReason():FString();
     const FString Gyro=Rig&&Rig->IsContactPhysics()?FString::Printf(TEXT("\nG gyro %s   Z/X speed   set %.1f / actual %.1f rad/s%s"),
         bGyroMode?TEXT("ON"):TEXT("OFF"),GyroSpeedRadS,Rig->GetMeasuredYawRate(),
-        TEXT("  |  WASD camera-relative move")):FString();
-    return FString::Printf(TEXT("%.1f km/h  |  %s%s  |  %s%s  |  %.0f fps\nW/S forward/back   A/D strafe   Q/E turn   Ctrl slow   SPACE brake   R reset\nMouse aim   C free look   Shift sight   RMB zoom   Wheel camera"),
+        TEXT("  |  WASD turret-relative move")):FString();
+    return FString::Printf(TEXT("%.1f km/h  |  %s%s  |  %s%s  |  %.0f fps\nW/S turret forward/back   A/D strafe   Q/E turn   Ctrl slow   SPACE brake   R reset\nMouse aim   Hold C orbit view   Shift sight   RMB zoom   Wheel camera"),
         SpeedCmPerSecond * 0.036, *Mode, bHadInputFocus ? TEXT("") : TEXT("  |  Click to focus"),
         *StageMap.DisplayName, Region.IsEmpty() ? TEXT("") : *(TEXT(" / ")+Region),FrameAverageSeconds>1.e-6?1./FrameAverageSeconds:0.) + (Training?TEXT("\n")+Training->Hud():FString()) +
         Gyro+(bPrecisionDrive?TEXT("\nPRECISION drive"):FString())+(RosBridge?TEXT("\n")+RosBridge->StatusText():FString())+
@@ -767,7 +805,7 @@ void AImportLabHUD::DrawHUD()
     DrawLine(X - 12, Y, X - 4, Y, FLinearColor::White, 1.5f); DrawLine(X + 4, Y, X + 12, Y, FLinearColor::White, 1.5f);
     DrawLine(X, Y - 12, X, Y - 4, FLinearColor::White, 1.5f); DrawLine(X, Y + 4, X, Y + 12, FLinearColor::White, 1.5f);
     FVector GunPoint; FVector2D Screen;
-    if (PlayerOwner && Mode->GetGunWorldPoint(GunPoint) && PlayerOwner->ProjectWorldLocationToScreen(GunPoint, Screen, true) &&
+    if (PlayerOwner && Mode->IsGunReticleVisible() && Mode->GetGunWorldPoint(GunPoint) && PlayerOwner->ProjectWorldLocationToScreen(GunPoint, Screen, true) &&
         Screen.X >= 0 && Screen.X <= Canvas->SizeX && Screen.Y >= 0 && Screen.Y <= Canvas->SizeY)
     {
         const FLinearColor GunColor(1.0f, 0.65f, 0.1f);

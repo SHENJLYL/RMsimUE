@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "exit_code": 0,
+  "created_utc": "2026-11-18T04:01:00.395222+00:00",
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "-u",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\check_analyzer.py",
+    "--source",
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py",
+    "--map-library",
+    "D:\\simulator\\artifacts\\runtime\\navigation\\windows\\map_lib.dll"
+  ],
+  "tests_run": 10,
+  "tests_passed": 10,
+  "input_sha256": {
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py": "40000772567ae420e32da3e7c0d2ae4d44eb05ca3fef6eb3f5f985cb804b20d7",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\check_analyzer.py": "c5bea0e2635837311e79000d43e8000399e4a3e76d89f873409ac27d4eb20945",
+    "D:\\simulator\\artifacts\\runtime\\navigation\\windows\\map_lib.dll": "28cefe6101b0ce678e72ed37ed4fff5a7e4b9656888332ebd77718c7c5c5c2a1",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\scored-analyzer-before-output-guard.py": "56e4c8f374941b69032af4320b005dae52b60ccb71ce1c04508b58710144d86f",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\native-nine-checks-before-output-guard.py": "213ccd031de0bbcc9b9aef3a0893af51feb0fe33b214f8d83809b2dd4622e88c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-10\\scan-map-alignment\\summary.json": "02d24b965f4f60111d2ee5b24aca1489aa42ebf85f4e345c252baaa9e0c8b87e"
+  },
+  "checks": [
+    "Quaternion interpolation and mount composition",
+    "No timestamp extrapolation or oversized brackets",
+    "Recorded TF inversion and static stamp0",
+    "Original beam index/float range handling",
+    "Binary PGM pixel parsing",
+    "Immutable evidence writer and repeated full-run rejection",
+    "Native map distance and AMCL rounding",
+    "Pinned source likelihood formula",
+    "Synthetic identity-bound full pipeline and provenance rejection"
+  ],
+  "output_sha256": {
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\output-guard-native-01\\stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\output-guard-native-01\\stderr.txt": "2fd65dfa93e38dd525d8a8678118fdb186a3a04da04041bf34d1157e81c89c6c"
+  },
+  "original_real_analysis_retained": true,
+  "production_runtime_changes": false
+}

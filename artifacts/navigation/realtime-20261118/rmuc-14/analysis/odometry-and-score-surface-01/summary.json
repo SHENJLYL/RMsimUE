@@ -1,0 +1,463 @@
+{
+  "status": "diagnostic_complete_not_controller_input",
+  "paired_odometry_samples": 351,
+  "alignment": {
+    "configured_spawn_xy_yaw": [
+      5.8,
+      6.4,
+      0.0
+    ],
+    "first_recorded_odometry": {
+      "received_monotonic_s": 47320.5596793,
+      "latest_clock_ns": 0,
+      "bridge_sim_time_ns": null,
+      "session": null,
+      "epoch": null,
+      "probe_phase": "waiting",
+      "goal_request_id": null,
+      "action_goal_id": null,
+      "frame_id": "aim_sentry/odom",
+      "stamp_ns": 30564999318,
+      "stamp_s": 30.564999318,
+      "position_m": [
+        -0.005612814022949025,
+        0.00435244782732247,
+        0.0005072571226025779
+      ],
+      "orientation_xyzw": [
+        -0.048404049810386915,
+        0.00805622533767097,
+        -0.00346402970614751,
+        0.9987893399979083
+      ],
+      "child_frame_id": "aim_sentry/base_link",
+      "pose_covariance": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "linear_velocity_m_s": [
+        0.037452611803753595,
+        -0.10062380964870735,
+        -0.006804877898063363
+      ],
+      "angular_velocity_rad_s": [
+        0.032050177865517886,
+        -0.01670253085327775,
+        -0.01112027883208735
+      ]
+    },
+    "first_action_clock_ns": 30879999310,
+    "fixed_odom_to_known_spawn_se2": {
+      "rotation_rad": 0.007700611947833539,
+      "translation_xy_m": [
+        5.805646163785942,
+        6.395690902896418
+      ]
+    },
+    "first_recorded_truth_relative_to_configured_spawn": {
+      "stamp_ns": 30789999312,
+      "xy_m": [
+        8.153301844338046e-06,
+        -0.000971732814246451
+      ],
+      "yaw_rad": -0.0026553062753642436
+    },
+    "alignment_rule": "Configured scene spawn and first pre-action body odometry only. No fitting to trajectory or future evaluation poses. First truth observation is diagnostic only."
+  },
+  "endpoint_odometry": [
+    {
+      "mode": "single_goal",
+      "stamp_ns": 39464999120,
+      "aligned_odometry_xy_yaw": [
+        9.3901929708012,
+        6.493296867173099,
+        0.5603179451854227
+      ],
+      "evaluation_xy_yaw": [
+        9.388731274457692,
+        6.498674648089063,
+        0.5527767026081686
+      ],
+      "odometry_minus_truth_xy_m": [
+        0.0014616963435081232,
+        -0.005377780915964081
+      ],
+      "position_error_m": 0.005572888279943578,
+      "odometry_yaw_error_deg": 0.4320813719610185,
+      "tf_global_estimated_xy_m": [
+        9.376641784470541,
+        6.366566870668097
+      ],
+      "amcl_tf_minus_aligned_odometry_xy_m": [
+        -0.013551186330658993,
+        -0.12672999650500127
+      ],
+      "odometry_bracket": {
+        "mode": "exact",
+        "stamps_ns": [
+          39464999120
+        ],
+        "fraction": 0.0
+      },
+      "truth_bracket": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          39449999118,
+          39474999118
+        ],
+        "fraction": 0.60000008
+      }
+    },
+    {
+      "mode": "waypoints",
+      "stamp_ns": 58569998693,
+      "aligned_odometry_xy_yaw": [
+        9.480384061072101,
+        6.494103427681824,
+        0.6618144153260656
+      ],
+      "evaluation_xy_yaw": [
+        9.476375151276299,
+        6.499210415096057,
+        0.6600404789238611
+      ],
+      "odometry_minus_truth_xy_m": [
+        0.00400890979580204,
+        -0.0051069874142326555
+      ],
+      "position_error_m": 0.006492509391599546,
+      "odometry_yaw_error_deg": 0.10163906897093772,
+      "tf_global_estimated_xy_m": [
+        9.399400451814191,
+        6.374344816677753
+      ],
+      "amcl_tf_minus_aligned_odometry_xy_m": [
+        -0.0809836092579097,
+        -0.11975861100407137
+      ],
+      "odometry_bracket": {
+        "mode": "exact",
+        "stamps_ns": [
+          58569998693
+        ],
+        "fraction": 0.0
+      },
+      "truth_bracket": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          58554998691,
+          58589998690
+        ],
+        "fraction": 0.42857149795918564
+      }
+    }
+  ],
+  "phase_summaries": {
+    "cancel_settle": {
+      "count": 65,
+      "position_error_m": {
+        "count": 65,
+        "mean": 0.021973020174610402,
+        "median": 0.021602439573118536,
+        "p95": 0.03668654634559448,
+        "min": 0.0060240769252103985,
+        "max": 0.03980502437019022
+      },
+      "yaw_error_deg": {
+        "count": 65,
+        "mean": 0.2684278199667035,
+        "median": 0.25643289236091565,
+        "p95": 0.5103558213008232,
+        "min": -0.21611952932847212,
+        "max": 0.6053695577978778
+      }
+    },
+    "cancel_test": {
+      "count": 8,
+      "position_error_m": {
+        "count": 8,
+        "mean": 0.02172696510079005,
+        "median": 0.0251331325616569,
+        "p95": 0.03314992982586266,
+        "min": 0.00454762535092857,
+        "max": 0.03533224329131234
+      },
+      "yaw_error_deg": {
+        "count": 8,
+        "mean": 0.258460753755779,
+        "median": 0.29729215325931657,
+        "p95": 0.39974372439331995,
+        "min": -0.09852320843605399,
+        "max": 0.4031555262015463
+      }
+    },
+    "single_goal": {
+      "count": 87,
+      "position_error_m": {
+        "count": 87,
+        "mean": 0.019941482957463574,
+        "median": 0.012660172666275674,
+        "p95": 0.0574352773377195,
+        "min": 0.0009428769572098774,
+        "max": 0.09279587484500608
+      },
+      "yaw_error_deg": {
+        "count": 87,
+        "mean": 0.33876604126189236,
+        "median": 0.3267557593747816,
+        "p95": 0.7561632637713285,
+        "min": -0.5637812682091616,
+        "max": 1.6985833138556703
+      }
+    },
+    "waypoints": {
+      "count": 191,
+      "position_error_m": {
+        "count": 191,
+        "mean": 0.030408367213023913,
+        "median": 0.02493262249821828,
+        "p95": 0.07409856027250034,
+        "min": 0.0007586813402666114,
+        "max": 0.12938840017377248
+      },
+      "yaw_error_deg": {
+        "count": 191,
+        "mean": 0.3002936553840193,
+        "median": 0.28457678694834543,
+        "p95": 0.827981271912543,
+        "min": -1.6298690397425615,
+        "max": 3.039859561872163
+      }
+    }
+  },
+  "score_surfaces": [
+    {
+      "phase": "single_goal",
+      "stamp_ns": 39464999120,
+      "used_beams": 19,
+      "beam_indices": [
+        140,
+        154,
+        168,
+        175,
+        182,
+        189,
+        203,
+        217,
+        231,
+        238,
+        245,
+        273,
+        294,
+        336,
+        364,
+        371,
+        378,
+        385,
+        392
+      ],
+      "estimated_pose_xy_yaw": [
+        9.374026389790815,
+        6.366397567647069,
+        0.566453479632662
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.388731274457692,
+        6.498674648089063,
+        0.5526813620144361
+      ],
+      "estimated_score": 17.415643427096548,
+      "evaluation_score": 17.548693625,
+      "score_surfaces": [
+        {
+          "yaw_mode": "estimated_yaw_fixed",
+          "fixed_yaw_rad": 0.566453479632662,
+          "maximum_score": 17.548693625,
+          "maximum_count": 12,
+          "grid_total": 441,
+          "maximum_region_xy_bounds_m": [
+            [
+              9.174026389790816,
+              6.241397567647069
+            ],
+            [
+              9.574026389790815,
+              6.491397567647069
+            ]
+          ],
+          "maximum_region_relative_to_estimate_m": [
+            [
+              -0.1999999999999993,
+              -0.125
+            ],
+            [
+              0.1999999999999993,
+              0.125
+            ]
+          ],
+          "exact_evaluation_xy_score_at_this_yaw": 17.282593229193097
+        },
+        {
+          "yaw_mode": "evaluation_yaw_sensitivity_only",
+          "fixed_yaw_rad": 0.5526813620144361,
+          "maximum_score": 17.548693625,
+          "maximum_count": 10,
+          "grid_total": 441,
+          "maximum_region_xy_bounds_m": [
+            [
+              9.174026389790816,
+              6.266397567647069
+            ],
+            [
+              9.574026389790815,
+              6.491397567647069
+            ]
+          ],
+          "maximum_region_relative_to_estimate_m": [
+            [
+              -0.1999999999999993,
+              -0.09999999999999964
+            ],
+            [
+              0.1999999999999993,
+              0.125
+            ]
+          ],
+          "exact_evaluation_xy_score_at_this_yaw": 17.548693625
+        }
+      ]
+    },
+    {
+      "phase": "waypoints",
+      "stamp_ns": 58169998702,
+      "used_beams": 20,
+      "beam_indices": [
+        91,
+        98,
+        119,
+        140,
+        147,
+        154,
+        161,
+        168,
+        189,
+        196,
+        238,
+        252,
+        287,
+        315,
+        329,
+        336,
+        357,
+        371,
+        378,
+        385
+      ],
+      "estimated_pose_xy_yaw": [
+        9.400618682638685,
+        6.326623561788413,
+        0.6713148976119074
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.476375151276299,
+        6.499210415096057,
+        0.6596179583114303
+      ],
+      "estimated_score": 12.882120242932544,
+      "evaluation_score": 16.2612761198447,
+      "score_surfaces": [
+        {
+          "yaw_mode": "estimated_yaw_fixed",
+          "fixed_yaw_rad": 0.6713148976119074,
+          "maximum_score": 18.286627302096548,
+          "maximum_count": 3,
+          "grid_total": 441,
+          "maximum_region_xy_bounds_m": [
+            [
+              9.475618682638684,
+              6.301623561788412
+            ],
+            [
+              9.475618682638684,
+              6.351623561788413
+            ]
+          ],
+          "maximum_region_relative_to_estimate_m": [
+            [
+              0.07499999999999929,
+              -0.025000000000000355
+            ],
+            [
+              0.07499999999999929,
+              0.025000000000000355
+            ]
+          ],
+          "exact_evaluation_xy_score_at_this_yaw": 16.937318993297556
+        },
+        {
+          "yaw_mode": "evaluation_yaw_sensitivity_only",
+          "fixed_yaw_rad": 0.6596179583114303,
+          "maximum_score": 17.61197314769705,
+          "maximum_count": 2,
+          "grid_total": 441,
+          "maximum_region_xy_bounds_m": [
+            [
+              9.475618682638684,
+              6.301623561788412
+            ],
+            [
+              9.475618682638684,
+              6.326623561788413
+            ]
+          ],
+          "maximum_region_relative_to_estimate_m": [
+            [
+              0.07499999999999929,
+              -0.025000000000000355
+            ],
+            [
+              0.07499999999999929,
+              0.0
+            ]
+          ],
+          "exact_evaluation_xy_score_at_this_yaw": 16.2612761198447
+        }
+      ]
+    }
+  ],
+  "verification_sha256": "d96866e72869f760a46a1ae8e79360de501607470649d8f15b4e62c43ec6896b"
+}

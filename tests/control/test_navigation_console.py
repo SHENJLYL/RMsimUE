@@ -13,8 +13,9 @@ class NavigationConsoleTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name);self.source=self.root/'assets/maps/rmuc2027/navigation-console';self.source.mkdir(parents=True)
-        self.scene={'kind':'rm_mesh_map','id':'rmuc2027','meshes':[{'id':'floor','collision_asset':'/Game/floor'}],'spawns':[]}
+        self.scene={'kind':'rm_mesh_map','id':'rmuc2027','units':'m','coordinate_system':'ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP','meshes':[{'id':'floor','collision_asset':'/Game/floor'}],'spawns':[{'id':'default','position_m':[5.8,6.4,0.03147864],'yaw_rad':0.}]}
         (self.source/'scene.json').write_text(json.dumps(self.scene))
+        (self.source.parent/'mesh-source.json').write_text(json.dumps({'source_to_sim_translation_m':[0.,0.,0.]}))
         (self.source/'map.pgm').write_bytes(b'P5\n2 2\n255\n'+bytes([0,254,254,0]))
         (self.source/'map.yaml').write_text('image: map.pgm\nresolution: 0.05\norigin: [0,0,0]\n')
         self.spec={'scene_geometry_sha256':config.scene_geometry(self.scene),'raster_sha256':config.digest(self.source/'map.pgm'),'map_metadata':{'map_id':'rmuc2027'}}

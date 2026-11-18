@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "test_command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "-m",
+    "unittest",
+    "tests.control.test_navigation_goal_source",
+    "tests.control.test_navigation_speed",
+    "-v"
+  ],
+  "test_exit_code": 0,
+  "test_output": "test_each_optional_block_can_override_independently (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_each_optional_block_can_override_independently) ... ok\ntest_external_goal_and_localization_survive_boundary_adaptation (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_external_goal_and_localization_survive_boundary_adaptation) ... ok\ntest_older_vehicle_without_optional_blocks_retains_reference_localization (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_older_vehicle_without_optional_blocks_retains_reference_localization) ... ok\ntest_optional_selection_is_a_copy_and_does_not_rewrite_vehicle_source (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_optional_selection_is_a_copy_and_does_not_rewrite_vehicle_source) ... ok\ntest_present_malformed_optional_blocks_fail_with_node_identity (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_present_malformed_optional_blocks_fail_with_node_identity) ... ok\ntest_working_goal_and_localization_values_are_explicit_source_choices (tests.control.test_navigation_goal_source.NavigationGoalSourceTests.test_working_goal_and_localization_values_are_explicit_source_choices) ... ok\ntest_external_vehicle_navigation_yaml_is_source_of_truth (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_external_vehicle_navigation_yaml_is_source_of_truth) ... ok\ntest_historical_legacy_diagnostics_preserved (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_historical_legacy_diagnostics_preserved) ... ok\ntest_original_source_unchanged_and_aim_tuned_original_algorithm (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_original_source_unchanged_and_aim_tuned_original_algorithm) ... ok\ntest_pointlio_filters_follow_the_same_source_yaml (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_pointlio_filters_follow_the_same_source_yaml) ... ok\ntest_sentry_profiles_match_original_controller_and_smoother (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_sentry_profiles_match_original_controller_and_smoother) ... ok\ntest_simulator_source_is_immutable_during_selection (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_simulator_source_is_immutable_during_selection) ... ok\ntest_unsupported_profile_does_not_resolve_arbitrary_files (tests.control.test_navigation_speed.SentryNavigationSourceTests.test_unsupported_profile_does_not_resolve_arbitrary_files) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 2.087s\n\nOK\n",
+  "git_diff_check_exit_code": 0,
+  "git_diff_check_output": "",
+  "files": {
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": "5da76de2d623fc47844eab5e31182719154d5a6bde6fe7e7394ea0746544424b",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/sentry_navigation_source.py": "1c804ae21c56119ac8995414019cb5b60652fc9f8105aa54209cac258212d795",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9",
+    "tests/control/test_navigation_speed.py": "66f84fc26307e0b110416399a64ecf4da0bdb969e65ef110318a5dccd15e0bec",
+    "tests/control/test_navigation_goal_source.py": "f0043a53b0f14585d2849cf70d58e7b3a72aa4bfb0b6521105559b75e2dae8e1"
+  },
+  "previous_effective_xy_goal_tolerance": 0.1,
+  "current_effective_xy_goal_tolerance": 0.05,
+  "prepared_config_unchanged_except_selected_xy_goal": true,
+  "current_amcl_and_scan_match_previous_effective_values": true,
+  "pointlio_tuning_unchanged": true
+}

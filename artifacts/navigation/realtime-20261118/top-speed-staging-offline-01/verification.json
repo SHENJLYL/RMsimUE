@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-18T04:57:47.469167+00:00",
+  "scope": "Six offline physical-lane/staging/phase-isolation contracts; no UE or ROS action was started",
+  "passed": true,
+  "test_return_code": 0,
+  "tests_expected": 6,
+  "powershell_parse_passed": true,
+  "original_check_count": 15,
+  "original_check_names": [
+    "observer_matches_the_requested_session",
+    "fresh_import_lab_native_stack",
+    "source_speed_and_smoother_selected",
+    "synchronized_drive_telemetry_available",
+    "original_nav2_goal_accepted",
+    "actual_speed_sustained_at_source_threshold",
+    "original_planner_generated_route",
+    "cancel_request_accepted",
+    "original_nav2_action_cancelled",
+    "high_speed_cancel_respects_source_derived_bounds",
+    "cancelled_vehicle_remains_stationary",
+    "source_command_reaches_wheel_target_without_second_shaper",
+    "source_command_cap_preserved",
+    "mounted_imu_and_lidar_continued_sampling",
+    "session_and_command_acceptance_preserved"
+  ],
+  "all_original_check_names_preserved": true,
+  "original_threshold_constants_unchanged": true,
+  "source_cancellation_formulas_unchanged": true,
+  "declared_formal_lane": {
+    "start_m": [
+      -8.5,
+      0.0
+    ],
+    "goal_m": [
+      8.5,
+      0.0
+    ],
+    "length_m": 17.0,
+    "swept_radius_m": 0.4676955262170047,
+    "wall_clearance_m": 0.8323044737829957,
+    "boundary_inner_half_extents_m": [
+      9.8,
+      9.8
+    ],
+    "obstacle_clearances": [
+      {
+        "id": "probe_box",
+        "additional_box_padding_clearance_m": 0.2323044737792207
+      },
+      {
+        "id": "tall_box",
+        "additional_box_padding_clearance_m": 0.5323044737715644
+      }
+    ],
+    "clearance_method": "original conservative expanded oriented box and inner-wall test",
+    "source_theoretical_minimum_length_m": 11.2,
+    "approach_velocity_scaling_dist_m": 2.0,
+    "length_before_approach_m": 15.0,
+    "theoretical_length_formula": "threshold^2/(2*source_accel) + threshold*sustained_seconds"
+  },
+  "files": [
+    {
+      "path": "D:\\simulator\\tools\\integration\\probe_navigation_top_speed.py",
+      "sha256": "83febc0ec41178148ba3c14fcad4f3162853fb11e5b51af149b5f845db7f1391"
+    },
+    {
+      "path": "D:\\simulator\\tools\\integration\\Run-NavigationTopSpeed.ps1",
+      "sha256": "4c737d7bdecc0d1baed5b1ab2c4e2ddd9c4ae091d12878e594ecb69ab701bb4d"
+    },
+    {
+      "path": "D:\\simulator\\tests\\control\\test_navigation_top_speed_fixture.py",
+      "sha256": "b6813f4e7d79634aa2d3121a31e98fafd71f05a94c4e4a57ed9f338c5f911c90"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\import_lab\\map.json",
+      "sha256": "99be3156ea9bf792cb6d6dc8a909ebee348595db76811aed18f4d142f5598e86"
+    },
+    {
+      "path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10"
+    },
+    {
+      "path": "D:\\simulator\\assets\\vehicles\\aim_sentry\\drive-profile.json",
+      "sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+    }
+  ],
+  "test_output_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\top-speed-staging-offline-01\\unittest.log",
+  "test_output_sha256": "1fcbb885c52a75ccd938d5797dea5aff0f3d308a6c4a09830db35d20a3304fbf"
+}

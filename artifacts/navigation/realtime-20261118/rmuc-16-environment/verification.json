@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+    "--session",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16",
+    "--seconds",
+    "90"
+  ],
+  "exit_code": 0,
+  "elapsed_wall_s": 134.9081124000004,
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "background_processes_before": [
+    {
+      "ProcessId": 44568,
+      "Name": "UnrealEditor-Cmd.exe",
+      "CreationDate": "/Date(1794977826325)/",
+      "KernelModeTime": 133437500,
+      "UserModeTime": 1702812500,
+      "CommandLine": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe\" \"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\" -run=pythonscript -script=\"D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py\" -FoliagePackage=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen\" -FoliageReport=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-05/verification.json\" -AbsLog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-05/engine.log\" -d3d11 -AllowCommandletRendering -NoShaderWorker -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound "
+    }
+  ],
+  "background_processes_after": [
+    {
+      "ProcessId": 44568,
+      "Name": "UnrealEditor-Cmd.exe",
+      "CreationDate": "/Date(1794977826325)/",
+      "KernelModeTime": 231406250,
+      "UserModeTime": 2780312500,
+      "CommandLine": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe\" \"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\" -run=pythonscript -script=\"D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py\" -FoliagePackage=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen\" -FoliageReport=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-05/verification.json\" -AbsLog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-05/engine.log\" -d3d11 -AllowCommandletRendering -NoShaderWorker -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound "
+    }
+  ],
+  "diagnostic_cloud_capture": false
+}

@@ -43,15 +43,18 @@ private:
     FString MapId,MapHash,MapKind;
     int64 SlowReaderDisconnects=0;
     bool bControl=false,bOperatorBrake=false,bMotorControl=false;
-    bool bStallProbe=false,bStallInjected=false;
+    bool bStallProbe=false,bStallInjected=false,bProfileSensorTiming=false;
+    double ProfileCameraWall=0,ProfileCameraStartSim=0;
+    int64 ProfileCameraCount=0;
     int32 Port=9451,Width=1280,Height=720,SendOffset=0;
     int64 Epoch=0,TickIndex=0,AcceptedSeq=-1,RejectedCommands=0,Images=0;
+    // Generic ROS retains 10Hz RGB; zero disables pixels while preserving TF/calibration.
     double CameraHz=10,HFovDegrees=60,EpochSolverTime=0,LastCommandWall=-1,LastPollWall=0,LastStateWall=0,LastSendProgressWall=0,NextImageSim=0;
     TArray<TSharedPtr<FJsonValue>> SensorMountSamples;
     int64 DroppedSensorMountSamples=0;
     TArray<uint8> Inbound,Outbound;
     TArray<FColor> Pixels;
-    double LastSimTime=0,RealTimeFactor=0;
+    double LastSimTime=0,RealTimeFactor=0,RateWindowWall=0,RateWindowSim=0;
     double SolverTime() const;
     void CloseSocket(FSocket*& Socket);
     void Disconnect(const FString& Reason);

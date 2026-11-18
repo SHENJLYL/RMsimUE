@@ -7,13 +7,15 @@ from rclpy.clock import Clock,ClockType
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
+from nav_msgs.msg import OccupancyGrid
 from lifecycle_msgs.srv import GetState
 from std_srvs.srv import Empty,Trigger
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data,QoSProfile,DurabilityPolicy,ReliabilityPolicy
 from ament_index_python.packages import get_package_prefix
 from .navigation_config import prepare,INTERFACE_NODES,LOCALIZATION_NODES,NAVIGATION_NODES
 from .protocol import identifier
 from .service_poll import ReadOnlyServicePoll
+from .navigation_map_identity import validate_localization_map,map_file_signatures,verify_occupancy_message
 
 PROGRAMS={
  'loam_interface':('loam_interface','loam_interface_node'),
@@ -22,7 +24,7 @@ PROGRAMS={
  'terrain_analysis_ext':('terrain_analysis_ext','terrainAnalysisExt'),
  'pointcloud_to_laserscan':('pointcloud_to_laserscan','pointcloud_to_laserscan_node'),
  'fake_vel_transform':('fake_vel_transform','fake_vel_transform_node'),
- 'map_server':('nav2_map_server','map_server'),'amcl':('nav2_amcl','amcl'),
+ 'map_server':('nav2_map_server','map_server'),'localization_map_server':('nav2_map_server','map_server'),'amcl':('nav2_amcl','amcl'),
  'controller_server':('nav2_controller','controller_server'),'planner_server':('nav2_planner','planner_server'),
  'smoother_server':('nav2_smoother','smoother_server'),'behavior_server':('nav2_behaviors','behavior_server'),
  'bt_navigator':('nav2_bt_navigator','bt_navigator'),'waypoint_follower':('nav2_waypoint_follower','waypoint_follower'),
@@ -39,6 +41,8 @@ class NavigationRunner(Node):
         super().__init__('rmsim_navigation_runner')
         self.robot=identifier(self.declare_parameter('robot_id','aim_sentry').value)
         reference=self.declare_parameter('reference_config','').value;map_yaml=self.declare_parameter('map_yaml','').value
+        self.map_yaml=str(Path(map_yaml).resolve())
+        self.localization_map_yaml=self.declare_parameter('localization_map_yaml','').value
         initial=self.declare_parameter('initial_pose',[.6,-.4,.15]).value;self.initial_pose=initial
         self.runtime=self.declare_parameter('native_runtime','').value
         self.localization_only=self.declare_parameter('localization_only',False).value
@@ -46,7 +50,16 @@ class NavigationRunner(Node):
         self.control_source=self.declare_parameter('control_source','').value
         base=Path(self.declare_parameter('output_directory','artifacts/navigation/live').value)
         self.output=base/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+str(os.getpid()));self.output.mkdir(parents=True,exist_ok=False)
-        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source)
+        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source,self.localization_map_yaml)
+        self.localization_nodes=list(cfg['lifecycle_manager_localization']['ros__parameters']['node_names'])
+        self.map_identity=self.map_metadata.get('localization_map')
+        self.map_seen={'navigation':False,'localization':False} if self.map_identity else {}
+        self.map_fault='';self.next_map_check=0.
+        self.map_signatures=map_file_signatures(self.map_identity) if self.map_identity else {}
+        self.remaps={name:list(values) for name,values in REMAPS.items()}
+        if self.map_identity:
+            binding=self.map_metadata['localization_map_binding']
+            self.remaps.setdefault('amcl',[]).append((binding['source_topic'],binding['target_topic']))
         from .sentry_navigation_source import source_profile
         self.source_identity=source_profile(reference,self.control_profile,self.control_source)[1]
         self.controller_config=cfg['controller_server']['ros__parameters']['FollowPath']
@@ -63,7 +76,26 @@ class NavigationRunner(Node):
         self.create_subscription(String,'/rmsim/'+self.robot+'/state',self.observe,1)
         self.create_subscription(String,'/rmsim/'+self.robot+'/localization',lambda m:setattr(self,'lio',json.loads(m.data)),1)
         self.status=self.create_publisher(String,'/rmsim/'+self.robot+'/navigation',1)
+        if self.map_identity:
+            qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL)
+            self.create_subscription(OccupancyGrid,cfg['map_server']['ros__parameters'].get('topic_name','map'),
+                                     lambda message:self.observe_map('navigation',message),qos)
+            self.create_subscription(OccupancyGrid,self.map_metadata['localization_map_binding']['target_topic'],
+                                     lambda message:self.observe_map('localization',message),qos)
         self.create_timer(.1,self.poll,clock=Clock(clock_type=ClockType.STEADY_TIME))
+
+    def observe_map(self,role,message):
+        try:
+            verify_occupancy_message(message,self.map_identity[role],self.robot+'/map')
+            self.map_seen[role]=True
+        except (ValueError,TypeError,AttributeError) as error:
+            self.map_fault=role+': '+str(error)
+
+    def verify_map_inputs(self):
+        if self.map_identity:
+            current=validate_localization_map(self.map_yaml,self.localization_map_yaml)
+            if current!=self.map_identity:raise ValueError('Map inputs changed after navigation preparation')
+            self.map_signatures=map_file_signatures(self.map_identity)
 
     def observe(self,message):
         value=json.loads(message.data)
@@ -76,6 +108,7 @@ class NavigationRunner(Node):
             try:child.wait(timeout=10)
             except subprocess.TimeoutExpired:child.kill();child.wait(timeout=5)
         self.children={}
+        self.map_seen={role:False for role in self.map_seen}
         self.seeded=False;self.localized=False;self.nav_started=False;self.scan=None;self.pose=None;self.good_poses=0;self.pose_stamp=0
         for future in (self.pending_state,self.pending_update,self.pending_active):
             if future and not future.done():future.cancel()
@@ -85,6 +118,7 @@ class NavigationRunner(Node):
         self.streams=[]
 
     def start(self):
+        self.verify_map_inputs() # Revalidate before every session/epoch reload, not only at construction.
         reference=self.lio.get('reference_frame',self.robot+'/imu_link')
         if not reference.startswith(self.robot+'/') or not reference.endswith('_link'):raise ValueError('Invalid estimator reference frame')
         identifier(reference[len(self.robot)+1:-5])
@@ -93,7 +127,7 @@ class NavigationRunner(Node):
         cfg['loam_interface']['ros__parameters']['align_gravity_initialized_pose']=self.lio.get('reference_parent_frame')==self.robot+'/yaw_link'
         self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.starts+=1
-        names=INTERFACE_NODES+LOCALIZATION_NODES+['lifecycle_manager_localization']
+        names=INTERFACE_NODES+self.localization_nodes+['lifecycle_manager_localization']
         self.start_nodes(names)
 
     def start_nodes(self,names):
@@ -102,12 +136,13 @@ class NavigationRunner(Node):
             path=Path(self.runtime)/(exe+'.exe') if os.name=='nt' else Path(get_package_prefix(package))/'lib'/package/exe
             if not path.is_file():raise RuntimeError('Missing native program '+str(path))
             command=[str(path),'--ros-args','-r','__node:='+name,'--params-file',str(self.params)]
-            for before,after in REMAPS.get(name,[]):command+=['-r',before+':='+after]
+            for before,after in self.remaps.get(name,[]):command+=['-r',before+':='+after]
             stream=(self.output/f'{self.starts:02d}-{name}.log').open('w',encoding='utf-8');self.streams.append(stream)
             options={'creationflags':subprocess.CREATE_NO_WINDOW} if os.name=='nt' else {}
             self.children[name]=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT,**options)
 
     def initialize_pose(self):
+        if self.map_identity and (self.map_fault or not all(self.map_seen.values())):return
         if not self.seeded:
             if not self.scan or not self.amcl_state.service_is_ready():return
             response=self.state_query.poll(self.amcl_state,GetState.Request(),time.monotonic())
@@ -137,7 +172,7 @@ class NavigationRunner(Node):
 
     def poll(self):
         if self.state and self.identity is not None and self.identity!=[self.state.get('session'),self.state.get('epoch')]:
-            self.stop();self.phase='waiting'
+            self.stop();self.phase='waiting';self.map_fault=''
         ready=self.state and self.state.get('connected') and self.state.get('state_fresh') and time.monotonic()-self.received<1 and self.lio and self.lio.get('phase')=='running'
         if ready:
             scene=self.state.get('map',{})
@@ -145,6 +180,14 @@ class NavigationRunner(Node):
                 self.stop();self.phase='map_mismatch';ready=False
             identity=[self.state['session'],self.state['epoch']]
             if self.lio.get('identity')!=identity:ready=False
+            if self.map_identity:
+                if time.monotonic()>=self.next_map_check:
+                    self.next_map_check=time.monotonic()+1.
+                    try:
+                        if map_file_signatures(self.map_identity)!=self.map_signatures:self.verify_map_inputs()
+                    except ValueError as error:self.map_fault=str(error)
+                if self.map_fault:
+                    self.stop();self.phase='localization_map_mismatch';ready=False
         if ready:
             for name,child in self.children.items():
                 if child.poll() is not None:raise RuntimeError('Original navigation process exited: '+name+' '+str(child.returncode))
@@ -155,6 +198,8 @@ class NavigationRunner(Node):
             self.stop();self.phase='waiting'
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
             output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,
+            localization_map=self.map_identity,localization_map_verified=not self.map_identity or (all(self.map_seen.values()) and not self.map_fault),
+            localization_map_topics=self.map_metadata.get('localization_map_binding'),map_input_fault=self.map_fault,
             control_profile=self.control_profile,control_source=self.source_identity,
             navigation_velocity_limit_mps=self.controller_config['v_linear_max'],
             smoother_max_velocity=self.smoother_config['max_velocity'],

@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "scope": "offline aggregation guard checks using completed native rmuc06 evidence and negative in-memory variants; no new runtime or accepted release generated",
+  "created_utc": "2026-11-18T02:47:45.501155+00:00",
+  "checks": [
+    {
+      "name": "rmuc06_all_required_receipt_checks_present_and_passed",
+      "passed": true
+    },
+    {
+      "name": "rmuc06_raw_native_counter_recalculation_passed",
+      "passed": true
+    },
+    {
+      "name": "counter_window_that_ends_before_action_is_rejected",
+      "passed": true
+    },
+    {
+      "name": "one_missing_received_sample_is_rejected_from_raw_log",
+      "passed": true
+    },
+    {
+      "name": "receipt_matches_current_pointlio_inputs",
+      "passed": true
+    },
+    {
+      "name": "receipt_file_hash_bindings_match",
+      "passed": true
+    },
+    {
+      "name": "git_diff_check_clean",
+      "passed": true,
+      "output": ""
+    }
+  ],
+  "raw_counter_checks": [
+    {
+      "name": "raw_native_receipt_counter_schema",
+      "passed": true
+    },
+    {
+      "name": "raw_native_receipt_interval_endpoints_present",
+      "passed": true
+    },
+    {
+      "name": "raw_native_receipt_epoch_monotonic",
+      "passed": true
+    },
+    {
+      "name": "raw_native_receipt_window_covers_full_action",
+      "passed": true,
+      "native_sim_window_s": [
+        22.134999505,
+        57.25499872
+      ],
+      "action_sim_window_s": [
+        25.084999439,
+        56.459998738
+      ]
+    },
+    {
+      "name": "raw_native_receipt_interval_matches_report",
+      "passed": true
+    },
+    {
+      "name": "raw_native_receipt_no_gaps_duplicates_or_backwards",
+      "passed": true,
+      "counter_delta": {
+        "received": 7024,
+        "accepted": 7024,
+        "inferred_missing": 0,
+        "header_gaps": 0,
+        "duplicates": 0,
+        "backwards": 0
+      }
+    },
+    {
+      "name": "raw_native_receipt_all_nominal_samples_received_and_accepted",
+      "passed": true,
+      "expected_samples": 7024
+    },
+    {
+      "name": "raw_native_receipt_preserves_200hz_header_period",
+      "passed": true,
+      "maximum_header_interval_s": 0.005
+    }
+  ],
+  "source_sha256": "560078044ee43961aefadc3342539d512e9be5b88e5b5c9f3598a3a9994c5f6c",
+  "receipt_verification_sha256": "a9fa9cea86dc96cafe840031391a18e48857e48e60a621fdec0d0f206c295447",
+  "full_action_sim_window_s": [
+    25.084999439,
+    56.459998738
+  ]
+}

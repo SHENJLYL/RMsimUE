@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "status": "diagnosis_complete",
+  "native_gate_status": "failed",
+  "scope": "Read-only diagnosis of failed flat-speed-04 formal phase; no raw controller topic was recorded",
+  "trace_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-04\\top-speed\\trace.json",
+  "trace_sha256": "169638ee750610da4d2e2828700ab0e69ed07a82303cd456fe89b5f344baf5fc",
+  "native_verification_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-04\\top-speed\\verification.json",
+  "native_verification_sha256": "afedb9a6dd331f41a52a14c7007927437b25240a8411ad00c84022af88eddc03",
+  "runtime_provenance_sha256": "83d928d46a9c2c80fa02ea1ad105c5c212a6d5e1f4c3f8b441d39dff227a4c41",
+  "runtime_parameter_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-04\\navigation\\20261118T050457Z-44264\\parameters.yaml",
+  "runtime_parameter_sha256": "dad4706ec48aa875e79cdc4c48daf5ec56fa180c622ee5ce2cdc4ddbe70a39d3",
+  "source_before_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10",
+  "controller_cpp_sha256": "b6a0cf23fcd8e135ddb2aaddfe86faae3bfae9b6542bfdd0e73441ea43d22560",
+  "pid_cpp_sha256": "04a7301794fd6e5f127ce1da9054f724326b923abe479b1a91fca11497933c02",
+  "formal_start_stamp": 24.789999446,
+  "formal_sample_counts": {
+    "truth": 298,
+    "commands": 156,
+    "drive": 298,
+    "plans": 22
+  },
+  "raw_controller_topic_recorded": false,
+  "raw_controller_peak_mps": null,
+  "full_plan_geometry_recorded": false,
+  "path_curvature_measurement": null,
+  "post_smoother_command_norm_mps": {
+    "count": 156,
+    "min": 0.0,
+    "median": 2.5812553190851752,
+    "max": 3.1131619202060037
+  },
+  "drive_requested_norm_mps": {
+    "count": 298,
+    "min": 0.0,
+    "median": 2.5812553190851757,
+    "max": 3.113161920206004
+  },
+  "drive_filtered_norm_mps": {
+    "count": 298,
+    "min": 0.0,
+    "median": 2.5812553190851757,
+    "max": 3.113161920206004
+  },
+  "same_tick_requested_filtered_error_max_mps": 0.0,
+  "actual_speed_mps": {
+    "count": 295,
+    "min": 0.024334510729744806,
+    "median": 2.585591935493915,
+    "max": 3.0972900332906517
+  },
+  "plateau_over_3p10": {
+    "count": 56,
+    "first_stamp": 28.694999359,
+    "last_stamp": 31.729999291,
+    "first_actual_position_m": [
+      -2.4788132733414963,
+      -0.12070320927910969,
+      -0.01037175358187632
+    ],
+    "last_actual_position_m": [
+      6.878302982300786,
+      -0.011267034048482543,
+      -0.010610332586308236
+    ],
+    "command_norm_mps": {
+      "count": 56,
+      "min": 3.101158612888838,
+      "median": 3.104999984388795,
+      "max": 3.1131619202060037
+    }
+  },
+  "position_bins": [
+    {
+      "actual_x_interval_m": [
+        -8.5,
+        -7
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 40,
+        "min": 0.0,
+        "median": 0.7800167436436851,
+        "max": 1.5600119212018426
+      },
+      "actual_speed_mps": {
+        "count": 70,
+        "min": 0.024334510729744806,
+        "median": 0.7075735339171156,
+        "max": 1.4301479783354378
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        -7,
+        -5
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 21,
+        "min": 1.6000116219638865,
+        "median": 2.000309475777168,
+        "max": 2.4009386280306804
+      },
+      "actual_speed_mps": {
+        "count": 40,
+        "min": 1.4423400944698246,
+        "median": 1.8797990473746626,
+        "max": 2.27143311554758
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        -5,
+        -3
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 15,
+        "min": 2.4409232452780434,
+        "median": 2.721032511484986,
+        "max": 3.003455562920528
+      },
+      "actual_speed_mps": {
+        "count": 28,
+        "min": 2.295715961600601,
+        "median": 2.5771044181999545,
+        "max": 2.866866632685349
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        -3,
+        -1
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 13,
+        "min": 3.045565293003299,
+        "median": 3.0965703067934043,
+        "max": 3.108748144756603
+      },
+      "actual_speed_mps": {
+        "count": 26,
+        "min": 2.891965654412722,
+        "median": 3.086093883100438,
+        "max": 3.0972900332906517
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        -1,
+        1
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 13,
+        "min": 3.1046138504043377,
+        "median": 3.1049999859534383,
+        "max": 3.1131619202060037
+      },
+      "actual_speed_mps": {
+        "count": 23,
+        "min": 3.0413614332995236,
+        "median": 3.084559153942921,
+        "max": 3.092928410811334
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        1,
+        3
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 13,
+        "min": 3.104992118254157,
+        "median": 3.1049999473605587,
+        "max": 3.1050000540737264
+      },
+      "actual_speed_mps": {
+        "count": 25,
+        "min": 3.08709947952772,
+        "median": 3.0877266147556317,
+        "max": 3.0901236609746072
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        3,
+        5
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 12,
+        "min": 3.104510994534648,
+        "median": 3.1049999692603087,
+        "max": 3.1049999849708696
+      },
+      "actual_speed_mps": {
+        "count": 26,
+        "min": 3.0845686666041434,
+        "median": 3.0868755341325986,
+        "max": 3.089024896961244
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        5,
+        6.5
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 11,
+        "min": 3.104999916442728,
+        "median": 3.1050000505780466,
+        "max": 3.105000086892132
+      },
+      "actual_speed_mps": {
+        "count": 20,
+        "min": 3.0847025599454,
+        "median": 3.0856266307779183,
+        "max": 3.086471024879977
+      }
+    },
+    {
+      "actual_x_interval_m": [
+        6.5,
+        8.5
+      ],
+      "post_smoother_command_norm_mps": {
+        "count": 17,
+        "min": 0.8562130896573159,
+        "median": 2.0549138178773774,
+        "max": 3.1050000505780466
+      },
+      "actual_speed_mps": {
+        "count": 33,
+        "min": 1.2534010165373515,
+        "median": 2.42171977078198,
+        "max": 3.08591135259159
+      }
+    }
+  ],
+  "controller_parameters": {
+    "v_linear_max": 5.0,
+    "translation_kp": 3.0,
+    "translation_ki": 0.1,
+    "translation_kd": 0.3,
+    "lookahead_dist": 2.0,
+    "use_velocity_scaled_lookahead_dist": true,
+    "min_lookahead_dist": 0.5,
+    "max_lookahead_dist": 1.0,
+    "lookahead_time": 1.0,
+    "use_interpolation": true,
+    "approach_velocity_scaling_dist": 2.0,
+    "min_approach_linear_velocity": 0.05
+  },
+  "pid_source_derivation": {
+    "control_dt_s": 0.05,
+    "lookahead_radius_m": 1.0,
+    "integral_internal_clamp": 1.0,
+    "integral_output_is_computed_before_internal_clamp": true,
+    "steady_derivative_term": 0.0,
+    "steady_output_mps": 3.105,
+    "formula": "kp*r + ki*(1 + r*dt), before outer v_linear_max clamp",
+    "distance_needed_for_steady_5mps_before_cap_m": 1.6306156405990018,
+    "source_locations": [
+      "omni_pid_pursuit_controller.cpp:231-253",
+      "omni_pid_pursuit_controller.cpp:363-388",
+      "omni_pid_pursuit_controller.cpp:472-483",
+      "pid.cpp:22-56"
+    ]
+  },
+  "recommendation": "Change only selected source max_lookahead_dist 1.0 to 2.0; preserve source PID, velocity scaling, smoother, acceleration, approach and collision/curvature logic and the same native fixture.",
+  "limits": "The raw unsmoothed controller topic and full plan geometry were not captured; reported raw-PID value is a source-code steady-state derivation, not a measured topic."
+}

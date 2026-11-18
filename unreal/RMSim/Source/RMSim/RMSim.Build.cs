@@ -6,6 +6,6 @@ public class RMSim : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine" });
-        PrivateDependencyModuleNames.AddRange(new[] { "Json", "RenderCore", "RHI", "InputCore", "PhysicsCore", "Chaos", "Sockets", "Landscape" });
+        PrivateDependencyModuleNames.AddRange(new[] { "Json", "RenderCore", "RHI", "InputCore", "PhysicsCore", "Chaos", "Sockets", "Landscape", "Slate", "SlateCore" });
     }
 }

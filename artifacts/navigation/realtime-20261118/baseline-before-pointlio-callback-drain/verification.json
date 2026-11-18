@@ -1,0 +1,60 @@
+{
+  "created_utc": "2026-11-18T02:34:45.109331+00:00",
+  "status": "source_applied_patch_reproduction_passed_native_build_pending",
+  "before": {
+    "ros2_ws/src/point_lio/src/laserMapping.cpp": "1e608fc2b4ee6db5998b932f189ae57156375fc8dcdc556f46bb41f18b85e18b",
+    "third_party/patches/point-lio-native.patch": "09a71b30479a16df5ec54c3c88cf5d57fc0b319c0d450951b054d92827010786"
+  },
+  "scope": "same-thread bounded callback drain only; unchanged Rate(500), estimator math, IMU payloads, source tuning and TF age gate",
+  "executor_reference": "https://api.nav2.org/humble/html/executor_8cpp_source.html",
+  "executor_semantics": "spin_all(max_duration) invokes spin_some_impl(max_duration,true), repolls ready work after each consumed waitset; exits when none remains or steady-clock budget exceeded",
+  "after": {
+    "ros2_ws/src/point_lio/src/laserMapping.cpp": "c128f1426896f08a15ed695b032123a5aa791f54d7e009cce081e123732bd9af",
+    "third_party/patches/point-lio-native.patch": "baf573e3fbbc1ffff7565aa50f93b20ef07a2500b97ef866d7a7fa779202ab1a"
+  },
+  "patch_commands": [
+    {
+      "command": [
+        "git",
+        "init",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "D:\\simulator\\third_party\\patches\\point-lio-native.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "D:\\simulator\\third_party\\patches\\point-lio-native.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "patch_reproduced_text": {
+    "CMakeLists.txt": true,
+    "include/ivox/ivox3d.h": true,
+    "include/ivox/ivox3d_node.hpp": true,
+    "package.xml": true,
+    "src/laserMapping.cpp": true,
+    "src/li_initialization.cpp": true,
+    "src/parameters.cpp": true,
+    "src/parameters.h": true,
+    "src/preprocess.h": true
+  },
+  "native_verification": "Parent will build lio-build05 and measure callback receipt gaps, output age and navigation readiness. No native pass claimed here."
+}

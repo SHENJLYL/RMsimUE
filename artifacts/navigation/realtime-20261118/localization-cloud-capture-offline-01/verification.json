@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "created_utc": "2026-11-18T04:37:43.577972+00:00",
+  "scope": "Offline raw-cloud codec/selection/storage-budget tests; no ROS/UE launch or received native clouds claimed",
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "checks": [
+    {
+      "name": "six_raw_cloud_capture_tests_passed",
+      "passed": true
+    },
+    {
+      "name": "original_fourteen_check_call_asts_unchanged",
+      "passed": true,
+      "count": 14
+    },
+    {
+      "name": "capture_flag_defaults_off",
+      "passed": true
+    },
+    {
+      "name": "python_sources_compile",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "tools/integration/probe_high_speed_diagnostics.py": "893a748984bc679b38e33b83bac8065f45d8546ac73e043ed8013bf545e5f3ed",
+    "tools/integration/localization_cloud_capture.py": "be60384bc94a1e7e956fe5878b9654d6599e202d0ec7f296ab5749afbbe44186",
+    "tools/integration/Run-HighSpeedDiagnostics.ps1": "44f4431079706c3c5010c2f2f93a09cb4364f6dcc78f57239a16e32a9814973a",
+    "tests/control/test_localization_cloud_capture.py": "6ab1aa74b1c4a9cbaaf9f2b1f38a9a02eb361378e67c51102d4f75d167034f90"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-11-18T02:51:27.268769+00:00",
+  "status": "documentation_reviewed",
+  "scope": [
+    "docs/guides/navigation-console.md",
+    "docs/guides/native-navigation.md",
+    ".codestable/architecture/ARCHITECTURE.md"
+  ],
+  "before": {
+    "docs/guides/navigation-console.md": "2515ff2539500cbcbdaa432347082a01a31bfe0f186cc14fe5f8293bed6b70b9",
+    "docs/guides/native-navigation.md": "d0e34385426a9e1d3461af255cd310699608e6830d1d7418e00d3a73b47079fa",
+    ".codestable/architecture/ARCHITECTURE.md": "f87749f3cc45f00ecde8e1048bf0e11bd80ae2f5d36d67f8d5a4bbc9c418c1f7"
+  },
+  "after": {
+    "docs/guides/navigation-console.md": "edfbac83a4ffdd2eb9fd0d5c59cad45866af8c314fb73e859c5f9d9cc197ca5e",
+    "docs/guides/native-navigation.md": "3b8d4ad3ea1f2c342e8e73dc10641d4d465e730be3215d7498699a17a832e904",
+    ".codestable/architecture/ARCHITECTURE.md": "506c58875d716454e79ce31d431f2d5868b7893340f124e100b59cf78d8a4892"
+  },
+  "runtime_evidence": "artifacts/navigation/realtime-20261118/rmuc-06",
+  "qualification": "Only the three assigned documentation files changed. Final publication, GUI and compatibility acceptance remain under parent task.",
+  "reviewed_utc": "2026-11-18T02:52:56.581307+00:00",
+  "checks": {
+    "git_diff_check_exit_code": 0,
+    "utf8_and_markdown_fences": "passed",
+    "documented_action_values_match_original_json": [
+      "0.193394",
+      "0.211837",
+      "0.095606"
+    ],
+    "action_check_count": 14,
+    "clock_check_count": 32,
+    "receipt_check_count": 19
+  }
+}

@@ -206,9 +206,12 @@ class BridgeNode(Node):
             diagnostic.update(session=self.state['session'], epoch=self.state['epoch'], tick=self.state['tick'],
                               sim_time_ns=self.state['sim_time_ns'], command=self.state['command'])
             diagnostic.update(simulation_rate=self.state.get('simulation_rate'),fixed_step_s=self.state.get('fixed_step_s'))
+            for key in ('clock_source', 'rendering', 'drive'):
+                if key in self.state:
+                    diagnostic[key] = self.state[key]
             if 'map' in self.state:diagnostic['map']=self.state['map']
             camera=self.state['camera']
-            diagnostic['camera_config']={key:camera.get(key) for key in ('width','height','hfov_rad','nominal_hz','observer_hfov_rad')}
+            diagnostic['camera_config']={key:camera.get(key) for key in ('width','height','hfov_rad','nominal_hz','observer_hfov_rad','capture_enabled')}
             if self.lk is not None:diagnostic['motors']=self.state.get('motors')
             if 'aim' in self.state:diagnostic['aim']=self.state['aim']
             if 'imu' in self.state:

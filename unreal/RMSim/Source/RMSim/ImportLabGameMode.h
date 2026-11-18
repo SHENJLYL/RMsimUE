@@ -46,9 +46,11 @@ public:
     AImportLabGameMode();
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
+    virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     FString GetControlHudText() const;
     bool GetGunWorldPoint(FVector& OutPoint) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
+    bool IsGunReticleVisible() const { return bSightMode && !bFreeLook; }
 private:
     UPROPERTY() AVehicleRig* Rig = nullptr;
     UPROPERTY() ATrainingRange* Training = nullptr;
@@ -75,6 +77,9 @@ private:
     double SteeringCommandPhaseSeconds=-1;
     double MovingCommandPhaseSeconds=-1,MovingTargetResponseSeconds=-1,MovingActualResponseSeconds=-1;
     double FrameAverageSeconds=0,LastFrameWallSeconds=0;
+    double RealTimeStepSeconds=0,NextPhysicsFrameWall=-1;
+    FDelegateHandle RealTimePaceHandle;
+    void PacePhysicsFrame();
     FVector2D GyroPreviousFiltered=FVector2D::ZeroVector;
     bool bGyroPreviousValid=false;
     void TickGyroProbe(double DeltaSeconds);

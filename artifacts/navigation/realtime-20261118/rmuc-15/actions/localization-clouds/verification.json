@@ -1,0 +1,848 @@
+{
+  "status": "completed",
+  "acceptance_scope": "optional raw localization diagnostic; exact matches and missing samples are reported separately",
+  "schema": "rmsim_raw_pointcloud2_endpoints_v1",
+  "helper_sha256": "be60384bc94a1e7e956fe5878b9654d6599e202d0ec7f296ab5749afbbe44186",
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime-provenance.json",
+  "runtime_provenance_sha256": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+  "trace_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\trace.json",
+  "trace_sha256": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0",
+  "probe_script_sha256": "893a748984bc679b38e33b83bac8065f45d8546ac73e043ed8013bf545e5f3ed",
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "source_control_config_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9",
+  "scene": {
+    "scene": "rmuc2027",
+    "scene_file": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\scene.json",
+    "map_yaml": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+    "initial_pose": [
+      6.4,
+      6.0,
+      0.15
+    ],
+    "view": {
+      "x": 7.5,
+      "y": 6.4,
+      "scale": 65.0
+    },
+    "scene_sha256": "264de7b1b2e629580fa1dd54efc48b2f1b14cefbeacaab917349ed80e61d5f75",
+    "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+  },
+  "localization_map": {
+    "schema": "rmsim_localization_map_identity_v1",
+    "map_id": "rmuc2027",
+    "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+    "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+    "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+    "source_to_sim_translation_m": [
+      -7.152952372635468e-06,
+      -1.6243433957331543,
+      1.6403436655816601
+    ],
+    "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+    "units": "m",
+    "source_role": "offline_geometry_candidate",
+    "source_status": "generated_not_native_validated",
+    "navigation": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.pgm",
+      "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\metadata.json",
+      "metadata_sha256": "3f3eb288c8aeee8e025eb3624b6d59f730638126ff6fbc3e41a9e8c0fb9b01f6",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "eced113f0c5facce2e5f6db507784ba89b633dba0c27a412a2f0615673de4f87"
+    },
+    "localization": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json",
+      "metadata_sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "1e48bb4f55a8aff4524613534011f2a0e493d8385030e7d1d2562e0110d1f1ae"
+    }
+  },
+  "capture": {
+    "enabled": true,
+    "max_samples_per_topic": 12,
+    "max_buffer_bytes": 33554432,
+    "retained_buffer_bytes": 753760,
+    "peak_buffer_bytes": 830464,
+    "retained_records": 32,
+    "pinned_records": 8,
+    "endpoint_snapshots": 2,
+    "counters": {
+      "/terrain_map_ext": {
+        "received": 353,
+        "retained": 353,
+        "invalid": 0,
+        "oversize": 0,
+        "evicted_ring": 341,
+        "evicted_budget": 0,
+        "dropped_pinned_budget": 0
+      },
+      "/registered_scan": {
+        "received": 354,
+        "retained": 354,
+        "invalid": 0,
+        "oversize": 0,
+        "evicted_ring": 342,
+        "evicted_budget": 0,
+        "dropped_pinned_budget": 0
+      }
+    },
+    "memory_scope": "Raw buffers in rings and pinned endpoint snapshots; middleware-owned message memory is external"
+  },
+  "snapshots": [
+    {
+      "mode": "single_goal",
+      "context": {
+        "received_monotonic_s": 48872.6000678,
+        "latest_clock_ns": 35739999201,
+        "bridge_sim_time_ns": 35729999201,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3"
+      },
+      "targets": {
+        "amcl": 35069999217,
+        "obstacle_scan": 35669999204
+      },
+      "topics": {
+        "/terrain_map_ext": {
+          "amcl": {
+            "requested_stamp_ns": 35069999217,
+            "exact_found": true,
+            "exact": {
+              "record_id": 178,
+              "stamp_ns": 35069999217,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.6298477000018465,
+              "header_age_to_latest_clock_ns": 669999984
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "obstacle_scan": {
+            "requested_stamp_ns": 35669999204,
+            "exact_found": true,
+            "exact": {
+              "record_id": 190,
+              "stamp_ns": 35669999204,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.04962320000049658,
+              "header_age_to_latest_clock_ns": 69999997
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "latest_received": {
+            "record_id": 190,
+            "stamp_ns": 35669999204,
+            "stamp_delta_ns": null,
+            "received_age_s": 0.04962320000049658,
+            "header_age_to_latest_clock_ns": 69999997
+          }
+        },
+        "/registered_scan": {
+          "amcl": {
+            "requested_stamp_ns": 35069999217,
+            "exact_found": true,
+            "exact": {
+              "record_id": 177,
+              "stamp_ns": 35069999217,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.6431069999962347,
+              "header_age_to_latest_clock_ns": 669999984
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "obstacle_scan": {
+            "requested_stamp_ns": 35669999204,
+            "exact_found": true,
+            "exact": {
+              "record_id": 189,
+              "stamp_ns": 35669999204,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.06279619999986608,
+              "header_age_to_latest_clock_ns": 69999997
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "latest_received": {
+            "record_id": 189,
+            "stamp_ns": 35669999204,
+            "stamp_delta_ns": null,
+            "received_age_s": 0.06279619999986608,
+            "header_age_to_latest_clock_ns": 69999997
+          }
+        }
+      }
+    },
+    {
+      "mode": "waypoints",
+      "context": {
+        "received_monotonic_s": 48891.7236894,
+        "latest_clock_ns": 54839998774,
+        "bridge_sim_time_ns": 54839998774,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded"
+      },
+      "targets": {
+        "amcl": 54274998789,
+        "obstacle_scan": 54774998777
+      },
+      "topics": {
+        "/terrain_map_ext": {
+          "amcl": {
+            "requested_stamp_ns": 54274998789,
+            "exact_found": true,
+            "exact": {
+              "record_id": 562,
+              "stamp_ns": 54274998789,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.5617742000031285,
+              "header_age_to_latest_clock_ns": 564999985
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "obstacle_scan": {
+            "requested_stamp_ns": 54774998777,
+            "exact_found": true,
+            "exact": {
+              "record_id": 572,
+              "stamp_ns": 54774998777,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.06068470000172965,
+              "header_age_to_latest_clock_ns": 64999997
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "latest_received": {
+            "record_id": 572,
+            "stamp_ns": 54774998777,
+            "stamp_delta_ns": null,
+            "received_age_s": 0.06068470000172965,
+            "header_age_to_latest_clock_ns": 64999997
+          }
+        },
+        "/registered_scan": {
+          "amcl": {
+            "requested_stamp_ns": 54274998789,
+            "exact_found": true,
+            "exact": {
+              "record_id": 561,
+              "stamp_ns": 54274998789,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.5737924999993993,
+              "header_age_to_latest_clock_ns": 564999985
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "obstacle_scan": {
+            "requested_stamp_ns": 54774998777,
+            "exact_found": true,
+            "exact": {
+              "record_id": 571,
+              "stamp_ns": 54774998777,
+              "stamp_delta_ns": 0,
+              "received_age_s": 0.07296499999938533,
+              "header_age_to_latest_clock_ns": 64999997
+            },
+            "nearest_when_exact_missing": null,
+            "missing_reason": null
+          },
+          "latest_received": {
+            "record_id": 571,
+            "stamp_ns": 54774998777,
+            "stamp_delta_ns": null,
+            "received_age_s": 0.07296499999938533,
+            "header_age_to_latest_clock_ns": 64999997
+          }
+        }
+      }
+    }
+  ],
+  "records": [
+    {
+      "height": 1,
+      "width": 180,
+      "point_step": 48,
+      "row_step": 8640,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 35,
+          "nanosec": 69999217
+        },
+        "stamp_ns": 35069999217
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_x",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_y",
+          "offset": 20,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_z",
+          "offset": 24,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 32,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "curvature",
+          "offset": 36,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 8640,
+      "topic": "/registered_scan",
+      "context": {
+        "received_monotonic_s": 48871.9569608,
+        "latest_clock_ns": 35099999215,
+        "bridge_sim_time_ns": 35099999215,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3"
+      },
+      "record_id": 177,
+      "data_file": "pointcloud2-000177.bin",
+      "data_sha256": "2452694e6712d2806dc0b13bf1f1f470e18915d2a619e067b70e0e6ea38cc04f"
+    },
+    {
+      "height": 1,
+      "width": 743,
+      "point_step": 32,
+      "row_step": 23776,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 35,
+          "nanosec": 69999217
+        },
+        "stamp_ns": 35069999217
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 23776,
+      "topic": "/terrain_map_ext",
+      "context": {
+        "received_monotonic_s": 48871.9702201,
+        "latest_clock_ns": 35124999215,
+        "bridge_sim_time_ns": 35124999215,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3"
+      },
+      "record_id": 178,
+      "data_file": "pointcloud2-000178.bin",
+      "data_sha256": "0d8a0c1154f3a6af39491c0954bcd52a9e4ca799e6291a9bc1c47d4a8f6ed536"
+    },
+    {
+      "height": 1,
+      "width": 149,
+      "point_step": 48,
+      "row_step": 7152,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 35,
+          "nanosec": 669999204
+        },
+        "stamp_ns": 35669999204
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_x",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_y",
+          "offset": 20,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_z",
+          "offset": 24,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 32,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "curvature",
+          "offset": 36,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 7152,
+      "topic": "/registered_scan",
+      "context": {
+        "received_monotonic_s": 48872.5372716,
+        "latest_clock_ns": 35684999202,
+        "bridge_sim_time_ns": 35684999202,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3"
+      },
+      "record_id": 189,
+      "data_file": "pointcloud2-000189.bin",
+      "data_sha256": "5682a848567666204c1acda769f7ab0353fc93ecb77c9374ae2a48fa3b30f789"
+    },
+    {
+      "height": 1,
+      "width": 689,
+      "point_step": 32,
+      "row_step": 22048,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 35,
+          "nanosec": 669999204
+        },
+        "stamp_ns": 35669999204
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 22048,
+      "topic": "/terrain_map_ext",
+      "context": {
+        "received_monotonic_s": 48872.5504446,
+        "latest_clock_ns": 35704999202,
+        "bridge_sim_time_ns": 35704999202,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3"
+      },
+      "record_id": 190,
+      "data_file": "pointcloud2-000190.bin",
+      "data_sha256": "4b30139ec429032e86fc04cdba4e79dd46141d09c8d33a09a3a65de289820d78"
+    },
+    {
+      "height": 1,
+      "width": 177,
+      "point_step": 48,
+      "row_step": 8496,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 54,
+          "nanosec": 274998789
+        },
+        "stamp_ns": 54274998789
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_x",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_y",
+          "offset": 20,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_z",
+          "offset": 24,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 32,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "curvature",
+          "offset": 36,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 8496,
+      "topic": "/registered_scan",
+      "context": {
+        "received_monotonic_s": 48891.1498969,
+        "latest_clock_ns": 54294998786,
+        "bridge_sim_time_ns": 54294998786,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded"
+      },
+      "record_id": 561,
+      "data_file": "pointcloud2-000561.bin",
+      "data_sha256": "3bf5bf2e7ff2503498e2827d165e0adb0f559bf2bea0eb6d5209c33a7afbdb7c"
+    },
+    {
+      "height": 1,
+      "width": 713,
+      "point_step": 32,
+      "row_step": 22816,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 54,
+          "nanosec": 274998789
+        },
+        "stamp_ns": 54274998789
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 22816,
+      "topic": "/terrain_map_ext",
+      "context": {
+        "received_monotonic_s": 48891.1619152,
+        "latest_clock_ns": 54294998786,
+        "bridge_sim_time_ns": 54294998786,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded"
+      },
+      "record_id": 562,
+      "data_file": "pointcloud2-000562.bin",
+      "data_sha256": "6a783d334f59d010b7f23887dcbda4a2b2df8818e889439c0b90742d2310d608"
+    },
+    {
+      "height": 1,
+      "width": 182,
+      "point_step": 48,
+      "row_step": 8736,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 54,
+          "nanosec": 774998777
+        },
+        "stamp_ns": 54774998777
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_x",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_y",
+          "offset": 20,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "normal_z",
+          "offset": 24,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 32,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "curvature",
+          "offset": 36,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 8736,
+      "topic": "/registered_scan",
+      "context": {
+        "received_monotonic_s": 48891.6507244,
+        "latest_clock_ns": 54794998775,
+        "bridge_sim_time_ns": 54794998775,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded"
+      },
+      "record_id": 571,
+      "data_file": "pointcloud2-000571.bin",
+      "data_sha256": "00e2495362f0e6ac2cf42e49b0dcc770dcf7a2c5eaf9e4c5af7f72855ff29c09"
+    },
+    {
+      "height": 1,
+      "width": 772,
+      "point_step": 32,
+      "row_step": 24704,
+      "header": {
+        "frame_id": "aim_sentry/odom",
+        "stamp": {
+          "sec": 54,
+          "nanosec": 774998777
+        },
+        "stamp_ns": 54774998777
+      },
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "z",
+          "offset": 8,
+          "datatype": 7,
+          "count": 1
+        },
+        {
+          "name": "intensity",
+          "offset": 16,
+          "datatype": 7,
+          "count": 1
+        }
+      ],
+      "is_bigendian": false,
+      "is_dense": true,
+      "data_bytes": 24704,
+      "topic": "/terrain_map_ext",
+      "context": {
+        "received_monotonic_s": 48891.6630047,
+        "latest_clock_ns": 54814998775,
+        "bridge_sim_time_ns": 54814998775,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded"
+      },
+      "record_id": 572,
+      "data_file": "pointcloud2-000572.bin",
+      "data_sha256": "6684851a746e8e813b3b2397b884ed60f54c2458016cded835713ffbd8911195"
+    }
+  ],
+  "scope": "Unmodified PointCloud2 data bytes and layout; no values are published or fed into localization/control"
+}

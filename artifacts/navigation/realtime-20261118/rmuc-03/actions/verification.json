@@ -1,0 +1,106 @@
+{
+  "status": "failed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "B5991A984236B4D9FD00E4B7E96B5A27",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": false,
+      "status": 6,
+      "error_m": 1.6896508024258619,
+      "position": [
+        8.322037904248946,
+        7.658022791799596,
+        0.061043438414723886
+      ]
+    }
+  ],
+  "script_sha256": "613e23080bd0e2c304c8d17c8b3ac8dd78eeb6655bbb3b70b591be076b6762dc",
+  "command": [
+    "E:\\simulator-cache\\environments\\rm-simulator-ros2-humble-9257817147700612234\\envs\\default\\python.exe",
+    "D:\\simulator\\tools\\integration\\probe_high_speed_diagnostics.py",
+    "--output",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-03\\actions"
+  ],
+  "trace_scope": "full bridge diagnostic and command receipt samples; derived velocities/accelerations are independent finite-difference observations",
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "B5991A984236B4D9FD00E4B7E96B5A27",
+      0
+    ],
+    "pids": {
+      "loam_interface": 40448,
+      "sensor_scan_generation": 40516,
+      "terrain_analysis": 5160,
+      "terrain_analysis_ext": 32820,
+      "pointcloud_to_laserscan": 13424,
+      "fake_vel_transform": 39056,
+      "map_server": 40944,
+      "amcl": 36436,
+      "lifecycle_manager_localization": 17452,
+      "controller_server": 2132,
+      "planner_server": 37176,
+      "smoother_server": 34032,
+      "behavior_server": 38484,
+      "bt_navigator": 39128,
+      "waypoint_follower": 25012,
+      "velocity_smoother": 30976,
+      "lifecycle_manager_navigation": 2932
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-03\\navigation\\20261118T020027Z-39084",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 0,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    8.322037904248946,
+    7.658022791799596,
+    0.061043438414723886
+  ],
+  "error": "AssertionError('single_goal_actual_arrival')"
+}

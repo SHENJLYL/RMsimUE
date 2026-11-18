@@ -1,0 +1,259 @@
+{
+  "status": "passed",
+  "scope": "owned-process-only experiment; production sources unchanged",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-13-cpuset",
+  "script_sha256": "b80aa411ce4fc531c6cde811483aa664ed3cfc856d636a43699379b0a7c1795e",
+  "process_policy": "preferred high-performance CPU Sets selected from current native topology",
+  "no_hard_affinity_priority_or_machine_power_plan_changes": true,
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+    "--session",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-13-cpuset",
+    "--seconds",
+    "90"
+  ],
+  "coordinator_pid": 40688,
+  "started_utc": "2026-11-18T03:57:12.598149+00:00",
+  "cpu_topology": [
+    {
+      "id": 256,
+      "group": 0,
+      "logical": 0,
+      "core": 0,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 257,
+      "group": 0,
+      "logical": 1,
+      "core": 1,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 258,
+      "group": 0,
+      "logical": 2,
+      "core": 2,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 259,
+      "group": 0,
+      "logical": 3,
+      "core": 3,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 260,
+      "group": 0,
+      "logical": 4,
+      "core": 4,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 261,
+      "group": 0,
+      "logical": 5,
+      "core": 5,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 262,
+      "group": 0,
+      "logical": 6,
+      "core": 6,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 263,
+      "group": 0,
+      "logical": 7,
+      "core": 7,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 264,
+      "group": 0,
+      "logical": 8,
+      "core": 8,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 265,
+      "group": 0,
+      "logical": 9,
+      "core": 9,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 266,
+      "group": 0,
+      "logical": 10,
+      "core": 10,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 267,
+      "group": 0,
+      "logical": 11,
+      "core": 11,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 268,
+      "group": 0,
+      "logical": 12,
+      "core": 12,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 269,
+      "group": 0,
+      "logical": 13,
+      "core": 13,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 270,
+      "group": 0,
+      "logical": 14,
+      "core": 14,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 271,
+      "group": 0,
+      "logical": 15,
+      "core": 15,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 272,
+      "group": 0,
+      "logical": 16,
+      "core": 16,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 273,
+      "group": 0,
+      "logical": 17,
+      "core": 17,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 274,
+      "group": 0,
+      "logical": 18,
+      "core": 18,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 275,
+      "group": 0,
+      "logical": 19,
+      "core": 19,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 276,
+      "group": 0,
+      "logical": 20,
+      "core": 20,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 277,
+      "group": 0,
+      "logical": 21,
+      "core": 21,
+      "efficiency_class": 0,
+      "flags": 0
+    },
+    {
+      "id": 278,
+      "group": 0,
+      "logical": 22,
+      "core": 22,
+      "efficiency_class": 1,
+      "flags": 0
+    },
+    {
+      "id": 279,
+      "group": 0,
+      "logical": 23,
+      "core": 23,
+      "efficiency_class": 1,
+      "flags": 0
+    }
+  ],
+  "cpu_sets_before": [],
+  "cpu_sets_after": [
+    256,
+    257,
+    266,
+    267,
+    268,
+    269,
+    278,
+    279
+  ],
+  "ue_pid": 3716,
+  "owned_process": {
+    "ProcessId": 3716,
+    "ParentProcessId": 41008,
+    "CommandLine": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe D:\\simulator\\unreal\\RMSim\\RMSim.uproject /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode -game -RenderOffScreen -unattended -ResX=640 -ResY=360 -ProfileSensorTiming -VerifyLidarQueries -RMSimViewportHz=60.0 -SimRealTimePace -NoSplash -NoSound -ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005 -RosControl -RosAimControl -RosImu -RosLidar -LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json -ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json -SimStepSeconds=0.005 -RosCameraWidth=320 -RosCameraHeight=240 -RosCameraHz=0.0 -RosPort=9451 -MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json -MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-13-cpuset\\scene\\scene.json -abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-13-cpuset\\runtime.log",
+    "ExecutablePath": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "CreationDate": "/Date(1794974236335)/"
+  },
+  "policy_before": {
+    "version": 1,
+    "control_mask": 0,
+    "state_mask": 0
+  },
+  "policy_after": {
+    "version": 1,
+    "control_mask": 0,
+    "state_mask": 0
+  },
+  "applied_monotonic_s": 46127.8864077,
+  "clock_state_at_apply": {
+    "phase": "waiting_for_warmup",
+    "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-13-cpuset",
+    "observer_started_monotonic_s": 46125.9452356,
+    "observer_started_utc": "2026-11-18T03:57:15.141819+00:00",
+    "updated_monotonic_s": 46125.9454636,
+    "updated_utc": "2026-11-18T03:57:15.142044+00:00",
+    "requested_wall_seconds": 90.0,
+    "warmup_seconds": 10.0
+  },
+  "runtime_provenance_sha256": "ea9a23d34b2396cd6f638be113c5480f1cbf50f0801672f482a0da6811e6ff3c",
+  "exit_code": 0,
+  "native_status": "passed",
+  "clock": "passed",
+  "actions": "passed",
+  "precision": "failed",
+  "finished_utc": "2026-11-18T03:59:26.851832+00:00"
+}

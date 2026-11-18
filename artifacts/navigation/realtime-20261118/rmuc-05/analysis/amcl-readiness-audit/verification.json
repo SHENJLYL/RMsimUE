@@ -1,0 +1,199 @@
+{
+  "status": "failed",
+  "scope": "completed rmuc05 native navigation startup; post-run log and source-path diagnosis",
+  "created_utc": "2026-11-18T02:48:46.393997+00:00",
+  "observed_failure": "Navigation did not become ready within the console 180-second startup deadline",
+  "navigation_phase": "localizing",
+  "localization_candidate": false,
+  "last_estimated_pose": {
+    "frame": "aim_sentry/map",
+    "x": 6.163856698122334,
+    "y": 5.951296706555219,
+    "q": [
+      0.0,
+      0.0,
+      0.03866194454046647,
+      0.9992523475300671
+    ],
+    "stamp_ns": 3764999918
+  },
+  "last_clock_ns": 167349996259,
+  "runtime_provenance_sha256": "28dfe3342cc6f871c92b748428bbdccb35e527b40df556968dbf155b6901f53a",
+  "module_sha256": "b94f7fceb9888a3683ea8b63007c445ae46946f112ee57324ce8149490c03778",
+  "evidence": [
+    {
+      "role": "rmuc-04_scan_health",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\navigation\\20261118T021344Z-33952\\01-sensor_scan_generation.log",
+      "sha256": "fe08b14fb95f7d02c69afedee104989923e612049dbcf04e84a3e4660183b344"
+    },
+    {
+      "role": "rmuc-04_scan_filter",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\navigation\\20261118T021344Z-33952\\01-pointcloud_to_laserscan.log",
+      "sha256": "ff065b70144b4c3a21ca8def2cc8fef67d6fe26ec6d467b02031d9908ddb1a8e"
+    },
+    {
+      "role": "rmuc-04_amcl",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\navigation\\20261118T021344Z-33952\\01-amcl.log",
+      "sha256": "d53de3ce36a3eddad4d5b4f5750b488823e397a90e8e1c3b94b0d2283842d3f2"
+    },
+    {
+      "role": "rmuc-04_parameters",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\navigation\\20261118T021344Z-33952\\parameters.yaml",
+      "sha256": "368a8de2646539af0057b9302d96693a4a222fa1d662bbb08bdf9340784da181"
+    },
+    {
+      "role": "rmuc-04_navigation_status",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\navigation\\20261118T021344Z-33952\\status.json",
+      "sha256": "8cb7b53d8a7661479c136f426fec9969f40b642de9cb78a5b60e4d0ce6328aa2"
+    },
+    {
+      "role": "rmuc-05_scan_health",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\navigation\\20261118T022636Z-39984\\01-sensor_scan_generation.log",
+      "sha256": "3d6e66326db56958449e38be297649abd9f57914aa412db87db3ca32f473a1bd"
+    },
+    {
+      "role": "rmuc-05_scan_filter",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\navigation\\20261118T022636Z-39984\\01-pointcloud_to_laserscan.log",
+      "sha256": "b06c8dd112e2211862a327ee7d1647294064e72cc9eda90fe6b61d84c4660e31"
+    },
+    {
+      "role": "rmuc-05_amcl",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\navigation\\20261118T022636Z-39984\\01-amcl.log",
+      "sha256": "d1780bbac93f71185b23a5f8a5f8192e3809a866a0c9b90896b0c9f6c7c58135"
+    },
+    {
+      "role": "rmuc-05_parameters",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\navigation\\20261118T022636Z-39984\\parameters.yaml",
+      "sha256": "f2251eb6e79e62c7ab24dc66ff4b57b84ff183844a272eff0653a58f49da933f"
+    },
+    {
+      "role": "rmuc-05_navigation_status",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\navigation\\20261118T022636Z-39984\\status.json",
+      "sha256": "548f74500b6b5a65e87c920b0f2cb7bf2c4d62e591c59a708b4c3daaeb6eb2c6"
+    },
+    {
+      "role": "failed_session_status.json",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\status.json",
+      "sha256": "089def0dfc7749e56842fd3e2e823fba379c7e3b5214782f948b1216fdfc0ed1"
+    },
+    {
+      "role": "failed_session_failure-trace.txt",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\failure-trace.txt",
+      "sha256": "aa8a4d2fcb92bfea6edd8c19467fc99185c18d419a2f2de2d1a7abdd9104f3b1"
+    },
+    {
+      "role": "failed_session_runtime-provenance.json",
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\runtime-provenance.json",
+      "sha256": "28dfe3342cc6f871c92b748428bbdccb35e527b40df556968dbf155b6901f53a"
+    }
+  ],
+  "comparative_metrics": {
+    "rmuc-04": {
+      "scan_health_records": 63,
+      "first": {
+        "odom": 20,
+        "cloud": 20,
+        "paired": 20,
+        "transformed": 20,
+        "now_s": 4.689999895,
+        "odom_stamp_s": 4.619999898,
+        "delay_s": 0.06999999700000004
+      },
+      "last": {
+        "odom": 1880,
+        "cloud": 1880,
+        "paired": 1880,
+        "transformed": 1880,
+        "now_s": 190.689995738,
+        "odom_stamp_s": 190.62499574,
+        "delay_s": 0.06499999799999046
+      },
+      "odom_delay_min_s": 0.054999996999995915,
+      "odom_delay_max_s": 0.10999999600000265,
+      "odom_delay_median_s": 0.07499999699999904,
+      "delay_over_point5_records": 0,
+      "all_odom_cloud_pair_transform_counts_equal": true,
+      "nomotion_request_log_count": 10,
+      "scan_filter_drop_log_count": 0,
+      "fake_vel_transform_parameters": {
+        "use_sim_time": true,
+        "odom_topic": "odometry",
+        "robot_base_frame": "aim_sentry/base_link",
+        "fake_robot_base_frame": "aim_sentry/navigation_frame",
+        "input_cmd_vel_topic": "cmd_vel_nav2_result",
+        "output_cmd_vel_topic": "/aim_sentry/cmd_vel",
+        "cmd_spin_topic": "cmd_spin",
+        "init_spin_speed": 0.0,
+        "translation_scale": 1.0,
+        "planar_navigation_frames": true,
+        "stabilized_base_frame": "aim_sentry/base_stabilized"
+      }
+    },
+    "rmuc-05": {
+      "scan_health_records": 55,
+      "first": {
+        "odom": 6,
+        "cloud": 6,
+        "paired": 6,
+        "transformed": 6,
+        "now_s": 4.679999895,
+        "odom_stamp_s": 4.064999911,
+        "delay_s": 0.6149999839999998
+      },
+      "last": {
+        "odom": 1626,
+        "cloud": 1626,
+        "paired": 1626,
+        "transformed": 1626,
+        "now_s": 166.724996273,
+        "odom_stamp_s": 166.06999629,
+        "delay_s": 0.654999982999982
+      },
+      "odom_delay_min_s": 0.6149999839999998,
+      "odom_delay_max_s": 0.689999983000007,
+      "odom_delay_median_s": 0.6599999839999953,
+      "delay_over_point5_records": 55,
+      "all_odom_cloud_pair_transform_counts_equal": true,
+      "nomotion_request_log_count": 300,
+      "scan_filter_drop_log_count": 63,
+      "fake_vel_transform_parameters": {
+        "use_sim_time": true,
+        "odom_topic": "odometry",
+        "robot_base_frame": "aim_sentry/base_link",
+        "fake_robot_base_frame": "aim_sentry/navigation_frame",
+        "input_cmd_vel_topic": "cmd_vel_nav2_result",
+        "output_cmd_vel_topic": "/aim_sentry/cmd_vel",
+        "cmd_spin_topic": "cmd_spin",
+        "init_spin_speed": 0.0,
+        "translation_scale": 1.0,
+        "planar_navigation_frames": true,
+        "stabilized_base_frame": "aim_sentry/base_stabilized"
+      }
+    }
+  },
+  "source_guard": {
+    "path": "ros2_ws/src/fake_vel_transform/src/fake_vel_transform.cpp",
+    "callback": "odometryCallback",
+    "default_max_odom_age_s": 0.5,
+    "behavior": "Age above the threshold returns before publishing the base_stabilized transform; command freshness remains guarded."
+  },
+  "diagnosis": "Estimated odometry and paired point clouds continued at 10Hz with about 0.66s age; the age gate prevented current base_stabilized TF publication, the scan transform filter queued/dropped input, and AMCL received no usable new scan despite 300 no-motion requests.",
+  "followup_scope": "The later same-thread bounded Point-LIO callback drain and common loopback transport were applied together; their combined native validation is recorded separately in rmuc06.",
+  "followup_evidence": [
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-06\\actions\\verification.json",
+      "sha256": "b47d29d66f05613baa5651d709812e698fa1f5dae9ab6e95ebc9a62e250687a0",
+      "status": "passed"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-06\\clock\\verification.json",
+      "sha256": "b4d1f90b024363f3a55a6e87b4f00e5f10b8d035bb580069b15129d0c0bb9c14",
+      "status": "passed"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-06\\imu-receipts\\verification.json",
+      "sha256": "a9fa9cea86dc96cafe840031391a18e48857e48e60a621fdec0d0f206c295447",
+      "status": "passed"
+    }
+  ]
+}

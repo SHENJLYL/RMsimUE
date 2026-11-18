@@ -4,12 +4,13 @@ from pathlib import Path
 import yaml
 from .protocol import identifier
 from .sentry_navigation_source import source_profile
+from .navigation_map_identity import validate_localization_map
 
 LOCALIZATION_NODES=['map_server','amcl']
 NAVIGATION_NODES=['controller_server','planner_server','smoother_server','behavior_server','bt_navigator','waypoint_follower','velocity_smoother']
 INTERFACE_NODES=['loam_interface','sensor_scan_generation','terrain_analysis','terrain_analysis_ext','pointcloud_to_laserscan','fake_vel_transform']
 
-def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',control_source=''):
+def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',control_source='',localization_map_yaml=''):
     identifier(robot);reference=Path(reference);map_yaml=Path(map_yaml).resolve()
     source=yaml.safe_load(reference.read_text(encoding='utf-8'))
     selected=INTERFACE_NODES+LOCALIZATION_NODES+NAVIGATION_NODES+['local_costmap','global_costmap']
@@ -39,8 +40,8 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
     get('map_server').update(yaml_filename=str(map_yaml),frame_id=world)
     get('controller_server').pop('progress_checker_plugins',None)
     get('controller_server')['progress_checker_plugin']='progress_checker' # Humble1.1.20 uses singular.
-    get('controller_server')['general_goal_checker'].update(xy_goal_tolerance=.10)
     if control_profile=='legacy':
+        get('controller_server')['general_goal_checker'].update(xy_goal_tolerance=.10)
         # Stable historical diagnostics only. The user console uses the actual sentry
         # simulation profile, including the native curvature/approach limits.
         get('controller_server')['FollowPath'].update(v_linear_max=.35,min_lookahead_dist=.25,lookahead_dist=.4)
@@ -58,9 +59,23 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
         layer=params['intensity_voxel_layer']
         for name in layer['observation_sources'].split():
             layer[name]['topic']='/'+name;layer[name]['sensor_frame']=robot+'/lidar_link'
-    # Explicit initial localization is a prior; no simulator truth is consulted here.
-    for name,nodes in [('lifecycle_manager_localization',LOCALIZATION_NODES),('lifecycle_manager_navigation',NAVIGATION_NODES)]:
-        cfg[name]={'ros__parameters':{'use_sim_time':True,'autostart':True,'node_names':nodes,'bond_timeout':4.0}}
     metadata=json.loads((map_yaml.parent/'metadata.json').read_text(encoding='utf-8-sig'))
     if 'source_md5' not in metadata:raise ValueError('Re-export the map with source identity metadata.')
+    localization_nodes=list(LOCALIZATION_NODES)
+    if localization_map_yaml:
+        identity=validate_localization_map(map_yaml,localization_map_yaml)
+        source_topic=get('amcl').get('map_topic','map')
+        if not isinstance(source_topic,str) or not source_topic:
+            raise ValueError('Source AMCL map_topic must be a nonempty ROS topic')
+        target_topic='localization_map'
+        if get('map_server').get('topic_name','map').lstrip('/')==target_topic:
+            raise ValueError('Navigation and localization map publishers require distinct topics')
+        cfg['localization_map_server']=copy.deepcopy(cfg['map_server'])
+        get('localization_map_server').update(yaml_filename=identity['localization']['yaml_path'],topic_name=target_topic)
+        localization_nodes=['map_server','localization_map_server','amcl']
+        metadata['localization_map']=identity
+        metadata['localization_map_binding']={'source_topic':source_topic,'target_topic':target_topic}
+    # Explicit initial localization is a prior; no simulator truth is consulted here.
+    for name,nodes in [('lifecycle_manager_localization',localization_nodes),('lifecycle_manager_navigation',NAVIGATION_NODES)]:
+        cfg[name]={'ros__parameters':{'use_sim_time':True,'autostart':True,'node_names':nodes,'bond_timeout':4.0}}
     return cfg,metadata

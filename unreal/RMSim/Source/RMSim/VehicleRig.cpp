@@ -212,6 +212,7 @@ bool AVehicleRig::AddVisuals(const FObject& Link, USceneComponent* Parent, FStri
         Visual->SetMobility(EComponentMobility::Movable);
         Visual->SetupAttachment(Parent);
         Visual->SetStaticMesh(Mesh);
+        Visual->SetGenerateOverlapEvents(false);
         Visual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         Pose.SetScale3D(Scale);
         Visual->SetRelativeTransform(Pose);
@@ -541,6 +542,7 @@ bool AVehicleRig::LoadMeshRig(const FString& Filename, FString& Error)
             UStaticMeshComponent* Visual = NewObject<UStaticMeshComponent>(this);
             Visual->SetMobility(EComponentMobility::Movable);
             Visual->SetupAttachment(Link); Visual->SetStaticMesh(Mesh);
+            Visual->SetGenerateOverlapEvents(false);
             Visual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             AddInstanceComponent(Visual); Visual->RegisterComponent();
             VisualMeshes.Add(Visual);
@@ -612,6 +614,8 @@ void AVehicleRig::EnableArticulatedSensorQueries()
     for(auto* Body:ContactBodies)if(IsValid(Body))Body->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Ignore);
     for(auto* Visual:VisualMeshes)if(IsValid(Visual))
     {
+        // Ray queries still see this joint surface; overlap events have no consumer.
+        Visual->SetGenerateOverlapEvents(false);
         Visual->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         Visual->SetCollisionResponseToAllChannels(ECR_Ignore);
         Visual->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Block);

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "scope": "Offline clock and native-scene-counter acceptance logic; game engine source recorded awaiting parent native build/UI verification",
+  "tests_run": 13,
+  "failures": 0,
+  "errors": 0,
+  "files": {
+    "tools/integration/measure_console_clock.py": "68c55fed54cbf76b19a1b26446052d7a2f928f49186d94ec91d73077490140c8",
+    "tests/control/test_console_clock.py": "735a3989677e97bede1a8afb68aa3e2d4e6db8268f74d49c30bfc3eb53427b68",
+    "unreal/RMSim/Source/RMSim/RMSimGameEngine.h": "f4555b439d0ce0f00d4caee723516f3a8b0abe981d956d0998169e9d162636a7",
+    "unreal/RMSim/Source/RMSim/RMSimGameEngine.cpp": "8657a497cb26c4115a03809d6ea9b88c5a5f5a34b6c233d743240da97f3b682e",
+    "unreal/RMSim/Config/DefaultEngine.ini": "271266d7f5400e63e1c87e4a2e83aaa0df87fef265d7c73a0181003f61d3088c"
+  },
+  "engine_api_review": {
+    "game_engine_virtual": "Engine/Classes/Engine/GameEngine.h:CreateGameViewportWidget",
+    "construction_order": "Engine/Private/GameEngine.cpp:CreateGameViewport calls widget override before CreateViewport",
+    "persistent_target": "Engine/Private/Slate/SceneViewport.cpp constructor caches !ShouldRenderDirectly; normal separate target allocates one buffered frame",
+    "ui_coverage": "Not yet run; scene Draw rate is distinct from display scanout/retention"
+  }
+}

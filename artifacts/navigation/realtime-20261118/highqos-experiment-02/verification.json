@@ -1,0 +1,54 @@
+{
+  "status": "failed",
+  "scope": "owned-process-only experiment; production sources unchanged",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+  "script_sha256": "fb19fc337e47c5d801c72e4bf0478690a05be7e717a8f9af2d01c714384fa49b",
+  "process_policy": "explicit HighQoS and honor existing timer-resolution requests",
+  "no_affinity_priority_or_machine_power_plan_changes": true,
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+    "--session",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+    "--seconds",
+    "90"
+  ],
+  "coordinator_pid": 39300,
+  "started_utc": "2026-11-18T03:50:35.543109+00:00",
+  "ue_pid": 3716,
+  "owned_process": {
+    "ProcessId": 3716,
+    "ParentProcessId": 43660,
+    "CommandLine": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe D:\\simulator\\unreal\\RMSim\\RMSim.uproject /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode -game -RenderOffScreen -unattended -ResX=640 -ResY=360 -ProfileSensorTiming -VerifyLidarQueries -RMSimViewportHz=60.0 -SimRealTimePace -NoSplash -NoSound -ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005 -RosControl -RosAimControl -RosImu -RosLidar -LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json -ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json -SimStepSeconds=0.005 -RosCameraWidth=320 -RosCameraHeight=240 -RosCameraHz=0.0 -RosPort=9451 -MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json -MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos\\scene\\scene.json -abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos\\runtime.log",
+    "ExecutablePath": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "CreationDate": "/Date(1794973840367)/"
+  },
+  "policy_before": {
+    "version": 1,
+    "control_mask": 0,
+    "state_mask": 0
+  },
+  "policy_after": {
+    "version": 1,
+    "control_mask": 5,
+    "state_mask": 0
+  },
+  "applied_monotonic_s": 45732.2880251,
+  "clock_state_at_apply": {
+    "phase": "waiting_for_warmup",
+    "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+    "observer_started_monotonic_s": 45729.7025618,
+    "observer_started_utc": "2026-11-18T03:50:38.899148+00:00",
+    "updated_monotonic_s": 45729.7029513,
+    "updated_utc": "2026-11-18T03:50:38.899533+00:00",
+    "requested_wall_seconds": 90.0,
+    "warmup_seconds": 10.0
+  },
+  "runtime_provenance_sha256": "21043e6f3c36aaa9e2cabf4c9cd94006f82fc2e76f7ef30dd2e2769742bfc095",
+  "exit_code": 2,
+  "native_status": "failed",
+  "clock": "failed",
+  "actions": "passed",
+  "precision": "failed",
+  "finished_utc": "2026-11-18T03:52:46.549553+00:00"
+}

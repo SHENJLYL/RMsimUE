@@ -1,0 +1,128 @@
+{
+  "status": "failed",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+  "events": [
+    {
+      "name": "console",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\environment\\Start-NavigationConsole.ps1",
+        "-Scene",
+        "rmuc2027",
+        "-NoRviz",
+        "-Offscreen",
+        "-PaceRealTime",
+        "-ControlProfile",
+        "simulation",
+        "-VerifyLidarQueries",
+        "-ProfileSensorTiming",
+        "-ProfileFrames",
+        "0",
+        "-OutputDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos"
+      ],
+      "pid": 25464,
+      "started_monotonic_s": 45726.4622778
+    },
+    {
+      "name": "clock",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\measure_console_clock.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+        "--output",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos\\clock",
+        "--seconds",
+        "90.0",
+        "--ready-timeout-seconds",
+        "240.0"
+      ],
+      "pid": 17564,
+      "started_monotonic_s": 45729.5817317
+    },
+    {
+      "name": "actions",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "& 'D:\\simulator\\tools\\environment\\run-env.ps1' -Command @('powershell','-NoProfile','-File','D:\\simulator\\tools\\integration\\Run-HighSpeedDiagnostics.ps1','-OutputDirectory','D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos\\actions')"
+      ],
+      "pid": 42092,
+      "started_monotonic_s": 45764.7063734
+    }
+  ],
+  "script_sha256": "5fb8928588dccf3b9173f66d87b449be664cb2c5a2465acbea95846167e5c21f",
+  "keep_session_requested": false,
+  "cleanup": [
+    {
+      "name": "actions",
+      "pid": 42092,
+      "status": "already_exited",
+      "exit_code": 0
+    },
+    {
+      "name": "clock",
+      "pid": 17564,
+      "status": "already_exited",
+      "exit_code": 2
+    },
+    {
+      "name": "console",
+      "status": "owned_stop_requested",
+      "exit_code": 0
+    }
+  ],
+  "cleanup_errors": [],
+  "clock_at_action_launch": {
+    "phase": "measuring",
+    "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos",
+    "observer_started_monotonic_s": 45729.7025618,
+    "observer_started_utc": "2026-11-18T03:50:38.899148+00:00",
+    "updated_monotonic_s": 45764.6639318,
+    "updated_utc": "2026-11-18T03:51:13.860517+00:00",
+    "requested_wall_seconds": 90.0,
+    "session_identity": [
+      "9DDA29114A379D466CC36CB2F2296BF0",
+      0
+    ],
+    "window_start_monotonic_s": 45764.4132126,
+    "window_end_monotonic_s": 45854.4132126,
+    "window_start_sim_time_s": 20.954999532000002
+  },
+  "result_statuses": {
+    "clock": "failed",
+    "actions": "passed"
+  },
+  "action_interval": {
+    "valid": true,
+    "samples": 1581,
+    "session_identity": [
+      "9DDA29114A379D466CC36CB2F2296BF0",
+      0
+    ],
+    "start_monotonic_s": 45769.4044261,
+    "end_monotonic_s": 45805.0589106,
+    "start_sim_time_s": 25.939999420000003,
+    "end_sim_time_s": 61.60499862300001,
+    "phases": [
+      "cancel_settle",
+      "cancel_test",
+      "single_goal",
+      "waiting",
+      "waypoints"
+    ]
+  },
+  "complete_action_covered_by_clock": true,
+  "stop_request_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-12-highqos\\stop.request",
+  "kept_session": false,
+  "exit_codes": {
+    "console": 0,
+    "clock": 2,
+    "actions": 0
+  },
+  "finished_monotonic_s": 45857.3287365
+}

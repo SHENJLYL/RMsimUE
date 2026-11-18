@@ -1,0 +1,42 @@
+{
+  "status": "camera_scope_documentation_reviewed",
+  "updated_utc": "2026-11-18T03:15:30.104689+00:00",
+  "scope": [
+    "docs/guides/navigation-console.md",
+    "docs/guides/native-navigation.md",
+    ".codestable/architecture/ARCHITECTURE.md"
+  ],
+  "before": {
+    "docs/guides/navigation-console.md": "64873eacc831e5eb432c5bd7e466386d4a424aec91edd5831f394a0c18d1cc78",
+    "docs/guides/native-navigation.md": "0c2058674c7982bdd47c39377f3174cfca47e8ffbd680872f6c2543ef52a9845",
+    ".codestable/architecture/ARCHITECTURE.md": "9677fe8a65c5288fe5d64db2078e531e76f33e29c303b1a5ac7868c6bc7b5331"
+  },
+  "after": {
+    "docs/guides/navigation-console.md": "7c76e8a5314ab6fd0064bdaa95e1eaa888013a26f5b6e5e97b67d932aecabcfe",
+    "docs/guides/native-navigation.md": "7e5823e890306ff38eec1fa932744d6c04b01cd2be2ae80cd10771b4f1af27db",
+    ".codestable/architecture/ARCHITECTURE.md": "6b8b90bd12dcacdf5b968cfff1d835d4cd0ffa78a5423fbe3588b43d09378115"
+  },
+  "git_diff_check_exit_code": 0,
+  "source_contract": {
+    "navigation_camera_hz_default": 0,
+    "enabled_rate_range_hz": [
+      1,
+      60
+    ],
+    "navigation_resolution": [
+      320,
+      240
+    ],
+    "generic_ros_default_hz": 10,
+    "viewport_hz": 60,
+    "lidar_rays_per_second": 200000,
+    "imu_hz": 200,
+    "zero_rate_metadata_and_tf": "retained; confirmed by source owner"
+  },
+  "historical_failed_evidence": {
+    "path": "artifacts\\navigation\\realtime-20261118\\rmuc-07\\clock\\verification.json",
+    "sha256": "5233d58b71facc79c88fa13786b4df3ceb0107007f81cb220005504c1ec6bc9f",
+    "status": "failed"
+  },
+  "native_acceptance": "Default-RGB-off core/top-speed/compatibility/GUI regression pending parent results; enabled-RGB real-time acceptance remains separate."
+}

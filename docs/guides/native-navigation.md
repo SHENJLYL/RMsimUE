@@ -1,12 +1,10 @@
-# 原生哨兵导航
+# 原生 sentry 导航
 
-日常使用可双击 **Play-Navigation.cmd**：包含RViz选点/连续航点、sentry偏航跟随和云台安装Mid-360。[图形操作指南](navigation-console.md)。本页四终端入口保留为固定安装传感器/原导航诊断方式。
+日常使用 **Play-Navigation.cmd**，启动默认 RMUC2027、原生 ROS 桥、Point-LIO、AMCL/Nav2 与 RViz。选点、航点、取消、云台跟随和 Mid-360 的操作见[导航控制台指南](navigation-console.md)。当前工作分支的真实结果与验收状态见[当前进度](../progress/current.md)和[本轮变更](../changes/2026-11-18-navigation-realtime.md)。
 
-Windows当前已验证原Point-LIO、原地形/扫描节点、AMCL、Theta*和Omni PID：平地绕障、RMUC波浪往返、导航中断线重连、目标取消以及平地实际R复位恢复。最新验收为两轮RMUC各14项与平地17项，汇总在 `artifacts/navigation/reconnect-tf-20261117/release-summary.json`。完整自主视觉/决策、多车、全场路线和Ubuntu继续分项验收。
+## 构建与启动
 
-## 构建和启动
-
-从项目根目录准备原节点与sidecar：
+在项目根目录准备原节点与 sidecar：
 
 ```powershell
 & .\tools\environment\Build-PointLio.cmd
@@ -14,7 +12,64 @@ Windows当前已验证原Point-LIO、原地形/扫描节点、AMCL、Theta*和Om
 & .\tools\environment\run-env.ps1 -Command @('powershell','-NoProfile','-File','D:/simulator/tools/environment/Build-RosBridge.ps1')
 ```
 
-关闭手动预览，分别在四个终端运行默认平地样例：
+`Play-Navigation.cmd import_lab` 选择原平地测试场。关闭 RViz 或运行 `Stop-Navigation.cmd` 结束本次拥有的进程。原生桥改动后须重新安装到 `ros2_ws/install_bridge`；Point-LIO 和导航库分别使用各自构建入口。
+
+使用另一套 sentry_ws 配置：
+
+```powershell
+& .\tools\environment\Start-NavigationConsole.ps1 -ControlProfile simulation -NavigationSource 'D:/new_vehicle/sentry_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml'
+```
+
+默认源是 `ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml`，原始下载副本在 `third_party/sentry_nav_original`。源文件决定原控制器、平滑器、规划/避障、AMCL、扫描转换和支持的 Point-LIO 参数。当前前向上限5 m/s与AIM手动模式一致，导航源保留0.8 m/s²平移加速和3 m/s²减速。当前实际源码、运动结果和上限须分别查看，不把参数上限记成实测峰值。
+
+Point-LIO监督器一次读取、校验并冻结源YAML原始字节，参数生成、状态和session/epoch重启共同使用该快照。当前 `common.imu_qos_depth=128`；允许1–4096，未提供时为原默认5。原500Hz循环使用有1ms预算的回调排空，估计公式保持原源实现。
+
+## 时钟、场景与传感器
+
+默认导航使用真实Chaos5ms固定步长和单调墙钟节拍，保留完整物理步。当前进程在创建物理场景前覆盖硬子步上限；全局手动设置仍为1/240s。原LK电机环等显式1ms入口继续按各自配置运行。
+
+物理/IMU200Hz、场景Draw目标60Hz、Mid-360 200k射线/仿真秒与10Hz扫描分别计数。Windows混合核心平台的性能CPU Sets和UE核心预算按实际可用集合匹配，继承限制和系统策略有独立保留路径；`-CpuPolicy system`选择系统策略。
+
+导航默认 `-CameraHz 0`，关闭未使用的RGB采集与读回，保留CameraInfo和TF。需要RGB时使用 `-CameraHz 10` 等显式频率。RGB开启版本的实时性单独验收。当前标准速度报告包括90秒或更长窗口、每秒移动的10秒滚动窗、真实Draw计数和全部传感器无丢样检查；实际可见窗口另做GUI记录。
+
+ROS IMU按SI单位发布。源饱和阈值按 `satu_acc_source × 9.81 / acc_norm_source` 换算，当前simulation已为 `acc_norm=9.81`、`satu_acc=30.0`。外部YAML依其实际字段换算，源协方差保持。挂载外参和物理采样来自车辆传感器包。
+
+## Windows通信与地图身份
+
+控制台在ROS context创建前验证包内 `fastdds-loopback-udp.xml`，允许接口限定127.0.0.1。桥、Point-LIO、导航监督器、原节点和RViz继承同一会话环境。该会话使用经检查XML界定本机通信边界；所有环境修改仅传给拥有的子进程。
+
+导航链为原Point-LIO → loam_interface → sensor_scan_generation → terrain_analysis/ext → pointcloud_to_laserscan → AMCL/原Nav2。map→odom来自AMCL，局部位姿来自估计，真值只用于独立评价。
+
+RMUC包可声明独立几何定位图，原规划地图保持。正常启动先校验包内声明和源几何，缺失派生栅格/表面来源文件可按固定配方重建。运行中核对两路实际OccupancyGrid、frame、分辨率、原点与内容；输入变更会报告身份错误。详见控制台指南中的重建入口。
+
+## 重建、取消与恢复
+
+断线、session或epoch变化会停止旧导航进程，丢弃旧目标并重建定位。实际R复位使仿真时间重新开始，Point-LIO重建局部地图。安装TF查询采用零等待；变换尚未到达时丢弃当前观测，等待后续真实样本。
+
+历史恢复测试入口：
+
+```powershell
+& .\tools\unreal\Test-Navigation.ps1 -RecoverSession -RoundTrip
+& .\tools\unreal\Test-Navigation.ps1 -InteractiveReset
+```
+
+恢复夹具只操作自己启动的bridge与已核对的UE窗口。2026-11-17的两轮RMUC恢复及平地实际R记录在 `artifacts/navigation/reconnect-tf-20261117/release-summary.json`；后续组合的覆盖范围按当前结果另记。
+
+## 诊断与验证入口
+
+`tools/integration/run_navigation_realtime_acceptance.py` 将原Nav2单点、完整航点与取消放进同一90秒测量窗口，保留原14项动作检查。`--capture-localization-clouds` 是默认关闭的有界原始点云诊断；正式默认入口性能验收保持关闭。`Run-NavigationTopSpeed.ps1` 使用真实地图、原action、实际速度持续窗口和源制动曲线验证高速取消，准备阶段与正式测速独立记录。
+
+离线测试入口：
+
+```powershell
+& .\tools\environment\run-env.ps1 -Command @('python','tools/integration/run_offline_tests.py','--output','artifacts/navigation/offline-new-run')
+```
+
+每次使用新的输出目录，保留旧失败。最终汇总核验当前源码/模块/配置、动作与时钟的完整覆盖、CPU策略、传感器接收、串行激光对照、GUI和兼容回归；未完成的门禁继续报告失败。
+
+## 历史固定安装诊断
+
+下列入口保留历史0.35m/s配置，适用于固定安装诊断：
 
 ```powershell
 & .\tools\unreal\Start-PreparedVehicle.ps1 -EngineRoot 'E:/simulator-tools/UE_5.8' -MapFile 'D:/simulator/assets/maps/import_lab/map.json' -RosControl -RosImu -RosLidar -SimStepSeconds 0.001
@@ -23,34 +78,6 @@ Windows当前已验证原Point-LIO、原地形/扫描节点、AMCL、Theta*和Om
 & .\tools\environment\Start-Navigation.ps1
 ```
 
-定位与节点激活后，在另一个终端发送位置目标：
+节点激活后可用 `Send-NavigationGoal.ps1 -X 5.5 -Y 1.0` 发送目标。该路径按显式1ms物理步长运行，其墙钟倍率独立记录。当前高速度可视化导航使用前述统一控制台入口。
 
-```powershell
-& .\tools\environment\Send-NavigationGoal.ps1 -X 5.5 -Y 1.0
-```
-
-上述公开包装的独立整套操作验收仍待补充；本轮真实验收通过Test-Navigation的已安装ros2 run入口完成。速度上限0.35m/s、实际车体0.52m包络，固定1ms物理步长可能慢于墙钟。目标到达按独立实际位置检查，当前门限0.25m。
-
-## Windows本机传输
-
-已安装的 `rmsim_bridge navigation` 入口默认使用包内 `config/fastdds-loopback-udp.xml`。配置仅允许127.0.0.1 UDP，严格校验后才创建ROS context，缺失/非法配置立即停止。实际模式、接口和哈希发布在navigation状态中。
-
-Humble的ROS_LOCALHOST_ONLY=1会额外加入SHM；此导航进程改由XML白名单承担本机范围，避免已复现的重启后消息交付中断。设置仅影响导航监督器和其子进程，桥、Point-LIO、其他测试及系统环境保持原配置。没有新增防火墙许可。Ubuntu默认原模式，尚无原生Ubuntu验收。
-
-`RMSIM_NAV_TRANSPORT=default` 是故障对照入口，保留旧传输行为；`loopback_udp` 显式选择当前本机配置。配置校验拒绝其他接口、内建传输、SHM、额外结构及冲突环境覆盖。完整栈的真实场景验证优先于小型接口夹具。
-
-## 坐标、地图和复位
-
-处理链：原Point-LIO → loam_interface → sensor_scan_generation → terrain_analysis/ext → pointcloud_to_laserscan → AMCL/原Nav2插件。Point-LIO参考IMU安装点，代价地图观测原点使用LiDAR frame。map→odom来自AMCL，odom→base来自估计；评测真值保持独立。
-
-默认初值[0.6,-0.4,0.15]带非零0.25/0.25/0.09协方差。RMUC专项使用其专用初值、候选栅格和出生点。metadata的地图id/kind/source_md5必须匹配实际UE场景，错图拒绝启动。RMUC候选图已覆盖当前波浪路线，其他区域继续扩展验证。
-
-断线/新session/epoch变化会停止自有导航进程、清理旧目标并重建定位。用户通过实际R复位后，仿真时钟重新开始，原Point-LIO重新建立局部地图。真实传感器尚未提供安装TF时，适配器跳过当前观测，后续样本重试，避免停顿仿真时钟下同步等待阻塞。
-
-## 复测入口
-
-`tools/unreal/Test-Navigation.ps1 -RecoverSession` 注入自有bridge断线，验证停车、重新定位、目标不重放及后续导航；`-RoundTrip` 增加返程。`-InteractiveReset` 打开可见测试窗口并等待一次实际R输入。每次使用全新的EvidenceDirectory；不要与手动预览并行。
-
-`tools/integration/Invoke-NavigationResetInput.ps1` 仅接受证据已请求复位、项目命令行匹配的自有RMSim PID，并要求目标处于前台才发送一次R；焦点校验失败时不发送输入。真实ROS epoch与定位恢复由另一侧独立检查。
-
-证据会记录UE/profile/rig、导航DLL及安装Python文件哈希，完整日志/截图/有界链路时序留本地。`tools/integration/summarize_navigation_recovery.py` 检查结果集合和当前文件一致性。原生适配补丁在third_party/patches，源副本、工作包和验证产物分目录保存。
+源码补丁保存在 `third_party/patches`，固定原始副本、来源与精简结果分别保存。原始日志、截图、稠密轨迹和大型派生资产留本地。Windows结果与原生Ubuntu验收分开记录，完整自主决策、多车与权威联机继续按长期目标推进。

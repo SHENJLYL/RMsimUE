@@ -1,8 +1,7 @@
 diff --git a/point_lio/CMakeLists.txt b/point_lio/CMakeLists.txt
-index d0b7eea..53a8bb0 100644
 --- a/point_lio/CMakeLists.txt
 +++ b/point_lio/CMakeLists.txt
-@@ -5,17 +5,18 @@ if(NOT CMAKE_BUILD_TYPE)
+@@ -5,17 +5,18 @@
    set(CMAKE_BUILD_TYPE Release)
  endif()
  
@@ -26,7 +25,7 @@ index d0b7eea..53a8bb0 100644
  
  if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
    include(ProcessorCount)
-@@ -41,31 +42,21 @@ endif()
+@@ -41,31 +42,21 @@
  # Find packages
  find_package(ament_cmake REQUIRED)
  find_package(rclcpp REQUIRED)
@@ -60,7 +59,7 @@ index d0b7eea..53a8bb0 100644
  )
  
  link_directories(
-@@ -85,19 +76,16 @@ add_executable(pointlio_mapping
+@@ -85,19 +76,16 @@
  
  ament_target_dependencies(pointlio_mapping
    rclcpp
@@ -81,7 +80,7 @@ index d0b7eea..53a8bb0 100644
  
  # Install the executable
  install(TARGETS
-@@ -113,11 +101,9 @@ install(
+@@ -113,11 +101,9 @@
  # Export dependencies
  ament_export_dependencies(
    rclcpp
@@ -94,7 +93,6 @@ index d0b7eea..53a8bb0 100644
    tf2_ros
    livox_ros_driver2
 diff --git a/point_lio/include/ivox/ivox3d.h b/point_lio/include/ivox/ivox3d.h
-index 12d99f5..a07e0be 100644
 --- a/point_lio/include/ivox/ivox3d.h
 +++ b/point_lio/include/ivox/ivox3d.h
 @@ -5,7 +5,6 @@
@@ -106,10 +104,9 @@ index 12d99f5..a07e0be 100644
  #include <list>
  #include <thread>
 diff --git a/point_lio/include/ivox/ivox3d_node.hpp b/point_lio/include/ivox/ivox3d_node.hpp
-index 71f8de1..8a09305 100644
 --- a/point_lio/include/ivox/ivox3d_node.hpp
 +++ b/point_lio/include/ivox/ivox3d_node.hpp
-@@ -134,7 +134,7 @@ struct IVoxNode<PointT, dim>::DistPoint
+@@ -134,7 +134,7 @@
  template <typename PointT, int dim>
  void IVoxNode<PointT, dim>::InsertPoint(const PointT & pt)
  {
@@ -118,7 +115,7 @@ index 71f8de1..8a09305 100644
  }
  
  template <typename PointT, int dim>
-@@ -180,7 +180,7 @@ int IVoxNode<PointT, dim>::KNNPointByCondition(
+@@ -180,7 +180,7 @@
      auto t1 = std::chrono::high_resolution_clock::now();
  #endif
      if (d < max_range * max_range) {
@@ -128,7 +125,6 @@ index 71f8de1..8a09305 100644
  #ifdef INNER_TIMER
      auto t2 = std::chrono::high_resolution_clock::now();
 diff --git a/point_lio/package.xml b/point_lio/package.xml
-index efee677..8b3af40 100644
 --- a/point_lio/package.xml
 +++ b/point_lio/package.xml
 @@ -18,17 +18,15 @@
@@ -152,10 +148,15 @@ index efee677..8b3af40 100644
    <test_depend>ament_lint_auto</test_depend>
    <test_depend>ament_lint_common</test_depend>
 diff --git a/point_lio/src/laserMapping.cpp b/point_lio/src/laserMapping.cpp
-index 2b654fa..f8501f5 100644
 --- a/point_lio/src/laserMapping.cpp
 +++ b/point_lio/src/laserMapping.cpp
-@@ -316,7 +316,12 @@ int main(int argc, char ** argv)
+@@ -1,4 +1,5 @@
+ // #include <so3_math.h>
++#include <chrono>
+ #include <malloc.h>
+ #include <pcl/filters/voxel_grid.h>
+ #include <pcl/io/pcd_io.h>
+@@ -316,7 +317,12 @@
    rclcpp::executors::MultiThreadedExecutor executor;
    executor.add_node(nh);
  
@@ -169,18 +170,181 @@ index 2b654fa..f8501f5 100644
    std::cout << "lidar_type: " << lidar_type << '\n';
    ivox_ = std::make_shared<IVoxType>(ivox_options_);
  
-@@ -1039,4 +1044,4 @@ int main(int argc, char ** argv)
+@@ -377,8 +383,11 @@
+       lid_topic, rclcpp::SensorDataQoS(),
+       [](const sensor_msgs::msg::PointCloud2::SharedPtr msg) { standard_pcl_cbk(msg); });
+   }
++  auto imu_qos = rclcpp::SensorDataQoS();
++  imu_qos.keep_last(static_cast<std::size_t>(imu_qos_depth));
++  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=best_effort history=keep_last", imu_qos_depth);
+   auto sub_imu =
+-    nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, rclcpp::SensorDataQoS(), imu_cbk);
++    nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, imu_qos, imu_cbk);
+   auto pub_laser_cloud_full_res =
+     nh->create_publisher<sensor_msgs::msg::PointCloud2>("cloud_registered", 20);
+   auto pub_laser_cloud_full_res_body =
+@@ -394,9 +403,14 @@
+   //------------------------------------------------------------------------------------------------------
+   signal(SIGINT, SigHandle);
+   rclcpp::Rate rate(500);
++  RCLCPP_INFO(
++    LOGGER,
++    "POINTLIO_CALLBACK_DRAIN mode=spin_all budget_ms=1 execution=same_thread loop_rate_hz=500");
+   while (rclcpp::ok()) {
+     if (flg_exit) break;
+-    executor.spin_some();
++    // Drain burst arrivals on the mapping thread; spin_some takes only one
++    // message per ready subscription and can retain a full IMU history.
++    executor.spin_all(std::chrono::milliseconds(1));
+     if (sync_packages(Measures)) {
+       if (flg_reset) {
+         RCLCPP_WARN(LOGGER, "reset when rosbag play back");
+@@ -1039,4 +1053,4 @@
    fout_out.close();
    fout_imu_pbp.close();
    return 0;
 -}
 \ No newline at end of file
 +}
+diff --git a/point_lio/src/li_initialization.cpp b/point_lio/src/li_initialization.cpp
+--- a/point_lio/src/li_initialization.cpp
++++ b/point_lio/src/li_initialization.cpp
+@@ -1,4 +1,79 @@
+ #include "li_initialization.h"
++
++#include <algorithm>
++#include <chrono>
++#include <cmath>
++#include <cstdint>
++#include <limits>
++
++namespace
++{
++// Observe actual subscription delivery without changing messages, timestamps,
++// acceptance, QoS, queue operations, or filter state. No new callback threads.
++struct ImuReceiptDiagnostics
++{
++  using Clock = std::chrono::steady_clock;
++  std::uint64_t received = 0, accepted = 0, duplicates = 0, backwards = 0;
++  std::uint64_t gaps = 0, inferred_missing = 0;
++  double first_stamp = 0.0, previous_stamp = 0.0;
++  double min_positive_dt = std::numeric_limits<double>::infinity();
++  double max_header_dt = 0.0, max_wall_gap = 0.0;
++  double window_max_header_dt = 0.0, window_max_wall_gap = 0.0;
++  std::size_t queue_peak = 0;
++  Clock::time_point first_wall, previous_wall, last_log;
++
++  void observe(double raw_stamp, double adjusted_stamp, bool was_accepted, std::size_t queue_size)
++  {
++    const auto now = Clock::now();
++    if (received == 0) {
++      first_stamp = raw_stamp;
++      first_wall = previous_wall = last_log = now;
++    } else {
++      const double dt = raw_stamp - previous_stamp;
++      const double wall_gap = std::chrono::duration<double>(now - previous_wall).count();
++      max_wall_gap = std::max(max_wall_gap, wall_gap);
++      window_max_wall_gap = std::max(window_max_wall_gap, wall_gap);
++      if (dt < 0.0) ++backwards;
++      else if (dt == 0.0) ++duplicates;
++      else {
++        min_positive_dt = std::min(min_positive_dt, dt);
++        max_header_dt = std::max(max_header_dt, dt);
++        window_max_header_dt = std::max(window_max_header_dt, dt);
++        if (std::isfinite(imu_time_inte) && imu_time_inte > 0.0 && dt > 1.5 * imu_time_inte) {
++          ++gaps;
++          inferred_missing += static_cast<std::uint64_t>(
++            std::max(0.0, std::floor(dt / imu_time_inte + 0.5) - 1.0));
++        }
++      }
++    }
++    ++received;
++    if (was_accepted) ++accepted;
++    queue_peak = std::max(queue_peak, queue_size);
++    previous_stamp = raw_stamp;
++    previous_wall = now;
++    if (std::chrono::duration<double>(now - last_log).count() < 5.0) return;
++    RCLCPP_INFO(
++      rclcpp::get_logger("li_initialization"),
++      "POINTLIO_IMU_RX received=%llu accepted=%llu duplicates=%llu backwards=%llu "
++      "header_gaps=%llu inferred_missing=%llu nominal_period_s=%.9f "
++      "first_stamp_s=%.9f raw_stamp_s=%.9f adjusted_stamp_s=%.9f "
++      "min_header_dt_s=%.9f max_header_dt_s=%.9f max_wall_gap_s=%.6f "
++      "window_max_header_dt_s=%.9f window_max_wall_gap_s=%.6f "
++      "queue_size=%llu queue_peak=%llu wall_elapsed_s=%.6f",
++      static_cast<unsigned long long>(received), static_cast<unsigned long long>(accepted),
++      static_cast<unsigned long long>(duplicates), static_cast<unsigned long long>(backwards),
++      static_cast<unsigned long long>(gaps), static_cast<unsigned long long>(inferred_missing),
++      imu_time_inte, first_stamp, raw_stamp, adjusted_stamp,
++      std::isfinite(min_positive_dt) ? min_positive_dt : 0.0, max_header_dt, max_wall_gap,
++      window_max_header_dt, window_max_wall_gap,
++      static_cast<unsigned long long>(queue_size), static_cast<unsigned long long>(queue_peak),
++      std::chrono::duration<double>(now - first_wall).count());
++    last_log = now;
++    window_max_header_dt = window_max_wall_gap = 0.0;
++  }
++};
++}  // namespace
++
+ bool data_accum_finished = false, data_accum_start = false, online_calib_finish = false,
+      refine_print = false;
+ int frame_num_init = 0;
+@@ -152,6 +227,8 @@
+ 
+ void imu_cbk(const sensor_msgs::msg::Imu::ConstSharedPtr & msg_in)
+ {
++  static ImuReceiptDiagnostics receipt_diagnostics;
++  const double raw_stamp = get_time_sec(msg_in->header.stamp);
+   // mtx_buffer.lock();
+ 
+   sensor_msgs::msg::Imu::SharedPtr msg(new sensor_msgs::msg::Imu(*msg_in));
+@@ -164,6 +241,7 @@
+   // printf("time_diff%f, %f, %f\n", last_timestamp_imu - timestamp, last_timestamp_imu, timestamp);
+ 
+   if (timestamp < last_timestamp_imu) {
++    receipt_diagnostics.observe(raw_stamp, timestamp, false, imu_deque.size());
+     RCLCPP_ERROR(rclcpp::get_logger("li_initialization"), "imu loop back, clear deque");
+     // imu_deque.shrink_to_fit();
+     // std::cout << "check time:" << timestamp << ";" << last_timestamp_imu << '\n';
+@@ -175,6 +253,7 @@
+   }
+   imu_deque.emplace_back(msg);
+   last_timestamp_imu = timestamp;
++  receipt_diagnostics.observe(raw_stamp, timestamp, true, imu_deque.size());
+   // mtx_buffer.unlock();
+   // sig_buffer.notify_all();
+ }
 diff --git a/point_lio/src/parameters.cpp b/point_lio/src/parameters.cpp
-index c16f147..3671fb4 100644
 --- a/point_lio/src/parameters.cpp
 +++ b/point_lio/src/parameters.cpp
-@@ -230,8 +230,10 @@ void readParameters(std::shared_ptr<rclcpp::Node> & nh)
+@@ -1,4 +1,5 @@
+ #include "parameters.h"
++#include <stdexcept>
+ 
+ bool is_first_frame = true;
+ double lidar_end_time = 0.0, first_lidar_time = 0.0, time_con = 0.0;
+@@ -22,6 +23,7 @@
+ // double cube_len = 2000;
+ float DET_RANGE = 450;
+ bool imu_en = true;
++int imu_qos_depth = 5;
+ double imu_time_inte = 0.005;
+ double laser_point_cov = 0.01, acc_norm;
+ double vel_cov, acc_cov_input, gyr_cov_input;
+@@ -90,6 +92,12 @@
+     nh->declare_parameter<std::string>("common.imu_topic", ".livox.imu");
+     nh->get_parameter("common.imu_topic", imu_topic);
+ 
++    nh->declare_parameter<int>("common.imu_qos_depth", 5);
++    nh->get_parameter("common.imu_qos_depth", imu_qos_depth);
++    if (imu_qos_depth < 1 || imu_qos_depth > 4096) {
++      throw std::invalid_argument("common.imu_qos_depth must be an integer in [1, 4096]");
++    }
++
+     nh->declare_parameter<bool>("common.con_frame", false);
+     nh->get_parameter("common.con_frame", con_frame);
+ 
+@@ -230,8 +238,10 @@
      nh->get_parameter("ivox_nearby_type", ivox_nearby_type);
    } catch (const rclcpp::ParameterTypeException & e) {
      RCLCPP_ERROR(nh->get_logger(), "Parameter type exception: %s", e.what());
@@ -191,7 +355,7 @@ index c16f147..3671fb4 100644
    }
  
    if (ivox_nearby_type == 0) {
-@@ -290,4 +292,4 @@ void reset_cov_output(Eigen::Matrix<double, 30, 30> & P_init_output)
+@@ -290,4 +300,4 @@
    P_init_output.block<3, 3>(21, 21) = MD(3, 3)::Identity() * 0.0001;
    // P_init_output.block<6, 6>(6, 6) = MD(6,6)::Identity() * 0.0001;
    P_init_output.block<6, 6>(24, 24) = MD(6, 6)::Identity() * 0.001;
@@ -199,7 +363,6 @@ index c16f147..3671fb4 100644
 \ No newline at end of file
 +}
 diff --git a/point_lio/src/parameters.h b/point_lio/src/parameters.h
-index ded11bc..c90f4df 100644
 --- a/point_lio/src/parameters.h
 +++ b/point_lio/src/parameters.h
 @@ -1,12 +1,10 @@
@@ -215,7 +378,15 @@ index ded11bc..c90f4df 100644
  
  #include <Eigen/Core>
  #include <Eigen/Eigen>
-@@ -86,4 +84,4 @@ void readParameters(std::shared_ptr<rclcpp::Node> & n);
+@@ -53,6 +51,7 @@
+ // extern double cube_len;
+ extern float DET_RANGE;
+ extern bool imu_en;
++extern int imu_qos_depth;
+ extern double imu_time_inte;
+ extern double laser_point_cov, acc_norm;
+ extern double acc_cov_input, gyr_cov_input, vel_cov;
+@@ -86,4 +85,4 @@
  void open_file();
  Eigen::Matrix<double, 3, 1> SO3ToEuler(const SO3 & orient);
  void reset_cov(Eigen::Matrix<double, 24, 24> & P_init);
@@ -223,7 +394,6 @@ index ded11bc..c90f4df 100644
 \ No newline at end of file
 +void reset_cov_output(Eigen::Matrix<double, 30, 30> & P_init_output);
 diff --git a/point_lio/src/preprocess.h b/point_lio/src/preprocess.h
-index cd68623..5657905 100644
 --- a/point_lio/src/preprocess.h
 +++ b/point_lio/src/preprocess.h
 @@ -1,6 +1,10 @@

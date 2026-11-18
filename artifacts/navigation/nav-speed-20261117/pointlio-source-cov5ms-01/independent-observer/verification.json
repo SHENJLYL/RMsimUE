@@ -1,0 +1,83 @@
+{
+  "status": "failed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "3B08C6E24B712F1B7A9F0BB897C90DF0",
+        0
+      ]
+    }
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "3B08C6E24B712F1B7A9F0BB897C90DF0",
+      0
+    ],
+    "pids": {
+      "loam_interface": 7244,
+      "sensor_scan_generation": 35584,
+      "terrain_analysis": 17856,
+      "terrain_analysis_ext": 38208,
+      "pointcloud_to_laserscan": 19048,
+      "fake_vel_transform": 32208,
+      "map_server": 35260,
+      "amcl": 36168,
+      "lifecycle_manager_localization": 4100,
+      "controller_server": 16644,
+      "planner_server": 38764,
+      "smoother_server": 30936,
+      "behavior_server": 37288,
+      "bt_navigator": 30316,
+      "waypoint_follower": 11216,
+      "velocity_smoother": 16168,
+      "lifecycle_manager_navigation": 27540
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\pointlio-source-cov5ms-01\\navigation\\20261117T133603Z-28232",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    5.800013010825348,
+    6.399432990184571,
+    0.027787998019871554
+  ],
+  "error": "TimeoutError('Sentry navigation deadline exceeded')"
+}

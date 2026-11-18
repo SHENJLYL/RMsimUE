@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "created_utc": "2026-11-18T04:35:37.185329+00:00",
+  "scope": "Actual read-only current-process CPU topology and disposable owned Python child; no UE launch",
+  "tests_run": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "wall_seconds": 0.03561030000128085,
+  "source_sha256": {
+    "tests\\control\\test_platform_worker_budget.py": "772b7d4ba47a7f06ba0d79b2806fbe3f1736410980eb1b9deea0fc4ec1640357",
+    "tools\\integration\\platform_cpu_policy.py": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+    "tools\\integration\\navigation_console.py": "6b268153d8190b548b1e6994e36a8a61d7a3eae5834d8165f780f313d2ca2df1"
+  },
+  "native": {
+    "preflight_status": "passed",
+    "preflight_action": "apply",
+    "preflight_reason": "highest_available_performance_class",
+    "physical_core_count": 8,
+    "logical_processor_count": 8,
+    "corelimit": 8,
+    "corelimit_argument": "-corelimit=8",
+    "command": [
+      "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-c",
+      "import sys; sys.stdin.read()",
+      "-corelimit=8"
+    ],
+    "expected_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "parent_process": {
+      "pid": 17376,
+      "exit_code": 259,
+      "executable": "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe"
+    },
+    "parent_before": {
+      "affinity": {
+        "process_mask": 16777215,
+        "system_mask": 16777215
+      },
+      "priority_class": 32,
+      "power_throttling": {
+        "version": 1,
+        "control_mask": 0,
+        "state_mask": 0
+      },
+      "default_cpu_sets": []
+    },
+    "preflight_native_calls": [
+      {
+        "api": "GetCurrentProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessId",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetExitCodeProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "QueryFullProcessImageNameW",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      }
+    ],
+    "child_pid": 44668,
+    "child_status": "passed",
+    "child_outcome": "applied",
+    "child_checks": [
+      {
+        "name": "valid_requested_policy",
+        "passed": true
+      },
+      {
+        "name": "owned_live_popen",
+        "passed": true
+      },
+      {
+        "name": "owned_executable_argument_matches",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_preflight_passed",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_request_and_source_match",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_actual_command_matches_declared",
+        "passed": true
+      },
+      {
+        "name": "borrowed_popen_handle_present",
+        "passed": true
+      },
+      {
+        "name": "native_process_identity_matches_owned_popen",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_actual_cpu_sets_match_preflight",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_actual_core_counts_match_preflight",
+        "passed": true
+      },
+      {
+        "name": "worker_budget_corelimit_present_before_ue_startup",
+        "passed": true
+      },
+      {
+        "name": "owned_process_still_live_before_apply",
+        "passed": true
+      },
+      {
+        "name": "native_cpu_sets_readback_matches_decision",
+        "passed": true
+      },
+      {
+        "name": "affinity_priority_and_power_policy_unchanged",
+        "passed": true
+      }
+    ],
+    "child_requested_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "child_observed_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "child_worker_budget": {
+      "preflight_sha256": "4e1e986279fb73ce81f6d6046e12cd3ac77b7ef13c35fb5bb5f73dfd9225dd14",
+      "declared_action": "apply",
+      "corelimit": 8,
+      "corelimit_argument": "-corelimit=8",
+      "expected_cpu_set_ids": [
+        256,
+        257,
+        266,
+        267,
+        268,
+        269,
+        278,
+        279
+      ],
+      "expected_physical_core_count": 8,
+      "expected_logical_processor_count": 8,
+      "actual_ue_command_sha256": "4259f8e30adf84d725b9013ce6e95246b380500d9b138d0378372265170d5f60",
+      "child_dynamic_decision": {
+        "action": "apply",
+        "requested_cpu_set_ids": [
+          256,
+          257,
+          266,
+          267,
+          268,
+          269,
+          278,
+          279
+        ],
+        "highest_efficiency_class": 1,
+        "reason": "highest_available_performance_class"
+      },
+      "actual_physical_core_count": 8,
+      "actual_logical_processor_count": 8
+    },
+    "child_native_calls": [
+      {
+        "api": "GetProcessId",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetExitCodeProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "QueryFullProcessImageNameW",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "SetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      }
+    ]
+  },
+  "detail_sha256": {
+    "artifacts\\navigation\\realtime-20261118\\worker-budget-native-01\\test-output.txt": "5b746a4ba5e07f5307ddf4f4714321eb46d8c758ba6634857724851c48971c84",
+    "artifacts\\navigation\\realtime-20261118\\worker-budget-native-01\\preflight.json": "ea21417199aa1034f25b16d06870cb7d9d7d6fd7e82b6b2050d09e6b547e6d90",
+    "artifacts\\navigation\\realtime-20261118\\worker-budget-native-01\\child-policy.json": "9b31bcce6e7e700f7635e4c385e8fc5d41f236c5a031b6f3c9bb8da45417a079"
+  },
+  "engine_core_count_observed": false,
+  "native_ue_realtime_result": "pending root native15"
+}

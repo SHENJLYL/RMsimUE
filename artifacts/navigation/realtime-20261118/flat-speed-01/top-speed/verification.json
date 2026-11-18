@@ -1,0 +1,245 @@
+{
+  "status": "passed",
+  "scope": "original Nav2 action; source-owned speed and smoothing; actual >=80% cap sustained for 0.3 s; truth only for evaluation",
+  "checks": [
+    {
+      "name": "observer_matches_the_requested_session",
+      "passed": true
+    },
+    {
+      "name": "fresh_import_lab_native_stack",
+      "passed": true,
+      "identity": [
+        "52BBEAC741B27CA0352097AE91BBA89F",
+        0
+      ],
+      "start": [
+        1.3771599656167143e-05,
+        -0.0002294034861936023,
+        -0.0035619731984391123
+      ]
+    },
+    {
+      "name": "source_speed_and_smoother_selected",
+      "passed": true
+    },
+    {
+      "name": "synchronized_drive_telemetry_available",
+      "passed": true
+    },
+    {
+      "name": "original_nav2_goal_accepted",
+      "passed": true,
+      "goal": [
+        8.5,
+        0.0
+      ]
+    },
+    {
+      "name": "actual_speed_sustained_at_source_threshold",
+      "passed": true,
+      "required_speed_mps": 2.4000000000000004,
+      "required_duration_s": 0.3,
+      "observed_speed_mps": 2.683556230475001,
+      "peak_mps": 2.683556230475001,
+      "goal_finished_before_threshold": false
+    },
+    {
+      "name": "original_planner_generated_route",
+      "passed": true,
+      "points": 168
+    },
+    {
+      "name": "cancel_request_accepted",
+      "passed": true
+    },
+    {
+      "name": "original_nav2_action_cancelled",
+      "passed": true,
+      "status": 5
+    },
+    {
+      "name": "high_speed_cancel_respects_source_derived_bounds",
+      "passed": true,
+      "distance_m": 1.4033338025361066,
+      "distance_bound_m": 2.0221337910649417,
+      "time_s": 0.994999978000001,
+      "time_bound_s": 1.2281854101583338
+    },
+    {
+      "name": "cancelled_vehicle_remains_stationary",
+      "passed": true,
+      "drift_m": 0.0008754905545630056,
+      "observation_sim_seconds": 2.0
+    },
+    {
+      "name": "source_command_reaches_wheel_target_without_second_shaper",
+      "passed": true,
+      "samples": 184,
+      "max_linear_error_mps": 0.0,
+      "max_yaw_error_rad_s": 0,
+      "tolerance": 1e-06
+    },
+    {
+      "name": "source_command_cap_preserved",
+      "passed": true,
+      "source_cap_mps": 3.0,
+      "observed_command_peak_mps": 2.8000372951855566
+    },
+    {
+      "name": "mounted_imu_and_lidar_continued_sampling",
+      "passed": true,
+      "measured_imu_samples": 1386,
+      "published_lidar_scans": 69
+    },
+    {
+      "name": "session_and_command_acceptance_preserved",
+      "passed": true,
+      "rejections_before": [
+        0,
+        0
+      ],
+      "rejections_after": [
+        0,
+        0
+      ]
+    }
+  ],
+  "contract": {
+    "scene_sha256": "7f7818d94d19e115ea04ecf319bd8c6ff7009fea6b45bb76078cd3ef6ef4b8fe",
+    "map_id": "import_lab",
+    "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+    "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f",
+    "source_cap_mps": 3.0,
+    "source_accel_mps2": 0.8,
+    "source_decel_mps2": 3.0,
+    "source_smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "source_smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "source_smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "speed_threshold_mps": 2.4000000000000004,
+    "sustained_seconds": 0.3,
+    "goal": [
+      8.5,
+      0.0
+    ],
+    "start": [
+      0,
+      0
+    ],
+    "swept_radius_m": 0.4676955262170047,
+    "cancellation_latency_budget_s": 0.14500000000000002,
+    "latency_components_s": {
+      "controller_cycle": 0.05,
+      "smoother_cycle": 0.05,
+      "bridge_roundtrip_budget": 0.04,
+      "physics_step": 0.005
+    },
+    "tracking_time_allowance_s": 0.1,
+    "tracking_distance_allowance_m": 0.05,
+    "stop_time_allowance_s": 0.15
+  },
+  "actual_peak_speed_mps": 2.7496008634032507,
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "52BBEAC741B27CA0352097AE91BBA89F",
+      0
+    ],
+    "pids": {
+      "loam_interface": 11216,
+      "sensor_scan_generation": 39248,
+      "terrain_analysis": 34452,
+      "terrain_analysis_ext": 40748,
+      "pointcloud_to_laserscan": 32192,
+      "fake_vel_transform": 17060,
+      "map_server": 26876,
+      "amcl": 15756,
+      "lifecycle_manager_localization": 40652,
+      "controller_server": 25944,
+      "planner_server": 27360,
+      "smoother_server": 37788,
+      "behavior_server": 27204,
+      "bt_navigator": 16904,
+      "waypoint_follower": 23180,
+      "velocity_smoother": 13400,
+      "lifecycle_manager_navigation": 40352
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-01\\navigation\\20261118T015203Z-23624",
+    "map_id": "import_lab",
+    "initial_pose_sent": true,
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_truth": {
+    "stamp": 18.254999592,
+    "wall": 38643.4645408,
+    "position": [
+      5.914030129800165,
+      -0.04305480590548277,
+      -0.0041991399955640316
+    ],
+    "speed_mps": 0.0
+  },
+  "cancellation": {
+    "stamp": 14.74999967,
+    "initial_position": [
+      4.52772714808054,
+      -0.04647318966573744,
+      -0.0030378283988253155
+    ],
+    "initial_speed_mps": 2.683556230475001,
+    "reaction_speed_bound_mps": 2.7995562304750012,
+    "distance_bound_m": 2.0221337910649417,
+    "time_bound_s": 1.2281854101583338,
+    "distance_formula": "v0*delay + 0.5*a*delay^2 + reaction_speed^2/(2*source_decel) + v0*0.10 + 0.05",
+    "time_formula": "delay + reaction_speed/source_decel + 0.15",
+    "allowance_scope": "predeclared integration acceptance budgets, not measured hardware calibration",
+    "actual_stop_distance_m": 1.4033338025361066,
+    "actual_stop_time_s": 0.994999978000001,
+    "stop_confirmed_stamp": 16.249999637
+  }
+}

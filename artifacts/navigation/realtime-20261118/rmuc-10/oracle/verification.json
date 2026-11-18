@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "scope": "startup oracle: first 4096 native rays in this scene/session compared against serial scene queries",
+  "created_utc": "2026-11-18T03:48:51.384335+00:00",
+  "checks": [
+    {
+      "name": "completed_owned_session_log_is_final",
+      "passed": true
+    },
+    {
+      "name": "runtime_enabled_native_lidar_query_oracle",
+      "passed": true
+    },
+    {
+      "name": "first_4096_native_rays_pass_serial_reference_comparison",
+      "passed": true
+    },
+    {
+      "name": "no_native_oracle_failure_recorded",
+      "passed": true
+    },
+    {
+      "name": "runtime_module_matches_final_native_module",
+      "passed": true
+    },
+    {
+      "name": "runtime_engine_configuration_matches_current",
+      "passed": true
+    }
+  ],
+  "results": [
+    {
+      "line": 1593,
+      "rays": 4096,
+      "scene_queries": 8010,
+      "max_impact_error_cm": 0.0,
+      "raw_line": "[2026.11.18-03.44.03:067][166]LogRMSim: Display: LIDAR_QUERY_VERIFICATION result=passed rays=4096 scene_queries=8010 max_impact_error_cm=0.000000000"
+    }
+  ],
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-10\\runtime-provenance.json",
+  "runtime_provenance_sha256": "ee8336d6768d95263c31dcfbc16f52612a69bad1484c496b109d06259c718ed1",
+  "runtime_log_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-10\\runtime.log",
+  "runtime_log_sha256": "9b3f44e891ed1f054acf223e8db1530d9c7872b20121ea2afd4b42760b3df2a2",
+  "module_sha256": "c47c92ba001016233b77dbf84aa7d308626808169754b7b0a50efc4ec348443d",
+  "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+  "session_identity": [
+    "29F5EAA548E63FD570A0689E738D952B",
+    0
+  ],
+  "evidence_extraction": "literal native runtime log markers; no new simulation or raycast was performed"
+}

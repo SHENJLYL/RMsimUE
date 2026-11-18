@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "exit_code": 0,
+  "created_utc": "2026-11-18T04:03:58.041597+00:00",
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "-u",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\check_analyzer.py",
+    "--source",
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py",
+    "--map-library",
+    "D:\\simulator\\artifacts\\runtime\\navigation\\windows\\map_lib.dll"
+  ],
+  "tests_run": 10,
+  "tests_passed": 10,
+  "input_sha256": {
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py": "5284af23defb37b33918a18e7f6e72c9d5d126d1fbc0365e25f5a9338118a18c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\check_analyzer.py": "a7ca385d064a2701464b406e9150c65dbdb62dc5b0c0fdf8677a392748aae79b",
+    "D:\\simulator\\artifacts\\runtime\\navigation\\windows\\map_lib.dll": "28cefe6101b0ce678e72ed37ed4fff5a7e4b9656888332ebd77718c7c5c5c2a1",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\analyzer-before-candidate-mode.py": "40000772567ae420e32da3e7c0d2ae4d44eb05ca3fef6eb3f5f985cb804b20d7",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\checks-before-candidate-mode.py": "c5bea0e2635837311e79000d43e8000399e4a3e76d89f873409ac27d4eb20945"
+  },
+  "new_checks": [
+    "Explicit same-grid candidate manifest accepted with identical fixture score",
+    "Original runtime report preserved during candidate comparison",
+    "Mismatched reference raster hash rejected before output creation"
+  ],
+  "output_sha256": {
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\candidate-native-01\\stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-map-analysis-offline\\candidate-native-01\\stderr.txt": "e2d957c47bcdffaef2291fadbbe8b4cbd94c832b1a46483e11e2fa489854fd43"
+  },
+  "production_runtime_changes": false
+}

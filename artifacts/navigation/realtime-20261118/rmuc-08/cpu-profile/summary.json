@@ -1,0 +1,770 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "scope": "rmuc-08 native diagnostic CSV capture; unchanged rolling 10-second realtime gate fails",
+  "created_utc": "2026-11-18T03:26:51.704729+00:00",
+  "checks": [
+    {
+      "name": "camera_zero_explicit_native_startup",
+      "passed": true
+    },
+    {
+      "name": "one_actual_chaos_step_per_post_warmup_frame",
+      "passed": true
+    },
+    {
+      "name": "serial_parallel_oracle",
+      "passed": true
+    },
+    {
+      "name": "native_actions",
+      "passed": true
+    },
+    {
+      "name": "all_clock_checks",
+      "passed": false
+    }
+  ],
+  "module_sha256": "c47c92ba001016233b77dbf84aa7d308626808169754b7b0a50efc4ec348443d",
+  "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+  "camera_hz": 0.0,
+  "camera_capture_enabled": false,
+  "physics_max_substep_seconds": 0.005,
+  "physics_config_override": "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+  "native_ue_command": "LogInit: Command Line: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode -game -RenderOffScreen -unattended -ResX=640 -ResY=360 -ProfileSensorTiming -csvCaptureFrames=16000 -csvCategories=PhysicsVerbose,PhysicsCounters -csvCompression=0 -csvStatCounts -VerifyLidarQueries -RMSimViewportHz=60.0 -SimRealTimePace -NoSplash -NoSound -ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005 -RosControl -RosAimControl -RosImu -RosLidar -LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json -ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json -SimStepSeconds=0.005 -RosCameraWidth=320 -RosCameraHeight=240 -RosCameraHz=0.0 -RosPort=9451 -MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json -MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-08\\scene\\scene.json -abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-08\\runtime.log",
+  "lidar_query_oracle": {
+    "rays": 4096,
+    "scene_queries": 8010,
+    "maximum_impact_error_cm": 0.0
+  },
+  "csv": {
+    "path": "cpu-profile/Profile-20261118-111307.csv",
+    "original_path": "C:\\Users\\SHEN\\AppData\\Local\\UnrealEngine\\5.8\\Saved\\Profiling\\CSV\\Profile(20261118_111307).csv",
+    "sha256": "99b60f33d23ab5d69b55efae5c0d185ea5ee926aaa61ac657e6b3dd6874df4a8",
+    "frames": 16000,
+    "post_warmup_substep_histogram": {
+      "1.0": 15000
+    }
+  },
+  "clock": {
+    "status": "failed",
+    "factor": 1.000720640913124,
+    "scene_hz": 59.99163289530831,
+    "rolling_factor_min": 0.9748164160299115,
+    "rolling_factor_max": 1.0265584282086564,
+    "failed_windows": [
+      {
+        "clock_window": {
+          "start_seconds": 6.0,
+          "duration_seconds": 10.0,
+          "factor": 0.9748164160299115
+        },
+        "clock_wall_start": 43517.4575308,
+        "clock_wall_end": 43527.4575308,
+        "clock_sim_start": 26.944712088274276,
+        "clock_sim_end": 36.69287624857339,
+        "csv_row_start": 5393,
+        "csv_row_end": 7343,
+        "native_csv_wall_elapsed_s": 10.022198600000031,
+        "native_sim_per_wall": 0.9726572531000418
+      },
+      {
+        "clock_window": {
+          "start_seconds": 16.0,
+          "duration_seconds": 10.0,
+          "factor": 1.0265584282086564
+        },
+        "clock_wall_start": 43527.4575308,
+        "clock_wall_end": 43537.4575308,
+        "clock_sim_start": 36.69287624857339,
+        "clock_sim_end": 46.958460530659956,
+        "csv_row_start": 7343,
+        "csv_row_end": 9396,
+        "native_csv_wall_elapsed_s": 9.990302400000004,
+        "native_sim_per_wall": 1.0275549098580399
+      },
+      {
+        "clock_window": {
+          "start_seconds": 17.0,
+          "duration_seconds": 10.0,
+          "factor": 1.0217164945179682
+        },
+        "clock_wall_start": 43528.4575308,
+        "clock_wall_end": 43538.4575308,
+        "clock_sim_start": 37.73907629893475,
+        "clock_sim_end": 47.95624124411444,
+        "csv_row_start": 7552,
+        "csv_row_end": 9595,
+        "native_csv_wall_elapsed_s": 9.99857260000001,
+        "native_sim_per_wall": 1.0218623551505421
+      }
+    ]
+  },
+  "sensor_rates": {
+    "imu": {
+      "imu": {
+        "measured_hz": 200.0000044697557,
+        "increments": {
+          "measured_samples": 18086,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        }
+      },
+      "mid360_imu": {
+        "measured_hz": 200.0000044697557,
+        "increments": {
+          "measured_samples": 18086,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        }
+      }
+    },
+    "lidar": {
+      "rays_per_second": 200000.0044697557,
+      "scans_per_second": 9.996682740277516,
+      "increments": {
+        "traced_rays": 18086000,
+        "published_scans": 904,
+        "dropped_scans": 0,
+        "history_resets": 0
+      }
+    }
+  },
+  "phase_comparison": [
+    {
+      "run": "rmuc-07",
+      "csv_sha256": "1dbfd6b09b090f0d0c16cab82055989e6582394a5a8b5d41b7c2e0a4ed45506f",
+      "phase_windows": [
+        {
+          "label": "single_goal_whole",
+          "sim_start_s": 27.184999392,
+          "sim_end_s": 34.514999229,
+          "frames": 1466,
+          "sim_per_wall": 0.9996400477568826,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 5.001800409276944,
+              "p99": 20.7959,
+              "maximum": 34.8347
+            },
+            "GameThreadTime": {
+              "mean": 4.633641268758526,
+              "p99": 19.3416,
+              "maximum": 21.1009
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 4.993957776261937,
+              "p99": 20.4082,
+              "maximum": 34.4114
+            },
+            "RenderThreadTime": {
+              "mean": 1.2556769440654842,
+              "p99": 8.7134,
+              "maximum": 20.8301
+            },
+            "RHIThreadTime": {
+              "mean": 0.6710232605729878,
+              "p99": 2.4864,
+              "maximum": 15.4365
+            },
+            "GPUTime": {
+              "mean": 0.46614863574351983,
+              "p99": 4.9577,
+              "maximum": 8.4779
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.69291207366985,
+              "p99": 2.7301,
+              "maximum": 6.6599
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 1.0107969986357437,
+              "p99": 3.209,
+              "maximum": 6.3693
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.11871541609822647,
+              "p99": 0.2106,
+              "maximum": 0.3181
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 0.9471952251023191,
+              "p99": 3.1407,
+              "maximum": 4.1131
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.6185024556616644,
+              "p99": 2.6491,
+              "maximum": 3.512
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.10315866302864939,
+              "p99": 0.2576,
+              "maximum": 0.8969
+            }
+          },
+          "mean_observed_speed_m_s": 0.4857280151632052
+        },
+        {
+          "label": "waypoints_whole",
+          "sim_start_s": 34.584999227,
+          "sim_end_s": 51.739998844,
+          "frames": 3431,
+          "sim_per_wall": 1.0000033168282558,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 4.999983415913728,
+              "p99": 20.1906,
+              "maximum": 32.2889
+            },
+            "GameThreadTime": {
+              "mean": 4.659800116584086,
+              "p99": 18.5018,
+              "maximum": 22.7484
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 4.997554852812591,
+              "p99": 19.763,
+              "maximum": 31.7791
+            },
+            "RenderThreadTime": {
+              "mean": 1.2576068784610899,
+              "p99": 8.9558,
+              "maximum": 18.01
+            },
+            "RHIThreadTime": {
+              "mean": 0.6898343631594287,
+              "p99": 2.5469,
+              "maximum": 3.3904
+            },
+            "GPUTime": {
+              "mean": 0.43439387933547075,
+              "p99": 5.1965,
+              "maximum": 8.9771
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.7110768872048967,
+              "p99": 2.6727,
+              "maximum": 5.9159
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 1.0975236957155348,
+              "p99": 3.3295,
+              "maximum": 4.1614
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.13053345963276014,
+              "p99": 0.2395,
+              "maximum": 0.4602
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 1.034193325561061,
+              "p99": 3.2588,
+              "maximum": 4.0869
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.679767618770038,
+              "p99": 2.7532,
+              "maximum": 3.4986
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.11476881375692218,
+              "p99": 0.257,
+              "maximum": 0.6057
+            }
+          },
+          "mean_observed_speed_m_s": 0.40000331157859
+        },
+        {
+          "label": "waypoints_elapsed_2_to_4s",
+          "sim_start_s": 36.584999227,
+          "sim_end_s": 38.584999227,
+          "frames": 400,
+          "sim_per_wall": 0.9142607628034106,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 5.46889925,
+              "p99": 13.7237,
+              "maximum": 13.9315
+            },
+            "GameThreadTime": {
+              "mean": 5.114083,
+              "p99": 7.1429,
+              "maximum": 7.5333
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 5.466019999999999,
+              "p99": 13.2698,
+              "maximum": 14.1766
+            },
+            "RenderThreadTime": {
+              "mean": 1.3246965,
+              "p99": 9.3261,
+              "maximum": 9.9024
+            },
+            "RHIThreadTime": {
+              "mean": 0.767167,
+              "p99": 2.6335,
+              "maximum": 2.8108
+            },
+            "GPUTime": {
+              "mean": 0.7497357499999999,
+              "p99": 5.8291,
+              "maximum": 6.1292
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.7338127499999998,
+              "p99": 2.6157,
+              "maximum": 2.6739
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 2.2082005000000002,
+              "p99": 3.7889,
+              "maximum": 4.1614
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.147339,
+              "p99": 0.206,
+              "maximum": 0.2277
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 2.139044,
+              "p99": 3.7379,
+              "maximum": 4.0869
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 1.7085499999999998,
+              "p99": 3.2498,
+              "maximum": 3.4986
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.16933174999999998,
+              "p99": 0.3185,
+              "maximum": 0.5949
+            }
+          },
+          "mean_observed_speed_m_s": 0.688823611294106
+        },
+        {
+          "label": "idle_after_actions",
+          "sim_start_s": 65.0,
+          "sim_end_s": 75.0,
+          "frames": 2000,
+          "sim_per_wall": 0.9989352648692338,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 5.00532935,
+              "p99": 23.8339,
+              "maximum": 28.3059
+            },
+            "GameThreadTime": {
+              "mean": 4.6376348,
+              "p99": 19.7808,
+              "maximum": 21.4689
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 5.0015832499999995,
+              "p99": 23.4038,
+              "maximum": 27.7657
+            },
+            "RenderThreadTime": {
+              "mean": 1.089046,
+              "p99": 8.8119,
+              "maximum": 11.9939
+            },
+            "RHIThreadTime": {
+              "mean": 0.5011624499999999,
+              "p99": 2.2397,
+              "maximum": 3.7444
+            },
+            "GPUTime": {
+              "mean": 0.33013175,
+              "p99": 4.8205,
+              "maximum": 5.2965
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.6189472,
+              "p99": 2.672,
+              "maximum": 3.9925
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 0.1130204,
+              "p99": 0.4332,
+              "maximum": 1.32
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.0063877,
+              "p99": 0.0133,
+              "maximum": 0.0775
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 0.09961955,
+              "p99": 0.2323,
+              "maximum": 1.3209
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.0013926000000000001,
+              "p99": 0.0024,
+              "maximum": 0.0576
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.00170345,
+              "p99": 0.0047,
+              "maximum": 0.1251
+            }
+          },
+          "mean_observed_speed_m_s": null
+        }
+      ]
+    },
+    {
+      "run": "rmuc-08",
+      "csv_sha256": "99b60f33d23ab5d69b55efae5c0d185ea5ee926aaa61ac657e6b3dd6874df4a8",
+      "phase_windows": [
+        {
+          "label": "single_goal_whole",
+          "sim_start_s": 24.644999449,
+          "sim_end_s": 32.759999268,
+          "frames": 1623,
+          "sim_per_wall": 1.0000696413252388,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 4.999651817621689,
+              "p99": 18.8229,
+              "maximum": 21.0302
+            },
+            "GameThreadTime": {
+              "mean": 4.915404805914973,
+              "p99": 18.4876,
+              "maximum": 20.4988
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 4.998114540973506,
+              "p99": 18.5387,
+              "maximum": 20.5458
+            },
+            "RenderThreadTime": {
+              "mean": 1.0730298829328404,
+              "p99": 3.677,
+              "maximum": 4.5837
+            },
+            "RHIThreadTime": {
+              "mean": 0.7548475046210721,
+              "p99": 1.9053,
+              "maximum": 2.2107
+            },
+            "GPUTime": {
+              "mean": 0.244537707948244,
+              "p99": 2.4814,
+              "maximum": 6.1417
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.7925911891558843,
+              "p99": 2.4575,
+              "maximum": 3.8175
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 1.1018262476894638,
+              "p99": 3.465,
+              "maximum": 5.326
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.14778810844115833,
+              "p99": 0.2787,
+              "maximum": 0.3592
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 1.023707516943931,
+              "p99": 3.3952,
+              "maximum": 5.0788
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.6364842883548982,
+              "p99": 2.8529,
+              "maximum": 4.5577
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.11981756007393715,
+              "p99": 0.2701,
+              "maximum": 0.8819
+            }
+          },
+          "mean_observed_speed_m_s": 0.4366701106032909
+        },
+        {
+          "label": "waypoints_whole",
+          "sim_start_s": 32.819999266,
+          "sim_end_s": 50.824998864,
+          "frames": 3601,
+          "sim_per_wall": 1.0000298148294695,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 4.999850930297139,
+              "p99": 18.8822,
+              "maximum": 21.5326
+            },
+            "GameThreadTime": {
+              "mean": 4.920479339072481,
+              "p99": 18.5031,
+              "maximum": 21.1867
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 4.997237906137184,
+              "p99": 18.5671,
+              "maximum": 21.2104
+            },
+            "RenderThreadTime": {
+              "mean": 1.0275316023326855,
+              "p99": 3.0672,
+              "maximum": 6.2203
+            },
+            "RHIThreadTime": {
+              "mean": 0.7320960011108025,
+              "p99": 1.6917,
+              "maximum": 1.9032
+            },
+            "GPUTime": {
+              "mean": 0.24305295751180228,
+              "p99": 2.4428,
+              "maximum": 7.115
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.7698255762288253,
+              "p99": 2.4608,
+              "maximum": 4.0449
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 1.1731260483199113,
+              "p99": 3.4108,
+              "maximum": 4.2089
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.1485303249097473,
+              "p99": 0.2716,
+              "maximum": 0.5875
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 1.0985093029713968,
+              "p99": 3.3259,
+              "maximum": 4.1318
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.7179425159677868,
+              "p99": 2.8119,
+              "maximum": 3.6474
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.12224795890030547,
+              "p99": 0.2685,
+              "maximum": 0.9789
+            }
+          },
+          "mean_observed_speed_m_s": 0.3760310481465428
+        },
+        {
+          "label": "waypoints_elapsed_2_to_4s",
+          "sim_start_s": 34.819999266,
+          "sim_end_s": 36.819999266,
+          "frames": 400,
+          "sim_per_wall": 0.8785059249733975,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 5.691481250000001,
+              "p99": 7.3863,
+              "maximum": 7.5346
+            },
+            "GameThreadTime": {
+              "mean": 5.61296325,
+              "p99": 7.1309,
+              "maximum": 7.6567
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 5.688763,
+              "p99": 7.2738,
+              "maximum": 7.7237
+            },
+            "RenderThreadTime": {
+              "mean": 1.1204935,
+              "p99": 2.9294,
+              "maximum": 3.0891
+            },
+            "RHIThreadTime": {
+              "mean": 0.8176287499999999,
+              "p99": 1.6636,
+              "maximum": 1.8675
+            },
+            "GPUTime": {
+              "mean": 0.40366,
+              "p99": 2.4449,
+              "maximum": 2.8983
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.85914775,
+              "p99": 2.4868,
+              "maximum": 2.8335
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 2.4792887500000003,
+              "p99": 3.8595,
+              "maximum": 3.9791
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.17290075000000002,
+              "p99": 0.3529,
+              "maximum": 0.5875
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 2.39683525,
+              "p99": 3.7821,
+              "maximum": 3.9092
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 1.92184575,
+              "p99": 3.2266,
+              "maximum": 3.3675
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.1890675,
+              "p99": 0.326,
+              "maximum": 0.7052
+            }
+          },
+          "mean_observed_speed_m_s": 0.5850299205803237
+        },
+        {
+          "label": "idle_after_actions",
+          "sim_start_s": 65.0,
+          "sim_end_s": 75.0,
+          "frames": 2000,
+          "sim_per_wall": 0.9992302729361519,
+          "timing_ms": {
+            "FrameTime": {
+              "mean": 5.0038516,
+              "p99": 19.7713,
+              "maximum": 21.2635
+            },
+            "GameThreadTime": {
+              "mean": 4.920007,
+              "p99": 19.335,
+              "maximum": 20.5891
+            },
+            "GameThreadTime_CriticalPath": {
+              "mean": 4.99893835,
+              "p99": 19.3935,
+              "maximum": 20.6421
+            },
+            "RenderThreadTime": {
+              "mean": 0.88499905,
+              "p99": 3.0593,
+              "maximum": 5.2177
+            },
+            "RHIThreadTime": {
+              "mean": 0.4750908,
+              "p99": 1.4803,
+              "maximum": 1.8745
+            },
+            "GPUTime": {
+              "mean": 0.36000695,
+              "p99": 5.2791,
+              "maximum": 5.5063
+            },
+            "Exclusive/GameThread/TickActors": {
+              "mean": 1.6325954,
+              "p99": 2.3307,
+              "maximum": 2.5854
+            },
+            "Exclusive/GameThread/EventWait/EndPhysics": {
+              "mean": 0.10935965,
+              "p99": 0.2711,
+              "maximum": 0.5139
+            },
+            "Exclusive/GameThread/SyncBodies": {
+              "mean": 0.007042,
+              "p99": 0.0133,
+              "maximum": 0.3067
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver": {
+              "mean": 0.1064757,
+              "p99": 0.2096,
+              "maximum": 0.3269
+            },
+            "PhysicsVerbose/AllWorkers/DetectCollisions_NarrowPhase": {
+              "mean": 0.0013675999999999998,
+              "p99": 0.0027,
+              "maximum": 0.04
+            },
+            "PhysicsVerbose/AllWorkers/StepSolver_PerIslandSolve": {
+              "mean": 0.0016748499999999999,
+              "p99": 0.0035,
+              "maximum": 0.0136
+            }
+          },
+          "mean_observed_speed_m_s": null
+        }
+      ]
+    }
+  ],
+  "lidar_profile": {
+    "rmuc07": {
+      "samples": 22,
+      "reported_total_rays": 22022999,
+      "reported_total_wall_ms": 31750.314000000002,
+      "weighted_wall_us_per_ray": 1.441688936188936
+    },
+    "rmuc08": {
+      "samples": 22,
+      "reported_total_rays": 22022999,
+      "reported_total_wall_ms": 32589.709,
+      "weighted_wall_us_per_ray": 1.479803409154221
+    }
+  },
+  "bottleneck": "During rmuc08 35-37 solver seconds, measured GT critical path 5.52-5.77ms exceeds the 5ms budget. GT physics wait 2.37-2.52ms overlaps worker solver 2.29-2.43ms; narrowphase nested within solver costs 1.82-1.96ms. Camera zero removes synchronous RGB work but this profiled run still falls behind then catches up.",
+  "default_without_csv_comparison": {
+    "run": "rmuc-09",
+    "scope": "Clock-only pass; complete navigation acceptance failed at waypoint truth error, so this is not a core pass.",
+    "clock_status": "passed",
+    "clock_checks": 32,
+    "factor": 0.9998654842070307,
+    "rolling_factor_min": 0.9873877323875042,
+    "rolling_factor_max": 1.0114592691624247,
+    "scene_hz": 59.66894516187745,
+    "actions_status": "failed",
+    "same_module_sha256": true,
+    "csv_capture_cli_present": false,
+    "clock_sha256": "bf768c52a39dfb1351c19fdf359a2a07229b20ef2a5fc1f33a5c7a65ab959a2c",
+    "actions_sha256": "df5556f77630a2531b3e6b536505cc9f92982dbcfeca49547837f7505e92abb0"
+  },
+  "timing_interpretation": [
+    "GT physics wait overlaps worker solver; do not add these two intervals.",
+    "Worker solver includes narrowphase and island solve; nested timer values are not additive.",
+    "GT actor and body-sync intervals are separate; FrameTime/GT include intentional pacing.",
+    "Phase-relative windows align navigation stages. Trajectories and contact load are not bit-identical; no isolated camera speedup or profiler cost is inferred by subtracting totals.",
+    "CSV analysis reproduces the failed rolling rate with independent native frame wall times, to within frame-boundary/receipt interpolation uncertainty.",
+    "The no-CSV rmuc09 clock passes at full sensor budget, while its waypoint truth-position gate fails. Source timing and coordinate precision are independent acceptance results."
+  ],
+  "source_reports_sha256": {
+    "runtime.log": "b9a286788320ca692414a86bcb18e31cbd8cc92564f4f5413761ce02da82cc23",
+    "runtime-provenance.json": "c08b54092e9c86f3a402a1feaa10a8ce7355413242a2944d052306eb3d2c3383",
+    "clock/verification.json": "a2d481cdf0cfd40472e3fa66479ee6bdb38f36b7f51d25b04c9702113b49b1cc",
+    "clock/observations.json": "e874951d9a23e5043c9f41a176d8228f30372d06fdfebddf55221d5b66d17929",
+    "actions/verification.json": "97c11790b09dad35d00a4b48162cb40d48cc845dfc79115f7cf74bdc78ca252c",
+    "actions/trace.json": "3b35339131c2e093714310832855c9943c7272b02183d1672f518ce869818061"
+  },
+  "action_draw_counter_deltas": {
+    "first_sim_s": 24.689999448000002,
+    "last_sim_s": 57.604998712000004,
+    "wall_seconds": 32.88908420000371,
+    "actual_scene_hz": 60.05031906603764,
+    "increments": {
+      "scene_rendered_frames": 1975,
+      "scene_skipped_frames": 4608,
+      "scene_catchup_draws": 23,
+      "scene_dropped_deadlines": 0,
+      "scene_cadence_resyncs": 0
+    }
+  }
+}

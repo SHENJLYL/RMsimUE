@@ -1,4 +1,5 @@
 #include "RosBridgeComponent.h"
+#include "RMSimViewportClient.h"
 #include "VehicleRig.h"
 #include "RosAimController.h"
 #include "RosImuComponent.h"
@@ -76,6 +77,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     if(!Vehicle||!Vehicle->IsContactPhysics()||!Aim||UPhysicsSettings::Get()->bTickPhysicsAsync)
     {Error=TEXT("ROS bridge requires a physical rig and synchronous post-physics sampling");return false;}
     Rig=Vehicle;bControl=Control;RobotId=Rig->GetVehicleId();
+    bProfileSensorTiming=FParse::Param(FCommandLine::Get(),TEXT("ProfileSensorTiming"));
     bMotorControl=FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
     if(bMotorControl)
     {
@@ -94,7 +96,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraWidth="),Width);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHeight="),Height);
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraHz="),CameraHz);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHFov="),HFovDegrees);
     if(Port<1024||Port>65535||Width<16||Width>1920||Height<16||Height>1080||
-        !FMath::IsFinite(CameraHz)||CameraHz<1||CameraHz>60||!FMath::IsFinite(HFovDegrees)||HFovDegrees<5||HFovDegrees>150)
+        !FMath::IsFinite(CameraHz)||(CameraHz!=0&&(CameraHz<1||CameraHz>60))||!FMath::IsFinite(HFovDegrees)||HFovDegrees<5||HFovDegrees>150)
     {Error=TEXT("invalid ROS port or camera configuration");return false;}
     Sockets=ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     Listener=Sockets->CreateSocket(NAME_Stream,TEXT("RMSim loopback listener"),false);
@@ -107,6 +109,8 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
     Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
     Rig->AddInstanceComponent(Camera);Camera->RegisterComponent();
+    UE_LOG(LogRMSim,Display,TEXT("ROS_CAMERA_CAPTURE enabled=%d nominal_hz=%.3f width=%d height=%d"),
+        CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height);
     AimController=NewObject<URosAimController>(GetOwner());GetOwner()->AddInstanceComponent(AimController);AimController->RegisterComponent();
     if(!AimController->Initialize(Rig,Aim,Training,FParse::Param(FCommandLine::Get(),TEXT("RosAimControl")),Error))return false;
     if(FParse::Param(FCommandLine::Get(),TEXT("RosImu")))
@@ -209,9 +213,14 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
         double Vx,Vy,Wz;
         if(!Number(J,TEXT("vx"),Vx)||!Number(J,TEXT("vy"),Vy)||!Number(J,TEXT("wz"),Wz)){Reject(TEXT("fields"));return true;}
         const double MaxSpeed=Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));
-        if(FMath::Abs(Vx)>MaxSpeed||FMath::Abs(Vy)>MaxSpeed||FVector2D(Vx,Vy).Size()>MaxSpeed||FMath::Abs(Wz)>Rig->GetDriveParameter(TEXT("GyroMaxRadS")))
+        // Coordinate rotations can overshoot a saturated float velocity by a few ULPs.
+        constexpr double LimitTolerance=1.e-6;
+        if(FMath::Abs(Vx)>MaxSpeed+LimitTolerance||FMath::Abs(Vy)>MaxSpeed+LimitTolerance||FVector2D(Vx,Vy).Size()>MaxSpeed+LimitTolerance||FMath::Abs(Wz)>Rig->GetDriveParameter(TEXT("GyroMaxRadS"))+LimitTolerance)
         {Reject(TEXT("limits"));return true;}
-        if(!Rig->SetContactPlanarDrive(FVector2D(Vx,Vy),Wz,false,false)){Reject(TEXT("drive_backend"));return true;}
+        // Nav2 owns the velocity ramp. A deliberate zero requests physical
+        // brake torque; command expiry still uses the independent safety brake.
+        const bool StopRequested=FMath::Abs(Vx)<1.e-4&&FMath::Abs(Vy)<1.e-4&&FMath::Abs(Wz)<1.e-4;
+        if(!Rig->SetExternalVelocityTarget(FVector2D(Vx,Vy),Wz,StopRequested)){Reject(TEXT("drive_backend"));return true;}
     }
     AcceptedSeq=int64(Sequence);LastCommandWall=FPlatformTime::Seconds();CommandStatus=TEXT("active");
     Rig->RenewExternalDriveLease(.25);return true;
@@ -264,15 +273,29 @@ void URosBridgeComponent::SendPending()
 
 bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
 {
+    // RGB capture is optional; calibration and camera TF remain available.
+    // NullRHI also omits pixels without dereferencing a render resource.
+    if(CameraHz<=0||!FApp::CanEverRender())Capture=false;
     const int64 Stamp=FMath::RoundToInt64(SimTime*1.e9);if(Stamp<0||Stamp>MaxInteger)return false;
     const auto Pose=RosPose(Rig->GetActorTransform());
     const auto Local=RosPose(Camera->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform()),true);
     if(Capture)
     {
+        const double CameraStart=bProfileSensorTiming?FPlatformTime::Seconds():0.;
         Camera->CaptureScene();FlushRenderingCommands();
         FReadSurfaceDataFlags Flags(RCM_UNorm);Flags.SetLinearToGamma(false);
         if(!Target->GameThread_GetRenderTargetResource()->ReadPixels(Pixels,Flags)||Pixels.Num()!=Width*Height)return false;
         ++Images;
+        if(bProfileSensorTiming)
+        {
+            ProfileCameraWall+=FPlatformTime::Seconds()-CameraStart;++ProfileCameraCount;
+            if(SimTime-ProfileCameraStartSim>=5.0)
+            {
+                UE_LOG(LogRMSim,Display,TEXT("RMSIM_CAMERA_TIMING samples=%lld wall_total_ms=%.3f mean_ms=%.3f sim_elapsed=%.3f"),
+                    ProfileCameraCount,ProfileCameraWall*1000,1000*ProfileCameraWall/FMath::Max(1.,double(ProfileCameraCount)),SimTime-ProfileCameraStartSim);
+                ProfileCameraWall=0;ProfileCameraCount=0;ProfileCameraStartSim=SimTime;
+            }
+        }
     }
     auto State=MakeShared<FJsonObject>();State->SetNumberField(TEXT("v"),Lidar?2:1);State->SetStringField(TEXT("kind"),TEXT("state"));
     State->SetStringField(TEXT("session"),Session);State->SetStringField(TEXT("robot_id"),RobotId);
@@ -282,6 +305,7 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
     auto Sensor=MakeShared<FJsonObject>();Sensor->SetNumberField(TEXT("width"),Width);Sensor->SetNumberField(TEXT("height"),Height);
     Sensor->SetNumberField(TEXT("hfov_rad"),FMath::DegreesToRadians(HFovDegrees));Sensor->SetNumberField(TEXT("stamp_ns"),double(Stamp));
     Sensor->SetNumberField(TEXT("nominal_hz"),CameraHz);
+    Sensor->SetBoolField(TEXT("capture_enabled"),CameraHz>0&&FApp::CanEverRender());
     if(const auto* Observer=Cast<USceneCaptureComponent2D>(Camera->GetAttachParent()))
         Sensor->SetNumberField(TEXT("observer_hfov_rad"),FMath::DegreesToRadians(double(Observer->FOVAngle)));
     Sensor->SetStringField(TEXT("frame_id"),RobotId+TEXT("/aim_camera_optical_frame"));Sensor->SetObjectField(TEXT("pose_in_base"),Local);State->SetObjectField(TEXT("camera"),Sensor);
@@ -289,6 +313,9 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
     Command->SetNumberField(TEXT("age_s"),LastCommandWall<0?-1:FPlatformTime::Seconds()-LastCommandWall);
     Command->SetNumberField(TEXT("rejected_count"),RejectedCommands);Command->SetStringField(TEXT("last_rejection"),LastRejection);
     State->SetObjectField(TEXT("command"),Command);State->SetNumberField(TEXT("captured_images"),Images);
+    State->SetObjectField(TEXT("drive"),Rig->GetVelocityCommandState());
+    if(const auto* Viewport=Cast<URMSimViewportClient>(GetWorld()->GetGameViewport()))
+        State->SetObjectField(TEXT("rendering"),Viewport->RenderState());
     if(AimController)
     {
         State->SetObjectField(TEXT("aim"),AimController->State(Stamp));
@@ -319,11 +346,16 @@ void URosBridgeComponent::Advance()
 {
     if(!Listener||!IsValid(Rig))return;
     const double Now=FPlatformTime::Seconds();
-    const double WallDelta=Now-LastPollWall;
+
     if(Client&&Now-LastPollWall>.25)Disconnect(TEXT("game_tick_stall"));
     LastPollWall=Now;++TickIndex;
     const double SimTime=FMath::Max(0.,SolverTime()-EpochSolverTime);
-    if(WallDelta>1.e-6&&SimTime>=LastSimTime)RealTimeFactor=FMath::Lerp(RealTimeFactor,(SimTime-LastSimTime)/WallDelta,.02);
+    if(RateWindowWall<=0||SimTime<RateWindowSim){RateWindowWall=Now;RateWindowSim=SimTime;}
+    else if(Now-RateWindowWall>=1.)
+    {
+        RealTimeFactor=(SimTime-RateWindowSim)/(Now-RateWindowWall);
+        RateWindowWall=Now;RateWindowSim=SimTime;
+    }
     const double SimDelta=FMath::Max(0.,SimTime-LastSimTime);LastSimTime=SimTime;
     // Apply only the previously accepted aim command over elapsed physics time.
     if(AimController)AimController->Advance(SimDelta);
@@ -367,9 +399,10 @@ void URosBridgeComponent::Advance()
         else if(LastCommandWall>=0)CommandStatus=TEXT("expired");
     }
     if(Client)SendPending();
-    if(Client&&Outbound.IsEmpty()&&(bMotorControl||Now-LastStateWall>=FMath::Min(.02,1./CameraHz)))
+    const double StateInterval=CameraHz>0?FMath::Min(.02,1./CameraHz):.02;
+    if(Client&&Outbound.IsEmpty()&&(bMotorControl||Now-LastStateWall>=StateInterval))
     {
-        const bool Capture=SimTime>=NextImageSim;
+        const bool Capture=CameraHz>0&&SimTime>=NextImageSim;
         if(!QueueState(SimTime,Capture)){Disconnect(TEXT("capture_failed"));return;}
         if(Capture)NextImageSim=SimTime+1/CameraHz;
         LastStateWall=Now;SendPending();
@@ -378,7 +411,7 @@ void URosBridgeComponent::Advance()
 
 void URosBridgeComponent::ResetEpoch()
 {
-    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=0;LastSimTime=0;RealTimeFactor=0;Disconnect(TEXT("reset"));
+    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=0;LastSimTime=0;RealTimeFactor=0;RateWindowWall=0;RateWindowSim=0;Disconnect(TEXT("reset"));
     if(AimController)AimController->Reset(true);
     if(Imu)Imu->Reset();
     if(Lidar)Lidar->Reset();

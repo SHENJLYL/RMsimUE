@@ -1,7 +1,7 @@
 ---
 doc_type: goal
 status: active
-updated: 2026-11-17
+updated: 2026-11-18
 authorization: user_request_in_current_chat
 ---
 
@@ -32,3 +32,9 @@ authorization: user_request_in_current_chat
 ## 当前工作切片：原 sentry_ws 控速与实时性能
 
 2026-11-17 增加实验目标：导航速度、变速、避障和滤波参数从 sentry_ws ROS YAML 读取；AIM 当前 3m/s 前进上限在该 ROS 源文件调整，允许新车替换自己的文件。长波浪路 0.25m 验收及标准 1× 实时仍 open，详细问题与试验在 .codestable/issues/2026-11-17-navigation-source-realtime。原先长期 goal 继续 active，main 已验收基线保持。
+
+## 2026-11-18 最新用户优先级：精度与性能
+
+用户追加要求继续减小导航误差并提高当前模拟器性能。当前2000/140悬挂、真实接触和原源插件保持；正式性能验收采用用户默认的无重型CSV记录配置。rmuc-09的90秒clock 32项已通过，整体0.999865484×、滚动十秒窗0.987387732–1.011459269、Draw59.668945Hz；同次航点真实误差0.285641m使动作门禁失败，完整版本仍未验收。
+
+接续任务是恢复所选sentry YAML对到点容差的控制权（适配层现有固定0.10m仅保留legacy），当前Simulation先选择0.05m；区分真实停车误差、同步地图定位偏差和规划路径末点差。新增LaserScan、/plan端点、姿态及map→odom TF的只读证据；真值只用于独立评价。目标争取实际到点误差10cm以内，结果按实测记录，原25cm、取消、1×实时及传感器预算门槛保持。完成当前功能、可视化和兼容验收后提交用户指定GitHub，长期可换车/地图、Windows/Ubuntu同源、权威联机目标继续active。

@@ -1,0 +1,49 @@
+{
+  "scope": "native Windows MSVC test of production ScanCadence; not UE/ROS runtime acceptance",
+  "build_command": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scan-cadence-native-01\\build-test.cmd"
+  ],
+  "build_returncode": 0,
+  "files_sha256": {
+    "unreal\\RMSim\\Source\\RMSim\\Sensors\\ScanCadence.h": "9472fdd4c16f58cb83b4bc61672b4a9d8d1d0060fd90d035ae520eafd937e85f",
+    "tests\\control\\test_scan_cadence.cpp": "4b5583bc48895e93f1c7373f9708bd2930d0be0f416916cab6b519f9e428ecdb"
+  },
+  "test_returncode": 0,
+  "result": {
+    "status": "passed",
+    "checks": 36,
+    "cases": [
+      {
+        "name": "chaos_float_5ms_mid360_10hz",
+        "scans": 999,
+        "measured_hz": 9.9994992466
+      },
+      {
+        "name": "non_divisor_30hz",
+        "scans": 2999,
+        "measured_hz": 29.9995003453
+      },
+      {
+        "name": "non_divisor_7hz",
+        "scans": 699,
+        "measured_hz": 6.99995001355
+      },
+      {
+        "name": "jittered_physics",
+        "scans": 1000,
+        "measured_hz": 10
+      },
+      {
+        "name": "nonzero_clock_epoch",
+        "scans": 999,
+        "measured_hz": 9.9994992466
+      }
+    ],
+    "scope": "native standalone tests of production ScanCadence; live UE/ROS frequency remains separate"
+  },
+  "status": "passed",
+  "wall_elapsed_s": 3.3152832984924316
+}

@@ -186,9 +186,9 @@ void AImportLabGameMode::TickControlProbe()
         const double Alignment = FVector::DotProduct((Target - ChaseCamera->GetActorLocation()).GetSafeNormal(),
             ChaseCamera->GetActorForwardVector());
         Name = TEXT("return_to_chase");
-        Detail = FString::Printf(TEXT("Shift preserves aim and reprojects it to the chase centre; angular error %.6f deg"),
+        Detail = FString::Printf(TEXT("Shift exits scope, clears sticky aim and aligns the chase centre; angular error %.6f deg"),
             FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(Alignment, -1.0, 1.0))));
-        Passed = !bSightMode && PC->GetViewTarget() == ChaseCamera && Target.Equals(AimWorldTarget, 1.e-6) &&
+        Passed = !bSightMode && !bHoldAimAfterFreeLook && PC->GetViewTarget() == ChaseCamera &&
             Alignment > FMath::Cos(FMath::DegreesToRadians(0.1));
         break;
     }

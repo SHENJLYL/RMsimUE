@@ -1,0 +1,539 @@
+{
+  "status": "passed",
+  "created_utc": "2026-11-18T04:12:15.860931+00:00",
+  "scope": "Focused CPU topology/selection/ownership/readback checks plus native API on disposable owned Python process; no UE or ROS launched",
+  "tests_run": 9,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_sha256": {
+    "tools/integration/platform_cpu_policy.py": "3f15ad643b476a50199aff81622c9165152fe71a38f4e2afdc53a016b8939302",
+    "tools/integration/navigation_console.py": "6fb433dd81e233a55ff1abfa181a4d55463ff903dbf32dd6e07c935895b2024f",
+    "tools/integration/summarize_navigation_realtime.py": "cb4bc78a3ce32da6bac74955b0caf60ee6c8991be088e720c623763d1d0eb34c",
+    "tests/control/test_platform_cpu_policy.py": "d386ca002a6a18051f321e6784b5a331fc1d818ad7b05e7a103f23670fdd4138"
+  },
+  "checks": [
+    {
+      "name": "focused_cpu_policy_tests_passed",
+      "passed": true
+    },
+    {
+      "name": "all_modified_python_sources_parse",
+      "passed": true
+    }
+  ],
+  "native_owned_python_policy": {
+    "schema_version": 1,
+    "status": "passed",
+    "mode": "owned_process_cpu_sets",
+    "requested_policy": "performance",
+    "paced_navigation": true,
+    "platform": "nt",
+    "helper_sha256": "3f15ad643b476a50199aff81622c9165152fe71a38f4e2afdc53a016b8939302",
+    "started_monotonic_s": 47026.6264986,
+    "pid": 38820,
+    "launcher_pid": 44308,
+    "expected_executable": "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "requested_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "scope": "UE process default soft CPU Sets; OS scheduling and explicit thread policy retained",
+    "checks": [
+      {
+        "name": "valid_requested_policy",
+        "passed": true
+      },
+      {
+        "name": "owned_live_popen",
+        "passed": true
+      },
+      {
+        "name": "owned_executable_argument_matches",
+        "passed": true
+      },
+      {
+        "name": "borrowed_popen_handle_present",
+        "passed": true
+      },
+      {
+        "name": "native_process_identity_matches_owned_popen",
+        "passed": true
+      },
+      {
+        "name": "owned_process_still_live_before_apply",
+        "passed": true
+      },
+      {
+        "name": "native_cpu_sets_readback_matches_decision",
+        "passed": true
+      },
+      {
+        "name": "affinity_priority_and_power_policy_unchanged",
+        "passed": true
+      }
+    ],
+    "native_calls": [
+      {
+        "api": "GetProcessId",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetExitCodeProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "QueryFullProcessImageNameW",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "SetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      }
+    ],
+    "command": [
+      "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-c",
+      "import sys; sys.stdin.read()"
+    ],
+    "handle_source": "owned_subprocess_popen_handle",
+    "native_process": {
+      "pid": 38820,
+      "exit_code": 259,
+      "executable": "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe"
+    },
+    "before": {
+      "affinity": {
+        "process_mask": 16777215,
+        "system_mask": 16777215
+      },
+      "priority_class": 32,
+      "power_throttling": {
+        "version": 1,
+        "control_mask": 0,
+        "state_mask": 0
+      },
+      "default_cpu_sets": []
+    },
+    "topology": [
+      {
+        "id": 256,
+        "group": 0,
+        "logical_processor": 0,
+        "core": 0,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 2,
+        "allocation_tag": 0
+      },
+      {
+        "id": 257,
+        "group": 0,
+        "logical_processor": 1,
+        "core": 1,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 258,
+        "group": 0,
+        "logical_processor": 2,
+        "core": 2,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 259,
+        "group": 0,
+        "logical_processor": 3,
+        "core": 3,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 260,
+        "group": 0,
+        "logical_processor": 4,
+        "core": 4,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 261,
+        "group": 0,
+        "logical_processor": 5,
+        "core": 5,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 262,
+        "group": 0,
+        "logical_processor": 6,
+        "core": 6,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 263,
+        "group": 0,
+        "logical_processor": 7,
+        "core": 7,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 264,
+        "group": 0,
+        "logical_processor": 8,
+        "core": 8,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 265,
+        "group": 0,
+        "logical_processor": 9,
+        "core": 9,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 266,
+        "group": 0,
+        "logical_processor": 10,
+        "core": 10,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 2,
+        "allocation_tag": 0
+      },
+      {
+        "id": 267,
+        "group": 0,
+        "logical_processor": 11,
+        "core": 11,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 268,
+        "group": 0,
+        "logical_processor": 12,
+        "core": 12,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 269,
+        "group": 0,
+        "logical_processor": 13,
+        "core": 13,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 270,
+        "group": 0,
+        "logical_processor": 14,
+        "core": 14,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 271,
+        "group": 0,
+        "logical_processor": 15,
+        "core": 15,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 272,
+        "group": 0,
+        "logical_processor": 16,
+        "core": 16,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 273,
+        "group": 0,
+        "logical_processor": 17,
+        "core": 17,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 274,
+        "group": 0,
+        "logical_processor": 18,
+        "core": 18,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 275,
+        "group": 0,
+        "logical_processor": 19,
+        "core": 19,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 276,
+        "group": 0,
+        "logical_processor": 20,
+        "core": 20,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 277,
+        "group": 0,
+        "logical_processor": 21,
+        "core": 21,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 278,
+        "group": 0,
+        "logical_processor": 22,
+        "core": 22,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 279,
+        "group": 0,
+        "logical_processor": 23,
+        "core": 23,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      }
+    ],
+    "decision": {
+      "action": "apply",
+      "requested_cpu_set_ids": [
+        256,
+        257,
+        266,
+        267,
+        268,
+        269,
+        278,
+        279
+      ],
+      "highest_efficiency_class": 1,
+      "reason": "highest_available_performance_class"
+    },
+    "reason": "highest_available_performance_class",
+    "after": {
+      "affinity": {
+        "process_mask": 16777215,
+        "system_mask": 16777215
+      },
+      "priority_class": 32,
+      "power_throttling": {
+        "version": 1,
+        "control_mask": 0,
+        "state_mask": 0
+      },
+      "default_cpu_sets": [
+        256,
+        257,
+        266,
+        267,
+        268,
+        269,
+        278,
+        279
+      ]
+    },
+    "observed_default_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "outcome": "applied",
+    "completed_monotonic_s": 47026.6268292
+  }
+}

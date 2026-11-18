@@ -31,28 +31,45 @@ class SentryNavigationSourceTests(unittest.TestCase):
         original=yaml.safe_load((self.original/'simulation/nav2_params.yaml').read_text(encoding='utf-8'))
         patched=yaml.safe_load((self.source/'simulation/nav2_params.yaml').read_text(encoding='utf-8'))
         follow=original['controller_server']['ros__parameters']['FollowPath']
-        follow['v_linear_max']=3.0
+        follow['v_linear_max']=5.0
         follow['min_approach_linear_velocity']=0.05
         follow['approach_velocity_scaling_dist']=2.0
         follow['use_interpolation']=True
+        follow['max_lookahead_dist']=2.0
         smooth=original['velocity_smoother']['ros__parameters']
-        smooth['max_velocity']=[3.0,2.0,3.0]
+        smooth['max_velocity']=[5.0,2.0,3.0]
         smooth['min_velocity']=[-1.5,-2.0,-3.0]
         smooth['max_accel']=[0.8,0.8,3.0]
         smooth['max_decel']=[-3.0,-3.0,-5.0]
+        # The selected source explicitly owns native IMU receive history.
+        original['point_lio']['ros__parameters']['common']['imu_qos_depth']=128
+        original['controller_server']['ros__parameters']['general_goal_checker']['xy_goal_tolerance']=.05
+        # Localization is copied from the previously effective reality reference;
+        # this ownership change preserves its estimator and scan values.
+        reality=yaml.safe_load(self.reference.read_text(encoding='utf-8'))
+        for node in ('amcl','pointcloud_to_laserscan'):
+            original[node]=reality[node]
         self.assertEqual(original,patched)
         manual=json.loads((ROOT/'assets/vehicles/aim_sentry/drive-profile.json').read_text())['control']
         self.assertEqual(patched['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],manual['MaxForwardSpeedMps'])
-        self.assertEqual(smooth['max_velocity'][:2],[manual['MaxForwardSpeedMps'],manual['MaxLateralSpeedMps']])
-        self.assertEqual(smooth['min_velocity'][:2],[-manual['MaxReverseSpeedMps'],-manual['MaxLateralSpeedMps']])
+        self.assertEqual(smooth['max_velocity'],[manual['MaxForwardSpeedMps'],2.0,3.0])
+        self.assertEqual(smooth['min_velocity'],[-1.5,-2.0,-3.0])
+        # Only the forward ceiling follows the current manual capability.
+        # Other directions retain the source limits within the physical envelope.
+        self.assertLessEqual(smooth['max_velocity'][1],manual['MaxLateralSpeedMps'])
+        self.assertLessEqual(-smooth['min_velocity'][0],manual['MaxReverseSpeedMps'])
+        self.assertLessEqual(-smooth['min_velocity'][1],manual['MaxLateralSpeedMps'])
+        self.assertLessEqual(max(smooth['max_velocity'][2],-smooth['min_velocity'][2]),manual['GyroMaxRadS'])
 
     def test_sentry_profiles_match_original_controller_and_smoother(self):
-        for name,speed,acceleration,deceleration in [('simulation',3.0,0.8,3.0),('reality',1.0,1.5,1.5)]:
+        for name,speed,acceleration,deceleration in [('simulation',5.0,0.8,3.0),('reality',1.0,1.5,1.5)]:
             with self.subTest(mode=name):
                 cfg,_=prepare(self.reference,self.map,'aim_sentry',[.6,-.4,.15],name)
                 raw=yaml.safe_load((self.source/name/'nav2_params.yaml').read_text(encoding='utf-8'))
                 self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath'],
                                  raw['controller_server']['ros__parameters']['FollowPath'])
+                self.assertEqual(cfg['controller_server']['ros__parameters']['general_goal_checker'],
+                                 raw['controller_server']['ros__parameters']['general_goal_checker'])
                 native_smoother=dict(cfg['velocity_smoother']['ros__parameters'])
                 upstream_smoother=dict(raw['velocity_smoother']['ros__parameters'])
                 # Simulated time must be enabled in UE, even for original reality presets.
@@ -95,12 +112,18 @@ class SentryNavigationSourceTests(unittest.TestCase):
         self.assertEqual(tuning['point_filter_num'],8)
         self.assertEqual(tuning['filter_size_surf'],.2)
         self.assertEqual(tuning['filter_size_map'],.2)
+        self.assertAlmostEqual(tuning['mapping.satu_acc'],30.0)
+        self.assertEqual(tuning['mapping.lidar_meas_cov'],.001)
+        self.assertEqual(tuning['mapping.imu_meas_acc_cov'],.1)
+        self.assertFalse(tuning['use_imu_as_input'])
+        self.assertAlmostEqual(pointlio_tuning(self.source/'reality/nav2_params.yaml')['mapping.satu_acc'],4*9.81)
         self.assertEqual(pointlio_tuning(''),{})
 
     def test_historical_legacy_diagnostics_preserved(self):
         cfg,_=prepare(self.reference,self.map,'aim_sentry',[.6,-.4,.15])
         self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],.35)
         self.assertEqual(cfg['velocity_smoother']['ros__parameters']['max_velocity'][:2],[.35,.35])
+        self.assertEqual(cfg['controller_server']['ros__parameters']['general_goal_checker']['xy_goal_tolerance'],.10)
 
     def test_unsupported_profile_does_not_resolve_arbitrary_files(self):
         for name in ('../external','foo','SIMULATION',None):
@@ -112,7 +135,7 @@ class SentryNavigationSourceTests(unittest.TestCase):
         selected,_=source_profile(self.reference,'simulation')
         selected['controller_server']['ros__parameters']['FollowPath']['v_linear_max']=100
         selected_again,_=source_profile(self.reference,'simulation')
-        self.assertEqual(selected_again['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],3.0)
+        self.assertEqual(selected_again['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],5.0)
         self.assertEqual(self.reference.read_bytes(),before)
 
 if __name__=='__main__':unittest.main()

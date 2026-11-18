@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Sensors/ScanCadence.h"
 #include "RosLidarComponent.generated.h"
 class AVehicleRig;
 class FJsonObject;
@@ -20,12 +21,18 @@ public:
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
     FString Id,ProfileHash,ParentFrame;
-    bool bArticulated=false;
+    bool bArticulated=false,bProfileTiming=false,bSerialQuery=false,bVerifyQueries=false;
+    static constexpr int64 MaxVerificationRays=4096;
+    int64 VerifiedRays=0,VerifiedQueries=0;
+    double VerificationMaxErrorCm=0;
+    double ProfileRayWall=0,ProfileStartSim=0;
+    int64 ProfileRayCount=0;
     int64 WindowPasses=0,SelfBlocked=0;
     FTransform Mount;
     FVector Origin;
     double RaysPerSecond=0,FrameHz=0,MinElevation=0,MaxElevation=0,MinRange=0,MaxRange=0,NoiseStd=0;
     double PreviousTime=-1,FrameStart=-1,FrameEnd=0,RayRemainder=0,MaxStep=0;
+    RMSimSensors::ScanCadence Cadence;
     int32 Reflectivity=0,Seed=0;
     int64 RayIndex=0,Traced=0,Hits=0,MissedRays=0,DroppedScans=0,ScanSequence=0,HistoryResets=0;
     uint64 MotionGeneration=0;

@@ -1,0 +1,925 @@
+{
+  "scene": {
+    "scene": "rmuc2027",
+    "scene_file": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\scene.json",
+    "map_yaml": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+    "initial_pose": [
+      6.4,
+      6.0,
+      0.15
+    ],
+    "view": {
+      "x": 7.5,
+      "y": 6.4,
+      "scale": 65.0
+    },
+    "scene_sha256": "264de7b1b2e629580fa1dd54efc48b2f1b14cefbeacaab917349ed80e61d5f75",
+    "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+  },
+  "transport": {
+    "mode": "loopback_udp",
+    "allowed_interfaces": [
+      "127.0.0.1"
+    ],
+    "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+    "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+  },
+  "git_head": "13f196199ad03d8a4048d77f30bec0b6a1b45b27",
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "rig_sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+  "lidar_sha256": "484d0088296d3c69861e6f3b14907da03f99ef9f1472fb6fb41994c096762229",
+  "lidar_profile": "D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json",
+  "imu_sha256": "9fc5bf3e274229b19f15d6d4533470d398b54bba2c08da2579583a43f190cbc1",
+  "navigation_follow_sha256": "d5bf930b85ce0668db1d434b271fab5dfebce8c6ddc2907329c45897af122aef",
+  "navigation_follow_profile": "D:\\simulator\\assets\\vehicles\\aim_sentry\\navigation-follow.json",
+  "source_control_config_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9",
+  "navigation_source": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+  "control_profile": "simulation",
+  "sim_step_seconds": 0.005,
+  "no_rhi_diagnostic": false,
+  "viewport_hz": 60.0,
+  "pace_real_time": true,
+  "camera_hz": 0.0,
+  "camera_capture_enabled": false,
+  "camera_width": 320,
+  "camera_height": 240,
+  "physics_max_substep_seconds": 0.005,
+  "physics_config_override": "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+  "offscreen": true,
+  "no_rviz": true,
+  "sensor_timing_diagnostic": true,
+  "status_period_seconds": 0.5,
+  "verify_lidar_queries": true,
+  "lidar_serial_query": false,
+  "profile_frames": 0,
+  "localization_map": {
+    "schema": "rmsim_localization_map_identity_v1",
+    "map_id": "rmuc2027",
+    "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+    "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+    "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+    "source_to_sim_translation_m": [
+      -7.152952372635468e-06,
+      -1.6243433957331543,
+      1.6403436655816601
+    ],
+    "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+    "units": "m",
+    "source_role": "offline_geometry_candidate",
+    "source_status": "generated_not_native_validated",
+    "navigation": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.pgm",
+      "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\metadata.json",
+      "metadata_sha256": "3f3eb288c8aeee8e025eb3624b6d59f730638126ff6fbc3e41a9e8c0fb9b01f6",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "eced113f0c5facce2e5f6db507784ba89b633dba0c27a412a2f0615673de4f87"
+    },
+    "localization": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json",
+      "metadata_sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "1e48bb4f55a8aff4524613534011f2a0e493d8385030e7d1d2562e0110d1f1ae"
+    }
+  },
+  "cpu_policy_requested": "performance",
+  "cpu_policy_platform": "nt",
+  "cpu_policy_source_sha256": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+  "process_policy_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\process-policy\\verification.json",
+  "ros_process_transport": {
+    "monitor": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "bridge": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "pointlio": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "navigation": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "rviz": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    }
+  },
+  "git_worktree_status": [
+    " M .codestable/architecture/ARCHITECTURE.md",
+    " M .codestable/goal.md",
+    " M .gitignore",
+    " M assets/vehicles/aim_sentry/drive-profile.json",
+    " M docs/guides/native-navigation.md",
+    " M docs/guides/navigation-console.md",
+    " M docs/progress/current.md",
+    " M ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml",
+    " M ros2_ws/src/point_lio/src/laserMapping.cpp",
+    " M ros2_ws/src/point_lio/src/li_initialization.cpp",
+    " M ros2_ws/src/point_lio/src/parameters.cpp",
+    " M ros2_ws/src/point_lio/src/parameters.h",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_runner.py",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/point_lio_runner.py",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/sentry_navigation_source.py",
+    " M ros2_ws/src/rmsim_bridge/rmsim_bridge/sentry_pointlio_source.py",
+    " M tests/control/test_navigation_speed.py",
+    " M third_party/patches/point-lio-native.patch",
+    " M tools/environment/Start-NavigationConsole.ps1",
+    " M tools/integration/Run-NavigationConsole.ps1",
+    " M tools/integration/measure_console_clock.py",
+    " M tools/integration/navigation_console.py",
+    " M tools/integration/navigation_console_config.py",
+    " M tools/unreal/Test-ManualControls.ps1",
+    " M unreal/RMSim/Config/DefaultEngine.ini",
+    " M unreal/RMSim/Source/RMSim/GyroProbe.cpp",
+    " M unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp",
+    " M unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+    " M unreal/RMSim/Source/RMSim/ManualControlProbe.cpp",
+    " M unreal/RMSim/Source/RMSim/RMSim.Build.cs",
+    " M unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp",
+    " M unreal/RMSim/Source/RMSim/RosBridgeComponent.h",
+    " M unreal/RMSim/Source/RMSim/RosLidarComponent.cpp",
+    " M unreal/RMSim/Source/RMSim/RosLidarComponent.h",
+    " M unreal/RMSim/Source/RMSim/VehicleContactPhysics.cpp",
+    " M unreal/RMSim/Source/RMSim/VehicleDrive.cpp",
+    " M unreal/RMSim/Source/RMSim/VehicleRig.cpp",
+    " M unreal/RMSim/Source/RMSim/VehicleRig.h",
+    "?? .codestable/issues/2026-11-18-navigation-realtime/",
+    "?? artifacts/control/manual-5m-camera-20261118/",
+    "?? artifacts/navigation/nav-speed-20261117/diagnostic5ms-01/",
+    "?? artifacts/navigation/nav-speed-20261117/diagnostic5ms-02/",
+    "?? artifacts/navigation/nav-speed-20261117/engine-brake-profile-01/",
+    "?? artifacts/navigation/nav-speed-20261117/engine-optical-nearseg-01/",
+    "?? artifacts/navigation/nav-speed-20261117/engine-realtime-pacer-01/",
+    "?? artifacts/navigation/nav-speed-20261117/engine-viewport-01/",
+    "?? artifacts/navigation/nav-speed-20261117/imu-input-01-console/",
+    "?? artifacts/navigation/nav-speed-20261117/imu-output-voxel-01-console/",
+    "?? artifacts/navigation/nav-speed-20261117/nullrhi-diagnostic-01/",
+    "?? artifacts/navigation/nav-speed-20261117/nullrhi-diagnostic-02/",
+    "?? artifacts/navigation/nav-speed-20261117/nullrhi-optical200k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/optical-native-01/",
+    "?? artifacts/navigation/nav-speed-20261117/paced-render30-lidar75k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/paced-render60-lidar75k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/pointlio-native-source/",
+    "?? artifacts/navigation/nav-speed-20261117/pointlio-source-cov5ms-01/",
+    "?? artifacts/navigation/nav-speed-20261117/render60-lidar200k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/rhi-lidar100k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/rhi-lidar50k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/rhi-lidar75k-01/",
+    "?? artifacts/navigation/nav-speed-20261117/rhi-profile-brake-01/",
+    "?? artifacts/navigation/realtime-20261118/",
+    "?? docs/changes/2026-11-18-manual-control.md",
+    "?? docs/progress/archive/2026-11-18-before-navigation-realtime.md",
+    "?? ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_map_identity.py",
+    "?? tests/control/test_camera_capture_option.py",
+    "?? tests/control/test_console_clock.py",
+    "?? tests/control/test_localization_cloud_capture.py",
+    "?? tests/control/test_navigation_goal_source.py",
+    "?? tests/control/test_navigation_localization_map.py",
+    "?? tests/control/test_platform_cpu_policy.py",
+    "?? tests/control/test_platform_worker_budget.py",
+    "?? tests/control/test_pointlio_imu_qos.py",
+    "?? tests/control/test_pointlio_source_snapshot.py",
+    "?? tests/control/test_scan_cadence.cpp",
+    "?? tests/control/test_scene_draw_cadence.cpp",
+    "?? tools/integration/Capture-NavigationViewport.ps1",
+    "?? tools/integration/Run-HighSpeedDiagnostics.ps1",
+    "?? tools/integration/Run-NavigationTopSpeed.ps1",
+    "?? tools/integration/analyze_scan_map_alignment.py",
+    "?? tools/integration/localization_cloud_capture.py",
+    "?? tools/integration/platform_cpu_policy.py",
+    "?? tools/integration/probe_high_speed_diagnostics.py",
+    "?? tools/integration/probe_navigation_top_speed.py",
+    "?? tools/integration/run_navigation_realtime_acceptance.py",
+    "?? tools/integration/runtime_identity.py",
+    "?? tools/integration/summarize_navigation_realtime.py",
+    "?? tools/maps/export_localization_surface_map.py",
+    "?? unreal/RMSim/Source/RMSim/RMSimGameEngine.cpp",
+    "?? unreal/RMSim/Source/RMSim/RMSimGameEngine.h",
+    "?? unreal/RMSim/Source/RMSim/RMSimViewportClient.cpp",
+    "?? unreal/RMSim/Source/RMSim/RMSimViewportClient.h",
+    "?? unreal/RMSim/Source/RMSim/Rendering/",
+    "?? unreal/RMSim/Source/RMSim/Sensors/"
+  ],
+  "bridge_inputs": {
+    "__init__.py": {
+      "source_sha256": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+      "installed_sha256": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b"
+    },
+    "aim_adapter.py": {
+      "source_sha256": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26",
+      "installed_sha256": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26"
+    },
+    "aim_demo.py": {
+      "source_sha256": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+      "installed_sha256": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea"
+    },
+    "control_dlls.py": {
+      "source_sha256": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+      "installed_sha256": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004"
+    },
+    "drive_demo.py": {
+      "source_sha256": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+      "installed_sha256": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22"
+    },
+    "imu.py": {
+      "source_sha256": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484",
+      "installed_sha256": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484"
+    },
+    "lidar.py": {
+      "source_sha256": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa",
+      "installed_sha256": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa"
+    },
+    "lk_adapter.py": {
+      "source_sha256": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+      "installed_sha256": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6"
+    },
+    "native_transport.py": {
+      "source_sha256": "5a261878674a451e87082afa9c827e1f7d83a835ca658f14faf0ffef963d818f",
+      "installed_sha256": "5a261878674a451e87082afa9c827e1f7d83a835ca658f14faf0ffef963d818f"
+    },
+    "navigation_config.py": {
+      "source_sha256": "f30bcc35a9577707c8800d1516e9de7873fa2ae816c1ebfd21813b2daf17d3ff",
+      "installed_sha256": "f30bcc35a9577707c8800d1516e9de7873fa2ae816c1ebfd21813b2daf17d3ff"
+    },
+    "navigation_follow.py": {
+      "source_sha256": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3",
+      "installed_sha256": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3"
+    },
+    "navigation_follow_adapter.py": {
+      "source_sha256": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13",
+      "installed_sha256": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13"
+    },
+    "navigation_map_identity.py": {
+      "source_sha256": "8ff8b30aa928e0a6d117677c0307e756934054729dc3ed5c8a4e279be60ab9f3",
+      "installed_sha256": "8ff8b30aa928e0a6d117677c0307e756934054729dc3ed5c8a4e279be60ab9f3"
+    },
+    "navigation_runner.py": {
+      "source_sha256": "29fd506dd35b33d47932c384f8d91226725dc5e627a12249a76c1297f8ecd14f",
+      "installed_sha256": "29fd506dd35b33d47932c384f8d91226725dc5e627a12249a76c1297f8ecd14f"
+    },
+    "node.py": {
+      "source_sha256": "2aab14fbaf6fe2d8b143faafcdd88b26277734937ad6d06d02fa9c60360a154a",
+      "installed_sha256": "2aab14fbaf6fe2d8b143faafcdd88b26277734937ad6d06d02fa9c60360a154a"
+    },
+    "point_lio_runner.py": {
+      "source_sha256": "4c42f3d2f80703d3cb457e3578d9de16896b6dd11c05d0b18330036052da8973",
+      "installed_sha256": "4c42f3d2f80703d3cb457e3578d9de16896b6dd11c05d0b18330036052da8973"
+    },
+    "pointlio_units.py": {
+      "source_sha256": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1",
+      "installed_sha256": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1"
+    },
+    "protocol.py": {
+      "source_sha256": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08",
+      "installed_sha256": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08"
+    },
+    "sentry_navigation_source.py": {
+      "source_sha256": "1c804ae21c56119ac8995414019cb5b60652fc9f8105aa54209cac258212d795",
+      "installed_sha256": "1c804ae21c56119ac8995414019cb5b60652fc9f8105aa54209cac258212d795"
+    },
+    "sentry_pointlio_source.py": {
+      "source_sha256": "82873ca1a1593cf8e1f6fc0e27df89009b550878992f532e96264a02b1fed811",
+      "installed_sha256": "82873ca1a1593cf8e1f6fc0e27df89009b550878992f532e96264a02b1fed811"
+    },
+    "service_poll.py": {
+      "source_sha256": "cd30a551bdfc3dcf7da37a6a587251fe23f9b480f0dbc435d085153971734090",
+      "installed_sha256": "cd30a551bdfc3dcf7da37a6a587251fe23f9b480f0dbc435d085153971734090"
+    },
+    "transport.py": {
+      "source_sha256": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+      "installed_sha256": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3"
+    }
+  },
+  "native_navigation": {
+    "loam_interface.dll": "559c74d3a3e34a4e6f9619c17419869cdeb0c2ef85dd4a2db50c2fdcd99e119b",
+    "sensor_scan_generation.dll": "39b055f340978d82e3f7ce3b9deb48efc788f8ec04fa76ec901eea44299e656e",
+    "fake_vel_transform.dll": "9d5e6efc86d1d6e5568a13bc1b38b0506ef01a36189e8d9e3527c801fa7abc96"
+  },
+  "pointlio_inputs": {
+    "executable_path": "D:\\simulator\\ros2_ws\\install_lio\\point_lio\\lib\\point_lio\\pointlio_mapping.exe",
+    "executable_sha256": "35ac93059f6efc96b3392d71eb8de0bfbc94a068780542ff7b0a2ababe44ce40",
+    "source_files": {
+      "ros2_ws/src/point_lio/CMakeLists.txt": "d8f23cde9a6db43276e6cdaa8e06cf99532216d1a9cd38b36bbed7f16671fe39",
+      "ros2_ws/src/point_lio/include/common_lib.h": "9497750c8adf58ba6236a727a4cc342e949201b5f0e61f93c8b0680424b6ca28",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/esekfom/esekfom.hpp": "0155f9ff49055d9f90c19154b5ba2e8b27684ca86657223b3f204589b631749a",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/esekfom/util.hpp": "fbf382a63838d4f834117010bc3a0a4faa1ab0790b6ddc3085b090bc5a4874aa",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/build_manifold.hpp": "3ead1049f8edd5ded925cf6c4c70cb9833ff304bc5ce3d94182c0d1d65d77384",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/mtkmath.hpp": "0f0aa04f162ef029a5a9f2b2c9bd4eb4c1aec488b35a998a4ab040df24eddf67",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/SubManifold.hpp": "5381ac698347bccfc38c1165a22af457fb372cda1e986c4ca3a113012e795250",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/src/vectview.hpp": "542fd83490ac26c10f52fe134ca6053dbd7d71a3e5a6a0f76ff20e8228607488",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/startIdx.hpp": "952df182043fdfc8a5d26f5e889b5b405ed908eb1850391d95abebaf89e3d607",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/S2.hpp": "38aca2b8b1474fe1d1c3b71839558bddbab198bb7fd2656471202983fc47a1d3",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/SEn.hpp": "2ef8b30d6d5257f86070010f404f47fd49f6ce5c25f967a9b15698c2ffd42889",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/SOn.hpp": "0446a9afd34a73c02d97a5d832e9a8e2d92fb23b0e2dca13ffed303df12dd907",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/vect.hpp": "032f8821e03eedbd4eec880ecc1bda781065c641a80e536e83d187b73474d855",
+      "ros2_ws/src/point_lio/include/IKFoM/IKFoM_toolkit/mtk/types/wrapped_cv_mat.hpp": "47c377167f870adf334553f8555de1581311e01f31862d75da0bba177c8e98f0",
+      "ros2_ws/src/point_lio/include/ivox/eigen_types.h": "3b8a19e5c2979295383ff21160ec08bbb853c9b70d73745fb87a80cfc32ceec2",
+      "ros2_ws/src/point_lio/include/ivox/hilbert.hpp": "e145216d1d894f04c1a53201e206ef725e75a238a32c26f9fd8b34582f25c68a",
+      "ros2_ws/src/point_lio/include/ivox/ivox3d.h": "48892292d0cb4be8f3d60b3f3b57732ce86c9e2ca7814264128e7b397aac3e61",
+      "ros2_ws/src/point_lio/include/ivox/ivox3d_node.hpp": "16bc33eb9783844dbf729c02a85a58fe5c78fc6c536aba0f40f20a9109488eb5",
+      "ros2_ws/src/point_lio/include/matplotlibcpp.h": "5602396f543aad2d499a5b8f072f76d925141231e8acb98614e90a2ec3ec77c4",
+      "ros2_ws/src/point_lio/include/so3_math.h": "e6f4a13e7b72bcadbded1e739f521a50a577b5d1ca7d5c0aa2d0c4845a37646e",
+      "ros2_ws/src/point_lio/package.xml": "126f5ebc7b904935fb79fd9170109e0583a190f4c4b631618bf7e3abcc3f4d4f",
+      "ros2_ws/src/point_lio/src/Estimator.cpp": "135459c16d18636c807bf18a8fffa2fa43272e0fb3e9184f2bf80b124d1912eb",
+      "ros2_ws/src/point_lio/src/Estimator.h": "d0d51f620fd02a5f650a4cd17a7a80b57b5559683dbcbe712cf818feeb87e6ad",
+      "ros2_ws/src/point_lio/src/IMU_Processing.cpp": "8530dc2684b26a9054bfdf9b79d5082a866c01f94844b122cd43c8650d1aea16",
+      "ros2_ws/src/point_lio/src/IMU_Processing.h": "27d6fb4cc9860d3a25fee2719e7241bc0304131664a9878cf94c328948bfd4fa",
+      "ros2_ws/src/point_lio/src/laserMapping.cpp": "c128f1426896f08a15ed695b032123a5aa791f54d7e009cce081e123732bd9af",
+      "ros2_ws/src/point_lio/src/li_initialization.cpp": "bf8368fb308b586b5a1867adbe78f10109117f608c2503a73766d85aac37e36f",
+      "ros2_ws/src/point_lio/src/li_initialization.h": "79f14a5f99f40c976a99d64e7a1c40807ccb5b4034144d583821dec001506aba",
+      "ros2_ws/src/point_lio/src/parameters.cpp": "85c01228ae1aefadc3889ac906a628a77e904cb83b9602e77b9c7d2c313e188d",
+      "ros2_ws/src/point_lio/src/parameters.h": "627ac08caeae369941e57868f4e9868e5d5a2645ff6d222eb23b0047a9a6f173",
+      "ros2_ws/src/point_lio/src/preprocess.cpp": "a6cfc292946405c32103585144621f4d02675c4001239d69be085bd4f7f8bb1f",
+      "ros2_ws/src/point_lio/src/preprocess.h": "95dedb005690b9bec94de665a31af2178e065dcf6af337198309a5cf461cac7d"
+    },
+    "source_tree_sha256": "58b989d8bc7eabf7771de5de01bdb130538cdd8765ce4ef5e168870c4687fbe0",
+    "patch_path": "third_party/patches/point-lio-native.patch",
+    "patch_sha256": "baf573e3fbbc1ffff7565aa50f93b20ef07a2500b97ef866d7a7fa779202ab1a",
+    "base_config_path": "D:\\simulator\\ros2_ws\\install_lio\\point_lio\\share\\point_lio\\config\\mid360.yaml",
+    "base_config_sha256": "6bbbf6decabf5e41521e457770973c5536e846d15ba299e1b387dc0758a4d6be"
+  },
+  "runtime_identity_source_sha256": "883552b28ee8ec09a0b285a4e0d8b806d04407cf6442b0386759b6beefbfe7b5",
+  "console_source_sha256": "6b268153d8190b548b1e6994e36a8a61d7a3eae5834d8165f780f313d2ca2df1",
+  "console_config_source_sha256": "4522d474eea0af81d08788ee015fc8efc537140fef156e5f9a55208a8d996ad4",
+  "dependency_lock_sha256": "476551dd4cc0a80340b959422b08f7b2a6ce29834f5db712e1e757da9e88642e",
+  "capture_scope": "inputs captured before process launch; source/installed Python text compared",
+  "worker_budget": {
+    "schema_version": 1,
+    "status": "passed",
+    "action": "apply",
+    "outcome": "limited",
+    "launch_allowed": true,
+    "requested_policy": "performance",
+    "paced_navigation": true,
+    "platform": "nt",
+    "launcher_pid": 40552,
+    "helper_sha256": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+    "started_monotonic_s": 48813.2559886,
+    "command_before": [
+      "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+      "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode",
+      "-game",
+      "-RenderOffScreen",
+      "-unattended",
+      "-ResX=640",
+      "-ResY=360",
+      "-ProfileSensorTiming",
+      "-VerifyLidarQueries",
+      "-RMSimViewportHz=60.0",
+      "-SimRealTimePace",
+      "-NoSplash",
+      "-NoSound",
+      "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+      "-RosControl",
+      "-RosAimControl",
+      "-RosImu",
+      "-RosLidar",
+      "-LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json",
+      "-ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json",
+      "-SimStepSeconds=0.005",
+      "-RosCameraWidth=320",
+      "-RosCameraHeight=240",
+      "-RosCameraHz=0.0",
+      "-RosPort=9451",
+      "-MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+      "-MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\scene.json",
+      "-abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime.log"
+    ],
+    "command": [
+      "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+      "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode",
+      "-game",
+      "-RenderOffScreen",
+      "-unattended",
+      "-ResX=640",
+      "-ResY=360",
+      "-ProfileSensorTiming",
+      "-VerifyLidarQueries",
+      "-RMSimViewportHz=60.0",
+      "-SimRealTimePace",
+      "-NoSplash",
+      "-NoSound",
+      "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+      "-RosControl",
+      "-RosAimControl",
+      "-RosImu",
+      "-RosLidar",
+      "-LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json",
+      "-ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json",
+      "-SimStepSeconds=0.005",
+      "-RosCameraWidth=320",
+      "-RosCameraHeight=240",
+      "-RosCameraHz=0.0",
+      "-RosPort=9451",
+      "-MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+      "-MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\scene.json",
+      "-abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime.log",
+      "-corelimit=8"
+    ],
+    "expected_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "physical_core_count": 8,
+    "logical_processor_count": 8,
+    "corelimit": 8,
+    "corelimit_argument": "-corelimit=8",
+    "corelimit_source": "automatic",
+    "expected_windows_worker_threads_to_spawn": 7,
+    "checks": [
+      {
+        "name": "valid_requested_policy",
+        "passed": true
+      },
+      {
+        "name": "explicit_ue_argument_vector",
+        "passed": true
+      },
+      {
+        "name": "readonly_current_parent_identity",
+        "passed": true
+      }
+    ],
+    "native_calls": [
+      {
+        "api": "GetCurrentProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessId",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetExitCodeProcess",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "QueryFullProcessImageNameW",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessAffinityMask",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetPriorityClass",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetProcessDefaultCpuSets",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": false,
+        "last_error": 122,
+        "expected_buffer_query": true
+      },
+      {
+        "api": "GetSystemCpuSetInformation",
+        "succeeded": true,
+        "last_error": 0,
+        "expected_buffer_query": false
+      }
+    ],
+    "parent_process": {
+      "pid": 40552,
+      "exit_code": 259,
+      "executable": "E:\\simulator-cache\\environments\\rm-simulator-ros2-humble-9257817147700612234\\envs\\default\\python.exe"
+    },
+    "parent_before": {
+      "affinity": {
+        "process_mask": 16777215,
+        "system_mask": 16777215
+      },
+      "priority_class": 32,
+      "power_throttling": {
+        "version": 1,
+        "control_mask": 0,
+        "state_mask": 0
+      },
+      "default_cpu_sets": []
+    },
+    "topology": [
+      {
+        "id": 256,
+        "group": 0,
+        "logical_processor": 0,
+        "core": 0,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 2,
+        "allocation_tag": 0
+      },
+      {
+        "id": 257,
+        "group": 0,
+        "logical_processor": 1,
+        "core": 1,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 258,
+        "group": 0,
+        "logical_processor": 2,
+        "core": 2,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 259,
+        "group": 0,
+        "logical_processor": 3,
+        "core": 3,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 260,
+        "group": 0,
+        "logical_processor": 4,
+        "core": 4,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 261,
+        "group": 0,
+        "logical_processor": 5,
+        "core": 5,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 262,
+        "group": 0,
+        "logical_processor": 6,
+        "core": 6,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 263,
+        "group": 0,
+        "logical_processor": 7,
+        "core": 7,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 264,
+        "group": 0,
+        "logical_processor": 8,
+        "core": 8,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 265,
+        "group": 0,
+        "logical_processor": 9,
+        "core": 9,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 266,
+        "group": 0,
+        "logical_processor": 10,
+        "core": 10,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 2,
+        "allocation_tag": 0
+      },
+      {
+        "id": 267,
+        "group": 0,
+        "logical_processor": 11,
+        "core": 11,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 268,
+        "group": 0,
+        "logical_processor": 12,
+        "core": 12,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 269,
+        "group": 0,
+        "logical_processor": 13,
+        "core": 13,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 270,
+        "group": 0,
+        "logical_processor": 14,
+        "core": 14,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 271,
+        "group": 0,
+        "logical_processor": 15,
+        "core": 15,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 272,
+        "group": 0,
+        "logical_processor": 16,
+        "core": 16,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 273,
+        "group": 0,
+        "logical_processor": 17,
+        "core": 17,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 274,
+        "group": 0,
+        "logical_processor": 18,
+        "core": 18,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 275,
+        "group": 0,
+        "logical_processor": 19,
+        "core": 19,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 276,
+        "group": 0,
+        "logical_processor": 20,
+        "core": 20,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 277,
+        "group": 0,
+        "logical_processor": 21,
+        "core": 21,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 0,
+        "flags": 1,
+        "scheduling_class": 0,
+        "allocation_tag": 0
+      },
+      {
+        "id": 278,
+        "group": 0,
+        "logical_processor": 22,
+        "core": 22,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      },
+      {
+        "id": 279,
+        "group": 0,
+        "logical_processor": 23,
+        "core": 23,
+        "cache": 0,
+        "numa": 0,
+        "efficiency_class": 1,
+        "flags": 0,
+        "scheduling_class": 1,
+        "allocation_tag": 0
+      }
+    ],
+    "decision": {
+      "action": "apply",
+      "requested_cpu_set_ids": [
+        256,
+        257,
+        266,
+        267,
+        268,
+        269,
+        278,
+        279
+      ],
+      "highest_efficiency_class": 1,
+      "reason": "highest_available_performance_class"
+    },
+    "reason": "highest_available_performance_class",
+    "completed_monotonic_s": 48813.2564711,
+    "command_sha256": "35aacb8999cf9baaa34dd1ba446577ac8ec430b56d00746b01cc846ed7ce1e0b"
+  },
+  "worker_budget_sha256": "a431326412c96a110181bf7fef7c0aa016e6a9d7d23f5242f22445d8ffdf2de7",
+  "ue_command": [
+    "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+    "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode",
+    "-game",
+    "-RenderOffScreen",
+    "-unattended",
+    "-ResX=640",
+    "-ResY=360",
+    "-ProfileSensorTiming",
+    "-VerifyLidarQueries",
+    "-RMSimViewportHz=60.0",
+    "-SimRealTimePace",
+    "-NoSplash",
+    "-NoSound",
+    "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+    "-RosControl",
+    "-RosAimControl",
+    "-RosImu",
+    "-RosLidar",
+    "-LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json",
+    "-ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json",
+    "-SimStepSeconds=0.005",
+    "-RosCameraWidth=320",
+    "-RosCameraHeight=240",
+    "-RosCameraHz=0.0",
+    "-RosPort=9451",
+    "-MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+    "-MapFile=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\scene.json",
+    "-abslog=D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime.log",
+    "-corelimit=8"
+  ],
+  "ue_command_sha256": "35aacb8999cf9baaa34dd1ba446577ac8ec430b56d00746b01cc846ed7ce1e0b",
+  "ue_corelimit": 8
+}

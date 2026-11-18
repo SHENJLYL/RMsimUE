@@ -1,0 +1,605 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "mode": "owned_process_cpu_sets",
+  "requested_policy": "performance",
+  "paced_navigation": true,
+  "platform": "nt",
+  "helper_sha256": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+  "started_monotonic_s": 58211.1572893,
+  "pid": 47056,
+  "launcher_pid": 28596,
+  "expected_executable": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+  "requested_cpu_set_ids": [
+    256,
+    257,
+    266,
+    267,
+    268,
+    269,
+    278,
+    279
+  ],
+  "scope": "UE process default soft CPU Sets; OS scheduling and explicit thread policy retained",
+  "checks": [
+    {
+      "name": "valid_requested_policy",
+      "passed": true
+    },
+    {
+      "name": "owned_live_popen",
+      "passed": true
+    },
+    {
+      "name": "owned_executable_argument_matches",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_preflight_passed",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_request_and_source_match",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_actual_command_matches_declared",
+      "passed": true
+    },
+    {
+      "name": "borrowed_popen_handle_present",
+      "passed": true
+    },
+    {
+      "name": "native_process_identity_matches_owned_popen",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_actual_cpu_sets_match_preflight",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_actual_core_counts_match_preflight",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_corelimit_present_before_ue_startup",
+      "passed": true
+    },
+    {
+      "name": "owned_process_still_live_before_apply",
+      "passed": true
+    },
+    {
+      "name": "native_cpu_sets_readback_matches_decision",
+      "passed": true
+    },
+    {
+      "name": "affinity_priority_and_power_policy_unchanged",
+      "passed": true
+    }
+  ],
+  "native_calls": [
+    {
+      "api": "GetProcessId",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetExitCodeProcess",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "QueryFullProcessImageNameW",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessAffinityMask",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessInformation",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetPriorityClass",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessDefaultCpuSets",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetSystemCpuSetInformation",
+      "succeeded": false,
+      "last_error": 122,
+      "expected_buffer_query": true
+    },
+    {
+      "api": "GetSystemCpuSetInformation",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "SetProcessDefaultCpuSets",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessAffinityMask",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessInformation",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetPriorityClass",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    },
+    {
+      "api": "GetProcessDefaultCpuSets",
+      "succeeded": false,
+      "last_error": 122,
+      "expected_buffer_query": true
+    },
+    {
+      "api": "GetProcessDefaultCpuSets",
+      "succeeded": true,
+      "last_error": 0,
+      "expected_buffer_query": false
+    }
+  ],
+  "command": [
+    "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+    "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode",
+    "-game",
+    "-windowed",
+    "-ResX=1120",
+    "-ResY=860",
+    "-WinX=20",
+    "-WinY=40",
+    "-RMSimViewportHz=60.0",
+    "-SimRealTimePace",
+    "-NoSplash",
+    "-NoSound",
+    "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+    "-RosControl",
+    "-RosAimControl",
+    "-RosImu",
+    "-RosLidar",
+    "-LidarProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360.json",
+    "-ImuProfile=D:\\simulator\\assets\\vehicles\\aim_sentry\\sensors\\mid360-imu.json",
+    "-SimStepSeconds=0.005",
+    "-RosCameraWidth=320",
+    "-RosCameraHeight=240",
+    "-RosCameraHz=0.0",
+    "-RosPort=9451",
+    "-MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+    "-MapFile=D:\\simulator\\artifacts\\navigation\\console-live\\20261118T071838Z-8fbd40a4\\scene\\scene.json",
+    "-abslog=D:\\simulator\\artifacts\\navigation\\console-live\\20261118T071838Z-8fbd40a4\\runtime.log",
+    "-corelimit=8"
+  ],
+  "worker_budget": {
+    "preflight_sha256": "da6fc13a93cac7f8ca1e5b5143c873ac96483a0094e0a58717b3e7996a0bd4d4",
+    "declared_action": "apply",
+    "corelimit": 8,
+    "corelimit_argument": "-corelimit=8",
+    "expected_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "expected_physical_core_count": 8,
+    "expected_logical_processor_count": 8,
+    "actual_ue_command_sha256": "ba539a1f4bf5ff4b2b1c71f952533f1d61e61d3820d1cf6d3ae2510a73d9a87d",
+    "child_dynamic_decision": {
+      "action": "apply",
+      "requested_cpu_set_ids": [
+        256,
+        257,
+        266,
+        267,
+        268,
+        269,
+        278,
+        279
+      ],
+      "highest_efficiency_class": 1,
+      "reason": "highest_available_performance_class"
+    },
+    "actual_physical_core_count": 8,
+    "actual_logical_processor_count": 8
+  },
+  "handle_source": "owned_subprocess_popen_handle",
+  "native_process": {
+    "pid": 47056,
+    "exit_code": 259,
+    "executable": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe"
+  },
+  "before": {
+    "affinity": {
+      "process_mask": 16777215,
+      "system_mask": 16777215
+    },
+    "priority_class": 32,
+    "power_throttling": {
+      "version": 1,
+      "control_mask": 0,
+      "state_mask": 0
+    },
+    "default_cpu_sets": []
+  },
+  "topology": [
+    {
+      "id": 256,
+      "group": 0,
+      "logical_processor": 0,
+      "core": 0,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 2,
+      "allocation_tag": 0
+    },
+    {
+      "id": 257,
+      "group": 0,
+      "logical_processor": 1,
+      "core": 1,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    },
+    {
+      "id": 258,
+      "group": 0,
+      "logical_processor": 2,
+      "core": 2,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 259,
+      "group": 0,
+      "logical_processor": 3,
+      "core": 3,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 260,
+      "group": 0,
+      "logical_processor": 4,
+      "core": 4,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 261,
+      "group": 0,
+      "logical_processor": 5,
+      "core": 5,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 262,
+      "group": 0,
+      "logical_processor": 6,
+      "core": 6,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 263,
+      "group": 0,
+      "logical_processor": 7,
+      "core": 7,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 264,
+      "group": 0,
+      "logical_processor": 8,
+      "core": 8,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 265,
+      "group": 0,
+      "logical_processor": 9,
+      "core": 9,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 266,
+      "group": 0,
+      "logical_processor": 10,
+      "core": 10,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 2,
+      "allocation_tag": 0
+    },
+    {
+      "id": 267,
+      "group": 0,
+      "logical_processor": 11,
+      "core": 11,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    },
+    {
+      "id": 268,
+      "group": 0,
+      "logical_processor": 12,
+      "core": 12,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    },
+    {
+      "id": 269,
+      "group": 0,
+      "logical_processor": 13,
+      "core": 13,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    },
+    {
+      "id": 270,
+      "group": 0,
+      "logical_processor": 14,
+      "core": 14,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 271,
+      "group": 0,
+      "logical_processor": 15,
+      "core": 15,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 272,
+      "group": 0,
+      "logical_processor": 16,
+      "core": 16,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 273,
+      "group": 0,
+      "logical_processor": 17,
+      "core": 17,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 274,
+      "group": 0,
+      "logical_processor": 18,
+      "core": 18,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 275,
+      "group": 0,
+      "logical_processor": 19,
+      "core": 19,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 276,
+      "group": 0,
+      "logical_processor": 20,
+      "core": 20,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 277,
+      "group": 0,
+      "logical_processor": 21,
+      "core": 21,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 0,
+      "flags": 1,
+      "scheduling_class": 0,
+      "allocation_tag": 0
+    },
+    {
+      "id": 278,
+      "group": 0,
+      "logical_processor": 22,
+      "core": 22,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    },
+    {
+      "id": 279,
+      "group": 0,
+      "logical_processor": 23,
+      "core": 23,
+      "cache": 0,
+      "numa": 0,
+      "efficiency_class": 1,
+      "flags": 0,
+      "scheduling_class": 1,
+      "allocation_tag": 0
+    }
+  ],
+  "decision": {
+    "action": "apply",
+    "requested_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "highest_efficiency_class": 1,
+    "reason": "highest_available_performance_class"
+  },
+  "reason": "highest_available_performance_class",
+  "after": {
+    "affinity": {
+      "process_mask": 16777215,
+      "system_mask": 16777215
+    },
+    "priority_class": 32,
+    "power_throttling": {
+      "version": 1,
+      "control_mask": 0,
+      "state_mask": 0
+    },
+    "default_cpu_sets": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ]
+  },
+  "observed_default_cpu_set_ids": [
+    256,
+    257,
+    266,
+    267,
+    268,
+    269,
+    278,
+    279
+  ],
+  "outcome": "applied",
+  "completed_monotonic_s": 58211.1577804,
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\console-live\\20261118T071838Z-8fbd40a4",
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\console-live\\20261118T071838Z-8fbd40a4\\runtime-provenance.json",
+  "runtime_provenance_sha256": "bd19f53583d671dce65a292787cfc0d4dbf0e92fbd26ae0ed2a2705e5f5a105d",
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "capture_phase": "immediately_after_owned_ue_popen"
+}

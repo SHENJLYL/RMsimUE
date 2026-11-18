@@ -1,60 +1,97 @@
-# 可视化导航、云台跟随与 Mid-360
+# 可视化导航控制台与云台 Mid-360
 
-## 打开和关闭
+## 打开与关闭
 
-在已准备资源的本机，双击根目录 `Play-Navigation.cmd`。启动器打开 UE 场景，依次启动原生 ROS 桥、Point-LIO、AMCL/Nav2，定位就绪后打开 RViz。默认场地为 RMUC2027 红方波浪路出生点；平地示例可运行 `Play-Navigation.cmd import_lab`。
+在已准备资产的本机，双击根目录 **Play-Navigation.cmd**。它启动 UE 场景、原生 ROS 桥、Point-LIO、AMCL/Nav2，并在定位就绪后打开 RViz。默认地图为 RMUC2027 红方波浪路线；平地示例使用 `Play-Navigation.cmd import_lab`。
 
-关闭 RViz 会结束本次启动器拥有的整套导航进程。也可双击 `Stop-Navigation.cmd`。手动驾驶入口仍为 `Play-ManualVehicle.cmd`，训练入口仍为 `Play-Training.cmd`。同一工程使用单个 UE 游戏实例；启动导航时会正常关闭已有手动预览，遇到编辑器、测试或另一套导航则拒绝重复启动。
+关闭 RViz 会结束本次启动器拥有的整套导航进程，也可双击 **Stop-Navigation.cmd**。手动驾驶入口是 `Play-ManualVehicle.cmd`，训练入口是 `Play-Training.cmd`。同一工程使用一个 UE 游戏实例；启动器会检测已有实例，先关闭当前手动预览再打开导航。
 
-当前 Windows 环境已安装 RViz2 和原 Nav2 RViz 插件。新机器先按仓库说明准备引擎、合法资源和 ROS 依赖，再运行 `tools/environment/Prepare-NavigationConsole.cmd` 完成本地 RViz DLL 部署。该准备入口只部署现有依赖，不自动下载来源受限地图或模型。完整 Ubuntu 原生运行单独验收。
+新机器先按仓库说明准备 UE、合法来源资产和原生 ROS 环境，再运行 `tools/environment/Prepare-NavigationConsole.cmd`。当前实际运行证据来自 Windows；Ubuntu 同源入口与原生运行结果分别记录在[当前进度](../progress/current.md)。
 
-## 单点导航
+## 单点与多航点
 
-在 RViz 左侧确认 `Navigation: active`、`Localization: active`。点击顶栏 **Nav2 Goal**，在白色可通行区域按下鼠标左键、拖动箭头、松开。原 Nav2 action server接收目标，蓝色路径显示规划结果；反馈区显示状态、剩余距离等。鼠标拖动箭头提供目标朝向，当前位置导航的宽松终点朝向策略沿用原配置。
+RViz 显示 `Navigation: active`、`Localization: active` 后，点击顶部 **Nav2 Goal**，在白色可通行区域按住左键并拖出目标箭头，松开后发送原 Nav2 action。绿色路径和导航面板显示规划结果及任务状态。途中点击面板 **Cancel** 取消任务。
 
-导航途中点击左侧 **Cancel** 取消当前任务。UE 窗口仍保留 Space 人工制动和 R 复位；R 会重建本会话的定位与导航，旧目标失效。
+多航点操作顺序：
 
-## 多航点
+1. 打开 **Waypoint / Nav Through Poses Mode** 累积模式。
+2. 用 **Nav2 Goal** 逐一选择地点。
+3. 点击 **Start Waypoint Following**，由原 `FollowWaypoints` action 顺序执行。
+4. **Cancel Accumulation** 清除尚未发送的点队列；行驶中的 **Cancel** 取消活动任务。
 
-点击左侧 **Waypoint / Nav Through Poses Mode** 进入累积模式，然后用顶栏 **Nav2 Goal** 逐一选取地点。选择 **Start Waypoint Following** 后，原 `FollowWaypoints` action依序执行。**Start Nav Through Poses** 对应另一原生 action；其完成范围以当前验收记录为准。**Cancel Accumulation** 清空尚未启动的点列，行驶中的 **Cancel** 取消活动任务。
+**Start Nav Through Poses** 保留另一个原生 action 入口，其专项覆盖见验收记录。目标箭头提供朝向，位置到达后的最终朝向行为由所选源配置控制。
 
-地图可以用 Move Camera 平移、旋转和滚轮缩放。默认视图聚焦已验证的出生点和波浪路。自动验收夹具读取当前视角换算点击坐标，实际用户无需运行该夹具。
+UE 窗口保留 Space 人工制动与 R 复位。R 会产生新的 epoch、清除旧目标并重建定位导航；当前组合的实际 OS 按键恢复范围见当前进度。地图视图可用 Move Camera 平移、旋转和滚轮缩放。
 
-## 画面与坐标
+## 地图与定位显示
 
-RViz固定坐标为 `aim_sentry/map`，显示导航栅格、局部障碍代价、机器人估计位置和外形包络、规划路径、实时激光、Point-LIO配准点云、云台航向和Mid-360安装坐标。地图定位由AMCL提供；局部位姿与点云来自原Point-LIO。显示器与导航均使用估计位姿，仿真真值仅进入独立验收观察器。
+RViz 固定坐标系是 `aim_sentry/map`，显示导航地图、代价地图、估计位姿与协方差、规划路径、激光扫描、Point-LIO 配准点云和安装 TF。定位使用原 Point-LIO 和 AMCL，仿真真值只进入独立评价话题。
 
-当前导航使用场景几何生成的候选栅格，默认已测试区域为红方波浪路线。其他出生点、跨高度结构及全场任意点需要逐项扩展通行验收。
+RMUC 地图包通过 `assets/maps/rmuc2027/navigation-console/SOURCE.json` 声明独立的几何定位图。AMCL 接收该定位图，原可通行地图继续供规划与代价地图使用。显式 `-LocalizationMapYaml` 优先；没有包内声明的其他地图沿用单地图流程。
 
-## sentry_ws 云台跟随
-
-车辆包 `navigation-follow.json` 固定参考 `unnc-aim/universal_controller` 的提交 `95c66c28717e0b4d0f586c2ebf8df99d47a24ab0`。原Hub/云台控制器按导航速度方向形成目标航向，并采用最短角度、最大1rad/s角速度、2rad/s²角加速度、0.3rad/s最低转动段速度、0.02rad容差及0.2s输入有效期。
-
-仿真桥把通过校验的实际导航速度、估计底盘航向和关节反馈送入同一目标整形规则。停车时保持航向，失效输入停止跟随；扫描/获准自瞄优先。导航跟随不开火。当前为高层云台运动接口，原硬件电流PID及完整Hub/视觉仲裁继续单独跟踪。
-
-## Mid-360 实际安装
-
-原模型 `radar_mid360` 随 `bone_turret` 转动，已对应到 `yaw_link`。零位光学中心相对底盘约 `[0.19812,0.07376,0.36119]m`，前倾约45°；来源、源文件哈希与几何拟合记录在 `assets/vehicles/aim_sentry/sensors/mid360-source.json`。传感器相对云台安装配置在 `mid360.json`，共装IMU在 `mid360-imu.json`。
-
-光学原点、点云射线、共装IMU和安装TF随实际关节运动；自己的已审计光学罩可透射，其余车体保留遮挡。范围采用360°水平、-7°到52°俯仰、每仿真秒20万条射线、10Hz扫描。当前是规格约束下的理想首回波模型，专有扫描轨迹、反射强度、温漂、折射和实车标定尚待补充。
-
-Point-LIO接收ROS SI惯性数据。原3g加速度饱和阈值同步换算为29.43m/s²，`acc_norm`为9.81；保留同一物理范围和原饱和逻辑。场景重力单独按UE实际9.8m/s²传入。
-
-## 证据和复测
-
-最新完整通过项及缺口以 `docs/progress/current.md` 和该功能的发布汇总为准。`Test-Mid360Mount.ps1` 验证真实旋转安装和惯性测量；`probe_sentry_navigation.py` 验证原Nav2航点、取消和云台/传感器联动；`test_navigation_console_ui.py` 单独验证真实RViz操作。禁止将后台action成功写成鼠标界面验收成功。
-
-## sentry_ws 导航速度由源配置管理（实验分支）
-
-当前实验分支默认读取 `ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml`，该 ROS 2 工作副本暂将 AIM 前进上限调为 3.0m/s，平滑器的 x/y 轴限分别匹配车包手动参数，原控制器、曲率减速、接近目标减速及 Theta*/代价地图照常工作。原始上游配置保存在只读的 `third_party/sentry_nav_original`。
-
-对于未来不同底盘，可直接向启动器传入其自己的 `sentry_ws` 配置文件，覆盖控制、平滑、避障与 Point-LIO 滤波，而不在仿真中新增该车专属速度常数：
+包内固定来源、坐标、栅格和生成器都进行身份校验。PGM/NPZ 缺失时，启动准备流程从已存在的原碰撞几何重建；已有文件校验失败时会报告具体文件。手动重建入口：
 
 ```powershell
-cd D:\simulator
+.\tools\environment\run-env.ps1 -Command @('python','tools/maps/export_localization_surface_map.py','--restore-package','assets/maps/rmuc2027/navigation-console/SOURCE.json')
+```
+
+该流程需要本地已准备的原几何资源。地图包记录生成配方，源码仓库按来源与大小规则保存数据。当前已覆盖路线、实际误差和未覆盖区域均列在验收记录中。
+
+## 由 sentry_ws 决定速度、平滑和避障
+
+当前默认源是 `ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml`；原始下载副本保存在 `third_party/sentry_nav_original`。前向上限与当前 AIM 手动配置的 5 m/s 对齐，其余导航曲线保留源值。
+
+| 源参数 | 当前值 |
+|---|---|
+| `FollowPath.v_linear_max` | 5.0 m/s |
+| `velocity_smoother.max_velocity` | `[5.0, 2.0, 3.0]`，前进/侧向/yaw |
+| `velocity_smoother.min_velocity` | `[-1.5, -2.0, -3.0]` |
+| `velocity_smoother.max_accel` | `[0.8, 0.8, 3.0]` |
+| `velocity_smoother.max_decel` | `[-3.0, -3.0, -5.0]` |
+| `general_goal_checker.xy_goal_tolerance` | 0.05 m，作用于导航估计位姿 |
+
+实际速度由加减速、路径曲率、障碍代价、接近目标减速和真实轮地接触共同决定。真实到点误差另用独立评价位置测量，包含定位偏差和停车行为。
+
+原 Omni PID、Theta*、速度平滑器和局部/全局代价地图继续工作。车辆的 `external_shaped_velocity` 执行原 ROS 已整形的目标，保留舵轮运动学、转向前馈、轮速 PI 和真实接触；手动输入的另一套平滑曲线保持在手动分支。
+
+接入自己的源文件：
+
+```powershell
 .\tools\environment\Start-NavigationConsole.ps1 -ControlProfile simulation -NavigationSource 'D:\new_vehicle\sentry_ws\src\pb2025_nav_bringup\config\simulation\nav2_params.yaml'
 ```
 
-可选的 `-NavigationFollowProfile` 接收车辆自己的云台目标整形配置。当前 UE mesh-rig、Mid-360 等仍默认 AIM，其他车辆完整自动导入和运行另行验收。
+`-NavigationFollowProfile` 可选择车辆的云台目标整形配置。当前默认 mesh-rig 和传感器仍是 AIM 样例；换车后的几何、安装和整套动力学需按车辆包验收。导航和 Point-LIO 读取选定源文件的快照；修改配置后重新启动会话生效。
 
-**验证边界：** 本次 3m/s 配置单点导航已在原生 UE/ROS 上通过；长波浪路双航点和稳定 1× 实时运行尚未通过。完整证据 `artifacts/navigation/nav-speed-20261117/checkpoint-summary.json`。图形界面原来 0.35m/s 版本的 84+13 项成功记录仍属于先前已验收版本。
+## 标准仿真速度与渲染
+
+默认导航采用真实 Chaos **5 ms 固定步长 / 200 Hz**，按单调墙钟推进完整物理步。该硬子步设置只覆盖当前导航进程；手动入口保留全局 1/240 s 设置。场景绘制采用独立 **60 Hz** 节拍，并保留上一帧纹理；地图、车辆网格与光照继续由原 UE 场景渲染。
+
+Windows 混合核心平台默认 `-CpuPolicy performance`：从可用 CPU Sets 选择性能核心，并在启动前设置匹配的 UE 核心预算。已有 CPU/affinity 限制和显式预算会保留或严格核对。需要使用系统调度策略时：
+
+```powershell
+.\tools\environment\Start-NavigationConsole.ps1 -CpuPolicy system
+```
+
+策略只作用于本次启动的 UE 子进程。CPU 集合、核心预算、完整命令和读回结果进入会话来源记录。
+
+当前导航默认 `-CameraHz 0`，关闭未使用的 ROS RGB 图像采集与同步读回，保留 CameraInfo 和安装 TF。UE 可见场景维持 60 Hz 目标；Mid-360 为 200k 射线/仿真秒、10 Hz 点云，两路 IMU 为 200 Hz。需要 RGB 算法输入时显式开启：
+
+```powershell
+.\tools\environment\Start-NavigationConsole.ps1 -Scene rmuc2027 -CameraHz 10
+```
+
+`-CameraHz` 接受 0 或 1–60 Hz。RGB 开启配置的实时性能独立验证；正式性能报告会明确记录相机状态、真实时钟比例、滚动时间窗、Draw 调用与传感器计数。
+
+## sentry 云台跟随与实际 Mid-360 安装
+
+`assets/vehicles/aim_sentry/navigation-follow.json` 参考原 `unnc-aim/universal_controller` 固定提交 `95c66c28717e0b4d0f586c2ebf8df99d47a24ab0`：最短角、最大目标转速 1 rad/s、角加速度 2 rad/s²、最低转动段速度 0.3 rad/s、容差 0.02 rad、输入有效期 0.2 s。实际导航速度、估计底盘航向和关节反馈共同转换云台目标；扫描/获准自瞄优先，导航不发射。
+
+原模型 `radar_mid360 / bone_turret` 对应 `yaw_link`。零位光学中心相对底盘约 `[0.19812, 0.07376, 0.36119] m`，前倾约45°；来源与测量在 `sensors/mid360-source.json`，运行参数在 `mid360.json` 和 `mid360-imu.json`。光学原点、TF、射线和共装 IMU 随真实关节运动，光学窗口可透射，其余车体保留遮挡。
+
+当前理想扫描模型为360°水平、-7°至52°俯仰、200k射线/仿真秒、10Hz；设备专有扫描图样、反射强度与实车标定继续按传感器范围跟踪。Point-LIO 使用 ROS SI 单位；当前 source `acc_norm=9.81`、`satu_acc=30.0`，实际饱和阈值为30.0 m/s²。源参数决定滤波、协方差和 IMU 队列深度，安装外参由车辆传感器包提供。
+
+## 实际验证记录
+
+最新结果、命令、模块/配置身份和完成范围见[当前进度](../progress/current.md)及[本轮变更](../changes/2026-11-18-navigation-realtime.md)。`artifacts/navigation/realtime-20261118` 保留每轮原生结果和失败实验；最终汇总严格关联同一套当前输入。
+
+原14项导航动作、25cm真实到点、取消停车和完整传感器预算门限保持；10cm作为额外精度目标单列。GUI选点/航点/取消、实际可见画面、标准实时性和原生控制兼容性分别记录。更多出生点、完整场地、原生Ubuntu、多车与权威联机沿长期目标继续推进。

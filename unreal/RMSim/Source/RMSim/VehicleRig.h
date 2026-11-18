@@ -62,6 +62,9 @@ public:
     // SI command: forward metres/sec and ROS yaw radians/sec (positive left).
     void SetContactDrive(double ForwardMetresPerSecond,double YawRadiansPerSecond,bool Brake);
     bool SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake);
+    // ROS velocity already shaped by the vehicle controller; wheel dynamics remain physical.
+    bool SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake);
+    TSharedRef<FJsonObject> GetVelocityCommandState() const;
     double GetDriveParameter(const TCHAR* Name) const { return DriveParameters.FindRef(Name); }
     double GetMeasuredYawRate() const;
     FVector GetCommandOriginVelocity() const;
@@ -154,7 +157,9 @@ private:
     void UpdateContactDrive(double Seconds);
     bool bSwerveContact=false,bDriveWorldFrame=false;
     bool bFreeRollingDiagnostic=false;
-    bool bExternalDriveLease=false;
+    bool bExternalDriveLease=false,bExternalVelocityTracking=false,bAppliedExternalVelocityTracking=false;
+    FVector2D DriveAppliedRequestedWorld=FVector2D::ZeroVector;
+    double DriveAppliedRequestedYaw=0;
     bool bMotorCurrentControl=false,bApplyingMotorCurrent=false,bMotorCommandValid=false;
     double WheelTorqueNmPerAmp=.14,SteerTorqueNmPerAmp=.14;
     TArray<double> SteerCurrentCommands,WheelCurrentCommands;
