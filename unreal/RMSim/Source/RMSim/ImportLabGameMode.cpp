@@ -1,4 +1,6 @@
 #include "ImportLabGameMode.h"
+#include "ArenaShell.h"
+#include "CampusGym.h"
 #include "MapOverview.h"
 #include "TrainingRange.h"
 #include "VehicleRig.h"
@@ -38,6 +40,7 @@
 #include "HAL/PlatformProcess.h"
 #include "Misc/CoreDelegates.h"
 #include "ImageUtils.h"
+#include "ImageCore.h"
 #include "InputCoreTypes.h"
 #include "Misc/CommandLine.h"
 #include "Misc/App.h"
@@ -296,6 +299,7 @@ bool AImportLabGameMode::CreateStage()
     if (!Spawn) { Abort(TEXT("requested spawn id does not exist in map")); return false; }
     SelectedSpawn = *Spawn;
     if (!StageMap.SpawnGeometry(GetWorld(), MapBoxes, MapError)) { Abort(MapError); return false; }
+    if (StageMap.bMeshTerrain && !FArenaShell::Spawn(GetWorld(),StageMap,MapBoxes,MapError)) { Abort(MapError); return false; }
     ProbeObstacle = MapBoxes.FindRef(TEXT("obstacle_") + StageMap.InspectionObstacleId);
     const FBox LocalBounds = Rig->GetLocalCollisionBounds();
     Rig->SetActorLocationAndRotation(RosCoordinates::Position(Spawn->GroundMetres) + FVector(0,0,2.0-LocalBounds.Min.Z),
@@ -310,6 +314,8 @@ bool AImportLabGameMode::CreateStage()
     }
     if (ProbeReport.IsValid()) { ProbeReport->SetStringField(TEXT("map_id"),StageMap.Id); ProbeReport->SetStringField(TEXT("spawn_id"),SpawnId); }
     if (ControlReport.IsValid()) { ControlReport->SetStringField(TEXT("map_id"),StageMap.Id); ControlReport->SetStringField(TEXT("spawn_id"),SpawnId); }
+    if(!FCampusGym::IsActive(GetWorld()))
+    {
     const FVector FloorOffset=StageMap.bSavedScene ? RosCoordinates::Position(Spawn->GroundMetres) : FVector(0,0,StageMap.FloorZ*100.0);
     ADirectionalLight* Sun = GetWorld()->SpawnActor<ADirectionalLight>(FVector(0, 0, 500)+FloorOffset, FRotator(-45, -30, 0));
     Sun->GetLightComponent()->SetMobility(EComponentMobility::Movable);
@@ -345,13 +351,14 @@ bool AImportLabGameMode::CreateStage()
         Light->SetSourceHeight(200.0f);
         Light->SetAttenuationRadius(1800.0f);
     }
+    } // Map-owned indoor lighting
     Overview = GetWorld()->SpawnActor<ACameraActor>();
     Overview->GetCameraComponent()->SetFieldOfView(55.0f);
     UpdateOverview();
     OverviewCapture = NewObject<USceneCaptureComponent2D>(Overview);
     OverviewCapture->SetupAttachment(Overview->GetRootComponent());
     OverviewCapture->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-    OverviewCapture->FOVAngle = 55;
+    OverviewCapture->FOVAngle = Overview->GetCameraComponent()->FieldOfView;
     if (bMapOverview)
     {
         OverviewCapture->ProjectionType = ECameraProjectionMode::Orthographic;
@@ -364,12 +371,39 @@ bool AImportLabGameMode::CreateStage()
     Target->InitAutoFormat(1600, 1000); Target->UpdateResourceImmediate(true);
     OverviewCapture->TextureTarget = Target;
     Overview->AddInstanceComponent(OverviewCapture); OverviewCapture->RegisterComponent();
+    FString GymRenderProfile;
+    if (StageMap.Id == TEXT("rmuc2027") &&
+        FParse::Value(FCommandLine::Get(), TEXT("CustomConfig="), GymRenderProfile) &&
+        GymRenderProfile == TEXT("RMSimGymLumen"))
+    {
+        // SceneCapture defaults explicitly opt out of Lumen in UE 5.8.
+        // Match this venue's player viewport for visual QA; sensor cameras retain their settings.
+        auto& CapturePost = OverviewCapture->PostProcessSettings;
+        CapturePost.bOverride_DynamicGlobalIlluminationMethod = true;
+        CapturePost.DynamicGlobalIlluminationMethod = EDynamicGlobalIlluminationMethod::Lumen;
+        CapturePost.bOverride_ReflectionMethod = true;
+        CapturePost.ReflectionMethod = EReflectionMethod::Lumen;
+        CapturePost.bOverride_LumenSurfaceCacheResolution = true;
+        CapturePost.LumenSurfaceCacheResolution = 1.0f;
+        OverviewCapture->ShowFlags.SetTemporalAA(true);
+        OverviewCapture->ShowFlags.SetAntiAliasing(true);
+        UE_LOG(LogTemp, Display, TEXT("RMSIM_GYM_OVERVIEW_LUMEN enabled=1 temporal_aa=1"));
+    }
     return true;
 }
 
 void AImportLabGameMode::UpdateOverview()
 {
     if (!Rig || !Overview) return;
+    FVector GymPosition,GymTarget;float GymFov=72;
+    if(StageMap.Id==TEXT("rmuc2027")&&FCampusGym::PreviewCamera(GymPosition,GymTarget,GymFov))
+    {
+        Overview->SetActorLocation(GymPosition);
+        Overview->SetActorRotation((GymTarget-GymPosition).Rotation());
+        Overview->GetCameraComponent()->SetProjectionMode(ECameraProjectionMode::Perspective);
+        Overview->GetCameraComponent()->SetFieldOfView(GymFov);
+        return;
+    }
     if (bMapOverview)
     {
         FVector OverviewLocation(0,0,(StageMap.FloorZ+50.0)*100);
@@ -601,6 +635,14 @@ FVector AImportLabGameMode::TraceViewPoint(const FVector& Start, const FVector& 
 void AImportLabGameMode::UpdatePlayerView(APlayerController* PC)
 {
     if (!ChaseCamera || !SightCamera || !Rig || !PC) return;
+    // Optional presentation view uses the same main renderer as normal driving.
+    // The official launcher does not pass this flag, so its controls/view stay unchanged.
+    static const bool GymReviewCamera = FParse::Param(FCommandLine::Get(), TEXT("GymReviewCamera"));
+    if (GymReviewCamera && StageMap.Id == TEXT("rmuc2027") && Overview)
+    {
+        if (PC->GetViewTarget() != Overview) PC->SetViewTarget(Overview);
+        return;
+    }
     const FVector Pivot = Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
     const FRotator Look(OrbitPitch, OrbitYaw, 0.0);
     FVector Position = Pivot - Look.Vector() * ChaseDistanceCm;
@@ -983,6 +1025,7 @@ bool AImportLabGameMode::GetGunWorldPoint(FVector& OutPoint) const
 void AImportLabHUD::DrawHUD()
 {
     Super::DrawHUD();
+    if (FParse::Param(FCommandLine::Get(), TEXT("GymReviewCamera"))) return;
     const AImportLabGameMode* Mode = GetWorld()->GetAuthGameMode<AImportLabGameMode>();
     if (!Canvas || !Mode || !Mode->IsControlHudVisible()) return;
     if (!MapOverview) MapOverview = NewObject<UMapOverview>(this);
@@ -1018,10 +1061,13 @@ bool AImportLabGameMode::CapturePngs(const FString& Phase)
         Pair.Value->CaptureScene();
         FlushRenderingCommands();
         Pair.Value->bCaptureEveryFrame = bContinuousPreview;
-        FBufferArchive Buffer;
+        FImage CapturedImage;
+        TArray64<uint8> Buffer;
         const FString Filename = FPaths::Combine(Directory, FPaths::MakeValidFileName(Pair.Key) + TEXT(".png"));
-        // Supported across UE5 versions; deprecated in newer engines in favor of GetRenderTargetImage.
-        if (!FImageUtils::ExportRenderTarget2DAsPNG(Pair.Value->TextureTarget, Buffer) ||
+        // Save the compressed byte count. UE 5.8's deprecated export helper
+        // serializes allocation capacity and can append bytes after PNG IEND.
+        if (!FImageUtils::GetRenderTargetImage(Pair.Value->TextureTarget, CapturedImage) ||
+            !FImageUtils::CompressImage(Buffer, TEXT("PNG"), CapturedImage) ||
             !FFileHelper::SaveArrayToFile(Buffer, *Filename)) return false;
         UE_LOG(LogRMSim, Display, TEXT("CAPTURE_WRITTEN %s"), *Filename);
         if (bProbeActive)

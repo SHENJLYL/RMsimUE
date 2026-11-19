@@ -23,6 +23,7 @@ struct FMapUiProbeState;
 struct FZeppelinContactProbeState;
 struct FManualRigState;
 struct FRailContactProbeState;
+struct FCampusGymBoundaryProbeState;
 struct FCameraHeadingProbeState;
 
 // The live player-controller adapter and deterministic control probe share raw mouse counts.
@@ -217,6 +218,8 @@ private:
     void TickCombatProbe();
     void TickContactProbe(double DeltaSeconds);
     void TickRailContactProbe(double DeltaSeconds);
+    void TickCampusGymBoundaryProbe(double DeltaSeconds);
+    TSharedPtr<FCampusGymBoundaryProbeState> CampusGymBoundaryProbe;
     TSharedPtr<FRailContactProbeState> RailContactProbe;
     void TickSuspensionProbe(double DeltaSeconds);
     bool RecordControlCheck(const FString& Name, bool Passed, const TSharedPtr<FJsonObject>& Before, const FString& Detail);
