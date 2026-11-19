@@ -1,5 +1,6 @@
 #include "ImportLabGameMode.h"
 #include "ArenaShell.h"
+#include "CampusGym.h"
 #include "TrainingRange.h"
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
@@ -33,6 +34,7 @@
 #include "HAL/PlatformProperties.h"
 #include "HAL/PlatformTime.h"
 #include "ImageUtils.h"
+#include "ImageCore.h"
 #include "InputCoreTypes.h"
 #include "Misc/CommandLine.h"
 #include "Misc/App.h"
@@ -285,6 +287,8 @@ bool AImportLabGameMode::CreateStage()
         RosCoordinates::Rotation(FVector(0,0,Spawn->YawRadians)));
     if (ProbeReport.IsValid()) { ProbeReport->SetStringField(TEXT("map_id"),StageMap.Id); ProbeReport->SetStringField(TEXT("spawn_id"),SpawnId); }
     if (ControlReport.IsValid()) { ControlReport->SetStringField(TEXT("map_id"),StageMap.Id); ControlReport->SetStringField(TEXT("spawn_id"),SpawnId); }
+    if(!FCampusGym::IsActive(GetWorld()))
+    {
     const FVector FloorOffset(0,0,StageMap.FloorZ*100.0);
     ADirectionalLight* Sun = GetWorld()->SpawnActor<ADirectionalLight>(FVector(0, 0, 500)+FloorOffset, FRotator(-45, -30, 0));
     Sun->GetLightComponent()->SetMobility(EComponentMobility::Movable);
@@ -306,13 +310,14 @@ bool AImportLabGameMode::CreateStage()
         Light->SetSourceHeight(200.0f);
         Light->SetAttenuationRadius(1800.0f);
     }
+    } // Map-owned indoor lighting
     Overview = GetWorld()->SpawnActor<ACameraActor>();
     Overview->GetCameraComponent()->SetFieldOfView(55.0f);
     UpdateOverview();
     OverviewCapture = NewObject<USceneCaptureComponent2D>(Overview);
     OverviewCapture->SetupAttachment(Overview->GetRootComponent());
     OverviewCapture->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-    OverviewCapture->FOVAngle = 55;
+    OverviewCapture->FOVAngle = Overview->GetCameraComponent()->FieldOfView;
     if (bMapOverview)
     {
         OverviewCapture->ProjectionType = ECameraProjectionMode::Orthographic;
@@ -331,6 +336,15 @@ bool AImportLabGameMode::CreateStage()
 void AImportLabGameMode::UpdateOverview()
 {
     if (!Rig || !Overview) return;
+    FVector GymPosition,GymTarget;float GymFov=72;
+    if(StageMap.Id==TEXT("rmuc2027")&&FCampusGym::PreviewCamera(GymPosition,GymTarget,GymFov))
+    {
+        Overview->SetActorLocation(GymPosition);
+        Overview->SetActorRotation((GymTarget-GymPosition).Rotation());
+        Overview->GetCameraComponent()->SetProjectionMode(ECameraProjectionMode::Perspective);
+        Overview->GetCameraComponent()->SetFieldOfView(GymFov);
+        return;
+    }
     if (bMapOverview)
     {
         Overview->SetActorLocation(FVector(0,0,(StageMap.FloorZ+50.0)*100));
@@ -793,10 +807,13 @@ bool AImportLabGameMode::CapturePngs(const FString& Phase)
         Pair.Value->CaptureScene();
         FlushRenderingCommands();
         Pair.Value->bCaptureEveryFrame = bContinuousPreview;
-        FBufferArchive Buffer;
+        FImage CapturedImage;
+        TArray64<uint8> Buffer;
         const FString Filename = FPaths::Combine(Directory, FPaths::MakeValidFileName(Pair.Key) + TEXT(".png"));
-        // Supported across UE5 versions; deprecated in newer engines in favor of GetRenderTargetImage.
-        if (!FImageUtils::ExportRenderTarget2DAsPNG(Pair.Value->TextureTarget, Buffer) ||
+        // Save the compressed byte count. UE 5.8's deprecated export helper
+        // serializes allocation capacity and can append bytes after PNG IEND.
+        if (!FImageUtils::GetRenderTargetImage(Pair.Value->TextureTarget, CapturedImage) ||
+            !FImageUtils::CompressImage(Buffer, TEXT("PNG"), CapturedImage) ||
             !FFileHelper::SaveArrayToFile(Buffer, *Filename)) return false;
         UE_LOG(LogRMSim, Display, TEXT("CAPTURE_WRITTEN %s"), *Filename);
         if (bProbeActive)

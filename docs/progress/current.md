@@ -1,5 +1,13 @@
 # 当前进度
 
+## 2026-11-19：校园体育馆与固定玻璃围栏
+
+RMUC2027 现在位于完整校园体育馆中央。四周六排看台、864 个座位、木地板通道、钢屋架、木质吸声板、顶灯和高侧窗已进入原生运行场景。看台复用 Innerscene CC0 模型，PBR 材质来自 ambientCG，窗外与环境光采用 Poly Haven 庭院 HDR。58 块玻璃板和四扇装饰门保持固定关闭；门缝区域也有连续物理边界，车辆始终在比赛场内运行。
+
+物理及雷达边界恢复原验收尺寸，玻璃内面与它对齐。原 CAD、车辆源模型、2000/140 悬挂、sentry_ws 速度与平滑/避障配置保留。发布切片四视角原生检查、重复资源导入、主工程整合检查及独立车辆撞墙/顶压/倒车均已验证，精确身份、最终 90 秒实时导航结果与历史失败见 `artifacts/maps/campus-gym-20261119/release-summary.json`。
+
+新 checkout 先编译，再运行 `tools/unreal/setup_campus_gym.py` 重建忽略的 UE 资源。现有手动驾驶和导航入口加载 RMUC2027 时采用同一体育馆。指南：`docs/guides/campus-gym.md`；变更：`docs/changes/2026-11-19-campus-gym.md`；CodeStable 基线与验收：`.codestable/features/2026-11-19-campus-gym/`。Ubuntu 原生、1080p 实时和物理光度标定继续独立验收。
+
 更新：2026-11-17，Asia/Shanghai。长期goal保持active，完整范围见`.codestable/goal.md`。Windows原生优先，保留Ubuntu同源、通用车辆包、可换地图、高画质、正式裁判与权威联机目标。
 
 ## 最新交付：可视化航点、原导航云台跟随与动态Mid-360

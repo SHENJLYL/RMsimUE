@@ -113,3 +113,11 @@ Play-Navigation启动单实例生命周期监督器，编排UE、原Point-LIO、
 原源码95c66c2的导航偏航目标整形在桥中独立实现，输入实际导航速度、估计底盘yaw与关节反馈；高优先级扫描/获准自瞄保留，导航不发射。v2传感器配置增加yaw_link，逐物理帧安装TF、射线和共装IMU跟随实际关节；v1固定安装入口保持。Loam接口根据重力初始化的原估计与动态安装TF恢复底盘，单次平移/偏航对齐，避免重复应用45°安装旋转。Point-LIO归一化与原始饱和参数配对转换到SI。
 
 当前Windows原生84项、图形13项与离线120/2跳过完成验收，见artifacts/navigation/sentry-console-20261117/release-summary.json。硬件云台电流环、传感器标定、新组合实际R/断线、全场/多车和原生Ubuntu继续沿长期规划推进。
+
+## RMUC 校园体育馆扩展（2026-11-19）
+
+`ArenaShell` 按地图扩展 schema 分派：`rmsim_campus_gym_v1` 由 `CampusGym` 加载有界 SI 布局、CC0 派生座椅和 PBR/HDR 材质；旧 arena schema 保留。场外建筑及固定玻璃门采用无碰撞的实例化装饰网格。四个独立连续静态碰撞墙保留既有比赛及 LiDAR 边界，装饰门区没有通行开口。当前场外视觉不参与导航与雷达查询。
+
+体育馆拥有地图范围内的曝光、环境和面积灯设置。`ImportLabGameMode` 在该扩展激活时使用地图灯光，并提供显式 `GymView` 验收视角；其他地图沿用各自的现有路径。PNG 捕获使用有效 `FImage` 与实际压缩字节，严格验收包含 PNG 结构及文件尾部。
+
+`prepare_campus_gym_assets.py` 核验来源哈希，`build_campus_gym_layout.py` 生成布局，`import_campus_gym_assets.py` 在原生 UE 中重建选定生成资产，`setup_campus_gym.py` 串联并记录各阶段。`test_campus_gym.py` 绑定输入与模块身份，验证原生场景、连续边界和图像。功能指南与范围见 `docs/guides/campus-gym.md`，证据见 `artifacts/maps/campus-gym-20261119/release-summary.json`。

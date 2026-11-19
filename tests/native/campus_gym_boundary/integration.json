@@ -1,0 +1,21 @@
+{
+  "mode": "exact_text_replacements_each_expected_once",
+  "copy_source": "CampusGymBoundaryProbe.cpp -> unreal/RMSim/Source/RMSim/CampusGymBoundaryProbe.cpp",
+  "replacements": [
+    {
+      "file": "unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+      "old": "struct FManualRigState;",
+      "new": "struct FManualRigState;\nstruct FCampusGymBoundaryProbeState;"
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+      "old": "    void TickContactProbe(double DeltaSeconds);",
+      "new": "    void TickContactProbe(double DeltaSeconds);\n    TSharedPtr<FCampusGymBoundaryProbeState> CampusGymBoundaryProbe;\n    void TickCampusGymBoundaryProbe(double DeltaSeconds);"
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/ContactProbe.cpp",
+      "old": "void AImportLabGameMode::TickContactProbe(double DeltaSeconds)\n{",
+      "new": "void AImportLabGameMode::TickContactProbe(double DeltaSeconds)\n{\n    if(FParse::Param(FCommandLine::Get(),TEXT(\"CampusGymBoundaryProbe\")))\n    {TickCampusGymBoundaryProbe(DeltaSeconds);return;}"
+    }
+  ]
+}

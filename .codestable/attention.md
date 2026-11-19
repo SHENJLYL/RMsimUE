@@ -152,3 +152,11 @@
 - Qt的TogglePattern曾只改勾选而未激活Nav2 Goal；测试采用QAction InvokePattern和实际OS地图鼠标，保持前台/PID/像素归属校验。读取实时相机投影，默认65px/m近车视图；GUI短路线与完整波浪action分别记录，不放宽25cm门限。
 - 导航偏航整形参考原95c66c2，最大目标转速1rad/s、加速度2rad/s²、输入200ms过期。扫描/获准自瞄优先，导航不开火。完整硬件云台电流环/Hub/视觉继续独立跟踪。
 - 新Mid360组合的实际R/断线恢复、Nav Through Poses按钮专项、更多出生点/全场、多车和原生Ubuntu保持后续验收。关闭RViz停止该会话；不得并行多个同项目UE做性能结论。大资源/截图/稠密轨迹保留本地。
+
+## 2026-11-19 校园体育馆基线
+
+- `rmsim_campus_gym_v1` 是 RMUC2027 的地图美术扩展；原 `rmsim_arena_shell_v1` 分派与 legacy fixture 保留。入口 `assets/maps/rmuc2027/arena-shell.json`，重建入口 `tools/unreal/setup_campus_gym.py`。
+- 用户要求玻璃门永久关闭且仅作装饰。不得新增 F 交互、开门状态或车辆出场通道。四面连续保护墙覆盖门区及四角。
+- 物理/LiDAR 围墙保持既有验收几何：内缩 0.25 m、厚 0.48 m、Z=-1.25～4.80 m。可见玻璃顶面 Z=2.60 m、厚 12 mm，内表面对齐保护墙的场内侧。改变视觉样式不得无记录地移动定位边界。
+- 源素材有固定哈希、CC0 来源及派生说明；新 UE Content 保持生成和忽略，现有 14 个 legacy 资产许可白名单未扩大。原源模型与导航真值边界保持。
+- 验收对应具体模块与构建树；发布切片的场景结果与当前统一工作区的导航结果分开记录。基线、实际检查及失败记录见 `.codestable/features/2026-11-19-campus-gym/acceptance.md` 与 `artifacts/maps/campus-gym-20261119/release-summary.json`。

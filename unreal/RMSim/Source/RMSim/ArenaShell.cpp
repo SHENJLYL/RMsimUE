@@ -1,4 +1,5 @@
 #include "ArenaShell.h"
+#include "CampusGym.h"
 #include "MapStage.h"
 #include "RosCoordinates.h"
 
@@ -139,6 +140,9 @@ bool FArenaShell::Spawn(UWorld* World,const FMapStage& Stage,
        !FFileHelper::LoadFileToString(SourceText,*Source)||
        !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(SourceText),Root))
         return Fail(TEXT("missing/oversized/broken manifest"));
+    FString CampusSchema;
+    if(Root->TryGetStringField(TEXT("schema"),CampusSchema)&&CampusSchema==TEXT("rmsim_campus_gym_v1"))
+        return FCampusGym::Spawn(World,Stage,Root,Source,Actors,Error);
     FString Schema,MapId,Units,Coordinates;
     if(!Root->TryGetStringField(TEXT("schema"),Schema)||Schema!=TEXT("rmsim_arena_shell_v1")||
        !Root->TryGetStringField(TEXT("map_id"),MapId)||MapId!=Stage.Id||
