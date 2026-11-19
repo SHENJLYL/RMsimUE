@@ -19,6 +19,8 @@ class UWTGeneratedCollisionComponent;
 class UMapOverview;
 struct FMapOverviewFrame;
 struct FMapOverviewPresentation;
+struct FMapUiProbeState;
+struct FZeppelinContactProbeState;
 struct FManualRigState;
 struct FRailContactProbeState;
 struct FCameraHeadingProbeState;
@@ -154,6 +156,10 @@ private:
     void UpdateManualMapInput(const FManualControlInput& Input, bool AllowActions,
         int32& CameraWheelSteps, bool& ConsumeMouse);
     void FillMapInteractionFrame(FMapOverviewFrame& Frame) const;
+    void TickMapUiProbe(double DeltaSeconds);
+    TSharedPtr<FMapUiProbeState> MapUiProbe;
+    void TickZeppelinContactProbe(double DeltaSeconds);
+    TSharedPtr<FZeppelinContactProbeState> ZeppelinContactProbe;
     bool bProbeActive = false;
     int32 ProbePhase = 0;
     FString EvidenceDirectory;

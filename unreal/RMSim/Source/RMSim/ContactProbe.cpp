@@ -37,6 +37,7 @@ void AImportLabGameMode::RecoverContactVehicleIfOutsideMap()
 
 void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
 {
+    if(FParse::Param(FCommandLine::Get(),TEXT("ZeppelinContactProbe"))){TickZeppelinContactProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("RailContactProbe"))){TickRailContactProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("SuspensionProbe"))){TickSuspensionProbe(DeltaSeconds);return;}
     if(!Rig||!Rig->IsContactPhysics()){Abort(TEXT("contact probe lacks native physics vehicle"));return;}

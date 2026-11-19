@@ -1,0 +1,151 @@
+{
+  "schema": "rmsim_flanders_zeppelin_map_release_v1",
+  "status": "passed",
+  "recorded_utc": "2026-11-19T07:22:13.266551+00:00",
+  "branch": "feat/unified-flanders-20261118",
+  "base_commit": "54abb6db38f324d9ffe0e7e546498c3807944052",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+  "world_sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+  "zeppelin": {
+    "original_instances": 67,
+    "original_resources": 31,
+    "visual_assets": 55,
+    "collision_assets": 53,
+    "colliding_instances": 65,
+    "original_materials": 12,
+    "original_textures": 26,
+    "fixed_landmark": true,
+    "source_manifest_sha256": "e2e9bc224a7e7b101f1dd719df3cb201356ee3ded7907b61f869ba4610b2c283",
+    "scene_manifest_sha256": "2709c747a0e1087eb168b1f33607b8ca4d813a1d779248f44b04d49a58ceb864",
+    "authoring_evidence": "native-zeppelin-03/native-authoring.json",
+    "saved_world_readback_evidence": "native-zeppelin-07/native-authoring.json"
+  },
+  "map_ui": {
+    "original_resource_roles": 11,
+    "native_import_evidence": "ui-import-report-06.json",
+    "corrected_display_axis": "flip_v",
+    "grid": [
+      7,
+      7
+    ],
+    "minimap_height_fraction": 0.3,
+    "maximum_zoom": 10,
+    "arrow": "actual_gimbal_horizontal_forward",
+    "full_map_key": "M",
+    "minimap_zoom": "Alt+wheel",
+    "scale": "displayed pixels times metres per pixel"
+  },
+  "native_tests": [
+    {
+      "evidence": "ui-native-03/verification.json",
+      "sha256": "63f43def2ceed6d90d9760ae036585cfe6cbca24c1d97b9f95d16d805dfd8d9c",
+      "checks_passed": 13,
+      "captures": 10,
+      "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+      "os_input_verified": false,
+      "status": "passed"
+    },
+    {
+      "evidence": "zeppelin-contact-03/verification.json",
+      "sha256": "b428604daec90b0e250f10a6acdfeb4c649460d5385bcc89b9c57d44ceee5648",
+      "checks_passed": 8,
+      "captures": 14,
+      "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+      "os_input_verified": false,
+      "status": "passed"
+    },
+    {
+      "evidence": "camera-regression-02/verification.json",
+      "sha256": "5d4b99e11c2634ffd310fa364dea7997134ff8457065887e3e539f2bc23f652c",
+      "checks_passed": 16,
+      "captures": 8,
+      "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+      "os_input_verified": false,
+      "status": "passed"
+    }
+  ],
+  "total_native_checks": 37,
+  "native_pngs": 32,
+  "physical_contact": {
+    "positive_target_contacts": 527,
+    "peak_impulse_n_s": 2.570919786089097,
+    "held_drive_advance_cm": 0.9305039208057114,
+    "reverse_clearance_cm": 100.26505770355021,
+    "source_surface_error_cm": 1.803719772771081e-05
+  },
+  "reimport": {
+    "preflight": "passed",
+    "composition_order_verified": true,
+    "full_base_scene_reimport_executed": false,
+    "evidence": "root-final-integration.json"
+  },
+  "retained_failures": [
+    "build-01",
+    "build-04",
+    "build-06",
+    "author-01",
+    "author-02",
+    "author-03",
+    "author-04",
+    "zeppelin-contact-01",
+    "os-input-01",
+    "os-input-02",
+    "os-input-03",
+    "formal-launch-02",
+    "formal-launch-03",
+    "formal-launch-04",
+    "formal-launch-05",
+    "formal-launch-06",
+    "formal-launch-07"
+  ],
+  "original_inputs": {
+    "map": "1d702ef98ac60e764e32a809d4e594a04b320fdcf3419689a38c558a55ccc3c4",
+    "profile": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+    "rig": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+    "spawn": "c765cf3a15db23877ead4e1a46308d36d6f1fb8145f624a91fae9b2fcded6527",
+    "rails": "c6ad70fe21b9e0826d429e49388817ac1f8ddd33c982688d6115385c11c89087"
+  },
+  "acceptance_scope": "37 native checks and actual HUD pixel verification passed; desktop input supplement incomplete",
+  "hud_pixels": {
+    "status": "passed",
+    "terrain_evidence": "ui-native-03/pixel-audit/verification.json",
+    "terrain_evidence_sha256": "c6ae9ab66c61c090aa6de111585499ab4c2e6f9dbf40a7e2bc458702f380892e",
+    "arrow_evidence": "minimap/ui-native-03/native-arrow-alpha-audit.json",
+    "arrow_evidence_sha256": "d86aa05de3f15e5fc68c2695d47fb807b44dde0adad80ba040927cd63e696589",
+    "measured_left_turn_deg": -35.0,
+    "measured_right_turn_deg": 69.75,
+    "measured_c_orbit_arrow_deg": 0.0,
+    "original_font_glow_and_panel_visually_reviewed": true
+  },
+  "desktop_input": {
+    "status": "incomplete_focus_guard_stopped",
+    "evidence": "os-input-03/report.json",
+    "evidence_sha256": "e15d312921814b10e8cf950cf1a8a6d408b28234393a82235a1070b515700c7e",
+    "report_status": "failed",
+    "checks_completed": 1,
+    "full_suite_count": 11,
+    "reason": "Owned game lost foreground focus; input stopped",
+    "remaining_injected_keys": [],
+    "script": "artifacts/maps/wt-zeppelin-minimap-20261119/Test-OwnedMapOsInput.ps1",
+    "script_sha256": "b41d46835a6e81693117c0b7699c713c030d0a8cd62baadf27f903c96ad12b46",
+    "native_shared_input_suite_is_separate": true
+  },
+  "public_entry": {
+    "entry": "D:/simulator/Play-WarThunder.cmd",
+    "loaded_successfully": true,
+    "observed_pid": 51232,
+    "source_launch": "formal-launch-07/launcher.stdout.log",
+    "readiness_events": [
+      "SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0",
+      "MAP_STAGE_READY wt_vlaanderen spawn=default",
+      "IMPORT_LAB_READY"
+    ],
+    "test_window_closed": true,
+    "close_record": "os-input-03-close.json"
+  },
+  "visual_review_images": [
+    "ui-native-03/hud/07-full-map.png",
+    "zeppelin-contact-03/zeppelin-overview/overview.png"
+  ]
+}
