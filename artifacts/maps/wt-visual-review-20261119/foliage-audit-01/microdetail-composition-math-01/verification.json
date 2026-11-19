@@ -1,0 +1,377 @@
+{
+  "schema": "wt_ground_microdetail_composition_audit_v1",
+  "status": "passed",
+  "script_sha256": "e46417b9540b7b45c5848fb8f2749a0b3bcfbcc8cf0348a1de607f3ac0d6a905",
+  "module_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-01\\wt_ground_microdetails.candidate.py",
+  "module_sha256": "da4768e92c7c815fac10bba57e0950ab4159a462650d9e53466c18b575fd73b3",
+  "checks": [
+    {
+      "name": "source_and_shader_binding",
+      "passed": true,
+      "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+      "hlsl_sha256": "9812a8f3159a1a30307d505ee2bc2e0959b130c98f185eb1e38c7c6993977d22",
+      "slot_count": 12,
+      "unique_textures": 11
+    },
+    {
+      "name": "original_pixels_cached_equals_direct",
+      "passed": true,
+      "cases": 1024,
+      "max_abs_error": 0.0,
+      "uncached_requests": 2486,
+      "cached_requests": 2214,
+      "maximum_requests": 4,
+      "sampling_scope": "original highest mip wrap bilinear CPU reference; hardware filtering separate"
+    },
+    {
+      "name": "rvt_clear_decode_and_source_validity",
+      "passed": true,
+      "maximum_error": 1.509903313490213e-14,
+      "clear_value": 0.5019607843137255,
+      "id_count_scale": 11.086956977844238
+    },
+    {
+      "name": "surface_identities_not_averaged",
+      "passed": true,
+      "separate_result": [
+        0.4216000000000001,
+        0.5848000000000001,
+        0.2584000000000001,
+        0.71,
+        0.32151140475048073,
+        0.13318308692813738,
+        0.9374927636902937
+      ],
+      "incorrect_averaged_id_result": [
+        0.012400000000000003,
+        0.017200000000000003,
+        0.007600000000000002,
+        0.942,
+        0.11877113736973437,
+        -0.07918075824648958,
+        0.9897594780811199
+      ]
+    },
+    {
+      "name": "coverage_and_validity_endpoints",
+      "passed": true,
+      "maximum_error": 0.0,
+      "outside_rvt_weights": [
+        1.0,
+        0.0
+      ],
+      "opaque_invalid_decal": "neutral effect; underlying LC identity does not leak through"
+    },
+    {
+      "name": "old_rvt_only_results_preserved",
+      "passed": true,
+      "cases": 132,
+      "maximum_error": 0.0
+    },
+    {
+      "name": "continuous_per_surface_floor_next_and_coverage",
+      "passed": true,
+      "epsilon": 1e-07,
+      "integer_boundary_max_delta": 3.5199305886690624e-08,
+      "coverage_max_delta": 8.874266402281172e-08
+    },
+    {
+      "name": "sample_reuse_exact_integer_slice_keys",
+      "passed": true,
+      "inactive": 0,
+      "same_integer": 1,
+      "same_fractional": 2,
+      "overlapping_endpoints": 3,
+      "distinct_endpoints": 4
+    },
+    {
+      "name": "real_socket_contract_fails_closed",
+      "passed": true,
+      "rejected_invalid_contracts": 5,
+      "native_missing_pin_behavior": "wt_materials._wire must raise; validated separately with native graph"
+    }
+  ],
+  "source_slots": [
+    {
+      "index": 0,
+      "sha256": "6d90367fdda7ec090afa79db525212597e06a12c73465e782620adbe0c10da1c"
+    },
+    {
+      "index": 1,
+      "sha256": "b8f313b509f93894d146d986675eb6ab69d0c1a3a5107e295e50b77c193632ad"
+    },
+    {
+      "index": 2,
+      "sha256": "a079faa38c79227aab1635e19ecb10b2d6a9d322d287a422d50748b1320156c5"
+    },
+    {
+      "index": 3,
+      "sha256": "0e6c0865bf20ba5d446a32fcef91b107e41598bc8037eb07681fbdb3bb048b28"
+    },
+    {
+      "index": 4,
+      "sha256": "f2ebf62d0c38dba3d36417fa3fdad6a47ddb3a508ede3fd68093ba54656d86fe"
+    },
+    {
+      "index": 5,
+      "sha256": "0dabc65f1468efb61e3692652667c91969da325743ffecd6bdd962e4b86064f6"
+    },
+    {
+      "index": 6,
+      "sha256": "5f428c27c11e442588c10dca337e8a31b866181677287013641d8301077d843c"
+    },
+    {
+      "index": 7,
+      "sha256": "a1992dcd983589df34bf862012f942802ea61767620e5b866a0191aa976d71e7"
+    },
+    {
+      "index": 8,
+      "sha256": "cf22776eb8a17a68da50cbdeed3479026a1674ba27402116f84331f2e810b68e"
+    },
+    {
+      "index": 9,
+      "sha256": "42363260b816bf21934dc54b701cf671633eef98025f5c02d3d47c3fbfa94020"
+    },
+    {
+      "index": 10,
+      "sha256": "51e318864b110c9f85a47c336e26e965d91a9759bf8fce6167349a21700aec47"
+    },
+    {
+      "index": 11,
+      "sha256": "f2ebf62d0c38dba3d36417fa3fdad6a47ddb3a508ede3fd68093ba54656d86fe"
+    }
+  ],
+  "metadata": {
+    "composition": "effects_on_composed_surface_then_coverage_validity_blend",
+    "decal_weight": "coverage*decoded_decal_valid",
+    "hlsl_sha256": "9812a8f3159a1a30307d505ee2bc2e0959b130c98f185eb1e38c7c6993977d22",
+    "id_count_scale": 11.086956977844238,
+    "inputs": [
+      "BaseColor",
+      "BaseNormalWorld",
+      "BaseRoughness",
+      "BaseMetallic",
+      "BaseMicrodetailId",
+      "BaseMicrodetailValid",
+      "DecalMask",
+      "DecalIdPayload",
+      "World",
+      "BoundsMin",
+      "BoundsMax",
+      "Microdetails"
+    ],
+    "interpolation": "independent_floor_next_within_each_surface",
+    "native_render_validation": "required_separately",
+    "neutral_weight": "1-source_weight-decal_weight",
+    "pbr_channels": "R_diffuse_and_smoothness_AG_normal",
+    "sample_cache_key": "integer_slice_at_shared_world_uv_and_explicit_gradients",
+    "samplers": 1,
+    "schema": "wt_ground_microdetails_post_v2",
+    "source_connected": true,
+    "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+    "source_id": "cooked_A_unorm_times_original_id_count_scale",
+    "source_weight": "(1-coverage)*saturate(BaseMicrodetailValid)",
+    "texture_reads": {
+      "inactive": 0,
+      "maximum": 4,
+      "minimum_active": 1,
+      "scope": "logical_array_sample_requests_before_hardware_filter_taps"
+    },
+    "uv_scale_per_m": 0.5099999904632568
+  },
+  "examples": [
+    {
+      "uv": [
+        -1.6347043763524978,
+        -0.8371454808017362
+      ],
+      "indices": [
+        6.273939319732617,
+        0.0
+      ],
+      "strengths": [
+        0.0,
+        0.0
+      ],
+      "result": [
+        0.31,
+        0.43,
+        0.19,
+        0.71,
+        0.11877113736973437,
+        -0.07918075824648958,
+        0.9897594780811197
+      ],
+      "reads": 0
+    },
+    {
+      "uv": [
+        -0.7877010285412953,
+        0.0429092313556545
+      ],
+      "indices": [
+        10.884502144584733,
+        7.521486383230938
+      ],
+      "strengths": [
+        0.285,
+        0.05
+      ],
+      "result": [
+        0.32768480311597165,
+        0.4545305333544123,
+        0.20083907287753103,
+        0.7020559287235109,
+        0.1397459751631709,
+        -0.08195182088015661,
+        0.9867902317514706
+      ],
+      "reads": 4
+    },
+    {
+      "uv": [
+        -0.4932649265158,
+        1.7364114802160104
+      ],
+      "indices": [
+        0.36456580485686296,
+        3.9710562020387012
+      ],
+      "strengths": [
+        0.75,
+        0.25
+      ],
+      "result": [
+        0.3471248237624699,
+        0.481495723283426,
+        0.21275392424151382,
+        0.6931522443059054,
+        -0.061901206126353345,
+        -0.19164669412323806,
+        0.9795099720328204
+      ],
+      "reads": 4
+    },
+    {
+      "uv": [
+        1.9673503522199938,
+        -1.5127733680297486
+      ],
+      "indices": [
+        7.897029193612815,
+        8.826153651265589
+      ],
+      "strengths": [
+        0.0,
+        0.5
+      ],
+      "result": [
+        0.3163516798028837,
+        0.4388103945652903,
+        0.19389296504047712,
+        0.7070588812015852,
+        0.09948555704853533,
+        -0.08645992998894877,
+        0.9912755945977126
+      ],
+      "reads": 2
+    },
+    {
+      "uv": [
+        -1.7316573051301525,
+        -1.2175290112644728
+      ],
+      "indices": [
+        5.8391884861470436,
+        1.5576080211110424
+      ],
+      "strengths": [
+        0.075,
+        0.75
+      ],
+      "result": [
+        0.2757457929376659,
+        0.38248609988127846,
+        0.1690054859940533,
+        0.7275091043838648,
+        0.07138943176749737,
+        0.026270892212113133,
+        0.9971024968649379
+      ],
+      "reads": 4
+    },
+    {
+      "uv": [
+        -1.0401450539014778,
+        0.8829355006905542
+      ],
+      "indices": [
+        3.391626702882717,
+        3.391626702882717
+      ],
+      "strengths": [
+        0.0,
+        1.0
+      ],
+      "result": [
+        0.27405101207005944,
+        0.38013527480685666,
+        0.16796674933326225,
+        0.7273328265668221,
+        0.10991325813389063,
+        -0.16336355729253066,
+        0.980424104066767
+      ],
+      "reads": 2
+    },
+    {
+      "uv": [
+        1.3996550237552152,
+        -1.8508867262552098
+      ],
+      "indices": [
+        0.5400058062556005,
+        0.0
+      ],
+      "strengths": [
+        0.0,
+        0.0
+      ],
+      "result": [
+        0.31,
+        0.43,
+        0.19,
+        0.71,
+        0.11877113736973437,
+        -0.07918075824648958,
+        0.9897594780811197
+      ],
+      "reads": 0
+    },
+    {
+      "uv": [
+        1.1227684571350611,
+        -0.0709391772262351
+      ],
+      "indices": [
+        3.631201332241784,
+        0.0
+      ],
+      "strengths": [
+        0.285,
+        0.0
+      ],
+      "result": [
+        0.3248485764691596,
+        0.45059641252173754,
+        0.1991007404165817,
+        0.7033242987514132,
+        0.08099995552444744,
+        0.018865910833349545,
+        0.9965355410688902
+      ],
+      "reads": 2
+    }
+  ],
+  "scope": "CPU source-pixel composition and cache equivalence; native compiled graph and GPU performance pending"
+}

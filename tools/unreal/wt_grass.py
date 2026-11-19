@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import struct
 
-VERSION = 3
+VERSION = 4
 NODE_PREFIX = 'RMSim source grass:'
 GRASS_CODE = """
 float4 masks=Texture2DSample(Masks,MasksSampler,UV);
@@ -208,16 +208,21 @@ def validate_foliage(package, foliage_base=None):
         repo = package.parents[2]
         for relative, digest in proof['source_inputs'].items():
             _file(repo, relative, digest)
+    from wt_grass_alpha_mips import validate_alpha_mips
+    alpha_mips = validate_alpha_mips(base, definition)
+    if alpha_mips:
+        for identity, record in alpha_mips['records'].items():
+            models[identity]['alpha_mip_path'] = record['path']
     return dict(package=package, base=base, definition=definition, definition_path=path,
                 definition_sha256=_sha(path), weights=weights, models=models, layers=layers,
-                land_path=land_path, map_id=descriptor['id'], enhancement_proof=proof)
+                land_path=land_path, map_id=descriptor['id'], enhancement_proof=proof, alpha_mips=alpha_mips)
 
 
 def _asset(unreal, path):
     return unreal.load_asset(path) if unreal.EditorAssetLibrary.does_asset_exist(path) else None
 
 
-def _texture_asset(unreal, filename, folder, name, srgb, weights=False, clamp=False):
+def _texture_asset(unreal, filename, folder, name, srgb, weights=False, clamp=False, preserve_mips=False):
     from import_vehicle_assets import import_asset
     asset_path = folder + '/' + name
     texture = _asset(unreal, asset_path)
@@ -236,6 +241,10 @@ def _texture_asset(unreal, filename, folder, name, srgb, weights=False, clamp=Fa
     else:
         settings.update(address_x=unreal.TextureAddress.TA_CLAMP if clamp else unreal.TextureAddress.TA_WRAP,
                         address_y=unreal.TextureAddress.TA_CLAMP if clamp else unreal.TextureAddress.TA_WRAP)
+    if preserve_mips:
+        _require(not srgb and not weights, 'source alpha mips must remain linear')
+        settings.update(mip_gen_settings=unreal.TextureMipGenSettings.TMGS_LEAVE_EXISTING_MIPS,
+                        do_scale_mips_for_alpha_coverage=False)
     for key, value in settings.items():
         texture.set_editor_property(key, value)
     unreal.EditorAssetLibrary.set_metadata_tag(texture, 'RMSimGrassSourceSHA256', digest)
@@ -273,8 +282,10 @@ def _custom(unreal, material, code, inputs, output_type, extra=(), defer_notific
     return node
 
 
-def install_grass(package, folder, terrain=None):
+def install_grass(package, folder, terrain=None, evidence_directory=None):
     checked = validate_foliage(package)
+    if checked['alpha_mips']:
+        _require(evidence_directory is not None, 'full source alpha mips require a native readback directory')
     import unreal
     from import_vehicle_assets import import_asset
     from import_wt_scene import fbx_options, bounds_record
@@ -304,9 +315,15 @@ def install_grass(package, folder, terrain=None):
     for name, model in checked['models'].items():
         clamp = model['material'].get('texture_address') == 'clamp'
         mask_textures[name] = _texture_asset(unreal, model['mask_path'], root+'/Textures', name+'_Masks', False, clamp=clamp)
-        alpha_textures[name] = _texture_asset(unreal, model['alpha_path'], root+'/Textures', name+'_Alpha', False, clamp=clamp)
+        alpha_textures[name] = _texture_asset(unreal, model.get('alpha_mip_path', model['alpha_path']),
+            root+'/Textures', name+'_Alpha', False, clamp=clamp, preserve_mips=checked['alpha_mips'] is not None)
         if model['normal_path'] is not None:
             normal_textures[name] = _texture_asset(unreal, model['normal_path'], root+'/Textures', name+'_PackedNormal', False, clamp=True)
+    alpha_readback = []
+    if checked['alpha_mips']:
+        from wt_grass_alpha_mips import verify_native_alpha_texture
+        for name, record in checked['alpha_mips']['records'].items():
+            alpha_readback.append(verify_native_alpha_texture(unreal, alpha_textures[name], record, evidence_directory))
     for name, weight in checked['weights'].items():
         weight_textures[name] = _texture_asset(unreal, weight['path'], root+'/Textures', name, False, True)
     land_texture = _texture_asset(unreal, checked['land_path'], root+'/Textures', 'WT_GrassLandColor', True)
@@ -481,13 +498,17 @@ def install_grass(package, folder, terrain=None):
         definition_file=checked['definition_path'].relative_to(checked['package']).as_posix(),
         enhancement_proof_sha256=definition.get('enhancement_proof', {}).get('sha256'),
         importer_sha256=_sha(__file__), source_models=mesh_reports, grass_types=type_reports,
+        alpha_mips_helper_sha256=_sha(Path(__file__).with_name('wt_grass_alpha_mips.py')),
+        alpha_mip_definition_sha256=checked['alpha_mips']['definition_sha256'] if checked['alpha_mips'] else None,
+        source_alpha_mip_readback=alpha_readback,
         weight_assets={name: texture.get_path_name() for name, texture in weight_textures.items()},
         terrain=terrain.get_path_name(), grass_parent=parent.get_path_name(),
         allocation='native Landscape Grass streams clusters around rendered views',
         cull_distance_conversion='source distance rounded to nearest UE centimetre',
         source_collision=False, wind_animation=False, instance_distribution='UE Halton with deterministic per-instance variation',
         layer_colour_formula='source RGB masks and T0_a.r alpha; pow(source RGB endpoints,2.2), original alpha retained',
-        visual_adapter=definition.get('visual_adapter'),
+        visual_adapter=definition.get('visual_adapter'), alpha_mip_adapter=definition.get('alpha_mip_adapter'),
+        alpha_clip_value=definition['alpha_clip_value'], alpha_clip_provenance=definition['alpha_clip_provenance'],
         source_normal_assets={name: texture.get_path_name() for name, texture in normal_textures.items()},
         source_normal_channels='AG normal XY, B translucency, R smoothness; source linear DDSx GAMMA_EQ_1',
         source_colour_contract='gpuGrass.cpp srgb_color4; grass_generate.dshl:817-819; fast_grass.cpp:44-51/140-145',

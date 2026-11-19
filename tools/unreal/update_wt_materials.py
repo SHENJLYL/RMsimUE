@@ -22,6 +22,7 @@ import unreal
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import wt_materials as materials
 import wt_landdetail
+import wt_lc_reflectance
 import wt_rendinst_decals as decals
 from wt_landclass import validate_landclass_surface
 from wt_vertex_opacity import validate_scene_vertex_opacity
@@ -82,6 +83,11 @@ def grass_subgraph(material):
 
 def update(source_path, output):
     command = unreal.SystemLibrary.get_command_line()
+    if re.search(r'(?:^|\s)-ObjectOnly(?:\s|$)', command, re.I):
+        if re.search(r'(?:^|\s)-GroundOnly(?:\s|$)', command, re.I):
+            raise ValueError('ObjectOnly and GroundOnly are separate authoring scopes')
+        from update_wt_object_materials import update as update_objects
+        return update_objects(source_path, output, author=True)
     if (re.search(r'(?:^|\s)-(?:nullrhi|noshadercompile)\b', command, re.I)
             or not re.search(r'(?:^|\s)-AllowCommandletRendering\b', command, re.I)):
         raise ValueError('material authoring requires rendering and real shader compilation')
@@ -99,7 +105,7 @@ def update(source_path, output):
             ('update_wt_materials.py','wt_materials.py','wt_landclass.py','wt_landdetail.py',
              'wt_rendinst_decals.py','wt_material_refine_verify.py','verify_wt_materials.py',
              'wt_vertex_opacity.py','wt_tree_alpha.py','wt_runtime_virtual_texture.py','wt_water.py',
-             'wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py')},
+             'wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py','wt_lc_reflectance.py')},
         parents=[], instances=[], backups=[], source_manifest_modified=False,
         ground_only=bool(re.search(r'(?:^|\s)-GroundOnly(?:\s|$)',command,re.I)),
         saved_world_modified=False, independent_reload_verified=False,
@@ -121,6 +127,14 @@ def update(source_path, output):
         water_source = water_surface_contract(source, package)
         report['source_landdetail'] = dict(definition_sha256=digest(package/wt_landdetail.DEFINITION_FILE),
             verification_sha256=landdetail['verification_sha256'], biome_count=65, detail_texture_count=23)
+        reflection_data=landdetail['reflectance']
+        report['source_landdetail_reflectance']=dict(
+            definition_sha256=digest(package/wt_lc_reflectance.DEFINITION_FILE),
+            proof_sha256=reflection_data['proof_sha256'],
+            source_swizzle_sha256=reflection_data['swizzle_proof_sha256'],
+            texture_count=len(reflection_data['reflectance_names']),channels=reflection_data['channels'],
+            adapter=json.loads(wt_lc_reflectance.adapter_metadata(reflection_data)),
+            albedo_to_reflectance=reflection_data['albedo_to_reflectance'])
         ground_shaders = {HEIGHT_SHADER,'land_mesh','land_mesh_combined_detailed_decal'}
         ground_specs = [spec for spec in source['materials'] if spec['shader'] in ground_shaders]
         height_specs = [spec for spec in ground_specs if spec['shader']==HEIGHT_SHADER]
@@ -165,6 +179,7 @@ def update(source_path, output):
         changed.add(terrain_path)
         changed.update(folder+'/Materials/'+spec['id'] for spec in specs)
         texture_keys = {(name,True,False) for name in landdetail['table']['albedo_names']}
+        texture_keys.update((name,False,False) for name in reflection_data['reflectance_names'])
         texture_keys.update({(wt_landdetail.MACRO_NAME,True,False),(wt_landdetail.INDEX_NAME,False,True),
                              (wt_landdetail.FLOW_NAME,False,False)})
         texture_keys.update((entry['name'],entry['srgb'],entry['nearest']) for entry in landclass['textures'].values())
@@ -186,6 +201,7 @@ def update(source_path, output):
             asset_name = re.sub('[^A-Za-z0-9_]','_',name)+('_C' if color else '_D')+('_Point' if nearest else '')
             changed.add(folder+'/Textures/'+asset_name)
         changed.add(folder+'/Textures/'+wt_landdetail.ARRAY_NAME)
+        changed.add(folder+'/Textures/'+wt_lc_reflectance.ARRAY_NAME)
         changed.add(folder+'/Textures/'+micro.ARRAY_NAME)
         for path in sorted(changed):
             filename = asset_file(path)
@@ -268,6 +284,7 @@ def update(source_path, output):
                 record['source_height_surface']=height_contract(spec,microdetails)
         data.update(version=materials.VERSION,source_landdetail=report['source_landdetail'],
             source_ground_microdetails=report['source_ground_microdetails'],
+            source_landdetail_reflectance=report['source_landdetail_reflectance'],
             material_refine_update=dict(source_manifest_sha256=report['source_manifest_sha256'],
                 original_material_report_sha256=provenance_before,
                 update_script_sha256=report['scripts_sha256']['update_wt_materials.py'],
@@ -276,16 +293,18 @@ def update(source_path, output):
                 retained_grass_layers=len(grass_before['grass_types'])))
         data['limitations']=[text for text in data.get('limitations',[])
                              if not any(text.startswith(prefix) for prefix in
-                                ('terrain uses ','land_mesh ','outer land_mesh ','ground decal geometry writes '))]
+                                ('terrain uses ','land_mesh ','outer land_mesh ','ground decal geometry writes ',
+                                 'Terrain and core LC1 ','Other landclass details, packed reflectance',
+                                 'HeightDecal shipped T2 reflection ','Specular transports '))]
         data['limitations'].extend([
             'Ground decal geometry projects source color/opacity through RVT; rendinst diffuse/normal use native mesh DeferredDecal and modulate2x uses Surface/Unlit/Modulate.',
             'Rendinst modulate2x retains linear factor/neutral and source depth/camera offset through Surface Unlit Modulate; it multiplies lit scene color.',
             'Original decal smoothness/metalness multiplication, independent diffuse normal opacity, per-section draw_order and palette painting remain unadapted.',
-            'Terrain and core LC1 use original 65-biome dual-layer colors and 23 original albedo-height textures; normals are an explicit UE surface-gradient adaptation.',
-            'Other landclass details, packed reflectance/self-color flags, wetness and vertical-cliff shading remain separate.',
-            'HeightDecal shipped T2 reflection is adapted as A smoothness/G AO/R reflectance/B microdetail ID; source T1 is absent, so the published diffuse-alpha UV gradient supplies normals.',
+            'Terrain and core LC1 use 65 original biomes, 23 albedo-height textures and 23 cooked reflection textures; self-coloring, smoothness and winning microdetail IDs follow source rules. Normals remain an explicit UE local alpha-gradient adaptation.',
+            'Other landclass detail families, wetness and vertical-cliff shading remain separate.',
+            'HeightDecal cooked T2 uses R smoothness/G reflectance/B AO/A microdetail ID, bound to the same-shader CDK BARG rule and actual exporter. Missing source normal uses the source alpha-gradient formula with explicit UE strength0.2; 18 original RGB/alpha shapes have source-id/PNG-bound polarity adapters.',
             'Original 12-slot/11-texture microdetails are a source-backed UE post-RVT adaptation; the shipped land consumer is absent from the pinned public checkout.',
-            'Specular transports a coverage-weighted ID payload with continuous floor/next selection; source R reflectance/G AO, independent opacity channels and full correct-bilinear ID gather remain outside this adapter.'])
+            'Specular transports a coverage-weighted RVT ID payload. LC and RVT IDs retain separate floor/next microdetail samples before result blending; cooked G reflectance/B AO, independent attribute opacity and full correct-bilinear ID gather remain outside this adapter.'])
         data['limitations']=list(dict.fromkeys(data['limitations']))
         save(provenance,data)
         report['material_report_sha256_after']=digest(provenance)
@@ -305,7 +324,8 @@ def update(source_path, output):
                 stable_material_identities=True,retained_grass_output_subgraph=True,
                 native_material_graphs=True,completed_native_shader_statistics=True,
                 source_height_texture_encoding=True,source_twelve_slot_array=True,
-                actual_normal_and_payload_output_pins=True),
+                actual_normal_and_payload_output_pins=True,source_lc23_reflection_array=True,
+                source_lc_roughness_id_valid_output_pins=True),
             finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
         unreal.log('WT_MATERIAL_REFINE_UPDATE_PASSED '+str(evidence/'verification.json'))
     except Exception as error:

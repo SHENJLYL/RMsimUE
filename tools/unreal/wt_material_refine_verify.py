@@ -7,6 +7,7 @@ import struct
 import unreal
 import wt_rendinst_decals as decals
 import wt_landdetail as detail
+import wt_lc_reflectance as reflection
 
 
 def _require(value,message):
@@ -129,22 +130,41 @@ def landdetail_graph(material,data,package):
     from wt_ground_material_verify import _inputs, _reroute
     metadata=str(unreal.EditorAssetLibrary.get_metadata_tag(material,detail.NORMAL_ADAPTER_TAG))
     _require(metadata==detail.normal_adapter_metadata(),'saved LC1 local-normal adapter metadata differs')
-    normal_field='DetailNormalWorld' if material.get_name()=='WT_Parent_Land' else 'BaseNormalWorld'
-    bindings=[]
-    for consumer in edit.get_material_expressions(material):
-        if not isinstance(consumer,unreal.MaterialExpressionCustom) or consumer==node:
-            continue
-        incoming=_inputs(material,consumer)
-        reroute=incoming.get(normal_field)
-        if not isinstance(reroute,unreal.MaterialExpressionReroute):
-            continue
-        linked=list(edit.get_inputs_for_material_expression(material,reroute))
-        if len(linked)==1 and linked[0]==node:
-            bindings.append(dict(consumer=consumer.get_path_name(),input=normal_field,
-                                 **_reroute(material,reroute,node,'NormalOut')))
-    _require(len(bindings)==1,'LC1 local normal must feed exactly one saved receiver through NormalOut')
+    is_land=material.get_name()=='WT_Parent_Land'
+    consumers=[(consumer,_inputs(material,consumer)) for consumer in edit.get_material_expressions(material)
+               if isinstance(consumer,unreal.MaterialExpressionCustom) and consumer!=node]
+    source_outputs={}
+    fields_to_pins=(
+        ('DetailNormalWorld' if is_land else 'BaseNormalWorld','NormalOut'),
+        ('DetailRoughness' if is_land else 'BaseRoughness','RoughnessOut'),
+        ('DetailMicrodetailId' if is_land else 'BaseMicrodetailId','MicrodetailIdOut'),
+        ('DetailMicrodetailValid' if is_land else 'BaseMicrodetailValid','MicrodetailValidOut'))
+    for field,pin in fields_to_pins:
+        bindings=[]
+        for consumer,incoming in consumers:
+            reroute=incoming.get(field)
+            if not isinstance(reroute,unreal.MaterialExpressionReroute):
+                continue
+            linked=list(edit.get_inputs_for_material_expression(material,reroute))
+            if len(linked)==1 and linked[0]==node:
+                bindings.append(dict(consumer=consumer.get_path_name(),input=field,
+                                     **_reroute(material,reroute,node,pin)))
+        _require(len(bindings)==1,'LC1 source '+pin+' must feed exactly one saved receiver')
+        source_outputs[pin]=bindings[0]
+    _require(source_outputs['NormalOut']['consumer']==source_outputs['RoughnessOut']['consumer'],
+             'LC1 normal and roughness must reach the same receiver')
+    _require(source_outputs['MicrodetailIdOut']['consumer']==source_outputs['MicrodetailValidOut']['consumer'],
+             'LC1 original ID and validity must reach the same receiver')
+    if is_land:
+        _require(source_outputs['NormalOut']['consumer']==source_outputs['MicrodetailIdOut']['consumer'],
+                 'outer landclass must receive all four LC1 surface attributes')
+    additional={str(o.get_editor_property('output_name')):o.get_editor_property('output_type')
+                for o in node.get_editor_property('additional_outputs')}
+    _require(additional.get('MicrodetailIdOut')==unreal.CustomMaterialOutputType.CMOT_FLOAT1
+             and additional.get('MicrodetailValidOut')==unreal.CustomMaterialOutputType.CMOT_FLOAT1,
+             'source land microdetail ID/validity output types differ')
     upstream=dict(zip(fields,edit.get_inputs_for_material_expression(material,node)))
-    _require(set(upstream)=={'World','VertexNormalWorld','Macro','Index','Flow','Details'}
+    _require(set(upstream)=={'World','VertexNormalWorld','Macro','Index','Flow','Details','Reflectance'}
              and all(upstream.values()),'source ground detail inputs are disconnected')
     array=upstream['Details'].get_editor_property('texture')
     _require(isinstance(array,unreal.Texture2DArray),'ground details must retain independent array slices')
@@ -175,10 +195,61 @@ def landdetail_graph(material,data,package):
                      and texture.get_editor_property('mip_gen_settings')==unreal.TextureMipGenSettings.TMGS_NO_MIPMAPS
                      and bool(texture.get_editor_property('never_stream')),'biome categorical IDs must not have averaged mips')
         texture_bindings[parameter]=dict(asset=path,source_sha256=data['textures'][name]['sha256'])
+    reflection_data=data['reflectance']
+    reflection_metadata=str(unreal.EditorAssetLibrary.get_metadata_tag(material,reflection.ADAPTER_TAG))
+    _require(reflection_metadata==reflection.adapter_metadata(reflection_data),
+             'native LC1 reflection/source-selfcolor adapter metadata differs')
+    parameter=upstream['Reflectance']
+    _require(isinstance(parameter,unreal.MaterialExpressionTextureObjectParameter)
+             and str(parameter.get_editor_property('parameter_name'))=='SourceReflectance'
+             and parameter.get_editor_property('sampler_type')==unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR,
+             'LC1 reflectance array parameter or linear sampler differs')
+    reflect_array=parameter.get_editor_property('texture')
+    expected_reflect_array=root+'/Textures/'+reflection.ARRAY_NAME+'.'+reflection.ARRAY_NAME
+    _require(isinstance(reflect_array,unreal.Texture2DArray)
+             and reflect_array.get_path_name()==expected_reflect_array,'LC1 original reflectance array binding differs')
+    reflect_before=detail.digest(_file(reflect_array))
+    reflect_native=json.loads(unreal.MapImportLibrary.describe_map_texture_array(reflect_array))
+    reflection_paths=[root+'/Textures/'+name+'_D.'+name+'_D' for name in reflection_data['reflectance_names']]
+    _require(reflect_native.get('width')==reflect_native.get('height')==reflect_native.get('source_width')==reflect_native.get('source_height')==1024
+             and reflect_native.get('slices')==reflect_native.get('source_slices')==23
+             and reflect_native.get('mips')==11 and reflect_native.get('source_textures')==reflection_paths,
+             'native LC1 reflectance dimensions, mip count or original slice order differ')
+    _require(not reflect_array.get_editor_property('srgb') and bool(reflect_array.get_editor_property('never_stream'))
+             and reflect_array.get_editor_property('compression_settings')==unreal.TextureCompressionSettings.TC_VECTOR_DISPLACEMENTMAP
+             and reflect_array.get_editor_property('mip_gen_settings')==unreal.TextureMipGenSettings.TMGS_SIMPLE_AVERAGE
+             and reflect_array.get_editor_property('address_x')==unreal.TextureAddress.TA_WRAP
+             and reflect_array.get_editor_property('address_y')==unreal.TextureAddress.TA_WRAP
+             and reflect_array.get_editor_property('address_z')==unreal.TextureAddress.TA_CLAMP
+             and reflect_array.get_editor_property('lod_bias')==0 and reflect_array.get_editor_property('max_texture_size')==0
+             and unreal.EditorAssetLibrary.get_metadata_tag(reflect_array,'WT_SourceDefinitionSHA256')==
+                 detail.digest(Path(package)/reflection.DEFINITION_FILE),
+             'native LC1 reflectance gamma/packing/mip/address/source policy differs')
+    slices=list(reflect_array.get_editor_property('source_textures'))
+    _require(len(slices)==23,'native LC1 reflectance SourceTextures count differs')
+    from wt_ground_material_verify import texture_state
+    reflection_slices=[]
+    for name,texture,path in zip(reflection_data['reflectance_names'],slices,reflection_paths):
+        entry=reflection_data['textures'][name]
+        item=texture_state(texture)
+        _require(texture.get_path_name()==path and item['size']==[1024,1024] and not item['srgb']
+                 and texture.get_editor_property('compression_settings')==unreal.TextureCompressionSettings.TC_VECTOR_DISPLACEMENTMAP
+                 and unreal.EditorAssetLibrary.get_metadata_tag(texture,'WT_LandDetailReflectancePNG_SHA256')==entry['sha256'],
+                 'native original LC1 reflectance slice/source differs: '+name)
+        source_png=Path(package)/Path(reflection.DEFINITION_FILE).parent/entry['file']
+        _require(detail.digest(source_png)==entry['sha256'],'original LC1 reflection PNG bytes differ: '+name)
+        item.update(source_name=name,source_png_sha256=entry['sha256'])
+        reflection_slices.append(item)
+    _require(detail.digest(_file(reflect_array))==reflect_before,
+             'read-only reflection array audit changed its saved file')
     _require(detail.digest(_file(array))==before,'read-only array audit changed its saved file')
     return dict(definition_sha256=detail.digest(Path(package)/detail.DEFINITION_FILE),
                 shader_code_sha256=hashlib.sha256(expected.encode()).hexdigest(),
                 native_array=native,array_sha256=before,texture_bindings=texture_bindings,
                 source_biome_count=65,source_package_adapter_note=data['adapter']['normal'],
-                normal_adapter=json.loads(metadata),normal_binding=bindings[0],
+                normal_adapter=json.loads(metadata),normal_binding=source_outputs['NormalOut'],
+                source_surface_output_bindings=source_outputs,
+                reflectance=dict(definition_sha256=detail.digest(Path(package)/reflection.DEFINITION_FILE),
+                    native_array=reflect_native,array_sha256=reflect_before,source_slices=reflection_slices,
+                    adapter=json.loads(reflection_metadata)),
                 native_visual_quality_verified=False)

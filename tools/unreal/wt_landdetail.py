@@ -6,7 +6,9 @@ The source resource has no normal texture fields. UE shading normals are an
 explicit local alpha-gradient adaptation: each fixed slice/rotation is sampled
 before final source weights blend the resulting normals. Source height_scale and
 normal_scale remain adapter multipliers; they do not establish metres of height.
-Packed reflectance and Dagor microdetail self-color/wetness are not guessed.
+Original cooked reflectance, per-neighbor self-color and winning microdetail IDs
+are restored from a separately bound source companion. AO/reflectance outputs and
+wetness remain outside the current UE material connection.
 """
 import hashlib
 import json
@@ -26,16 +28,23 @@ MACRO_NAME = 'avg_vlaanderen_detailed_biome_tex_d'
 FLOW_NAME = 'avg_vlaanderen_detailed_biome_tex_f'
 NORMAL_ADAPTER_TAG = 'WT_LandDetailNormalAdapter'
 NORMAL_ADAPTER = {
-    'schema': 'wt_lc1_local_alpha_normal_v2',
+    'schema': 'wt_lc1_local_alpha_normal_v3',
     'kind': 'ue_fixed_slice_rotation_alpha_gradient',
     'derivative_basis': 'world_position_before_categorical_selection',
-    'sample_offsets': 'same_slice_rotation_lod_plus_two_continuous_uv_offsets',
+    'sample_offsets': 'same_slice_rotation_explicit_gradients_plus_two_continuous_uv_offsets',
+    'filtering': 'array_sample_grad_rotated_continuous_gradients',
     'normal_blending': 'unit_normals_then_source_final_pow4_weights_both_levels',
     'weight_derivatives': False,
     'source_normal_binding': None,
     'height_scale_domain': 'ue_adapter_multiplier_not_source_metres',
-    'base_array_reads': 8,
-    'local_alpha_array_reads': 16,
+    'sample_reuse_key': 'exact_slice_and_all_four_rotation_components_within_one_layer',
+    'cached_values': 'rgba_and_two_raw_alpha_differences_before_per_neighbour_strength',
+    'max_base_array_reads': 8,
+    'max_local_alpha_array_reads': 16,
+    'max_array_reads_per_pixel': 24,
+    'min_array_reads_per_pixel': 6,
+    'array_reads_per_distinct_key_per_layer': 3,
+    'dynamic_reads': 'three_times_sum_of_distinct_slice_rotation_keys_in_two_layers',
     'additional_samplers': 0,
 }
 
@@ -138,6 +147,8 @@ def validate(package, source):
              and proof.get('resource_sha256')==RESOURCE_SHA256
              and proof.get('albedo_count')==23 and proof.get('biome_count')==65,
              'source proof did not pass')
+    import wt_lc_reflectance
+    data['reflectance'] = wt_lc_reflectance.validate(package, data)
     return data
 
 
@@ -162,6 +173,7 @@ WTDetailMath util;
 
 def shader_code(data):
     table=data['table']; biomes=table['biomes']; p=table['source_parameters']
+    reflection=data['reflectance']
     def floats(value):
         return ','.join(format(float(x),'.10g') for x in value)
     def array(name, rows):
@@ -172,6 +184,10 @@ def shader_code(data):
                                         b['layers'][0]['normal_scale'],b['layers'][1]['normal_scale']) for b in biomes])
     constants += array('WeightRotation', [(b['layers'][0]['weight_mul'],b['layers'][1]['weight_mul'],
                                           b['random_flowmap'][0],b['random_flowmap'][1]) for b in biomes])
+    constants += 'const float2 ReflectanceSlice[65]={'+','.join(
+        'float2('+floats(row['reflectance_slices'])+')' for row in reflection['biomes'])+'};\n'
+    constants += 'const float MicroColoring[12]={'+floats(reflection['microdetail_coloring'])+'};\n'
+    constants += 'const float microIdScale='+floats([reflection['id_count_scale']])+';\n'
     constants += 'const float2 tileMeters=float2('+floats([p['detailMul1'],p['detailMul2']])+');\n'
     constants += 'const float rotatePeriod='+floats([p['randomRotatePeriod']])+';\n'
     constants += 'const float variationMeters='+floats([p['randomVariationPeriod']])+';\n'
@@ -180,8 +196,8 @@ float2 worldMeters=World.xy/100.0;
 // Compute the continuous geometric basis before categorical ID/rotation selection.
 float3 geometricNormal=normalize(VertexNormalWorld);
 float3 worldDdx=ddx(World/100.0),worldDdy=ddy(World/100.0);
-// Keep the original color sample UV and ddx/ddy mip calculation byte-for-byte;
-// calculate them before any categorical selection to isolate local derivatives.
+// Calculate the continuous texture footprint before categorical selection.
+// Rotate both gradients with each fixed neighbour; retain anisotropic filtering.
 float2 layerUV[2],layerUVDdx[2],layerUVDdy[2];
 [unroll] for(int layer=0;layer<2;layer++){
  float2 tc=worldMeters/tileMeters[layer];
@@ -192,6 +208,7 @@ float3 gradientR1=cross(worldDdy,geometricNormal),gradientR2=cross(geometricNorm
 float gradientDet=dot(worldDdx,gradientR1);
 float2 mapUV=float2(worldMeters.x,-worldMeters.y)/2048.0;
 float3 macro=Texture2DSample(Macro,MacroSampler,mapUV).rgb;
+MicrodetailIdOut=0;MicrodetailValidOut=0;
 if(any(worldMeters<0) || any(worldMeters>2048)){
  NormalOut=normalize(VertexNormalWorld);RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;return macro;
 }
@@ -214,26 +231,41 @@ int ids[4];float4 rotations[4];
  rotations[k]=float4(sc.y,sc.x,-sc.x,sc.y);
 }
 float4 layerDiffuse[2];float3 layerNormal[2];float layerMultiplier[2];
+float layerSmoothness[2],layerMicroId[2];
 [unroll] for(int layer=0;layer<2;layer++){
  float2 tc=layerUV[layer],tcDdx=layerUVDdx[layer],tcDdy=layerUVDdy[layer];
- float2 dx=tcDdx*1024,dy=tcDdy*1024;
- float lod=clamp(0.5*log2(max(max(dot(dx,dx),dot(dy,dy)),1.e-8)),0,10);
- float4 samples[4];float4 heightWeights;float3 localNormals[4];
+ float4 samples[4];float2 alphaDelta[4];float4 heightWeights;float3 localNormals[4];
  layerMultiplier[layer]=0;
  [unroll]for(int k=0;k<4;k++){
   int id=ids[k];float slice=SliceHeight[id][layer];
-  float2 localUV=util.rotate(tc,rotations[k]);
-  samples[k]=Texture2DArraySampleLevel(Details,DetailsSampler,float3(localUV,slice),lod);
+  // The layer UV and its continuous gradients are shared. Equal slice AND all
+  // four rotation entries therefore select exactly the same three samples.
+  int previous=k;
+  [unroll]for(int j=0;j<4;j++){
+   if(j<k){
+    if(slice==SliceHeight[ids[j]][layer] && all(rotations[k]==rotations[j]))
+     previous=min(previous,j);
+   }
+  }
+  [branch]if(previous<k){
+   samples[k]=samples[previous];alphaDelta[k]=alphaDelta[previous];
+  }else{
+   float2 localUV=util.rotate(tc,rotations[k]);
+   float2 localDx=util.rotate(tcDdx,rotations[k]),localDy=util.rotate(tcDdy,rotations[k]);
+   samples[k]=Texture2DArraySampleGrad(Details,DetailsSampler,float3(localUV,slice),localDx,localDy);
+   // Fixed identity and footprint on both local alpha differences. No lane's
+   // categorical ID, rotation or blend weight participates in a derivative.
+   float alphaDx=Texture2DArraySampleGrad(Details,DetailsSampler,
+       float3(localUV+localDx,slice),localDx,localDy).a;
+   float alphaDy=Texture2DArraySampleGrad(Details,DetailsSampler,
+       float3(localUV+localDy,slice),localDx,localDy).a;
+   alphaDelta[k]=float2(alphaDx-samples[k].a,alphaDy-samples[k].a);
+  }
   float alpha=samples[k].a;
-  // Fixed source identity on both finite differences: no lane's neighbouring
-  // categorical ID, rotation or blend weight participates in this derivative.
-  float alphaDx=Texture2DArraySampleLevel(Details,DetailsSampler,
-      float3(localUV+util.rotate(tcDdx,rotations[k]),slice),lod).a;
-  float alphaDy=Texture2DArraySampleLevel(Details,DetailsSampler,
-      float3(localUV+util.rotate(tcDdy,rotations[k]),slice),lod).a;
+  // Strength and inversion belong to each biome, even when samples are shared.
   float heightMultiplier=SliceHeight[id][layer+2]*InvertNormal[id][layer+2];
   float3 localGradient=sign(gradientDet)*heightMultiplier*
-      ((alphaDx-alpha)*gradientR1+(alphaDy-alpha)*gradientR2);
+      (alphaDelta[k].x*gradientR1+alphaDelta[k].y*gradientR2);
   localNormals[k]=abs(gradientDet)>1.e-10 ?
       normalize(abs(gradientDet)*geometricNormal-localGradient) : geometricNormal;
   heightWeights[k]=(InvertNormal[id][layer]>0.5 ? 1-alpha : alpha)*baseWeights[k]+baseWeights[k]*0.0001;
@@ -242,9 +274,38 @@ float4 layerDiffuse[2];float3 layerNormal[2];float layerMultiplier[2];
  heightWeights/=max(dot(heightWeights,1),1.e-8);
  float4 weights=heightWeights*heightWeights;weights*=weights;weights=saturate(weights-2.e-10);
  weights/=max(dot(weights,1),1.e-8);
- layerDiffuse[layer]=0;layerNormal[layer]=0;
+ layerDiffuse[layer]=0;layerNormal[layer]=0;layerSmoothness[layer]=0;layerMicroId[layer]=0;
+ float4 reflectionSamples[4];float maxMicroWeight=0;
  [unroll]for(int k=0;k<4;k++){
-  layerDiffuse[layer]+=samples[k]*weights[k];
+  reflectionSamples[k]=0;
+  [branch]if(weights[k]>0){
+   float reflectionSlice=ReflectanceSlice[ids[k]][layer];int previous=k;
+   // Reflectance has its own full identity key. Albedo reuse cannot stand in
+   // for a potentially different reflectance slice or rotation.
+   [unroll]for(int j=0;j<4;j++){
+    if(j<k && weights[j]>0){
+     if(reflectionSlice==ReflectanceSlice[ids[j]][layer] && all(rotations[k]==rotations[j]))
+      previous=min(previous,j);
+    }
+   }
+   [branch]if(previous<k) reflectionSamples[k]=reflectionSamples[previous];
+   else{
+    float2 localUV=util.rotate(tc,rotations[k]);
+    float2 localDx=util.rotate(tcDdx,rotations[k]),localDy=util.rotate(tcDdy,rotations[k]);
+    // Same wrap/filter/footprint as albedo, sharing its sampler state.
+    reflectionSamples[k]=Texture2DArraySampleGrad(Reflectance,DetailsSampler,
+        float3(localUV,reflectionSlice),localDx,localDy);
+   }
+   float4 r=reflectionSamples[k];
+   float arrayNoFloat=r.a*microIdScale;int ci=min(11,(int)floor(arrayNoFloat));
+   float coloring=lerp(MicroColoring[ci],MicroColoring[min(ci+1,11)],frac(arrayNoFloat));
+   float3 sourceColor=lerp(float3(1,1,1),macro,coloring)*samples[k].rgb;
+   layerDiffuse[layer]+=float4(sourceColor,samples[k].a)*weights[k];
+   layerSmoothness[layer]+=r.r*weights[k];
+   // Source make_clipmap selects a winning ID. It never blends IDs with the
+   // normal/roughness weights. Strict > preserves first-neighbor ties.
+   if(weights[k]>maxMicroWeight){layerMicroId[layer]=r.a;maxMicroWeight=weights[k];}
+  }
   layerNormal[layer]+=localNormals[k]*weights[k];
  }
 }
@@ -258,9 +319,14 @@ float3 detail=layerDiffuse[0].rgb*layerWeights.x+layerDiffuse[1].rgb*layerWeight
 // Only normals are mixed. No derivative of height weights or categorical IDs.
 // Source height_scale/normal_scale are explicit UE adapter multipliers, not metres.
 NormalOut=normalize(layerNormal[0]*layerWeights.x+layerNormal[1]*layerWeights.y);
-RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;
-// Packed reflectance / microdetail self-color flags await their original binding.
-return max(macro*detail*4.59479341998814,0);
+RoughnessOut=saturate(1-dot(float2(layerSmoothness[0],layerSmoothness[1]),layerWeights));
+MetallicOut=0;OpacityOut=1;
+// Source second layer wins an equal-weight tie. Raw A is retained for the
+// original floor/next microdetail interpolation after the surface composition.
+MicrodetailIdOut=layerWeights.x>layerWeights.y ? layerMicroId[0] : layerMicroId[1];
+MicrodetailValidOut=1;
+// Original G reflectance / B AO are preserved in the companion but not connected.
+return max(detail*4.59479341998814,0);
 '''
 
 
@@ -317,6 +383,8 @@ def author_surface(material, textures):
     index.set_editor_property('address_x',unreal.TextureAddress.TA_WRAP)
     index.set_editor_property('address_y',unreal.TextureAddress.TA_WRAP)
     unreal.EditorAssetLibrary.save_loaded_asset(index)
+    import wt_lc_reflectance
+    reflection_array=wt_lc_reflectance.author_array(textures,data['reflectance'])
     inputs={
         'World':(w._expr(material,unreal.MaterialExpressionWorldPosition),''),
         'VertexNormalWorld':(w._expr(material,unreal.MaterialExpressionVertexNormalWS),''),
@@ -324,8 +392,13 @@ def author_surface(material, textures):
         'Index':(w._texture(material,'DetailIndex',index,False),''),
         'Flow':(w._texture(material,'DetailFlow',textures.get(FLOW_NAME,False),False),''),
         'Details':(w._texture(material,'SourceDetails',array,True),''),
+        'Reflectance':(w._texture(material,'SourceReflectance',reflection_array,False),''),
     }
-    node=w._custom(material,shader_code(data),inputs)
+    node=w._custom(material,shader_code(data),inputs,additional_outputs=[
+        ('MicrodetailIdOut',unreal.CustomMaterialOutputType.CMOT_FLOAT1),
+        ('MicrodetailValidOut',unreal.CustomMaterialOutputType.CMOT_FLOAT1)])
+    unreal.EditorAssetLibrary.set_metadata_tag(material,wt_lc_reflectance.ADAPTER_TAG,
+        wt_lc_reflectance.adapter_metadata(data['reflectance']))
     unreal.EditorAssetLibrary.set_metadata_tag(material,NORMAL_ADAPTER_TAG,normal_adapter_metadata())
     material.set_editor_property('tangent_space_normal',False)
     return node,data

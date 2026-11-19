@@ -1,0 +1,977 @@
+{
+  "schema": "rmsim_wt_final_renderer_comparison_v1",
+  "status": "passed",
+  "reference": "after-ground-slope-tsr-auto-01",
+  "candidate": "after-ground-slope-taa100-01",
+  "checks": {
+    "map_file": true,
+    "spawn_id": true,
+    "render_mode": true,
+    "requested_frames": true,
+    "graphics_rhi": true,
+    "analysis_warmup_frames": true,
+    "editor": true,
+    "script_sha256": true,
+    "capture_commands_equal_except_evidence_directory": true,
+    "all_input_hashes_equal": true,
+    "both_captured_exit0": true
+  },
+  "input_count_each": {
+    "after-ground-slope-tsr-auto-01": 1001,
+    "after-ground-slope-taa100-01": 1001
+  },
+  "input_identity": [
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Binaries\\Win64\\UnrealEditor-RMSim.dll",
+      "sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+      "bytes": 2757120
+    },
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\World.umap",
+      "sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+      "bytes": 292666521
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\map-visual-review-20261119.json",
+      "sha256": "7d6a26af5c2b1983fb34cdb7c292e852b87691ea5d3a7a2e29c83ea25a99eda6",
+      "bytes": 1521
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+      "sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+      "bytes": 1677248
+    },
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Config\\DefaultEngine.ini",
+      "sha256": "edb0cd8a026b72383621e2e326fd53396e9a43eae6ae2df7bad247e9af7ac302",
+      "bytes": 1617
+    },
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Config\\DefaultGame.ini",
+      "sha256": "653f026acee09222d627f32850fc30175f8096d928defa08a6cd8c63f06c5e0c",
+      "bytes": 1652
+    }
+  ],
+  "windows": {
+    "after_requested_warmup": {
+      "reference": {
+        "first_csv_row": 600,
+        "last_csv_row": 3599,
+        "first_capture_frame": 601,
+        "last_capture_frame": 3600,
+        "rows": 3000,
+        "metrics_ms": {
+          "frame": {
+            "column": "FrameTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 7.9645014,
+            "p50": 7.5761,
+            "p95": 9.088959999999997,
+            "p99": 10.868976999999985,
+            "minimum": 2.3572,
+            "maximum": 494.5461,
+            "sum": 23893.5042,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "game": {
+            "column": "GameThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 2.7012391333333334,
+            "p50": 2.5016499999999997,
+            "p95": 3.390535,
+            "p99": 4.054924999999999,
+            "minimum": 1.8184,
+            "maximum": 165.7176,
+            "sum": 8103.7174,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "render": {
+            "column": "RenderThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 7.681978466666667,
+            "p50": 7.5123,
+            "p95": 9.021095,
+            "p99": 10.695661999999995,
+            "minimum": 0.9294,
+            "maximum": 33.7377,
+            "sum": 23045.935400000002,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "rhi": {
+            "column": "RHIThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 3.2608963666666666,
+            "p50": 3.18835,
+            "p95": 4.021875,
+            "p99": 4.756996999999965,
+            "minimum": 0.3563,
+            "maximum": 8.3931,
+            "sum": 9782.6891,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "gpu": {
+            "column": "GPUTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 8.0819025,
+            "p50": 7.58385,
+            "p95": 9.185944999999998,
+            "p99": 11.724080999999972,
+            "minimum": 5.5751,
+            "maximum": 342.4349,
+            "sum": 24245.7075,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          }
+        },
+        "fps": {
+          "elapsed_mean_fps": 125.55713782660645,
+          "p50_reciprocal_fps": 131.9940338696691,
+          "p95_latency_reciprocal_fps": 110.02358905749396,
+          "p99_latency_reciprocal_fps": 92.00497894144053,
+          "definition": "elapsed_mean_fps=N*1000/sum(FrameTime_ms); reciprocal tail values are latency equivalents, not averages of per-frame FPS."
+        },
+        "frame_budget_exceedance": {
+          "16.6666666667": {
+            "count": 5,
+            "percent": 0.16666666666666669
+          },
+          "33.3333333333": {
+            "count": 3,
+            "percent": 0.1
+          }
+        },
+        "slowest_frames": [
+          {
+            "csv_row": 1000,
+            "capture_frame": 1001,
+            "frame_ms": 494.5461,
+            "captured_elapsed_seconds": 25.8040003,
+            "events": ""
+          },
+          {
+            "csv_row": 1200,
+            "capture_frame": 1201,
+            "frame_ms": 165.2467,
+            "captured_elapsed_seconds": 27.5522145,
+            "events": ""
+          },
+          {
+            "csv_row": 935,
+            "capture_frame": 936,
+            "frame_ms": 33.8035,
+            "captured_elapsed_seconds": 24.811094200000003,
+            "events": ""
+          },
+          {
+            "csv_row": 1924,
+            "capture_frame": 1925,
+            "frame_ms": 17.6707,
+            "captured_elapsed_seconds": 32.95363320000001,
+            "events": ""
+          },
+          {
+            "csv_row": 1365,
+            "capture_frame": 1366,
+            "frame_ms": 16.8318,
+            "captured_elapsed_seconds": 28.835545600000003,
+            "events": ""
+          }
+        ]
+      },
+      "candidate": {
+        "first_csv_row": 600,
+        "last_csv_row": 3599,
+        "first_capture_frame": 601,
+        "last_capture_frame": 3600,
+        "rows": 3000,
+        "metrics_ms": {
+          "frame": {
+            "column": "FrameTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 8.185075099999999,
+            "p50": 7.792949999999999,
+            "p95": 9.277619999999999,
+            "p99": 11.192330999999994,
+            "minimum": 2.9678,
+            "maximum": 507.2122,
+            "sum": 24555.2253,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "game": {
+            "column": "GameThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 2.9648549999999996,
+            "p50": 2.73955,
+            "p95": 3.6994599999999993,
+            "p99": 4.171614999999997,
+            "minimum": 1.8453,
+            "maximum": 181.3911,
+            "sum": 8894.564999999999,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "render": {
+            "column": "RenderThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 7.913884166666667,
+            "p50": 7.7288,
+            "p95": 9.190239999999998,
+            "p99": 10.977399999999998,
+            "minimum": 1.1562,
+            "maximum": 51.7825,
+            "sum": 23741.6525,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "rhi": {
+            "column": "RHIThreadTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 3.4196083666666666,
+            "p50": 3.32375,
+            "p95": 4.263705,
+            "p99": 5.181980999999998,
+            "minimum": 0.3513,
+            "maximum": 9.9471,
+            "sum": 10258.8251,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          },
+          "gpu": {
+            "column": "GPUTime",
+            "count": 3000,
+            "missing": 0,
+            "mean": 8.263292300000002,
+            "p50": 7.80735,
+            "p95": 9.350469999999998,
+            "p99": 11.562933999999986,
+            "minimum": 5.6029,
+            "maximum": 160.3087,
+            "sum": 24789.876900000003,
+            "zero_count": 0,
+            "nonzero_count": 3000
+          }
+        },
+        "fps": {
+          "elapsed_mean_fps": 122.1735888532043,
+          "p50_reciprocal_fps": 128.32111074753465,
+          "p95_latency_reciprocal_fps": 107.78626414964184,
+          "p99_latency_reciprocal_fps": 89.34689297519887,
+          "definition": "elapsed_mean_fps=N*1000/sum(FrameTime_ms); reciprocal tail values are latency equivalents, not averages of per-frame FPS."
+        },
+        "frame_budget_exceedance": {
+          "16.6666666667": {
+            "count": 7,
+            "percent": 0.23333333333333336
+          },
+          "33.3333333333": {
+            "count": 4,
+            "percent": 0.13333333333333333
+          }
+        },
+        "slowest_frames": [
+          {
+            "csv_row": 1000,
+            "capture_frame": 1001,
+            "frame_ms": 507.2122,
+            "captured_elapsed_seconds": 25.59768979999999,
+            "events": ""
+          },
+          {
+            "csv_row": 1200,
+            "capture_frame": 1201,
+            "frame_ms": 169.2875,
+            "captured_elapsed_seconds": 27.4705841,
+            "events": ""
+          },
+          {
+            "csv_row": 2535,
+            "capture_frame": 2536,
+            "frame_ms": 33.5222,
+            "captured_elapsed_seconds": 38.059246599999966,
+            "events": ""
+          },
+          {
+            "csv_row": 1560,
+            "capture_frame": 1561,
+            "frame_ms": 33.3587,
+            "captured_elapsed_seconds": 30.374587899999995,
+            "events": ""
+          },
+          {
+            "csv_row": 2023,
+            "capture_frame": 2024,
+            "frame_ms": 33.1211,
+            "captured_elapsed_seconds": 33.96999749999996,
+            "events": ""
+          }
+        ]
+      },
+      "taa_relative_change_percent": {
+        "frame": {
+          "mean": 2.7694602451824535,
+          "p50": 2.8622906244637702,
+          "p95": 2.0757050311587033,
+          "p99": 2.9750177960631286
+        },
+        "game": {
+          "mean": 9.75907180573694,
+          "p50": 9.509723582435603,
+          "p95": 9.111393924557621,
+          "p99": 2.87773509990934
+        },
+        "render": {
+          "mean": 3.018827779930322,
+          "p50": 2.8819402845999154,
+          "p95": 1.8749941110252966,
+          "p99": 2.6341333523815846
+        },
+        "rhi": {
+          "mean": 4.867127996534193,
+          "p50": 4.246710681073296,
+          "p95": 6.012867132867128,
+          "p99": 8.93387151600129
+        },
+        "gpu": {
+          "mean": 2.244394806792105,
+          "p50": 2.94705195909728,
+          "p95": 1.7910514378215892,
+          "p99": -1.3744957920368006
+        },
+        "elapsed_mean_fps": -2.694828053563003
+      }
+    },
+    "after_screenshots_and_overlay": {
+      "reference": {
+        "first_csv_row": 1205,
+        "last_csv_row": 3599,
+        "first_capture_frame": 1206,
+        "last_capture_frame": 3600,
+        "rows": 2395,
+        "metrics_ms": {
+          "frame": {
+            "column": "FrameTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.696110438413361,
+            "p50": 7.4942,
+            "p95": 9.12458,
+            "p99": 10.779945999999995,
+            "minimum": 5.6632,
+            "maximum": 17.6707,
+            "sum": 18432.1845,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "game": {
+            "column": "GameThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 2.6055884342379962,
+            "p50": 2.4843,
+            "p95": 3.4366099999999986,
+            "p99": 4.05505,
+            "minimum": 1.8184,
+            "maximum": 17.657,
+            "sum": 6240.384300000001,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "render": {
+            "column": "RenderThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.627165929018789,
+            "p50": 7.4217,
+            "p95": 9.055399999999999,
+            "p99": 10.696471999999998,
+            "minimum": 6.1767,
+            "maximum": 16.863,
+            "sum": 18267.0624,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "rhi": {
+            "column": "RHIThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 3.23959006263048,
+            "p50": 3.1428,
+            "p95": 4.02225,
+            "p99": 4.947985999999998,
+            "minimum": 2.5524,
+            "maximum": 8.3931,
+            "sum": 7758.8182,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "gpu": {
+            "column": "GPUTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.697071899791233,
+            "p50": 7.4935,
+            "p95": 9.19063,
+            "p99": 11.039783999999983,
+            "minimum": 5.5751,
+            "maximum": 15.7199,
+            "sum": 18434.487200000003,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          }
+        },
+        "fps": {
+          "elapsed_mean_fps": 129.9357653456648,
+          "p50_reciprocal_fps": 133.43652424541645,
+          "p95_latency_reciprocal_fps": 109.59408542639771,
+          "p99_latency_reciprocal_fps": 92.76484316340735,
+          "definition": "elapsed_mean_fps=N*1000/sum(FrameTime_ms); reciprocal tail values are latency equivalents, not averages of per-frame FPS."
+        },
+        "frame_budget_exceedance": {
+          "16.6666666667": {
+            "count": 2,
+            "percent": 0.08350730688935282
+          },
+          "33.3333333333": {
+            "count": 0,
+            "percent": 0.0
+          }
+        },
+        "slowest_frames": [
+          {
+            "csv_row": 1924,
+            "capture_frame": 1925,
+            "frame_ms": 17.6707,
+            "captured_elapsed_seconds": 32.95363320000001,
+            "events": ""
+          },
+          {
+            "csv_row": 1365,
+            "capture_frame": 1366,
+            "frame_ms": 16.8318,
+            "captured_elapsed_seconds": 28.835545600000003,
+            "events": ""
+          },
+          {
+            "csv_row": 2793,
+            "capture_frame": 2794,
+            "frame_ms": 16.2273,
+            "captured_elapsed_seconds": 39.4525591,
+            "events": ""
+          },
+          {
+            "csv_row": 2794,
+            "capture_frame": 2795,
+            "frame_ms": 16.0318,
+            "captured_elapsed_seconds": 39.468590899999995,
+            "events": ""
+          },
+          {
+            "csv_row": 2094,
+            "capture_frame": 2095,
+            "frame_ms": 15.4958,
+            "captured_elapsed_seconds": 34.22857569999998,
+            "events": ""
+          }
+        ]
+      },
+      "candidate": {
+        "first_csv_row": 1205,
+        "last_csv_row": 3599,
+        "first_capture_frame": 1206,
+        "last_capture_frame": 3600,
+        "rows": 2395,
+        "metrics_ms": {
+          "frame": {
+            "column": "FrameTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.960143924843424,
+            "p50": 7.7833,
+            "p95": 9.199259999999999,
+            "p99": 11.230781999999985,
+            "minimum": 6.4771,
+            "maximum": 33.5222,
+            "sum": 19064.5447,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "game": {
+            "column": "GameThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 2.8487133611691022,
+            "p50": 2.7387,
+            "p95": 3.59938,
+            "p99": 4.068741999999999,
+            "minimum": 1.8453,
+            "maximum": 27.846,
+            "sum": 6822.6685,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "render": {
+            "column": "RenderThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.891822254697286,
+            "p50": 7.7176,
+            "p95": 9.131029999999999,
+            "p99": 10.994985999999992,
+            "minimum": 6.4434,
+            "maximum": 35.1834,
+            "sum": 18900.9143,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "rhi": {
+            "column": "RHIThreadTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 3.418027682672234,
+            "p50": 3.3155,
+            "p95": 4.21391,
+            "p99": 5.081799999999999,
+            "minimum": 2.5572,
+            "maximum": 9.9471,
+            "sum": 8186.1763,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          },
+          "gpu": {
+            "column": "GPUTime",
+            "count": 2395,
+            "missing": 0,
+            "mean": 7.959839248434237,
+            "p50": 7.7937,
+            "p95": 9.20513,
+            "p99": 11.164951999999998,
+            "minimum": 5.6029,
+            "maximum": 35.5173,
+            "sum": 19063.815,
+            "zero_count": 0,
+            "nonzero_count": 2395
+          }
+        },
+        "fps": {
+          "elapsed_mean_fps": 125.62586926085889,
+          "p50_reciprocal_fps": 128.48020762401552,
+          "p95_latency_reciprocal_fps": 108.7043957883569,
+          "p99_latency_reciprocal_fps": 89.04099465201989,
+          "definition": "elapsed_mean_fps=N*1000/sum(FrameTime_ms); reciprocal tail values are latency equivalents, not averages of per-frame FPS."
+        },
+        "frame_budget_exceedance": {
+          "16.6666666667": {
+            "count": 5,
+            "percent": 0.20876826722338201
+          },
+          "33.3333333333": {
+            "count": 2,
+            "percent": 0.08350730688935282
+          }
+        },
+        "slowest_frames": [
+          {
+            "csv_row": 2535,
+            "capture_frame": 2536,
+            "frame_ms": 33.5222,
+            "captured_elapsed_seconds": 38.059246599999966,
+            "events": ""
+          },
+          {
+            "csv_row": 1560,
+            "capture_frame": 1561,
+            "frame_ms": 33.3587,
+            "captured_elapsed_seconds": 30.374587899999995,
+            "events": ""
+          },
+          {
+            "csv_row": 2023,
+            "capture_frame": 2024,
+            "frame_ms": 33.1211,
+            "captured_elapsed_seconds": 33.96999749999996,
+            "events": ""
+          },
+          {
+            "csv_row": 2129,
+            "capture_frame": 2130,
+            "frame_ms": 24.9424,
+            "captured_elapsed_seconds": 34.83996309999995,
+            "events": ""
+          },
+          {
+            "csv_row": 2024,
+            "capture_frame": 2025,
+            "frame_ms": 17.864,
+            "captured_elapsed_seconds": 33.987861499999966,
+            "events": ""
+          }
+        ]
+      },
+      "taa_relative_change_percent": {
+        "frame": {
+          "mean": 3.430739313617437,
+          "p50": 3.8576499159349797,
+          "p95": 0.818448629964319,
+          "p99": 4.1821730832416915
+        },
+        "game": {
+          "mean": 9.330902906091843,
+          "p50": 10.240309141408034,
+          "p95": 4.7363535577211735,
+          "p99": 0.3376530499007435
+        },
+        "render": {
+          "mean": 3.469916980192722,
+          "p50": 3.9869571661479197,
+          "p95": 0.8351922609713514,
+          "p99": 2.7907706391415266
+        },
+        "rhi": {
+          "mean": 5.508030849337331,
+          "p50": 5.495099910907486,
+          "p95": 4.7649947168873386,
+          "p99": 2.7044134724714564
+        },
+        "gpu": {
+          "mean": 3.41386116777902,
+          "p50": 4.006138653499702,
+          "p95": 0.15776938033627008,
+          "p99": 1.1337902987958337
+        },
+        "elapsed_mean_fps": -3.3169436246751616
+      }
+    }
+  },
+  "cvars_and_resolution": {
+    "after-ground-slope-tsr-auto-01": {
+      "overrides": [
+        "r.ScreenPercentage 0",
+        "r.ScreenPercentage.Default.Desktop.Mode 1",
+        "r.AntiAliasingMethod 4"
+      ],
+      "cvars": [
+        {
+          "name": "r.AntiAliasingMethod",
+          "value": "4",
+          "last_set_by": "Console",
+          "log_line": 3236,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.ScreenPercentage",
+          "value": "0",
+          "last_set_by": "Console",
+          "log_line": 3244,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.ScreenPercentage.Default.Desktop.Mode",
+          "value": "1",
+          "last_set_by": "Console",
+          "log_line": 3252,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.SecondaryScreenPercentage.GameViewport",
+          "value": "0",
+          "last_set_by": "Constructor",
+          "log_line": 3255,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "sg.ResolutionQuality",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3262,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.Streaming.PoolSize",
+          "value": "4096",
+          "last_set_by": "Commandline",
+          "log_line": 3270,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.MaxAnisotropy",
+          "value": "8",
+          "last_set_by": "Scalability",
+          "log_line": 3277,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.Streaming.MipBias",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3284,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.VSync",
+          "value": "0",
+          "last_set_by": "GameSetting",
+          "log_line": 3291,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "t.MaxFPS",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3298,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        },
+        {
+          "name": "r.GPUCsvStatsEnabled",
+          "value": "1",
+          "last_set_by": "Code",
+          "log_line": 3305,
+          "utc": "2026-11-19T07:33:13.810000+00:00"
+        }
+      ],
+      "resolution": {
+        "output_png": [
+          1600,
+          1000
+        ],
+        "canonical_output_1600x1000": true,
+        "unit_hud_observation": {
+          "percent": 83.4,
+          "render_width": 1336,
+          "render_height": 751,
+          "method": "assistant visually read native stat-unit PNG",
+          "image_sha256": "699da4bd10abf2a356a62a2c05a91c42409991a934af24fe47dd4b0322bed5f2"
+        }
+      }
+    },
+    "after-ground-slope-taa100-01": {
+      "overrides": [],
+      "cvars": [
+        {
+          "name": "r.AntiAliasingMethod",
+          "value": "2",
+          "last_set_by": "ProjectSetting",
+          "log_line": 3226,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.ScreenPercentage",
+          "value": "100",
+          "last_set_by": "SystemSettingsIni",
+          "log_line": 3233,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.ScreenPercentage.Default.Desktop.Mode",
+          "value": "0",
+          "last_set_by": "SystemSettingsIni",
+          "log_line": 3240,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.SecondaryScreenPercentage.GameViewport",
+          "value": "0",
+          "last_set_by": "Constructor",
+          "log_line": 3243,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "sg.ResolutionQuality",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3250,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.Streaming.PoolSize",
+          "value": "4096",
+          "last_set_by": "Commandline",
+          "log_line": 3258,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.MaxAnisotropy",
+          "value": "8",
+          "last_set_by": "Scalability",
+          "log_line": 3265,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.Streaming.MipBias",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3272,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.VSync",
+          "value": "0",
+          "last_set_by": "GameSetting",
+          "log_line": 3279,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "t.MaxFPS",
+          "value": "0",
+          "last_set_by": "Scalability",
+          "log_line": 3286,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        },
+        {
+          "name": "r.GPUCsvStatsEnabled",
+          "value": "1",
+          "last_set_by": "Code",
+          "log_line": 3293,
+          "utc": "2026-11-19T07:31:41.417000+00:00"
+        }
+      ],
+      "resolution": {
+        "output_png": [
+          1600,
+          1000
+        ],
+        "canonical_output_1600x1000": true,
+        "unit_hud_observation": {
+          "percent": 100.0,
+          "render_width": 1600,
+          "render_height": 900,
+          "method": "assistant visually read native stat-unit PNG",
+          "image_sha256": "c5badf7580d7dade04306242468f1daebd15cc309ae1a72330c332085b1ad9a0"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "One sequential capture per configuration.",
+    "Combined TAA100 versusTSR83.4 change, not isolated AA-only experiment.",
+    "Old4e38 material-before captures are not used to compute a ground-material improvement percentage.",
+    "The post600 window retains screenshot stalls; clean frame1206..3600 is identical for both runs."
+  ],
+  "evidence": {
+    "after-ground-slope-tsr-auto-01": {
+      "analysis_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-tsr-auto-01\\analysis.json",
+      "analysis_sha256": "e367c2b0f24a4991ff3d78655ab067a60abcfebf7a713269b94e57755e74eda4",
+      "execution_sha256": "2d67b50decf943a75e8d1f9f4e28b7dbecd531d6b790ba72bcd722f900ba2553",
+      "csv_sha256": "efb08661a17feb314d9d981f681b7efae7e1bdbab380b38edff725eeaa177174",
+      "screenshots": [
+        {
+          "path": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-tsr-auto-01\\unit.png",
+          "sha256": "699da4bd10abf2a356a62a2c05a91c42409991a934af24fe47dd4b0322bed5f2",
+          "bytes": 3259559,
+          "width": 1600,
+          "height": 1000,
+          "label": "unit",
+          "requested_capture_frame": 1000,
+          "command_anchor": {
+            "log_line": 3307,
+            "utc": "2026-11-19T07:33:17.004000+00:00",
+            "timestamp": 1795073597.004,
+            "ue_frame_mod1000": 999,
+            "text": "LogCsvProfiler: Display: CSVEvent \"CsvExecCommand : shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-tsr-auto-01/unit.png -nosuffix\" [Frame 1000]",
+            "command": "shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-tsr-auto-01/unit.png -nosuffix",
+            "capture_frame": 1000,
+            "csv_row_zero_based": 999,
+            "event_relative_seconds": 25.309902,
+            "capture_minus_row": 1,
+            "inferred_capture_origin_utc_epoch": 1795073571.694098,
+            "cumulative_frame_start_seconds": 25.302308,
+            "cumulative_frame_end_seconds": 25.3094542
+          }
+        },
+        {
+          "path": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-tsr-auto-01\\view.png",
+          "sha256": "37c166d6db57cf941f41c4b703559f76afb18e5044efbb9a7ad2f59dbf1e0784",
+          "bytes": 3248452,
+          "width": 1600,
+          "height": 1000,
+          "label": "view",
+          "requested_capture_frame": 1200,
+          "command_anchor": {
+            "log_line": 3310,
+            "utc": "2026-11-19T07:33:19.082000+00:00",
+            "timestamp": 1795073599.082,
+            "ue_frame_mod1000": 199,
+            "text": "LogCsvProfiler: Display: CSVEvent \"CsvExecCommand : shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-tsr-auto-01/view.png -nosuffix\" [Frame 1200]",
+            "command": "shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-tsr-auto-01/view.png -nosuffix",
+            "capture_frame": 1200,
+            "csv_row_zero_based": 1199,
+            "event_relative_seconds": 27.387464,
+            "capture_minus_row": 1,
+            "inferred_capture_origin_utc_epoch": 1795073571.694536,
+            "cumulative_frame_start_seconds": 27.380238800000004,
+            "cumulative_frame_end_seconds": 27.3869678
+          }
+        }
+      ]
+    },
+    "after-ground-slope-taa100-01": {
+      "analysis_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-taa100-01\\analysis.json",
+      "analysis_sha256": "593d076689cc851008c1300c4280b875266c140ed7e12c3739be9028f7e1e12a",
+      "execution_sha256": "4c876ff3639b52c213c68e07c046e697448f488a0ab29cdeaa1377d2127013f1",
+      "csv_sha256": "ee2b02dc090686ef4f8b2fa089bbfe16fdde00d9c892a8fe0265425d39ce4c26",
+      "screenshots": [
+        {
+          "path": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-taa100-01\\unit.png",
+          "sha256": "c5badf7580d7dade04306242468f1daebd15cc309ae1a72330c332085b1ad9a0",
+          "bytes": 3220632,
+          "width": 1600,
+          "height": 1000,
+          "label": "unit",
+          "requested_capture_frame": 1000,
+          "command_anchor": {
+            "log_line": 3295,
+            "utc": "2026-11-19T07:31:44.503000+00:00",
+            "timestamp": 1795073504.503,
+            "ue_frame_mod1000": 999,
+            "text": "LogCsvProfiler: Display: CSVEvent \"CsvExecCommand : shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-taa100-01/unit.png -nosuffix\" [Frame 1000]",
+            "command": "shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-taa100-01/unit.png -nosuffix",
+            "capture_frame": 1000,
+            "csv_row_zero_based": 999,
+            "event_relative_seconds": 25.090999,
+            "capture_minus_row": 1,
+            "inferred_capture_origin_utc_epoch": 1795073479.4120011,
+            "cumulative_frame_start_seconds": 25.082097099999988,
+            "cumulative_frame_end_seconds": 25.09047759999999
+          }
+        },
+        {
+          "path": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-taa100-01\\view.png",
+          "sha256": "2cd4018a0dc6e102fea492855603c0c0ae33ae80fe9c8a4e743eb843313b270c",
+          "bytes": 3208610,
+          "width": 1600,
+          "height": 1000,
+          "label": "view",
+          "requested_capture_frame": 1200,
+          "command_anchor": {
+            "log_line": 3298,
+            "utc": "2026-11-19T07:31:46.714000+00:00",
+            "timestamp": 1795073506.714,
+            "ue_frame_mod1000": 199,
+            "text": "LogCsvProfiler: Display: CSVEvent \"CsvExecCommand : shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-taa100-01/view.png -nosuffix\" [Frame 1200]",
+            "command": "shot showui filename=D:/simulator/artifacts/maps/wt-visual-review-20261119/after-ground-slope-taa100-01/view.png -nosuffix",
+            "capture_frame": 1200,
+            "csv_row_zero_based": 1199,
+            "event_relative_seconds": 27.302521,
+            "capture_minus_row": 1,
+            "inferred_capture_origin_utc_epoch": 1795073479.411479,
+            "cumulative_frame_start_seconds": 27.293898200000005,
+            "cumulative_frame_end_seconds": 27.3012966
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "wt_grass_alpha_reload_execution_summary_v1",
+  "status": "passed",
+  "pid": 40372,
+  "exit_code": 0,
+  "duration_seconds": 20.891392,
+  "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+  "world_sha256_before": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+  "world_sha256_after": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+  "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "native_layers": 16,
+  "native_meshes": 10,
+  "checks": 82,
+  "source_alpha_textures": 10,
+  "source_alpha_mips": 100,
+  "fresh_grass_components": 1089,
+  "generation_mismatches": 0,
+  "unchanged_saved_files": 90,
+  "field_points": 6,
+  "clear_hard_surface_fields": [
+    "previous_gui_station_grass",
+    "spawn",
+    "hard_road_edge"
+  ],
+  "positive_grass_field_layers": [
+    4,
+    7,
+    4
+  ],
+  "scope": "saved native grass generation freshness/weights/types/geometry/linear colours, complete source alpha mip pixels/build settings and source-bound sampled surfaces; runtime appearance checked separately",
+  "execution_sha256": "ef67b5dd96e1d51682d9a4d7607255dce7ac2019a0cd4f4da461775f4d3ed5bf",
+  "audit_summary_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\grass-alpha-reload-01\\audit\\summary.json",
+  "audit_summary_sha256": "732c27aeac35dd79ae2c26b8d12f14ab639da1d76b0e6eb22eecef34b55b98aa",
+  "verification_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\grass-alpha-reload-01\\audit\\verification.json",
+  "verification_sha256": "71ee1a60a0b9f995b0caf75d4b4be13332b893473d76a5a0a108b9624f3bdd4a"
+}

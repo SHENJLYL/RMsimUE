@@ -70,6 +70,9 @@ def resume_authored_grass(checked, package, folder, content, landscape):
     expected = dict(definition_sha256=checked['definition_sha256'],
         source_level_sha256=checked['definition']['source_level_sha256'],
         importer_sha256=sha(Path(__file__).with_name('wt_grass.py')))
+    if checked['alpha_mips']:
+        expected['alpha_mips_helper_sha256'] = sha(Path(__file__).with_name('wt_grass_alpha_mips.py'))
+        expected['alpha_mip_definition_sha256'] = checked['alpha_mips']['definition_sha256']
     if authored.get('schema') != 'wt_grass_native_import_v1' or authored.get('status') != 'authored_pending_weight_bake':
         raise ValueError('resume requires the completed source grass authoring report')
     if any(authored.get(key) != value for key, value in expected.items()):
@@ -234,7 +237,7 @@ def main():
         started_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         command=unreal.SystemLibrary.get_command_line(), resume_authored_assets=resume,
         independent_material_104_gate='pending', independent_grass_27_gate='pending',
-        scripts_sha256={name: sha(Path(__file__).with_name(name)) for name in ('author_wt_grass.py','wt_grass.py')})
+        scripts_sha256={name: sha(Path(__file__).with_name(name)) for name in ('author_wt_grass.py','wt_grass.py','wt_grass_alpha_mips.py')})
     save(output, report)
     failure = None
     try:
@@ -271,12 +274,19 @@ def main():
             report['authoring'], report['resume_validation'] = resume_authored_grass(
                 checked, package, folder, content, landscape[0])
         else:
-            report['authoring'] = install_grass(package, folder)
+            report['authoring'] = install_grass(package, folder, evidence_directory=output.parent/'alpha-source-readback')
         save(output, report)
         default_spawn = next(item for item in map_descriptor['spawns'] if item['id'] == 'default')
         spawn = default_spawn['position_m']
         cameras = [unreal.Vector(spawn[0]*100, -spawn[1]*100, spawn[2]*100+1500),
                    unreal.Vector(107425, 101175, spawn[2]*100+1500)]
+        if resume and checked['alpha_mips']:
+            from wt_grass_alpha_mips import verify_native_alpha_texture
+            report['resume_validation']['source_alpha_mip_readback'] = [
+                verify_native_alpha_texture(unreal, unreal.load_asset(folder+'/Foliage/Textures/'+name+'_Alpha'),
+                    record, output.parent/'alpha-source-readback')
+                for name, record in checked['alpha_mips']['records'].items()]
+            save(output, report)
         native = build_complete_grass(landscape[0], cameras, report, output)
         if resume:
             check_resume_assets(content, folder, report, 'after_bake')

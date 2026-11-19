@@ -30,8 +30,12 @@
     ]
   },
   "color_correction_multiplier": 4.59479341998814,
-  "alpha_clip_value": 0.3333333333333333,
-  "alpha_clip_provenance": "UE Masked adapter threshold; original random_grass shader threshold is not published",
+  "alpha_clip_value": 0.5,
+  "alpha_clip_provenance": {
+    "small_grass": "fixed grass_generate.dshl:385 source opacity minimum 0.5; clip(alpha-opacity) at 785-793",
+    "original_random_grass": "UE cutout calibration at 0.5, supported by original authored per-mip coverage; closed shader threshold not asserted",
+    "distance_fade": "existing UE per-instance cull fade retained; source varying distance opacity is not reproduced"
+  },
   "models": [
     {
       "id": "grass_blueberry_a",
@@ -5402,5 +5406,13 @@
   "enhancement_proof": {
     "file": "enhancement-proof.json",
     "sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5"
+  },
+  "alpha_mip_adapter": {
+    "schema": "wt_grass_alpha_mip_adapter_v1",
+    "definition_file": "source-alpha-mips/definition.json",
+    "definition_sha256": "48afe1706b9415cf71c7bdcee37642a801878002b62419748f99d676ce9edfbe",
+    "source_channel": "R",
+    "mip_policy": "LeaveExistingMips",
+    "srgb": false
   }
 }

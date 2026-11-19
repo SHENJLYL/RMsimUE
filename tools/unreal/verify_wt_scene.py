@@ -175,6 +175,92 @@ def transformed_bounds(spec, values):
     return [placed[i]-radius[i] for i in range(3)], [placed[i]+radius[i] for i in range(3)]
 
 
+
+def verified_mission_supplement(world, actors, package, source, content, proof_inputs):
+    """Accept only the hash-bound original mission supplement; never filter by prefix."""
+    owner = "RMSim.WTMissionObjects.Zeppelin"
+    owned = [actor for actor in actors
+             if owner in [str(tag) for tag in actor.get_editor_property("tags")]]
+    supplement = package / "mission-objects"
+    if not supplement.exists() and not supplement.is_symlink():
+        if owned:
+            raise ValueError("mission actors have no original source supplement")
+        return None, set()
+
+    # Optional source/author dependencies are loaded only for a present supplement.
+    from wt_mission_supplements import preflight
+    from author_wt_mission_objects import native_readback
+    checked = preflight(package, source)
+    if checked is None:
+        raise ValueError("present mission supplement has no verified source contract")
+    supplement = Path(checked["package"])
+    manifest = read(package_file(supplement, "scene-source.json"))
+    bindings = read(package_file(supplement, "instances.json"))["parts"]
+    expected_labels = {part["id"] for part in manifest["meshes"]}
+    if len(expected_labels) != len(manifest["meshes"]):
+        raise ValueError("duplicate source mission actor labels")
+    expected_meshes = {}
+    for role, directory in (("meshes", "Meshes"), ("collision_meshes", "Collision")):
+        for spec in manifest[role]:
+            asset = "/Game/RMSim/Maps/" + source["id"] + "/MissionObjects/" + directory + "/" + spec["id"] + "." + spec["id"]
+            expected_meshes[asset] = (spec, role == "collision_meshes")
+    cache_file = package_file(supplement, "ue-mesh-import-cache.json")
+    cache = read(cache_file)
+    if cache.get("schema") != "wt_scene_mesh_cache_v1" or set(cache.get("assets", {})) != set(expected_meshes):
+        raise ValueError("mission saved mesh cache identity differs")
+    native_files = []
+    for asset, (spec, collision) in expected_meshes.items():
+        entry = cache["assets"][asset]
+        signature = entry.get("signature", {})
+        path = saved_asset_file(content, asset)
+        actual_hash = digest(path)
+        if (signature.get("fbx_sha256") != spec["sha256"]
+                or signature.get("material_slots") != spec["material_slots"]
+                or signature.get("triangle_collision") is not collision
+                or actual_hash != entry.get("ue_file_sha256")):
+            raise ValueError("mission saved mesh/source hash binding differs: " + asset)
+        native_files.append(dict(asset=asset, role="saved_mission_mesh", path=str(path), sha256=actual_hash))
+    files = {"scene-source.json", "mission-source.json", "source-provenance.json",
+             "preparation-verification.json", "instances.json", "collision-probes.json",
+             "ue-mesh-import-cache.json", "textures/source-textures.json"}
+    for field in ("geometry_file_sha256", "instance_file_sha256", "texture_file_sha256"):
+        files.update(checked[field])
+    proof_inputs.extend(dict(role="mission_source", path=str(package_file(supplement, name)),
+                             sha256=digest(package_file(supplement, name))) for name in sorted(files))
+    proof_inputs.extend(native_files)
+    for name in ("wt_mission_supplements.py", "author_wt_mission_objects.py"):
+        path = Path(__file__).resolve().with_name(name)
+        proof_inputs.append(dict(role="mission_validation_script", path=str(path), sha256=digest(path)))
+    native = native_readback(world, supplement, manifest)
+    verified_paths = {record["actor"] for record in native["records"]}
+    if (len(verified_paths) != len(expected_labels)
+            or {record["label"] for record in native["records"]} != expected_labels
+            or verified_paths != {actor.get_path_name() for actor in owned}
+            or native["actors"] != checked["visual_assets"]
+            or native["visual_instances"] != checked["instances"]
+            or native["collision_instances"] != checked["colliding_instances"]):
+        raise ValueError("mission native actor/instance coverage differs from original source")
+    expected_components = len(bindings) + sum(bool(part["collision_asset"]) for part in bindings)
+    actual_components = 0
+    for actor in owned:
+        components = list(actor.get_components_by_class(unreal.InstancedStaticMeshComponent))
+        hisms = list(actor.get_components_by_class(unreal.HierarchicalInstancedStaticMeshComponent))
+        if len(components) != len(hisms):
+            raise ValueError("mission source instance component class differs")
+        actual_components += len(hisms)
+        for component in hisms:
+            blocking = component.get_collision_enabled() != unreal.CollisionEnabled.NO_COLLISION
+            if bool(component.get_editor_property("hidden_in_game")) != blocking:
+                raise ValueError("mission visual/collision visibility role differs")
+    if (actual_components != expected_components
+            or actual_components != checked["visual_assets"] + checked["collision_assets"]
+            or sum(len(record["components"]) for record in native["records"]) != expected_components):
+        raise ValueError("mission HISM coverage differs from original source")
+    return dict(status="passed", source=checked, native=native,
+                loaded_hism_components=actual_components, native_mesh_hashes=native_files,
+                ignored_unknown_components=False), verified_paths
+
+
 def verify(source_file, output=None):
     source_file = Path(source_file).resolve(strict=True)
     package = source_file.parent
@@ -315,12 +401,26 @@ def verify(source_file, output=None):
         check("world_source_identity", len(settings) == 1 and sorted(identity_tags) == sorted(expected_tags),
               settings_count=len(settings), expected=expected_tags, actual=identity_tags)
 
+        mission, mission_actor_paths = verified_mission_supplement(
+            world, actors, package, source, content, proof_inputs)
+        report["mission_objects"] = mission
+        if mission is not None:
+            check("native_original_mission_supplement", mission["status"] == "passed",
+                  actors=mission["native"]["actors"],
+                  hism_components=mission["loaded_hism_components"],
+                  visual_instances=mission["native"]["visual_instances"],
+                  collision_instances=mission["native"]["collision_instances"],
+                  source_manifest_sha256=mission["source"]["source_manifest_sha256"],
+                  scene_manifest_sha256=mission["source"]["scene_manifest_sha256"])
+
         instances = read(package_file(package, source["instances"]))
         parts = instances["parts"]
         by_label = {}
         all_hisms = []
         for actor in actors:
             components = list(actor.get_components_by_class(unreal.HierarchicalInstancedStaticMeshComponent))
+            if actor.get_path_name() in mission_actor_paths:
+                continue
             if components:
                 by_label.setdefault(actor.get_actor_label(), []).append((actor, components))
                 all_hisms.extend(components)
@@ -414,13 +514,16 @@ def verify(source_file, output=None):
             expected_collision_placements=expected_collision_placements,
             source_stored_instances=source["source_coverage"]["source_instances"],
             affine_baked_source_instances=source["source_coverage"]["affine_baked_instances"],
-            loaded_hism_components=len(all_hisms), actor_count=len(actors))
+            loaded_hism_components=len(all_hisms), actor_count=len(actors),
+            verified_mission_actors=len(mission_actor_paths),
+            verified_mission_hism_components=mission["loaded_hism_components"] if mission else 0,
+            total_loaded_hism_components=len(all_hisms) + (mission["loaded_hism_components"] if mission else 0))
         check("native_scene_inventory",
               not errors and len(parts) == len(expected_visual) == 726
               and expected_placements == native_placements == 35922
-              and native_collision_groups == expected_collision_groups
-              and native_collision_placements == expected_collision_placements
-              and len(all_hisms) == len(parts) + expected_collision_groups
+              and native_collision_groups == expected_collision_groups == 642
+              and native_collision_placements == expected_collision_placements == 20033
+              and len(all_hisms) == len(parts) + expected_collision_groups == 1368
               and set(by_label) == {part["id"] for part in parts},
               errors=errors, **report["inventory"])
 

@@ -155,7 +155,11 @@ color+=lerp(lc1,DetailColor,inside)*w1;
 color+=Texture2DSample(LC2,LC2Sampler,worldXZ*LCMap2.xy+LCMap2.zw).rgb*w2;
 color+=Texture2DSample(LC3,LC3Sampler,worldXZ*LCMap3.xy+LCMap3.zw).rgb*w3;
 color+=Texture2DSample(LC4,LC4Sampler,worldXZ*LCMap4.xy+LCMap4.zw).rgb*w4;
-NormalOut=normalize(VertexNormalWorld*(w0+w2+w3+w4+w1*(1-inside))+DetailNormalWorld*w1*inside);RoughnessOut=0.9;MetallicOut=0;OpacityOut=1;
+NormalOut=normalize(VertexNormalWorld*(w0+w2+w3+w4+w1*(1-inside))+DetailNormalWorld*w1*inside);
+RoughnessOut=lerp(0.9,DetailRoughness,w1*inside);
+MicrodetailIdOut=DetailMicrodetailId;
+MicrodetailValidOut=DetailMicrodetailValid*w1*inside;
+MetallicOut=0;OpacityOut=1;
 return color;
 '''
 

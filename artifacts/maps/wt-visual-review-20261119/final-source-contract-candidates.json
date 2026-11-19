@@ -1,0 +1,139 @@
+{
+  "schema": "rmsim_wt_visual_contract_metadata_candidates_v1",
+  "status": "prepared",
+  "recorded_utc": "2026-11-19T06:54:56.596077+00:00",
+  "required_new_json": [
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/definition.json",
+      "bytes": 67367,
+      "sha256": "48afe1706b9415cf71c7bdcee37642a801878002b62419748f99d676ce9edfbe",
+      "crlf_lines": 1743,
+      "purpose": "Required alpha definition/proof and exact baseline/source-record dependencies consumed by wt_grass_alpha_mips.validate",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/foliage-before.json",
+      "bytes": 137274,
+      "sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+      "crlf_lines": 5406,
+      "purpose": "Required alpha definition/proof and exact baseline/source-record dependencies consumed by wt_grass_alpha_mips.validate",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-foliage-source.json",
+      "bytes": 199812,
+      "sha256": "ddcc8b649a18a917adbbe69c3b294d08a5158d245b1470f997d51f9f9f86e8d9",
+      "crlf_lines": 7965,
+      "purpose": "Required alpha definition/proof and exact baseline/source-record dependencies consumed by wt_grass_alpha_mips.validate",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-small-grass-source.json",
+      "bytes": 59518,
+      "sha256": "2d45ac003403ade7c3e8a6fca42b23b03a33526755175893f5407e145426d82c",
+      "crlf_lines": 2212,
+      "purpose": "Required alpha definition/proof and exact baseline/source-record dependencies consumed by wt_grass_alpha_mips.validate",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/definition.json",
+      "bytes": 44432,
+      "sha256": "0dc385832f8caac5cf5e8d87def40bc3f04d0d107f2c06462640727c00bca575",
+      "crlf_lines": 1557,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/proof.json",
+      "bytes": 26598,
+      "sha256": "b309d738359d98a84150cc7dcf86a11377e8f3b81be207d7256c97b82b5b946d",
+      "crlf_lines": 804,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/source/ground-swizzle-consumer.json",
+      "bytes": 13808,
+      "sha256": "f3fde1e24431dd191593fc737444ece16c02f776494da8e675646a61a3761c77",
+      "crlf_lines": 64,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/source/landdetail-definition.json",
+      "bytes": 72975,
+      "sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+      "crlf_lines": 2369,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/source/microdetail-definition.json",
+      "bytes": 10763,
+      "sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+      "crlf_lines": 351,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/source/reflectance-source-audit.json",
+      "bytes": 88535,
+      "sha256": "8894fe4eeb64b0ad49a7902104a2c52ec537a6a128406eadf7f2d7aa76e51e8d",
+      "crlf_lines": 4162,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/terrain-reflectance/source/source-landclass.json",
+      "bytes": 128294,
+      "sha256": "66cb40e875ef86b612bd89bdc38a561a419061ce8e4597538ae3ee6f6640ade7",
+      "crlf_lines": 4438,
+      "purpose": "LC reflectance definition/proof and original source-record evidence for hash-bound preparation and validation",
+      "selection": "include exact JSON bytes"
+    }
+  ],
+  "total_bytes": 849376,
+  "existing_contract_updates": [
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json",
+      "bytes": 137881,
+      "sha256": "8946b65202815cae103d290e2a356f74fc1ee0e27ef206c7746e8da2a09ce0fc",
+      "crlf_lines": 5418
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage-enhanced/native-sample-fixture.json",
+      "bytes": 52767,
+      "sha256": "d099c2f78f47cedc46ae504170f08760732db93186d6d33503748dec16c7480d",
+      "crlf_lines": 2170
+    }
+  ],
+  "hash_byte_policy": "Preserve exact CRLF bytes using path-specific -text and cr-at-eol attributes; do not rewrite or trim bound source-record copies.",
+  "alpha_proof_layout": "source-alpha-mips/definition.json is the proof:100 authored mip hashes/coverage records plus3 exact JSON dependencies; there is no separate alpha proof.json.",
+  "shared_attributes_scope": {
+    "file": ".gitattributes",
+    "root_owned_additions": [
+      "assets/maps/wt_vlaanderen/terrain-reflectance/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol",
+      "assets/maps/wt_vlaanderen/terrain-reflectance/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+    ],
+    "preserve": "All concurrent campus/vehicle/source attributes and other existing changes remain in working tree."
+  },
+  "excluded_payloads": [
+    "23 original reflectance PNGs",
+    "10 derived R8 DDS files and original BC4 payloads",
+    "FBX/NPZ/dense source geometry",
+    "World/uasset/DLL and other native build artifacts",
+    "Full CSV/log/PNG captures",
+    "Copied full shader source from fixed Dagor checkout; local preparation reconstructs these hash-bound reference files."
+  ],
+  "git_attributes": {
+    "exit": 0,
+    "stdout": "assets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/definition.json: text: unset\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/definition.json: eol: lf\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/definition.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/foliage-before.json: text: unset\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/foliage-before.json: eol: lf\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/foliage-before.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-foliage-source.json: text: unset\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-foliage-source.json: eol: lf\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-foliage-source.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-small-grass-source.json: text: unset\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-small-grass-source.json: eol: lf\nassets/maps/wt_vlaanderen/foliage-enhanced/source-alpha-mips/original-small-grass-source.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/definition.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/definition.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/definition.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/proof.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/proof.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/proof.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/source/ground-swizzle-consumer.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/source/ground-swizzle-consumer.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/source/ground-swizzle-consumer.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/source/landdetail-definition.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/source/landdetail-definition.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/source/landdetail-definition.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/source/microdetail-definition.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/source/microdetail-definition.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/source/microdetail-definition.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/source/reflectance-source-audit.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/source/reflectance-source-audit.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/source/reflectance-source-audit.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\nassets/maps/wt_vlaanderen/terrain-reflectance/source/source-landclass.json: text: unset\nassets/maps/wt_vlaanderen/terrain-reflectance/source/source-landclass.json: eol: lf\nassets/maps/wt_vlaanderen/terrain-reflectance/source/source-landclass.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\n",
+    "stderr": ""
+  },
+  "all_11_text_unset": true,
+  "git_ignore": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  }
+}

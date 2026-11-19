@@ -98,6 +98,10 @@ def height_instance(material, spec, package, inventory, data):
              'height-decal UE normal-strength override differs')
     metadata = str(unreal.EditorAssetLibrary.get_metadata_tag(material,height.HEIGHT_NORMAL_METADATA_TAG))
     _require(metadata==height.normal_adapter_metadata(), 'height-decal UE normal-strength metadata differs')
+    reflection_metadata = str(unreal.EditorAssetLibrary.get_metadata_tag(material,height.HEIGHT_REFLECTION_METADATA_TAG))
+    _require(reflection_metadata==height.reflection_metadata(), 'height-decal cooked reflection layout metadata differs')
+    polarity_metadata = str(unreal.EditorAssetLibrary.get_metadata_tag(material,height.HEIGHT_POLARITY_METADATA_TAG))
+    _require(polarity_metadata==height.height_polarity_metadata(spec), 'height-decal source-bound polarity metadata differs')
     textures = {}
     for index,color in ((0,True),(2,False)):
         name = spec['texture_slots'][index].split('*')[0].split('$')[0]
@@ -116,9 +120,15 @@ def height_instance(material, spec, package, inventory, data):
         _require(item['size']==entry['size'], 'native height texture dimensions differ: '+name)
         item.update(source_png_sha256=entry['sha256'], source_size=entry['size'])
         textures['T'+str(index)] = item
+    approved = source['height_polarity'].get('adapter')
+    if approved is not None:
+        _require(textures['T0']['source_png_sha256']==approved['diffuse_sha256']
+                 and textures['T2']['source_png_sha256']==approved['reflection_sha256'],
+                 'height-polarity approved source PNG identity differs')
     return dict(source_contract=source,actual_height_source=actual,actual_height_blend=blend,
                 actual_height_normal_strength=strength,height_normal_adapter_metadata=json.loads(metadata),
-                texture_bindings=textures)
+                height_reflection_layout_metadata=json.loads(reflection_metadata),
+                height_polarity_metadata=json.loads(polarity_metadata),texture_bindings=textures)
 
 
 def rvt_writer(material, data):
@@ -168,10 +178,13 @@ def rvt_writer(material, data):
         _require(strength==_f32(height.HEIGHT_NORMAL_STRENGTH), 'height-decal parent normal strength differs')
         metadata = str(unreal.EditorAssetLibrary.get_metadata_tag(material,height.HEIGHT_NORMAL_METADATA_TAG))
         _require(metadata==height.normal_adapter_metadata(), 'height-decal parent adapter metadata differs')
+        reflection_metadata = str(unreal.EditorAssetLibrary.get_metadata_tag(material,height.HEIGHT_REFLECTION_METADATA_TAG))
+        _require(reflection_metadata==height.reflection_metadata(), 'height-decal parent cooked reflection layout metadata differs')
         return dict(height_surface=True,source_shader_code_sha256=hashlib.sha256(height.HEIGHT_DECAL_CODE.encode()).hexdigest(),
                     output_pins=pins,height_source=vector,height_normal_strength=strength,
                     height_normal_strength_node=strength_node.get_path_name(),
                     height_normal_adapter_metadata=json.loads(metadata),
+                    height_reflection_layout_metadata=json.loads(reflection_metadata),
                     raw_mask=1,native_opacity_multiplication_count=1,
                     source_definition_sha256=micro.DEFINITION_SHA256)
     payload = upstream.get('Specular')
@@ -202,16 +215,25 @@ def microdetail_graph(material, data, composite_code):
                       (prop.MP_ROUGHNESS,'RoughnessOut'),(prop.MP_METALLIC,'MetallicOut')):
         _property(material,field,post,pin)
     inputs = _inputs(material,post)
-    _require(set(inputs)=={'BaseColor','BaseNormalWorld','BaseRoughness','BaseMetallic','DecalMask',
-                          'DecalIdPayload','World','BoundsMin','BoundsMax','Microdetails'}
+    _require(set(inputs)==set(micro.POST_INPUTS)
              and all(inputs.values()) and inputs['BaseColor']==composite,
              'post-RVT microdetail input closure differs')
+    post_metadata=str(unreal.EditorAssetLibrary.get_metadata_tag(material,micro.POST_ADAPTER_TAG))
+    _require(post_metadata==micro.post_adapter_metadata(data,source_connected=True),
+             'post-RVT LC/source detail metadata or connected-source contract differs')
     pins = {}
     for field,pin in (('BaseNormalWorld','NormalOut'),('BaseRoughness','RoughnessOut'),('BaseMetallic','MetallicOut')):
         pins[field] = _reroute(material,inputs[field],composite,pin)
     for field,pin in (('DecalMask','Mask'),('DecalIdPayload','Specular')):
         pins[field] = _reroute(material,inputs[field],sample,pin)
     source = _inputs(material,composite)
+    base_surface=source.get('BaseColor')
+    _require(isinstance(base_surface,unreal.MaterialExpressionCustom),
+             'LC/source microdetails require the original pre-RVT surface')
+    for field,pin in (('BaseMicrodetailId','MicrodetailIdOut'),('BaseMicrodetailValid','MicrodetailValidOut')):
+        pins[field]=_reroute(material,inputs[field],base_surface,pin)
+    for field,pin in (('BaseNormalWorld','NormalOut'),('BaseRoughness','RoughnessOut'),('BaseMetallic','MetallicOut')):
+        pins['composite_'+field]=_reroute(material,source[field],base_surface,pin)
     _require(isinstance(source.get('BaseGeometricNormal'),unreal.MaterialExpressionVertexNormalWS),
              'source clipmap RNM is missing the geometric terrain normal')
     for field,pin in (('DecalColor','BaseColor'),('DecalNormalWorld','Normal'),
@@ -263,5 +285,7 @@ def microdetail_graph(material, data, composite_code):
                 composition_order='source_land_detail_then_RVT_source_over_then_source_microdetail',
                 source_uv_scale_per_m=data['uv_scale_per_m'],source_id_scale=data['id_count_scale'],
                 transport='raw_specular_payload_native_opacity_then_clear_recovery',
-                selection='continuous_floor_next_fraction_with_coverage_and_valid_payload_fade',
+                selection='separate_source_ids_floor_next_then_blend_sampled_microdetail_values',
+                post_adapter=json.loads(post_metadata),
+                original_pre_rvt_surface=base_surface.get_path_name(),
                 native_visual_quality_verified=False)

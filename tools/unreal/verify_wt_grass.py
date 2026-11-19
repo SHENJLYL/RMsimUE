@@ -264,6 +264,9 @@ def main():
             source_level_sha256=definition['source_level_sha256'],fixture_file=str(fixture_path),
             fixture_sha256=sha(fixture_path),world_asset=folder+'/World')
         report['visual_adapter']=definition.get('visual_adapter')
+        report['alpha_mip_adapter']=definition.get('alpha_mip_adapter')
+        report['supporting_scripts_sha256']={name:sha(Path(__file__).with_name(name))
+            for name in ('wt_grass.py','wt_grass_alpha_mips.py')}
         check('bound_source_and_field_fixture',True,models=len(checked['models']),
               weights=len(checked['weights']),layers=len(checked['layers']))
         content=Path(unreal.Paths.project_content_dir()).resolve()
@@ -276,6 +279,8 @@ def main():
         terrain_package=height['material'].split('.',1)[0]
         snapshot_files += [content/(terrain_package[len('/Game/'):]+'.uasset'),
                            checked['definition_path'],package/'scene-source.json',package/'map.json']
+        if checked['alpha_mips']:
+            snapshot_files += list(checked['alpha_mips']['definition_path'].parent.rglob('*'))
         snapshots={str(p.resolve()):sha(p) for p in snapshot_files if p.is_file()}
         require(len(snapshots)>20,'saved grass resource inventory is incomplete')
         report['before_hashes']=snapshots
@@ -309,9 +314,11 @@ def main():
             codes=[str(node.get_editor_property('code')) for node in unreal.MaterialEditingLibrary.get_material_expressions(parent)
                    if isinstance(node,unreal.MaterialExpressionCustom)]
             check('saved_grass_world_normal_graph',
-                not parent.get_editor_property('tangent_space_normal') and codes.count(GRASS_CODE)==1 and codes.count(GRASS_NORMAL_CODE)==1,
+                not parent.get_editor_property('tangent_space_normal') and codes.count(GRASS_CODE)==1 and codes.count(GRASS_NORMAL_CODE)==1 and
+                close(parent.get_editor_property('opacity_mask_clip_value'),definition['alpha_clip_value']),
                 asset=parent.get_path_name(),main_custom_count=codes.count(GRASS_CODE),normal_custom_count=codes.count(GRASS_NORMAL_CODE),
-                source_lit_models=[m['id'] for m in definition['models'] if m['material'].get('normal_texture')])
+                source_lit_models=[m['id'] for m in definition['models'] if m['material'].get('normal_texture')],
+                alpha_clip_value=parent.get_editor_property('opacity_mask_clip_value'))
             for model in definition['models']:
                 if model['material'].get('normal_texture'):
                     path=folder+'/Foliage/Textures/'+model['id']+'_PackedNormal'
@@ -331,10 +338,22 @@ def main():
                     unreal.EditorAssetLibrary.get_metadata_tag(texture,'RMSimGrassSourceSHA256')==model['material']['normal_texture_sha256'],
                     asset=texture.get_path_name(),dimensions=size,source_png_sha256=model['material']['normal_texture_sha256'],
                     source_channels=model['material']['normal_semantics'])
+        alpha_readback=[]
+        if checked['alpha_mips']:
+            from wt_grass_alpha_mips import verify_native_alpha_texture
+            for name, record in checked['alpha_mips']['records'].items():
+                texture=unreal.load_asset(folder+'/Foliage/Textures/'+name+'_Alpha')
+                native_alpha=verify_native_alpha_texture(unreal,texture,record,output/'alpha-source-readback')
+                alpha_readback.append(native_alpha)
+                check('saved_grass_source_alpha_chain_'+name,True,**native_alpha)
+        report['source_alpha_mip_readback']=alpha_readback
         for layer in definition['layers']:
             path=folder+'/Foliage/Materials/'+layer['id']+'.'+layer['id']
             material=unreal.load_asset(path)
             require(isinstance(material,unreal.MaterialInstanceConstant),'saved grass layer material missing')
+            alpha=unreal.MaterialEditingLibrary.get_material_instance_texture_parameter_value(material,'Alpha')
+            expected_alpha=folder+'/Foliage/Textures/'+layer['model_id']+'_Alpha.'+layer['model_id']+'_Alpha'
+            require(alpha is not None and alpha.get_path_name()==expected_alpha,'grass alpha model binding differs: '+layer['id'])
             errors=[];values={}
             for channel in ('r','g','b'):
                 for endpoint in ('min','max'):
@@ -378,7 +397,7 @@ def main():
         after={path:sha(Path(path)) for path in snapshots}
         check('saved_assets_and_sources_unchanged',after==snapshots,file_count=len(snapshots))
         report['status']='passed'
-        report['scope']='saved native grass generation freshness/weights/types/geometry/linear colours and source-bound sampled surfaces; runtime population and appearance checked separately'
+        report['scope']='saved native grass generation freshness/weights/types/geometry/linear colours, complete source alpha mip pixels/build settings and source-bound sampled surfaces; runtime appearance checked separately'
         report['read_only_operations']=True
         report['finished_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
         save(target,report)
@@ -387,6 +406,8 @@ def main():
             world_sha256=snapshots[str(level_file.resolve())],module_sha256=report.get('module_sha256'),
             native_layers=len(rows),native_meshes=len(definition['models']),field_points=len(field_rows),
             native_source_normal_textures=len(normal_assets),visual_adapter=definition.get('visual_adapter',{}).get('schema'),
+            source_alpha_textures=len(alpha_readback),source_alpha_mips=sum(r['mip_count'] for r in alpha_readback),
+            alpha_mip_definition_sha256=checked['alpha_mips']['definition_sha256'] if checked['alpha_mips'] else None,
             source_station_nonzero_layers=field_rows[0]['nonzero_native_layers'],
             positive_grass_field_layers=[r['nonzero_native_layers'] for r in field_rows if r['expected_grass']=='positive'],
             clear_hard_surface_fields=[r['id'] for r in field_rows if r['expected_grass']=='zero'],

@@ -1,0 +1,151 @@
+{
+  "schema": "wt_ground_microdetail_composition_implementation_v1",
+  "status": "source_preflight_passed",
+  "native_status": "pending_root",
+  "files": [
+    {
+      "path": "D:\\simulator\\tools\\unreal\\wt_ground_microdetails.py",
+      "before_sha256": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303",
+      "after_sha256": "da4768e92c7c815fac10bba57e0950ab4159a462650d9e53466c18b575fd73b3",
+      "candidate": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-01\\wt_ground_microdetails.candidate.py",
+      "backup": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-01\\wt_ground_microdetails.before.py"
+    },
+    {
+      "path": "D:\\simulator\\tools\\unreal\\wt_lc_reflectance.py",
+      "before_sha256": "a1ec83ff5e5e12fcd9ab2f6fb38b79cc528b73af8a935e99bd6e2891d5b23967",
+      "after_sha256": "3c30d44490e4995df211ead079982f12ca93b7049ed1f8e7ddc047b248dc55e9",
+      "candidate": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-01\\wt_lc_reflectance.candidate.py",
+      "backup": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-01\\wt_lc_reflectance.before.py"
+    }
+  ],
+  "proof_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\microdetail-composition-math-01\\verification.json",
+  "proof_sha256": "2a62c3b0ae89d4c125c1af42fb303d8ff7e066b76df1753ab085ad972500b822",
+  "checks": [
+    {
+      "name": "source_and_shader_binding",
+      "passed": true,
+      "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+      "hlsl_sha256": "9812a8f3159a1a30307d505ee2bc2e0959b130c98f185eb1e38c7c6993977d22",
+      "slot_count": 12,
+      "unique_textures": 11
+    },
+    {
+      "name": "original_pixels_cached_equals_direct",
+      "passed": true,
+      "cases": 1024,
+      "max_abs_error": 0.0,
+      "uncached_requests": 2486,
+      "cached_requests": 2214,
+      "maximum_requests": 4,
+      "sampling_scope": "original highest mip wrap bilinear CPU reference; hardware filtering separate"
+    },
+    {
+      "name": "rvt_clear_decode_and_source_validity",
+      "passed": true,
+      "maximum_error": 1.509903313490213e-14,
+      "clear_value": 0.5019607843137255,
+      "id_count_scale": 11.086956977844238
+    },
+    {
+      "name": "surface_identities_not_averaged",
+      "passed": true,
+      "separate_result": [
+        0.4216000000000001,
+        0.5848000000000001,
+        0.2584000000000001,
+        0.71,
+        0.32151140475048073,
+        0.13318308692813738,
+        0.9374927636902937
+      ],
+      "incorrect_averaged_id_result": [
+        0.012400000000000003,
+        0.017200000000000003,
+        0.007600000000000002,
+        0.942,
+        0.11877113736973437,
+        -0.07918075824648958,
+        0.9897594780811199
+      ]
+    },
+    {
+      "name": "coverage_and_validity_endpoints",
+      "passed": true,
+      "maximum_error": 0.0,
+      "outside_rvt_weights": [
+        1.0,
+        0.0
+      ],
+      "opaque_invalid_decal": "neutral effect; underlying LC identity does not leak through"
+    },
+    {
+      "name": "old_rvt_only_results_preserved",
+      "passed": true,
+      "cases": 132,
+      "maximum_error": 0.0
+    },
+    {
+      "name": "continuous_per_surface_floor_next_and_coverage",
+      "passed": true,
+      "epsilon": 1e-07,
+      "integer_boundary_max_delta": 3.5199305886690624e-08,
+      "coverage_max_delta": 8.874266402281172e-08
+    },
+    {
+      "name": "sample_reuse_exact_integer_slice_keys",
+      "passed": true,
+      "inactive": 0,
+      "same_integer": 1,
+      "same_fractional": 2,
+      "overlapping_endpoints": 3,
+      "distinct_endpoints": 4
+    },
+    {
+      "name": "real_socket_contract_fails_closed",
+      "passed": true,
+      "rejected_invalid_contracts": 5,
+      "native_missing_pin_behavior": "wt_materials._wire must raise; validated separately with native graph"
+    }
+  ],
+  "metadata": {
+    "composition": "effects_on_composed_surface_then_coverage_validity_blend",
+    "decal_weight": "coverage*decoded_decal_valid",
+    "hlsl_sha256": "9812a8f3159a1a30307d505ee2bc2e0959b130c98f185eb1e38c7c6993977d22",
+    "id_count_scale": 11.086956977844238,
+    "inputs": [
+      "BaseColor",
+      "BaseNormalWorld",
+      "BaseRoughness",
+      "BaseMetallic",
+      "BaseMicrodetailId",
+      "BaseMicrodetailValid",
+      "DecalMask",
+      "DecalIdPayload",
+      "World",
+      "BoundsMin",
+      "BoundsMax",
+      "Microdetails"
+    ],
+    "interpolation": "independent_floor_next_within_each_surface",
+    "native_render_validation": "required_separately",
+    "neutral_weight": "1-source_weight-decal_weight",
+    "pbr_channels": "R_diffuse_and_smoothness_AG_normal",
+    "sample_cache_key": "integer_slice_at_shared_world_uv_and_explicit_gradients",
+    "samplers": 1,
+    "schema": "wt_ground_microdetails_post_v2",
+    "source_connected": true,
+    "source_definition_sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54",
+    "source_id": "cooked_A_unorm_times_original_id_count_scale",
+    "source_weight": "(1-coverage)*saturate(BaseMicrodetailValid)",
+    "texture_reads": {
+      "inactive": 0,
+      "maximum": 4,
+      "minimum_active": 1,
+      "scope": "logical_array_sample_requests_before_hardware_filter_taps"
+    },
+    "uv_scale_per_m": 0.5099999904632568
+  },
+  "source_assets_modified": false,
+  "native_assets_modified": false,
+  "runtime_or_engine_started": false
+}

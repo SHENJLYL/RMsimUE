@@ -1,0 +1,21 @@
+﻿{
+    "schema":  "rmsim_wt_normal_window_review_v1",
+    "status":  "observed",
+    "image_reviewed":  true,
+    "process_id":  11144,
+    "capture_utc":  "2026-11-19T08:20:19.9236772Z",
+    "review_utc":  "2026-11-19T08:24:01.2336085Z",
+    "image":  "entry.png",
+    "image_sha256":  "c5a4e8a6027310e90c8bd3c277e2214fa0fe1105e664a2abd99afd7842e87efb",
+    "module_sha256":  "95f19c9fe62ad60c3a9042f9af93fe85ad8bec8e73fd43964ba18128e9216f75",
+    "world_sha256":  "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "entry":  "Start-PreparedVehicle.ps1 with exact Play-WarThunder.cmd default parameters",
+    "observations":  [
+                         "Actual foreground RMSim game window rendered Flanders terrain, road edge, grass and camouflage net with HUD and minimap.",
+                         "Observed live SIGHT view; no new black or white material rectangle in this image.",
+                         "The normal entry used its default runtime parameters; fixed-step motion-capture flags were absent."
+                     ],
+    "os_keyboard_test_performed":  false,
+    "performance_sample":  false,
+    "window_left_open":  true
+}

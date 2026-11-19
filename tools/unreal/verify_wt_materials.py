@@ -133,8 +133,14 @@ def graph_record(material, leaves=False, landclass=None, landdetail=None, packag
         result['source_rendinst_decal'] = source_decal
     if name not in ('WT_Parent_HeightDecal', 'WT_Terrain', 'WT_Parent_Land', 'WT_Parent_Water',
                     'WT_Parent_DecalModulate', 'WT_Parent_DecalDiffuse', 'WT_Parent_DecalNormal'):
-        if not any(isinstance(node, unreal.MaterialExpressionCustom) and str(node.get_editor_property('code')) == OBJECT_CODE for node in expressions):
+        expected_code = OBJECT_CODE
+        if name == 'WT_Parent_Surface':
+            import wt_object_normals
+            expected_code = wt_object_normals.surface_code(OBJECT_CODE)
+        if not any(isinstance(node, unreal.MaterialExpressionCustom) and str(node.get_editor_property('code')) == expected_code for node in expressions):
             raise RuntimeError('saved source surface graph differs from its current alpha/texture adapter')
+        if name == 'WT_Parent_Surface':
+            result['source_layered_normals'] = wt_object_normals.graph_record(material)
     if name == 'WT_Parent_Water':
         if (len(expressions) != 4 or not isinstance(base, unreal.MaterialExpressionVectorParameter)
                 or str(base.get_editor_property('parameter_name')) != 'SourceWaterColor'
@@ -313,8 +319,11 @@ def grass_texture_bindings(checked, model_id):
     result = {
         'Masks': dict(name=model_id+'_Masks', path=model['mask_path'],
                       sha256=material['texture_sha256'], srgb=False, address=address),
-        'Alpha': dict(name=model_id+'_Alpha', path=model['alpha_path'],
-                      sha256=material['alpha_texture_sha256'], srgb=False, address=address),
+        'Alpha': dict(name=model_id+'_Alpha', path=model['alpha_mip_path'],
+                      sha256=checked['alpha_mips']['records'][model_id]['dds_sha256'],
+                      size=checked['alpha_mips']['records'][model_id]['size'],
+                      source_mip_count=checked['alpha_mips']['records'][model_id]['source_levels'],
+                      preserve_source_mips=True, srgb=False, address=address),
         'Land': dict(name='WT_GrassLandColor', path=checked['land_path'],
                      sha256=checked['definition']['land_color']['texture_sha256'], srgb=True, address='wrap'),
     }
@@ -350,16 +359,29 @@ def grass_texture_record(texture, expected, root):
             or texture.get_editor_property('lod_bias') != 0 or texture.get_editor_property('max_texture_size') != 0):
         raise RuntimeError('grass texture provenance/gamma/compression differs: ' + path)
     dimensions = completed_texture_size(texture)
-    if dimensions != _png_dimensions(expected['path'])[0]:
+    source_size = expected['size'] if expected.get('preserve_source_mips') else _png_dimensions(expected['path'])[0]
+    if dimensions != source_size:
         raise RuntimeError('grass texture native/source dimensions differ: ' + path)
+    if expected.get('preserve_source_mips'):
+        if (texture.get_editor_property('mip_gen_settings') != unreal.TextureMipGenSettings.TMGS_LEAVE_EXISTING_MIPS
+                or texture.get_editor_property('do_scale_mips_for_alpha_coverage')):
+            raise RuntimeError('grass alpha original-mip preservation policy differs: '+path)
     address = unreal.TextureAddress.TA_CLAMP if expected['address']=='clamp' else unreal.TextureAddress.TA_WRAP
     if texture.get_editor_property('address_x') != address or texture.get_editor_property('address_y') != address:
         raise RuntimeError('grass source atlas addressing differs: '+path)
     after = digest(asset_file(path))
     if after != before:
         raise RuntimeError('grass texture audit modified a saved asset')
-    return dict(asset=path, source_png_sha256=expected['sha256'], file_sha256=before,
-                file_sha256_after=after, srgb=expected['srgb'], address=expected['address'], native_dimensions=dimensions)
+    record = dict(asset=path, source_file_sha256=expected['sha256'], file_sha256=before,
+                  file_sha256_after=after, srgb=expected['srgb'], address=expected['address'], native_dimensions=dimensions)
+    if expected.get('preserve_source_mips'):
+        record.update(source_dds_sha256=expected['sha256'], expected_source_mip_count=expected['source_mip_count'],
+                      mip_gen_settings=str(texture.get_editor_property('mip_gen_settings')),
+                      do_scale_mips_for_alpha_coverage=False,
+                      native_source_mip_byte_audit='Independent verify_wt_grass.py exports and compares all original mip payloads')
+    else:
+        record['source_png_sha256'] = expected['sha256']
+    return record
 
 
 def grass_surface_properties(material, checked, instance=False):

@@ -17,7 +17,9 @@ from import_vehicle_assets import import_asset
 from wt_vertex_opacity import HEIGHT_DECAL_SHADER, validate_scene_vertex_opacity
 from wt_height_decals import (HEIGHT_DECAL_CODE, HEIGHT_SOURCE, HEIGHT_NORMAL_STRENGTH,
                               HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata,
-                              contract as height_surface_contract)
+                              contract as height_surface_contract,
+                              HEIGHT_REFLECTION_METADATA_TAG, reflection_metadata,
+                              HEIGHT_POLARITY_METADATA_TAG, height_polarity_contract, height_polarity_metadata)
 import wt_ground_microdetails as ground_microdetails
 from wt_tree_alpha import tree_alpha_contract, SOURCE_AUDIT_SHA256 as TREE_ALPHA_AUDIT_SHA256
 from wt_landclass import LANDCLASS_CODE, validate_landclass_surface, shader_vectors
@@ -72,7 +74,7 @@ def height_blend_parameters(spec):
         return params.get(name, [default])[0]
     if value('attenuation_from_heightmap_height', 0) != 0:
         raise ValueError('height-decal ground-height attenuation requires its original heightmap binding')
-    threshold, gamma, above = (value('diffuse_threshold', .25), value('vertex_gamma', 1), value('height_above', 0))
+    threshold, gamma, above = (value('diffuse_threshold', .25), value('vertex_gamma', 1), height_polarity_contract(spec)['value'])
     if not (threshold > 0 and gamma > 0 and above in (0, 1)):
         raise ValueError('unsupported source height-decal blend parameters')
     return (threshold, gamma, above, 0)
@@ -475,7 +477,9 @@ def _read_ground_decal_rvt(material, surface, textures, base_normal_is_world=Fal
         inputs[name] = (value, '')
     node = _custom(material, RVT_COMPOSITE_CODE, inputs)
     material.set_editor_property('tangent_space_normal', False)
-    return ground_microdetails.author_post_layer(material, textures, node, sample, world, inputs)
+    return ground_microdetails.author_post_layer(material, textures, node, sample, world, inputs,
+        source_microdetail={'id': (surface, 'MicrodetailIdOut'),
+                            'valid': (surface, 'MicrodetailValidOut')})
 
 
 def _landclass_surface(material, textures):
@@ -483,20 +487,29 @@ def _landclass_surface(material, textures):
         raise ValueError('land_mesh requires its verified original global landclass data')
     from wt_landdetail import author_surface
     detail, _ = author_surface(material, textures)
-    detail_normal = _expr(material, unreal.MaterialExpressionReroute)
-    _wire(detail, 'NormalOut', detail_normal, '')
     inputs = {'World': (_expr(material, unreal.MaterialExpressionWorldPosition), ''),
-              'DetailColor': (detail, ''), 'DetailNormalWorld': (detail_normal, ''),
+              'DetailColor': (detail, ''),
               'VertexNormalWorld': (_expr(material, unreal.MaterialExpressionVertexNormalWS), '')}
+    for name, pin in (('DetailNormalWorld', 'NormalOut'),
+                      ('DetailRoughness', 'RoughnessOut'),
+                      ('DetailMicrodetailId', 'MicrodetailIdOut'),
+                      ('DetailMicrodetailValid', 'MicrodetailValidOut')):
+        value = _expr(material, unreal.MaterialExpressionReroute)
+        _wire(detail, pin, value, '')
+        inputs[name] = (value, '')
     for parameter, entry in textures.landclass['textures'].items():
         texture = textures.get(entry['name'], entry['srgb'], nearest=entry['nearest'])
         inputs[parameter] = (_texture(material, parameter, texture, entry['srgb']), '')
     for name, values in shader_vectors(textures.landclass).items():
         inputs[name] = (_vector(material, name, values), 'RGBA')
-    return _custom(material, LANDCLASS_CODE, inputs)
+    return _custom(material, LANDCLASS_CODE, inputs, additional_outputs=[
+        ('MicrodetailIdOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1),
+        ('MicrodetailValidOut', unreal.CustomMaterialOutputType.CMOT_FLOAT1)])
 
 
-def parent_material(folder, flavor, textures):
+def parent_material(folder, flavor, textures, save_asset=True):
+    if not save_asset and flavor != 'Surface':
+        raise ValueError('deferred parent save is supported only for the ObjectOnly Surface gate')
     name = 'WT_Parent_' + flavor
     material = _load_existing(f'{folder}/Materials/{name}') or unreal.AssetToolsHelpers.get_asset_tools().create_asset(name, folder+'/Materials', unreal.Material, unreal.MaterialFactoryNew())
     _clear_graph(material)
@@ -533,6 +546,7 @@ def parent_material(folder, flavor, textures):
         _prop(node, 'OpacityOut', P.MP_OPACITY)
         _write_ground_decal_rvt(material, node, normal_is_world=True, microdetail_pin='MicrodetailPayloadOut')
         unreal.EditorAssetLibrary.set_metadata_tag(material, HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata())
+        unreal.EditorAssetLibrary.set_metadata_tag(material, HEIGHT_REFLECTION_METADATA_TAG, reflection_metadata())
         _save_parent(material)
         return material
     if flavor == 'Land' and textures.landclass is not None:
@@ -552,7 +566,20 @@ def parent_material(folder, flavor, textures):
     inputs['Family'] = (_scalar(material,'Family',0),'')
     inputs['AlphaEnabled'] = (_scalar(material,'AlphaEnabled',0),'')
     inputs['AlphaFromT1'] = (_scalar(material,'AlphaFromT1',0),'')
-    node = _custom(material, OBJECT_CODE, inputs)
+    code = OBJECT_CODE
+    if flavor == 'Surface':
+        import wt_object_normals
+        inputs['World'] = (_expr(material, unreal.MaterialExpressionWorldPosition), '')
+        inputs['GeometricNormal'] = (_expr(material, unreal.MaterialExpressionVertexNormalWS), '')
+        code = wt_object_normals.surface_code(OBJECT_CODE)
+        material.set_editor_property('tangent_space_normal', True)
+    node = _custom(material, code, inputs)
+    if flavor == 'Surface':
+        normal_output = _expr(material, unreal.MaterialExpressionReroute)
+        _wire(node, 'NormalOut', normal_output, '')
+        _prop(normal_output, '', P.MP_NORMAL)
+        unreal.EditorAssetLibrary.set_metadata_tag(
+            material, wt_object_normals.METADATA_TAG, wt_object_normals.metadata(OBJECT_CODE))
     _prop(node,'OpacityOut',P.MP_OPACITY if translucent else P.MP_OPACITY_MASK)
     if flavor == 'Leaves':
         facing_leaves_wpo(material)
@@ -560,7 +587,8 @@ def parent_material(folder, flavor, textures):
         _write_ground_decal_rvt(material, node)
     if flavor == 'Land':
         _read_ground_decal_rvt(material, node, textures)
-    _save_parent(material)
+    if save_asset:
+        _save_parent(material)
     return material
 
 
@@ -613,6 +641,8 @@ def make_instance(folder, spec, parent, textures):
         EDIT.set_material_instance_vector_parameter_value(instance, 'HeightSource', unreal.LinearColor(*HEIGHT_SOURCE))
         EDIT.set_material_instance_scalar_parameter_value(instance, 'HeightNormalStrength', HEIGHT_NORMAL_STRENGTH)
         unreal.EditorAssetLibrary.set_metadata_tag(instance, HEIGHT_NORMAL_METADATA_TAG, normal_adapter_metadata())
+        unreal.EditorAssetLibrary.set_metadata_tag(instance, HEIGHT_REFLECTION_METADATA_TAG, reflection_metadata())
+        unreal.EditorAssetLibrary.set_metadata_tag(instance, HEIGHT_POLARITY_METADATA_TAG, height_polarity_metadata(spec))
         for index, color, fallback in [(0, True, 'White'), (2, False, 'Black')]:
             texture = textures.get(slots[index] if index < len(slots) else None, color, fallback)
             EDIT.set_material_instance_texture_parameter_value(instance, 'T' + str(index), texture)

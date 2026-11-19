@@ -2,6 +2,13 @@
 
 本文件是 CodeStable 技能启动必读的项目注意事项入口。
 
+## 2026-11-19 弗兰德斯地表材质验收
+
+- Ground40、Grass82、全量307材质和Scene22已完成保存资产的原生重载；草的完整author更新World为`ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0`。Object193独立重载记录单列。原地图、几何与碰撞清单保持；Scene检查按已绑定的55可视/53碰撞任务分组核对飞艇，未知附加组件仍失败。
+- `terrain-reflectance`与`source-alpha-mips`来源合同按原字节SHA关联，勿自动转换JSON换行。地表_r通道为R smoothness/G reflectance/B AO/A microdetail ID；18项height polarity适配有source ID与PNG哈希白名单。GrassV4保留100个原BC4 mip的解码像素和16层分布；完整Terrain更新后必须重新author/bake草，再独立verify。
+- 默认渲染使用有效的`r.AntiAliasingMethod=2`、`r.ScreenPercentage=100`、`r.ScreenPercentage.Default.Desktop.Mode=0`。最终7269/ba531静态同身份测试的草坡为TAA100 125.626FPS、原TSR83.4 129.936FPS，GPU差0.26277ms；旧4e模块的+5.95%只属历史比较。性能采样使用单主视口，ContactProbe移动截图单独验收。
+- 本轮固定画面已人工观察，完整来源、失败历史、实际身份与后续局部草叶照明/源LOD事项见`docs/changes/2026-11-19-flanders-visual.md`及`artifacts/maps/wt-visual-review-20261119/`。共享工程有并行更新时，以每份execution实际DLL/World身份为准，禁止跨模块计算材质总提速。
+
 ## 项目碎片知识
 
 <!-- cs-note managed: 项目 owner 已在本次对话明确授权记录长期约束。 -->

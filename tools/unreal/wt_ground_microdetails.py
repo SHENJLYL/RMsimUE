@@ -1,5 +1,6 @@
 """Original Flanders microdetails as a source-backed UE post-RVT adaptation.
 
+LC and decal identities are sampled independently, then their effects are blended.
 The original 12-slot array, UV scale and scalar ID mapping are retained. UE RVT
 Specular transports a coverage-weighted payload instead of physical specular.
 The public land helper supplies color/normal/smoothness math; the shipped game's
@@ -17,6 +18,11 @@ DEFINITION_SHA256 = '2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e0
 SOURCE_LEVEL_SHA256 = '427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f'
 ARRAY_NAME = 'WT_GroundMicrodetails'
 CLEAR_VALUE = 128 / 255
+POST_ADAPTER_TAG = 'WT_GroundMicrodetailPostAdapter'
+POST_ADAPTER_SCHEMA = 'wt_ground_microdetails_post_v2'
+POST_INPUTS = ('BaseColor', 'BaseNormalWorld', 'BaseRoughness', 'BaseMetallic',
+               'BaseMicrodetailId', 'BaseMicrodetailValid', 'DecalMask',
+               'DecalIdPayload', 'World', 'BoundsMin', 'BoundsMax', 'Microdetails')
 
 
 def digest(path):
@@ -87,42 +93,136 @@ def definition(textures):
 
 
 def shader_code(data):
-    scale = format(data['uv_scale_per_m'],'.17g')
+    scale = format(data['uv_scale_per_m'], '.17g')
+    id_scale = format(data['id_count_scale'], '.17g')
     count = int(data['slot_count'])
-    return ('const float slotCount='+str(count)+'.0;\n'
-            'const float sourceUvScale='+scale+';\n') + r'''
+    return ('const float slotCount=' + str(count) + '.0;\n'
+            'const float sourceUvScale=' + scale + ';\n'
+            'const float sourceIdCountScale=' + id_scale + ';\n') + r"""
 const float clearValue=128.0/255.0;
 float coverage=saturate((DecalMask-clearValue)/(1-clearValue));
 float inside=step(BoundsMin.x,World.x)*step(BoundsMin.y,World.y)*step(World.x,BoundsMax.x)*step(World.y,BoundsMax.y);
 coverage*=inside;
-NormalOut=normalize(BaseNormalWorld);RoughnessOut=BaseRoughness;
+float3 baseNormal=normalize(BaseNormalWorld);
+NormalOut=baseNormal;RoughnessOut=BaseRoughness;
 MetallicOut=BaseMetallic;OpacityOut=1;
-// Evaluate world gradients outside the coverage branch for stable array mips.
+// Derivatives belong to the continuous world UV, before all validity branches.
 float2 uv=World.xy*0.01*sourceUvScale;
 float2 uvDdx=ddx(uv),uvDdy=ddy(uv);
-if(coverage<=0.0001) return BaseColor;
-// UE writes raw attributes * Opacity and blends ONE, INVSRCALPHA.
-// Remove clear exactly once. The payload is never pre-multiplied in our graph.
-float payload=max((DecalIdPayload-clearValue*(1-coverage))/max(coverage,0.0001),0);
-float valid=saturate(payload*(slotCount+1));
-float index=clamp(payload*(slotCount+1)-1,0,slotCount-1);
-float lower=floor(index),upper=min(lower+1,slotCount-1),part=frac(index);
-// Source non-correct-bilinear branch: continuously blend floor/next slices.
-// Integer array indices are stable; no rounded-ID threshold after RVT filtering.
-float4 md0=Texture2DArraySampleGrad(Microdetails,MicrodetailsSampler,float3(uv,lower),uvDdx,uvDdy);
-float4 md1=Texture2DArraySampleGrad(Microdetails,MicrodetailsSampler,float3(uv,upper),uvDdx,uvDdy);
-float4 micro=lerp(md0,md1,part);
-float strength=coverage*valid;
-float diffuseFactor=(micro.r*2)*(micro.r*2);
-float modifiedRoughness=1-saturate((1-BaseRoughness)*micro.r*2);
-RoughnessOut=clamp(lerp(BaseRoughness,modifiedRoughness,strength),0.04,1);
-float2 xy=micro.ag*2-1;
-float3 detailNormal=normalize(float3(xy,sqrt(saturate(1-dot(xy,xy)))));
-float3 t=NormalOut+float3(0,0,1),u=detailNormal*float3(-1,-1,1);
-float3 combined=normalize(t*(dot(t,u)/max(t.z,1.e-5))-u);
-NormalOut=normalize(lerp(NormalOut,combined,strength));
-return max(BaseColor*lerp(1,diffuseFactor,strength),0);
-'''
+float baseValid=saturate(BaseMicrodetailValid);
+float baseIndex=clamp(BaseMicrodetailId*sourceIdCountScale,0,slotCount-1);
+float decalValid=0,decalIndex=0;
+if(coverage>0)
+{
+    // RVT writes attributes * Opacity and blends ONE, INVSRCALPHA.
+    // Remove the clear contribution once; zero payload denotes no source ID.
+    float payload=max((DecalIdPayload-clearValue*(1-coverage))/max(coverage,1.e-8),0);
+    decalValid=saturate(payload*(slotCount+1));
+    decalIndex=clamp(payload*(slotCount+1)-1,0,slotCount-1);
+}
+// The two surface identities remain separate throughout sampling.
+float surfaceIndices[2]={baseIndex,decalIndex};
+float surfaceStrengths[2]={(1-coverage)*baseValid,coverage*decalValid};
+float totalStrength=surfaceStrengths[0]+surfaceStrengths[1];
+if(totalStrength<=0) return BaseColor;
+float neutralStrength=max(1-totalStrength,0);
+float diffuseFactor=neutralStrength;
+float roughnessResult=BaseRoughness*neutralStrength;
+float3 normalResult=baseNormal*neutralStrength;
+// At this shared world UV and gradient, equal integer slices are identical
+// sample requests. Cache only texels, never the two surfaces' resulting IDs.
+int cacheSlices[4]={-1,-1,-1,-1};
+float4 cacheValues[4]={float4(0,0,0,0),float4(0,0,0,0),float4(0,0,0,0),float4(0,0,0,0)};
+int cacheCount=0;
+[unroll] for(int surface=0;surface<2;++surface)
+{
+    float strength=surfaceStrengths[surface];
+    if(strength>0)
+    {
+        float index=surfaceIndices[surface];
+        int lower=(int)floor(index),upper=min(lower+1,(int)slotCount-1);
+        float part=frac(index);
+        int slices[2]={lower,upper};
+        float sliceWeights[2]={1-part,part};
+        float4 micro=float4(0,0,0,0);
+        [unroll] for(int endpoint=0;endpoint<2;++endpoint)
+        {
+            float sliceWeight=sliceWeights[endpoint];
+            if(sliceWeight>0)
+            {
+                int slice=slices[endpoint];
+                float4 value=float4(0,0,0,0);
+                bool found=false;
+                [unroll] for(int cached=0;cached<4;++cached)
+                {
+                    if(cached<cacheCount && cacheSlices[cached]==slice)
+                    {
+                        value=cacheValues[cached];found=true;
+                    }
+                }
+                if(!found)
+                {
+                    value=Texture2DArraySampleGrad(Microdetails,MicrodetailsSampler,float3(uv,(float)slice),uvDdx,uvDdy);
+                    cacheSlices[cacheCount]=slice;cacheValues[cacheCount]=value;++cacheCount;
+                }
+                micro+=value*sliceWeight;
+            }
+        }
+        // Original dry helper: R changes diffuse/smoothness; AG is the normal.
+        // Apply each source's floor/next result to the composed surface first.
+        diffuseFactor+=strength*((micro.r*2)*(micro.r*2));
+        float modifiedRoughness=1-saturate((1-BaseRoughness)*micro.r*2);
+        roughnessResult+=strength*modifiedRoughness;
+        float2 xy=micro.ag*2-1;
+        float3 detailNormal=normalize(float3(xy,sqrt(saturate(1-dot(xy,xy)))));
+        float3 t=baseNormal+float3(0,0,1),u=detailNormal*float3(-1,-1,1);
+        float3 combined=normalize(t*(dot(t,u)/max(t.z,1.e-5))-u);
+        normalResult+=strength*combined;
+    }
+}
+// Blend effects with coverage, not the identities of different surfaces.
+NormalOut=normalize(normalResult);
+RoughnessOut=clamp(roughnessResult,0.04,1);
+return max(BaseColor*diffuseFactor,0);
+"""
+
+
+def post_adapter_metadata(data, source_connected=True):
+    """Stable contract for native graph/property readback, not a render verdict."""
+    return json.dumps({
+        'schema': POST_ADAPTER_SCHEMA,
+        'source_definition_sha256': DEFINITION_SHA256,
+        'source_connected': bool(source_connected),
+        'hlsl_sha256': hashlib.sha256(shader_code(data).encode('utf-8')).hexdigest(),
+        'inputs': list(POST_INPUTS),
+        'source_id': 'cooked_A_unorm_times_original_id_count_scale',
+        'id_count_scale': data['id_count_scale'],
+        'uv_scale_per_m': data['uv_scale_per_m'],
+        'interpolation': 'independent_floor_next_within_each_surface',
+        'composition': 'effects_on_composed_surface_then_coverage_validity_blend',
+        'source_weight': '(1-coverage)*saturate(BaseMicrodetailValid)',
+        'decal_weight': 'coverage*decoded_decal_valid',
+        'neutral_weight': '1-source_weight-decal_weight',
+        'sample_cache_key': 'integer_slice_at_shared_world_uv_and_explicit_gradients',
+        'texture_reads': {'maximum': 4, 'minimum_active': 1, 'inactive': 0,
+                          'scope': 'logical_array_sample_requests_before_hardware_filter_taps'},
+        'samplers': 1,
+        'pbr_channels': 'R_diffuse_and_smoothness_AG_normal',
+        'native_render_validation': 'required_separately',
+    }, sort_keys=True, separators=(',', ':'))
+
+
+def _source_microdetail_sockets(value):
+    if value is None:
+        return None
+    _require(isinstance(value, dict) and set(value) == {'id', 'valid'},
+             'source_microdetail requires both id and valid sockets')
+    for key in ('id', 'valid'):
+        socket = value[key]
+        _require(isinstance(socket, (tuple, list)) and len(socket) == 2
+                 and socket[0] is not None and isinstance(socket[1], str) and bool(socket[1]),
+                 'source_microdetail ' + key + ' must name an actual expression output')
+    return value
 
 
 def ensure_array(textures):
@@ -174,7 +274,8 @@ def ensure_array(textures):
     return array
 
 
-def author_post_layer(material,textures,surface,rvt,world,bounds_inputs):
+def author_post_layer(material,textures,surface,rvt,world,bounds_inputs,source_microdetail=None):
+    source_microdetail = _source_microdetail_sockets(source_microdetail)
     import unreal
     import wt_materials as w
     data = definition(textures)
@@ -184,12 +285,23 @@ def author_post_layer(material,textures,surface,rvt,world,bounds_inputs):
         reroute=w._expr(material,unreal.MaterialExpressionReroute)
         w._wire(source,pin,reroute,'')
         return (reroute,'')
+    if source_microdetail is None:
+        zero = w._expr(material,unreal.MaterialExpressionConstant,r=0.0)
+        source_id = source_valid = (zero,'')
+    else:
+        # _wire raises on an absent native output; real callers never fall back.
+        source_id = wire_output(*source_microdetail['id'])
+        source_valid = wire_output(*source_microdetail['valid'])
     inputs = {
         'BaseColor':(surface,''),'BaseNormalWorld':wire_output(surface,'NormalOut'),
         'BaseRoughness':wire_output(surface,'RoughnessOut'),'BaseMetallic':wire_output(surface,'MetallicOut'),
+        'BaseMicrodetailId':source_id,'BaseMicrodetailValid':source_valid,
         'DecalMask':wire_output(rvt,'Mask'),'DecalIdPayload':wire_output(rvt,'Specular'),'World':(world,''),
         'BoundsMin':bounds_inputs['BoundsMin'],'BoundsMax':bounds_inputs['BoundsMax'],
         'Microdetails':(w._texture(material,'SourceGroundMicrodetails',array,False),'')}
+    _require(tuple(inputs) == POST_INPUTS, 'post-layer input contract differs')
     node=w._custom(material,shader_code(data),inputs)
+    unreal.EditorAssetLibrary.set_metadata_tag(
+        material,POST_ADAPTER_TAG,post_adapter_metadata(data,source_microdetail is not None))
     material.set_editor_property('tangent_space_normal',False)
     return node

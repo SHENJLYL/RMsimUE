@@ -35,9 +35,9 @@ def rnm(a,b):
 def decode(payload,mask):
     clear=128/255
     coverage=min(1.,max(0.,(mask-clear)/(1-clear)))
-    if coverage<=.0001:
+    if coverage<=0:
         return 0.,0.,0.
-    recovered=max((payload-clear*(1-coverage))/coverage,0.)
+    recovered=max((payload-clear*(1-coverage))/max(coverage,1.e-8),0.)
     valid=min(1.,max(0.,recovered*13))
     index=min(11.,max(0.,recovered*13-1))
     return index,coverage*valid,coverage
@@ -66,7 +66,7 @@ def check(source_file,output,engine_root):
     try:
         scripts=('wt_materials.py','wt_height_decals.py','wt_ground_microdetails.py',
                  'wt_ground_material_verify.py','update_wt_materials.py','verify_wt_materials.py',
-                 'wt_landdetail.py','wt_material_refine_verify.py')
+                 'wt_landdetail.py','wt_material_refine_verify.py','wt_lc_reflectance.py')
         for name in scripts:
             path=project/'tools/unreal'/name
             ast.parse(path.read_text(encoding='utf-8'),filename=str(path))
@@ -78,7 +78,7 @@ def check(source_file,output,engine_root):
         require('lc1_fixed_source_local_derivatives_before_blending',
                 local_code.index('worldDdx=ddx(')<local_code.index('int ids[4]')
                 and 'ddx(height)' not in local_code and 'ddy(height)' not in local_code
-                and local_code.count('Texture2DArraySampleLevel(Details,DetailsSampler,')==3
+                and local_code.count('Texture2DArraySampleGrad(Details,DetailsSampler,')==3
                 and 'layerNormal[layer]+=localNormals[k]*weights[k]' in local_code
                 and 'NormalOut=normalize(layerNormal[0]*layerWeights.x+layerNormal[1]*layerWeights.y)' in local_code,
                 adapter=landdetail.NORMAL_ADAPTER,source_definition_sha256=sha(package/landdetail.DEFINITION_FILE))
@@ -106,6 +106,49 @@ def check(source_file,output,engine_root):
                 textures[name]=dict(sha256=entry['sha256'],size=entry['size'])
         report['original_height_textures']=textures
         report['source_contract_example']=contracts[0]
+        polarity=[height.height_polarity_contract(s) for s in specs]
+        active=[item for item in polarity if item['adapter_active']]
+        require('height_polarity_only_18_reviewed_source_ids',
+                len(active)==18 and {item['material_id'] for item in active}==set(height.HEIGHT_POLARITY_ADAPTERS)
+                and all(item['value']==1 for item in active)
+                and all(item['value']==0 for item in polarity if not item['adapter_active']),
+                source_adapters=polarity,retained_original_defaults=16)
+        require('all_18_polarity_bindings_keep_original_png_bytes',
+                all(textures[item['adapter']['diffuse']]['sha256']==item['adapter']['diffuse_sha256']
+                    and textures[item['adapter']['reflection']]['sha256']==item['adapter']['reflection_sha256']
+                    for item in active))
+        approved=next(s for s in specs if s['id']=='WT_e82be167172b929d5356')
+        overrides=[]
+        for declared in (0,1):
+            changed=dict(approved,parameters=approved['parameters']+'\nheight_above='+str(declared))
+            got=height.height_polarity_contract(changed)
+            overrides.append(got['value']==declared and got['source_explicit'] and not got['adapter_active'])
+        wrong=dict(approved,texture_slots=list(approved['texture_slots']))
+        wrong['texture_slots'][0]='wrong_source_tex_d*'
+        rejected=False
+        try:
+            height.height_polarity_contract(wrong)
+        except ValueError:
+            rejected=True
+        require('explicit_height_above_wins_and_false_source_binding_rejected',all(overrides) and rejected)
+        require('same_shader_cdk_barg_cooked_layout',
+                height.COOKED_REFLECTION_LAYOUT['build_swizzle_argb']=='BARG'
+                and height.COOKED_REFLECTION_CHANNELS==dict(smoothness='R',reflectance='G',ambient_occlusion='B',microdetail_id='A')
+                and all(c['reflection_channels']==height.COOKED_REFLECTION_CHANNELS
+                        and c['cooked_reflection_layout']==height.COOKED_REFLECTION_LAYOUT for c in contracts),
+                source_layout=height.COOKED_REFLECTION_LAYOUT,source_reflectance_and_ao_rendered=False)
+        # Distinct source bytes demonstrate the exporter ARGB destination order independently
+        # of the material's two consumer expressions.
+        packing=[]
+        for original in [(17,29,46,71),(0,255,23,128),(255,0,255,0)]:
+            source_channels=dict(zip('RGBA',original))
+            cooked=dict(zip('ARGB',[source_channels[x] for x in 'BARG']))
+            packing.append(dict(source_rgba=list(original),cooked_rgba=[cooked[x] for x in 'RGBA'],
+                smoothness=cooked['R'],reflectance=cooked['G'],ambient_occlusion=cooked['B'],microdetail_id=cooked['A']))
+        require('barg_preserves_each_original_semantic_channel',
+                all(item['smoothness']==item['source_rgba'][3] and item['reflectance']==item['source_rgba'][0]
+                    and item['ambient_occlusion']==item['source_rgba'][1] and item['microdetail_id']==item['source_rgba'][2]
+                    for item in packing),cases=packing)
         clear=128/255
         errors=[]
         for coverage in (1.,.5,.1,.01,.001):
@@ -184,8 +227,8 @@ def check(source_file,output,engine_root):
                 old_wrong_ag_normal_z_below_point_two_fraction=float(np.mean(z<.2)),
                 channels_rgba_mean=(rgba.mean(axis=(0,1))*255).tolist())
         report['old_reflection_as_normal_failure']=wrong
-        require('height_shader_uses_alpha_gradient_and_reflection_a_b','reflection.ag' not in height.HEIGHT_DECAL_CODE
-                and '1-reflection.a' in height.HEIGHT_DECAL_CODE and 'reflection.b*HeightSource.y' in height.HEIGHT_DECAL_CODE
+        require('height_shader_uses_alpha_gradient_and_cooked_reflection_r_a','reflection.ag' not in height.HEIGHT_DECAL_CODE
+                and '1-reflection.r' in height.HEIGHT_DECAL_CODE and 'reflection.a*HeightSource.y' in height.HEIGHT_DECAL_CODE
                 and 'up-gradient*HeightNormalStrength' in height.HEIGHT_DECAL_CODE)
         engine=Path(engine_root).resolve(strict=True)
         paths={
@@ -202,8 +245,29 @@ def check(source_file,output,engine_root):
         require('ue_raw_specular_is_multiplied_once',bool(re.search(
             r'float4\(\s*Specular,\s*Roughness,\s*PackedNormal\.z,\s*1(?:\.f|\.0f|\.0)?\s*\)\s*\*\s*Opacity',native)))
         code=micro.shader_code(data)
-        require('microdetail_mip_gradients_outside_coverage_branch',code.index('ddx(uv)')<code.index('if(coverage<=0.0001)')
-                and code.count('Texture2DArraySampleGrad(')==2)
+        post_contract=json.loads(micro.post_adapter_metadata(data,source_connected=True))
+        require('microdetail_mip_gradients_outside_all_validity_branches',
+                code.index('ddx(uv)')<code.index('if(coverage>0)')
+                and code.index('ddx(uv)')<code.index('if(totalStrength<=0)')
+                and code.count('Texture2DArraySampleGrad(')==1,
+                logical_texture_reads=post_contract['texture_reads'])
+        require('lc_and_rvt_ids_are_separately_sampled_before_effect_blending',
+                'float surfaceIndices[2]={baseIndex,decalIndex};' in code
+                and 'float surfaceStrengths[2]={(1-coverage)*baseValid,coverage*decalValid};' in code
+                and post_contract['interpolation']=='independent_floor_next_within_each_surface'
+                and post_contract['texture_reads']['maximum']==4
+                and post_contract['source_connected'] is True
+                and set(post_contract['inputs'])==set(micro.POST_INPUTS),post_adapter=post_contract)
+        weight_cases=[]
+        for coverage in (0.,.1,.5,1.):
+            for base_valid in (0.,.25,1.):
+                for decal_valid in (0.,.5,1.):
+                    weights=[(1-coverage)*base_valid,coverage*decal_valid]
+                    weights.append(1-sum(weights))
+                    weight_cases.append(weights)
+        require('independent_surface_and_neutral_weights_are_finite_partition',
+                all(min(w)>=0 and abs(sum(w)-1)<1.e-12 for w in weight_cases),
+                cases=len(weight_cases))
         backup=project/'artifacts/maps/wt-refine-20261118/ground-refine-01/backup.json'
         report['prior_asset_backup']=dict(path=str(backup),sha256=sha(backup))
         report['visual_baselines']={}
