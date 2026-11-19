@@ -19,6 +19,7 @@ class UWTGeneratedCollisionComponent;
 class UMapOverview;
 struct FMapOverviewFrame;
 struct FManualRigState;
+struct FRailContactProbeState;
 
 // The live player-controller adapter and deterministic control probe share raw mouse counts.
 struct FManualControlInput
@@ -181,6 +182,8 @@ private:
     void TickTerrainProbe();
     void TickCombatProbe();
     void TickContactProbe(double DeltaSeconds);
+    void TickRailContactProbe(double DeltaSeconds);
+    TSharedPtr<FRailContactProbeState> RailContactProbe;
     void TickSuspensionProbe(double DeltaSeconds);
     bool RecordControlCheck(const FString& Name, bool Passed, const TSharedPtr<FJsonObject>& Before, const FString& Detail);
     bool WriteControlReport(const FString& Status, const FString& Reason = FString());
