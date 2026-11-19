@@ -156,3 +156,10 @@ Thumbs.db
 /artifacts/maps/wt-refine-*/**/audit/verification.json
 /artifacts/maps/wt-refine-*/grass-native-*/verification.json
 /artifacts/maps/wt-refine-*/grass-reload-*/verification.json
+
+# Fresh collision stages and rollback copies retain generated source geometry locally.
+/assets/maps/wt_vlaanderen/generated-collision-stage-*/
+/assets/maps/wt_vlaanderen/generated-collision-before-*/
+# Dense rail/source/native journals stay local; publish the compact accepted record.
+/artifacts/maps/wt-rails-spawn-20261119/**
+!/artifacts/maps/wt-rails-spawn-20261119/release-summary.json

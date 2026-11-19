@@ -188,3 +188,11 @@ rmuc-06对应此前带10Hz RGB、全局5ms最大物理子步配置，原生导�
 共用手动 profile SHA `fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87`，前进上限 5 m/s、悬挂 2000/140。组合模块 `37daaf0e…` 完成 C/Shift/速度 6 项、弗兰德斯与 RMUC 各 5 项接触/复位；最终 World `33113995…` 完成场景21项、草72项和材质307项。实际GUI确认坡格线/碎石斜黑纹消除、真实W移动、M开关和R复位。并行Arena/破坏工作归属独立保留。
 
 本轮结构、来源和逐项验收入口见 `docs/changes/2026-11-18-unified-flanders.md`、碰撞与草地专项指南。完整导航 UE/ROS 门禁继续采用其独立证据，feature 检查点与 main 发布状态分别管理。
+
+## 弗兰德斯钢轨补充与任务出生来源（2026-11-19）
+
+生成补充覆盖扩展为 237 个资产、951 个 cell、18,488 个源实例。34 个 `world_static_000` 中的钢轨 SCN 对象按 `railroad_rails_tile_a` 精确选择，共 160,336 个原三角形；每对象一个中心局部 BVH 和 identity 旋转 RMI。源 SCN、NPZ、视觉 FBX、原 identity RMI、每面索引及材质归属共同绑定。仅钢轨新导出规范正交 FBX 节点为精确 -90°；逐元素指纹保留其他数据。既有同步空间加载、QueryAndPhysics / BlockAll、出生锚点和迟滞策略继续使用。
+
+默认出生来自只读 mis.vromfs 任务链中的 Dom Team A 第二坦克重生组 `t1_tankSpawn02_zone01`，经 missionMarkAsRespawnPoint 的 tank/team 注册核对。map.json 继续保持严格字段，来源放在独立 spawn-source.json。原区水平坐标按 Dagor→ROS 转换，GroundMetres 垂直投影到原 HM2；派生航向与原显式区域变换分别记录。
+
+`RailContactProbe` 仅由显式测试旗标分派，使用世界通道射线验证精确组件/实例，再读取原生接触队列证明持续阻挡和倒车脱离。最终 `d19c15bc…` 模块完成 280 条查询、8 项真实钢轨接触和5项新出生点驾驶/复位；源位置门限保持，World 与车辆参数身份保持。完整边界及证据见 docs/changes/2026-11-19-flanders-rails-spawn.md 和 artifacts/maps/wt-rails-spawn-20261119/release-summary.json。

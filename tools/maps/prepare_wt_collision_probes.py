@@ -12,9 +12,14 @@ import sys
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'unreal'))
-from wt_collision import load_contract, read, save, digest, local, rmi_rows, COUNTS
+from wt_collision import (load_contract, read, save, digest, local, rmi_rows, COUNTS,
+                          SOURCE_COUNTS, STATIC_RAILS, STATIC_RAIL_SOURCE,
+                          STATIC_RAIL_SCENE_SHA256, STATIC_RAIL_MATERIAL_INDEX,
+                          STATIC_RAIL_MATERIAL)
 
 C = np.array(((1, 0, 0), (0, 0, -1), (0, 1, 0)), dtype=float)
+# Fixed railway regression anchor. The game's default spawn is read from map.json
+# and verified separately; this fixture does not change the player spawn.
 SPAWN = np.array((1028., -1020., -1.3805753))
 
 
@@ -51,27 +56,55 @@ class Source:
                     self.add(item['model'], C @ np.array(item['matrix3x3']) @ C.T,
                              C @ np.array(item['translation_dagor_m']),
                              dict(kind='affine', tile=batch['tile'], tile_index=index))
+        static_root = original/'static-02'
+        if digest(static_root/'scene.json') != STATIC_RAIL_SCENE_SHA256:
+            raise ValueError('original static scene identity differs')
+        static_scene = read(static_root/'scene.json')
+        if static_scene['materials'][STATIC_RAIL_MATERIAL_INDEX]['name'] != STATIC_RAIL_MATERIAL:
+            raise ValueError('original steel rail material differs')
+        objects = {item['file']: item for item in static_scene['objects']}
+        for file, (count, sha256) in sorted(STATIC_RAILS.items()):
+            if digest(static_root/file) != sha256:
+                raise ValueError('original steel rail source hash differs')
+            with np.load(static_root/file) as archive:
+                vertices = archive['vertices'].astype(float) @ C.T
+                face_ids = np.flatnonzero(archive['material_ids'] == STATIC_RAIL_MATERIAL_INDEX)
+                faces = archive['triangles'][face_ids].astype(int)
+            if len(faces) != count:
+                raise ValueError('original steel rail triangle count differs')
+            # Independent original double-precision world geometry, not the
+            # localized/generated FBX used for the collision cook.
+            geometry_id = 'static_rails/'+file
+            position = vertices[np.unique(faces)].mean(axis=0)
+            self.models[geometry_id] = (vertices-position, faces)
+            self.hashes[geometry_id] = sha256
+            self.add(STATIC_RAIL_SOURCE, np.eye(3), position,
+                     dict(kind='static_world', file=file, object_index=objects[file]['index'],
+                          name=objects[file]['name'], material_index=STATIC_RAIL_MATERIAL_INDEX),
+                     geometry_id=geometry_id, face_ids=face_ids)
         actual = collections.Counter(item['model'] for item in self.items)
-        if dict(actual) != COUNTS:
+        if dict(actual) != SOURCE_COUNTS:
             raise ValueError('independent source instance counts differ')
         self.lo = np.array([i['lo'] for i in self.items])
         self.hi = np.array([i['hi'] for i in self.items])
         self.positions = np.array([i['position'] for i in self.items])
 
-    def add(self, name, matrix, position, identity):
-        points = self.models[name][0] @ matrix.T + position
-        self.items.append(dict(model=name, matrix=matrix, position=position,
-                               identity=identity, lo=points.min(axis=0), hi=points.max(axis=0)))
+    def add(self, name, matrix, position, identity, geometry_id=None, face_ids=None):
+        geometry_id = geometry_id or name
+        points = self.models[geometry_id][0] @ matrix.T + position
+        self.items.append(dict(model=name, geometry_id=geometry_id, face_ids=face_ids,
+                               matrix=matrix, position=position, identity=identity,
+                               lo=points.min(axis=0), hi=points.max(axis=0)))
 
     def geometry(self, index):
         item = self.items[index]
-        vertices, faces = self.models[item['model']]
+        vertices, faces = self.models[item['geometry_id']]
         return (vertices @ item['matrix'].T + item['position'])[faces]
 
     def provenance(self, index):
         item = self.items[index]
         return dict(model=item['model'], source_instance=item['identity'],
-                    source_npz_sha256=self.hashes[item['model']],
+                    source_npz_sha256=self.hashes[item['geometry_id']],
                     position_ros_m=item['position'].tolist())
 
     def candidates(self, low, high):
@@ -100,8 +133,10 @@ class Source:
                 face = choices[np.argmin(t[choices])]
                 if t[face] < best:
                     best = float(t[face])
+                    face_ids = self.items[index]['face_ids']
+                    original_face = int(face if face_ids is None else face_ids[face])
                     result = dict(hit=True, impact_ros_m=(start+direction*best).tolist(),
-                                  source_face=int(face), **self.provenance(int(index)))
+                                  source_face=original_face, **self.provenance(int(index)))
         return result or dict(hit=False)
 
     def fixture(self, name, start, end, anchor, kind):
@@ -170,6 +205,67 @@ def projected_segment_distance(triangles, a, b):
     return result
 
 
+def steel_rail_probes(source):
+    probes = []
+    for index, item in enumerate(source.items):
+        if item['model'] != STATIC_RAIL_SOURCE:
+            continue
+        triangles = source.geometry(index)
+        cross = np.cross(triangles[:, 1]-triangles[:, 0], triangles[:, 2]-triangles[:, 0])
+        for face in np.argsort(abs(cross[:, 2]))[::-1]:
+            if abs(cross[face, 2]) < 1e-10:
+                break
+            center = triangles[face].mean(axis=0)
+            start, end = center.copy(), center.copy()
+            start[2], end[2] = source.hi[index, 2]+.5, source.lo[index, 2]-.5
+            candidate = source.fixture('steel_rail_%04d_top' % item['identity']['object_index'],
+                                       start, end, center, 'source_steel_rail_top')
+            if candidate['expected'].get('source_instance') == item['identity']:
+                probes.append(candidate)
+                break
+        else:
+            raise ValueError('steel rail has no independently verified top surface')
+        if len(probes) != sum(x['model'] == STATIC_RAIL_SOURCE for x in source.items[:index+1]):
+            raise ValueError('steel rail top surface is occluded')
+    # A side-face fixture exercises the thin rail web as well as top faces.
+    index = next(i for i, x in enumerate(source.items)
+                 if x['model'] == STATIC_RAIL_SOURCE and x['identity']['object_index'] == 29)
+    triangles = source.geometry(index)
+    cross = np.cross(triangles[:, 1]-triangles[:, 0], triangles[:, 2]-triangles[:, 0])
+    area = np.linalg.norm(cross, axis=1)
+    normal = np.divide(cross, area[:, None], out=np.zeros_like(cross), where=area[:, None] > 1e-12)
+    for face in np.argsort(area)[::-1]:
+        if abs(normal[face, 2]) > .2 or area[face] < 1e-10:
+            continue
+        center = triangles[face].mean(axis=0)
+        candidate = source.fixture('steel_rail_0029_side', center+normal[face]*.08,
+                                   center-normal[face]*.08, center, 'source_steel_rail_side')
+        if candidate['expected'].get('source_instance') == source.items[index]['identity']:
+            probes.append(candidate)
+            break
+    else:
+        raise ValueError('steel rail has no independently verified side surface')
+    # Paired original rail heads (object29/30, source face885). Their midpoint
+    # is an audited open gap; the complete independent source must confirm it.
+    pair = ((29, (1028.9574788411458, -1003.6217854817709)),
+            (30, (1027.8625292427623, -1002.7818537125181)))
+    for object_id, xy in pair:
+        candidate = source.fixture('paired_rail_%04d_top' % object_id,
+                                   (*xy, 1.), (*xy, -3.), (*xy, -1.), 'source_paired_rail_top')
+        if (candidate['expected'].get('model') != STATIC_RAIL_SOURCE or
+                candidate['expected'].get('source_instance', {}).get('object_index') != object_id):
+            raise ValueError('paired rail top source identity differs')
+        probes.append(candidate)
+    xy = (np.asarray(pair[0][1])+np.asarray(pair[1][1]))/2
+    gap = source.fixture('between_steel_rails', (*xy, 1.), (*xy, -3.),
+                         (*xy, -1.), 'source_steel_rail_air_gap')
+    if gap['expected']['hit']:
+        raise ValueError('original gap between paired steel rails is obstructed')
+    gap['source_neighbours'] = [probes[-2]['expected'], probes[-1]['expected']]
+    probes.append(gap)
+    return probes
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--scene-source', type=Path, required=True)
@@ -179,7 +275,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     root, manifest, contract = load_contract(args.scene_source)
     source = Source(args.scene_source.resolve().parent, args.source_root.resolve())
-    probes, selected = [], []
+    probes, selected = steel_rail_probes(source), []
     # Top surfaces for all fourteen resources, including full-affine sources.
     for name in sorted(COUNTS):
         indices = [i for i, item in enumerate(source.items) if item['model'] == name]
@@ -283,7 +379,8 @@ def main():
         schema='wt_generated_collision_source_probe_summary_v1', status='passed',
         fixtures_sha256=digest(args.output/'fixtures.json'), script_sha256=digest(Path(__file__)),
         source_instances=len(source.items), fixture_count=len(probes),
-        represented_models=len(COUNTS), verified_original_gaps=2,
+        represented_models=len(SOURCE_COUNTS), steel_rail_objects=len(STATIC_RAILS),
+        steel_rail_triangles=sum(x[0] for x in STATIC_RAILS.values()), verified_original_gaps=3,
         query_range_m=40., boundary_stages=len(boundary),
         boundary_rays=sum(len(x['probes']) for x in boundary),
         corridor_centerline_ros_m=[corridor_a.tolist(), corridor_b.tolist()],

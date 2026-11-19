@@ -134,6 +134,13 @@ def trace(world, fixture, ignored, channel, complex_trace, bindings):
             or component.get_collision_response_to_channel(bindings['lidar_collision_channel'])
                != bindings['block_response']):
         raise ValueError('ray did not hit the generated source-bound BlockAll collider')
+    if expected.get('model') == 'world_static_rails':
+        source_index = expected['source_instance']['object_index']
+        expected_mesh = 'gc_static_rail_%04d' % source_index
+        if (not isinstance(component, unreal.InstancedStaticMeshComponent)
+                or component.static_mesh.get_name() != expected_mesh
+                or component.get_instance_count() != 1 or int(values[13]) != 0):
+            raise ValueError('ray hit a different original steel rail instance: '+fixture['name'])
     impact = xyz(values[5])
     target = ue(expected['impact_ros_m'])
     error = math.dist(impact, target)

@@ -1,0 +1,470 @@
+{
+  "schema": "rm_wt_mission_spawn_source_v1",
+  "map_id": "wt_vlaanderen",
+  "map_source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "spawn_id": "default",
+  "source_archive": {
+    "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\mis.vromfs.bin",
+    "sha256": "1cfb7ebbff304639f19052acab339627779ac75c0575f1265da95fe7c86dbd32",
+    "magic": "VRFx",
+    "target": 1129316352,
+    "header_size": 24,
+    "extension_flags": 0,
+    "version": 37552145,
+    "packed_size": 7967064,
+    "decoded_size": 9676320,
+    "body_sha256": "72276cd0b19e18cd3419b9edac40af36c2e8284393f4c81d753fd72b23b3b821",
+    "file_count": 5152
+  },
+  "entries": [
+    {
+      "entry": "gamedata/missions/cta/tanks/vlaanderen/vlaanderen_dom.blk",
+      "entry_sha256": "2c92440617e959f4f9aef86c7335a4a64c1460a80dde95b21e285e9e2911c1fa",
+      "decode": {
+        "format_label": 5,
+        "decoded_bytes": 3477,
+        "local_names": 0,
+        "shared_names": 103180,
+        "blocks": 84,
+        "parameters": 289,
+        "complex_bytes": 832
+      },
+      "decoded_file": "D:\\simulator\\artifacts\\maps\\wt-rails-spawn-20261119\\spawn-audit\\vlaanderen_dom.json"
+    },
+    {
+      "entry": "gamedata/missions/cta/tanks/vlaanderen/battleareas/template_vlaanderen_dom_battlearea.blk",
+      "entry_sha256": "86fbf0ba7c90213a0966f6cf130e22e999833dfef51b70dc09f9060975d9cc94",
+      "decode": {
+        "format_label": 5,
+        "decoded_bytes": 702,
+        "local_names": 0,
+        "shared_names": 103180,
+        "blocks": 35,
+        "parameters": 46,
+        "complex_bytes": 192
+      },
+      "decoded_file": "D:\\simulator\\artifacts\\maps\\wt-rails-spawn-20261119\\spawn-audit\\template_vlaanderen_dom_battlearea.json"
+    },
+    {
+      "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+      "entry_sha256": "1a764bb90b6014518cd985600e68c2a722430a127ed21b7802ffb09772e35dd3",
+      "decode": {
+        "format_label": 5,
+        "decoded_bytes": 7223,
+        "local_names": 0,
+        "shared_names": 103180,
+        "blocks": 180,
+        "parameters": 334,
+        "complex_bytes": 3712
+      },
+      "decoded_file": "D:\\simulator\\artifacts\\maps\\wt-rails-spawn-20261119\\spawn-audit\\vlaanderen_dom_template.json"
+    },
+    {
+      "entry": "gamedata/missions/templates/tank_templates/dom_template.blk",
+      "entry_sha256": "5f91c91fb60e0ca8d49eab33b936a88b90290c79bc3a4740ee373de951f19f90",
+      "decode": {
+        "format_label": 5,
+        "decoded_bytes": 7406,
+        "local_names": 0,
+        "shared_names": 103180,
+        "blocks": 277,
+        "parameters": 757,
+        "complex_bytes": 144
+      },
+      "decoded_file": "D:\\simulator\\artifacts\\maps\\wt-rails-spawn-20261119\\spawn-audit\\dom_template.json"
+    }
+  ],
+  "provenance": {
+    "mission_level": "levels/avg_vlaanderen.bin",
+    "mission_type": [
+      "domination"
+    ],
+    "mission_import_chain": [
+      "gamedata/missions/cta/tanks/vlaanderen/vlaanderen_dom.blk",
+      "gamedata/missions/cta/tanks/vlaanderen/battleareas/template_vlaanderen_dom_battlearea.blk",
+      "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk"
+    ],
+    "respawn_logic_template": "gamedata/missions/templates/tank_templates/dom_template.blk",
+    "area_field_path": "areas/t1_tankSpawn02_zone01",
+    "area_type": "Sphere",
+    "area_tm": [
+      -4.586440086364746,
+      0.0,
+      8.88617992401123,
+      0.0,
+      10.0,
+      0.0,
+      -8.88617992401123,
+      0.0,
+      -4.586440086364746,
+      439.0,
+      1.0499999523162842,
+      148.3000030517578
+    ],
+    "area_center_dagor_m": [
+      439.0,
+      1.0499999523162842,
+      148.3000030517578
+    ],
+    "area_axis_lengths_m": [
+      9.99998131536823,
+      10.0,
+      9.99998131536823
+    ],
+    "groups": [
+      {
+        "name": "dom_t1_tank_spawn_02_arcade",
+        "squad_members": [
+          "t1_tankSpawn02_zone01",
+          "t1_tankSpawn02_zone02",
+          "t1_tankSpawn02_zone03",
+          "t1_tankSpawn02_zone04",
+          "t1_tankSpawn02_zone05",
+          "t1_tankSpawn02_zone06",
+          "t1_tankSpawn02_zone07",
+          "t1_tankSpawn02_zone08",
+          "t1_tankSpawn02_zone09",
+          "t1_tankSpawn02_zone10",
+          "t1_tankSpawn02_zone11",
+          "t1_tankSpawn02_zone12",
+          "t1_tankSpawn02_zone13",
+          "t1_tankSpawn02_zone14",
+          "t1_tankSpawn02_zone15",
+          "t1_tankSpawn02_zone16"
+        ]
+      },
+      {
+        "name": "dom_t1_tank_spawn_02_hardcore",
+        "squad_members": [
+          "t1_tankSpawn02_zone01",
+          "t1_tankSpawn02_zone02",
+          "t1_tankSpawn02_zone03",
+          "t1_tankSpawn02_zone04",
+          "t1_tankSpawn02_zone05",
+          "t1_tankSpawn02_zone06",
+          "t1_tankSpawn02_zone07",
+          "t1_tankSpawn02_zone08",
+          "t1_tankSpawn02_zone09",
+          "t1_tankSpawn02_zone10",
+          "t1_tankSpawn02_zone11",
+          "t1_tankSpawn02_zone12",
+          "t1_tankSpawn02_zone13",
+          "t1_tankSpawn02_zone14",
+          "t1_tankSpawn02_zone15",
+          "t1_tankSpawn02_zone16"
+        ]
+      }
+    ],
+    "registration": {
+      "init": {
+        "name": "varSetString",
+        "params": [
+          {
+            "name": "value",
+            "type": "string",
+            "value": "dom_t1_tank_spawn_02"
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "t1_spawn_02_name"
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "temp_t1_spawn_02_name"
+          }
+        ],
+        "children": []
+      },
+      "arcade_suffix": {
+        "name": "varAddString",
+        "params": [
+          {
+            "name": "value",
+            "type": "string",
+            "value": "_arcade"
+          },
+          {
+            "name": "digits",
+            "type": "int",
+            "value": 0
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "t1_spawn_01_name"
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "t1_spawn_02_name"
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "t2_spawn_01_name"
+          },
+          {
+            "name": "var",
+            "type": "string",
+            "value": "t2_spawn_02_name"
+          }
+        ],
+        "children": []
+      },
+      "missionMarkAsRespawnPoint": {
+        "name": "missionMarkAsRespawnPoint",
+        "params": [
+          {
+            "name": "loc_name",
+            "type": "string",
+            "value": "missions/spawn_02"
+          },
+          {
+            "name": "spawnEffect",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "isAirfield",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "isUnit",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "radius",
+            "type": "real",
+            "value": -1.0
+          },
+          {
+            "name": "isStrictSpawn",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "useExisting",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "removeAreas",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "canSpawnOnNeutral",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "showOnMap",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "name": "isIndividual",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "name": "resetStrictSpawnIndex",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "onlyOnePlayerPerSpawnPoint",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "replaceAreas",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "forceCreate",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "ignoreTeamsOnReuse",
+            "type": "bool",
+            "value": false
+          },
+          {
+            "name": "target",
+            "type": "string",
+            "value": "@t1_spawn_02_name"
+          },
+          {
+            "name": "team",
+            "type": "string",
+            "value": "A"
+          }
+        ],
+        "children": [
+          {
+            "name": "tags",
+            "params": [
+              {
+                "name": "tank",
+                "type": "bool",
+                "value": true
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    },
+    "source_team": "A",
+    "runtime_team_mapping": "source Team A represented as blue in RMSim"
+  },
+  "coordinates": {
+    "source": "Dagor x/y-up/z metres",
+    "ros": "ROS x-forward/y-left/z-up metres",
+    "ue": "Unreal x-forward/y-right/z-up centimetres",
+    "source_to_ros_matrix": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        -1
+      ],
+      [
+        0,
+        1,
+        0
+      ]
+    ],
+    "source_translation_m": [
+      0,
+      0,
+      0
+    ],
+    "source_center_ros_m": [
+      439.0,
+      -148.3000030517578,
+      1.0499999523162842
+    ],
+    "source_center_ue_cm": [
+      43900.0,
+      14830.000305175781,
+      104.99999523162842
+    ],
+    "ground_anchor_ros_m": [
+      439.0,
+      -148.3000030517578,
+      -3.467716648308154
+    ],
+    "ground_anchor_ue_cm": [
+      43900.0,
+      14830.000305175781,
+      -346.7716648308154
+    ],
+    "horizontal_shift_m": [
+      0,
+      0
+    ],
+    "vertical_ground_projection_m": -4.517716600624438
+  },
+  "heading": {
+    "method": "derived yaw from the original area transform first basis vector projected into the ROS horizontal plane",
+    "formula": "atan2(-tm[2],tm[0])",
+    "source_basis0_dagor": [
+      -4.586440086364746,
+      0.0,
+      8.88617992401123
+    ],
+    "derived_ros_yaw_rad": -2.0472659359862844,
+    "derived_ue_yaw_degrees": 117.29969767291426,
+    "scope": "derived RMSim heading; source mission contains a region transform, not an explicit vehicle yaw parameter"
+  },
+  "support": {
+    "type": "original HM2 fine heightfield",
+    "heightfield_descriptor": "heightfield.json",
+    "heightfield_descriptor_sha256": "9726bdc20626819425786d0cf707eef29cbebd491935f8be9ec2cecadd5f14eb",
+    "height_file": "terrain/height.u16",
+    "height_bytes_sha256": "b6d82aa5bdb6473398f1fd07af0f67ef46da6b8705a31677b6f2f95ec4b9a1a6",
+    "grid_xy": [
+      878.0,
+      296.6000061035156
+    ],
+    "grid_lower_index": [
+      878,
+      296
+    ],
+    "fractions": [
+      0.0,
+      0.600006103515625
+    ],
+    "corner_heights_m": [
+      [
+        -3.451895933470663,
+        -3.476310368505377
+      ],
+      [
+        -3.4782635233081542,
+        -3.504631113145649
+      ]
+    ],
+    "interpolation": "on original x-grid edge, linear in z; bilinear and triangle heights coincide",
+    "height_m": -3.467716648308154,
+    "source_region_vertical_distance_m": 4.517716600624438,
+    "remains_inside_original_sphere": true,
+    "offline_surface_audit": "D:\\simulator\\artifacts\\maps\\wt-rails-spawn-20261119\\spawn-audit\\support-surface-audit.json",
+    "offline_surface_audit_sha256": "0791ab583a54161a7ed067c9577dd6572849593665b0cea718cf966d35a6544a",
+    "coarse_land_exclusion": "original HM2 exclude_bounding=[16,16,18,18]; cell 0528 at [16,16] is replaced by fine HM2 in prepare_wt_scene.py",
+    "native_validation": {
+      "status": "passed",
+      "module_sha256": "d19c15bcf6a4eddfe77af506dfb15bc8eed72b4bb8fdea6199fc5a2750d70e52",
+      "checks": 5,
+      "report": "artifacts/maps/wt-rails-spawn-20261119/native-spawn-01/verification.json",
+      "report_sha256": "038d064c2a1dd9e6588aee0d4723a36a51dba157f094d0f18487739e9ace4179",
+      "formal_entry_report": "artifacts/maps/wt-rails-spawn-20261119/formal-entry/verification.json"
+    }
+  },
+  "runtime_spawn": {
+    "id": "default",
+    "team": "blue",
+    "position_m": [
+      439.0,
+      -148.3000030517578,
+      -3.467716648308154
+    ],
+    "yaw_rad": -2.0472659359862844
+  },
+  "previous_spawn": {
+    "id": "default",
+    "team": "neutral",
+    "position_m": [
+      1028,
+      -1020,
+      -1.3805752992630005
+    ],
+    "yaw_rad": 0
+  },
+  "previous_map_sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+  "entry_point": {
+    "path": "Play-WarThunder.cmd",
+    "sha256": "05927a7a1c7c29fd0cafe899a1cf03bb56f3bc4672396913bea2e76013d3b6fe",
+    "default_spawn_id": "default",
+    "map_file": "assets/maps/wt_vlaanderen/map.json",
+    "changed": false
+  },
+  "decode_notes": {
+    "namemap_lossless_surrogateescape": true,
+    "namemap_non_utf8_names": 3,
+    "source_mutation": false
+  },
+  "applied_map_sha256": "1d702ef98ac60e764e32a809d4e594a04b320fdcf3419689a38c558a55ccc3c4"
+}
