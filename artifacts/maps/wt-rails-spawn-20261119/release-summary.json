@@ -151,13 +151,24 @@
   "formal_entry": {
     "status": "passed",
     "pid": 8180,
-    "process_left_running": true,
+    "process_left_running": false,
     "ready_markers": [
       "WT_GENERATED_COLLISION_READY",
       "CONTACT_PHYSICS_READY",
       "MAP_STAGE_READY wt_vlaanderen spawn=default"
     ],
-    "visual_scope": "native rail-blocked, rail-reverse and contact-reset captures reviewed; foreground application preserved"
+    "visual_scope": "native rail-blocked, rail-reverse and contact-reset captures reviewed; foreground application preserved",
+    "process_left_running_at_review": true,
+    "final_process_state": {
+      "status": "normal_viewport_close",
+      "requested_exit_code": 0,
+      "exit_log_lines": [
+        "[2026.11.19-03.32.46:935][484]LogEngine: All Windows Closed",
+        "[2026.11.19-03.32.46:935][484]LogWindows: FPlatformMisc::RequestExitWithStatus(0, 0, UGameEngine::Tick.ViewportClosed)"
+      ],
+      "log_sha256": "5beb77b5a1cfe335f94b103e8295b3e2ddf864af81dd7c70ef33c383fb0c323c",
+      "checked_utc": "2026-11-19T03:38:56.365936+00:00"
+    }
   },
   "reports": {
     "build": {
@@ -186,7 +197,7 @@
     },
     "formal": {
       "file": "artifacts/maps/wt-rails-spawn-20261119/formal-entry/verification.json",
-      "sha256": "ea6c589e0088a885103a046b31edca4a3e0da450f6279e854f231611add7e67f"
+      "sha256": "862b1b3be64a3af3f95d865bf862541496408651670284fb7ba01f477b80e7f6"
     }
   },
   "failed_evidence_retained": [
