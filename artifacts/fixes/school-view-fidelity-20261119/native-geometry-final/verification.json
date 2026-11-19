@@ -1,0 +1,80 @@
+{
+  "schema": "school_saved_native_geometry_compact_v1",
+  "status": "passed",
+  "scope": "Independent saved-asset LODResources[0] geometry and explicit source UV representative reconciliation",
+  "source_skp_sha256": "a40bbf0c69bace3b5ee1aed3795217e69c88c4c58ce71b191aff3e033e3502bc",
+  "prepared_sha256": "a6d29420c1b8e16bc036c17a700bc441ac1f679688e1f7061f571420dc6a0d12",
+  "native_meshes": 23,
+  "totals": {
+    "source_triangles": 1959036,
+    "native_render_triangles": 1956048,
+    "matched_triangles": 1956048,
+    "proven_absent_degenerate_or_duplicate_triangles": 2988,
+    "unknown_missing_triangles": 0,
+    "unexpected_native_triangles": 0,
+    "original_matched_under_2ulp": 1956042,
+    "proven_uv_weld_triangles": 6,
+    "proven_uv_weld_corner_replacements": 10
+  },
+  "allowed_scalar_ulp": 2,
+  "nanite_cluster_geometry_audited": false,
+  "original_native_files_unchanged": 111,
+  "full_report": "artifacts/fixes/school-view-fidelity-20261119/native-geometry-final/report.json",
+  "full_report_sha256": "aaa0840e10b8b6073a03dc57074bbc02ad85f02a76aeff20167d1a7a80a15f19",
+  "original_native_report_sha256": "f291eafc5eda27320b22c607bdfa463910a522277c7e73bffa98367198750f13",
+  "import_report_sha256": "3bef027fb446d7a9523a146c47a4678823d108c013b00899b358ed42593f1dd5",
+  "checker_sha256": "2f5cd080ad3793f38d92cdf8c25f0e5e53714f0029a0a2e02d535d3a4e2e5bcd",
+  "reconciliation_script_sha256": "20f76078a01483ea59d092c4d2610f19658765ae9e4f362edf982ee1ca46307c",
+  "native_file_identity_sha256": "2ac4248212ebab8d9837811b3f81525ea6343edcbced79a7f857216bcd89aae0",
+  "engine_source_evidence": {
+    "fixed_uv_comparison": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Public\\MeshBuild.h",
+      "sha256": "f202dd78a017dbdc2bbc2f50df848baee0b4c18f649b6740b1c5f289f1948ba5",
+      "lines": [
+        61,
+        65
+      ]
+    },
+    "vertex_attribute_comparison": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Developer\\MeshBuilder\\Private\\StaticMeshBuilder.cpp",
+      "sha256": "ac4845329704bd8f9b1ffbe1b26c9adf0ffce864fa690521308c0792dcce6508",
+      "lines": [
+        1508,
+        1556
+      ]
+    },
+    "earlier_wedge_representative": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Developer\\MeshBuilder\\Private\\StaticMeshBuilder.cpp",
+      "sha256": "ac4845329704bd8f9b1ffbe1b26c9adf0ffce864fa690521308c0792dcce6508",
+      "lines": [
+        1719,
+        1736
+      ]
+    }
+  },
+  "execution": {
+    "native_import": {
+      "status": "exited",
+      "script_sha256": "7cc4f7f834c346555e240f7fb942934ffa57d796d7c131911ab2bcc7f42cbca5",
+      "pid": 21880,
+      "exit_code": 0,
+      "seconds": 232.65598539999337
+    },
+    "native_reload": {
+      "status": "exited",
+      "script_sha256": "2d5bef53945e349c7a310229a4f855cd3fdb245481b687331c35cdf540c272b8",
+      "pid": 35020,
+      "exit_code": 0,
+      "seconds": 63.56645809998736
+    },
+    "cpu_reconciliation": {
+      "status": "exited",
+      "pid": 15588,
+      "exit_code": 0,
+      "seconds": 1.83,
+      "kind": "CPU-only source/native evidence reconciliation",
+      "script_sha256": "20f76078a01483ea59d092c4d2610f19658765ae9e4f362edf982ee1ca46307c",
+      "native_engine_started": false
+    }
+  }
+}
