@@ -10,6 +10,7 @@
 
 void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
 {
+    if(FParse::Param(FCommandLine::Get(),TEXT("CameraHeadingProbe"))){TickCameraHeadingProbe(DeltaSeconds);return;}
     if(!Rig||!Rig->IsContactPhysics()||!Rig->HasSteeringModules()){Abort(TEXT("gyro probe requires the physical swerve rig"));return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("SteeringResponse"))&&ControlProbePhase==0)
     {ControlProbePhase=14;ContactPhaseTime=0;ContactStageStart=Rig->GetActorTransform();}

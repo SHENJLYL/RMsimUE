@@ -20,6 +20,7 @@ class UMapOverview;
 struct FMapOverviewFrame;
 struct FManualRigState;
 struct FRailContactProbeState;
+struct FCameraHeadingProbeState;
 
 // The live player-controller adapter and deterministic control probe share raw mouse counts.
 struct FManualControlInput
@@ -91,6 +92,8 @@ private:
     FVector2D GyroPreviousFiltered=FVector2D::ZeroVector;
     bool bGyroPreviousValid=false;
     void TickGyroProbe(double DeltaSeconds);
+    void TickCameraHeadingProbe(double DeltaSeconds);
+    TSharedPtr<FCameraHeadingProbeState> CameraHeadingProbe;
     bool bTractionProbeActive=false;
     UPROPERTY() AStaticMeshActor* TractionSlope=nullptr;
     FTransform TractionPose;
