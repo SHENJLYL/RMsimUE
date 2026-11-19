@@ -651,6 +651,9 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     NoteEdges(EKeys::Q,TEXT("TurnLeft"));NoteEdges(EKeys::E,TEXT("TurnRight"));
     NoteEdges(EKeys::LeftControl,TEXT("Precision"));NoteEdges(EKeys::RightControl,TEXT("Precision"));
     NoteEdges(EKeys::MouseScrollUp, TEXT("WheelUp")); NoteEdges(EKeys::MouseScrollDown, TEXT("WheelDown"));
+    NoteEdges(EKeys::M, TEXT("Map")); NoteEdges(EKeys::Escape, TEXT("MapClose"));
+    NoteEdges(EKeys::LeftAlt, TEXT("MapModifier")); NoteEdges(EKeys::RightAlt, TEXT("MapModifier"));
+    NoteEdges(EKeys::MiddleMouseButton, TEXT("MapPoint"));
 
     float MouseX = 0.0f, MouseY = 0.0f;
     if (PC->PlayerInput)
@@ -677,6 +680,14 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     Input.GyroSpeedSteps=(PC->WasInputKeyJustPressed(EKeys::X)?1:0)-(PC->WasInputKeyJustPressed(EKeys::Z)?1:0);
     Input.WheelSteps = (PC->WasInputKeyJustPressed(EKeys::MouseScrollUp) ? 1 : 0) -
         (PC->WasInputKeyJustPressed(EKeys::MouseScrollDown) ? 1 : 0);
+    Input.MapModifier = PC->IsInputKeyDown(EKeys::LeftAlt) || PC->IsInputKeyDown(EKeys::RightAlt);
+    Input.ToggleMap = PC->WasInputKeyJustPressed(EKeys::M);
+    Input.CloseMap = PC->WasInputKeyJustPressed(EKeys::Escape);
+    Input.MapDrag = PC->IsInputKeyDown(EKeys::RightMouseButton);
+    Input.MapPing = PC->WasInputKeyJustPressed(EKeys::LeftMouseButton);
+    Input.MapPointOfInterest = PC->WasInputKeyJustPressed(EKeys::MiddleMouseButton);
+    float CursorX = -1.0f, CursorY = -1.0f;
+    if (PC->GetMousePosition(CursorX, CursorY)) Input.CursorPixels = FVector2D(CursorX, CursorY);
     Input.MouseX = MouseX; Input.MouseY = MouseY;
     ApplyManualInput(Input, DeltaSeconds);
     if (BeforeInput.IsValid() && Focused) WriteInputEvidence(BeforeInput);
@@ -689,6 +700,7 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     if (!Input.Focused)
     {
         bPrecisionDrive=false;
+        bMapDragging=false;
         if(Rig->IsContactPhysics()&&!bRosControl)Rig->SetContactDrive(0,0,true);
         if(RosBridge)RosBridge->SetOperatorBrake(false);
         if(Training&&!bRosAimControl)if(auto* Aim=GetAimCapture())Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),false,false,Aim->GetComponentTransform());
@@ -702,6 +714,10 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     double MouseX = Input.MouseX, MouseY = Input.MouseY;
     if (!bHadInputFocus || !FMath::IsFinite(MouseX) || !FMath::IsFinite(MouseY)) MouseX = MouseY = 0.0;
     bHadInputFocus = true;
+    int32 CameraWheelSteps = Input.WheelSteps;
+    bool MapConsumesMouse = false;
+    UpdateManualMapInput(Input, AllowTrigger, CameraWheelSteps, MapConsumesMouse);
+    if (MapConsumesMouse) MouseX = MouseY = 0.0;
     if(Input.RestartRound&&AllowTrigger&&Rig->IsContactPhysics())
     {
         ResetContactVehicle(TEXT("manual_R"),bRosAimControl);
@@ -757,15 +773,15 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
         RecenterView(HeldManualAimDirection);
         MouseX = MouseY = 0.0;
     }
-    bSightZoom = bSightMode && Input.Zoom;
+    bSightZoom = bSightMode && Input.Zoom && !MapConsumesMouse;
     const double Sensitivity = MouseSensitivity * (bSightMode && !bFreeLook ? (bSightZoom ? 15.0 : ScopeBaseFov) / 55.0 : 1.0);
     OrbitYaw = FRotator::NormalizeAxis(OrbitYaw + MouseX * Sensitivity);
     OrbitPitch = FMath::Clamp(OrbitPitch + MouseY * Sensitivity, -60.0, 45.0);
     if (!bFreeLook && (!FMath::IsNearlyZero(MouseX) || !FMath::IsNearlyZero(MouseY)))
         bHoldManualAimDirection = false;
     if (bSightMode && !bFreeLook)
-        ScopeBaseFov = FMath::Clamp(ScopeBaseFov - Input.WheelSteps * 3.0, 15.0, 30.0);
-    else ChaseDistanceCm = FMath::Clamp(ChaseDistanceCm - Input.WheelSteps * 35.0, 180.0, 800.0);
+        ScopeBaseFov = FMath::Clamp(ScopeBaseFov - CameraWheelSteps * 3.0, 15.0, 30.0);
+    else ChaseDistanceCm = FMath::Clamp(ChaseDistanceCm - CameraWheelSteps * 35.0, 180.0, 800.0);
 
     if(Rig->IsContactPhysics()&&AllowTrigger&&!bRosControl)
     {
@@ -829,7 +845,7 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
                 FMath::Clamp(DesiredPitch - CurrentPitch, -PitchBudget, PitchBudget));
         }
         if (Training && !bRosAimControl)
-            Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger&&!bRosControl,
+            Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger&&!bRosControl&&!MapConsumesMouse,
                 Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
     }
 
@@ -907,6 +923,12 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
     State->SetBoolField(TEXT("precision_drive"),bPrecisionDrive);
     State->SetNumberField(TEXT("gyro_setpoint_rad_s"),GyroSpeedRadS);
     State->SetBoolField(TEXT("window_focused"), bHadInputFocus);
+    State->SetBoolField(TEXT("map_expanded"), bTacticalMapExpanded);
+    State->SetBoolField(TEXT("map_cursor_active"), bMapCursorActive);
+    State->SetNumberField(TEXT("minimap_zoom_level"), MiniMapZoomLevel);
+    State->SetNumberField(TEXT("full_map_zoom_level"), FullMapZoomLevel);
+    State->SetArrayField(TEXT("full_map_center_uv"), {
+        MakeShared<FJsonValueNumber>(FullMapCenterUv.X), MakeShared<FJsonValueNumber>(FullMapCenterUv.Y)});
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
         if (AActor* View = PC->GetViewTarget()) State->SetObjectField(TEXT("camera"), TransformJson(View->GetActorTransform()));
     return State;

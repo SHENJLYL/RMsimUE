@@ -182,3 +182,11 @@
 ## 2026-11-19 手动相机方向更新
 
 C 环视保持实际云台单位世界方向，Shift scope 持续读取角方向；普通手动路径不得保留有限世界点形成追踪。C/Shift 返回第三人称可做一次投影，后续保持角方向直到新鼠标输入。WASD 和大小地图箭头在当帧云台更新后共用 GetGimbalPlanarForwardRos。固定弹道目标只属于显式控制 probe。当前 77 项原生和 12 项地图校准绑定 camera-heading-20261119/release-summary.json；旧测试只检查驾驶与云台一起同向，不能单独证明环视期间方向稳定。
+
+
+### 2026-11-19：飞艇任务对象与地图原资源
+
+- 弗兰德斯飞艇源于原任务 object groups；完整基础导入须先验证任务补充，再在保存及最后一次旧 UObject 读取后恢复，保持源 67 实例 / 65 碰撞和固定地标策略。
+- HUD DrawLine 默认 Canvas 项忽略 alpha；原网格用真实 translucent 路径。sRGB 字节必须显式转换，避免 UI 变亮。
+- tiny_text_hud 为 PT Sans reduced-height、1080p18px、forceAutoHint=no；fontFx64 转换为2.0。当前 MapFontRenderer 复用原字体字节，实现源 glow／coverage gamma 缓存。
+- FontFace 导入需要完整 Editor／Slate；NullRHI commandlet 路径不适用。Texture 须等待 Editor.AsyncAssetCompilationFinishAll 后再验尺寸和保存；失败证据保留，重试使用新目录。

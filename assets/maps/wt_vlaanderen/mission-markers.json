@@ -1,0 +1,220 @@
+{
+  "schema": "rmsim_map_mission_markers_v1",
+  "map_id": "wt_vlaanderen",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "mission": "vlaanderen_dom",
+  "mode": "arcade",
+  "reference_team": 1,
+  "marker_state": "static mission definitions; no live unit or capture ownership state",
+  "source_archive": {
+    "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\mis.vromfs.bin",
+    "sha256": "1cfb7ebbff304639f19052acab339627779ac75c0575f1265da95fe7c86dbd32",
+    "magic": "VRFx",
+    "target": 1129316352,
+    "header_size": 24,
+    "extension_flags": 0,
+    "version": 37552145,
+    "packed_size": 7967064,
+    "decoded_size": 9676320,
+    "body_sha256": "72276cd0b19e18cd3419b9edac40af36c2e8284393f4c81d753fd72b23b3b821",
+    "file_count": 5152
+  },
+  "source_entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+  "source_entry_sha256": "1a764bb90b6014518cd985600e68c2a722430a127ed21b7802ffb09772e35dd3",
+  "source_to_ros_matrix": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "source_translation_m": [
+    0,
+    0,
+    0
+  ],
+  "markers": [
+    {
+      "id": "dom_capture_area_01_arcade",
+      "kind": "capture",
+      "label": "A",
+      "team": "neutral",
+      "position_ros_m": [
+        512.5499877929688,
+        -1017.5
+      ],
+      "position_ros_xyz_m": [
+        512.5499877929688,
+        -1017.5,
+        1.0499999523162842
+      ],
+      "radius_m": 39.99996250067396,
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "areas/dom_capture_area_01_arcade",
+        "dagor_position_m": [
+          512.5499877929688,
+          1.0499999523162842,
+          1017.5
+        ]
+      }
+    },
+    {
+      "id": "dom_capture_area_02_arcade",
+      "kind": "capture",
+      "label": "B",
+      "team": "neutral",
+      "position_ros_m": [
+        1022.3800048828125,
+        -1010.5
+      ],
+      "position_ros_xyz_m": [
+        1022.3800048828125,
+        -1010.5,
+        0.027450600638985634
+      ],
+      "radius_m": 39.9999940608691,
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "areas/dom_capture_area_02_arcade",
+        "dagor_position_m": [
+          1022.3800048828125,
+          0.027450600638985634,
+          1010.5
+        ]
+      }
+    },
+    {
+      "id": "dom_capture_area_03_arcade",
+      "kind": "capture",
+      "label": "C",
+      "team": "neutral",
+      "position_ros_m": [
+        1511.969970703125,
+        -1025.489990234375
+      ],
+      "position_ros_xyz_m": [
+        1511.969970703125,
+        -1025.489990234375,
+        1.4000200033187866
+      ],
+      "radius_m": 41.29187910860269,
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "areas/dom_capture_area_03_arcade",
+        "dagor_position_m": [
+          1511.969970703125,
+          1.4000200033187866,
+          1025.489990234375
+        ]
+      }
+    },
+    {
+      "id": "dom_t1_tank_spawn_01_arcade",
+      "kind": "spawn",
+      "label": "1",
+      "team": 1,
+      "position_ros_m": [
+        1536.0,
+        -227.4530029296875
+      ],
+      "position_ros_xyz_m": [
+        1536.0,
+        -227.4530029296875,
+        1.4294699430465698
+      ],
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "units/area_squad[name=dom_t1_tank_spawn_01_arcade]",
+        "dagor_position_m": [
+          1536.0,
+          1.4294699430465698,
+          227.4530029296875
+        ]
+      }
+    },
+    {
+      "id": "dom_t1_tank_spawn_02_arcade",
+      "kind": "spawn",
+      "label": "2",
+      "team": 1,
+      "position_ros_m": [
+        433.3429870605469,
+        -169.95899963378906
+      ],
+      "position_ros_xyz_m": [
+        433.3429870605469,
+        -169.95899963378906,
+        1.049090027809143
+      ],
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "units/area_squad[name=dom_t1_tank_spawn_02_arcade]",
+        "dagor_position_m": [
+          433.3429870605469,
+          1.049090027809143,
+          169.95899963378906
+        ]
+      }
+    },
+    {
+      "id": "dom_t2_tank_spawn_01_arcade",
+      "kind": "spawn",
+      "label": "1",
+      "team": 2,
+      "position_ros_m": [
+        364.44500732421875,
+        -1758.52001953125
+      ],
+      "position_ros_xyz_m": [
+        364.44500732421875,
+        -1758.52001953125,
+        8.36303997039795
+      ],
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "units/area_squad[name=dom_t2_tank_spawn_01_arcade]",
+        "dagor_position_m": [
+          364.44500732421875,
+          8.36303997039795,
+          1758.52001953125
+        ]
+      }
+    },
+    {
+      "id": "dom_t2_tank_spawn_02_arcade",
+      "kind": "spawn",
+      "label": "2",
+      "team": 2,
+      "position_ros_m": [
+        1385.3499755859375,
+        -1811.6500244140625
+      ],
+      "position_ros_xyz_m": [
+        1385.3499755859375,
+        -1811.6500244140625,
+        -0.5
+      ],
+      "source": {
+        "entry": "gamedata/missions/cta/tanks/vlaanderen/mainareas/vlaanderen_dom_template.blk",
+        "block": "units/area_squad[name=dom_t2_tank_spawn_02_arcade]",
+        "dagor_position_m": [
+          1385.3499755859375,
+          -0.5,
+          1811.6500244140625
+        ]
+      }
+    }
+  ]
+}

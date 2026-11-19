@@ -18,6 +18,7 @@ class UWTFoliageCrushComponent;
 class UWTGeneratedCollisionComponent;
 class UMapOverview;
 struct FMapOverviewFrame;
+struct FMapOverviewPresentation;
 struct FManualRigState;
 struct FRailContactProbeState;
 struct FCameraHeadingProbeState;
@@ -34,6 +35,13 @@ struct FManualControlInput
     double MouseX = 0.0;
     double MouseY = 0.0;
     int32 WheelSteps = 0;
+    bool MapModifier = false;
+    bool ToggleMap = false;
+    bool CloseMap = false;
+    bool MapDrag = false;
+    bool MapPing = false;
+    bool MapPointOfInterest = false;
+    FVector2D CursorPixels = FVector2D(-1, -1);
     bool Brake = false;
     bool FreeLook = false;
     bool ToggleSight = false;
@@ -132,6 +140,20 @@ private:
     bool bDestructionProbeStarted = false;
     double DestructionProbeSeconds = 0;
     bool bMapOverview = false;
+    bool bTacticalMapExpanded = false;
+    bool bMapCursorActive = false;
+    bool bMapDragging = false;
+    int32 MiniMapZoomLevel = 0;
+    int32 FullMapZoomLevel = 0;
+    FVector2D FullMapCenterUv = FVector2D(0.5, 0.5);
+    FVector2D LastMapCursor = FVector2D::ZeroVector;
+    FVector2D LocalMapPingRos = FVector2D::ZeroVector;
+    FVector2D LocalMapPointRos = FVector2D::ZeroVector;
+    double LocalMapPingTime = -1000.0;
+    bool bLocalMapPointValid = false;
+    void UpdateManualMapInput(const FManualControlInput& Input, bool AllowActions,
+        int32& CameraWheelSteps, bool& ConsumeMouse);
+    void FillMapInteractionFrame(FMapOverviewFrame& Frame) const;
     bool bProbeActive = false;
     int32 ProbePhase = 0;
     FString EvidenceDirectory;
@@ -206,6 +228,10 @@ class RMSIM_API AImportLabHUD : public AHUD
     GENERATED_BODY()
 public:
     virtual void DrawHUD() override;
+    bool DescribeMap(const FMapOverviewFrame& Frame, const FVector2D& ViewportPixels,
+        FMapOverviewPresentation& Out);
+    bool MapScreenToWorld(const FMapOverviewFrame& Frame, const FVector2D& ViewportPixels,
+        const FVector2D& Pixel, FVector2D& OutRos);
 private:
     UPROPERTY() UMapOverview* MapOverview = nullptr;
 };

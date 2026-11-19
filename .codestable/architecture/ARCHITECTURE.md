@@ -205,3 +205,11 @@ rmuc-06对应此前带10Hz RGB、全局5ms最大物理子步配置，原生导�
 GetGimbalPlanarForwardRos 统一实际云台的 ROS 水平前向。ApplyManualInput 在 NudgeGimbal 后形成全向速度请求，MapOverview 的 VehicleForwardRos 使用同一结果，大小地图投影沿用原校准。ROS 底盘／云台所有权保持独立；固定弹道抬高点仅通过显式 bControlProbeActive 夹具覆盖进入。
 
 CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云台方向、请求速度和实际地图帧，覆盖近目标平移、底盘转向、C/Shift 组合、失焦及复位。Windows 当前 77 项原生 / 54 PNG 和 12 项离线地图校准绑定 4b362baa… 模块，证据与边界见 docs/changes/2026-11-19-camera-heading.md。
+
+
+## 2026-11-19：WT 任务对象与地图界面
+
+- `prepare_wt_mission_objects.py` 展开原任务 object groups 并烘焙完整仿射变换；任务作者仅拥有 `RMSim.WTMissionObjects.Zeppelin` 演员。`wt_mission_supplements.py` 为基础导入提供先验证、保存后恢复和最终 World 哈希更新。
+- `MapOverview` 统一图像、方向、位置和拾取投影；`ManualMapControl` 统一 M、Alt、缩放、拖动与本地标记。实际云台拥有箭头方向，观察相机拥有扇区。
+- `MapFontRenderer` 使用原 FontFace 字节和引擎 FreeType，缓存源字号／hinting／glow／gamma 的文字纹理。UI 资源经完整 Editor 导入，等待异步资源完成后验证。
+- 地图 probe 捕获实际 Canvas HUD；飞艇 probe 使用真实 Chaos 驱动验证原碰撞、持续受阻和倒车。证据：`artifacts/maps/wt-zeppelin-minimap-20261119/release-summary.json`。
