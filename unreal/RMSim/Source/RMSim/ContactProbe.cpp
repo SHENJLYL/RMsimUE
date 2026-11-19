@@ -18,7 +18,10 @@ void AImportLabGameMode::ResetContactVehicle(const FString& Reason,bool ResetTra
     if(!IsValid(Rig)||!Rig->IsContactPhysics())return;
     Rig->ResetContactPose(ContactSpawn);++ContactRecoveryCount;
     if(RosBridge)RosBridge->ResetEpoch();
-    SpeedCmPerSecond=0;TurnDegreesPerSecond=0;bAimTargetValid=false;bHoldAimAfterFreeLook=false;
+    SpeedCmPerSecond=0;TurnDegreesPerSecond=0;bAimTargetValid=false;
+    bHoldManualAimDirection=false;bProbeAimWorldTargetOverride=false;
+    HeldManualAimDirection=GetAimCapture()?GetAimCapture()->GetForwardVector():Rig->GetActorForwardVector();
+    bSightMode=false;bSightZoom=false;
     bGyroMode=false;bPrecisionDrive=false;GyroSpeedRadS=Rig->GetDriveParameter(TEXT("GyroDefaultRadS"));
     bFreeLook=false;OrbitYaw=ContactSpawn.Rotator().Yaw;OrbitPitch=-12;
     if(ResetTraining&&Training)Training->ResetRound();
@@ -141,7 +144,7 @@ void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
         const double Discriminant=V*V*V*V-G*(G*Distance*Distance+2*Delta.Z*V*V);
         if(Discriminant<0){Abort(TEXT("training target outside ballistic range"));return;}
         AimWorldTarget=FVector(Target.X,Target.Y,Muzzle.Z+(V*V-FMath::Sqrt(Discriminant))/G);
-        bAimTargetValid=true;bHoldAimAfterFreeLook=true;
+        bAimTargetValid=true;bProbeAimWorldTargetOverride=true;
         FManualControlInput Input;Input.Brake=true;Input.Fire=ContactPhaseTime>1.&&Training->GetShots()==0;
         ApplyManualInput(Input,DeltaSeconds);
         if(ContactPhaseTime<2.)return;

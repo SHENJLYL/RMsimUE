@@ -147,8 +147,8 @@ void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
         const double Match=FVector2D::DotProduct(Requested.GetSafeNormal(),FVector2D(Gun.X,-Gun.Y).GetSafeNormal());
         const double ViewDrift=FMath::Abs(FMath::FindDeltaAngleDegrees(ControlReport->GetNumberField(TEXT("scope_exit_view_yaw_deg")),OrbitYaw));
         Name=TEXT("shift_exit_clears_sticky_scope");
-        Detail=FString::Printf(TEXT("scope=%d sticky=%d reticle=%d view drift=%.5fdeg drive/turret dot=%.6f"),bSightMode,bHoldAimAfterFreeLook,IsGunReticleVisible(),ViewDrift,Match);
-        Passed=!bSightMode&&!bHoldAimAfterFreeLook&&!IsGunReticleVisible()&&ViewDrift<.1&&Match>.999;
+        Detail=FString::Printf(TEXT("scope=%d direction_hold=%d reticle=%d view drift=%.5fdeg drive/turret dot=%.6f"),bSightMode,bHoldManualAimDirection,IsGunReticleVisible(),ViewDrift,Match);
+        Passed=!bSightMode&&bHoldManualAimDirection&&!IsGunReticleVisible()&&ViewDrift<.1&&Match>.999;
         ControlPendingCapture=TEXT("gyro-chase");break;
     }
     case 24:

@@ -576,6 +576,20 @@ USceneCaptureComponent2D* AImportLabGameMode::GetAimCapture() const
     return nullptr;
 }
 
+FVector2D AImportLabGameMode::GetGimbalPlanarForwardRos() const
+{
+    if (!Rig) return FVector2D(1, 0);
+    const USceneCaptureComponent2D* Aim = GetAimCapture();
+    const FVector Gun = Aim ? Aim->GetForwardVector() : Rig->GetActorForwardVector();
+    FVector2D Forward(Gun.X, -Gun.Y); // UE XY -> ROS left-positive XY.
+    if (Forward.IsNearlyZero(1.e-6))
+    {
+        const FVector Body = Rig->GetActorForwardVector();
+        Forward = FVector2D(Body.X, -Body.Y);
+    }
+    return Forward.IsNearlyZero(1.e-6) ? FVector2D(1, 0) : Forward.GetSafeNormal();
+}
+
 FVector AImportLabGameMode::TraceViewPoint(const FVector& Start, const FVector& Direction) const
 {
     const FVector End = Start + Direction.GetSafeNormal() * 100000.0;
@@ -684,51 +698,75 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
         return;
     }
     const double Step = FMath::Clamp(DeltaSeconds, 0.0, 0.05);
-    const bool AllowTrigger=bHadInputFocus; // The click that captures the window must not fire a shot.
+    const bool AllowTrigger=bHadInputFocus; // Ignore recapture clicks and stale key edges.
     double MouseX = Input.MouseX, MouseY = Input.MouseY;
-    if (!bHadInputFocus || !FMath::IsFinite(MouseX) || !FMath::IsFinite(MouseY)) MouseX = MouseY = 0.0f;
-    bHadInputFocus = true; // The first focused frame discards any cursor recapture jump.
+    if (!bHadInputFocus || !FMath::IsFinite(MouseX) || !FMath::IsFinite(MouseY)) MouseX = MouseY = 0.0;
+    bHadInputFocus = true;
+    if(Input.RestartRound&&AllowTrigger&&Rig->IsContactPhysics())
+    {
+        ResetContactVehicle(TEXT("manual_R"),bRosAimControl);
+        MouseX = MouseY = 0.0;
+    }
     bPrecisionDrive=Input.Precision&&Rig->HasSteeringModules();
-    const bool WantsFreeLook = Input.FreeLook;
-    if (WantsFreeLook && !bFreeLook)
+
+    auto ActualAimDirection = [this]()
     {
-        SavedOrbitYaw = OrbitYaw; SavedOrbitPitch = OrbitPitch;
-        bHoldAimAfterFreeLook = true;
-    }
-    else if (!WantsFreeLook && bFreeLook)
+        const auto* Aim = GetAimCapture();
+        return (Aim ? Aim->GetForwardVector() : Rig->GetActorForwardVector()).GetSafeNormal();
+    };
+    auto HoldActualDirection = [&]()
     {
-        OrbitYaw = SavedOrbitYaw; OrbitPitch = SavedOrbitPitch;
-        MouseX = MouseY = 0.0f;
-        bHoldAimAfterFreeLook = true; // Return the view without retargeting the gun on C release.
+        HeldManualAimDirection = ActualAimDirection();
+        bHoldManualAimDirection = true;
+    };
+    auto RecenterView = [this](const FVector& Direction)
+    {
+        FRotator Look = Direction.Rotation();
+        if (!bSightMode)
+        {
+            const auto* Aim = GetAimCapture();
+            const FVector Muzzle = Aim ? Aim->GetComponentLocation() : Rig->GetActorLocation();
+            const FVector Target = TraceViewPoint(Muzzle, Direction);
+            const FVector Pivot = Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
+            Look = (Target - Pivot).Rotation();
+        }
+        OrbitYaw = FRotator::NormalizeAxis(Look.Yaw);
+        OrbitPitch = FMath::Clamp(Look.Pitch, -60.0, 45.0);
+    };
+    const bool ReleasedFreeLook = !Input.FreeLook && bFreeLook;
+    if (Input.FreeLook && !bFreeLook)
+    {
+        // Stop an unfinished previous aim slew at the actual gun direction.
+        HoldActualDirection();
     }
-    bFreeLook = WantsFreeLook;
-    if (Input.ToggleSight)
+    bFreeLook = Input.FreeLook;
+    if (Input.ToggleSight && AllowTrigger)
     {
         bSightMode = !bSightMode;
-        // On scope exit resume live chase aiming: the old scope hit must not
-        // continue steering the turret (and hence the chassis drive basis).
-        bHoldAimAfterFreeLook = bFreeLook || bSightMode;
-        if (!bFreeLook && bAimTargetValid)
+        if (!bFreeLook)
         {
-            // Reproject once at the transition. Reprojecting every subsequent tick
-            // leaves the chase view stuck to a stale scope target while driving.
-            const FVector Origin = bSightMode && GetAimCapture() ?
-                GetAimCapture()->GetComponentLocation() : Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
-            const FRotator Desired = (AimWorldTarget - Origin).Rotation();
-            OrbitYaw = Desired.Yaw;
-            OrbitPitch = Desired.Pitch;
+            HoldActualDirection();
+            RecenterView(HeldManualAimDirection);
+            // Scope intent is angular and is evaluated every frame, including zero mouse input.
+            if (bSightMode) bHoldManualAimDirection = false;
         }
+    }
+    if (ReleasedFreeLook)
+    {
+        // C+Shift chooses the return camera without consuming the orbit angle as aim.
+        RecenterView(HeldManualAimDirection);
+        MouseX = MouseY = 0.0;
     }
     bSightZoom = bSightMode && Input.Zoom;
     const double Sensitivity = MouseSensitivity * (bSightMode && !bFreeLook ? (bSightZoom ? 15.0 : ScopeBaseFov) / 55.0 : 1.0);
     OrbitYaw = FRotator::NormalizeAxis(OrbitYaw + MouseX * Sensitivity);
     OrbitPitch = FMath::Clamp(OrbitPitch + MouseY * Sensitivity, -60.0, 45.0);
-    if (!bFreeLook && (!FMath::IsNearlyZero(MouseX) || !FMath::IsNearlyZero(MouseY))) bHoldAimAfterFreeLook = false;
+    if (!bFreeLook && (!FMath::IsNearlyZero(MouseX) || !FMath::IsNearlyZero(MouseY)))
+        bHoldManualAimDirection = false;
     if (bSightMode && !bFreeLook)
         ScopeBaseFov = FMath::Clamp(ScopeBaseFov - Input.WheelSteps * 3.0, 15.0, 30.0);
     else ChaseDistanceCm = FMath::Clamp(ChaseDistanceCm - Input.WheelSteps * 35.0, 180.0, 800.0);
 
-    if(Input.RestartRound&&AllowTrigger&&Rig->IsContactPhysics())ResetContactVehicle(TEXT("manual_R"),bRosAimControl);
     if(Rig->IsContactPhysics()&&AllowTrigger&&!bRosControl)
     {
         if(Input.ToggleGyro&&Rig->HasSteeringModules())bGyroMode=!bGyroMode;
@@ -744,67 +782,77 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     TurnDegreesPerSecond = FMath::FInterpConstantTo(TurnDegreesPerSecond,
         Brake ? 0.0 : FMath::Clamp(Input.Steer, -1.0, 1.0) * 60.0, Step, 180.0);
     const FTransform BeforeMove = Rig->GetActorTransform();
-    bool MovedFully=true;
-    if(Rig->IsContactPhysics())
-    {
-        if(!bRosControl)
-        {
-        const double MaximumDriveSpeed=Rig->GetDriveParameter(Throttle>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
-        const double DriveSpeed=Throttle*(bPrecisionDrive?FMath::Min(MaximumDriveSpeed,Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):MaximumDriveSpeed);
-        if(Rig->HasSteeringModules())
-        {
-            // Movement belongs to the physical turret, never to the C orbit camera
-            // or to a scope/chase reticle that may outlive a Shift transition.
-            const USceneCaptureComponent2D* Aim=GetAimCapture();
-            const FVector GunForward=Aim?Aim->GetForwardVector():Rig->GetActorForwardVector();
-            const FVector2D HorizontalGun(GunForward.X,-GunForward.Y); // UE right-handed view -> ROS left-positive.
-            const FVector2D Forward=HorizontalGun.IsNearlyZero(1.e-6)?
-                FVector2D(Rig->GetActorForwardVector().X,-Rig->GetActorForwardVector().Y).GetSafeNormal():HorizontalGun.GetSafeNormal();
-            const FVector2D Left(-Forward.Y,Forward.X);
-            const double LateralSpeed=bPrecisionDrive?FMath::Min(Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps")),Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));
-            FVector2D WorldVelocity=Forward*DriveSpeed+Left*FMath::Clamp(Input.Strafe,-1.,1.)*LateralSpeed;
-            if(bPrecisionDrive&&WorldVelocity.Size()>Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")))WorldVelocity=WorldVelocity.GetSafeNormal()*Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"));
-            const double YawRate=bGyroMode?GyroSpeedRadS:-FMath::Clamp(Input.Turn,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS"));
-            Rig->SetContactPlanarDrive(WorldVelocity,YawRate,true,Brake);
-        }
-        else Rig->SetContactDrive(DriveSpeed,-FMath::Clamp(Input.Steer,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS")),Brake);
-        }
-        SpeedCmPerSecond=Rig->HasSteeringModules()?Rig->GetCommandOriginVelocity().Size2D():FVector::DotProduct(Rig->GetVelocity(),Rig->GetActorForwardVector());
-    }
-    else MovedFully=Rig->MoveManual(FVector(SpeedCmPerSecond * Step, 0, 0), TurnDegreesPerSecond * Step);
-    if (!MovedFully && Step > 0.0)
+    if(!Rig->IsContactPhysics() && !Rig->MoveManual(FVector(SpeedCmPerSecond * Step, 0, 0), TurnDegreesPerSecond * Step) && Step > 0.0)
     {
         SpeedCmPerSecond = FVector::DotProduct(Rig->GetActorLocation() - BeforeMove.GetLocation(), BeforeMove.GetRotation().GetForwardVector()) / Step;
         TurnDegreesPerSecond = FMath::FindDeltaAngleDegrees(BeforeMove.Rotator().Yaw, Rig->GetActorRotation().Yaw) / Step;
     }
 
     UpdatePlayerView(PC);
-    if(bRosControl||bRosAimControl)
-    {
-        if(Training&&!bRosAimControl)if(auto* Aim=GetAimCapture())Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),false,Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
-        return; // Observer motion never commands an autonomous robot's physical gimbal.
-    }
     if (USceneCaptureComponent2D* Aim = GetAimCapture())
     {
-        if (!bAimTargetValid || (!bFreeLook && !bHoldAimAfterFreeLook))
+        if (!bRosControl && !bRosAimControl)
         {
-            const FVector RayStart = bSightMode && !bFreeLook ? Aim->GetComponentLocation() : ChaseCamera->GetActorLocation();
-            const FVector RayDirection = bSightMode && !bFreeLook ? FRotator(OrbitPitch, OrbitYaw, 0).Vector() : ChaseCamera->GetActorForwardVector();
-            AimWorldTarget = TraceViewPoint(RayStart, RayDirection);
-            bAimTargetValid = true;
+            FVector DesiredWorldDirection;
+            if (bControlProbeActive && bProbeAimWorldTargetOverride && bAimTargetValid)
+            {
+                DesiredWorldDirection = (AimWorldTarget - Aim->GetComponentLocation()).GetSafeNormal();
+            }
+            else if (bFreeLook || bHoldManualAimDirection)
+            {
+                DesiredWorldDirection = HeldManualAimDirection;
+                AimWorldTarget = TraceViewPoint(Aim->GetComponentLocation(), DesiredWorldDirection);
+                bAimTargetValid = true;
+            }
+            else if (bSightMode)
+            {
+                DesiredWorldDirection = FRotator(OrbitPitch, OrbitYaw, 0).Vector();
+                AimWorldTarget = TraceViewPoint(Aim->GetComponentLocation(), DesiredWorldDirection);
+                bAimTargetValid = true;
+            }
+            else
+            {
+                AimWorldTarget = TraceViewPoint(ChaseCamera->GetActorLocation(), ChaseCamera->GetActorForwardVector());
+                DesiredWorldDirection = (AimWorldTarget - Aim->GetComponentLocation()).GetSafeNormal();
+                bAimTargetValid = true;
+            }
+            const FRotator DesiredLocal = Rig->GetActorTransform().InverseTransformVectorNoScale(DesiredWorldDirection).Rotation();
+            const double DesiredYaw = -FMath::DegreesToRadians(DesiredLocal.Yaw);
+            const double DesiredPitch = -FMath::DegreesToRadians(DesiredLocal.Pitch);
+            double CurrentYaw, CurrentPitch;
+            Rig->GetGimbalAngles(CurrentYaw, CurrentPitch);
+            // Preview turn-rate limits, not measured actuator parameters.
+            const double YawBudget = FMath::DegreesToRadians(GimbalYawSpeedDeg) * Step;
+            const double PitchBudget = FMath::DegreesToRadians(GimbalPitchSpeedDeg) * Step;
+            Rig->NudgeGimbal(
+                FMath::Clamp(FMath::FindDeltaAngleRadians(CurrentYaw, DesiredYaw), -YawBudget, YawBudget),
+                FMath::Clamp(DesiredPitch - CurrentPitch, -PitchBudget, PitchBudget));
         }
-        const FRotator DesiredLocal = Rig->GetActorTransform().InverseTransformVectorNoScale(AimWorldTarget - Aim->GetComponentLocation()).Rotation();
-        const double DesiredYaw = -FMath::DegreesToRadians(DesiredLocal.Yaw);
-        const double DesiredPitch = -FMath::DegreesToRadians(DesiredLocal.Pitch);
-        double CurrentYaw, CurrentPitch;
-        Rig->GetGimbalAngles(CurrentYaw, CurrentPitch);
-        // Preview turn-rate limits, not measured actuator parameters.
-        const double YawBudget = FMath::DegreesToRadians(GimbalYawSpeedDeg) * Step;
-        const double PitchBudget = FMath::DegreesToRadians(GimbalPitchSpeedDeg) * Step;
-        const double YawDelta = FMath::Clamp(FMath::FindDeltaAngleRadians(CurrentYaw, DesiredYaw), -YawBudget, YawBudget);
-        const double PitchDelta = FMath::Clamp(DesiredPitch - CurrentPitch, -PitchBudget, PitchBudget);
-        Rig->NudgeGimbal(YawDelta, PitchDelta);
-        if(Training)Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger,Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
+        if (Training && !bRosAimControl)
+            Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger&&!bRosControl,
+                Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
+    }
+
+    if (Rig->IsContactPhysics())
+    {
+        if (!bRosControl)
+        {
+            const double MaximumDriveSpeed=Rig->GetDriveParameter(Throttle>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
+            const double DriveSpeed=Throttle*(bPrecisionDrive?FMath::Min(MaximumDriveSpeed,Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):MaximumDriveSpeed);
+            if (Rig->HasSteeringModules())
+            {
+                // Sample after this frame's gimbal update: driving and both map arrows share actual heading.
+                const FVector2D Forward=GetGimbalPlanarForwardRos();
+                const FVector2D Left(-Forward.Y,Forward.X);
+                const double LateralSpeed=bPrecisionDrive?FMath::Min(Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps")),Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));
+                FVector2D WorldVelocity=Forward*DriveSpeed+Left*FMath::Clamp(Input.Strafe,-1.,1.)*LateralSpeed;
+                if(bPrecisionDrive&&WorldVelocity.Size()>Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")))WorldVelocity=WorldVelocity.GetSafeNormal()*Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"));
+                const double YawRate=bGyroMode?GyroSpeedRadS:-FMath::Clamp(Input.Turn,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS"));
+                Rig->SetContactPlanarDrive(WorldVelocity,YawRate,true,Brake);
+            }
+            else Rig->SetContactDrive(DriveSpeed,-FMath::Clamp(Input.Steer,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS")),Brake);
+        }
+        SpeedCmPerSecond=Rig->HasSteeringModules()?Rig->GetCommandOriginVelocity().Size2D():FVector::DotProduct(Rig->GetVelocity(),Rig->GetActorForwardVector());
     }
     UpdatePlayerView(PC);
 }
@@ -825,6 +873,11 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
         double Yaw, Pitch; Rig->GetGimbalAngles(Yaw, Pitch);
         State->SetNumberField(TEXT("gimbal_yaw_rad"), Yaw);
         State->SetNumberField(TEXT("gimbal_pitch_rad"), Pitch);
+        if (const auto* Aim = GetAimCapture())
+            State->SetArrayField(TEXT("gimbal_world_forward"), VectorJson(Aim->GetForwardVector()));
+        const FVector2D DriveForward = GetGimbalPlanarForwardRos();
+        State->SetArrayField(TEXT("drive_forward_ros"), {
+            MakeShared<FJsonValueNumber>(DriveForward.X), MakeShared<FJsonValueNumber>(DriveForward.Y)});
         const FManualRigState Actual=Rig->GetManualState();
         State->SetBoolField(TEXT("blocking_overlap"),Actual.bBlockingOverlap);
         State->SetBoolField(TEXT("terrain_following"),Actual.bTerrainFollowing);
@@ -845,6 +898,9 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
             State->SetNumberField(TEXT("active_fov_deg"), View->GetCameraComponent()->FieldOfView);
     State->SetArrayField(TEXT("world_aim_target_cm"), VectorJson(AimWorldTarget));
     State->SetBoolField(TEXT("free_look"), bFreeLook);
+    State->SetBoolField(TEXT("hold_manual_aim_direction"), bHoldManualAimDirection);
+    State->SetArrayField(TEXT("held_aim_world_direction"), VectorJson(HeldManualAimDirection));
+    State->SetBoolField(TEXT("probe_world_aim_override"), bControlProbeActive && bProbeAimWorldTargetOverride);
     State->SetBoolField(TEXT("sight_mode"), bSightMode);
     State->SetBoolField(TEXT("zoom"), bSightZoom);
     State->SetBoolField(TEXT("gyro_mode"),bGyroMode);

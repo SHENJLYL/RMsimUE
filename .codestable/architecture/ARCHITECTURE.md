@@ -196,3 +196,12 @@ rmuc-06对应此前带10Hz RGB、全局5ms最大物理子步配置，原生导�
 默认出生来自只读 mis.vromfs 任务链中的 Dom Team A 第二坦克重生组 `t1_tankSpawn02_zone01`，经 missionMarkAsRespawnPoint 的 tank/team 注册核对。map.json 继续保持严格字段，来源放在独立 spawn-source.json。原区水平坐标按 Dagor→ROS 转换，GroundMetres 垂直投影到原 HM2；派生航向与原显式区域变换分别记录。
 
 `RailContactProbe` 仅由显式测试旗标分派，使用世界通道射线验证精确组件/实例，再读取原生接触队列证明持续阻挡和倒车脱离。最终 `d19c15bc…` 模块完成 280 条查询、8 项真实钢轨接触和5项新出生点驾驶/复位；源位置门限保持，World 与车辆参数身份保持。完整边界及证据见 docs/changes/2026-11-19-flanders-rails-spawn.md 和 artifacts/maps/wt-rails-spawn-20261119/release-summary.json。
+
+
+## 手动观察、角方向瞄准与地图方向（2026-11-19）
+
+手动相机的 Orbit 角与云台保持的单位世界方向分别存储。C 进入捕获实际 aim_camera 前向，C 持续直接用角方向求解云台；射线命中点随当前枪口更新，仅用于显示。C 释放、Shift 退出做一次镜头重投影并保持角方向，新鼠标输入恢复实时瞄准。scope 每帧按 Orbit 角瞄准；C 中切 Shift 只切换返回模式。R 在处理当前 C 状态前清空旧保持，重新聚焦首帧丢弃陈旧鼠标量和 Shift 边沿。
+
+GetGimbalPlanarForwardRos 统一实际云台的 ROS 水平前向。ApplyManualInput 在 NudgeGimbal 后形成全向速度请求，MapOverview 的 VehicleForwardRos 使用同一结果，大小地图投影沿用原校准。ROS 底盘／云台所有权保持独立；固定弹道抬高点仅通过显式 bControlProbeActive 夹具覆盖进入。
+
+CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云台方向、请求速度和实际地图帧，覆盖近目标平移、底盘转向、C/Shift 组合、失焦及复位。Windows 当前 77 项原生 / 54 PNG 和 12 项离线地图校准绑定 4b362baa… 模块，证据与边界见 docs/changes/2026-11-19-camera-heading.md。

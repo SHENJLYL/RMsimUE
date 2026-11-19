@@ -163,3 +163,7 @@ Thumbs.db
 # Dense rail/source/native journals stay local; publish the compact accepted record.
 /artifacts/maps/wt-rails-spawn-20261119/**
 !/artifacts/maps/wt-rails-spawn-20261119/release-summary.json
+
+# Camera/control rollback snapshots and dense native traces stay local.
+/artifacts/control/camera-heading-20261119/**
+!/artifacts/control/camera-heading-20261119/release-summary.json

@@ -36,7 +36,7 @@ void AImportLabGameMode::TickCombatProbe()
             if(Discriminant<0||Distance<1)return false;
             const double Rise=(V*V-FMath::Sqrt(Discriminant))/G;
             AimWorldTarget=FVector(Training->GetTargetPoint(Target).X,Training->GetTargetPoint(Target).Y,Muzzle.Z+Rise);
-            bAimTargetValid=true;bHoldAimAfterFreeLook=true;
+            bAimTargetValid=true;bProbeAimWorldTargetOverride=true;
             ApplyManualInput(FManualControlInput(),1./60);
         }
         return true;

@@ -16,6 +16,7 @@ struct FMapOverviewFrame
     FString SourceFile;
     FString SourceSha256;
     FVector VehicleRosMetres = FVector::ZeroVector;
+    // Actual gimbal forward projected onto ROS XY; also the manual W drive basis.
     FVector2D VehicleForwardRos = FVector2D(1.0, 0.0);
     FVector2D SpawnRosMetres = FVector2D::ZeroVector;
 };

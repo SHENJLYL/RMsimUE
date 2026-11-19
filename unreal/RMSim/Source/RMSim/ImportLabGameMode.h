@@ -141,8 +141,6 @@ private:
     double TurnDegreesPerSecond = 0.0;
     double OrbitYaw = 0.0;
     double OrbitPitch = -12.0;
-    double SavedOrbitYaw = 0.0;
-    double SavedOrbitPitch = -12.0;
     double ChaseDistanceCm = 500.0;
     double ChasePivotHeightCm = 120.0;
     double ScopeBaseFov = 30.0;
@@ -154,7 +152,11 @@ private:
     bool bFreeLook = false;
     bool bHadInputFocus = false;
     bool bAimTargetValid = false;
-    bool bHoldAimAfterFreeLook = false;
+    // Manual observation holds a world direction, never a hit object's position.
+    bool bHoldManualAimDirection = false;
+    FVector HeldManualAimDirection = FVector::ForwardVector;
+    // Only opt-in ballistic probes may supply a fixed world-space aim point.
+    bool bProbeAimWorldTargetOverride = false;
     FVector AimWorldTarget = FVector::ZeroVector;
     FString InputEvidencePath;
     TMap<FString, int32> InputEventCounts;
@@ -175,6 +177,7 @@ private:
     void ApplyManualInput(const FManualControlInput& Input, double DeltaSeconds);
     void UpdatePlayerView(APlayerController* PC);
     USceneCaptureComponent2D* GetAimCapture() const;
+    FVector2D GetGimbalPlanarForwardRos() const;
     FVector TraceViewPoint(const FVector& Start, const FVector& Direction) const;
     TSharedRef<FJsonObject> ManualControlState() const;
     void WriteInputEvidence(const TSharedPtr<FJsonObject>& Before);

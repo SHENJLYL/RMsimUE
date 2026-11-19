@@ -116,10 +116,10 @@ bool AImportLabGameMode::GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const
     OutFrame.SourceFile = StageMap.SourceFile;
     OutFrame.SourceSha256 = StageMap.SceneSourceHash;
     const FVector Position = Rig->GetActorLocation();
-    const FVector Forward = Rig->GetActorForwardVector();
     // Inverse of RosCoordinates::Position: UE cm = (ROS x, -ROS y, ROS z) * 100.
     OutFrame.VehicleRosMetres = FVector(Position.X, -Position.Y, Position.Z) * 0.01;
-    OutFrame.VehicleForwardRos = FVector2D(Forward.X, -Forward.Y).GetSafeNormal();
+    // Share the actual turret heading used by manual W, independent of C's orbit view.
+    OutFrame.VehicleForwardRos = GetGimbalPlanarForwardRos();
     OutFrame.SpawnRosMetres = FVector2D(SelectedSpawn.GroundMetres.X, SelectedSpawn.GroundMetres.Y);
     return true;
 }
