@@ -13,6 +13,7 @@
 #include "PhysicsEngine/BodyInstance.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
+#include "PhysicsPublic.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -274,6 +275,8 @@ void AVehicleRig::ResetContactPose(const FTransform& Pose)
         Entry.Key->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
         Entry.Key->WakeAllRigidBodies();
     }
+    ObstacleContacts.Reset();ObstacleContactWriteIndex=0;
+    // Keep the sequence monotonic so a reader's pre-reset cursor cannot suppress new contacts.
     ContactObservations.Reset();bFreeRollingDiagnostic=false;DriveAcceleration=FVector2D::ZeroVector;DriveFilteredWorld=FVector2D::ZeroVector;DriveFilteredYaw=0;DriveSpeedAcceleration=0;DriveDirectionRate=0;
     for(auto& W:ContactWheels){W.SteeringTargetRad=0;W.SteeringMeasuredRad=0;W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;}
     SetContactDrive(0,0,true);
@@ -366,6 +369,77 @@ TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
         Wheels.Add(MakeShared<FJsonValueObject>(J));
     }
     State->SetArrayField(TEXT("wheels"),Wheels);return State;
+}
+
+void AVehicleRig::DispatchPhysicsCollisionHit(const FRigidBodyCollisionInfo& MyInfo,
+    const FRigidBodyCollisionInfo& OtherInfo,const FCollisionImpactData& CollisionData)
+{
+    // OnComponentHit omits the solver velocity delta and exposes only its first contact.
+    // Capture the pair before preserving the original delegates/telemetry via Super.
+    UPrimitiveComponent* MyComponent=MyInfo.Component.Get();
+    UPrimitiveComponent* OtherComponent=OtherInfo.Component.Get();
+    if(bContactPhysics && GetWorld() && MyComponent && OtherComponent &&
+       MyComponent->GetOwner()==this && OtherComponent->GetOwner()!=this && OtherInfo.BodyIndex>=0)
+    {
+        const FRigidBodyContactInfo* Contact=nullptr;
+        for(const FRigidBodyContactInfo& Candidate:CollisionData.ContactInfos)
+            if(!Candidate.bContactProbe){Contact=&Candidate;break;}
+        if(Contact)
+        {
+            const auto Finite=[](const FVector& V)
+            {return FMath::IsFinite(V.X)&&FMath::IsFinite(V.Y)&&FMath::IsFinite(V.Z);};
+            const FVector SourceCenter=MyComponent->GetCenterOfMass(MyInfo.BoneName);
+            const FVector PreImpact=MyComponent->GetPhysicsLinearVelocity(MyInfo.BoneName)-MyInfo.DeltaVelocity;
+            const double Now=GetWorld()->GetTimeSeconds();
+            if(Finite(Contact->ContactPosition) && Finite(Contact->ContactNormal) &&
+               Finite(SourceCenter) && Finite(PreImpact) && Finite(CollisionData.TotalNormalImpulse) &&
+               FMath::IsFinite(Now) && Contact->ContactNormal.SizeSquared()>UE_SMALL_NUMBER)
+            {
+                FVector Outward=Contact->ContactNormal.GetSafeNormal();
+                if(FVector::DotProduct(Outward,SourceCenter-Contact->ContactPosition)<0)Outward=-Outward;
+                // The solver's accumulated impulse vector need not be swapped with recipient order.
+                // Its projected magnitude is safe; oriented contact normal supplies obstacle direction.
+                const double Impulse=FMath::Abs(FVector::DotProduct(CollisionData.TotalNormalImpulse,Outward))/100.;
+                if(FMath::IsFinite(Impulse))
+                {
+                    FVehicleObstacleContact Snapshot;
+                    Snapshot.OtherComponent=OtherComponent;Snapshot.InstanceIndex=OtherInfo.BodyIndex;
+                    Snapshot.PointCm=Contact->ContactPosition;Snapshot.IntoObstacleNormal=-Outward;
+                    Snapshot.ImpulseNs=Impulse;Snapshot.PreImpactVelocityCmS=PreImpact;
+                    Snapshot.TimeSeconds=Now;Snapshot.Sequence=++ObstacleContactSequence;
+                    Snapshot.MotionGeneration=MotionGeneration;
+                    if(ObstacleContacts.Num()<ObstacleContactCapacity)
+                    {
+                        ObstacleContacts.Reserve(ObstacleContactCapacity);
+                        ObstacleContacts.Add(MoveTemp(Snapshot));
+                    }
+                    else ObstacleContacts[ObstacleContactWriteIndex]=MoveTemp(Snapshot);
+                    ObstacleContactWriteIndex=(ObstacleContactWriteIndex+1)%ObstacleContactCapacity;
+                }
+            }
+        }
+    }
+    Super::DispatchPhysicsCollisionHit(MyInfo,OtherInfo,CollisionData);
+}
+
+void AVehicleRig::GetObstacleContactsSince(uint64& Cursor,TArray<FVehicleObstacleContact>& Out) const
+{
+    Out.Reset();
+    const uint64 PreviousCursor=Cursor;
+    Cursor=ObstacleContactSequence;
+    if(!bContactPhysics || !GetWorld())return;
+    const double Now=GetWorld()->GetTimeSeconds();
+    if(!FMath::IsFinite(Now))return;
+    const int32 Count=ObstacleContacts.Num();
+    const int32 First=Count==ObstacleContactCapacity?ObstacleContactWriteIndex:0;
+    for(int32 Offset=0;Offset<Count;++Offset)
+    {
+        const FVehicleObstacleContact& Contact=ObstacleContacts[(First+Offset)%Count];
+        const double Age=Now-Contact.TimeSeconds;
+        if(Contact.Sequence<=PreviousCursor || Contact.MotionGeneration!=MotionGeneration ||
+           !Contact.OtherComponent.IsValid() || Contact.InstanceIndex<0 || Age<0 || Age>.15)continue;
+        Out.Add(Contact);
+    }
 }
 
 bool AVehicleRig::GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,

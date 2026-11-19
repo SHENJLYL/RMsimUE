@@ -36,6 +36,22 @@ struct FManualRigState
     FString TerrainBlockReason;
 };
 
+/** A single solver contact with one identified obstacle instance; all vectors are UE world-space. */
+struct FVehicleObstacleContact
+{
+    TWeakObjectPtr<UPrimitiveComponent> OtherComponent;
+    int32 InstanceIndex=INDEX_NONE;
+    FVector PointCm=FVector::ZeroVector;
+    FVector IntoObstacleNormal=FVector::ZeroVector;
+    double ImpulseNs=0;
+    // Linear COM estimate from current velocity minus this collision frame's solver delta.
+    // It is not a command, peak-speed cache, or an exact async pre-solve point velocity.
+    FVector PreImpactVelocityCmS=FVector::ZeroVector;
+    double TimeSeconds=0;
+    uint64 Sequence=0;
+    uint64 MotionGeneration=0;
+};
+
 // Imported visual rig and optional uncalibrated contact vehicle. No simulated IMU/LiDAR yet.
 UCLASS()
 class RMSIM_API AVehicleRig : public AActor
@@ -46,6 +62,8 @@ public:
     AVehicleRig();
     virtual void Tick(float DeltaSeconds) override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    virtual void DispatchPhysicsCollisionHit(const FRigidBodyCollisionInfo& MyInfo,
+        const FRigidBodyCollisionInfo& OtherInfo,const FCollisionImpactData& CollisionData) override;
     bool LoadCanonical(const FString& Filename, FString& Error);
     bool LoadMeshRig(const FString& Filename, FString& Error);
     bool SetJointAngle(const FString& JointName, double AngleRad, FString& Error);
@@ -76,6 +94,8 @@ public:
         const FVector2D Target=bDriveWorldFrame?DriveRequestedLinear:Forward*DriveRequestedLinear.X+Left*DriveRequestedLinear.Y;
         return FVector(Target.X,-Target.Y,0)*100.;
     }
+    // Returns each fresh instance contact once per caller cursor, in sequence order (150 ms lifetime).
+    void GetObstacleContactsSince(uint64& Cursor,TArray<FVehicleObstacleContact>& Out) const;
     // Live Chaos contact from our rigid bodies; caller still checks its own distance and drive intent.
     bool GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const;
     bool SampleChassisImu(const FTransform& Mount,FTransform& SensorWorld,FVector& PointVelocityCm,FVector& AngularVelocityRad) const;
@@ -186,6 +206,11 @@ private:
     bool bContactBrake=true;
     struct FContactObservation { FVector Point,Normal,Impulse; double Time=0; FString Other; TWeakObjectPtr<UPrimitiveComponent> OtherComponent; };
     TMap<FString,FContactObservation> ContactObservations;
+    // Game-thread solver notification ring; existing per-body telemetry remains independent.
+    static constexpr int32 ObstacleContactCapacity=256;
+    TArray<FVehicleObstacleContact> ObstacleContacts;
+    int32 ObstacleContactWriteIndex=0;
+    uint64 ObstacleContactSequence=0;
     UFUNCTION() void ObserveContact(UPrimitiveComponent* Component,AActor* OtherActor,
         UPrimitiveComponent* OtherComponent,FVector NormalImpulse,const FHitResult& Hit);
 
