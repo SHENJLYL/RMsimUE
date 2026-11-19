@@ -28,7 +28,10 @@ def main():
  'BoundaryCorner':{'position':[11,5.5,2.0],'target':[14,8,0.2],'fov':75},
  'BoundaryNorth':{'position':[0,6.0,.65],'target':[7,8.001566,-.18],'fov':70},
  'BoundarySouth':{'position':[0,-6.0,.65],'target':[-7,-8.001566,-.18],'fov':70},
- 'FieldSky':{'position':[-5,-5,1.25],'target':[-5,22,9.5],'fov':78}
+ 'FieldSky':{'position':[-5,-5,1.25],'target':[-5,22,9.5],'fov':78},
+ 'FloorContactSouth':{'position':[-7,-9.25,-.12],'target':[-3,-8.001566,-.27],'fov':60},
+ 'FloorContactNorth':{'position':[7,9.2,-.08],'target':[3,8.001566,-.26],'fov':60},
+ 'FloorContactCorner':{'position':[15.7,9.5,.6],'target':[13.8,7.8,-.23],'fov':65}
  }
  def ros(v):return ','.join(f'{x:.7g}' for x in (v[0],-v[1],v[2]))
  config=root/'assets/maps/rmuc2027/arena-shell.json'
@@ -65,7 +68,9 @@ def main():
     probe['status']=='passed',probe['sweep_samples']==96,probe['sweep_passed']==96,
     probe['all_boundary_parts_outside_source_bounds'] is True,
     probe['physics_contract']=='outside_source_bounds_v1',
-    abs(probe['outside_clearance_m']-.001)<1e-6,
+    abs(probe['outside_clearance_m'])<1e-9,
+    abs(probe['visual_floor_z_m']+.3009999990463257)<1e-9,
+    probe['all_glass_bases_meet_support_floor'] is True,
     probe['native_mesh_assets_loaded']==23,probe['native_mesh_instances']==57,
     probe['gi_method_requested']=='lumen',probe['reflection_method_requested']=='lumen',
     probe['procedural_parquet_enabled'] is False,probe['fixed_wall_branding_enabled'] is False):

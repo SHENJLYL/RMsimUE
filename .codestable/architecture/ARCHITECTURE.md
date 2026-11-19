@@ -206,6 +206,19 @@ GetGimbalPlanarForwardRos 统一实际云台的 ROS 水平前向。ApplyManualIn
 
 CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云台方向、请求速度和实际地图帧，覆盖近目标平移、底盘转向、C/Shift 组合、失焦及复位。Windows 当前 77 项原生 / 54 PNG 和 12 项离线地图校准绑定 4b362baa… 模块，证据与边界见 docs/changes/2026-11-19-camera-heading.md。
 
+## RMUC 源学校体育馆与地图边界（2026-11-20）
+
+`ArenaShell` 将 `rmsim_campus_gym_v1` 分派给 `CampusGym`。当前布局加载独立 `SchoolGymFidelity` 命名空间的 23 个 native mesh / 57 实例，保留原馆看台、窗户和钢构，26 棵场外树与教学楼提供实际视差。新增座椅为 0。源馆两个篮球架移除，其余几何完整保留；馆体中心对齐原篮球运动区，整体竖向移动使源地板承托 RMUC 原底面。场馆及场外装饰使用无碰撞实例网格，原比赛 CAD 和车辆接触几何独立保持。
+
+`CampusGym::Transform` 根据实际保存 mesh bounds、配置中心/尺寸及 ROS→UE 转换生成实例。源还原布局用 native bounds 重建单位缩放位置，随后统一加竖向支撑偏移。当前 `visual_floor_z_m=-0.3009999990463257`；地板、场外物件及灯位总上移 0.13559999942779544 m，树根与草地相对变换保持。源码 probe 读取每块玻璃的实际世界下端，核对与支撑面的关系。
+
+连续边界显式区分历史 `preserve_validated_arena_shell_v1` 与活动 `outside_source_bounds_v1`。当前 `outside_clearance_m=0`、`source_bounds_outer_face`，四面 0.48 m 厚碰撞墙从 RMUC 原外沿向场外展开，Z=-1.25～4.80 m；相对前一 1 mm 配置仅平移内侧边界。每片玻璃、框架和关闭门的厚度向场外放置，四角墙重叠 0.48 m。视觉基座延伸到馆地板，上端保持，物理墙高度保持。固定装饰门无通行/交互状态。当前场外视觉不参与导航和 LiDAR 查询。
+
+体育馆在当前地图世界内配置 12 盏面积灯、曝光、Lumen GI/反射及独立天空材质。照明使用 8K pure-sky 源生成的 cubemap；可见远景使用另一个完整 8K 景观源及独立背景材质。清透玻璃无额外 refraction，原玻璃两面/透明分类按源材质解释。其他地图保留各自路径。`GymCameraPosition/Target/Fov` 与 `GymProbeOutput` 提供真实场内/接触视角和边界检查；截图工具同时记录实际配置、模块、图像 SHA。
+
+源准备使用 `restore_school_source_materials.py`、`prepare_school_gym_fidelity.py`、`prepare_school_tree_fidelity.py`、`assemble_school_fidelity.py`；原生导入复用基础 transport 与 `school_fidelity_materials.py`。`verify_school_fidelity_geometry.py` 从保存资产 LODResources[0] 读取三角位置、UV0、材质和绕序，以 2 ULP 逐面核验；显式零面积/重复面和 UE 固定 UV 代表合并由独立证据闭合。Nanite 完整 fallback 与 cluster 编码范围分列。`activate_school_fidelity.py` 要求完整几何报告通过；外景和地面支撑调整分别有输入/输出 SHA 与回滚快照。
+
+`capture_school_gym.py` 每个视角执行 96 条边界扫掠，并检查 314 个实际墙/装饰构件在源外沿之外、四角闭合及全部玻璃底面接触；`probe_school_gpu_visible.py` 单独观察真实可见窗口和 GPU 日志。原生几何、人工图像复核和持续 GPU 运行按各次实际模块分开记载。当前来源、复现、已验结果见 `docs/changes/2026-11-19-school-gym-fidelity.md` 与 `docs/changes/2026-11-20-school-floor-contact.md`；历史 CC0 校园馆工具及旧边界 fixture 保留原记录。
 
 ## 2026-11-19：WT 任务对象与地图界面
 

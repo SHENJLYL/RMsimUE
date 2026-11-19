@@ -190,6 +190,17 @@
 
 C 环视保持实际云台单位世界方向，Shift scope 持续读取角方向；普通手动路径不得保留有限世界点形成追踪。C/Shift 返回第三人称可做一次投影，后续保持角方向直到新鼠标输入。WASD 和大小地图箭头在当帧云台更新后共用 GetGimbalPlanarForwardRos。固定弹道目标只属于显式控制 probe。当前 77 项原生和 12 项地图校准绑定 camera-heading-20261119/release-summary.json；旧测试只检查驾驶与云台一起同向，不能单独证明环视期间方向稳定。
 
+## 2026-11-20 学校体育馆与实际场地接触
+
+- `rmsim_campus_gym_v1` 是 RMUC2027 地图美术扩展；活动入口 `assets/maps/rmuc2027/arena-shell.json`。当前源馆采用 `SchoolGymFidelity` 流程，`setup_campus_gym.py` 对应历史 CC0 校园馆。
+- 用户要求保留源看台、阶梯、窗户和源材质，额外新增座椅为 0。源馆按原篮球运动区中心对齐；两套篮球架之外的源几何完整保留。旧新增座椅、阶梯模块及按面心删除源面均为历史流程，后续准备不得重新引入。
+- 当前 **23 mesh / 57 实例 / 26 棵树**。source→保存 LOD0/fallback 核验通过，6 面 UV 代表合并有逐 corner 源证明，基础 2 ULP 规则保持；Nanite cluster 编码结构独立列为未审范围。
+- 地板实际接触使用 `visual_floor_z_m=-0.3009999990463257`；源馆及全部外景、灯位统一上移 `0.13559999942779544 m`。馆地板覆盖完整比赛 footprint，原 RMUC 实际底面落在其上。原 CAD、车辆及导航数据保持，源地板与看台不另裁面。后续核验须分别读取真实上下表面和水平边界，避免只凭包围盒或截图判断。
+- 当前合同为 `physics_contract=outside_source_bounds_v1`、`visual_alignment=source_bounds_outer_face`、`outside_clearance_m=0`：玻璃内面直接接原场地外沿，框架向场外展开。相对前一版，四面连续碰撞墙向内移动 1 mm；厚度 0.48 m、碰撞 Z=-1.25～4.80 m、玻璃上端与永久关闭装饰门保持。玻璃和底轨延伸到地板，立柱下埋 1 cm。不得新增开门交互或车辆出场通道。
+- 历史 `preserve_validated_arena_shell_v1` 内缩 0.25 m 以及前一源馆版本的 1 mm 场外净距保留各自 fixture/证据身份。当前 0 m 接触使用现有 1 μm 几何数值容差，禁止更改验收门限掩盖实际侵入。
+- 外景采用完整三维树木/2K 贴图、独立 8K pure-sky 照明与完整 8K 景观背景。2026-11-19 三幅原生外景图已查看、152.88 s 可见 GPU 运行通过；2026-11-20 地面接触版本的三张实际图像复核及 150.02 s 可见运行通过，六类 GPU/溢出警告为 0，WM_NULL 可响应且窗口保持给用户；记录在 `docs/changes/2026-11-20-school-floor-contact.md`。原灰色屋架材质保留，原篮球记分牌三维文字镜像独立记录。
+- SketchupBox 原 SKP、派生几何/源纹理及 UE Content 保持本机，随附来源署名与禁止重新分发边界保持；Poly Haven、ambientCG 和官方商标按各自来源记录。源码、配置、来源/许可与 compact 验证入库。
+- 导航、车辆物理与跨平台验收保留各自模块/运行身份。旧校园馆历史证据在 `artifacts/maps/campus-gym-20261119/release-summary.json`；源保真阶段在 `artifacts/fixes/school-view-fidelity-20261119/`；最新接触阶段在 `artifacts/fixes/school-floor-contact-20261120/`。
 
 ### 2026-11-19：飞艇任务对象与地图原资源
 

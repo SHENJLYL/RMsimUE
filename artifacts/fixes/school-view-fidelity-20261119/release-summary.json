@@ -1,0 +1,156 @@
+{
+  "status": "accepted_for_exterior_visibility_and_field_boundary",
+  "utc": "2026-11-19T16:03:25.852036+00:00",
+  "platform": "Native Windows UE 5.8.4 / D3D12 / SM6",
+  "source_venue": "Indoor Basketball Gym.skp",
+  "native_mesh_assets": 23,
+  "native_mesh_instances": 57,
+  "tree_instances": 26,
+  "removed_added_seats": 864,
+  "removed_added_riser_modules": 72,
+  "source_gym_triangle_removal_except_two_basketball_goals": 0,
+  "source_material_textures_restored": 8,
+  "native_geometry_counts": {
+    "source_triangles": 1959036,
+    "native_lod0_triangles": 1956048,
+    "proven_degenerate_or_duplicate_removed": 2988,
+    "explicit_engine_uv_weld_triangles": 6,
+    "unknown_missing": 0,
+    "unexpected_native": 0
+  },
+  "perimeter": {
+    "contract": "outside_source_bounds_v1",
+    "alignment": "source_bounds_outer_face",
+    "outside_clearance_m": 0.001,
+    "samples": 96,
+    "passed": 96
+  },
+  "lighting": {
+    "mode": "downloaded_gym_lumen",
+    "rect_light_lumens": 45000,
+    "shadowed_rect_lights": 0,
+    "sun_intensity": 6000,
+    "sky_intensity": 64.0,
+    "motion_blur": false,
+    "exposure_ev100": 8.8,
+    "ambient_cubemap_intensity": 0.0,
+    "background_brightness": 512.0,
+    "gi_method": "lumen",
+    "reflection_method": "lumen",
+    "sun_rotation_ue_deg": [
+      -47.885557,
+      124.258123,
+      0.0
+    ]
+  },
+  "identity": {
+    "arena": {
+      "file": "assets/maps/rmuc2027/arena-shell.json",
+      "bytes": 2211,
+      "sha256": "dbbdb75241c3b584819e98f450bc6b4d28341e8c72f21b62076bd0bf6e13041d"
+    },
+    "layout": {
+      "file": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json",
+      "bytes": 29901,
+      "sha256": "8c70305d0631ffce6081b9bebdde38b94c63604790d7135e91f9fc25eedbe70e"
+    },
+    "module": {
+      "file": "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll",
+      "bytes": 2776064,
+      "sha256": "96a1e532691590506254af97916dd42f048b9ef26d23b3667403b35b9baef102"
+    },
+    "renderer_profile": {
+      "file": "unreal/RMSim/Config/Custom/RMSimGymLumen/DefaultEngine.ini",
+      "bytes": 1189,
+      "sha256": "5da4cea6f0d96a1b747cfed75ff8d353f40eef911faef26466cd3edcfb11c5f0"
+    },
+    "source_skp_sha256": "a40bbf0c69bace3b5ee1aed3795217e69c88c4c58ce71b191aff3e033e3502bc",
+    "protected_file_hashes": {
+      "assets\\maps\\rmuc2027\\map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+      "assets\\vehicles\\aim_sentry\\ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "assets\\vehicles\\aim_sentry\\drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+    }
+  },
+  "evidence": {
+    "native_geometry": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/native-geometry-final/report.json",
+      "bytes": 27979,
+      "sha256": "aaa0840e10b8b6073a03dc57074bbc02ad85f02a76aeff20167d1a7a80a15f19"
+    },
+    "activation": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/activation-01/report.json",
+      "bytes": 1264,
+      "sha256": "6a2d07ac6f5331a64ef31f496fbd4f2101718615a65dd73dbc97c3b9dbd9595a"
+    },
+    "source_court_alignment": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/geometry-audit-01/report.json",
+      "bytes": 18635,
+      "sha256": "d0e0a639eeb837fc68fd58a1095bd9d862b38a4f9d58604696268880ede78062"
+    },
+    "exterior_placement": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/exterior-tune-01/report.json",
+      "bytes": 42029,
+      "sha256": "172fdc3c3077e0201603945af321fed34f1e747bfd56e7c669953c4e393a7ec2"
+    },
+    "landscape_import": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/landscape-native-01/report.json",
+      "bytes": 1253,
+      "sha256": "428bb5c7d8f0df0f96005a1416d1899aae6f3955fad9426a194f912ecc7b6fc2"
+    },
+    "landscape_activation": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/landscape-activation-01/report.json",
+      "bytes": 634,
+      "sha256": "21bbd75810ffc140321efb8cf6181200a86820b76f5e205a3588fb6bd4548609"
+    },
+    "visual": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/visual-review-01/verification.json",
+      "bytes": 3681,
+      "sha256": "270f14235ee51e245e6096b71dbc8b5aae270a7fb3d9586ed2865e92887616f8"
+    },
+    "runtime_views": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/final-views-02/report.json",
+      "bytes": 3332,
+      "sha256": "808ba47e0843c962b47b10b8380b1d5190962df58ad0f0ad25608b3175ec013d"
+    },
+    "visible_gpu": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/visible-gpu-01/report.json",
+      "bytes": 4338,
+      "sha256": "94129377d4cdc6e7895a59395b8c78692d4aef17677b069ea448c555a62a0a31"
+    }
+  },
+  "gpu": {
+    "status": "passed",
+    "process_seconds": 152.88,
+    "exit_code": 0,
+    "visible_window_seen": true,
+    "warnings": {
+      "GPU timeout": 0,
+      "TerminateOnGPUCrash": 0,
+      "GPU Crashed": 0,
+      "Writing Aftermath dump": 0,
+      "Non-Nanite Marking Job Queue overflow": 0,
+      "Virtual Shadow Map Page Pool overflow": 0
+    },
+    "checks": {
+      "r.Shadow.Virtual.Enable:0": true,
+      "gi_requested=lumen": true,
+      "reflection_requested=lumen": true,
+      "RMSIM_CAMPUS_GYM_READY": true,
+      "IMPORT_LAB_READY": true,
+      "PCD3D_SM6": true
+    }
+  },
+  "source_records": {
+    "lighting_sky": {
+      "file": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-fidelity/SOURCE.json",
+      "bytes": 689,
+      "sha256": "eda52541c8a4e38e481873cda830a81bb75e115a9f0ad49d589eff4f1d43f030"
+    },
+    "visible_landscape": {
+      "file": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-full-fidelity/SOURCE.json",
+      "bytes": 848,
+      "sha256": "c0baf849fdec0e6358a9be21ebd2ed73c7667f985f3d4fd25edc211be82ee465"
+    }
+  },
+  "coverage": "Windows presentation and field-boundary acceptance. Protected navigation, map, vehicle rig and drive-profile bytes were preserved; no new navigation/Ubuntu acceptance is claimed."
+}

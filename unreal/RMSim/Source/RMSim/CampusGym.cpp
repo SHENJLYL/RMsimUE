@@ -367,6 +367,12 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
        (!OutsidePerimeter&&Inset<=Thickness*.5)||
        (*Perimeter)->GetStringField(TEXT("doors"))!=TEXT("fixed_closed_decorative"))
         return Fail(TEXT("invalid permanently closed glass perimeter"));
+    double VisualFloorZ=-.21;
+    if((*Perimeter)->HasField(TEXT("visual_floor_z_m"))&&
+       (!(*Perimeter)->TryGetNumberField(TEXT("visual_floor_z_m"),VisualFloorZ)||
+        !FMath::IsFinite(VisualFloorZ)||VisualFloorZ < -1.||VisualFloorZ > 0.))
+        return Fail(TEXT("invalid glass supporting floor elevation"));
+    const double FenceBaseShift=VisualFloorZ+.21;
     // Each explicit contract retains its own physical/LiDAR envelope. Existing
     // campus packages stay usable while the outside-boundary update is staged.
     const double GuardX=OutsidePerimeter?HX+Clearance+Thickness*.5:HX-Inset;
@@ -403,6 +409,13 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         {return AlongX?FVector(CX+Along,CY+Fixed,Z):FVector(CX+Fixed,CY+Along,Z);};
     auto Part=[&](FGroup& G,bool AlongX,double Fixed,double Along,double Z,double W,double D,double H,double Outset=0.)
         {
+            // Extend floor-connected glass, posts and base rails down to the
+            // supporting gym floor while keeping their existing upper ends.
+            if(Z-H*.5 < -.09)
+            {
+                const double UpperZ=Z+H*.5,LowerZ=Z-H*.5+FenceBaseShift;
+                Z=(UpperZ+LowerZ)*.5;H=UpperZ-LowerZ;
+            }
             const double Outside=OutsidePerimeter?Fixed+FMath::Sign(Fixed)*(D*.5+Outset):Fixed;
             G.Add(FencePoint(AlongX,Outside,Along,Z),AlongX?FVector(W,D,H):FVector(D,W,H));
         };
@@ -627,7 +640,15 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
             const double DY=FMath::Min(A.P.Y+A.S.Y*.5,B.P.Y+B.S.Y*.5)-FMath::Max(A.P.Y-A.S.Y*.5,B.P.Y-B.S.Y*.5);
             CornersOverlap&=DX>0&&DY>0;MinimumCornerOverlap=FMath::Min(MinimumCornerOverlap,FMath::Min(DX,DY));
         }
-        const bool PerimeterMatchesContract=!OutsidePerimeter||BoundaryOutside;
+        double GlassBaseMin=1.e30,GlassBaseMax=-1.e30;
+        for(int32 I=0;I<Glass.Component->GetInstanceCount();++I)
+        {
+            FTransform T;Glass.Component->GetInstanceTransform(I,T,true);
+            const double Base=Glass.Mesh->GetBoundingBox().TransformBy(T).Min.Z*.01;
+            GlassBaseMin=FMath::Min(GlassBaseMin,Base);GlassBaseMax=FMath::Max(GlassBaseMax,Base);
+        }
+        const bool GlassMeetsFloor=FMath::Abs(GlassBaseMin-VisualFloorZ)<=1.e-6&&FMath::Abs(GlassBaseMax-VisualFloorZ)<=1.e-6;
+        const bool PerimeterMatchesContract=(!OutsidePerimeter||BoundaryOutside)&&GlassMeetsFloor;
         const bool LightRigMatches=VenueEnabled?LightCount==12:LightCount==0;
         auto Report=MakeShared<FJsonObject>();
         Report->SetStringField(TEXT("status"),Passed==Tested&&Tested==96&&CosmeticNoCollision&&GateLeaves==4&&PerimeterMatchesContract&&CornersOverlap&&LightRigMatches&&Materials[TEXT("glass")]->GetBlendMode()==BLEND_Translucent?TEXT("passed"):TEXT("failed"));
@@ -648,6 +669,10 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         Report->SetNumberField(TEXT("collision_thickness_m"),Thickness);
         Report->SetNumberField(TEXT("collision_top_m"),CollisionTop);
         Report->SetNumberField(TEXT("glass_top_m"),Top);
+        Report->SetNumberField(TEXT("visual_floor_z_m"),VisualFloorZ);
+        Report->SetNumberField(TEXT("glass_base_min_m"),GlassBaseMin);
+        Report->SetNumberField(TEXT("glass_base_max_m"),GlassBaseMax);
+        Report->SetBoolField(TEXT("all_glass_bases_meet_support_floor"),GlassMeetsFloor);
         Report->SetNumberField(TEXT("continuous_collision_walls"),4);Report->SetNumberField(TEXT("glass_panels"),PanelCount);
         Report->SetNumberField(TEXT("fixed_gate_leaves"),GateLeaves);Report->SetBoolField(TEXT("gate_interaction_enabled"),false);
         Report->SetBoolField(TEXT("cosmetic_no_collision"),CosmeticNoCollision);

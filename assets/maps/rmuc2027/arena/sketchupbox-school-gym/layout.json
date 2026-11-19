@@ -1,0 +1,1407 @@
+{
+  "schema": "rmsim_campus_gym_layout_v1",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "units": "m",
+  "native_meshes": {
+    "RMSchool_0_0": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_0_0.RMSchool_0_0",
+    "RMSchool_0_1": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_0_1.RMSchool_0_1",
+    "RMSchool_0_3": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_0_3.RMSchool_0_3",
+    "RMSchool_1_0": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_1_0.RMSchool_1_0",
+    "RMSchool_1_1": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_1_1.RMSchool_1_1",
+    "RMSchool_1_2": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_1_2.RMSchool_1_2",
+    "RMSchool_1_3": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_1_3.RMSchool_1_3",
+    "RMSchool_2_0": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_2_0.RMSchool_2_0",
+    "RMSchool_2_1": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_2_1.RMSchool_2_1",
+    "RMSchool_2_2": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_2_2.RMSchool_2_2",
+    "RMSchool_2_3": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_2_3.RMSchool_2_3",
+    "RMSchool_3_0": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_3_0.RMSchool_3_0",
+    "RMSchool_3_1": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_3_1.RMSchool_3_1",
+    "RMSchool_3_2": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_3_2.RMSchool_3_2",
+    "RMSchool_3_3": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_3_3.RMSchool_3_3",
+    "RMSchool_4_0": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_4_0.RMSchool_4_0",
+    "RMSchool_4_1": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_4_1.RMSchool_4_1",
+    "RMSchool_4_2": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_4_2.RMSchool_4_2",
+    "RMSchool_4_3": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMSchool_4_3.RMSchool_4_3",
+    "RMExteriorGround": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorGround.RMExteriorGround",
+    "RMExteriorBuildings": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorBuildings.RMExteriorBuildings",
+    "RMExteriorFurnishings": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorFurnishings.RMExteriorFurnishings",
+    "RMExteriorTree": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorTree.RMExteriorTree"
+  },
+  "groups": [
+    {
+      "id": "RMSchool_0_0",
+      "mesh": "RMSchool_0_0",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.7774755859375,
+            7.1896606445312505,
+            -0.5663718175888062
+          ],
+          "size": [
+            53.950400390625,
+            38.0691064453125,
+            0.7924800109863281
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_0_1",
+      "mesh": "RMSchool_0_1",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            11.354822998046876,
+            5.5122009277343755,
+            -0.5572009038925171
+          ],
+          "size": [
+            32.947468261718754,
+            14.29948486328125,
+            0.7156017303466797
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_0_3",
+      "mesh": "RMSchool_0_3",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            3.662109375e-06,
+            -3.662109375e-06,
+            -0.3009999990463257
+          ],
+          "size": [
+            32.837001953125004,
+            22.47057861328125,
+            0.0
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_1_0",
+      "mesh": "RMSchool_1_0",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -13.748056640625,
+            7.186526489257813,
+            2.5397381830215453
+          ],
+          "size": [
+            28.0739599609375,
+            34.479824218750004,
+            12.815068359375001
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_1_1",
+      "mesh": "RMSchool_1_1",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            14.021103515625,
+            7.23944580078125,
+            2.500954155921936
+          ],
+          "size": [
+            27.464365234375002,
+            34.7381982421875,
+            6.923033447265625
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_1_2",
+      "mesh": "RMSchool_1_2",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -12.982298583984376,
+            -4.377276916503907,
+            2.5120004510879514
+          ],
+          "size": [
+            26.54244873046875,
+            14.935234375,
+            6.941432495117188
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_1_3",
+      "mesh": "RMSchool_1_3",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            13.6295068359375,
+            -4.377276306152344,
+            1.151964135169983
+          ],
+          "size": [
+            25.498354492187502,
+            14.93523193359375,
+            9.629451904296875
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_2_0",
+      "mesh": "RMSchool_2_0",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.017215576171875,
+            5.2373291015625005,
+            4.945131859779358
+          ],
+          "size": [
+            49.38029296875,
+            35.337412109375,
+            10.750372314453125
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_2_1",
+      "mesh": "RMSchool_2_1",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            12.32245640873909,
+            6.51692138671875,
+            4.575800366401673
+          ],
+          "size": [
+            24.71681081533432,
+            32.77078125,
+            9.753600730895997
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_2_2",
+      "mesh": "RMSchool_2_2",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -11.130041122436523,
+            -4.377276916503907,
+            4.575800366401673
+          ],
+          "size": [
+            27.149268341064452,
+            14.935233764648437,
+            9.753600730895997
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_2_3",
+      "mesh": "RMSchool_2_3",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            12.160355129241944,
+            -4.377276306152344,
+            4.575800366401673
+          ],
+          "size": [
+            25.025144233703614,
+            14.935232543945313,
+            9.753600730895997
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_3_0",
+      "mesh": "RMSchool_3_0",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -2.4659741210937502,
+            6.460099487304688,
+            9.17290102481842
+          ],
+          "size": [
+            53.0997998046875,
+            36.60998168945313,
+            7.87460205078125
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_3_1",
+      "mesh": "RMSchool_3_1",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            14.656873989105225,
+            5.553287353515625,
+            9.17290102481842
+          ],
+          "size": [
+            28.65450397491455,
+            34.79634033203125,
+            7.87460205078125
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_3_2",
+      "mesh": "RMSchool_3_2",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.01195556640625,
+            -3.18266357421875,
+            10.764669823646544
+          ],
+          "size": [
+            48.1917626953125,
+            17.4227490234375,
+            3.57345947265625
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_3_3",
+      "mesh": "RMSchool_3_3",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            10.030099639892578,
+            -3.182661437988281,
+            8.96810122013092
+          ],
+          "size": [
+            28.091949157714843,
+            17.422748413085937,
+            7.06500244140625
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_4_0",
+      "mesh": "RMSchool_4_0",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -9.792506103515626,
+            10.589659500122071,
+            5.798558449745179
+          ],
+          "size": [
+            29.31635009765625,
+            24.11730697631836,
+            12.173716888427734
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_4_1",
+      "mesh": "RMSchool_4_1",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            12.20866839647293,
+            10.589663009643555,
+            5.798558449745179
+          ],
+          "size": [
+            24.43638879299164,
+            24.117299957275392,
+            12.173716888427734
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_4_2",
+      "mesh": "RMSchool_4_2",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -12.406025638580322,
+            -5.545370388031006,
+            5.798558449745179
+          ],
+          "size": [
+            24.089301261901856,
+            12.091048774719239,
+            12.173716888427734
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMSchool_4_3",
+      "mesh": "RMSchool_4_3",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            12.374274883270264,
+            -5.5453692817687985,
+            5.798558449745179
+          ],
+          "size": [
+            24.08930179595947,
+            12.091048545837403,
+            12.173716888427734
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMExteriorGround",
+      "mesh": "RMExteriorGround",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -40.0158752,
+            42.1650915,
+            -0.46440000057220454
+          ],
+          "size": [
+            80.0,
+            70.0,
+            0.32
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -40.0158752,
+            -27.8349085,
+            -0.46440000057220454
+          ],
+          "size": [
+            80.0,
+            70.0,
+            0.32
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            39.9841248,
+            42.1650915,
+            -0.46440000057220454
+          ],
+          "size": [
+            80.0,
+            70.0,
+            0.32
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            39.9841248,
+            -27.8349085,
+            -0.46440000057220454
+          ],
+          "size": [
+            80.0,
+            70.0,
+            0.32
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMExteriorBuildings",
+      "mesh": "RMExteriorBuildings",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -19.0158752,
+            67.1650915,
+            5.665600008327796
+          ],
+          "size": [
+            32.0,
+            17.245,
+            12.3
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -19.0158752,
+            -52.8349085,
+            5.665600008327796
+          ],
+          "size": [
+            32.0,
+            17.245,
+            12.3
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            18.9841248,
+            67.1650915,
+            5.665600008327796
+          ],
+          "size": [
+            32.0,
+            17.245,
+            12.3
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            18.9841248,
+            -52.8349085,
+            5.665600008327796
+          ],
+          "size": [
+            32.0,
+            17.245,
+            12.3
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMExteriorFurnishings",
+      "mesh": "RMExteriorFurnishings",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -19.0158752,
+            36.1650915,
+            1.8606000083277956
+          ],
+          "size": [
+            8.3,
+            5.72,
+            4.69
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -19.0158752,
+            -21.8349085,
+            1.8606000083277956
+          ],
+          "size": [
+            8.3,
+            5.72,
+            4.69
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            18.9841248,
+            36.1650915,
+            1.8606000083277956
+          ],
+          "size": [
+            8.3,
+            5.72,
+            4.69
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            18.9841248,
+            -21.8349085,
+            1.8606000083277956
+          ],
+          "size": [
+            8.3,
+            5.72,
+            4.69
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMExteriorTree",
+      "mesh": "RMExteriorTree",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -22.0158752,
+            35.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -22.0158752,
+            -20.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -14.0158752,
+            35.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -14.0158752,
+            -20.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -0.0158752,
+            35.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -0.0158752,
+            -20.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            11.9841248,
+            35.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            11.9841248,
+            -20.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            21.9841248,
+            35.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            21.9841248,
+            -20.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -36.624234542846686,
+            23.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -36.624234542846686,
+            14.165091499999999,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -36.624234542846686,
+            -3.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -36.624234542846686,
+            -8.834908500000001,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            36.592486495971684,
+            23.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            36.592486495971684,
+            14.165091499999999,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            36.592486495971684,
+            -3.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            36.592486495971684,
+            -8.834908500000001,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -34.0158752,
+            40.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -34.0158752,
+            -25.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            33.9841248,
+            40.1650915,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            33.9841248,
+            -25.8349085,
+            5.391994652748108
+          ],
+          "size": [
+            14.516721038818359,
+            14.043905639648436,
+            11.752789306640626
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -65.0,
+            24.0,
+            4.412595543861389
+          ],
+          "size": [
+            12.097267532348631,
+            11.703254699707031,
+            9.793991088867188
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -65.0,
+            8.0,
+            4.412595543861389
+          ],
+          "size": [
+            12.097267532348631,
+            11.703254699707031,
+            9.793991088867188
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -65.0,
+            -8.0,
+            4.412595543861389
+          ],
+          "size": [
+            12.097267532348631,
+            11.703254699707031,
+            9.793991088867188
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "center": [
+            -65.0,
+            -24.0,
+            4.412595543861389
+          ],
+          "size": [
+            12.097267532348631,
+            11.703254699707031,
+            9.793991088867188
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "center": [
+        -19.0158752,
+        19.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        -6.5158752,
+        19.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        6.4841248,
+        19.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        18.9841248,
+        19.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        -19.0158752,
+        7.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        -6.5158752,
+        7.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        6.4841248,
+        7.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        18.9841248,
+        7.1650915,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        -19.0158752,
+        -4.8349085,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        -6.5158752,
+        -4.8349085,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        6.4841248,
+        -4.8349085,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    },
+    {
+      "center": [
+        18.9841248,
+        -4.8349085,
+        10.335599999427794
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 2.5,
+      "height_m": 0.55,
+      "cast_shadows": false
+    }
+  ],
+  "source": {
+    "title": "Indoor Basketball Gym",
+    "source_url": "https://www.sketchupbox.com/202509210650315/",
+    "source_file_sha256": "a40bbf0c69bace3b5ee1aed3795217e69c88c4c58ce71b191aff3e033e3502bc"
+  },
+  "prepared_sha256": "a6d29420c1b8e16bc036c17a700bc441ac1f679688e1f7061f571420dc6a0d12",
+  "source_geometry_policy": "Original school building, original benches, stairs and glazing retained. Two basketball goals omitted. Source sports-area center aligned to the unchanged RMUC court; no centroid triangle removal and no added spectator seating.",
+  "campus_geometry_policy": "Full source tree geometry and 2K source textures. Exterior shifted with the school building; tree roots/buildings/furniture placed on actual grass surface. Visual-only groups.",
+  "field_clearance_note": "Source hall is clear of the original RMUC field prism. Glass inner face remains exactly 1mm outside the unchanged CAD floor envelope; frame depth remains outward.",
+  "native_layout_policy": "School group centers/sizes come from final native bounds so each imported native geometry retains identity scale/position.",
+  "exterior_offset_ros_m": [
+    -0.0158752,
+    7.1650915,
+    0.0
+  ],
+  "source_verification": "artifacts\\fixes\\school-view-fidelity-20261119\\native-geometry-final\\report.json",
+  "sky_source": "arena/sketchupbox-school-gym/environment-fidelity/SOURCE.json",
+  "metadata": {
+    "floor_support": {
+      "schema": "uniform_source_floor_support_v1",
+      "applied_at_utc": "2026-11-19T16:17:36.499389+00:00",
+      "vertical_delta_m": 0.13559999942779544,
+      "source_floor_top_before_m": -0.4365999984741211,
+      "source_floor_top_after_m": -0.3009999990463257,
+      "measured_rmuc_physical_bottom_m": -0.3009999990463257,
+      "measured_rmuc_evidence": "D:\\simulator\\artifacts\\fixes\\school-view-fidelity-20261119\\field-floor-contact-01\\rmuc-floor.json",
+      "source_floor_audit": "D:\\simulator\\artifacts\\fixes\\school-floor-contact-20261120\\source-floor-audit-01\\report.json",
+      "source_floor_audit_sha256": "6bd5d414c1dad13041398e0ad76d8a5ed610c4c3ec5f307301c5979dfdd36819",
+      "layout_before_sha256": "8c70305d0631ffce6081b9bebdde38b94c63604790d7135e91f9fc25eedbe70e",
+      "source_instances_translated": 57,
+      "rect_lights_translated": 12,
+      "translation_axis": "ROS/UE positive Z only",
+      "invariants": [
+        "RMUC geometry and physics fixed",
+        "all XY, sizes and rotations byte-preserved",
+        "source geometry and native assets unchanged",
+        "relative source gym/exterior/light positions unchanged"
+      ]
+    }
+  }
+}
