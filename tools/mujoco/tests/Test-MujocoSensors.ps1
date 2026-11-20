@@ -2,6 +2,7 @@ param(
  [Parameter(Mandatory=$true)][string]$EngineRoot,
  [Parameter(Mandatory=$true)][string]$EvidenceDirectory,
  [string]$ModelManifest='',
+ [string]$LidarProfile='',
  [int]$Port=19671,
  [switch]$SkipRos,
  [int]$ProbeTimeoutSeconds=360
@@ -45,7 +46,7 @@ try {
  if($model.diagnostic_plane_only -or $model.map_identity.map_id -ne 'rmuc2027'){throw 'This gate requires the complete original RMUC model.'}
  $map=Join-Path $root 'assets/maps/rmuc2027/map.json'
  $arena=Join-Path $root 'assets/maps/rmuc2027/arena-shell.json'
- $lidar=Join-Path $root 'assets/vehicles/aim_sentry/sensors/mid360.json'
+ $lidar=if($LidarProfile){(Resolve-Path -LiteralPath $LidarProfile).Path}else{Join-Path $root 'assets/vehicles/aim_sentry/sensors/mid360.json'}
  $imu=Join-Path $root 'assets/vehicles/aim_sentry/sensors/mid360-imu.json'
  $rig=Join-Path $root 'assets/vehicles/aim_sentry/ue_mesh_rig.json'
  $inputs=[ordered]@{
@@ -80,6 +81,9 @@ try {
  Run-OwnedProbe $python @((Join-Path $PSScriptRoot 'probe_mujoco_sensors.py'),'--port',$Port.ToString(),'--output',(Join-Path $out 'tcp')) 'tcp-probe'
  $tcp=Get-Content -LiteralPath (Join-Path $out 'tcp/verification.json') -Raw -Encoding UTF8 | ConvertFrom-Json
  if($tcp.status -ne 'passed'){throw 'TCP sensor report is incomplete.'}
+ if($tcp.final_state.lidar.profile_md5 -ne (Get-FileHash -LiteralPath $lidar -Algorithm MD5).Hash.ToLowerInvariant()){throw 'Observed LiDAR profile does not match the requested input.'}
+ if($tcp.final_state.imu.profile_md5 -ne (Get-FileHash -LiteralPath $imu -Algorithm MD5).Hash.ToLowerInvariant()){throw 'Observed IMU profile does not match the requested input.'}
+ $report.sensor_profile_binding='passed'
  $report.tcp_checks=@($tcp.checks).Count;$report.observed_simulation_rate=$tcp.observed_simulation_rate
  if(-not $SkipRos){
   $rosArguments=@('-NoProfile','-File',(Join-Path $root 'tools/environment/run-env.ps1'),'powershell.exe','-NoProfile','-File',(Join-Path $PSScriptRoot 'Run-MujocoRosSensorProbe.ps1'),'-Port',$Port.ToString(),'-OutputDirectory',(Join-Path $out 'ros'))
@@ -89,10 +93,10 @@ try {
   $report.ros_checks=@($ros.checks).Count
  }
  $runtime=Get-Content -LiteralPath (Join-Path $out 'runtime.log') -Raw -Encoding UTF8
- $query=[regex]::Match($runtime,'LIDAR_QUERY_VERIFICATION result=passed rays=(\d+) scene_queries=(\d+) max_impact_error_cm=([0-9.]+)')
+ $query=[regex]::Match($runtime,'LIDAR_QUERY_VERIFICATION result=passed rays=(\d+) scene_queries=(\d+) max_impact_error_cm=([0-9.]+) material_equivalence=passed')
  if(-not $query.Success -or [int64]$query.Groups[1].Value -le 0 -or [double]$query.Groups[3].Value -gt .0001){throw 'Independent serial/parallel native LiDAR query verification missing or failed.'}
  if($runtime -match 'LIDAR_QUERY_VERIFICATION result=failed|Fatal error:|Assertion failed:|GPU Crashed|DXGI_ERROR_DEVICE_REMOVED'){throw 'Native runtime failure found in log.'}
- $report.lidar_query_verification=@{rays=[int64]$query.Groups[1].Value;queries=[int64]$query.Groups[2].Value;max_error_cm=[double]$query.Groups[3].Value}
+ $report.lidar_query_verification=@{rays=[int64]$query.Groups[1].Value;queries=[int64]$query.Groups[2].Value;max_error_cm=[double]$query.Groups[3].Value;material_equivalence='passed'}
  foreach($name in $inputs.Keys){
   if((Get-FileHash -LiteralPath $inputs[$name] -Algorithm SHA256).Hash.ToLowerInvariant() -ne $bindings[$name].sha256){throw ('Input changed during gate: '+$name)}
  }
