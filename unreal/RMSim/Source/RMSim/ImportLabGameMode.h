@@ -216,6 +216,7 @@ private:
     void TickControlProbe();
     void TickTerrainProbe();
     void TickCombatProbe();
+    void TickMujocoProbe(double DeltaSeconds);
     void TickContactProbe(double DeltaSeconds);
     void TickRailContactProbe(double DeltaSeconds);
     void TickCampusGymBoundaryProbe(double DeltaSeconds);

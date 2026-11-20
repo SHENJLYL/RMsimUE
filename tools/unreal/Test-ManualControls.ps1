@@ -26,7 +26,10 @@ param(
     [switch]$WithTraining,
     [double]$TraversalDistanceCm = 0,
     [switch]$MapOverview,
-    [int]$TimeoutSeconds = 180
+    [int]$TimeoutSeconds = 180,
+    [ValidateSet('chaos','mujoco')][string]$PhysicsBackend='chaos',
+    [string]$MujocoModel='',
+    [switch]$AllowDiagnosticPlane
 )
 . (Join-Path $PSScriptRoot 'Common.ps1')
 . (Join-Path $PSScriptRoot 'SceneMap.ps1')
@@ -53,6 +56,14 @@ try {
         ('-EvidenceDir=' + (Quote-UnrealArgument $evidence)),
         ('-abslog=' + (Quote-UnrealArgument (Join-Path $evidence 'runtime.log'))))
     $arguments += @($mapLaunch.RuntimeArguments)
+    if($PhysicsBackend -eq 'mujoco'){
+        if(-not $MujocoModel){throw 'MuJoCo controls probe requires a prepared manifest.'}
+        $modelPath=(Resolve-Path -LiteralPath $MujocoModel).Path
+        $manifest=Get-Content -LiteralPath $modelPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if($manifest.diagnostic_plane_only -and -not $AllowDiagnosticPlane){throw 'Diagnostic plane requires explicit AllowDiagnosticPlane.'}
+        $arguments+=@('-PhysicsBackend=mujoco',('-MujocoModel='+(Quote-UnrealArgument $modelPath)),'-SimStepSeconds=0.005')
+        if($AllowDiagnosticPlane){$arguments+='-MujocoAllowDiagnosticPlane'}
+    }
     if ($MapOverview) { $arguments += '-MapOverview' }
     if ($GraphicsRhi -eq 'D3D11') { $arguments += '-d3d11' }
     elseif ($GraphicsRhi -eq 'D3D12') { $arguments += '-d3d12' }

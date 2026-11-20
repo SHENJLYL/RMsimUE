@@ -37,6 +37,7 @@ void AImportLabGameMode::RecoverContactVehicleIfOutsideMap()
 
 void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
 {
+    if(FParse::Param(FCommandLine::Get(),TEXT("MujocoProbe"))){TickMujocoProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("ZeppelinContactProbe"))){TickZeppelinContactProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("CampusGymBoundaryProbe"))){TickCampusGymBoundaryProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("RailContactProbe"))){TickRailContactProbe(DeltaSeconds);return;}

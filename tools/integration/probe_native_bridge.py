@@ -81,6 +81,7 @@ class Peer:
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--port',type=int,default=19451);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--observe-only',action='store_true');parser.add_argument('--stall-probe',action='store_true')
+    parser.add_argument('--physics-backend',choices=('chaos','mujoco'),default='chaos')
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     report=dict(scope='actual native UE TCP/physics/rendering; ROS topic proof is separate',status='running',checks=[])
     peer=Peer(args.port)
@@ -103,7 +104,7 @@ def main():
             report.update(status='passed');return
         peer.pump(2,None if args.observe_only else (0,0,0));peer.until(lambda:len(peer.images)>3,5)
         image_state,pixels=peer.images[-1];camera=image_state['camera']
-        record('native_clock_and_image',image_state['clock_source']=='synchronous_Chaos_solver' and max(pixels)-min(pixels)>80,
+        record('native_clock_and_image',image_state['clock_source']==('synchronous_MuJoCo_solver' if args.physics_backend=='mujoco' else 'synchronous_Chaos_solver') and max(pixels)-min(pixels)>80,
                frames=len(peer.images),width=camera['width'],height=camera['height'],clock_ns=image_state['sim_time_ns'])
         (args.output/'camera.rgb').write_bytes(pixels);(args.output/'camera-state.json').write_text(json.dumps(image_state,indent=2),encoding='utf-8')
         from PIL import Image
@@ -137,7 +138,7 @@ def main():
         for reason,change in [('timestamp',{'stamp_ns':max(0,peer.state['sim_time_ns']-1_000_000_000)}),
                               ('timestamp',{'stamp_ns':peer.state['sim_time_ns']+1_000_000_000}),
                               ('frame',{'frame_id':'map'}),('session_epoch',{'session':'old-run'}),
-                              ('sequence',{'seq':peer.state['command']['accepted_seq']}),('limits',{'vx':4})]:
+                              ('sequence',{'seq':peer.state['command']['accepted_seq']}),('limits',{'vx':100})]:
             peer.seq+=1
             payload=json.loads(command_packet(peer.state,peer.seq,peer.state['sim_time_ns'],'aim_sentry/base_link',[0,0,0,0,0,0],'aim_sentry'))
             payload.update(change);old=peer.state['command']['rejected_count'];peer.socket.sendall(json.dumps(payload).encode()+b'\n')

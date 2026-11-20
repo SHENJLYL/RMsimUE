@@ -1,0 +1,144 @@
+#include "ImportLabGameMode.h"
+#include "VehicleRig.h"
+#include "Components/StaticMeshComponent.h"
+#include "Dom/JsonObject.h"
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
+#include "HAL/PlatformMisc.h"
+#include "Misc/Parse.h"
+#include "Misc/CommandLine.h"
+
+void AImportLabGameMode::TickMujocoProbe(double DeltaSeconds)
+{
+    if(!Rig||!Rig->IsMujocoPhysics()){Abort(TEXT("MuJoCo probe requires the native MuJoCo backend"));return;}
+    UpdatePlayerView(GetWorld()->GetFirstPlayerController());
+    if(!ControlPendingCapture.IsEmpty())
+    {
+        Rig->SetContactDrive(0,0,true);
+        if(++ControlCaptureWarmFrames<12)return;
+        if(!CaptureControlView(ControlPendingCapture)){Abort(TEXT("MuJoCo probe capture failed"));return;}
+        ControlPendingCapture.Reset();ControlCaptureWarmFrames=0;return;
+    }
+    ContactPhaseTime+=DeltaSeconds;
+    const auto Dynamics=Rig->GetContactState();
+    const auto State=ManualControlState();
+    if(ContactSamples.IsEmpty()||ContactPhaseTime-FMath::Floor((ContactPhaseTime-DeltaSeconds)*4)/4>=.25)
+    {
+        auto Sample=MakeShared<FJsonObject>();Sample->SetNumberField(TEXT("phase"),ControlProbePhase);
+        Sample->SetNumberField(TEXT("phase_time_s"),ContactPhaseTime);
+        Sample->SetNumberField(TEXT("solver_time_s"),Rig->GetSimulationTimeSeconds());
+        Sample->SetObjectField(TEXT("state"),State);Sample->SetObjectField(TEXT("dynamics"),Dynamics);
+        ContactSamples.Add(MakeShared<FJsonValueObject>(Sample));ControlReport->SetArrayField(TEXT("samples"),ContactSamples);
+    }
+    double Warnings=0,ChaosBodies=0;
+    if(!Dynamics->TryGetNumberField(TEXT("warning_count"),Warnings)||Warnings!=0||
+       !Dynamics->TryGetNumberField(TEXT("chaos_simulating_bodies"),ChaosBodies)||ChaosBodies!=0)
+    {Abort(TEXT("MuJoCo warnings or competing Chaos bodies detected"));return;}
+    if(Rig->GetActorTransform().ContainsNaN()||Rig->GetVelocity().ContainsNaN()||
+       Rig->GetActorUpVector().Z<.6||Rig->GetActorLocation().Z<ContactSpawn.GetLocation().Z-80)
+    {Abort(TEXT("MuJoCo vehicle escaped its physical envelope"));return;}
+    double RouteCm=100;FParse::Value(FCommandLine::Get(),TEXT("MujocoRouteCm="),RouteCm);
+    if(!FMath::IsFinite(RouteCm)||RouteCm<20||RouteCm>1200){Abort(TEXT("invalid MuJoCo route length"));return;}
+    const FVector Forward=ContactStart.GetRotation().GetForwardVector().GetSafeNormal2D();
+    const FVector Side=FVector::CrossProduct(FVector::UpVector,Forward);
+    const FVector Delta=Rig->GetActorLocation()-ContactStart.GetLocation();
+    const double Progress=FVector::DotProduct(Delta,Forward),Drift=FVector::DotProduct(Delta,Side);
+    const double Direction=ControlProbePhase==3?-1.:1.;
+    const double DesiredYaw=ContactStart.Rotator().Yaw+FMath::RadiansToDegrees(FMath::Atan2(-Direction*Drift,60.));
+    const double YawError=FMath::FindDeltaAngleDegrees(Rig->GetActorRotation().Yaw,DesiredYaw);
+    const double Steer=FMath::Clamp(-FMath::DegreesToRadians(YawError)*4,-1.5,1.5);
+    const double Drive=.8*FMath::Clamp(1-FMath::Abs(YawError)/45.,0.,1.);
+    FString Name,Detail;bool Passed=false;
+    if(ControlProbePhase>=9)
+    {
+        ControlReport->SetStringField(TEXT("physics_backend"),Rig->GetPhysicsBackendName());
+        ControlReport->SetNumberField(TEXT("dynamics_step_s"),Rig->GetDynamicsStepSeconds());
+        ControlReport->SetBoolField(TEXT("os_input_verified"),false);
+        if(!WriteControlReport(TEXT("passed"))){Abort(TEXT("cannot write MuJoCo probe result"));return;}
+        UE_LOG(LogRMSim,Display,TEXT("MUJOCO_PROBE_COMPLETE checks=%d"),ControlChecks.Num());
+        bReady=false;FPlatformMisc::RequestExitWithStatus(false,0);return;
+    }
+    switch(ControlProbePhase)
+    {
+    case 0:
+    {
+        Rig->SetContactDrive(0,0,true);
+        if(ContactPhaseTime<3.)return;
+        double Contacts=0,NormalForce=0,Steps=0;
+        Dynamics->TryGetNumberField(TEXT("contact_count"),Contacts);
+        Dynamics->TryGetNumberField(TEXT("normal_force_N"),NormalForce);
+        Dynamics->TryGetNumberField(TEXT("step_count"),Steps);
+        Name=TEXT("mujoco_settle_with_real_contact");
+        Detail=FString::Printf(TEXT("steps=%.0f contacts=%.0f normal_force_N=%.6f speed_cm_s=%.6f up_z=%.6f"),
+            Steps,Contacts,NormalForce,Rig->GetVelocity().Size(),Rig->GetActorUpVector().Z);
+        Passed=Steps>100&&Contacts>0&&NormalForce>5&&Rig->GetVelocity().Size()<5&&Rig->GetActorUpVector().Z>.95;
+        ContactStart=Rig->GetActorTransform();ControlPendingCapture=TEXT("mujoco-rest");break;
+    }
+    case 1:
+        Rig->SetContactDrive(Drive,Steer,false);
+        if(Progress<RouteCm&&ContactPhaseTime<25)return;
+        Rig->SetContactDrive(0,0,true);
+        Name=TEXT("mujoco_wheel_contact_forward");
+        Detail=FString::Printf(TEXT("progress_cm=%.6f target_cm=%.6f drift_cm=%.6f duration_s=%.6f"),Progress,RouteCm,Drift,ContactPhaseTime);
+        Passed=Progress>=RouteCm&&FMath::Abs(Drift)<25;
+        ControlPendingCapture=TEXT("mujoco-forward");break;
+    case 2:
+        Rig->SetContactDrive(0,0,true);
+        if(ContactPhaseTime<1.5)return;
+        Name=TEXT("mujoco_physical_brake");
+        Detail=FString::Printf(TEXT("measured_speed_cm_s=%.6f"),Rig->GetVelocity().Size());
+        Passed=Rig->GetVelocity().Size()<5;break;
+    case 3:
+        Rig->SetContactDrive(-Drive,Steer,false);
+        if(Progress>8&&ContactPhaseTime<25)return;
+        Rig->SetContactDrive(0,0,true);
+        Name=TEXT("mujoco_wheel_contact_reverse");
+        Detail=FString::Printf(TEXT("remaining_cm=%.6f drift_cm=%.6f"),Progress,Drift);
+        Passed=Progress<=8&&FMath::Abs(Drift)<25;ControlPendingCapture=TEXT("mujoco-return");break;
+    case 4:
+    case 5:
+    {
+        const double Sign=ControlProbePhase==4?1.:-1.;
+        Rig->SetContactPlanarDrive(FVector2D::ZeroVector,Sign*.8,false,false);
+        if(ContactPhaseTime<1.5)return;
+        const double Turn=-FMath::DegreesToRadians(FMath::FindDeltaAngleDegrees(ContactStageStart.Rotator().Yaw,Rig->GetActorRotation().Yaw));
+        Rig->SetContactDrive(0,0,true);
+        Name=ControlProbePhase==4?TEXT("mujoco_positive_yaw"):TEXT("mujoco_negative_yaw");
+        Detail=FString::Printf(TEXT("actual_ros_yaw_change_rad=%.6f requested_sign=%.0f"),Turn,Sign);
+        Passed=Sign*Turn>.15&&Sign*Turn<2.5;break;
+    }
+    case 6:
+        Rig->SetContactPlanarDrive(FVector2D(0,.4),0,true,false);
+        if(ContactPhaseTime<1.6)return;
+        Rig->SetContactDrive(0,0,true);
+        Name=TEXT("mujoco_swerve_lateral_contact");
+        Detail=FString::Printf(TEXT("actual_ros_left_cm=%.6f"),-(Rig->GetActorLocation().Y-ContactStageStart.GetLocation().Y));
+        Passed=-(Rig->GetActorLocation().Y-ContactStageStart.GetLocation().Y)>8;break;
+    case 7:
+    {
+        Rig->SetContactDrive(0,0,true);FString Error;
+        if(!Rig->SetGimbal(.4,-.1,Error)){Abort(Error);return;}
+        if(ContactPhaseTime<1.5)return;
+        double Yaw=0,Pitch=0;Rig->GetGimbalAngles(Yaw,Pitch);
+        FTransform Parent;const bool HasParent=Rig->GetSensorParentWorld(TEXT("yaw_link"),Parent);
+        Name=TEXT("mujoco_articulated_gimbal_and_sensor_mount");
+        Detail=FString::Printf(TEXT("measured_yaw_rad=%.6f measured_pitch_rad=%.6f parent_valid=%d"),Yaw,Pitch,HasParent?1:0);
+        Passed=HasParent&&FMath::Abs(Yaw-.4)<.035&&FMath::Abs(Pitch+.1)<.035;
+        ControlPendingCapture=TEXT("mujoco-gimbal");break;
+    }
+    case 8:
+    {
+        FManualControlInput Input;Input.Brake=true;Input.RestartRound=ContactRecoveryCount==0;
+        ApplyManualInput(Input,DeltaSeconds);
+        if(ContactPhaseTime<3.)return;
+        const double Distance=FVector::Dist2D(Rig->GetActorLocation(),ContactSpawn.GetLocation());
+        Name=TEXT("mujoco_shared_R_resets_solver_and_commands");
+        Detail=FString::Printf(TEXT("resets=%d distance_cm=%.6f measured_speed_cm_s=%.6f motion_generation=%llu"),
+            ContactRecoveryCount,Distance,Rig->GetVelocity().Size(),Rig->GetMotionGeneration());
+        Passed=ContactRecoveryCount==1&&Rig->GetMotionGeneration()==1&&Distance<5&&Rig->GetVelocity().Size()<5;
+        ControlPendingCapture=TEXT("mujoco-reset");break;
+    }
+    }
+    if(!RecordControlCheck(Name,Passed,State,Detail))return;
+    ++ControlProbePhase;ContactPhaseTime=0;ContactStageStart=Rig->GetActorTransform();
+}

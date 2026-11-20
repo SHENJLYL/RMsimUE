@@ -179,7 +179,9 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         ControlReport->SetBoolField(TEXT("pose_overrides_used"),false);
         ControlReport->SetBoolField(TEXT("os_keyboard_test"),false);
         ControlReport->SetNumberField(TEXT("initial_motion_generation"),static_cast<double>(P.MotionGeneration));
-        ControlReport->SetStringField(TEXT("contact_evidence_semantics"),
+        ControlReport->SetStringField(TEXT("physics_backend"),Rig->GetPhysicsBackendName());
+        ControlReport->SetStringField(TEXT("contact_evidence_semantics"),Rig->IsMujocoPhysics()?
+            TEXT("Native MuJoCo solved contact impulses; short UE queries identify the exact existing wall component; repeated recent frames are not unique solver events"):
             TEXT("Exact component OnComponentHit observations via GetRecentHitAgainst; repeated recent frames are not unique solver events; no preimpact velocity estimate claimed"));
     }
     auto& P=*CampusGymBoundaryProbe;
