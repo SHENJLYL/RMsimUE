@@ -65,3 +65,7 @@ assets/maps/wt_vlaanderen/terrain-details/definition.json -text whitespace=blank
 assets/maps/wt_vlaanderen/terrain-details/source-landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/maps/wt_vlaanderen/terrain-details/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/vehicles/aim_sentry/drive-profile.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve exact prepared scene bytes bound by the platform navigation recipe.
+assets/maps/rmuc2027/navigation-console/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-platform/scene.json -text whitespace=cr-at-eol

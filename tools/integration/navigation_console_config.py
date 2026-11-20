@@ -132,7 +132,11 @@ def select_localization_map(package_directory, specification, explicit=None, res
 
 def restore_packaged_map(manifest: Path) -> None:
     """Rebuild only declared missing generated files before launching native nodes."""
-    result = subprocess.run([sys.executable, str(ROOT / "tools/maps/export_localization_surface_map.py"),
+    specification = json.loads(manifest.read_text(encoding="utf-8-sig"))
+    schema = specification.get("localization_map", {}).get("export_recipe", {}).get("schema")
+    exporter = ("export_boundary_navigation_package.py" if schema == "rmsim_boundary_navigation_export_recipe_v1"
+                else "export_localization_surface_map.py")
+    result = subprocess.run([sys.executable, str(ROOT / "tools/maps" / exporter),
                              "--restore-package", str(manifest)], capture_output=True, text=True,
                             encoding="utf-8", errors="replace", check=False)
     if result.returncode:
@@ -147,18 +151,39 @@ def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, ini
     nav = output / 'navigation'
     source, specification = None, {}
     if scene_name == 'rmuc2027':
-        source = ROOT / 'assets/maps/rmuc2027/navigation-console'
+        map_root = ROOT / 'assets/maps/rmuc2027'
+        perimeter_file = map_root / 'arena-shell.json'
+        perimeter = json.loads(perimeter_file.read_text(encoding='utf-8-sig')) if perimeter_file.is_file() else {}
+        package_name = perimeter.get('navigation_package', 'navigation-console')
+        if not isinstance(package_name, str) or not re.fullmatch(r'[a-z0-9_-]+', package_name):
+            raise ValueError('Invalid declared navigation package directory')
+        source = map_root / package_name
         specification = json.loads((source / 'SOURCE.json').read_text(encoding='utf-8-sig'))
         scene = json.loads((source / 'scene.json').read_text(encoding='utf-8-sig'))
         if scene_geometry(scene) != specification['scene_geometry_sha256']:
             raise ValueError('RMUC navigation raster does not match the declared scene geometry')
+        boundary = specification.get('runtime_boundary')
+        outside_contract = perimeter.get('perimeter', {}).get('physics_contract') in ('outside_source_bounds_v1', 'outside_platform_bounds_v1')
+        if outside_contract or boundary is not None:
+            from rmsim_bridge.perimeter_geometry import closed_perimeter_geometry, canonical_sha256
+            physical = closed_perimeter_geometry(perimeter, scene['bounds_m'])
+            if not isinstance(boundary, dict) or boundary.get('geometry') != physical or boundary.get('sha256') != canonical_sha256(physical):
+                raise ValueError('Navigation package differs from the active physical perimeter; regenerate its boundary maps')
+            from rmsim_bridge.navigation_map_identity import package_relative_path
+            declared_boundary = package_relative_path(ROOT, specification.get('boundary_manifest_path'), 'boundary_manifest_path')
+            if declared_boundary != perimeter_file.resolve():
+                raise ValueError('Navigation package names a different active perimeter manifest')
         raster = source / 'map.pgm'
+        if not raster.is_file() and boundary is not None:
+            restore_packaged_map(source / 'SOURCE.json')
         if not raster.is_file() or digest(raster) != specification['raster_sha256']:
             raise ValueError('RMUC navigation raster is missing or changed; restore the local raster recorded in assets/maps/rmuc2027/navigation-console/SOURCE.json')
         nav.mkdir()
         shutil.copyfile(raster, nav / 'map.pgm')
         shutil.copyfile(source / 'map.yaml', nav / 'map.yaml')
         metadata = copy.deepcopy(specification['map_metadata'])
+        if boundary is not None:
+            metadata['runtime_boundary_manifest_path'] = str(perimeter_file.resolve())
         descriptor_file = source.parent / 'mesh-source.json'
         descriptor = json.loads(descriptor_file.read_text(encoding='utf-8-sig'))
         metadata['scene_geometry_sha256'] = specification['scene_geometry_sha256']

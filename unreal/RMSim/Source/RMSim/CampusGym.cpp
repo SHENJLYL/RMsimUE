@@ -343,16 +343,53 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     }
     }
 
-    const double CX=(Lower.X+Upper.X)*.5,CY=(Lower.Y+Upper.Y)*.5;
-    const double HX=(Upper.X-Lower.X)*.5,HY=(Upper.Y-Lower.Y)*.5;
     const FObj* Perimeter=nullptr;
     if(!Manifest->TryGetObjectField(TEXT("perimeter"),Perimeter))return Fail(TEXT("missing closed perimeter"));
     FString PhysicsContract;
     if(!(*Perimeter)->TryGetStringField(TEXT("physics_contract"),PhysicsContract)||
        (PhysicsContract!=TEXT("outside_source_bounds_v1")&&
+        PhysicsContract!=TEXT("outside_platform_bounds_v1")&&
         PhysicsContract!=TEXT("preserve_validated_arena_shell_v1")))
         return Fail(TEXT("unsupported closed perimeter contract"));
-    const bool OutsidePerimeter=PhysicsContract==TEXT("outside_source_bounds_v1");
+    const bool PlatformPerimeter=PhysicsContract==TEXT("outside_platform_bounds_v1");
+    const bool OutsidePerimeter=PlatformPerimeter||PhysicsContract==TEXT("outside_source_bounds_v1");
+    FVector TargetLower=Lower,TargetUpper=Upper;
+    auto PlatformReferences=MakeShared<FJsonObject>();
+    if(PlatformPerimeter)
+    {
+        const FObj* Target=nullptr;const FObj* References=nullptr;
+        if(!(*Perimeter)->TryGetObjectField(TEXT("target_bounds_m"),Target)||
+           !Vec(*Target,TEXT("lo"),TargetLower)||!Vec(*Target,TEXT("hi"),TargetUpper)||
+           FMath::Abs(TargetLower.X-Lower.X)>1.e-6||FMath::Abs(TargetUpper.X-Upper.X)>1.e-6||
+           FMath::Abs(TargetLower.Z-Lower.Z)>1.e-6||FMath::Abs(TargetUpper.Z-Upper.Z)>1.e-6||
+           TargetLower.Y<Lower.Y||TargetUpper.Y>Upper.Y||TargetUpper.Y<=TargetLower.Y||
+           !(*Perimeter)->TryGetObjectField(TEXT("platform_reference_meshes"),References))
+            return Fail(TEXT("invalid measured platform perimeter bounds"));
+        // Cross-check the measured anchors against the actual loaded visual and
+        // collision meshes. The original CAD bounds remain a separate identity.
+        for(const bool North:{false,true})
+        {
+            const TCHAR* Side=North?TEXT("north"):TEXT("south");FString MeshId;
+            if(!(*References)->TryGetStringField(Side,MeshId))return Fail(TEXT("missing platform mesh reference"));
+            auto Evidence=MakeShared<FJsonObject>();Evidence->SetStringField(TEXT("mesh_id"),MeshId);
+            for(const bool Collision:{false,true})
+            {
+                const FString Key=FString(Collision?TEXT("collision_"):TEXT("visual_"))+MeshId;
+                auto* Actor=Actors.FindRef(Key);
+                if(!Actor||!Actor->GetStaticMeshComponent()->GetStaticMesh())return Fail(TEXT("platform mesh not loaded: ")+Key);
+                auto* Component=Actor->GetStaticMeshComponent();
+                const FBox Box=Component->GetStaticMesh()->GetBoundingBox().TransformBy(Component->GetComponentTransform());
+                const double Edge=-(North?Box.Min.Y:Box.Max.Y)*.01;
+                const double Expected=North?TargetUpper.Y:TargetLower.Y;
+                if(FMath::Abs(Edge-Expected)>1.e-6)return Fail(TEXT("measured platform edge disagrees with native mesh: ")+Key);
+                Evidence->SetNumberField(Collision?TEXT("collision_outer_edge_y_m"):TEXT("visual_outer_edge_y_m"),Edge);
+                Evidence->SetNumberField(Collision?TEXT("collision_anchor_error_m"):TEXT("visual_anchor_error_m"),Edge-Expected);
+            }
+            PlatformReferences->SetObjectField(Side,Evidence);
+        }
+    }
+    const double CX=(TargetLower.X+TargetUpper.X)*.5,CY=(TargetLower.Y+TargetUpper.Y)*.5;
+    const double HX=(TargetUpper.X-TargetLower.X)*.5,HY=(TargetUpper.Y-TargetLower.Y)*.5;
     double Clearance=0.,Inset=0.,Thickness,Top,Bottom,CollisionTop,PanelWidth;
     bool Interaction=true;
     if((OutsidePerimeter?
@@ -609,21 +646,36 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         for(const auto* C:Components){CosmeticNoCollision&=C->GetCollisionEnabled()==ECollisionEnabled::NoCollision;AllInstances+=C->GetInstanceCount();}
         // Inspect each rendered instance, rather than the whole ring's bounds.
         // The latter encloses the field even when every individual part is outside.
-        bool BoundaryOutside=true;int32 BoundsChecked=0;double MinimumClearance=1.e30;
-        TArray<TSharedPtr<FJsonValue>> Intrusions;
+        bool BoundaryOutside=true,BoundaryOutsideTarget=true;
+        int32 BoundsChecked=0;double MinimumClearance=1.e30,MinimumTargetClearance=1.e30;
+        TArray<TSharedPtr<FJsonValue>> Intrusions,TargetIntrusions;
         auto CheckBounds=[&](const FBox& Box,const FString& Name)
         {
             const double MinX=Box.Min.X*.01,MaxX=Box.Max.X*.01;
             const double MinY=-Box.Max.Y*.01,MaxY=-Box.Min.Y*.01;
             const double Gap=FMath::Max(FMath::Max(Lower.X-MaxX,MinX-Upper.X),
                                       FMath::Max(Lower.Y-MaxY,MinY-Upper.Y));
-            MinimumClearance=FMath::Min(MinimumClearance,Gap);++BoundsChecked;
+            const double TargetGap=FMath::Max(FMath::Max(TargetLower.X-MaxX,MinX-TargetUpper.X),
+                                            FMath::Max(TargetLower.Y-MaxY,MinY-TargetUpper.Y));
+            MinimumClearance=FMath::Min(MinimumClearance,Gap);
+            MinimumTargetClearance=FMath::Min(MinimumTargetClearance,TargetGap);++BoundsChecked;
             if(Gap < -1.e-6){BoundaryOutside=false;Intrusions.Add(MakeShared<FJsonValueString>(Name));}
+            if(TargetGap < -1.e-6){BoundaryOutsideTarget=false;TargetIntrusions.Add(MakeShared<FJsonValueString>(Name));}
         };
-        for(const FWall& Wall:Walls)
+        bool CollisionFacesAligned=true;double MaxCollisionFaceError=0.;
+        auto CollisionFaceGaps=MakeShared<FJsonObject>();
+        for(int32 I=0;I<4;++I)
         {
+            const FWall& Wall= Walls[I];
             auto* A=CastChecked<AStaticMeshActor>(Actors.FindRef(FString(TEXT("arena_guard_"))+Wall.Name));
-            CheckBounds(A->GetStaticMeshComponent()->GetStaticMesh()->GetBoundingBox().TransformBy(A->GetActorTransform()),Wall.Name);
+            const FBox Box=A->GetStaticMeshComponent()->GetStaticMesh()->GetBoundingBox().TransformBy(A->GetActorTransform());
+            CheckBounds(Box,Wall.Name);
+            const double Gap=I==0?TargetLower.X-Box.Max.X*.01:
+                I==1?Box.Min.X*.01-TargetUpper.X:
+                I==2?TargetLower.Y+Box.Min.Y*.01:-Box.Max.Y*.01-TargetUpper.Y;
+            CollisionFaceGaps->SetNumberField(Wall.Name,Gap);
+            MaxCollisionFaceError=FMath::Max(MaxCollisionFaceError,FMath::Abs(Gap-Clearance));
+            CollisionFacesAligned&=FMath::Abs(Gap-Clearance)<=1.e-6;
         }
         for(const FGroup* G:{&Glass,&Frame,&Gaskets,&Hardware,&Stripe})
             for(int32 I=0;I<G->Component->GetInstanceCount();++I)
@@ -641,14 +693,27 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
             CornersOverlap&=DX>0&&DY>0;MinimumCornerOverlap=FMath::Min(MinimumCornerOverlap,FMath::Min(DX,DY));
         }
         double GlassBaseMin=1.e30,GlassBaseMax=-1.e30;
+        double SouthGlassGapMin=1.e30,SouthGlassGapMax=-1.e30,NorthGlassGapMin=1.e30,NorthGlassGapMax=-1.e30;
+        int32 SouthGlassCount=0,NorthGlassCount=0;
         for(int32 I=0;I<Glass.Component->GetInstanceCount();++I)
         {
             FTransform T;Glass.Component->GetInstanceTransform(I,T,true);
-            const double Base=Glass.Mesh->GetBoundingBox().TransformBy(T).Min.Z*.01;
+            const FBox Box=Glass.Mesh->GetBoundingBox().TransformBy(T);
+            const double Base=Box.Min.Z*.01;
             GlassBaseMin=FMath::Min(GlassBaseMin,Base);GlassBaseMax=FMath::Max(GlassBaseMax,Base);
+            if(Box.GetSize().X>Box.GetSize().Y)
+            {
+                const bool North=-Box.GetCenter().Y*.01>CY;
+                const double Gap=North?-Box.Max.Y*.01-TargetUpper.Y:TargetLower.Y+Box.Min.Y*.01;
+                if(North){++NorthGlassCount;NorthGlassGapMin=FMath::Min(NorthGlassGapMin,Gap);NorthGlassGapMax=FMath::Max(NorthGlassGapMax,Gap);}
+                else{++SouthGlassCount;SouthGlassGapMin=FMath::Min(SouthGlassGapMin,Gap);SouthGlassGapMax=FMath::Max(SouthGlassGapMax,Gap);}
+            }
         }
+        const bool LongGlassAligned=SouthGlassCount>0&&NorthGlassCount>0&&
+            FMath::Abs(SouthGlassGapMin-Clearance)<=1.e-6&&FMath::Abs(SouthGlassGapMax-Clearance)<=1.e-6&&
+            FMath::Abs(NorthGlassGapMin-Clearance)<=1.e-6&&FMath::Abs(NorthGlassGapMax-Clearance)<=1.e-6;
         const bool GlassMeetsFloor=FMath::Abs(GlassBaseMin-VisualFloorZ)<=1.e-6&&FMath::Abs(GlassBaseMax-VisualFloorZ)<=1.e-6;
-        const bool PerimeterMatchesContract=(!OutsidePerimeter||BoundaryOutside)&&GlassMeetsFloor;
+        const bool PerimeterMatchesContract=(!OutsidePerimeter||(BoundaryOutsideTarget&&CollisionFacesAligned&&LongGlassAligned))&&GlassMeetsFloor;
         const bool LightRigMatches=VenueEnabled?LightCount==12:LightCount==0;
         auto Report=MakeShared<FJsonObject>();
         Report->SetStringField(TEXT("status"),Passed==Tested&&Tested==96&&CosmeticNoCollision&&GateLeaves==4&&PerimeterMatchesContract&&CornersOverlap&&LightRigMatches&&Materials[TEXT("glass")]->GetBlendMode()==BLEND_Translucent?TEXT("passed"):TEXT("failed"));
@@ -657,7 +722,8 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         if(OutsidePerimeter)Report->SetNumberField(TEXT("outside_clearance_m"),Clearance);
         else Report->SetNumberField(TEXT("collision_inset_m"),Inset);
         Report->SetStringField(TEXT("physics_contract"),PhysicsContract);
-        Report->SetBoolField(TEXT("outside_bounds_required"),OutsidePerimeter);
+        Report->SetBoolField(TEXT("outside_bounds_required"),OutsidePerimeter&&!PlatformPerimeter);
+        Report->SetBoolField(TEXT("outside_target_bounds_required"),OutsidePerimeter);
         Report->SetBoolField(TEXT("perimeter_contract_satisfied"),PerimeterMatchesContract);
         Report->SetBoolField(TEXT("all_boundary_parts_outside_source_bounds"),BoundaryOutside);
         Report->SetNumberField(TEXT("boundary_bounds_checked"),BoundsChecked);
@@ -666,6 +732,28 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         Report->SetBoolField(TEXT("corner_slabs_overlap"),CornersOverlap);
         Report->SetNumberField(TEXT("minimum_corner_overlap_m"),MinimumCornerOverlap);
         Report->SetArrayField(TEXT("intruding_boundary_parts"),Intrusions);
+        Report->SetBoolField(TEXT("all_boundary_parts_outside_target_bounds"),BoundaryOutsideTarget);
+        Report->SetNumberField(TEXT("minimum_target_clearance_m"),MinimumTargetClearance);
+        Report->SetArrayField(TEXT("parts_inside_target_bounds"),TargetIntrusions);
+        auto JsonBounds=[](const FVector& Lo,const FVector& Hi)
+        {
+            auto Obj=MakeShared<FJsonObject>();TArray<TSharedPtr<FJsonValue>> L,H;
+            for(int32 I=0;I<3;++I){L.Add(MakeShared<FJsonValueNumber>(Lo[I]));H.Add(MakeShared<FJsonValueNumber>(Hi[I]));}
+            Obj->SetArrayField(TEXT("lo"),L);Obj->SetArrayField(TEXT("hi"),H);return Obj;
+        };
+        Report->SetObjectField(TEXT("source_bounds_m"),JsonBounds(Lower,Upper));
+        Report->SetObjectField(TEXT("target_bounds_m"),JsonBounds(TargetLower,TargetUpper));
+        Report->SetObjectField(TEXT("native_platform_references"),PlatformReferences);
+        Report->SetObjectField(TEXT("collision_inner_face_gaps_m"),CollisionFaceGaps);
+        Report->SetBoolField(TEXT("collision_faces_match_target"),CollisionFacesAligned);
+        Report->SetNumberField(TEXT("max_collision_face_error_m"),MaxCollisionFaceError);
+        Report->SetBoolField(TEXT("long_glass_faces_match_target"),LongGlassAligned);
+        Report->SetNumberField(TEXT("south_long_glass_count"),SouthGlassCount);
+        Report->SetNumberField(TEXT("south_glass_gap_min_m"),SouthGlassGapMin);
+        Report->SetNumberField(TEXT("south_glass_gap_max_m"),SouthGlassGapMax);
+        Report->SetNumberField(TEXT("north_long_glass_count"),NorthGlassCount);
+        Report->SetNumberField(TEXT("north_glass_gap_min_m"),NorthGlassGapMin);
+        Report->SetNumberField(TEXT("north_glass_gap_max_m"),NorthGlassGapMax);
         Report->SetNumberField(TEXT("collision_thickness_m"),Thickness);
         Report->SetNumberField(TEXT("collision_top_m"),CollisionTop);
         Report->SetNumberField(TEXT("glass_top_m"),Top);

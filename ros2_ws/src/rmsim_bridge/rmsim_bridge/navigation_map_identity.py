@@ -13,6 +13,16 @@ import struct
 
 import yaml
 
+if __package__:
+    from .perimeter_geometry import canonical_sha256, verify_boundary_metadata
+else:
+    # Release evidence also loads this exact source file without importing ROS.
+    import importlib.util
+    _perimeter_spec = importlib.util.spec_from_file_location("rmsim_perimeter_geometry", Path(__file__).with_name("perimeter_geometry.py"))
+    _perimeter = importlib.util.module_from_spec(_perimeter_spec)
+    _perimeter_spec.loader.exec_module(_perimeter)
+    canonical_sha256, verify_boundary_metadata = _perimeter.canonical_sha256, _perimeter.verify_boundary_metadata
+
 
 def _digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -158,8 +168,17 @@ def validate_localization_map(navigation_map_yaml, localization_map_yaml) -> dic
         raise ValueError("Localization map source-to-simulation transform differs")
     if local_meta.get("coordinate_system") != "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP" or local_meta.get("units") != "m":
         raise ValueError("Localization map axes/units differ from the native map contract")
+    boundary = verify_boundary_metadata(nav_meta)
+    if boundary != local_meta.get("runtime_boundary"):
+        raise ValueError("Localization and planning runtime-boundary geometry differ")
+    effective = nav_meta.get("effective_scene_geometry_sha256")
+    if effective != local_meta.get("effective_scene_geometry_sha256"):
+        raise ValueError("Localization and planning effective scene identity differ")
     return {
         "schema": "rmsim_localization_map_identity_v1",
+        "runtime_boundary": boundary,
+        "runtime_boundary_manifest_path": nav_meta.get("runtime_boundary_manifest_path"),
+        "effective_scene_geometry_sha256": effective,
         "map_id": map_id,
         "scene_geometry_sha256": scene_geometry,
         "source_collision_sha256": collision,
@@ -185,6 +204,13 @@ def map_file_signatures(identity: dict) -> dict:
             except OSError as error:
                 raise ValueError(f"Map input disappeared: {path}") from error
             signatures[path] = [stat.st_size, stat.st_mtime_ns]
+    boundary_path = identity.get("runtime_boundary_manifest_path")
+    if boundary_path:
+        try:
+            stat = Path(boundary_path).stat()
+        except OSError as error:
+            raise ValueError(f"Physical perimeter input disappeared: {boundary_path}") from error
+        signatures[boundary_path] = [stat.st_size, stat.st_mtime_ns]
     return signatures
 
 
@@ -271,8 +297,21 @@ def packaged_localization_map(package_directory, specification: dict, allow_miss
             or metadata.get("reference_navigation_raster_sha256") != specification.get("raster_sha256")):
         raise ValueError("Packaged localization map belongs to different navigation geometry")
     recipe = declaration.get("export_recipe")
-    if not isinstance(recipe, dict) or recipe.get("schema") != "rmsim_localization_surface_export_recipe_v1":
+    if not isinstance(recipe, dict) or recipe.get("schema") not in (
+            "rmsim_localization_surface_export_recipe_v1", "rmsim_boundary_navigation_export_recipe_v1"):
         raise ValueError("Packaged localization map lacks a supported export recipe")
+    boundary = specification.get("runtime_boundary")
+    if boundary != metadata.get("runtime_boundary"):
+        raise ValueError("Packaged localization runtime-boundary identity differs")
+    if boundary is not None:
+        if (not isinstance(boundary, dict) or boundary.get("schema") != "rmsim_runtime_boundary_identity_v1"
+                or not isinstance(boundary.get("geometry"), dict)
+                or canonical_sha256(boundary["geometry"]) != boundary.get("sha256")
+                or recipe.get("schema") != "rmsim_boundary_navigation_export_recipe_v1"
+                or recipe.get("runtime_boundary_sha256") != boundary["sha256"]):
+            raise ValueError("Invalid packaged runtime-boundary identity or export recipe")
+    elif recipe.get("schema") == "rmsim_boundary_navigation_export_recipe_v1":
+        raise ValueError("Boundary export recipe requires physical boundary geometry")
     return {"yaml_path": paths["yaml"]["path"], "files": paths, "missing_derived": missing,
             "export_recipe": recipe, "metadata": metadata,
             "status": declaration.get("status"), "selection": "package_default"}
