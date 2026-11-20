@@ -7,6 +7,11 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
 #include "HAL/PlatformMisc.h"
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 
@@ -17,7 +22,10 @@ struct FCampusGymBoundaryProbeState
     TWeakObjectPtr<UStaticMeshComponent> Wall;
     FTransform WallTransform;
     FBox WallBounds;
-    double SourceSouthEdgeCm=0,WallInnerFaceCm=0,WallClearanceCm=0;
+    FBox TargetBoundsMetres;
+    FString PhysicsContract,BoundaryManifestFile;
+    double SourceSouthEdgeCm=0,TargetSouthEdgeCm=0,WallInnerFaceCm=0,WallClearanceCm=0;
+    double DeclaredClearanceCm=0,MinimumSourceMarginCm=TNumericLimits<double>::Max();
     bool CaptureEnabled=true;
     FVector Start=FVector::ZeroVector,Forward=FVector::ForwardVector,Side=FVector::RightVector;
     FVector HoldStart=FVector::ZeroVector,ReverseStart=FVector::ZeroVector;
@@ -48,6 +56,60 @@ bool ReadGymVector(const TSharedPtr<FJsonObject>& Object,const TCHAR* Key,FVecto
         if(!(*Array)[I]->TryGetNumber(Out[I])||!FMath::IsFinite(Out[I]))return false;
     return true;
 }
+bool ReadGymBoundaryReference(const FMapStage& Stage,FCampusGymBoundaryProbeState& P,FString& Error)
+{
+    // Match ArenaShell's resolution for copied navigation/probe scene files.
+    P.BoundaryManifestFile=FPaths::Combine(FPaths::GetPath(Stage.SourceFile),TEXT("arena-shell.json"));
+    if(!IFileManager::Get().FileExists(*P.BoundaryManifestFile))
+    {
+        FString Directory=FPaths::GetPath(Stage.SourceFile);
+        for(int32 Depth=0;Depth<8;++Depth)
+        {
+            const FString Candidate=FPaths::Combine(Directory,TEXT("assets/maps/rmuc2027/arena-shell.json"));
+            if(IFileManager::Get().FileExists(*Candidate)){P.BoundaryManifestFile=Candidate;break;}
+            const FString Parent=FPaths::GetPath(Directory);
+            if(Parent.IsEmpty()||Parent==Directory)break;
+            Directory=Parent;
+        }
+    }
+    auto Fail=[&Error](const TCHAR* Message){Error=Message;return false;};
+    FString Text;TSharedPtr<FJsonObject> Manifest;
+    if(IFileManager::Get().FileSize(*P.BoundaryManifestFile)>64*1024||
+       !FFileHelper::LoadFileToString(Text,*P.BoundaryManifestFile)||
+       !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Manifest))
+        return Fail(TEXT("boundary probe cannot read the actual perimeter manifest"));
+    const TSharedPtr<FJsonObject>* Source=nullptr;
+    const TSharedPtr<FJsonObject>* Perimeter=nullptr;
+    FVector Lower,Upper;
+    if(!Manifest.IsValid()||!Manifest->TryGetObjectField(TEXT("bounds_m"),Source)||
+       !ReadGymVector(*Source,TEXT("lo"),Lower)||!ReadGymVector(*Source,TEXT("hi"),Upper)||
+       !Lower.Equals(Stage.SourceBoundsMetres.Min,1.e-7)||!Upper.Equals(Stage.SourceBoundsMetres.Max,1.e-7)||
+       !Manifest->TryGetObjectField(TEXT("perimeter"),Perimeter)||
+       !(*Perimeter)->TryGetStringField(TEXT("physics_contract"),P.PhysicsContract)||
+       (P.PhysicsContract!=TEXT("outside_source_bounds_v1")&&P.PhysicsContract!=TEXT("outside_platform_bounds_v1")))
+        return Fail(TEXT("boundary probe source bounds or physical contract differ"));
+    P.TargetBoundsMetres=Stage.SourceBoundsMetres;
+    if(P.PhysicsContract==TEXT("outside_platform_bounds_v1"))
+    {
+        const TSharedPtr<FJsonObject>* Target=nullptr;
+        if(!(*Perimeter)->TryGetObjectField(TEXT("target_bounds_m"),Target)||
+           !ReadGymVector(*Target,TEXT("lo"),Lower)||!ReadGymVector(*Target,TEXT("hi"),Upper)||
+           (Upper-Lower).GetMin()<=0.||
+           FMath::Abs(Lower.X-Stage.SourceBoundsMetres.Min.X)>1.e-7||
+           FMath::Abs(Upper.X-Stage.SourceBoundsMetres.Max.X)>1.e-7||
+           FMath::Abs(Lower.Z-Stage.SourceBoundsMetres.Min.Z)>1.e-7||
+           FMath::Abs(Upper.Z-Stage.SourceBoundsMetres.Max.Z)>1.e-7||
+           Lower.Y<Stage.SourceBoundsMetres.Min.Y||Upper.Y>Stage.SourceBoundsMetres.Max.Y)
+            return Fail(TEXT("boundary probe requires the declared platform target inside unchanged source X/Z bounds"));
+        P.TargetBoundsMetres=FBox(Lower,Upper);
+    }
+    double Clearance=0.;
+    if(!(*Perimeter)->TryGetNumberField(TEXT("outside_clearance_m"),Clearance)||
+       !FMath::IsFinite(Clearance)||Clearance<0.||Clearance>.02)
+        return Fail(TEXT("boundary probe requires the declared 0..2cm exterior clearance"));
+    P.DeclaredClearanceCm=Clearance*100.;
+    return true;
+}
 }
 
 void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
@@ -67,12 +129,15 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         P.WallTransform=P.Wall->GetComponentTransform();
         if(!P.Wall->GetStaticMesh()){Abort(TEXT("real perimeter has no mesh bounds"));return;}
         P.WallBounds=P.Wall->GetStaticMesh()->GetBoundingBox().TransformBy(P.WallTransform);
+        FString ReferenceError;
+        if(!ReadGymBoundaryReference(StageMap,P,ReferenceError)){Abort(ReferenceError);return;}
         P.SourceSouthEdgeCm=-StageMap.SourceBoundsMetres.Min.Y*100.;
+        P.TargetSouthEdgeCm=-P.TargetBoundsMetres.Min.Y*100.;
         P.WallInnerFaceCm=P.WallBounds.Min.Y;
-        P.WallClearanceCm=P.WallInnerFaceCm-P.SourceSouthEdgeCm;
+        P.WallClearanceCm=P.WallInnerFaceCm-P.TargetSouthEdgeCm;
         P.CaptureEnabled=CaptureEnabled;
-        if(!P.WallBounds.IsValid||P.WallClearanceCm<0||P.WallClearanceCm>2.)
-        {Abort(TEXT("south collision slab must start outside the source edge within declared 0..2cm clearance"));return;}
+        if(!P.WallBounds.IsValid||FMath::Abs(P.WallClearanceCm-P.DeclaredClearanceCm)>1.e-4)
+        {Abort(TEXT("south collision slab must match the declared target edge and clearance within 1 micrometre"));return;}
         P.Start=Rig->GetActorLocation();
         P.Forward=Rig->GetActorForwardVector().GetSafeNormal2D();
         P.Side=FVector::CrossProduct(FVector::UpVector,P.Forward);
@@ -82,7 +147,10 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         if(FMath::Abs(P.Start.X+1100)>15||FMath::Abs(P.Start.Y-660)>15||
             FVector::DotProduct(P.Forward,FVector(0,1,0))<.99)
         {Abort(TEXT("use the audited copied-map spawn ROS(-11,-6.6), yaw=-pi/2"));return;}
-        ControlReport->SetStringField(TEXT("probe"),TEXT("campus_gym_actual_outside_boundary_v2"));
+        ControlReport->SetStringField(TEXT("probe"),P.PhysicsContract==TEXT("outside_platform_bounds_v1")?
+            TEXT("campus_gym_actual_platform_boundary_v1"):TEXT("campus_gym_actual_outside_boundary_v2"));
+        ControlReport->SetStringField(TEXT("physics_contract"),P.PhysicsContract);
+        ControlReport->SetStringField(TEXT("boundary_manifest_file"),P.BoundaryManifestFile);
         ControlReport->SetStringField(TEXT("expected_wall"),TEXT("arena_guard_south"));
         ControlReport->SetStringField(TEXT("wall_component"),P.Wall->GetPathName());
         ControlReport->SetNumberField(TEXT("approach_command_speed_m_s"),2.0);
@@ -94,13 +162,19 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         ControlReport->SetStringField(TEXT("rendering_evidence_scope"),CaptureEnabled?TEXT("physics plus optional diagnostic screenshots"):TEXT("physical contacts only; rendering not exercised"));
         ControlReport->SetArrayField(TEXT("source_bounds_ros_lo_m"),GymVector(StageMap.SourceBoundsMetres.Min));
         ControlReport->SetArrayField(TEXT("source_bounds_ros_hi_m"),GymVector(StageMap.SourceBoundsMetres.Max));
+        ControlReport->SetArrayField(TEXT("target_bounds_ros_lo_m"),GymVector(P.TargetBoundsMetres.Min));
+        ControlReport->SetArrayField(TEXT("target_bounds_ros_hi_m"),GymVector(P.TargetBoundsMetres.Max));
         ControlReport->SetArrayField(TEXT("wall_world_bounds_lo_cm"),GymVector(P.WallBounds.Min));
         ControlReport->SetArrayField(TEXT("wall_world_bounds_hi_cm"),GymVector(P.WallBounds.Max));
         ControlReport->SetArrayField(TEXT("wall_ros_bounds_lo_m"),GymVector(FVector(P.WallBounds.Min.X,-P.WallBounds.Max.Y,P.WallBounds.Min.Z)/100.));
         ControlReport->SetArrayField(TEXT("wall_ros_bounds_hi_m"),GymVector(FVector(P.WallBounds.Max.X,-P.WallBounds.Min.Y,P.WallBounds.Max.Z)/100.));
         ControlReport->SetNumberField(TEXT("source_south_edge_world_y_cm"),P.SourceSouthEdgeCm);
         ControlReport->SetNumberField(TEXT("wall_inner_face_world_y_cm"),P.WallInnerFaceCm);
-        ControlReport->SetNumberField(TEXT("wall_outside_clearance_cm"),P.WallClearanceCm);
+        ControlReport->SetNumberField(TEXT("wall_outside_clearance_cm"),P.WallInnerFaceCm-P.SourceSouthEdgeCm);
+        ControlReport->SetNumberField(TEXT("target_south_edge_world_y_cm"),P.TargetSouthEdgeCm);
+        ControlReport->SetNumberField(TEXT("wall_target_outside_clearance_cm"),P.WallClearanceCm);
+        ControlReport->SetNumberField(TEXT("declared_target_clearance_cm"),P.DeclaredClearanceCm);
+        ControlReport->SetNumberField(TEXT("wall_target_inner_face_error_cm"),P.WallClearanceCm-P.DeclaredClearanceCm);
         ControlReport->SetNumberField(TEXT("reverse_command_speed_m_s"),.75);
         ControlReport->SetBoolField(TEXT("pose_overrides_used"),false);
         ControlReport->SetBoolField(TEXT("os_keyboard_test"),false);
@@ -134,11 +208,17 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
     const FBox& Source=StageMap.SourceBoundsMetres;
     const double GapToWallCm=P.WallInnerFaceCm-BodyBounds.Max.Y;
     const double CentreToWallCm=P.WallInnerFaceCm-Position.Y;
-    const double Margin=FMath::Min(
-        FMath::Min(BodyBounds.Min.X-Source.Min.X*100.,Source.Max.X*100.-BodyBounds.Max.X),
-        FMath::Min(BodyBounds.Min.Y+Source.Max.Y*100.,-Source.Min.Y*100.-BodyBounds.Max.Y));
+    auto MarginTo=[&](const FBox& Boundary)
+    {
+        return FMath::Min(
+            FMath::Min(BodyBounds.Min.X-Boundary.Min.X*100.,Boundary.Max.X*100.-BodyBounds.Max.X),
+            FMath::Min(BodyBounds.Min.Y+Boundary.Max.Y*100.,-Boundary.Min.Y*100.-BodyBounds.Max.Y));
+    };
+    const double SourceMargin=MarginTo(Source),Margin=MarginTo(P.TargetBoundsMetres);
     P.MinimumBoundaryMarginCm=FMath::Min(P.MinimumBoundaryMarginCm,Margin);
-    ControlReport->SetNumberField(TEXT("minimum_vehicle_envelope_boundary_margin_cm"),P.MinimumBoundaryMarginCm);
+    P.MinimumSourceMarginCm=FMath::Min(P.MinimumSourceMarginCm,SourceMargin);
+    ControlReport->SetNumberField(TEXT("minimum_vehicle_envelope_boundary_margin_cm"),P.MinimumSourceMarginCm);
+    ControlReport->SetNumberField(TEXT("minimum_vehicle_envelope_target_margin_cm"),P.MinimumBoundaryMarginCm);
     ControlReport->SetNumberField(TEXT("current_chassis_wheels_to_wall_gap_cm"),GapToWallCm);
     ControlReport->SetNumberField(TEXT("current_origin_to_wall_distance_cm"),CentreToWallCm);
     ControlReport->SetNumberField(TEXT("current_actual_speed_cm_s"),SpeedCmS);
@@ -207,6 +287,7 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         Event->SetArrayField(TEXT("surface_normal"),GymVector(Normal));
         Event->SetNumberField(TEXT("wall_inner_face_distance_cm"),FMath::Abs(Point.Y-P.WallInnerFaceCm));
         Event->SetNumberField(TEXT("source_south_edge_signed_distance_cm"),Point.Y-P.SourceSouthEdgeCm);
+        Event->SetNumberField(TEXT("target_south_edge_signed_distance_cm"),Point.Y-P.TargetSouthEdgeCm);
         Event->SetBoolField(TEXT("exact_wall_pointer_and_point_matched"),true);
         Event->SetNumberField(TEXT("impulse_n_s"),ExactImpulse);
         Event->SetNumberField(TEXT("observed_vehicle_speed_m_s"),SpeedCmS/100.);
@@ -229,7 +310,8 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         Sample->SetNumberField(TEXT("actual_speed_m_s"),SpeedCmS/100.);
         Sample->SetNumberField(TEXT("progress_cm"),Progress);
         Sample->SetNumberField(TEXT("lateral_drift_cm"),Drift);
-        Sample->SetNumberField(TEXT("vehicle_envelope_boundary_margin_cm"),Margin);
+        Sample->SetNumberField(TEXT("vehicle_envelope_boundary_margin_cm"),SourceMargin);
+        Sample->SetNumberField(TEXT("vehicle_envelope_target_margin_cm"),Margin);
         Sample->SetNumberField(TEXT("chassis_wheels_to_wall_gap_cm"),GapToWallCm);
         Sample->SetNumberField(TEXT("origin_to_wall_distance_cm"),CentreToWallCm);
         Sample->SetNumberField(TEXT("up_z"),UpZ);
@@ -326,7 +408,7 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
     case 5:
         Rig->SetContactDrive(0,0,true);
         if(ContactPhaseTime<2)return;
-        if(!Check(TEXT("final_stop_inside_original_field"),SpeedCmS<10&&UpZ>.85&&
+        if(!Check(P.PhysicsContract==TEXT("outside_platform_bounds_v1")?TEXT("final_stop_inside_platform_boundary"):TEXT("final_stop_inside_original_field"),SpeedCmS<10&&UpZ>.85&&
             P.MinimumBoundaryMarginCm>=-1.&&ContactRecoveryCount==0&&Rig->GetMotionGeneration()==P.MotionGeneration,
             FString::Printf(TEXT("Final speed %.4fcm/s; every-frame minimum field margin %.3fcm; unchanged motion generation %llu; resets %d"),
                 SpeedCmS,P.MinimumBoundaryMarginCm,static_cast<unsigned long long>(P.MotionGeneration),ContactRecoveryCount)))return;

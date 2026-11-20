@@ -31,11 +31,18 @@ def main():
  'FieldSky':{'position':[-5,-5,1.25],'target':[-5,22,9.5],'fov':78},
  'FloorContactSouth':{'position':[-7,-9.25,-.12],'target':[-3,-8.001566,-.27],'fov':60},
  'FloorContactNorth':{'position':[7,9.2,-.08],'target':[3,8.001566,-.26],'fov':60},
- 'FloorContactCorner':{'position':[15.7,9.5,.6],'target':[13.8,7.8,-.23],'fov':65}
+ 'FloorContactCorner':{'position':[15.7,9.5,.6],'target':[13.8,7.8,-.23],'fov':65},
+ 'WavePlatformNorth':{'position':[5.4,-3.8,2.3],'target':[8.5,-6.9,0.0],'fov':78},
+ 'WavePlatformSouth':{'position':[-5.4,3.8,2.3],'target':[-8.5,6.9,0.0],'fov':78},
+ 'WaveWallOverview':{'position':[-13,0,9],'target':[1,0,.3],'fov':100}
  }
  def ros(v):return ','.join(f'{x:.7g}' for x in (v[0],-v[1],v[2]))
  config=root/'assets/maps/rmuc2027/arena-shell.json'
  layout=root/'assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json'
+ manifest=json.loads(config.read_text(encoding='utf-8'))
+ perimeter=manifest['perimeter'];contract=perimeter['physics_contract']
+ if contract not in ('outside_source_bounds_v1','outside_platform_bounds_v1'):raise ValueError('Unsupported school capture perimeter contract')
+ expected_bounds=perimeter.get('target_bounds_m',manifest['bounds_m'])
  report={'status':'running','utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
          'manifest_sha256':sha(config),'layout_sha256':sha(layout),
          'source_map_sha256':sha(root/'assets/maps/rmuc2027/map.json'),
@@ -66,8 +73,12 @@ def main():
    probe=json.loads((folder/'boundary.json').read_text(encoding='utf-8-sig'))
    for check in (
     probe['status']=='passed',probe['sweep_samples']==96,probe['sweep_passed']==96,
-    probe['all_boundary_parts_outside_source_bounds'] is True,
-    probe['physics_contract']=='outside_source_bounds_v1',
+    probe['physics_contract']==contract,
+    probe['all_boundary_parts_outside_target_bounds'] is True,
+    probe['collision_faces_match_target'] is True,
+    probe['long_glass_faces_match_target'] is True,
+    probe['source_bounds_m']==manifest['bounds_m'],probe['target_bounds_m']==expected_bounds,
+    probe['all_boundary_parts_outside_source_bounds'] is (contract=='outside_source_bounds_v1'),
     abs(probe['outside_clearance_m'])<1e-9,
     abs(probe['visual_floor_z_m']+.3009999990463257)<1e-9,
     probe['all_glass_bases_meet_support_floor'] is True,
@@ -75,6 +86,11 @@ def main():
     probe['gi_method_requested']=='lumen',probe['reflection_method_requested']=='lumen',
     probe['procedural_parquet_enabled'] is False,probe['fixed_wall_branding_enabled'] is False):
     if not check:raise RuntimeError('School native field or Lumen QA failed: '+name)
+   if contract=='outside_platform_bounds_v1':
+    for side,mesh in perimeter['platform_reference_meshes'].items():
+     evidence=probe['native_platform_references'][side]
+     if evidence['mesh_id']!=mesh or max(abs(evidence['visual_anchor_error_m']),abs(evidence['collision_anchor_error_m']))>1e-6:
+      raise RuntimeError('Loaded platform asset disagrees with wall anchor: '+side)
    images=[]
    for fname in ('overview.png','aim_camera.png'):
     p=folder/fname
