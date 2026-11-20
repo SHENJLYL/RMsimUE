@@ -23,6 +23,8 @@ from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 from rmsim_bridge.control_dlls import load_package_dlls
 import rmsim_bridge.node as installed_node
+import rmsim_bridge.protocol as installed_protocol
+import rmsim_bridge.lidar as installed_lidar
 load_package_dlls("livox_ros_driver2")
 from livox_ros_driver2.msg import CustomMsg
 from probe_mujoco_sensors import png
@@ -78,7 +80,11 @@ def main():
         "installed_node":installed_node.__file__,"installed_node_sha256":sha(installed_node.__file__),
         "source_node_sha256":sha(ROOT/"ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py"),
         "domain_id":os.environ["ROS_DOMAIN_ID"],"localhost_only":os.environ["ROS_LOCALHOST_ONLY"]}
-    assert os.name=="nt" and "install_bridge" in str(Path(installed_node.__file__).resolve())
+    report["installed_modules"]={name:{"path":module.__file__,"installed_sha256":sha(module.__file__),
+        "source_sha256":sha(ROOT/f"ros2_ws/src/rmsim_bridge/rmsim_bridge/{name}.py")}
+        for name,module in (("node",installed_node),("protocol",installed_protocol),("lidar",installed_lidar))}
+    assert os.name=="nt" and all("install_bridge" in str(Path(item["path"]).resolve())
+        for item in report["installed_modules"].values())
     rclpy.init();node=Observer();bridge=None;stream=None
     def save():(args.output/"verification.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     def check(name,ok,**detail):
@@ -86,7 +92,8 @@ def main():
         print(("PASS " if ok else "FAIL ")+name,flush=True)
         if not ok:raise AssertionError(name)
     try:
-        check("installed_bridge_matches_current_source",report["installed_node_sha256"]==report["source_node_sha256"])
+        check("installed_bridge_matches_current_source",all(item["installed_sha256"]==item["source_sha256"]
+            for item in report["installed_modules"].values()),modules=report["installed_modules"])
         command=[shutil.which("ros2"),"run","rmsim_bridge","bridge","--ros-args","-p",f"port:={args.port}"]
         report["bridge_command"]=command;stream=(args.output/"bridge.log").open("w",encoding="utf-8")
         bridge=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT,env=os.environ.copy(),creationflags=subprocess.CREATE_NO_WINDOW)
@@ -127,8 +134,11 @@ def main():
         # DDS callbacks from different topics need not arrive in publish order.
         # Keep this exact scan fixed and wait for its clock; retain the strict stamp check.
         node.wait(lambda:node.clock>=key+offsets[-1],15)
-        check("ros_lidar_actual_time_offsets",19<=len(offsets)<=20 and offsets[-1]-offsets[0]>=90_000_000 and key+offsets[-1]<=node.clock,
+        check("ros_lidar_actual_time_offsets",len(rows)==len(offsets)==20000 and
+            offsets[0]==0 and offsets[-1]==99_995_000 and key+offsets[-1]<=node.clock and
+            all(r[0]==i*5000 and r[6]==(key//5000+i)%4 for i,r in enumerate(rows)),
             distinct_times=len(offsets),span_ns=offsets[-1]-offsets[0],last_sample_ns=key+offsets[-1],
+            zero_slots=sum(not any(r[1:4]) for r in rows),
             clock_before_wait_ns=clock_before_wait,clock_ns=node.clock)
         matching=set(node.images)&set(node.infos)&set(node.cameras);check("image_info_tf_same_physical_stamp",len(matching)>=2,matching_frames=len(matching))
         key=max(matching);image=node.images[key];info=node.infos[key];tf=node.cameras[key];rgb=bytes(image.data)

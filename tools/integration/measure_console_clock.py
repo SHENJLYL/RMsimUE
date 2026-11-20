@@ -14,9 +14,31 @@ import datetime
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import sys
 import time
+
+
+STATE_REPLACE_RETRY_BUDGET_S = .2
+STATE_REPLACE_RETRY_DELAY_S = .01
+
+
+def replace_measurement_state(temporary: Path, destination: Path) -> None:
+    """Publish one prepared snapshot despite brief Windows reader handles."""
+    deadline = time.monotonic() + STATE_REPLACE_RETRY_BUDGET_S
+    while True:
+        try:
+            temporary.replace(destination)
+            return
+        except OSError as error:
+            if os.name != "nt" or getattr(error, "winerror", None) not in (5, 32):
+                raise
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise
+            time.sleep(min(STATE_REPLACE_RETRY_DELAY_S, remaining))
+
 
 RATE_MIN, RATE_MAX = .98, 1.02
 MAX_FRESHNESS_S = 1.
@@ -302,7 +324,7 @@ def main():
                  "requested_wall_seconds": args.seconds, **details}
         temporary = args.output/"measurement-state.json.tmp"
         temporary.write_text(json.dumps(state, indent=2, allow_nan=False)+"\n", encoding="utf-8")
-        temporary.replace(args.output/"measurement-state.json")
+        replace_measurement_state(temporary, args.output/"measurement-state.json")
         print("CLOCK_MEASUREMENT_STATE "+json.dumps(state, allow_nan=False), flush=True)
     save_measurement_state("waiting_for_warmup", warmup_seconds=args.warmup_seconds)
     deadline = observer_started+args.ready_timeout_seconds

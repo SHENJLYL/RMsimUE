@@ -78,8 +78,11 @@ class SensorPeer:
             for scan in state.get("lidar",{}).get("scans",[]):
                 rows=list(struct.iter_unpack("<IfffBBBB",payload[scan["byte_offset"]:scan["byte_offset"]+scan["byte_length"]]))
                 offsets=sorted({r[0] for r in rows})
-                ranges=[math.sqrt(r[1]**2+r[2]**2+r[3]**2) for r in rows]
-                self.scans.append(dict(scan,phase=self.phase,packet_stamp_ns=t,unique_offsets=offsets,
+                ranges=[math.sqrt(r[1]**2+r[2]**2+r[3]**2) for r in rows if any(r[1:4])]
+                self.scans.append(dict(scan,phase=self.phase,packet_stamp_ns=t,distinct_time_count=len(offsets),
+                    first_offset_ns=offsets[0] if offsets else None,last_offset_ns=offsets[-1] if offsets else None,
+                    valid_returns=len(ranges),zero_slots=len(rows)-len(ranges),
+                    nominal_slot_contract=all(r[0]==i*5000 and r[6]==(scan["start_ns"]//5000+i)%4 for i,r in enumerate(rows)),
                     minimum_range_m=min(ranges) if ranges else None,maximum_range_m=max(ranges) if ranges else None,
                     sample_points=rows[::max(1,len(rows)//32)]))
             count=state.get("camera_bytes",len(payload))
@@ -125,12 +128,18 @@ def main():
             and abs(state["fixed_step_s"]-.005)<1e-12 and state["map"]["id"]=="rmuc2027",
             physics_backend=state.get("physics_backend"),clock_source=state.get("clock_source"),
             dynamics_step_s=state.get("dynamics_step_s"),sensor_step_s=state.get("fixed_step_s"),map=state["map"])
+        imu_model=state["imu"].get("physical_model",{})
+        check("native_imu_history_measurement_model",state["imu"].get("profile_schema")=="rm_imu_runtime_v3" and
+            imu_model.get("schema")=="rm_mid360_imu_physical_v1" and
+            abs(imu_model.get("integration_window_s",0)-.002)<1e-12 and
+            abs(imu_model.get("support_latency_s",0)-.001)<1e-12,
+            model=imu_model)
         cutoff=state["sim_time_ns"]-1_000_000_000
         for name in ("imu","mid360_imu"):
             rows=[r for r in peer.samples if r["id"]==name and r["phase"]=="rest" and r["stamp_ns"]>=cutoff]
             intervals=[(b["stamp_ns"]-a["stamp_ns"])/1e9 for a,b in zip(rows,rows[1:])]
             check(name+"_actual_200hz",195<=len(rows)<=202 and intervals and
-                max(abs(v-.005) for v in intervals)<1e-9 and all(abs(r["integration_dt_s"]-.005)<1e-8 for r in rows),
+                max(abs(v-.005) for v in intervals)<1e-9 and all(abs(r["integration_dt_s"]-.002)<1e-8 for r in rows),
                 samples_last_sim_second=len(rows),interval_min_s=min(intervals) if intervals else None,
                 interval_max_s=max(intervals) if intervals else None)
             force=average(rows,"specific_force_mps2");expected=average(rows,"gravity_expected");gyro=average(rows,"angular_velocity_rad_s")
@@ -167,20 +176,38 @@ def main():
         first=min(r["stamp_ns"] for r in moving);early=[r for r in moving if r["stamp_ns"]<first+600_000_000]
         acceleration=average(early,"force_without_gravity")
         check("imu_measures_actual_drive_acceleration",acceleration[0]>.1,mean_acceleration_m_s2=acceleration)
-        state=peer.state;lidar=state["lidar"];scans=[s for s in peer.scans if s["point_count"]]
+        state=peer.state;lidar=state["lidar"];scans=[s for s in peer.scans if s["valid_returns"]]
         check("real_lidar_packets_and_range",len(scans)>30 and max(s["point_count"] for s in scans)>1000 and
             all(s["start_ns"]<=s["end_ns"]<=s["packet_stamp_ns"] for s in scans) and
             min(s["minimum_range_m"] for s in scans)>=lidar["min_range_m"]-1e-5 and
             max(s["maximum_range_m"] for s in scans)<=lidar["max_range_m"]+1e-4,
             scans=len(scans),maximum_points=max(s["point_count"] for s in scans))
-        check("lidar_real_5ms_acquisition_times",all(19<=len(s["unique_offsets"])<=20 and
-            s["unique_offsets"][-1]-s["unique_offsets"][0]>=90_000_000 and
-            all(min(v%5_000_000,5_000_000-v%5_000_000)<=2 for v in s["unique_offsets"]) for s in scans),
-            minimum_distinct_times=min(len(s["unique_offsets"]) for s in scans),
-            maximum_distinct_times=max(len(s["unique_offsets"]) for s in scans),max_physics_step_s=lidar["max_physics_step_s"])
-        check("lidar_budget_and_opaque_occlusion",lidar["missed_rays"]==0 and lidar["dropped_scans"]==0 and
-            lidar["max_physics_step_s"]<.00501 and lidar["self_occluded_rays"]>0 and
-            0<lidar["returns"]<lidar["traced_rays"],metadata=lidar)
+        check("lidar_actual_5us_emission_slots",lidar.get("profile_schema")=="rm_lidar_runtime_v3" and
+            all(s["point_count"]==20000 and s["distinct_time_count"]==20000 and s["nominal_slot_contract"] and
+                s["first_offset_ns"]==0 and s["last_offset_ns"]==99_995_000 and
+                s["end_ns"]-s["start_ns"]==100_000_000 for s in peer.scans),
+            minimum_distinct_times=min(s["distinct_time_count"] for s in peer.scans),
+            maximum_distinct_times=max(s["distinct_time_count"] for s in peer.scans),
+            native_pose_support_s=state["dynamics_step_s"],scene_snapshot_step_s=lidar["max_physics_step_s"])
+        check("lidar_unavailable_returns_keep_slots",sum(s["zero_slots"] for s in peer.scans)>0 and
+            lidar["physical_model"]["retains_no_returns"] and
+            lidar["rejection_counts"]["missing_pose_history"]==0,
+            zero_slots=sum(s["zero_slots"] for s in peer.scans),
+            valid_returns=sum(s["valid_returns"] for s in peer.scans),rejections=lidar["rejection_counts"])
+        # The corrected optical origin clears the vehicle's opaque geometry at the -7 degree
+        # lower FOV edge. Self-hit counts depend on mounting geometry; zero is physically valid.
+        # Validate exact slot/return accounting and optical policy instead of requiring a phantom
+        # body hit. Native serial/parallel first-hit verification remains an independent gate.
+        check("lidar_emission_accounting_and_optical_policy",lidar["missed_rays"]==0 and lidar["dropped_scans"]==0 and
+            lidar["max_physics_step_s"]<.00501 and lidar["skipped_scan_windows"]==0 and
+            lidar["incomplete_scan_drops"]==0 and 0<lidar["returns"]<lidar["traced_rays"] and
+            lidar["emitted_slots"]==lidar["traced_rays"]+lidar["delivery_suppressed_slots"]+lidar["disconnected_slots"] and
+            lidar["traced_rays"]+lidar["rejection_counts"]["missing_pose_history"]==
+                lidar["returns"]+sum(lidar["rejection_counts"].values()) and
+            0<=lidar["self_occluded_rays"]<=lidar["traced_rays"] and lidar["optical_window_passes"]>0 and
+            lidar["rejection_counts"]["self_occluded"]==0 and
+            lidar["physical_model"]["self_return_policy"]=="opaque_self_geometry_first_return; no_self_return_mask",
+            metadata=lidar)
         images=[i for i in peer.images if i["stamp_ns"]>=peer.packets[0]["stamp_ns"]+1_000_000_000]
         check("actual_rendered_camera",len(images)>=40 and all(i["bytes"]==640*360*3 and i["max"]-i["min"]>80 and
             i["stamp_ns"]<=i["packet_stamp_ns"] and abs(i["hfov_rad"]-math.pi/3)<1e-5 for i in images),
@@ -199,6 +226,13 @@ def main():
             fresh and min(s["stamp_ns"] for s in fresh)>last_stamp and
             all(s["start_ns"]>=last_stamp for s in peer.scans if s["phase"]=="reconnect"),
             previous_session=original_session,new_session=peer.state["session"],first_fresh_imu_ns=min(s["stamp_ns"] for s in fresh))
+        reconnected_lidar=peer.state["lidar"]
+        check("reconnect_preserves_emission_accounting",reconnected_lidar["emitted_slots"]==
+            reconnected_lidar["traced_rays"]+reconnected_lidar["missed_rays"]+
+            reconnected_lidar["delivery_suppressed_slots"]+reconnected_lidar["disconnected_slots"],
+            emitted_slots=reconnected_lidar["emitted_slots"],traced_rays=reconnected_lidar["traced_rays"],
+            missed_rays=reconnected_lidar["missed_rays"],delivery_suppressed_slots=reconnected_lidar["delivery_suppressed_slots"],
+            disconnected_slots=reconnected_lidar["disconnected_slots"])
         elapsed_sim=(peer.packets[-1]["stamp_ns"]-peer.packets[0]["stamp_ns"])/1e9
         elapsed_wall=peer.packets[-1]["wall_s"]-peer.packets[0]["wall_s"]
         report.update(status="passed",simulated_seconds=elapsed_sim,observed_wall_seconds=elapsed_wall,
