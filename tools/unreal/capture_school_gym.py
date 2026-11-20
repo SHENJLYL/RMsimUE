@@ -34,12 +34,22 @@ def main():
  'FloorContactCorner':{'position':[15.7,9.5,.6],'target':[13.8,7.8,-.23],'fov':65},
  'WavePlatformNorth':{'position':[5.4,-3.8,2.3],'target':[8.5,-6.9,0.0],'fov':78},
  'WavePlatformSouth':{'position':[-5.4,3.8,2.3],'target':[-8.5,6.9,0.0],'fov':78},
- 'WaveWallOverview':{'position':[-13,0,9],'target':[1,0,.3],'fov':100}
+ 'WaveWallOverview':{'position':[-13,0,9],'target':[1,0,.3],'fov':100},
+ 'EntryWestInside':{'position':[-20,-5.5287084961,1.35],'target':[-45,-5.5287084961,1.0],'fov':96},
+ 'EntryWestOutside':{'position':[-43,-7.16435424805,3.1],'target':[-24,-7.16435424805,2.0],'fov':96},
+ 'EntryEastInside':{'position':[20,-5.5287084961,1.35],'target':[45,-5.5287084961,1.0],'fov':96},
+ 'EntryEastOutside':{'position':[43,-7.16435424805,3.1],'target':[24,-7.16435424805,2.0],'fov':96},
+ 'EntryBrickDetail':{'position':[35,11,1.5],'target':[31.9,5,.65],'fov':78},
+ 'EntryWestUpperDetail':{'position':[-28,-27,1.3],'target':[-32,-23,.7],'fov':75},
+ 'GroundSkySeam':{'position':[-72,-5.53,1.8],'target':[-150,-5.53,1.5],'fov':80}
  }
  def ros(v):return ','.join(f'{x:.7g}' for x in (v[0],-v[1],v[2]))
  config=root/'assets/maps/rmuc2027/arena-shell.json'
  layout=root/'assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json'
  manifest=json.loads(config.read_text(encoding='utf-8'))
+ scene=json.loads(layout.read_text(encoding='utf-8'))
+ expected_assets=len(scene['native_meshes'])
+ expected_instances=sum(len(g['instances']) for g in scene['groups'] if g['mesh'] in scene['native_meshes'])
  perimeter=manifest['perimeter'];contract=perimeter['physics_contract']
  if contract not in ('outside_source_bounds_v1','outside_platform_bounds_v1'):raise ValueError('Unsupported school capture perimeter contract')
  expected_bounds=perimeter.get('target_bounds_m',manifest['bounds_m'])
@@ -82,10 +92,16 @@ def main():
     abs(probe['outside_clearance_m'])<1e-9,
     abs(probe['visual_floor_z_m']+.3009999990463257)<1e-9,
     probe['all_glass_bases_meet_support_floor'] is True,
-    probe['native_mesh_assets_loaded']==23,probe['native_mesh_instances']==57,
+    probe['native_mesh_assets_loaded']==expected_assets,probe['native_mesh_instances']==expected_instances,
     probe['gi_method_requested']=='lumen',probe['reflection_method_requested']=='lumen',
     probe['procedural_parquet_enabled'] is False,probe['fixed_wall_branding_enabled'] is False):
     if not check:raise RuntimeError('School native field or Lumen QA failed: '+name)
+   if 'outdoor_background' in manifest:
+    background=probe['outdoor_background']
+    if not (background['contract_satisfied'] is True and background['ground_strip_count']==4 and
+            background['declared_sky_diameter_m']==manifest['outdoor_background']['sky_diameter_m'] and
+            background['ground_center_hole_uncovered'] is True):
+     raise RuntimeError('Outdoor background geometry or material contract failed: '+name)
    if contract=='outside_platform_bounds_v1':
     for side,mesh in perimeter['platform_reference_meshes'].items():
      evidence=probe['native_platform_references'][side]

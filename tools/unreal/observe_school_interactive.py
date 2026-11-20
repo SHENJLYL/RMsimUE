@@ -26,7 +26,9 @@ def main():
   text=log.read_text(encoding='utf-8-sig',errors='replace')
   terms=['GPU timeout','GPU Crashed','TerminateOnGPUCrash','Writing Aftermath dump','Non-Nanite Marking Job Queue overflow','Virtual Shadow Map Page Pool overflow']
   warnings={t:text.count(t) for t in terms}
-  required=['PCD3D_SM6','r.Shadow.Virtual.Enable:0','RMSIM_CAMPUS_GYM_READY layout=57','native_assets=23 native_instances=57','IMPORT_LAB_READY','M_SchoolLandscape.M_SchoolLandscape']
+  layout=json.loads((R/'assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json').read_text(encoding='utf-8'))
+  assets=len(layout['native_meshes']);instances=sum(len(g['instances']) for g in layout['groups'] if g['mesh'] in layout['native_meshes'])
+  required=['PCD3D_SM6','r.Shadow.Virtual.Enable:0',f'RMSIM_CAMPUS_GYM_READY layout={instances}',f'native_assets={assets} native_instances={instances}','IMPORT_LAB_READY','M_SchoolLandscape.M_SchoolLandscape']
   checks={t:t in text for t in required}
   assert any(v['visible_window'] for v in report['observations'])
   assert all(checks.values()) and not any(warnings.values())
