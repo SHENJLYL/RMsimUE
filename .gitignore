@@ -176,3 +176,15 @@ Thumbs.db
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-fidelity/*.hdr
 /assets/maps/rmuc2027/arena/campus-exterior/prepared-tree-fidelity-*/
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-full-fidelity/*.hdr
+
+# Official MuJoCo SDK and source-derived physics caches (reproducible locally).
+/third_party/mujoco-sdk/
+/assets/vehicles/aim_sentry/mujoco/generated/
+/assets/vehicles/aim_sentry/mujoco/rmuc2027/
+
+# MuJoCo notices and compact integration evidence.
+!/third_party/notices/
+/third_party/notices/*
+!/third_party/notices/mujoco-4.0.1/
+/artifacts/integration/mujoco-ue-20261120/**
+!/artifacts/integration/mujoco-ue-20261120/release-summary.json

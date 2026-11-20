@@ -1,0 +1,47 @@
+{
+  "schema": "rmsim_mujoco_backend_v1",
+  "mujoco_version": "4.0.1",
+  "timestep_s": 0.001,
+  "integrator": "implicitfast",
+  "solver": "Newton",
+  "iterations": 60,
+  "cone": "elliptic",
+  "contact": {
+    "flex_radius_m": 0.0001,
+    "solref": [
+      0.002,
+      1
+    ],
+    "solimp": [
+      0.99,
+      0.999,
+      0.0001,
+      0.5,
+      2
+    ],
+    "torsional_friction": 0.005,
+    "rolling_friction": 0.0001,
+    "static_sliding_friction": 0.8,
+    "condim": 6
+  },
+  "gimbal_control": {
+    "stiffness_nm_rad": 80,
+    "damping_nm_s": 8,
+    "max_torque_nm": 8,
+    "yaw_rate_rad_s": 9.42477796076938,
+    "pitch_rate_rad_s": 6.283185307179586
+  },
+  "gimbal_mass_kg": {
+    "yaw": 0.1,
+    "pitch": 0.1
+  },
+  "upper_mass_policy": "Subtract articulated yaw and pitch mass from ChassisMassKg; preserve total upper assembly mass.",
+  "self_collision_policy": "Exclude pairs of bodies belonging to this vehicle only; retain contact with other robots and the static world.",
+  "inertia_policy": "Homogeneous source convex-assembly inertia, rescaled to current drive-profile part mass; not a hardware measurement.",
+  "calibrated": false,
+  "notes": [
+    "Current drive-profile.json owns drive and suspension constants.",
+    "Original UE visual meshes and materials remain unchanged.",
+    "All movement and contact in this backend are solved by MuJoCo; visual transform updates only reproduce its output."
+  ]
+}

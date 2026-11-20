@@ -1,0 +1,13 @@
+{
+  "schema": "rmsim_mujoco_native_static_review_v1",
+  "reviewed_utc": "2026-11-20T02:42:23.641151+00:00",
+  "source_sha256": {
+    "unreal/RMSim/Source/RMSim/MapStage.cpp": "3dcff7a77d9e94f45f2b1592dbae482fd66ce89da669d8ffb498af84ada8c764",
+    "unreal/RMSim/Source/RMSim/MeshMap.cpp": "6a97903da1fd499c68884a39e49b78309d32678f06e488dde2c1b4aa66064bc9",
+    "unreal/RMSim/Source/RMSim/ArenaShell.cpp": "2a59c89180de8d745be0efe070eb4cfc365f8fae365bc07b416a74c913cfac9a",
+    "unreal/RMSim/Source/RMSim/CampusGym.cpp": "844b2cdbac88c79febe667919c0dd96963bac8cb767db01194129369ebc3eed0",
+    "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp": "219f0489dbfb19899db848c0346e2c76765ecb94d9e85254a2d5ad15bba56b8f",
+    "unreal/RMSim/Source/RMSim/TrainingRange.cpp": "1aa8da6f701484af1228207eeea36eb9f96190b0481e61f6a489dee3c6a47697"
+  },
+  "scope": "Manual read-only review of all current RMUC collider construction paths; rerun review if these sources change."
+}
