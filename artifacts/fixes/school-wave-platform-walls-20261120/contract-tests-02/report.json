@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "utc": "2026-11-20T01:33:50.015948+00:00",
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/control",
+    "-p",
+    "test_*perimeter.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "old_guard_negative_control": {
+    "old_guard_regression_detected": true,
+    "failures": [
+      "Traceback (most recent call last):\n  File \"D:\\simulator\\tests\\control\\test_platform_perimeter.py\", line 111, in test_console_rejects_legacy_package_without_runtime_boundary\n    with self.assertRaisesRegex(ValueError, \"active physical perimeter\"):\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n"
+    ],
+    "errors": []
+  },
+  "files": {
+    "tools/integration/navigation_console_config.py": "263ec99d0cd9b7cea2866a787a4fbc42b0f0a531e12c78c5785e68dfc3c0221c",
+    "tests/control/test_platform_perimeter.py": "9f4d315a62e269e94f44b133cd4442b2928c8741cd3cbeef1605d20bafd49463"
+  }
+}

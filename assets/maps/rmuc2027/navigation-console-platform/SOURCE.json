@@ -1,0 +1,510 @@
+{
+  "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+  "raster_sha256": "3c967b2923aaeed5a54e7168caaf05e9c6ef673ec1fa3d26a224b8e66b036f06",
+  "map_metadata": {
+    "map_id": "rmuc2027",
+    "source_sha256": "fd9c6bad8650f5b0728ac3d636cbc991858d0d6464252017d7a53ac51807bd33",
+    "source_md5": "b0453f53370193c59ef594a56003872b",
+    "resolution": 0.05000000000000071,
+    "origin": [
+      -14.550000000000008,
+      -8.600000000000009,
+      0.0
+    ],
+    "width": 582,
+    "height": 344,
+    "semantics": "geometry-derived reachable support/headroom and collision-checked adjacency; no robot inflation in PGM",
+    "status": "generated_not_native_validated",
+    "collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+    "columns_report_sha256": "73d38576d6edae7d55a7f270b7d0eaaac0ddd07a57ceb70b7986f42bdc547b65",
+    "candidate_surfaces": 180289,
+    "reachable_surfaces": 156386,
+    "free_cells": 144006,
+    "barrier_cells": 902,
+    "horizontal_queries": 933642,
+    "wall_seconds": 4.643465499975719,
+    "parameters": {
+      "body_height_m": 0.4192,
+      "headroom_margin_m": 0.03,
+      "max_candidate_slope_deg": 50,
+      "flat_step_limit_m": 0.035,
+      "probe_heights_m": [
+        0.0425,
+        0.21,
+        0.4192
+      ]
+    },
+    "samples": {
+      "spawn": {
+        "x": -8.024999999999915,
+        "y": -1.9750000000000218,
+        "free": true,
+        "envelope_free": true,
+        "support_z": -0.05271720886230469
+      },
+      "forward_goal": {
+        "x": -6.024999999999887,
+        "y": -1.9750000000000218,
+        "free": true,
+        "envelope_free": true,
+        "support_z": -0.05271768569946289
+      },
+      "red_wave": {
+        "x": 6.975000000000298,
+        "y": 6.424999999999949,
+        "free": true,
+        "envelope_free": true,
+        "support_z": 0.07988834381103516
+      },
+      "blue_wave": {
+        "x": -7.024999999999901,
+        "y": -6.375000000000006,
+        "free": true,
+        "envelope_free": true,
+        "support_z": 0.04380607604980469
+      },
+      "centre": {
+        "x": -0.024999999999801403,
+        "y": 0.024999999999971934,
+        "free": false,
+        "envelope_free": false,
+        "support_z": null
+      }
+    },
+    "limits": [
+      "Not proof of all physically traversable routes",
+      "Needs actual AMCL and Nav2 validation on the original field",
+      "Thin features and footprint support remain resolution dependent",
+      "50deg candidates do not assert calibrated climb performance"
+    ],
+    "runtime_boundary": {
+      "schema": "rmsim_runtime_boundary_identity_v1",
+      "sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+      "geometry": {
+        "schema": "rmsim_closed_perimeter_geometry_v1",
+        "map_id": "rmuc2027",
+        "units": "m",
+        "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "source_bounds_m": {
+          "lo": [
+            -13.999996185302734,
+            -8.001565933227539,
+            -0.3009999990463257
+          ],
+          "hi": [
+            13.999996185302734,
+            8.001565933227539,
+            3.497683048248291
+          ]
+        },
+        "physics_contract": "outside_platform_bounds_v1",
+        "outside_clearance_m": 0.0,
+        "collision_thickness_m": 0.48,
+        "collision_bottom_m": -1.25,
+        "collision_top_m": 4.8,
+        "target_bounds_m": {
+          "lo": [
+            -13.999996185302734,
+            -7.522840576171875,
+            -0.3009999990463257
+          ],
+          "hi": [
+            13.999996185302734,
+            7.522841186523437,
+            3.497683048248291
+          ]
+        },
+        "collision_channels": {
+          "Camera": "Ignore",
+          "Visibility": "Block",
+          "physics": "Block"
+        },
+        "walls": [
+          {
+            "id": "west",
+            "lo": [
+              -14.479996185302735,
+              -8.002840576171875,
+              -1.25
+            ],
+            "hi": [
+              -13.999996185302734,
+              8.002841186523437,
+              4.8
+            ]
+          },
+          {
+            "id": "east",
+            "lo": [
+              13.999996185302734,
+              -8.002840576171875,
+              -1.25
+            ],
+            "hi": [
+              14.479996185302735,
+              8.002841186523437,
+              4.8
+            ]
+          },
+          {
+            "id": "south",
+            "lo": [
+              -14.479996185302735,
+              -8.002840576171875,
+              -1.25
+            ],
+            "hi": [
+              14.479996185302735,
+              -7.522840576171875,
+              4.8
+            ]
+          },
+          {
+            "id": "north",
+            "lo": [
+              -14.479996185302735,
+              7.522841186523437,
+              -1.25
+            ],
+            "hi": [
+              14.479996185302735,
+              8.002841186523437,
+              4.8
+            ]
+          }
+        ],
+        "localization_faces": [
+          {
+            "id": "west",
+            "start_xy_m": [
+              -13.999996185302734,
+              -7.522840576171875
+            ],
+            "end_xy_m": [
+              -13.999996185302734,
+              7.522841186523437
+            ],
+            "bottom_m": -1.25,
+            "top_m": 4.8
+          },
+          {
+            "id": "east",
+            "start_xy_m": [
+              13.999996185302734,
+              -7.522840576171875
+            ],
+            "end_xy_m": [
+              13.999996185302734,
+              7.522841186523437
+            ],
+            "bottom_m": -1.25,
+            "top_m": 4.8
+          },
+          {
+            "id": "south",
+            "start_xy_m": [
+              -13.999996185302734,
+              -7.522840576171875
+            ],
+            "end_xy_m": [
+              13.999996185302734,
+              -7.522840576171875
+            ],
+            "bottom_m": -1.25,
+            "top_m": 4.8
+          },
+          {
+            "id": "north",
+            "start_xy_m": [
+              -13.999996185302734,
+              7.522841186523437
+            ],
+            "end_xy_m": [
+              13.999996185302734,
+              7.522841186523437
+            ],
+            "bottom_m": -1.25,
+            "top_m": 4.8
+          }
+        ],
+        "localization_visibility": "inward faces visible from the continuously enclosed field"
+      }
+    },
+    "effective_scene_geometry_sha256": "c2a18f9a1c5bba3c623a6fa575b100d04d51d7f013998cce026fa9481420b2dc",
+    "boundary_padding_cells": 11,
+    "baseline_navigation_raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+    "boundary_projection": "Conservative closed-cell XY intersection with the four physical collision slabs; no robot inflation"
+  },
+  "scope": "Preserved CAD navigation baseline with closed walls aligned to the declared wave-platform perimeter; native boundary and AMCL/Nav2 validation recorded separately.",
+  "localization_map": {
+    "schema": "rmsim_packaged_localization_map_v1",
+    "default": true,
+    "status": "generated_not_native_validated",
+    "files": {
+      "yaml": {
+        "path": "localization/vertical85/map.yaml",
+        "sha256": "cc4145c59632b9666f1b952809f9c3c9bbe316f58f22c803fc94609dec2faaaf"
+      },
+      "raster": {
+        "path": "localization/vertical85/map.pgm",
+        "sha256": "62849b8de92efde1d63405c68f0f3578c26377ce3084ab50779afb1793c2002d"
+      },
+      "metadata": {
+        "path": "localization/vertical85/metadata.json",
+        "sha256": "f9a91dd79c98ea8fe5197b0f264a8bb7c40b9c0bb5706b778291c2d164027546"
+      },
+      "surface_provenance": {
+        "path": "localization/vertical85/surface-provenance.npz",
+        "sha256": "857ed185f79a33f7bcda1b4c9924e42c21d40cb0082a4ad3b2669ba2acc0a2c7"
+      }
+    },
+    "export_recipe": {
+      "schema": "rmsim_boundary_navigation_export_recipe_v1",
+      "inputs": {
+        "baseline_manifest": {
+          "path": "assets/maps/rmuc2027/navigation-console/SOURCE.json",
+          "sha256": "f5536d0d2d61d42e8710f8eb0dd30d4601863ee3e781a65e1e590ada7f98e240"
+        },
+        "baseline_scene": {
+          "path": "assets/maps/rmuc2027/navigation-console/scene.json",
+          "sha256": "fd9c6bad8650f5b0728ac3d636cbc991858d0d6464252017d7a53ac51807bd33"
+        },
+        "baseline_navigation_yaml": {
+          "path": "assets/maps/rmuc2027/navigation-console/map.yaml",
+          "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+        },
+        "baseline_navigation_raster": {
+          "path": "assets/maps/rmuc2027/navigation-console/map.pgm",
+          "sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+        },
+        "baseline_localization_yaml": {
+          "path": "assets/maps/rmuc2027/navigation-console/localization/vertical85/map.yaml",
+          "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+        },
+        "baseline_localization_raster": {
+          "path": "assets/maps/rmuc2027/navigation-console/localization/vertical85/map.pgm",
+          "sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8"
+        },
+        "baseline_localization_metadata": {
+          "path": "assets/maps/rmuc2027/navigation-console/localization/vertical85/metadata.json",
+          "sha256": "a2bb480d74048b06dec74823758b6ad676273b127e95932ed93b97964d017852"
+        },
+        "baseline_surface_provenance": {
+          "path": "assets/maps/rmuc2027/navigation-console/localization/vertical85/surface-provenance.npz",
+          "sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035"
+        },
+        "tool": {
+          "path": "tools/maps/export_boundary_navigation_package.py",
+          "sha256": "5fe695db67a626f93a4d7a6073d1b6397998e2f225d7b4e1f8175d756d10ae23"
+        },
+        "geometry_helper": {
+          "path": "ros2_ws/src/rmsim_bridge/rmsim_bridge/perimeter_geometry.py",
+          "sha256": "2d9f834b08ea31ec89e8824defe7d22dc5156c05a66b1a0eb1e05f3648469159"
+        },
+        "projection_tool": {
+          "path": "tools/maps/export_localization_surface_map.py",
+          "sha256": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1"
+        }
+      },
+      "baseline_navigation_raster_seed": {
+        "encoding": "zlib-base64",
+        "uncompressed_bytes": 180335,
+        "sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+        "data": "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"
+      },
+      "boundary_manifest_path": "assets/maps/rmuc2027/arena-shell.json",
+      "runtime_boundary_sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+      "generated_files_policy": "Rebuild only missing planning PGM, localization PGM and NPZ; existing hash mismatches fail; tracked metadata and YAML remain unchanged."
+    },
+    "known_limits": [
+      "The fixed 85-degree category excludes the measured 84.92-degree red-road side face.",
+      "The unchanged terrain-derived scan and 2D surface map retain weak transverse (map y) constraints and multiple likelihood maxima on the red road.",
+      "Ten-centimetre arrival precision is not established across both routes; original 25cm acceptance remains unchanged.",
+      "Raw 3D capture and fixed 75-degree comparison are retained as evidence for future surface-height and visibility-consistent localization."
+    ],
+    "acceptance_record_policy": "Current release acceptance is reported independently in CodeStable and release-summary evidence; this manifest remains the immutable geometry/export declaration.",
+    "baseline_native_evidence": {
+      "scope": "The unchanged occupancy raster and surface-provenance bytes passed the original 14-action checks in rmuc-14 and rmuc-15; rmuc-15 also passed 32 clock checks using the historical 3m/s source snapshot. Later release acceptance is reported independently.",
+      "sessions": [
+        "artifacts/navigation/realtime-20261118/rmuc-14",
+        "artifacts/navigation/realtime-20261118/rmuc-15"
+      ],
+      "rmuc15_runtime_provenance_sha256": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+      "actual_arrival_errors_m": {
+        "rmuc14_single": 0.11616918857785492,
+        "rmuc14_waypoints": 0.10265649062957256,
+        "rmuc15_single": 0.1297606016608601,
+        "rmuc15_waypoints": 0.06680729426537449
+      },
+      "text_identity_scope": "Original rmuc-14, rmuc-15 and rmuc-16 text-input identities remain historical. The canonical LF descriptor, YAML and metadata form a separate text identity whose native validation is recorded in rmuc-17 or subsequent independent release evidence."
+    },
+    "baseline_native_evidence_scope": "Historical CAD map only; it does not validate this platform-perimeter package."
+  },
+  "runtime_boundary": {
+    "schema": "rmsim_runtime_boundary_identity_v1",
+    "sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+    "geometry": {
+      "schema": "rmsim_closed_perimeter_geometry_v1",
+      "map_id": "rmuc2027",
+      "units": "m",
+      "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+      "source_bounds_m": {
+        "lo": [
+          -13.999996185302734,
+          -8.001565933227539,
+          -0.3009999990463257
+        ],
+        "hi": [
+          13.999996185302734,
+          8.001565933227539,
+          3.497683048248291
+        ]
+      },
+      "physics_contract": "outside_platform_bounds_v1",
+      "outside_clearance_m": 0.0,
+      "collision_thickness_m": 0.48,
+      "collision_bottom_m": -1.25,
+      "collision_top_m": 4.8,
+      "target_bounds_m": {
+        "lo": [
+          -13.999996185302734,
+          -7.522840576171875,
+          -0.3009999990463257
+        ],
+        "hi": [
+          13.999996185302734,
+          7.522841186523437,
+          3.497683048248291
+        ]
+      },
+      "collision_channels": {
+        "Camera": "Ignore",
+        "Visibility": "Block",
+        "physics": "Block"
+      },
+      "walls": [
+        {
+          "id": "west",
+          "lo": [
+            -14.479996185302735,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            -13.999996185302734,
+            8.002841186523437,
+            4.8
+          ]
+        },
+        {
+          "id": "east",
+          "lo": [
+            13.999996185302734,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            8.002841186523437,
+            4.8
+          ]
+        },
+        {
+          "id": "south",
+          "lo": [
+            -14.479996185302735,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            -7.522840576171875,
+            4.8
+          ]
+        },
+        {
+          "id": "north",
+          "lo": [
+            -14.479996185302735,
+            7.522841186523437,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            8.002841186523437,
+            4.8
+          ]
+        }
+      ],
+      "localization_faces": [
+        {
+          "id": "west",
+          "start_xy_m": [
+            -13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            -13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "east",
+          "start_xy_m": [
+            13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "south",
+          "start_xy_m": [
+            -13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            -7.522840576171875
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "north",
+          "start_xy_m": [
+            -13.999996185302734,
+            7.522841186523437
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        }
+      ],
+      "localization_visibility": "inward faces visible from the continuously enclosed field"
+    }
+  },
+  "effective_scene_geometry_sha256": "c2a18f9a1c5bba3c623a6fa575b100d04d51d7f013998cce026fa9481420b2dc",
+  "boundary_manifest_path": "assets/maps/rmuc2027/arena-shell.json",
+  "status": "generated_not_native_validated",
+  "baseline_verified_route": [
+    {
+      "x": 5.8,
+      "y": 6.4
+    },
+    {
+      "x": 9.45,
+      "y": 6.4
+    }
+  ],
+  "baseline_provenance": "artifacts/navigation/reconnect-tf-20261117/release-summary.json"
+}

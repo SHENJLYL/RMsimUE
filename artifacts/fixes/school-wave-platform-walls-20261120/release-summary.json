@@ -1,0 +1,394 @@
+{
+  "schema": "rmsim_wave_platform_wall_acceptance_v1",
+  "status": "accepted",
+  "utc": "2026-11-20T01:38:55.081337+00:00",
+  "request": "Align both long glass walls with the raised wave-channel platform sides.",
+  "project": "D:/simulator/unreal/RMSim/RMSim.uproject",
+  "manifest": {
+    "path": "assets/maps/rmuc2027/arena-shell.json",
+    "bytes": 2812,
+    "sha256": "0a9f3441fa826c5bb1274c7c3b08d1a9377f8b9fffe2060811331639e672ed9e"
+  },
+  "module": {
+    "path": "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll",
+    "bytes": 2792960,
+    "sha256": "d1f1a51b8ab26e495fd3009ff21cfed54b4780e1485a75634b3160fded634496"
+  },
+  "target_bounds_m": {
+    "lo": [
+      -13.999996185302734,
+      -7.522840576171875,
+      -0.3009999990463257
+    ],
+    "hi": [
+      13.999996185302734,
+      7.522841186523437,
+      3.497683048248291
+    ]
+  },
+  "source_bounds_m": {
+    "lo": [
+      -13.999996185302734,
+      -8.001565933227539,
+      -0.3009999990463257
+    ],
+    "hi": [
+      13.999996185302734,
+      8.001565933227539,
+      3.497683048248291
+    ]
+  },
+  "perimeter_contract": "outside_platform_bounds_v1",
+  "wall_inward_move_m": {
+    "south": 0.478725357055664,
+    "north": 0.4787247467041018
+  },
+  "geometry_scope": {
+    "reference": "Complete outer envelope of the existing raised wave-channel platforms, confirmed from actual native LOD0 vertices and native bounds.",
+    "source_platform_outward_slope_degrees": 1.5,
+    "main_low_platform_edge_gap_m_approximately": 0.02356,
+    "floor_strip_policy": "Original low base-floor strips are retained outside the new glass; original CAD geometry is unchanged.",
+    "floor_z_m": -0.3009999990463257,
+    "original_1um_bounds_tolerance_preserved": true
+  },
+  "protected_inputs": [
+    {
+      "path": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json",
+      "sha256": "64bfb32766056f33a4b706c2656472f3d2d7f954187128cd2b9cc37a91710300",
+      "unchanged": true
+    },
+    {
+      "path": "assets/maps/rmuc2027/map.json",
+      "sha256": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+      "unchanged": true
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/drive-profile.json",
+      "sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "unchanged": true
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/ue_mesh_rig.json",
+      "sha256": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "unchanged": true
+    },
+    {
+      "path": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/source/Indoor Basketball Gym.skp",
+      "bytes": 4098079,
+      "sha256": "a40bbf0c69bace3b5ee1aed3795217e69c88c4c58ce71b191aff3e033e3502bc"
+    }
+  ],
+  "source_geometry_audit": {
+    "path": "artifacts/fixes/school-wave-platform-walls-20261120/source-platform-audit-01/anchor-summary.json",
+    "bytes": 5447,
+    "sha256": "338f8c1fb24c262f5ed22eebccda9e8d9390e7b250c5678791e4479dcc0fe70e"
+  },
+  "native_geometry_audit": {
+    "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-edge-audit-01/report.json",
+    "bytes": 14032,
+    "sha256": "72a09a06c878d665731bafadb634a875b5660dfea1d41b7da8b8ad520c6348aa"
+  },
+  "anchor_conversion_evidence": {
+    "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-anchor-apply-01/report.json",
+    "bytes": 377,
+    "sha256": "644d20598a91ffd3dcd50b6f76e062304959087a9aa294a4d2b3371ff5d7c057"
+  },
+  "build": {
+    "status": "passed",
+    "exit_code": 0,
+    "seconds": 13.21071519999532,
+    "utc": "2026-11-20T01:27:02.452661+00:00",
+    "module_sha256": "d1f1a51b8ab26e495fd3009ff21cfed54b4780e1485a75634b3160fded634496",
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "D:\\simulator\\tools\\unreal\\Build-ImportLab.ps1",
+      "-EngineRoot",
+      "E:/simulator-tools/UE_5.8"
+    ]
+  },
+  "native_views": [
+    {
+      "name": "WavePlatformNorth",
+      "status": "native_and_visual_passed",
+      "facts": {
+        "sweep_samples": 96,
+        "sweep_passed": 96,
+        "boundary_bounds_checked": 314,
+        "minimum_target_clearance_m": -8.881784197001252e-16,
+        "max_collision_face_error_m": 1.7763568394002505e-15,
+        "south_glass_gap_min_m": 0,
+        "south_glass_gap_max_m": 0,
+        "north_glass_gap_min_m": 1.7763568394002505e-15,
+        "north_glass_gap_max_m": 1.7763568394002505e-15,
+        "minimum_corner_overlap_m": 0.4800000000000004,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585,
+        "all_glass_bases_meet_support_floor": true,
+        "native_platform_references": {
+          "south": {
+            "mesh_id": "blue_road",
+            "visual_outer_edge_y_m": -7.522840576171875,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": -7.522840576171875,
+            "collision_anchor_error_m": 0
+          },
+          "north": {
+            "mesh_id": "red_road",
+            "visual_outer_edge_y_m": 7.522841186523437,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": 7.522841186523437,
+            "collision_anchor_error_m": 0
+          }
+        }
+      },
+      "probe": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformNorth/boundary.json",
+        "bytes": 25583,
+        "sha256": "7ef75aff9fe1d375535fc1abc8544b80f56ad03614099135d4b536ccfa1300bb"
+      },
+      "image": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformNorth/overview.png",
+        "bytes": 2770834,
+        "sha256": "65bf54b6457999af9f9c184c94270277cacafea82208e320f93e01447d894ce2"
+      },
+      "preview": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformNorth/overview-preview.jpg",
+        "bytes": 459118,
+        "sha256": "012fe59731967243635e5411471c99396df6a763105f0c7e5fad7149f05af267"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformNorth/command.json",
+        "bytes": 1338,
+        "sha256": "426c25055b9637cbe46d616251f2bea67fbab29c9eba86ba51d7b915973547fb"
+      }
+    },
+    {
+      "name": "WavePlatformSouth",
+      "status": "native_and_visual_passed",
+      "facts": {
+        "sweep_samples": 96,
+        "sweep_passed": 96,
+        "boundary_bounds_checked": 314,
+        "minimum_target_clearance_m": -8.881784197001252e-16,
+        "max_collision_face_error_m": 1.7763568394002505e-15,
+        "south_glass_gap_min_m": 0,
+        "south_glass_gap_max_m": 0,
+        "north_glass_gap_min_m": 1.7763568394002505e-15,
+        "north_glass_gap_max_m": 1.7763568394002505e-15,
+        "minimum_corner_overlap_m": 0.4800000000000004,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585,
+        "all_glass_bases_meet_support_floor": true,
+        "native_platform_references": {
+          "south": {
+            "mesh_id": "blue_road",
+            "visual_outer_edge_y_m": -7.522840576171875,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": -7.522840576171875,
+            "collision_anchor_error_m": 0
+          },
+          "north": {
+            "mesh_id": "red_road",
+            "visual_outer_edge_y_m": 7.522841186523437,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": 7.522841186523437,
+            "collision_anchor_error_m": 0
+          }
+        }
+      },
+      "probe": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformSouth/boundary.json",
+        "bytes": 25583,
+        "sha256": "7ef75aff9fe1d375535fc1abc8544b80f56ad03614099135d4b536ccfa1300bb"
+      },
+      "image": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformSouth/overview.png",
+        "bytes": 2554883,
+        "sha256": "c6e10e2c3f57df036e9d10547d92d9c88ae860f95ee659b5b49df6cb0bdbb813"
+      },
+      "preview": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformSouth/overview-preview.jpg",
+        "bytes": 340263,
+        "sha256": "56ea75c3dc5d61e983bd7e07a9d0e7d9b649e6c8aa7a39de7c9e2c5efb80c499"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WavePlatformSouth/command.json",
+        "bytes": 1342,
+        "sha256": "c495f56c6e260f949c8389cfb2b06174862cc594acb602eb803b97ca238e58d6"
+      }
+    },
+    {
+      "name": "WaveWallOverview",
+      "status": "native_and_visual_passed",
+      "facts": {
+        "sweep_samples": 96,
+        "sweep_passed": 96,
+        "boundary_bounds_checked": 314,
+        "minimum_target_clearance_m": -8.881784197001252e-16,
+        "max_collision_face_error_m": 1.7763568394002505e-15,
+        "south_glass_gap_min_m": 0,
+        "south_glass_gap_max_m": 0,
+        "north_glass_gap_min_m": 1.7763568394002505e-15,
+        "north_glass_gap_max_m": 1.7763568394002505e-15,
+        "minimum_corner_overlap_m": 0.4800000000000004,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585,
+        "all_glass_bases_meet_support_floor": true,
+        "native_platform_references": {
+          "south": {
+            "mesh_id": "blue_road",
+            "visual_outer_edge_y_m": -7.522840576171875,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": -7.522840576171875,
+            "collision_anchor_error_m": 0
+          },
+          "north": {
+            "mesh_id": "red_road",
+            "visual_outer_edge_y_m": 7.522841186523437,
+            "visual_anchor_error_m": 0,
+            "collision_outer_edge_y_m": 7.522841186523437,
+            "collision_anchor_error_m": 0
+          }
+        }
+      },
+      "probe": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WaveWallOverview/boundary.json",
+        "bytes": 25583,
+        "sha256": "7ef75aff9fe1d375535fc1abc8544b80f56ad03614099135d4b536ccfa1300bb"
+      },
+      "image": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WaveWallOverview/overview.png",
+        "bytes": 3136470,
+        "sha256": "db3848e075a5022fb356915be6dfa546936b332596c5888625fd7a25fa8199af"
+      },
+      "preview": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WaveWallOverview/overview-preview.jpg",
+        "bytes": 588137,
+        "sha256": "461989d87b09e43ef5eb1bc772e3ed49ce36144beb4f8c4a5a99c933d7eca111"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-wave-platform-walls-20261120/native-views-02/WaveWallOverview/command.json",
+        "bytes": 1330,
+        "sha256": "b7f00b4b07576abcc745eab86349b031cd543b6463224def20aeb037d30f01c5"
+      }
+    }
+  ],
+  "physical_boundary": {
+    "status": "passed",
+    "checks": [
+      {
+        "name": "physical_settle",
+        "passed": true,
+        "detail": "Settled speed 0.0000cm/s; upZ 0.99857; wall contact observations 0"
+      },
+      {
+        "name": "actual_closed_perimeter_contact",
+        "passed": true,
+        "detail": "Real wall contact after 66.884cm; actual peak approach 1.6042m/s; target 2m/s; peak impulse 24.510220Ns"
+      },
+      {
+        "name": "closed_glass_boundary_blocks_continued_drive",
+        "passed": true,
+        "detail": "Continued2m/s target for 1.500s: advance 1.104cm, speed 3.804cm/s, fresh contact span 1.474s; boundary margin -0.862cm"
+      },
+      {
+        "name": "physical_brake_at_boundary",
+        "passed": true,
+        "detail": "Native wheel brake stops at 0.0000cm/s; field margin -0.869cm"
+      },
+      {
+        "name": "physical_reverse_releases_wall_contact",
+        "passed": true,
+        "detail": "Motor-driven reverse clearance 60.007cm; lateral drift -0.295cm; recent wall contact no"
+      },
+      {
+        "name": "final_stop_inside_platform_boundary",
+        "passed": true,
+        "detail": "Final speed 0.0000cm/s; every-frame minimum field margin -0.963cm; unchanged motion generation 0; resets 0"
+      }
+    ],
+    "metrics": {
+      "peak_approach_actual_speed_m_s": 1.604223374062224,
+      "first_accepted_wall_contact_progress_cm": 66.8844211324601,
+      "held_drive_seconds": 1.5002943985164165,
+      "held_drive_advance_cm": 1.104074748772423,
+      "reverse_clearance_cm": 60.00722368253878,
+      "final_stop_speed_cm_s": 0,
+      "minimum_vehicle_envelope_boundary_margin_cm": 46.909807678149036,
+      "minimum_vehicle_envelope_target_margin_cm": -0.96272802741737,
+      "maximum_lateral_drift_cm": 0.46439615994611694,
+      "initial_motion_generation": 0,
+      "final_motion_generation": 0,
+      "contact_recovery_count": 0
+    },
+    "margin_semantics": "Original source-bound strict >=0cm check remains passed. Native target-plane AABB margin is -0.9627cm within unchanged -1cm native tolerance; it is not a zero-penetration mesh assertion.",
+    "pose_overrides_used": false,
+    "null_rhi": true,
+    "scope": "One south gate approach, continued real wheel drive, braking and reverse; complete map sweeps are independent.",
+    "evidence": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/physical-boundary-01/report.json",
+      "bytes": 8590948,
+      "sha256": "fabbb298f82abb1e12e64715358e40d7b362f0338a3207d70dc6dae3cf8ff41d"
+    },
+    "command": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/physical-boundary-01/command.json",
+      "bytes": 935,
+      "sha256": "035325c1a6a4339219cfcf7b9e00a2a8375cf47d37964221b1e1aeda81d6c2c5"
+    }
+  },
+  "offline_contract_tests": {
+    "passed": 14,
+    "evidence": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/contract-tests-02/report.json",
+      "bytes": 1092,
+      "sha256": "35bdc8025bbce71f3977c4d59c5a76005fde70a21f358147a2ded4ecec2e3e1b"
+    }
+  },
+  "navigation": {
+    "package": "navigation-console-platform",
+    "geometry_sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+    "generation": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/navigation-generation-02/report.json",
+      "bytes": 3797,
+      "sha256": "e47c2ac05cd5c74fae167b4f935b9882bef0e4e92f86e6933a2d135de3835d01"
+    },
+    "production_preflight": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/navigation-preflight-03/report.json",
+      "bytes": 7063,
+      "sha256": "3cb5b52abef82d2593d8040e806aed585568a693e98ba273b124bdd0889f2094"
+    },
+    "scope": "Planning and localization rasters regenerated, installed helper and prepare_scene checked; no new Nav2 route acceptance claimed."
+  },
+  "visible_runtime": {
+    "status": "passed_kept_open",
+    "pid": 41096,
+    "seconds": 60.02,
+    "left_running": true,
+    "warnings": {
+      "GPU timeout": 0,
+      "GPU Crashed": 0,
+      "TerminateOnGPUCrash": 0,
+      "Writing Aftermath dump": 0,
+      "Non-Nanite Marking Job Queue overflow": 0,
+      "Virtual Shadow Map Page Pool overflow": 0
+    },
+    "evidence": {
+      "path": "artifacts/fixes/school-wave-platform-walls-20261120/visible-final-01/report.json",
+      "bytes": 2270,
+      "sha256": "e5a271de89da0fc6fc2759c982a5378727fe7d741a04bc2589814ed2f0b0c928"
+    }
+  },
+  "retained_failed_attempts": [
+    {
+      "path": "native-views-01",
+      "reason": "Strict 1um source-anchor/native-edge mismatch caused initial scene load to refuse; actual native coordinates measured and used, without tolerance relaxation."
+    }
+  ],
+  "coverage_limits": [
+    "Windows native only; Ubuntu unchanged and not rerun.",
+    "Physics check uses original control and suspension with NullRHI; the three separate D3D12/SM6 native views verify rendering.",
+    "The two vertical glass planes touch the outermost platform contour; the original 1.5-degree side face has about 23.56mm clearance at its lower top edge."
+  ]
+}

@@ -2,6 +2,15 @@
 
 本文件是 CodeStable 技能启动必读的项目注意事项入口。
 
+## 2026-11-20 最新：波浪平台长玻璃墙
+
+- 用户指定长墙紧挨波浪通道所在高平台。活动 `outside_platform_bounds_v1` 以实际 native `visual/collision_blue_road` 的 Y=-7.522840576171875 m、`visual/collision_red_road` 的 Y=7.522841186523437 m 为边线；原 CAD `bounds_m` 保持，独立 `target_bounds_m` 供围墙和导航共用。
+- 两侧各内移约 47.87 cm，短墙长度和角部同步，玻璃与碰撞体内面均对齐。原底板低边带保留在墙外；勿再次用整体 floor Y=±8.001565933 m 覆盖平台定位。源外侧面外倾 1.5°，竖墙贴高端头外轮廓，低顶边约 23.56 mm 间隔。
+- 源到 UE 导入有 1.70/1.83 μm 坐标差；应读取实际 native 资产位置。原 1 μm 核验门限保持，首次失败已存。运行时同时校验源身份、目标边界和实际平台 visual/collision bounds；source/target 的 outside 报告保持各自意义。
+- 玻璃底端及馆地板接触 Z=-0.3009999990463257 m 保持；原材质、场馆、外景、23 mesh / 57 实例 / 26 树和额外 0 座位保持。新导航包 `navigation-console-platform` 已同步栅格及生产预检，两种 outside 合同都须有 runtime_boundary 声明。
+- 当前证据：三视角各 96/96 扫掠、314 构件；真实车辆接触六项；离线14项；可见窗口60.02 s，六类GPU警告0。物理底盘/车轮对target平面最小AABB余量 -0.962728 cm，使用既有 -1 cm 数值门限；原CAD边界严格非负检查为46.9098 cm，二者分别报告。
+- 记录见 `docs/changes/2026-11-20-wave-platform-glass.md` 和 `artifacts/fixes/school-wave-platform-walls-20261120/release-summary.json`；后文旧 source-envelope 合同为前一版历史身份。完整 Nav2 路线、Ubuntu 与实车标定保留各自验收。
+
 ## 2026-11-19 弗兰德斯地表材质验收
 
 - Ground40、Grass82、全量307材质和Scene22已完成保存资产的原生重载；草的完整author更新World为`ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0`。Object193独立重载记录单列。原地图、几何与碰撞清单保持；Scene检查按已绑定的55可视/53碰撞任务分组核对飞艇，未知附加组件仍失败。

@@ -12,6 +12,14 @@ implements: []
 
 # 当前架构
 
+## 2026-11-20 当前 RMUC 平台围墙
+
+`CampusGym` 将原 CAD `bounds_m` 与 `perimeter.target_bounds_m` 分开处理。活动 `outside_platform_bounds_v1` 只收拢长侧 Y 边界，X/Z 源边界保持；目标 Y 同时与已加载的两侧波浪平台 visual/collision mesh world bounds 核对。玻璃、框架、门饰与四面连续碰撞墙共用目标矩形，厚度向外，短墙长度随之改变。长玻璃内面、碰撞内面、角部闭合和落地高度分别查询；source 与 target 侵入结果单列。
+
+`perimeter_geometry.py` 输出相同几何及身份，`export_boundary_navigation_package.py` 生成规划/定位图。活动 `navigation-console-platform` 由生产 `prepare_scene` 与 installed `navigation_map_identity` 校验；两种 outside 合同均拒绝缺少 runtime_boundary 的包。旧 source-bound 及 inset 合同保持兼容。两个 scene.json 原始字节通过精确 `.gitattributes` 规则保存，复建 recipe 使用相同身份。
+
+本轮真实证据为三视角96查询/314构件、南侧六阶段真实轮驱动接触、14项离线与60.02秒可见运行。原平台、源馆、材质/外景、车辆与悬挂保持。详细坐标、源斜侧面关系、物理AABB余量范围和未覆盖的完整导航/Ubuntu见 `docs/changes/2026-11-20-wave-platform-glass.md`。以下旧馆/全底板边界描述保留各阶段来源。
+
 ## 现有数据流
 
 用户模型只读 → tools/assets导出FBX/PBR与manual_asset_rig_v1 → UE Editor Python导入 → ue_mesh_rig.json → VehicleRig → 手动输入/相机/HUD。

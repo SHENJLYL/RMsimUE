@@ -1,0 +1,225 @@
+{
+  "status": "passed_scene_and_map_identity_preflight",
+  "utc": "2026-11-20T01:34:10.564474+00:00",
+  "scope": "Offline production console with both boundary contracts requiring runtime-boundary identity; no UE/ROS runtime started",
+  "helper_source_sha256": "2d9f834b08ea31ec89e8824defe7d22dc5156c05a66b1a0eb1e05f3648469159",
+  "helper_installed_sha256": "2d9f834b08ea31ec89e8824defe7d22dc5156c05a66b1a0eb1e05f3648469159",
+  "console_config_sha256": "263ec99d0cd9b7cea2866a787a4fbc42b0f0a531e12c78c5785e68dfc3c0221c",
+  "loaded_helper_file": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\Lib\\site-packages\\rmsim_bridge\\perimeter_geometry.py",
+  "prepared": {
+    "scene": "rmuc2027",
+    "scene_file": "D:\\simulator\\artifacts\\fixes\\school-wave-platform-walls-20261120\\navigation-preflight-03\\prepared-session\\scene.json",
+    "map_yaml": "D:\\simulator\\artifacts\\fixes\\school-wave-platform-walls-20261120\\navigation-preflight-03\\prepared-session\\navigation\\map.yaml",
+    "initial_pose": [
+      5.8,
+      6.4,
+      0.0
+    ],
+    "initial_pose_prior": {
+      "schema": "rmsim_scene_spawn_prior_v1",
+      "mode": "scene_spawn",
+      "spawn_id": "default",
+      "scene_units": "m",
+      "scene_coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+      "spawn_position_m": [
+        5.8,
+        6.4,
+        0.03147864
+      ],
+      "spawn_yaw_rad": 0.0,
+      "requested_offset": null,
+      "applied_offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_pose": [
+        5.8,
+        6.4,
+        0.0
+      ],
+      "frame_semantics": {
+        "world_frame": "map",
+        "reference_origin": "base_link_and_base_stabilized_common_origin",
+        "translation_offset_axes": "map",
+        "yaw_unit": "rad",
+        "yaw_range": "[-pi, pi)",
+        "ground_z_use": "provenance_only_planar_prior",
+        "source": "declared_scene_spawn_once"
+      }
+    },
+    "view": {
+      "x": 7.5,
+      "y": 6.4,
+      "scale": 65.0
+    },
+    "scene_sha256": "264de7b1b2e629580fa1dd54efc48b2f1b14cefbeacaab917349ed80e61d5f75",
+    "raster_sha256": "3c967b2923aaeed5a54e7168caaf05e9c6ef673ec1fa3d26a224b8e66b036f06",
+    "localization_map_yaml": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console-platform\\localization\\vertical85\\map.yaml",
+    "localization_map_selection": "package_default",
+    "localization_map_package": {
+      "manifest_path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console-platform\\SOURCE.json",
+      "manifest_sha256": "83595355af6df52524cf3743d62c3b17fb9e634abba30fc31604dc750bb3730d"
+    }
+  },
+  "runtime_boundary_sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+  "physical_geometry": {
+    "schema": "rmsim_closed_perimeter_geometry_v1",
+    "map_id": "rmuc2027",
+    "units": "m",
+    "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+    "source_bounds_m": {
+      "lo": [
+        -13.999996185302734,
+        -8.001565933227539,
+        -0.3009999990463257
+      ],
+      "hi": [
+        13.999996185302734,
+        8.001565933227539,
+        3.497683048248291
+      ]
+    },
+    "physics_contract": "outside_platform_bounds_v1",
+    "outside_clearance_m": 0.0,
+    "collision_thickness_m": 0.48,
+    "collision_bottom_m": -1.25,
+    "collision_top_m": 4.8,
+    "target_bounds_m": {
+      "lo": [
+        -13.999996185302734,
+        -7.522840576171875,
+        -0.3009999990463257
+      ],
+      "hi": [
+        13.999996185302734,
+        7.522841186523437,
+        3.497683048248291
+      ]
+    },
+    "collision_channels": {
+      "Camera": "Ignore",
+      "Visibility": "Block",
+      "physics": "Block"
+    },
+    "walls": [
+      {
+        "id": "west",
+        "lo": [
+          -14.479996185302735,
+          -8.002840576171875,
+          -1.25
+        ],
+        "hi": [
+          -13.999996185302734,
+          8.002841186523437,
+          4.8
+        ]
+      },
+      {
+        "id": "east",
+        "lo": [
+          13.999996185302734,
+          -8.002840576171875,
+          -1.25
+        ],
+        "hi": [
+          14.479996185302735,
+          8.002841186523437,
+          4.8
+        ]
+      },
+      {
+        "id": "south",
+        "lo": [
+          -14.479996185302735,
+          -8.002840576171875,
+          -1.25
+        ],
+        "hi": [
+          14.479996185302735,
+          -7.522840576171875,
+          4.8
+        ]
+      },
+      {
+        "id": "north",
+        "lo": [
+          -14.479996185302735,
+          7.522841186523437,
+          -1.25
+        ],
+        "hi": [
+          14.479996185302735,
+          8.002841186523437,
+          4.8
+        ]
+      }
+    ],
+    "localization_faces": [
+      {
+        "id": "west",
+        "start_xy_m": [
+          -13.999996185302734,
+          -7.522840576171875
+        ],
+        "end_xy_m": [
+          -13.999996185302734,
+          7.522841186523437
+        ],
+        "bottom_m": -1.25,
+        "top_m": 4.8
+      },
+      {
+        "id": "east",
+        "start_xy_m": [
+          13.999996185302734,
+          -7.522840576171875
+        ],
+        "end_xy_m": [
+          13.999996185302734,
+          7.522841186523437
+        ],
+        "bottom_m": -1.25,
+        "top_m": 4.8
+      },
+      {
+        "id": "south",
+        "start_xy_m": [
+          -13.999996185302734,
+          -7.522840576171875
+        ],
+        "end_xy_m": [
+          13.999996185302734,
+          -7.522840576171875
+        ],
+        "bottom_m": -1.25,
+        "top_m": 4.8
+      },
+      {
+        "id": "north",
+        "start_xy_m": [
+          -13.999996185302734,
+          7.522841186523437
+        ],
+        "end_xy_m": [
+          13.999996185302734,
+          7.522841186523437
+        ],
+        "bottom_m": -1.25,
+        "top_m": 4.8
+      }
+    ],
+    "localization_visibility": "inward faces visible from the continuously enclosed field"
+  },
+  "map_signature_paths": [
+    "D:\\simulator\\artifacts\\fixes\\school-wave-platform-walls-20261120\\navigation-preflight-03\\prepared-session\\navigation\\map.yaml",
+    "D:\\simulator\\artifacts\\fixes\\school-wave-platform-walls-20261120\\navigation-preflight-03\\prepared-session\\navigation\\map.pgm",
+    "D:\\simulator\\artifacts\\fixes\\school-wave-platform-walls-20261120\\navigation-preflight-03\\prepared-session\\navigation\\metadata.json",
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console-platform\\localization\\vertical85\\map.yaml",
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console-platform\\localization\\vertical85\\map.pgm",
+    "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console-platform\\localization\\vertical85\\metadata.json",
+    "D:\\simulator\\assets\\maps\\rmuc2027\\arena-shell.json"
+  ],
+  "manifest_sha256": "0a9f3441fa826c5bb1274c7c3b08d1a9377f8b9fffe2060811331639e672ed9e"
+}

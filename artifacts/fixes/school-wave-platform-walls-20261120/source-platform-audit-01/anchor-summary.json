@@ -1,0 +1,184 @@
+{
+  "schema": "rmuc_wave_wall_anchor_recommendation_v1",
+  "scope": "Read-only source geometry; no runtime edits or native acceptance",
+  "source_audit_sha256": "96faadf4fbbc104ac071aa6425ebf3ef88826334f69358612e9b7d4948ed2ecc",
+  "long_wall_axis": "X",
+  "orthogonal_axis": "ROS Y",
+  "side_measurements": [
+    {
+      "mesh": "red_road",
+      "side_sign": 1,
+      "outermost_point_m": [
+        10.500003814697266,
+        7.522842884063721,
+        0.9023845195770264
+      ],
+      "outermost_signed_y_m": 7.522842884063721,
+      "outermost_vertices": [
+        [
+          10.500003814697266,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.500003814697266,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.500003814697266,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.500003814697266,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.366681098937988,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.366681098937988,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.366681098937988,
+          7.522842884063721,
+          0.9023845195770264
+        ],
+        [
+          10.366681098937988,
+          7.522842884063721,
+          0.9023845195770264
+        ]
+      ],
+      "outer_side_face_triangles": 113,
+      "outer_side_face_area_m2": 1.9978160061513244,
+      "outer_side_face_bounds": {
+        "lo": [
+          1.3987246751785278,
+          7.494048595428467,
+          -0.19723856449127197
+        ],
+        "hi": [
+          10.500003814697266,
+          7.522842884063721,
+          0.9023845195770264
+        ]
+      },
+      "face_outward_lean_deg": 1.5,
+      "plane_equation": "abs(Y) = intercept_at_z0_m + tan(1.5deg)*Z",
+      "intercept_at_z0_range_m": [
+        7.499212711902236,
+        7.499213650815073
+      ],
+      "main_platform_top_edge_z_m": 0.002692936919629574,
+      "main_platform_top_edge_abs_y_range_m": [
+        7.499283313751221,
+        7.499283313751221
+      ],
+      "main_platform_top_edge_x_range_m": [
+        1.3987246751785278,
+        10.300004005432129
+      ],
+      "old_wall_abs_y_m": 8.001565933227539,
+      "wall_inward_move_to_outermost_m": 0.47872304916381836,
+      "gap_from_vertical_outermost_wall_to_main_top_edge_m": 0.0235595703125
+    },
+    {
+      "mesh": "blue_road",
+      "side_sign": -1,
+      "outermost_point_m": [
+        -10.366682052612305,
+        -7.5228424072265625,
+        0.9023845195770264
+      ],
+      "outermost_signed_y_m": 7.5228424072265625,
+      "outermost_vertices": [
+        [
+          -10.366682052612305,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.366682052612305,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.366682052612305,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.500004768371582,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.500004768371582,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.500004768371582,
+          -7.5228424072265625,
+          0.9023845195770264
+        ],
+        [
+          -10.500004768371582,
+          -7.5228424072265625,
+          0.9023845195770264
+        ]
+      ],
+      "outer_side_face_triangles": 127,
+      "outer_side_face_area_m2": 2.0006988615802035,
+      "outer_side_face_bounds": {
+        "lo": [
+          -10.500004768371582,
+          -7.5228424072265625,
+          -0.19723856449127197
+        ],
+        "hi": [
+          -1.3987245559692383,
+          -7.49404764175415,
+          0.9023845195770264
+        ]
+      },
+      "face_outward_lean_deg": 1.5,
+      "plane_equation": "abs(Y) = intercept_at_z0_m + tan(1.5deg)*Z",
+      "intercept_at_z0_range_m": [
+        7.49921238701756,
+        7.499212859476467
+      ],
+      "main_platform_top_edge_z_m": 0.002692936919629574,
+      "main_platform_top_edge_abs_y_range_m": [
+        7.499283313751221,
+        7.499283313751221
+      ],
+      "main_platform_top_edge_x_range_m": [
+        -10.300004005432129,
+        -1.3987245559692383
+      ],
+      "old_wall_abs_y_m": 8.001565933227539,
+      "wall_inward_move_to_outermost_m": 0.47872352600097656,
+      "gap_from_vertical_outermost_wall_to_main_top_edge_m": 0.023559093475341797
+    }
+  ],
+  "options": {
+    "vertical_wall": {
+      "inner_north_y_m": 7.522842884063721,
+      "inner_south_y_m": -7.5228424072265625,
+      "glass_base_z_m": -0.3009999990463257,
+      "meaning": "Preserve vertical wall, hug complete raised-platform envelope without intersecting its highest end cap; main low edge has approx 23.56 mm clearance. Glass remains supported from gym floor alongside platform."
+    },
+    "inclined_wall": {
+      "slope_d_abs_y_dz": 0.02618592156918693,
+      "meaning": "To touch full native slanted platform side, use measured 1.5deg outward plane. This changes wall orientation and requires matching end joins and slope-aware collision/probe."
+    }
+  }
+}

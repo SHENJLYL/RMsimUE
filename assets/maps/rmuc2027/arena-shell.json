@@ -26,10 +26,27 @@
     "doors": "fixed_closed_decorative",
     "interaction": false,
     "collision_top_m": 4.8,
-    "visual_alignment": "source_bounds_outer_face",
-    "physics_contract": "outside_source_bounds_v1",
+    "visual_alignment": "platform_edges_outer_face",
+    "physics_contract": "outside_platform_bounds_v1",
     "outside_clearance_m": 0.0,
-    "visual_floor_z_m": -0.3009999990463257
+    "visual_floor_z_m": -0.3009999990463257,
+    "target_bounds_m": {
+      "lo": [
+        -13.999996185302734,
+        -7.522840576171875,
+        -0.3009999990463257
+      ],
+      "hi": [
+        13.999996185302734,
+        7.522841186523437,
+        3.497683048248291
+      ]
+    },
+    "platform_reference_meshes": {
+      "south": "blue_road",
+      "north": "red_road"
+    },
+    "platform_reference_note": "Target Y anchors are the extrema of the actual saved visual and collision LOD0 vertices, also equal to native bounds; source FBX float conversion offsets are recorded separately."
   },
   "lighting": {
     "mode": "downloaded_gym_lumen",
@@ -50,9 +67,9 @@
     ]
   },
   "asset_license": "Original SketchupBox model project with attribution, CC0 exterior, official DJI / RoboMaster logos. Raw source must not be redistributed separately.",
-  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky, source-envelope flush glass boundary.",
+  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky; long glass inner faces flush to the measured outer envelope of the original wave-channel platforms.",
   "render_profile": "RMSimGymLumen",
-  "navigation_package": "navigation-console-outside",
+  "navigation_package": "navigation-console-platform",
   "presentation_assets": {
     "glass_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_ClearBoundaryGlass.M_ClearBoundaryGlass",
     "environment_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolLandscape.M_SchoolLandscape",
