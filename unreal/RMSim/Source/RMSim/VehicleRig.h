@@ -88,12 +88,15 @@ public:
     // SI command: forward metres/sec and ROS yaw radians/sec (positive left).
     void SetContactDrive(double ForwardMetresPerSecond,double YawRadiansPerSecond,bool Brake);
     bool SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake);
-    // ROS velocity already shaped by the vehicle controller; wheel dynamics remain physical.
+    // ROS base_link targets retain navigation heading and pass the shared vehicle profile shaper.
     bool SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake);
     TSharedRef<FJsonObject> GetVelocityCommandState() const;
     double GetDriveParameter(const TCHAR* Name) const { return DriveParameters.FindRef(Name); }
     double GetMeasuredYawRate() const;
     FVector GetCommandOriginVelocity() const;
+    // Tight world bounds of the chassis/four-wheel source convex geometry.
+    bool GetChassisWheelCollisionEnvelope(FBox& OutWorldBounds,int32& OutVertexCount) const;
+    FBox GetFoliageContactBounds() const;
     FVector GetRequestedDriveWorldVelocityCmS() const
     {
         if(bContactBrake)return FVector::ZeroVector;
@@ -108,6 +111,11 @@ public:
     bool GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const;
     bool SampleChassisImu(const FTransform& Mount,FTransform& SensorWorld,FVector& PointVelocityCm,FVector& AngularVelocityRad) const;
     bool GetSensorParentWorld(const FString& Parent,FTransform& Pose) const;
+    // Native solver-time history, UE world cm. Returns false outside the current motion epoch.
+    bool SampleSensorParentWorldAtTime(const FString& ParentFrame,double SolverTime,FTransform& OutPose) const;
+    bool SampleSensorMotionAtTime(const FString& ParentFrame,double SolverTime,const FTransform& LocalMount,
+        FTransform& OutPose,FVector& OutPointVelocityCmS,FVector& OutAngularVelocityRadS) const;
+    bool GetSensorPoseHistoryRange(double& OldestSolverTime,double& NewestSolverTime,int32& SampleCount) const;
     void EnableArticulatedSensorQueries();
     TSharedRef<FJsonObject> GetSensorJointState(int64 Stamp) const;
     uint64 GetMotionGeneration() const { return MotionGeneration; }

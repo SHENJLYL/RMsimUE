@@ -98,6 +98,10 @@ private:
     double MovingCommandPhaseSeconds=-1,MovingTargetResponseSeconds=-1,MovingActualResponseSeconds=-1;
     double FrameAverageSeconds=0,LastFrameWallSeconds=0;
     double RealTimeStepSeconds=0,NextPhysicsFrameWall=-1;
+    bool bMujocoRealTimePace=false;
+    double MujocoPaceLastSimSeconds=-1,MujocoPaceCurrentLagSeconds=0,MujocoPaceMaxLagSeconds=0;
+    double MujocoPaceLastLagWarningWall=-1;
+    uint64 MujocoPaceMotionGeneration=0,MujocoPaceAnchorCount=0,MujocoPaceLagWarningCount=0;
     FDelegateHandle RealTimePaceHandle;
     void PacePhysicsFrame();
     FVector2D GyroPreviousFiltered=FVector2D::ZeroVector;

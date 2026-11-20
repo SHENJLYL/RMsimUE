@@ -5,12 +5,13 @@ import yaml
 from .protocol import identifier
 from .sentry_navigation_source import source_profile
 from .navigation_map_identity import validate_localization_map
+from .navigation_drive_profile import apply_drive_profile
 
 LOCALIZATION_NODES=['map_server','amcl']
 NAVIGATION_NODES=['controller_server','planner_server','smoother_server','behavior_server','bt_navigator','waypoint_follower','velocity_smoother']
 INTERFACE_NODES=['loam_interface','sensor_scan_generation','terrain_analysis','terrain_analysis_ext','pointcloud_to_laserscan','fake_vel_transform']
 
-def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',control_source='',localization_map_yaml=''):
+def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',control_source='',localization_map_yaml='',drive_profile=''):
     identifier(robot);reference=Path(reference);map_yaml=Path(map_yaml).resolve()
     source=yaml.safe_load(reference.read_text(encoding='utf-8'))
     selected=INTERFACE_NODES+LOCALIZATION_NODES+NAVIGATION_NODES+['local_costmap','global_costmap']
@@ -52,6 +53,9 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
         bt[key]=str(trees/file)
         if not Path(bt[key]).is_file():raise ValueError('Missing original behavior tree '+bt[key])
     get('behavior_server').update(local_frame=odom,global_frame=odom,robot_base_frame=fake)
+    # In RMSim, vehicle capabilities come from the same package as manual driving.
+    # Keep the selected source algorithms and the active original velocity smoother.
+    drive_identity=apply_drive_profile(cfg,drive_profile,robot) if drive_profile else None
     footprint='[[-0.26,-0.26],[-0.26,0.26],[0.26,0.26],[0.26,-0.26]]'
     for key in ['local_costmap','global_costmap']:
         params=cfg[key][key]['ros__parameters'];params.update(global_frame=odom if key=='local_costmap' else world,robot_base_frame=fake,footprint=footprint,footprint_padding=.01)
@@ -60,6 +64,7 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
         for name in layer['observation_sources'].split():
             layer[name]['topic']='/'+name;layer[name]['sensor_frame']=robot+'/lidar_link'
     metadata=json.loads((map_yaml.parent/'metadata.json').read_text(encoding='utf-8-sig'))
+    if drive_identity:metadata['drive_profile']=drive_identity
     if 'source_md5' not in metadata:raise ValueError('Re-export the map with source identity metadata.')
     localization_nodes=list(LOCALIZATION_NODES)
     if localization_map_yaml:

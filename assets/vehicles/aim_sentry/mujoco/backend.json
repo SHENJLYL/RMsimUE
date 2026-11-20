@@ -19,10 +19,10 @@
       0.5,
       2
     ],
-    "torsional_friction": 0.005,
-    "rolling_friction": 0.0001,
-    "static_sliding_friction": 0.8,
-    "condim": 6
+    "torsional_friction": 0.0,
+    "rolling_friction": 0.0,
+    "static_sliding_friction": 0.699999988079071,
+    "condim": 3
   },
   "gimbal_control": {
     "stiffness_nm_rad": 80,
@@ -35,13 +35,60 @@
     "yaw": 0.1,
     "pitch": 0.1
   },
-  "upper_mass_policy": "Subtract articulated yaw and pitch mass from ChassisMassKg; preserve total upper assembly mass.",
+  "upper_mass_policy": "Preserve ChassisMassKg on the body and original UE welded yaw/pitch masses separately: 20 + 0.1 + 0.1 kg upper assembly; total vehicle 25.6 kg.",
   "self_collision_policy": "Exclude pairs of bodies belonging to this vehicle only; retain contact with other robots and the static world.",
   "inertia_policy": "Homogeneous source convex-assembly inertia, rescaled to current drive-profile part mass; not a hardware measurement.",
   "calibrated": false,
   "notes": [
     "Current drive-profile.json owns drive and suspension constants.",
     "Original UE visual meshes and materials remain unchanged.",
-    "All movement and contact in this backend are solved by MuJoCo; visual transform updates only reproduce its output."
-  ]
+    "All movement and contact in this backend are solved by MuJoCo; visual transform updates only reproduce its output.",
+    "Native body damping uses original UE rate coefficients as COM force and inertia-weighted torque; contact friction maps the observed UE Average material rule."
+  ],
+  "contact_mapping": {
+    "schema": "rmsim_ue_homogeneous_static_contact_v1",
+    "source_friction_combine": "Average",
+    "source_restitution_combine": "Min",
+    "static_material": "/Engine/EngineMaterials/DefaultPhysicalMaterial.DefaultPhysicalMaterial",
+    "static_friction_binary32": 0.699999988079071,
+    "vehicle_friction_source": "drive-profile.json physics.WheelFriction/ChassisFriction converted to UE UPhysicalMaterial float",
+    "vehicle_priority": 1,
+    "static_priority": 0,
+    "effective_sliding_rule": "arithmetic mean of source vehicle and source static material",
+    "contact_dimensions": 3,
+    "explicit_torsional_rolling_friction": false,
+    "scope": "one articulated vehicle; verified homogeneous RMUC2027 static contact materials",
+    "reference_snapshot_sha256": "95e066d42cc3892bea54e96907a2f57105cfaedd376a7f414c17386ef4833a11",
+    "reference_snapshot": "artifacts/sensors/mid360-physical-20261120/contact-materials.json",
+    "reference_collision_assets": [
+      "/Game/RMSim/Maps/rmuc2027/collision_floor.collision_floor",
+      "/Game/RMSim/Maps/rmuc2027/collision_centre_platform.collision_centre_platform",
+      "/Game/RMSim/Maps/rmuc2027/collision_red_ramp_dart_station.collision_red_ramp_dart_station",
+      "/Game/RMSim/Maps/rmuc2027/collision_blue_ramp_dart_station.collision_blue_ramp_dart_station",
+      "/Game/RMSim/Maps/rmuc2027/collision_red_road.collision_red_road",
+      "/Game/RMSim/Maps/rmuc2027/collision_blue_road.collision_blue_road",
+      "/Game/RMSim/Maps/rmuc2027/collision_red_resource_zone.collision_red_resource_zone",
+      "/Game/RMSim/Maps/rmuc2027/collision_blue_resource_zone.collision_blue_resource_zone",
+      "/Game/RMSim/Maps/rmuc2027/collision_red_fortress.collision_red_fortress",
+      "/Game/RMSim/Maps/rmuc2027/collision_blue_fortress.collision_blue_fortress",
+      "/Game/RMSim/Maps/rmuc2027/collision_base_footing.collision_base_footing",
+      "/Game/RMSim/Maps/rmuc2027/collision_fan_frame.collision_fan_frame",
+      "/Game/RMSim/Maps/rmuc2027/collision_fan.collision_fan",
+      "/Game/RMSim/Maps/rmuc2027/collision_base.collision_base"
+    ],
+    "restitution_target": 0.0,
+    "solver_mapping": "MuJoCo compliant contact remains solver-specific; no extra torsional or rolling coefficient"
+  },
+  "gravity_mps2": [
+    0,
+    0,
+    -9.8
+  ],
+  "gravity_source": {
+    "engine_setting": "UPhysicsSettings.DefaultGravityZ",
+    "configured_cm_s2": -980.0,
+    "reference": "UE_5.8/Engine/Config/BaseEngine.ini",
+    "runtime_guard": "Require active UWorld.GetGravityZ to match generated MuJoCo gravity before Reset or stepping.",
+    "scope": "vehicle dynamics; TrainingRange.GravityCm is an independent projectile setting"
+  }
 }

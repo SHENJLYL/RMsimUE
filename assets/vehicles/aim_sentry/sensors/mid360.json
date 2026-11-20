@@ -1,18 +1,18 @@
 {
-  "schema": "rm_lidar_runtime_v2",
+  "schema": "rm_lidar_runtime_v3",
   "calibrated": false,
   "id": "lidar",
   "parent_frame": "yaw_link",
   "origin": {
     "xyz": [
-      0.19812227804774685,
-      0.07375968980603695,
-      0.17056386526967365
+      0.20351015609318657,
+      0.0737599152673861,
+      0.17595173400188763
     ],
     "rpy": [
-      -5.917937960475683e-05,
-      0.7853989005088806,
-      -4.184617137070745e-05
+      -0.7853990793228149,
+      -3.5730013792090176e-07,
+      -1.570754885673523
     ]
   },
   "pattern": "spherical_fibonacci",
@@ -21,8 +21,34 @@
   "elevation_min_rad": -0.12217304763960307,
   "elevation_max_rad": 0.9075712110370514,
   "min_range_m": 0.1,
-  "max_range_m": 40.0,
-  "range_noise_std_m": 0.0,
+  "max_range_m": 70.0,
+  "range_noise_std_m": 0.02,
   "reflectivity": 100,
-  "noise_seed": 2027
+  "noise_seed": 2027,
+  "mid360": {
+    "angular_noise_std_rad": 0.002617993877991494,
+    "near_range_noise_std_m": 0.03,
+    "noise_near_distance_m": 0.2,
+    "noise_reference_distance_m": 10.0,
+    "nir_default_reflectance": 0.1,
+    "nir_material_reflectance": {},
+    "range_reference_low_reflectance": 0.1,
+    "range_reference_low_m": 40.0,
+    "range_reference_high_reflectance": 0.8,
+    "range_reference_high_m": 70.0,
+    "incidence_cosine": true,
+    "pending_scan_limit": 8,
+    "direction_sequence_file": "",
+    "provenance": {
+      "document": "docs/sensors/mid360-physical-model.md",
+      "measurement_calibrated": false,
+      "scan_pattern_fidelity": "approximate_uniform_coverage",
+      "range_model": "uncalibrated_two_anchor_reflectance_and_cosine",
+      "range_noise_model": "uncalibrated_gaussian_interpolated_spec_limits",
+      "angular_noise_model": "uncalibrated_gaussian_at_spec_upper_bound",
+      "reflectivity_model": "uncalibrated_lambertian_linear_encoding",
+      "default_reflectance_source": "assumed 0.1 NIR reflectance; UE visible RGB is not a NIR measurement",
+      "imu_measurement": "200 Hz; assumed 16 g and 2000 deg/s full scales; bias, noise, quantization uncalibrated and disabled"
+    }
+  }
 }

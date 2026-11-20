@@ -242,3 +242,17 @@ CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云
 - `MapOverview` 统一图像、方向、位置和拾取投影；`ManualMapControl` 统一 M、Alt、缩放、拖动与本地标记。实际云台拥有箭头方向，观察相机拥有扇区。
 - `MapFontRenderer` 使用原 FontFace 字节和引擎 FreeType，缓存源字号／hinting／glow／gamma 的文字纹理。UI 资源经完整 Editor 导入，等待异步资源完成后验证。
 - 地图 probe 捕获实际 Canvas HUD；飞艇 probe 使用真实 Chaos 驱动验证原碰撞、持续受阻和倒车。证据：`artifacts/maps/wt-zeppelin-minimap-20261119/release-summary.json`。
+
+## 2026-11-20：MuJoCo 原生动力学后端
+
+当前 AIM / RMUC2027 增加原生 MuJoCo 4.0.1 后端。FMujocoVehicleDynamics 持有唯一 mjModel/mjData；VehicleMujocoPhysics 将源车辆包、现有驾驶/电机/云台接口接入该后端，并在完成子步后更新 UE 可视和 QueryOnly 组件。MuJoCo 车辆的 Chaos 模拟体数为 0。位置采用 (x,-y,z)×100 转换，轴向量采用 (-x,+y,-z)，ROS 时间读取 MuJoCo d->time。
+
+源模型包含 249 个车辆凸壳、14 组固定场地三角面和四面场地边界；源碰撞网格保持原拓扑。车辆质量、驱动配置和 2000/140 悬挂来自现有包。完整静态场地使用独立 4.0.1+rmsim.static-world-flex.3 运行库；缓存只覆盖严格固定在 world 的三角面，碰撞/求解结果与官方版本逐态对照一致。上游修改保存于 third_party/patches/mujoco/，生成模型和运行库由可复现脚本构建。
+
+标准入口 Play-ManualVehicle.cmd 与 Play-Navigation.cmd 直接采用 MuJoCo；独立 Play-MuJoCo*.cmd 已移除。启动先核验源资产、车辆配置、活动地图物理身份、模型和部署 DLL。常规车辆采用 1 ms 原生步长、5 ms UE 世界更新与 60 Hz 视口；原始电机模式使用 1 ms 世界步长。43 项驾驶/物理参数和云台速度读取原 UE 相同配置，总质量 25.6 kg、重力 9.8 m/s²；按原 UE 线性/角阻尼及实际材质 Average 摩擦规则映射接触。
+
+Native 实时节拍以当前仿真 epoch 的起点和实际 solver 时间维护固定的墙钟目标时刻。普通迟到帧保留原目标，完整推进物理与传感器后继续追赶；领先于目标时刻时才等待。初始化、motion generation 改变或 solver 时间回退时重新建立锚点。50 ms 为限频告警阈值，迟到时长与真实锚点次数分别记录。
+
+手动和导航的运动数值统一到车辆 drive-profile.json：前进/倒车/横移 5/2.5/4 m/s，加速/减速/制动 2/4/7 m/s²，jerk 6/20 m/s³，普通 yaw 上限 π/2 rad/s、角加减速 3/5 rad/s²。NavigationRunner 从原 sentry YAML 读取算法配置，并以同一车辆源生成运动限值和 SHA 身份。原 fake_vel_transform 先将 navigation_frame 指令转到 base_link，再进入原 velocity_smoother；已有 Runner 执行 Twist/TwistStamped 类型适配，公共 cmd_vel 保留仿真时间。VehicleDrive 对两种输入复用连续速度/方向整形状态。明确的零速目标经合法性检查后立即发布到共同车辆制动路径，smoother 剩余尾段在停止锁存期间归零；严格更新的合法非零目标恢复正常输出，disconnect/stale/epoch/reset 清理适配器。运行门禁直接比较实际节点参数与车辆端全部 27 项控制数值。
+
+MID-360 v3 使用 200,000 个 5 μs 发射槽/秒、4 通道、默认 10 Hz 完整组帧和有界发送队列。每束姿态从原生 1 ms 历史节点插值，射线查询采用当前 UE 场景快照；游戏线程调度、线程池批量求交、游戏线程光学/材质处理。IMU 以整数采样索引保持 200 Hz，真实测点速度在 t±1 ms 的支撑窗口计算比力。传感器安装原点与坐标轴按官方机械定义修正，具体近似和标定状态见 docs/sensors/mid360-physical-model.md。适用范围和真实验收见 docs/guides/mujoco-integration.md、docs/changes/2026-11-20-mujoco-integration.md。

@@ -1,0 +1,82 @@
+{
+  "schema": "rm_imu_runtime_v2",
+  "calibrated": false,
+  "imus": [
+    {
+      "id": "imu",
+      "parent_frame": "base_link",
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.15
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "rate_hz": 200.0,
+      "accel_bias_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_bias_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "accel_noise_std_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_noise_std_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "noise_seed": 2027
+    },
+    {
+      "id": "mid360_imu",
+      "parent_frame": "yaw_link",
+      "origin": {
+        "xyz": [
+          0.18878153591894153,
+          0.06275928780227212,
+          0.12828568662788892
+        ],
+        "rpy": [
+          -0.7853990793228149,
+          -3.5730013792090176e-07,
+          -1.570754885673523
+        ]
+      },
+      "rate_hz": 200.0,
+      "accel_bias_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_bias_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "accel_noise_std_mps2": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gyro_noise_std_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "noise_seed": 2027
+    }
+  ]
+}

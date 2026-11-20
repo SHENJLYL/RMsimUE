@@ -34,6 +34,9 @@ class LidarPublisher:
         local=mount_pose(data,self.node.robot_id)
         config={k:data[k] for k in ('id','profile_md5','model','frame_id','parent_frame_id','rays_per_second','frame_hz','min_range_m','max_range_m','elevation_min_rad','elevation_max_rad')}
         config['fixed_mount']=local
+        # Measurement-model identity stays fixed for an epoch just like rate and extrinsics.
+        for name in ('profile_schema','physical_model'):
+            if name in data:config[name]=data[name]
         fingerprint=json.dumps(config,sort_keys=True)
         if key==self.identity and fingerprint!=self.fingerprint:raise ProtocolError('LiDAR configuration changed within a session')
         if key!=self.identity:

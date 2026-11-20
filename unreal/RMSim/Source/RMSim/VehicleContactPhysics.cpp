@@ -455,6 +455,49 @@ void AVehicleRig::GetObstacleContactsSince(uint64& Cursor,TArray<FVehicleObstacl
     }
 }
 
+FBox AVehicleRig::GetFoliageContactBounds() const
+{
+    FBox Box(ForceInit);
+    if(ContactChassis)Box+=ContactChassis->Bounds.GetBox();
+    for(const FContactWheel& Wheel:ContactWheels)if(Wheel.Wheel)Box+=Wheel.Wheel->Bounds.GetBox();
+    return Box;
+}
+
+bool AVehicleRig::GetChassisWheelCollisionEnvelope(FBox& OutWorldBounds,int32& OutVertexCount) const
+{
+    OutWorldBounds=FBox(ForceInit);OutVertexCount=0;
+    if(!ContactChassis||ContactWheels.Num()!=4)return false;
+    FBox Bounds(ForceInit);int32 VertexCount=0;
+    auto Add=[&](UStaticMeshComponent* Part)
+    {
+        if(!Part)return false;
+        const UBodySetup* Setup=Part->GetBodySetup();
+        if(!Setup||Setup->AggGeom.ConvexElems.IsEmpty()||
+            Setup->AggGeom.GetElementCount()!=Setup->AggGeom.ConvexElems.Num())return false;
+        const FTransform ComponentToWorld=Part->GetComponentTransform();
+        if(!ComponentToWorld.IsValid())return false;
+        for(const FKConvexElem& Hull:Setup->AggGeom.ConvexElems)
+        {
+            const FTransform HullToComponent=Hull.GetTransform();
+            if(!HullToComponent.IsValid()||Hull.VertexData.Num()<4)return false;
+            for(const FVector& Vertex:Hull.VertexData)
+            {
+                // Apply hull-local transform first, then component scale/pose.
+                // Transforming the local AABB would add corners absent from the hull.
+                const FVector WorldVertex=ComponentToWorld.TransformPosition(HullToComponent.TransformPosition(Vertex));
+                if(WorldVertex.ContainsNaN())return false;
+                Bounds+=WorldVertex;++VertexCount;
+            }
+        }
+        return true;
+    };
+    if(!Add(ContactChassis))return false;
+    for(const FContactWheel& Wheel:ContactWheels)if(!Add(Wheel.Wheel))return false;
+    if(!Bounds.IsValid||VertexCount==0)return false;
+    OutWorldBounds=Bounds;OutVertexCount=VertexCount;
+    return true;
+}
+
 bool AVehicleRig::GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,
     double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const
 {

@@ -2,13 +2,13 @@
 
 UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接触物理驾驶、射击训练和原控制/传感器链路；长期目标保留 Windows/Ubuntu 原生同源算法、通用车辆包、可换地图、高画质和联机权威比赛。
 
-[当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-18-unified-flanders.md) · [仓库与本地资源](docs/guides/repository.md)
+[当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-20-mujoco-integration.md) · [仓库与本地资源](docs/guides/repository.md)
 
 ## 统一工程与参数
 
-当前活动工程统一在 `D:\simulator`。RMUC、弗兰德斯、训练和导航入口使用同一个 `unreal/RMSim/RMSim.uproject`；车辆动力学与手动驾驶参数共用 `assets/vehicles/aim_sentry/drive-profile.json`，云台和观察设置共用 `unreal/RMSim/Config/DefaultGame.ini`。导航由所选 `sentry_ws` 源 YAML 控制速度平滑、规划和避障，并使用同一车辆执行器与传感器包。
+当前活动工程统一在 `D:\simulator`。RMUC、弗兰德斯、训练和导航入口使用同一个 `unreal/RMSim/RMSim.uproject`；车辆动力学与手动驾驶参数共用 `assets/vehicles/aim_sentry/drive-profile.json`，云台和观察设置共用 `unreal/RMSim/Config/DefaultGame.ini`。导航沿用所选 `sentry_ws` YAML 的控制、规划、避障和速度平滑算法，运动能力限值从同一车辆 `drive-profile.json` 生成；手动与导航在车辆端共用连续整形器、执行器和传感器包。
 
-AIM 当前手动速度为前进 **5 m/s**、后退 **2.5 m/s**、横移 **4 m/s**；悬挂为 **2000 N/m、140 N·s/m**。切换地图直接选择入口，地图包保存地形、材质、布局和出生点。原地图工作树保留在本目录的 `artifacts/archive/wt-vlaanderen-before-unified-20261118`。工程整合、枕木与路肩碰撞、地表细节和植被修正的逐项结果见[本轮变更](docs/changes/2026-11-18-unified-flanders.md)。
+AIM 当前手动与标准导航的速度上限为前进 **5 m/s**、后退 **2.5 m/s**、横移 **4 m/s**；悬挂为 **2000 N/m、140 N·s/m**。切换地图直接选择入口，地图包保存地形、材质、布局和出生点。原地图工作树保留在本目录的 `artifacts/archive/wt-vlaanderen-before-unified-20261118`。工程整合、枕木与路肩碰撞、地表细节和植被修正的逐项结果见[本轮变更](docs/changes/2026-11-18-unified-flanders.md)。
 
 ## 弗兰德斯原图驾驶
 
@@ -24,7 +24,7 @@ AIM 当前手动速度为前进 **5 m/s**、后退 **2.5 m/s**、横移 **4 m/s*
 
 ## 本机直接运行
 
-双击 **Play-ManualVehicle.cmd** 驾驶，双击 **Play-Training.cmd** 进行静态靶射击训练。默认进入 RMUC2027 来源场地，使用本机 `E:\simulator-tools\UE_5.8` 和已导入资源；其他引擎目录可设置 `UE_ROOT`。
+双击 **Play-ManualVehicle.cmd** 驾驶，双击 **Play-Training.cmd** 进行静态靶射击训练。标准手动与 **Play-Navigation.cmd** 导航入口均直接采用 MuJoCo 车辆动力学和 UE5 画面，原独立 MuJoCo 入口已移除。默认进入 RMUC2027 来源场地，使用本机 `E:\simulator-tools\UE_5.8` 和已导入资源；其他引擎目录可设置 `UE_ROOT`。车辆驾驶参数读取共同车辆包；导航算法读取所选 `sentry_ws` 参数，速度和加减速等车辆能力限值按共同 profile 覆盖到生成配置。[融合与重建说明](docs/guides/mujoco-integration.md)
 
 | 输入 | 行为 |
 |---|---|
@@ -50,7 +50,7 @@ AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂�
 
 Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。当前2000/140悬挂下，原LK/Point-LIO联合11项通过。最新已完成两轮RMUC断线重连与自主往返各14项、平地实际R复位恢复17项，合计45项导航检查；两轮实际去程误差0.1871/0.1830m、返程0.0902/0.1026m，沿用0.25m门限。Windows导航进程使用经校验的127.0.0.1 UDP配置，解决已复现的重启消息中断；原失败证据保留。[导航指南](docs/guides/native-navigation.md) · [恢复验收](artifacts/navigation/reconnect-tf-20261117/release-summary.json)
 
-地图支持包入口切换。WT CDK示例：`Play-ManualVehicle.cmd assets\maps\wt_cdk_crop\map.json hillside`。弗兰德斯原图由 `Play-WarThunder.cmd` 打开已验证的保存关卡。[地图说明](docs/guides/map-packages.md)
+标准手动与导航入口使用完整 RMUC2027 MuJoCo 场地包，切换其他地图时须提供匹配的物理模型；启动校验会拒绝身份不匹配的地图。弗兰德斯原图由专用 `Play-WarThunder.cmd` 打开已验证的保存关卡，其动态破坏与碎屑尚需建立对应 MuJoCo 实体。[地图说明](docs/guides/map-packages.md)
 
 车辆包v1提供校验、受限URDF和规范化导出；AIM采用已运行验证的mesh-rig资产路径。任意新车的完整惯量/关节/传感器即插即用仍在后续范围。[车辆资源](docs/guides/aim-sentry-assets.md) · [构建与导入](docs/guides/unreal-import-lab.md)
 

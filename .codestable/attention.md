@@ -2,6 +2,19 @@
 
 本文件是 CodeStable 技能启动必读的项目注意事项入口。
 
+
+## 2026-11-20：MuJoCo 后端约定
+
+- 最新驾驶数值口径：手动与导航以同一 drive-profile.json 为准，前进/倒车/横移 5/2.5/4 m/s，加速/减速/制动 2/4/7 m/s²，jerk 6/20 m/s³，普通 yaw 上限 π/2 rad/s，角加减速 3/5 rad/s²。导航使用生成的同源限值和共同车辆整形器，连续消息保留整形状态。原 fake_vel_transform 先将 navigation_frame 目标转为 base_link，再通过原 Nav2 velocity_smoother；上游 sentry YAML 保存来源，标准仿真显式传入车辆 drive_profile。实际节点参数、源 SHA 与车辆端控制值需在运行验收中一致。
+- 标准 Play-ManualVehicle.cmd / Play-Navigation.cmd 已按用户最新要求直接采用 MuJoCo，Play-Training.cmd 复用标准手动入口；独立的 Play-MuJoCo.cmd / Play-MuJoCo-Navigation.cmd 已移除。正式模型为当前 RMUC2027 全场，启动执行严格源文件、模型和地图身份检查。弗兰德斯专用场景的动态实体尚需单独迁移。
+- 完整场地需要 4.0.1+rmsim.static-world-flex.3；仅官方 4.0.1 DLL 无法替代该已验证运行库。检查 staged DLL 与 SDK build manifest 的 SHA256，头文件使用 c-api/include 防止 Filament 与 UE Math 路径重名。
+- 模型保持 249 个源车辆凸壳、14 组原三角面，禁止用整场凸包、包围盒、平面或轮胎简化来替代正式接触。2000 N/m、140 N·s/m 悬挂及真实尺度保持；惯量/摩擦仍以 calibrated=false 标识。
+- 运行时由 mj_step 单独驱动；UE 车辆代理只提供查询。普通运动只能经执行器。初始化和 R 明确复位允许设定位姿，并清理传感器历史与 ROS epoch。
+- 云台初始角必须同时设置初始关节状态和伺服目标。接触 normal 从 MuJoCo geom0→geom1 的 frame 按车辆 Side 取向；禁止用整个 body 质心猜测组合凸壳的接触方向。
+- 主交互保持 1 ms MuJoCo / 5 ms UE 世界 / 60 Hz 视口。Mid-360 v3 每 5 μs 发射一个槽，基于真实 1 ms native 位姿节点做平移线性插值与四元数 slerp；环境和自体遮挡网格使用当前 UE 世界快照。200 Hz IMU 使用实际测点速度的 t±1 ms 中心差分，integration_dt_s=0.002，采样时间戳仍为 t；需要后支撑可用后才交付。扫描光机轨迹、NIR 材料响应与噪声模型保留未标定声明。
+- 正式启动对模型和实际 MapFile 做预检；导航运行场景旁须放置同身份 arena-shell.json。模型的源码/配置绑定发生变化时通过 Prepare-MujocoModel.ps1 重建，旧包归档。静态缓存的直接几何修改须显式失效。
+- Windows 原生证据、原版/缓存等价证据与 Ubuntu 验收分别记录。弗兰德斯动态破坏和碎屑尚需建立对应原生实体映射。精简证据为 artifacts/integration/mujoco-ue-20261120/release-summary.json。
+
 ## 2026-11-20：入口外景边界
 
 活动入口采用 `school-entry-brickwall` 的 Grab3D CC0 完整源模块，24 个装饰实例形成四段 15.3 m 砖墙，保留 19.2713 m 开口和约 4.2632 m 台阶净距。原馆及外景 23 mesh / 57 实例保持。`outdoor_background` 以半径 8 km 天空和四块无碰撞、无导航、无阴影/DF影响的地面环带围住原 160×140 m 地块；草地真实顶面 Z=-0.48440000057220454 m。新远地面材质在源边缘保留原相位，外侧最大 16 m 半宽混合四象限采样；原地块与源贴图保持，原近景纹理及局部接线按源保留。

@@ -4,8 +4,9 @@ from pathlib import Path
 import rclpy
 from rclpy.node import Node
 from rclpy.clock import Clock,ClockType
+from rclpy.parameter import Parameter
 from std_msgs.msg import String
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped,Twist,TwistStamped
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import OccupancyGrid
 from lifecycle_msgs.srv import GetState
@@ -16,6 +17,7 @@ from .navigation_config import prepare,INTERFACE_NODES,LOCALIZATION_NODES,NAVIGA
 from .protocol import identifier
 from .service_poll import ReadOnlyServicePoll
 from .navigation_map_identity import validate_localization_map,map_file_signatures,verify_occupancy_message
+from .navigation_drive_profile import load_drive_profile
 
 PROGRAMS={
  'loam_interface':('loam_interface','loam_interface_node'),
@@ -48,15 +50,20 @@ class NavigationRunner(Node):
         self.localization_only=self.declare_parameter('localization_only',False).value
         self.control_profile=self.declare_parameter('control_profile','legacy').value
         self.control_source=self.declare_parameter('control_source','').value
+        self.drive_profile=self.declare_parameter('drive_profile','').value
+        if self.drive_profile:
+            self.set_parameters([Parameter('use_sim_time',Parameter.Type.BOOL,True)])
         base=Path(self.declare_parameter('output_directory','artifacts/navigation/live').value)
         self.output=base/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+str(os.getpid()));self.output.mkdir(parents=True,exist_ok=False)
-        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source,self.localization_map_yaml)
+        cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source,self.localization_map_yaml,self.drive_profile)
+        self.drive_identity=self.map_metadata.get('drive_profile')
         self.localization_nodes=list(cfg['lifecycle_manager_localization']['ros__parameters']['node_names'])
         self.map_identity=self.map_metadata.get('localization_map')
         self.map_seen={'navigation':False,'localization':False} if self.map_identity else {}
         self.map_fault='';self.next_map_check=0.
         self.map_signatures=map_file_signatures(self.map_identity) if self.map_identity else {}
         self.remaps={name:list(values) for name,values in REMAPS.items()}
+        if self.drive_identity:self.remaps.update(self.drive_identity['topic_remaps'])
         if self.map_identity:
             binding=self.map_metadata['localization_map_binding']
             self.remaps.setdefault('amcl',[]).append((binding['source_topic'],binding['target_topic']))
@@ -76,6 +83,15 @@ class NavigationRunner(Node):
         self.create_subscription(String,'/rmsim/'+self.robot+'/state',self.observe,1)
         self.create_subscription(String,'/rmsim/'+self.robot+'/localization',lambda m:setattr(self,'lio',json.loads(m.data)),1)
         self.status=self.create_publisher(String,'/rmsim/'+self.robot+'/navigation',1)
+        self.reset_velocity_adapter()
+        self.velocity_adapter_counts={'accepted_inputs':0,'published_outputs':0,'rejected_inputs':0,'rejected_outputs':0,
+                                      'immediate_stops':0,'suppressed_smoother_outputs':0,'rejected_stop_releases':0}
+        if self.drive_identity:
+            topics=self.drive_identity['topics']
+            self.body_velocity_pub=self.create_publisher(Twist,topics['body_raw'],1)
+            self.public_velocity_pub=self.create_publisher(TwistStamped,topics['public'],1)
+            self.create_subscription(TwistStamped,topics['body_stamped'],self.on_body_velocity,1)
+            self.create_subscription(Twist,topics['body_smoothed'],self.on_smoothed_body_velocity,1)
         if self.map_identity:
             qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL)
             self.create_subscription(OccupancyGrid,cfg['map_server']['ros__parameters'].get('topic_name','map'),
@@ -83,6 +99,72 @@ class NavigationRunner(Node):
             self.create_subscription(OccupancyGrid,self.map_metadata['localization_map_binding']['target_topic'],
                                      lambda message:self.observe_map('localization',message),qos)
         self.create_timer(.1,self.poll,clock=Clock(clock_type=ClockType.STEADY_TIME))
+
+    def velocity_adapter_ready(self):
+        return bool(self.drive_identity and self.nav_started and self.state
+                    and self.state.get('connected') and self.state.get('state_fresh')
+                    and self.identity==[self.state.get('session'),self.state.get('epoch')])
+
+    def reset_velocity_adapter(self):
+        self.body_input_ns=None;self.body_output_ns=None;self.body_stop_ns=None
+
+    @staticmethod
+    def finite_planar_velocity(twist):
+        return (all(math.isfinite(value) for value in (
+                    twist.linear.x,twist.linear.y,twist.linear.z,
+                    twist.angular.x,twist.angular.y,twist.angular.z))
+                and twist.linear.z==0 and twist.angular.x==0 and twist.angular.y==0)
+
+    @staticmethod
+    def stop_velocity(twist):
+        # Match the bridge's physical-brake threshold after planar validation.
+        return all(abs(value)<1e-4 for value in (twist.linear.x,twist.linear.y,twist.angular.z))
+
+    def on_body_velocity(self,message):
+        now=self.get_clock().now().nanoseconds
+        stamp=message.header.stamp.sec*1_000_000_000+message.header.stamp.nanosec
+        timeout_ns=round(self.smoother_config['velocity_timeout']*1_000_000_000)
+        period_ns=round(1_000_000_000/self.smoother_config['smoothing_frequency'])
+        valid=(self.velocity_adapter_ready() and message.header.frame_id==self.robot+'/base_link'
+               and self.finite_planar_velocity(message.twist) and stamp>0
+               and -period_ns<=now-stamp<=timeout_ns
+               and (self.body_input_ns is None or stamp>=self.body_input_ns))
+        if not valid:
+            self.velocity_adapter_counts['rejected_inputs']+=1;return
+        stop=self.stop_velocity(message.twist)
+        if self.body_stop_ns is not None and not stop and stamp<=self.body_stop_ns:
+            # A reordered command sharing the stop's clock tick cannot release it.
+            self.velocity_adapter_counts['rejected_inputs']+=1
+            self.velocity_adapter_counts['rejected_stop_releases']+=1;return
+        self.body_input_ns=stamp
+        self.body_stop_ns=stamp if stop else None
+        command=Twist() if stop else message.twist
+        if stop and self.publish_body_velocity(command):
+            self.velocity_adapter_counts['immediate_stops']+=1
+        self.body_velocity_pub.publish(command)
+        self.velocity_adapter_counts['accepted_inputs']+=1
+
+    def publish_body_velocity(self,message):
+        now=self.get_clock().now().nanoseconds
+        # Only live callbacks publish. Normal motion keeps the original smoother's
+        # timeout/ramp; an accepted explicit zero reaches the vehicle brake now.
+        valid=(self.velocity_adapter_ready() and self.body_input_ns is not None
+               and now>0 and self.finite_planar_velocity(message)
+               and (self.body_output_ns is None or now>=self.body_output_ns))
+        if not valid:
+            self.velocity_adapter_counts['rejected_outputs']+=1;return False
+        output=TwistStamped();output.header.frame_id=self.robot+'/base_link'
+        output.header.stamp.sec=now//1_000_000_000
+        output.header.stamp.nanosec=now%1_000_000_000
+        output.twist=Twist() if self.body_stop_ns is not None else message
+        self.public_velocity_pub.publish(output);self.body_output_ns=now
+        self.velocity_adapter_counts['published_outputs']+=1
+        return True
+
+    def on_smoothed_body_velocity(self,message):
+        if (self.publish_body_velocity(message) and self.body_stop_ns is not None
+                and not self.stop_velocity(message)):
+            self.velocity_adapter_counts['suppressed_smoother_outputs']+=1
 
     def observe_map(self,role,message):
         try:
@@ -99,9 +181,17 @@ class NavigationRunner(Node):
 
     def observe(self,message):
         value=json.loads(message.data)
-        if value.get('robot_id')==self.robot:self.state=value;self.received=time.monotonic()
+        if value.get('robot_id')==self.robot:
+            if (not value.get('connected') or not value.get('state_fresh')
+                    or (self.state is not None and
+                        (not self.state.get('connected') or
+                         [self.state.get('session'),self.state.get('epoch')]!=
+                         [value.get('session'),value.get('epoch')]))):
+                self.reset_velocity_adapter()
+            self.state=value;self.received=time.monotonic()
 
     def stop(self):
+        self.reset_velocity_adapter()
         for child in reversed(list(self.children.values())):
             if child.poll() is None:child.terminate()
         for child in self.children.values():
@@ -119,6 +209,8 @@ class NavigationRunner(Node):
 
     def start(self):
         self.verify_map_inputs() # Revalidate before every session/epoch reload, not only at construction.
+        if self.drive_identity and load_drive_profile(self.drive_profile)['source_sha256']!=self.drive_identity['source_sha256']:
+            raise ValueError('Vehicle drive profile changed after navigation preparation')
         reference=self.lio.get('reference_frame',self.robot+'/imu_link')
         if not reference.startswith(self.robot+'/') or not reference.endswith('_link'):raise ValueError('Invalid estimator reference frame')
         identifier(reference[len(self.robot)+1:-5])
@@ -201,6 +293,9 @@ class NavigationRunner(Node):
             localization_map=self.map_identity,localization_map_verified=not self.map_identity or (all(self.map_seen.values()) and not self.map_fault),
             localization_map_topics=self.map_metadata.get('localization_map_binding'),map_input_fault=self.map_fault,
             control_profile=self.control_profile,control_source=self.source_identity,
+            drive_profile=self.drive_identity,velocity_adapter_counts=self.velocity_adapter_counts,
+            velocity_stop_policy='immediate_zero_target_latch_v1' if self.drive_identity else 'legacy',
+            velocity_stop_latched=self.body_stop_ns is not None,velocity_stop_stamp_ns=self.body_stop_ns,
             navigation_velocity_limit_mps=self.controller_config['v_linear_max'],
             smoother_max_velocity=self.smoother_config['max_velocity'],
             smoother_max_accel=self.smoother_config['max_accel'],smoother_max_decel=self.smoother_config['max_decel'],localization_candidate=self.localized,read_only_rpc_timeouts=self.state_query.timeouts+self.active_query.timeouts,transport=getattr(self,'transport_profile',{'mode':'unreported'}),scope='original sentry/Nav2 nodes; no truth input; single robot')

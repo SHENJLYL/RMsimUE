@@ -120,7 +120,6 @@ void AVehicleRig::SetFreeRollingDiagnostic(bool Enabled,double SteeringRosRadian
 
 bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake)
 {
-    if(bExternalVelocityTracking){DriveSpeedAcceleration=0;DriveDirectionRate=0;}
     bExternalVelocityTracking=false;
     if(!bContactPhysics)return false;
     if(!FMath::IsFinite(LinearMetresPerSecond.X)||!FMath::IsFinite(LinearMetresPerSecond.Y)||!FMath::IsFinite(YawRadiansPerSecond)||
@@ -137,7 +136,19 @@ bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,d
 bool AVehicleRig::SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake)
 {
     if(!bExternalDriveLease)return false;
-    const bool Accepted=SetContactPlanarDrive(LinearMetresPerSecond,YawRadiansPerSecond,false,Brake);
+    FVector2D LimitedLinear=LinearMetresPerSecond;
+    double LimitedYaw=YawRadiansPerSecond;
+    // Navigation commands remain in base_link; the shared shaper converts to world below.
+    // Preserve non-finite rejection in SetContactPlanarDrive instead of clamping it away.
+    if(FMath::IsFinite(LimitedLinear.X)&&FMath::IsFinite(LimitedLinear.Y)&&FMath::IsFinite(LimitedYaw))
+    {
+        LimitedLinear.X=FMath::Clamp(LimitedLinear.X,-GetDriveParameter(TEXT("MaxReverseSpeedMps")),GetDriveParameter(TEXT("MaxForwardSpeedMps")));
+        const double LateralLimit=GetDriveParameter(TEXT("MaxLateralSpeedMps"));
+        LimitedLinear.Y=FMath::Clamp(LimitedLinear.Y,-LateralLimit,LateralLimit);
+        const double YawLimit=GetDriveParameter(TEXT("ManualYawRateRadS"));
+        LimitedYaw=FMath::Clamp(LimitedYaw,-YawLimit,YawLimit);
+    }
+    const bool Accepted=SetContactPlanarDrive(LimitedLinear,LimitedYaw,false,Brake);
     bExternalVelocityTracking=Accepted;
     return Accepted;
 }
@@ -152,6 +163,13 @@ TSharedRef<FJsonObject> AVehicleRig::GetVelocityCommandState() const
         FVector2D(FVector2D::DotProduct(DriveFilteredWorld,Forward),FVector2D::DotProduct(DriveFilteredWorld,Left));
     State->SetStringField(TEXT("velocity_command_mode"),bExternalVelocityTracking?TEXT("external_shaped_velocity"):TEXT("manual_input_shaper"));
     State->SetStringField(TEXT("applied_velocity_command_mode"),bAppliedExternalVelocityTracking?TEXT("external_shaped_velocity"):TEXT("manual_input_shaper"));
+    // The mode tags identify the input source; both sources use this output shaper.
+    State->SetStringField(TEXT("output_velocity_shaper"),TEXT("shared_drive_profile_v1"));
+    auto Control=MakeShared<FJsonObject>();
+    for(const auto& Parameter:DriveParameters)Control->SetNumberField(Parameter.Key,Parameter.Value);
+    State->SetObjectField(TEXT("control_parameters"),Control);
+    State->SetNumberField(TEXT("speed_acceleration_m_s2"),DriveSpeedAcceleration);
+    State->SetNumberField(TEXT("direction_rate_rad_s"),DriveDirectionRate);
     State->SetBoolField(TEXT("requested_in_world_frame"),bDriveWorldFrame);
     State->SetArrayField(TEXT("requested_linear_m_s"),Vector(DriveRequestedLinear));
     State->SetArrayField(TEXT("filtered_linear_m_s"),Vector(Filtered));
@@ -173,17 +191,7 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
     const double TargetYaw=bContactBrake?0:ContactDriveYaw;
     DriveAppliedRequestedWorld=Target;DriveAppliedRequestedYaw=TargetYaw;
     bAppliedExternalVelocityTracking=bExternalVelocityTracking;
-    if(bExternalVelocityTracking)
-    {
-        // The original ROS smoother owns the velocity time profile. Apply its
-        // sample to wheel setpoints without a second manual input shaper.
-        DriveFilteredWorld=Target;
-        DriveFilteredYaw=TargetYaw;
-        DriveSpeedAcceleration=(Target.Size()-PreviousWorld.Size())/Seconds;
-        DriveDirectionRate=0;
-    }
-    else
-    {
+    // Manual and navigation share the same persistent profile limits at the vehicle tick.
     const double CurrentSpeed=PreviousWorld.Size(),TargetSpeed=Target.Size();
     FVector2D Direction=CurrentSpeed>1.e-8?PreviousWorld/CurrentSpeed:Target.GetSafeNormal();
     const FVector2D TargetDirection=TargetSpeed>1.e-8?Target/TargetSpeed:Direction;
@@ -224,7 +232,6 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
     const bool YawAccelerating=TargetYaw*DriveFilteredYaw>=0&&FMath::Abs(TargetYaw)>FMath::Abs(DriveFilteredYaw);
     DriveFilteredYaw=FMath::FInterpConstantTo(DriveFilteredYaw,TargetYaw,Seconds,GetDriveParameter(YawAccelerating?TEXT("AngularAccelerationRadS2"):TEXT("AngularDecelerationRadS2")));
 
-    }
     DriveAcceleration=(DriveFilteredWorld-PreviousWorld)/Seconds;
     const FVector Measured=GetCommandOriginVelocity()/100;
     const FVector2D MeasuredWorld(Measured.X,-Measured.Y);

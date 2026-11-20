@@ -216,8 +216,8 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
         constexpr double LimitTolerance=1.e-6;
         if(FMath::Abs(Vx)>MaxSpeed+LimitTolerance||FMath::Abs(Vy)>MaxSpeed+LimitTolerance||FVector2D(Vx,Vy).Size()>MaxSpeed+LimitTolerance||FMath::Abs(Wz)>Rig->GetDriveParameter(TEXT("GyroMaxRadS"))+LimitTolerance)
         {Reject(TEXT("limits"));return true;}
-        // Nav2 owns the velocity ramp. A deliberate zero requests physical
-        // brake torque; command expiry still uses the independent safety brake.
+        // Nav2 supplies the target; the shared vehicle profile shapes the wheel command.
+        // A deliberate zero and command expiry retain the physical safety brake.
         const bool StopRequested=FMath::Abs(Vx)<1.e-4&&FMath::Abs(Vy)<1.e-4&&FMath::Abs(Wz)<1.e-4;
         if(!Rig->SetExternalVelocityTarget(FVector2D(Vx,Vy),Wz,StopRequested)){Reject(TEXT("drive_backend"));return true;}
     }
@@ -365,8 +365,8 @@ void URosBridgeComponent::Advance()
         if(SensorMountSamples.Num()>=64){SensorMountSamples.RemoveAt(0,1,EAllowShrinking::No);++DroppedSensorMountSamples;}
         SensorMountSamples.Add(MakeShared<FJsonValueObject>(Rig->GetSensorJointState(FMath::RoundToInt64(SimTime*1.e9))));
     }
-    if(Imu)Imu->Advance(SimTime,Client!=nullptr);
-    if(Lidar)Lidar->Advance(SimTime,Client!=nullptr);
+    if(Imu)Imu->Advance(SimTime,Client!=nullptr,EpochSolverTime);
+    if(Lidar)Lidar->Advance(SimTime,Client!=nullptr,EpochSolverTime);
     // Retire an EOF peer before deciding whether a newly queued connection is
     // a competing client; otherwise an immediate reconnect can lose one attempt.
     if(Client)Receive(SimTime);
@@ -401,7 +401,9 @@ void URosBridgeComponent::Advance()
     }
     if(Client)SendPending();
     const double StateInterval=CameraHz>0?FMath::Min(.02,1./CameraHz):.02;
-    if(Client&&Outbound.IsEmpty()&&(bMotorControl||Now-LastStateWall>=StateInterval))
+    // A completed sensor frame is delivered on its own simulation cadence, including100Hz clouds.
+    // Existing camera/control heartbeat cadence remains available between cloud boundaries.
+    if(Client&&Outbound.IsEmpty()&&(bMotorControl||(Lidar&&Lidar->HasPendingScans())||Now-LastStateWall>=StateInterval))
     {
         const bool Capture=CameraHz>0&&SimTime>=NextImageSim;
         if(!QueueState(SimTime,Capture)){Disconnect(TEXT("capture_failed"));return;}

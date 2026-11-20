@@ -34,6 +34,8 @@ struct FCampusGymBoundaryProbeState
     double FirstHitSeconds=-1,LastHitWorldSeconds=-1,HoldFirstHitWorld=-1,HoldLastHitWorld=-1;
     double HoldStoppedSeconds=0,HoldRecentSeconds=0,HoldAdvanceCm=0;
     double MinimumBoundaryMarginCm=TNumericLimits<double>::Max();
+    double MinimumComponentAabbSourceMarginCm=TNumericLimits<double>::Max();
+    double MinimumComponentAabbTargetMarginCm=TNumericLimits<double>::Max();
     double MaxDriftCm=0,MaxRiseCm=0,ReverseClearanceCm=0;
     int32 RecentContactFrames=0,Captures=0;
     TMap<FString,double> LastRecordedHit;
@@ -158,7 +160,9 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         ControlReport->SetNumberField(TEXT("total_timeout_seconds"),40.0);
         ControlReport->SetBoolField(TEXT("capture_enabled"),CaptureEnabled);
         ControlReport->SetBoolField(TEXT("null_rhi"),FParse::Param(FCommandLine::Get(),TEXT("NullRHI")));
-        ControlReport->SetStringField(TEXT("boundary_envelope_semantics"),TEXT("GetFoliageContactBounds: ContactChassis and wheel bounds only; excludes gimbal and cosmetic meshes"));
+        ControlReport->SetStringField(TEXT("boundary_envelope_semantics"),TEXT("Exact world-axis support of source chassis and four-wheel convex vertices; hull-local then component transform; excludes gimbal and cosmetic meshes"));
+        ControlReport->SetStringField(TEXT("collision_envelope_geometry_source"),TEXT("UBodySetup::AggGeom.ConvexElems[].VertexData; unavailable or non-convex source geometry fails closed"));
+        ControlReport->SetStringField(TEXT("component_aabb_envelope_semantics"),TEXT("GetFoliageContactBounds: original chassis and wheel component bounds, retained as a diagnostic"));
         ControlReport->SetStringField(TEXT("rendering_evidence_scope"),CaptureEnabled?TEXT("physics plus optional diagnostic screenshots"):TEXT("physical contacts only; rendering not exercised"));
         ControlReport->SetArrayField(TEXT("source_bounds_ros_lo_m"),GymVector(StageMap.SourceBoundsMetres.Min));
         ControlReport->SetArrayField(TEXT("source_bounds_ros_hi_m"),GymVector(StageMap.SourceBoundsMetres.Max));
@@ -189,6 +193,33 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
     UStaticMeshComponent* Wall=P.Wall.Get();
     auto Fail=[&](const FString& Reason)
     {
+        // Capture the failing physical frame before braking, including frames
+        // rejected before the periodic sample below.
+        auto Frame=MakeShared<FJsonObject>();
+        Frame->SetNumberField(TEXT("elapsed_seconds"),P.Seconds);
+        Frame->SetNumberField(TEXT("phase"),ControlProbePhase);
+        Frame->SetArrayField(TEXT("actor_position_cm"),GymVector(Rig->GetActorLocation()));
+        const FQuat Rotation=Rig->GetActorQuat();
+        Frame->SetArrayField(TEXT("actor_rotation_xyzw"),{MakeShared<FJsonValueNumber>(Rotation.X),
+            MakeShared<FJsonValueNumber>(Rotation.Y),MakeShared<FJsonValueNumber>(Rotation.Z),
+            MakeShared<FJsonValueNumber>(Rotation.W)});
+        FBox ExactBounds(ForceInit);int32 Vertices=0;
+        const bool ExactAvailable=Rig->GetChassisWheelCollisionEnvelope(ExactBounds,Vertices);
+        Frame->SetBoolField(TEXT("collision_envelope_available"),ExactAvailable);
+        Frame->SetNumberField(TEXT("collision_envelope_vertex_count"),Vertices);
+        if(ExactAvailable)
+        {
+            Frame->SetArrayField(TEXT("collision_envelope_world_lo_cm"),GymVector(ExactBounds.Min));
+            Frame->SetArrayField(TEXT("collision_envelope_world_hi_cm"),GymVector(ExactBounds.Max));
+        }
+        const FBox ComponentBounds=Rig->GetFoliageContactBounds();
+        if(ComponentBounds.IsValid)
+        {
+            Frame->SetArrayField(TEXT("component_aabb_world_lo_cm"),GymVector(ComponentBounds.Min));
+            Frame->SetArrayField(TEXT("component_aabb_world_hi_cm"),GymVector(ComponentBounds.Max));
+        }
+        Frame->SetObjectField(TEXT("native_contact_state"),Rig->GetContactState());
+        ControlReport->SetObjectField(TEXT("failure_frame_state"),Frame);
         Rig->SetContactDrive(0,0,true);
         if(P.CaptureEnabled)CaptureControlView(TEXT("gym-boundary-failed"));
         Abort(Reason);
@@ -206,17 +237,32 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
     if(ControlProbePhase==1)P.PeakApproachSpeedMps=FMath::Max(P.PeakApproachSpeedMps,SpeedCmS/100.);
     P.MaxDriftCm=FMath::Max(P.MaxDriftCm,FMath::Abs(Drift));
     P.MaxRiseCm=FMath::Max(P.MaxRiseCm,Displacement.Z);
-    const FBox BodyBounds=Rig->GetFoliageContactBounds();
+    FBox BodyBounds(ForceInit);int32 EnvelopeVertexCount=0;
+    if(!Rig->GetChassisWheelCollisionEnvelope(BodyBounds,EnvelopeVertexCount))
+    {Fail(TEXT("chassis/four-wheel source convex collision envelope unavailable"));return;}
+    const FBox ComponentBounds=Rig->GetFoliageContactBounds();
+    if(!ComponentBounds.IsValid||ComponentBounds.Min.ContainsNaN()||ComponentBounds.Max.ContainsNaN())
+    {Fail(TEXT("chassis/wheel component bounds unavailable"));return;}
+    ControlReport->SetNumberField(TEXT("collision_envelope_vertex_count"),EnvelopeVertexCount);
     const FBox& Source=StageMap.SourceBoundsMetres;
     const double GapToWallCm=P.WallInnerFaceCm-BodyBounds.Max.Y;
     const double CentreToWallCm=P.WallInnerFaceCm-Position.Y;
-    auto MarginTo=[&](const FBox& Boundary)
+    auto MarginTo=[](const FBox& Envelope,const FBox& Boundary)
     {
         return FMath::Min(
-            FMath::Min(BodyBounds.Min.X-Boundary.Min.X*100.,Boundary.Max.X*100.-BodyBounds.Max.X),
-            FMath::Min(BodyBounds.Min.Y+Boundary.Max.Y*100.,-Boundary.Min.Y*100.-BodyBounds.Max.Y));
+            FMath::Min(Envelope.Min.X-Boundary.Min.X*100.,Boundary.Max.X*100.-Envelope.Max.X),
+            FMath::Min(Envelope.Min.Y+Boundary.Max.Y*100.,-Boundary.Min.Y*100.-Envelope.Max.Y));
     };
-    const double SourceMargin=MarginTo(Source),Margin=MarginTo(P.TargetBoundsMetres);
+    const double SourceMargin=MarginTo(BodyBounds,Source),Margin=MarginTo(BodyBounds,P.TargetBoundsMetres);
+    const double ComponentSourceMargin=MarginTo(ComponentBounds,Source);
+    const double ComponentTargetMargin=MarginTo(ComponentBounds,P.TargetBoundsMetres);
+    const double ComponentGapToWallCm=P.WallInnerFaceCm-ComponentBounds.Max.Y;
+    P.MinimumComponentAabbSourceMarginCm=FMath::Min(P.MinimumComponentAabbSourceMarginCm,ComponentSourceMargin);
+    P.MinimumComponentAabbTargetMarginCm=FMath::Min(P.MinimumComponentAabbTargetMarginCm,ComponentTargetMargin);
+    ControlReport->SetNumberField(TEXT("minimum_component_aabb_boundary_margin_cm"),P.MinimumComponentAabbSourceMarginCm);
+    ControlReport->SetNumberField(TEXT("minimum_component_aabb_target_margin_cm"),P.MinimumComponentAabbTargetMarginCm);
+    ControlReport->SetNumberField(TEXT("current_component_aabb_target_margin_cm"),ComponentTargetMargin);
+    ControlReport->SetNumberField(TEXT("current_component_aabb_to_wall_gap_cm"),ComponentGapToWallCm);
     P.MinimumBoundaryMarginCm=FMath::Min(P.MinimumBoundaryMarginCm,Margin);
     P.MinimumSourceMarginCm=FMath::Min(P.MinimumSourceMarginCm,SourceMargin);
     ControlReport->SetNumberField(TEXT("minimum_vehicle_envelope_boundary_margin_cm"),P.MinimumSourceMarginCm);
@@ -315,6 +361,14 @@ void AImportLabGameMode::TickCampusGymBoundaryProbe(double DeltaSeconds)
         Sample->SetNumberField(TEXT("vehicle_envelope_boundary_margin_cm"),SourceMargin);
         Sample->SetNumberField(TEXT("vehicle_envelope_target_margin_cm"),Margin);
         Sample->SetNumberField(TEXT("chassis_wheels_to_wall_gap_cm"),GapToWallCm);
+        Sample->SetNumberField(TEXT("collision_envelope_vertex_count"),EnvelopeVertexCount);
+        Sample->SetArrayField(TEXT("collision_envelope_world_lo_cm"),GymVector(BodyBounds.Min));
+        Sample->SetArrayField(TEXT("collision_envelope_world_hi_cm"),GymVector(BodyBounds.Max));
+        Sample->SetNumberField(TEXT("component_aabb_boundary_margin_cm"),ComponentSourceMargin);
+        Sample->SetNumberField(TEXT("component_aabb_target_margin_cm"),ComponentTargetMargin);
+        Sample->SetNumberField(TEXT("component_aabb_to_wall_gap_cm"),ComponentGapToWallCm);
+        Sample->SetArrayField(TEXT("component_aabb_world_lo_cm"),GymVector(ComponentBounds.Min));
+        Sample->SetArrayField(TEXT("component_aabb_world_hi_cm"),GymVector(ComponentBounds.Max));
         Sample->SetNumberField(TEXT("origin_to_wall_distance_cm"),CentreToWallCm);
         Sample->SetNumberField(TEXT("up_z"),UpZ);
         Sample->SetBoolField(TEXT("recent_exact_wall_hit"),Recent);

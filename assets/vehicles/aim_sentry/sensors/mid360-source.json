@@ -1,30 +1,76 @@
 {
+  "schema": "rm_mid360_source_v2",
   "source_blend_sha256": "4414ee2f57ef5604b8e9cd8cdf2b2386a424737271ed94c40abbad2e1ce18d37",
+  "source_rig_manifest_sha256": "237ff1460a3bf14b819974757cbd461734ac38bdfb526931ee8e102a3709453f",
   "source_object": "radar_mid360",
   "source_parent": "bone_turret",
   "source_linear_scale": 2.0,
   "optical_center_base_m": [
-    0.19812227804774685,
-    0.07375968980603695,
-    0.36119382437611897
+    0.20351015609318657,
+    0.0737599152673861,
+    0.36658169310833294
   ],
   "mount_parent_frame": "yaw_link",
   "origin_in_parent": {
     "xyz": [
-      0.19812227804774685,
-      0.07375968980603695,
-      0.17056386526967365
+      0.20351015609318657,
+      0.0737599152673861,
+      0.17595173400188763
     ],
     "rpy": [
-      -5.917937960475683e-05,
-      0.7853989005088806,
-      -4.184617137070745e-05
+      -0.7853990793228149,
+      -3.5730013792090176e-07,
+      -1.570754885673523
+    ]
+  },
+  "imu_origin_in_parent": {
+    "xyz": [
+      0.18878153591894153,
+      0.06275928780227212,
+      0.12828568662788892
+    ],
+    "rpy": [
+      -0.7853990793228149,
+      -3.5730013792090176e-07,
+      -1.570754885673523
     ]
   },
   "optical_axis_base": [
     0.7071073651313782,
     2.9589637051685713e-05,
     0.7071061134338379
+  ],
+  "sensor_x_axis_base": [
+    4.1488739261961014e-05,
+    -0.9999999403163171,
+    3.5730010175971677e-07
+  ],
+  "sensor_y_axis_base": [
+    0.7071060712417133,
+    2.9084291637278642e-05,
+    -0.7071073241562432
+  ],
+  "sensor_rotation_matrix_base": [
+    [
+      4.1488739261961014e-05,
+      0.7071060712417133,
+      0.7071073651313782
+    ],
+    [
+      -0.9999999403163171,
+      2.9084291637278642e-05,
+      2.9589637051685713e-05
+    ],
+    [
+      3.5730010175971677e-07,
+      -0.7071073241562432,
+      0.7071061134338379
+    ]
+  ],
+  "dome_sphere_center_base_m": [
+    0.19812227804774685,
+    0.07375968980603695,
+    0.36119382437611897
   ],
   "sphere_radius_m": 0.022006218719577014,
   "sphere_max_fit_error_m": 7.928249060305467e-05,
@@ -50,14 +96,157 @@
     0.0,
     0.1906299591064453
   ],
-  "scope": "Geometric optical-dome center and axis. Sensor X chosen by projecting robot +X onto optical-axis plane; not measured factory optical/IMU calibration.",
+  "mounting_base_center_base_m": [
+    0.17027611118370933,
+    0.07375852455449014,
+    0.3333477078035005
+  ],
+  "mounting_base_projection_from_dome_m": -0.039380395411176085,
+  "measured_body_height_m": 0.06009716598879037,
+  "optical_origin_height_above_base_m": 0.047,
+  "optical_origin_shift_from_dome_m": 0.007619604588823915,
+  "connector_outward_axis_base": [
+    -4.1488739261961014e-05,
+    0.9999999403163171,
+    -3.5730010175971677e-07
+  ],
+  "connector_evidence": {
+    "coordinate_basis": "temporary dome-centered basis; columns listed in basis_base",
+    "basis_base": [
+      [
+        0.7071062388354501,
+        0.0,
+        0.7071073651313782
+      ],
+      [
+        -2.9589687663892728e-05,
+        0.9999999403014903,
+        2.9589637051685713e-05
+      ],
+      [
+        -0.7071073229181223,
+        -4.1846103043199196e-05,
+        0.7071061134338379
+      ]
+    ],
+    "housing": {
+      "vertices": 4550,
+      "first_vertex": 8633,
+      "lo": [
+        -0.011001585950796467,
+        0.026499300020985266,
+        -0.03313036564651136
+      ],
+      "hi": [
+        0.01099866212583529,
+        0.04030022344872557,
+        -0.017130328079276905
+      ],
+      "midpoint": [
+        -1.4619124805888284e-06,
+        0.03339976173485541,
+        -0.025130346862894132
+      ]
+    },
+    "face_screws": [
+      {
+        "vertices": 2308,
+        "first_vertex": 23084,
+        "lo": [
+          0.005998467818579118,
+          0.023500314752721605,
+          -0.02213022427003756
+        ],
+        "hi": [
+          0.009998424992874334,
+          0.030500514256249844,
+          -0.018130341083737136
+        ],
+        "midpoint": [
+          0.007998446405726726,
+          0.027000414504485724,
+          -0.020130282676887348
+        ]
+      },
+      {
+        "vertices": 2308,
+        "first_vertex": 25392,
+        "lo": [
+          -0.010001540063174975,
+          0.023499371931638313,
+          -0.02213027005583141
+        ],
+        "hi": [
+          -0.0060016144990242045,
+          0.030499579791380283,
+          -0.018130355258964885
+        ],
+        "midpoint": [
+          -0.00800157728109959,
+          0.026999475861509296,
+          -0.020130312657398147
+        ]
+      },
+      {
+        "vertices": 2308,
+        "first_vertex": 27700,
+        "lo": [
+          0.005998454419590073,
+          0.023500305175986603,
+          -0.03213023784525017
+        ],
+        "hi": [
+          0.009998422130589334,
+          0.030500513191047778,
+          -0.028130344121787998
+        ],
+        "midpoint": [
+          0.007998438275089705,
+          0.02700040918351719,
+          -0.030130290983519083
+        ]
+      },
+      {
+        "vertices": 2308,
+        "first_vertex": 30008,
+        "lo": [
+          -0.010001521852019572,
+          0.02349936980423635,
+          -0.032130262557198745
+        ],
+        "hi": [
+          -0.006001596287868803,
+          0.030499570711334197,
+          -0.0281303427806325
+        ],
+        "midpoint": [
+          -0.008001559069944188,
+          0.026999470257785273,
+          -0.030130302668915622
+        ]
+      }
+    ],
+    "screw_plane_singular_values_m": [
+      0.016000010543493468,
+      0.00999999915907632,
+      1.421555302790411e-10
+    ],
+    "direction_method": "plane through four connector-face screw bounding-box centers, projected perpendicular to optical +Z"
+  },
+  "nominal_imu_in_lidar_translation_m": [
+    0.011,
+    0.02329,
+    -0.04412
+  ],
   "nominal_lidar_in_imu_translation_m": [
     -0.011,
     -0.02329,
     0.04412
   ],
-  "extrinsic_source": "ros2_ws/src/point_lio/config/mid360.yaml: mapping.extrinsic_T; nominal, not hardware calibrated",
+  "extrinsic_source": "Livox MID-360 User Manual v1.2 (2024.04), IMU diagram: [11, 23.29, -44.12] mm; nominal, not calibrated",
+  "datum_source": "https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf",
   "device_spec_source": "https://www.livoxtech.com/mid-360/specs",
-  "scan_model": "ideal spherical_fibonacci non-repeating rays, not proprietary device pattern",
-  "legacy_profiles_retained": true
+  "scan_model": "spherical_fibonacci_approx; uniform-coverage approximation, unpublished proprietary trajectory",
+  "legacy_profiles_retained": true,
+  "scope": "Official optical datum and axes inferred from unchanged source geometry. Factory calibration and proprietary scan trajectory are not supplied."
 }

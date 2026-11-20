@@ -28,7 +28,7 @@ if not exist "%MAP_FILE%" (
   pause
   exit /b 3
 )
-powershell.exe -NoProfile -File "%~dp0tools\unreal\Start-PreparedVehicle.ps1" -EngineRoot "%UE_ROOT%" -MapFile "%MAP_FILE%" -SpawnId "%SPAWN_ID%" %TRAINING_FLAG%
+powershell.exe -NoProfile -File "%~dp0tools\unreal\Start-PreparedVehicle.ps1" -EngineRoot "%UE_ROOT%" -MapFile "%MAP_FILE%" -SpawnId "%SPAWN_ID%" -PhysicsBackend mujoco -MujocoModel "%~dp0assets\vehicles\aim_sentry\mujoco\rmuc2027\manifest.json" -SimStepSeconds 0.005 -SimRealTimePace -ViewportHz 60 %TRAINING_FLAG%
 if errorlevel 20 (
   timeout /t 5 /nobreak >nul
   exit /b 0

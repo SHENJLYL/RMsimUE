@@ -4,6 +4,12 @@
 
 class FJsonObject;
 
+enum class EMujocoTimingScope : uint8
+{
+    Step, Solver, GetBody, Jacobian, PreImpact, Damping, Contacts, DerivedHistory,
+    FinalForward, Sync, ContactIdentity, Count
+};
+
 // All published quantities use UE coordinates/centimetres. The owned MuJoCo model
 // uses ROS right-handed SI coordinates and is accessed only on the game thread.
 struct FMujocoBodyState
@@ -44,8 +50,18 @@ public:
     bool SetServoTarget(const FString& Part, double Position, double Velocity, bool Wrap);
     bool SetTorque(const FString& Part, double Torque);
     bool SetForceLimit(const FString& Part, double ForceLimit);
+    bool ConfigureBodyDamping(const FString& Part, double LinearPerSecond, double AngularPerSecond, FString& Error);
     bool GetJoint(const FString& Part, double& Position, double& Velocity) const;
     bool GetBody(const FString& Part, FMujocoBodyState& Out) const;
+    // Absolute native solver seconds; UE world centimetres. GT only, no extrapolation.
+    bool SampleSensorParentWorldAtTime(const FString& ParentFrame, double SolverTime, FTransform& OutPose) const;
+    bool SampleSensorMotionAtTime(const FString& ParentFrame, double SolverTime,
+        const FTransform& LocalMount, FTransform& OutPose, FVector& OutPointVelocityCmS,
+        FVector& OutAngularVelocityRadS) const;
+    bool GetSensorPoseHistoryRange(double& OldestSolverTime, double& NewestSolverTime, int32& SampleCount) const;
+    bool IsTimingEnabled() const { return bTimingEnabled; }
+    void RecordTiming(EMujocoTimingScope Scope, double WallSeconds) const;
+    void FlushTiming();
     const TArray<FString>& BodyNames() const { return OrderedBodyNames; }
     const TArray<FMujocoContactSample>& Contacts() const { return FrameContacts; }
     const TSharedPtr<FJsonObject>& Manifest() const { return ManifestObject; }
@@ -71,5 +87,22 @@ private:
     int32 LastFrameSteps = 0;
     double MaximumPenetrationM = 0;
     bool ValidateState(FString& Error) const;
-    void CollectContacts(const TMap<FString, FVector>& BeforeVelocities);
+    void CollectContacts(const TArray<FVector>& BeforeVelocities);
+    bool CaptureSensorHistory(FString& Error);
+    bool FindSensorHistoryBracket(double SolverTime, int32& Lower, int32& Upper, double& Alpha) const;
+    void ApplyBodyDamping(int32 Body, const FMujocoBodyState& State);
+    bool PrepareBodyDamping(FString& Error);
+    bool bTimingEnabled = false;
+};
+
+// Disabled by default. Nested scopes report elapsed wall time, including waits.
+class FScopedMujocoTiming
+{
+public:
+    FScopedMujocoTiming(const FMujocoVehicleDynamics& InOwner, EMujocoTimingScope InScope);
+    ~FScopedMujocoTiming();
+private:
+    const FMujocoVehicleDynamics& Owner;
+    EMujocoTimingScope Scope;
+    double StartedSeconds = -1;
 };

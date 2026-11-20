@@ -1,6 +1,7 @@
 #include "MujocoVehicleDynamics.h"
 #include "Dom/JsonObject.h"
 #include "HAL/FileManager.h"
+#include "HAL/PlatformTime.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Misc/CommandLine.h"
@@ -15,6 +16,8 @@
 #if RMSIM_WITH_MUJOCO
 #include <mujoco/mujoco.h>
 #endif
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRMSim, Log, All);
 
 namespace
 {
@@ -186,6 +189,29 @@ struct FMujocoVehicleDynamics::FImplementation
     mjData* Data = nullptr;
     int32 RootJoint = -1;
     TMap<FString, int32> Bodies;
+    TArray<int32> OrderedBodyIds;
+    TArray<FString> BodyNamesById;
+    TArray<mjtNum> JacobianP, JacobianR;
+    TArray<FVector> BeforeVelocities;
+    TArray<FVector2D> BodyDamping;
+    TArray<mjtNum> SavedAppliedWrenches;
+    double LastDampingPowerW = 0;
+    TArray<FMujocoBodyState> BodyCache;
+    TArray<uint64> BodyCacheGeneration;
+    uint64 BodyStateGeneration = 1;
+    struct FSensorMotion
+    {
+        FTransform World = FTransform::Identity;
+        FVector VelocityCmS = FVector::ZeroVector, AngularVelocityRadS = FVector::ZeroVector;
+    };
+    struct FSensorHistorySample { double Time = 0; FSensorMotion Parent[2]; };
+    TArray<FSensorHistorySample> SensorHistory;
+    int32 SensorHistoryCount = 0, SensorHistoryWrite = 0, CachedHistoryLower = INDEX_NONE;
+    double CachedHistoryTime = -1;
+    uint64 HistoryQueries = 0, HistoryRangeMisses = 0, HistoryParentMisses = 0, HistoryInvalidTimeMisses = 0, HistoryInvalidMountMisses = 0, HistoryOverwrites = 0;
+    struct FTiming { double Seconds = 0; uint64 Calls = 0; };
+    FTiming Timings[int32(EMujocoTimingScope::Count)];
+    double TimingWindowStart = 0;
     struct FServo { int32 Joint = -1, Actuator = -1; double Kp = 0, Kd = 0, Limit = 0; };
     TMap<FString, FServo> Servos;
     ~FImplementation() { if (Data) mj_deleteData(Data); if (Model) mj_deleteModel(Model); }
@@ -245,6 +271,17 @@ bool FMujocoVehicleDynamics::Initialize(const FString& Filename, const TArray<FS
     Impl->RootJoint = mj_name2id(M, mjOBJ_JOINT, "chassis_free");
     if (Impl->RootJoint < 0 || M->jnt_type[Impl->RootJoint] != mjJNT_FREE)
     { Error = TEXT("MuJoCo vehicle must have a chassis_free free joint"); return false; }
+    bTimingEnabled = FParse::Param(FCommandLine::Get(), TEXT("ProfileMujocoTiming"));
+    Impl->BodyNamesById.SetNum(M->nbody);
+    Impl->BeforeVelocities.SetNumZeroed(M->nbody);
+    Impl->BodyDamping.Init(FVector2D::ZeroVector, M->nbody);
+    Impl->SavedAppliedWrenches.SetNumUninitialized(6 * M->nbody);
+    Impl->BodyCache.SetNum(M->nbody);
+    Impl->BodyCacheGeneration.SetNumZeroed(M->nbody);
+    Impl->JacobianP.SetNumUninitialized(3 * M->nv);
+    Impl->JacobianR.SetNumUninitialized(3 * M->nv);
+    // At least half a second plus both interpolation endpoints at the actual native step.
+    Impl->SensorHistory.SetNum(FMath::CeilToInt(.5 / double(M->opt.timestep)) + 2);
     TSet<FString> Required;
     for (const FString& Name : RequiredBodies) Required.Add(Name);
     for (int32 Body = 1; Body < M->nbody; ++Body)
@@ -252,15 +289,19 @@ bool FMujocoVehicleDynamics::Initialize(const FString& Filename, const TArray<FS
         const char* Name = mj_id2name(M, mjOBJ_BODY, Body);
         if (!Name) continue;
         const FString Part(UTF8_TO_TCHAR(Name));
-        if (Required.Contains(Part)) { Impl->Bodies.Add(Part, Body); OrderedBodyNames.Add(Part); }
+        if (Required.Contains(Part))
+        {
+            Impl->Bodies.Add(Part, Body); OrderedBodyNames.Add(Part);
+            Impl->OrderedBodyIds.Add(Body); Impl->BodyNamesById[Body] = Part;
+        }
     }
-    if (Impl->Bodies.Num() != Required.Num() || !Impl->Bodies.Contains(TEXT("body")))
+    if (Impl->Bodies.Num() != Required.Num() || !Impl->Bodies.Contains(TEXT("body")) || !Impl->Bodies.Contains(TEXT("yaw")))
     { Error = TEXT("MuJoCo body names do not cover the imported vehicle rig"); return false; }
     if (M->jnt_bodyid[Impl->RootJoint] != Impl->Bodies[TEXT("body")])
     { Error = TEXT("MuJoCo free joint is not on the body root"); return false; }
     ModelMd5 = LexToString(FMD5Hash::HashFile(*ModelPath));
     mj_forward(M, Impl->Data);
-    return ValidateState(Error);
+    return ValidateState(Error) && CaptureSensorHistory(Error);
 #else
     Error = TEXT("This build has no native MuJoCo SDK; run the pinned dependency setup and rebuild");
     return false;
@@ -288,8 +329,13 @@ bool FMujocoVehicleDynamics::Reset(const FTransform& Pose, FString& Error, doubl
     D->qpos[M->jnt_qposadr[YawJoint]]=FMath::UnwindRadians(InitialYaw);
     D->qpos[M->jnt_qposadr[PitchJoint]]=InitialPitch;
     RemainderSeconds = 0; FrameContacts.Reset(); MaximumPenetrationM = 0; LastFrameSteps = 0; ++ResetCount;
+    Impl->SensorHistoryCount = Impl->SensorHistoryWrite = 0;
+    Impl->CachedHistoryLower = INDEX_NONE; Impl->CachedHistoryTime = -1;
+    ++Impl->BodyStateGeneration;
+    for (auto& Timing : Impl->Timings) Timing = {};
+    Impl->TimingWindowStart = 0; Impl->LastDampingPowerW = 0;
     mj_forward(M, D);
-    return ValidateState(Error);
+    return ValidateState(Error) && CaptureSensorHistory(Error);
 #else
     Error = TEXT("MuJoCo SDK unavailable"); return false;
 #endif
@@ -314,6 +360,80 @@ bool FMujocoVehicleDynamics::ConfigureServo(const FString& Part, double Kp, doub
     M->actuator_ctrllimited[Actuator] = 0; M->actuator_forcelimited[Actuator] = 1;
     M->actuator_forcerange[2 * Actuator] = -Limit; M->actuator_forcerange[2 * Actuator + 1] = Limit;
     return SetServoTarget(Part, 0, 0, true);
+#else
+    Error = TEXT("MuJoCo SDK unavailable"); return false;
+#endif
+}
+
+
+bool FMujocoVehicleDynamics::ConfigureBodyDamping(const FString& Part, double LinearPerSecond, double AngularPerSecond, FString& Error)
+{
+#if RMSIM_WITH_MUJOCO
+    const int32* Body = Impl->Bodies.Find(Part);
+    if (!Body || !FMath::IsFinite(LinearPerSecond) || !FMath::IsFinite(AngularPerSecond) ||
+        LinearPerSecond < 0 || AngularPerSecond < 0 || LinearPerSecond > 20 || AngularPerSecond > 20)
+    { Error = TEXT("invalid MuJoCo source body damping: ") + Part; return false; }
+    Impl->BodyDamping[*Body] = FVector2D(LinearPerSecond, AngularPerSecond);
+    return true;
+#else
+    Error = TEXT("MuJoCo SDK unavailable"); return false;
+#endif
+}
+
+void FMujocoVehicleDynamics::ApplyBodyDamping(int32 Body, const FMujocoBodyState& State)
+{
+#if RMSIM_WITH_MUJOCO
+    FScopedMujocoTiming Timing(*this, EMujocoTimingScope::Damping);
+    const FVector2D Coefficients = Impl->BodyDamping[Body];
+    if (Coefficients.X == 0 && Coefficients.Y == 0) return;
+    const auto* M = Impl->Model; auto* D = Impl->Data;
+    // UE 5.8 PBDRigidsEvolutionGBF applies max(0,1-c*dt) to free-body
+    // velocity. F=-m*c*v and tau=-c*I_world*omega preserve those 1/s
+    // coefficients as physical inputs at each native step. Other force and
+    // constraint integration phases remain owned by the chosen solver.
+    const FVector VelocityUE = Impl->BeforeVelocities[Body] / 100.;
+    const FVector AngularUE = State.AngularVelocityRadS;
+    const mjtNum Velocity[3] = {VelocityUE.X, -VelocityUE.Y, VelocityUE.Z};
+    const mjtNum Angular[3] = {-AngularUE.X, AngularUE.Y, -AngularUE.Z};
+    mjtNum PrincipalAngular[3], PrincipalMomentum[3], WorldMomentum[3];
+    const mjtNum* InertialRotation = D->ximat + 9 * Body;
+    mju_mulMatTVec3(PrincipalAngular, InertialRotation, Angular);
+    for (int32 Axis = 0; Axis < 3; ++Axis)
+        PrincipalMomentum[Axis] = M->body_inertia[3 * Body + Axis] * PrincipalAngular[Axis];
+    mju_mulMatVec3(WorldMomentum, InertialRotation, PrincipalMomentum);
+    for (int32 Axis = 0; Axis < 3; ++Axis)
+    {
+        const mjtNum Force = -M->body_mass[Body] * Coefficients.X * Velocity[Axis];
+        const mjtNum Torque = -Coefficients.Y * WorldMomentum[Axis];
+        // MuJoCo xfrc_applied is a world-space wrench at this body's COM.
+        D->xfrc_applied[6 * Body + Axis] += Force;
+        D->xfrc_applied[6 * Body + 3 + Axis] += Torque;
+        Impl->LastDampingPowerW -= Force * Velocity[Axis] + Torque * Angular[Axis];
+    }
+#endif
+}
+
+bool FMujocoVehicleDynamics::PrepareBodyDamping(FString& Error)
+{
+#if RMSIM_WITH_MUJOCO
+    // Preserve caller-owned input exactly, including nonzero external forces.
+    FMemory::Memcpy(Impl->SavedAppliedWrenches.GetData(), Impl->Data->xfrc_applied,
+        sizeof(mjtNum) * 6 * Impl->Model->nbody);
+    Impl->LastDampingPowerW = 0;
+    for (int32 PartIndex = 0; PartIndex < OrderedBodyNames.Num(); ++PartIndex)
+    {
+        FMujocoBodyState State;
+        if (!GetBody(OrderedBodyNames[PartIndex], State))
+        {
+            FMemory::Memcpy(Impl->Data->xfrc_applied, Impl->SavedAppliedWrenches.GetData(), sizeof(mjtNum) * 6 * Impl->Model->nbody);
+            Error = TEXT("MuJoCo body state unavailable for damping/contact"); return false;
+        }
+        const int32 Body = Impl->OrderedBodyIds[PartIndex];
+        Impl->BeforeVelocities[Body] = State.VelocityCmS +
+            FVector::CrossProduct(State.AngularVelocityRadS, State.CentreOfMassCm - State.World.GetLocation());
+        ApplyBodyDamping(Body, State);
+    }
+    return true;
 #else
     Error = TEXT("MuJoCo SDK unavailable"); return false;
 #endif
@@ -381,22 +501,215 @@ bool FMujocoVehicleDynamics::GetJoint(const FString& Part, double& Position, dou
 
 bool FMujocoVehicleDynamics::GetBody(const FString& Part, FMujocoBodyState& Out) const
 {
+    check(IsInGameThread());
+    FScopedMujocoTiming Timing(*this, EMujocoTimingScope::GetBody);
 #if RMSIM_WITH_MUJOCO
     const int32* Id = Impl->Bodies.Find(Part);
     if (!Id || !Impl->Data) return false;
     const auto* M = Impl->Model; auto* D = Impl->Data;
     const int32 Body = *Id;
+    if (Impl->BodyCacheGeneration[Body] == Impl->BodyStateGeneration)
+    { Out = Impl->BodyCache[Body]; return true; }
     Out.World = FTransform(QuaternionToUE(D->xquat + 4 * Body), PolarToUE(D->xpos + 3 * Body, 100.));
-    TArray<mjtNum> JacobianP, JacobianR; JacobianP.SetNumUninitialized(3 * M->nv); JacobianR.SetNumUninitialized(3 * M->nv);
-    mj_jacBody(M, D, JacobianP.GetData(), JacobianR.GetData(), Body);
-    mjtNum Velocity[3], Angular[3];
-    mju_mulMatVec(Velocity, JacobianP.GetData(), D->qvel, 3, M->nv);
-    mju_mulMatVec(Angular, JacobianR.GetData(), D->qvel, 3, M->nv);
-    Out.VelocityCmS = PolarToUE(Velocity, 100.); Out.AngularVelocityRadS = AxialToUE(Angular);
+    {
+        FScopedMujocoTiming JacobianTiming(*this, EMujocoTimingScope::Jacobian);
+        // Body-origin velocity at this completed qpos, using the latest qvel.
+        // cvel/mj_objectVelocity may belong to the preceding integration phase.
+        mj_jacBody(M, D, Impl->JacobianP.GetData(), Impl->JacobianR.GetData(), Body);
+        mjtNum Velocity[3], Angular[3];
+        mju_mulMatVec(Velocity, Impl->JacobianP.GetData(), D->qvel, 3, M->nv);
+        mju_mulMatVec(Angular, Impl->JacobianR.GetData(), D->qvel, 3, M->nv);
+        Out.VelocityCmS = PolarToUE(Velocity, 100.); Out.AngularVelocityRadS = AxialToUE(Angular);
+    }
     Out.CentreOfMassCm = PolarToUE(D->xipos + 3 * Body, 100.);
     Out.MassKg = M->body_mass[Body];
     Out.PrincipalInertiaKgCm2 = FVector(M->body_inertia[3 * Body], M->body_inertia[3 * Body + 1], M->body_inertia[3 * Body + 2]) * 10000.;
-    return !Out.World.ContainsNaN() && !Out.VelocityCmS.ContainsNaN() && !Out.AngularVelocityRadS.ContainsNaN();
+    if (Out.World.ContainsNaN() || Out.VelocityCmS.ContainsNaN() || Out.AngularVelocityRadS.ContainsNaN()) return false;
+    Impl->BodyCache[Body] = Out; Impl->BodyCacheGeneration[Body] = Impl->BodyStateGeneration;
+    return true;
+#else
+    return false;
+#endif
+}
+
+
+FScopedMujocoTiming::FScopedMujocoTiming(const FMujocoVehicleDynamics& InOwner, EMujocoTimingScope InScope)
+    : Owner(InOwner), Scope(InScope)
+{
+    if (Owner.IsTimingEnabled()) StartedSeconds = FPlatformTime::Seconds();
+}
+
+FScopedMujocoTiming::~FScopedMujocoTiming()
+{
+    if (StartedSeconds >= 0) Owner.RecordTiming(Scope, FPlatformTime::Seconds() - StartedSeconds);
+}
+
+void FMujocoVehicleDynamics::RecordTiming(EMujocoTimingScope Scope, double WallSeconds) const
+{
+#if RMSIM_WITH_MUJOCO
+    if (!bTimingEnabled) return;
+    auto& Timing = Impl->Timings[int32(Scope)];
+    Timing.Seconds += WallSeconds; ++Timing.Calls;
+#endif
+}
+
+void FMujocoVehicleDynamics::FlushTiming()
+{
+#if RMSIM_WITH_MUJOCO
+    if (!bTimingEnabled || !Impl->Data) return;
+    const double Elapsed = Time() - Impl->TimingWindowStart;
+    if (Elapsed < 5.) return;
+    const auto Ms = [this](EMujocoTimingScope Scope) { return Impl->Timings[int32(Scope)].Seconds * 1000.; };
+    UE_LOG(LogRMSim, Display, TEXT("RMSIM_MUJOCO_TIMING sim_elapsed=%.6f native_steps=%llu ")
+        TEXT("step_total_ms=%.3f solver_ms=%.3f get_body_ms=%.3f jacobian_ms=%.3f ")
+        TEXT("preimpact_ms=%.3f damping_ms=%.3f contacts_ms=%.3f derived_history_ms=%.3f final_forward_ms=%.3f ")
+        TEXT("sync_total_ms=%.3f contact_identity_ms=%.3f get_body_calls=%llu jacobian_calls=%llu scopes=overlapping_elapsed"),
+        Elapsed, Impl->Timings[int32(EMujocoTimingScope::Solver)].Calls,
+        Ms(EMujocoTimingScope::Step), Ms(EMujocoTimingScope::Solver),
+        Ms(EMujocoTimingScope::GetBody), Ms(EMujocoTimingScope::Jacobian),
+        Ms(EMujocoTimingScope::PreImpact), Ms(EMujocoTimingScope::Damping), Ms(EMujocoTimingScope::Contacts),
+        Ms(EMujocoTimingScope::DerivedHistory), Ms(EMujocoTimingScope::FinalForward),
+        Ms(EMujocoTimingScope::Sync), Ms(EMujocoTimingScope::ContactIdentity),
+        Impl->Timings[int32(EMujocoTimingScope::GetBody)].Calls,
+        Impl->Timings[int32(EMujocoTimingScope::Jacobian)].Calls);
+    for (auto& Timing : Impl->Timings) Timing = {};
+    Impl->TimingWindowStart = Time();
+#endif
+}
+
+bool FMujocoVehicleDynamics::CaptureSensorHistory(FString& Error)
+{
+#if RMSIM_WITH_MUJOCO
+    if (!Impl->Data || Impl->SensorHistory.IsEmpty())
+    { Error = TEXT("MuJoCo sensor history unavailable"); return false; }
+    const double Now = Time();
+    if (Impl->SensorHistoryCount > 0)
+    {
+        const int32 Latest = (Impl->SensorHistoryWrite + Impl->SensorHistory.Num() - 1) % Impl->SensorHistory.Num();
+        if (Now <= Impl->SensorHistory[Latest].Time)
+        { Error = TEXT("MuJoCo sensor history time must advance within its reset epoch"); return false; }
+    }
+    FImplementation::FSensorHistorySample Sample;
+    Sample.Time = Now;
+    for (int32 Parent = 0; Parent < 2; ++Parent)
+    {
+        FMujocoBodyState State;
+        if (!GetBody(Parent == 0 ? TEXT("body") : TEXT("yaw"), State))
+        { Error = TEXT("MuJoCo sensor-parent state unavailable"); return false; }
+        Sample.Parent[Parent].World = State.World;
+        Sample.Parent[Parent].VelocityCmS = State.VelocityCmS;
+        Sample.Parent[Parent].AngularVelocityRadS = State.AngularVelocityRadS;
+    }
+    if (Impl->SensorHistoryCount == Impl->SensorHistory.Num()) ++Impl->HistoryOverwrites;
+    Impl->SensorHistory[Impl->SensorHistoryWrite] = Sample;
+    Impl->SensorHistoryWrite = (Impl->SensorHistoryWrite + 1) % Impl->SensorHistory.Num();
+    Impl->SensorHistoryCount = FMath::Min(Impl->SensorHistoryCount + 1, Impl->SensorHistory.Num());
+    Impl->CachedHistoryLower = INDEX_NONE; Impl->CachedHistoryTime = -1;
+    return true;
+#else
+    Error = TEXT("MuJoCo SDK unavailable"); return false;
+#endif
+}
+
+bool FMujocoVehicleDynamics::GetSensorPoseHistoryRange(double& OldestSolverTime, double& NewestSolverTime, int32& SampleCount) const
+{
+    check(IsInGameThread());
+    OldestSolverTime = NewestSolverTime = 0; SampleCount = 0;
+#if RMSIM_WITH_MUJOCO
+    if (Impl->SensorHistoryCount < 1) return false;
+    const int32 Capacity = Impl->SensorHistory.Num();
+    const int32 First = (Impl->SensorHistoryWrite + Capacity - Impl->SensorHistoryCount) % Capacity;
+    const int32 Last = (Impl->SensorHistoryWrite + Capacity - 1) % Capacity;
+    OldestSolverTime = Impl->SensorHistory[First].Time;
+    NewestSolverTime = Impl->SensorHistory[Last].Time;
+    SampleCount = Impl->SensorHistoryCount;
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool FMujocoVehicleDynamics::FindSensorHistoryBracket(double SolverTime, int32& Lower, int32& Upper, double& Alpha) const
+{
+#if RMSIM_WITH_MUJOCO
+    if (!FMath::IsFinite(SolverTime)) { ++Impl->HistoryInvalidTimeMisses; return false; }
+    const int32 Count = Impl->SensorHistoryCount, Capacity = Impl->SensorHistory.Num();
+    if (Count < 1) { ++Impl->HistoryRangeMisses; return false; }
+    const int32 First = (Impl->SensorHistoryWrite + Capacity - Count) % Capacity;
+    const auto At = [this, First, Capacity](int32 Logical) -> const FImplementation::FSensorHistorySample&
+        { return Impl->SensorHistory[(First + Logical) % Capacity]; };
+    if (SolverTime < At(0).Time || SolverTime > At(Count - 1).Time)
+    { ++Impl->HistoryRangeMisses; return false; }
+
+    int32 LogicalLower = 0;
+    if (Impl->CachedHistoryLower != INDEX_NONE && SolverTime >= Impl->CachedHistoryTime &&
+        Impl->CachedHistoryLower < Count && SolverTime >= At(Impl->CachedHistoryLower).Time)
+    {
+        // Rays arrive in emission-time order: after one binary search, traverse
+        // only the few native substep boundaries crossed by this ray batch.
+        LogicalLower = Impl->CachedHistoryLower;
+        while (LogicalLower + 1 < Count && At(LogicalLower + 1).Time <= SolverTime) ++LogicalLower;
+    }
+    else
+    {
+        int32 Low = 0, High = Count - 1;
+        while (Low < High)
+        {
+            const int32 Mid = Low + (High - Low + 1) / 2;
+            if (At(Mid).Time <= SolverTime) Low = Mid; else High = Mid - 1;
+        }
+        LogicalLower = Low;
+    }
+    const int32 LogicalUpper = FMath::Min(LogicalLower + 1, Count - 1);
+    Lower = (First + LogicalLower) % Capacity; Upper = (First + LogicalUpper) % Capacity;
+    const double Span = At(LogicalUpper).Time - At(LogicalLower).Time;
+    Alpha = Span > 0 ? (SolverTime - At(LogicalLower).Time) / Span : 0;
+    Impl->CachedHistoryLower = LogicalLower; Impl->CachedHistoryTime = SolverTime;
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool FMujocoVehicleDynamics::SampleSensorParentWorldAtTime(const FString& ParentFrame, double SolverTime, FTransform& OutPose) const
+{
+    check(IsInGameThread());
+#if RMSIM_WITH_MUJOCO
+    ++Impl->HistoryQueries;
+    const int32 Parent = ParentFrame == TEXT("base_link") ? 0 : ParentFrame == TEXT("yaw_link") ? 1 : INDEX_NONE;
+    if (Parent == INDEX_NONE) { ++Impl->HistoryParentMisses; return false; }
+    int32 Lower = 0, Upper = 0; double Alpha = 0;
+    if (!FindSensorHistoryBracket(SolverTime, Lower, Upper, Alpha)) return false;
+    const auto& A = Impl->SensorHistory[Lower].Parent[Parent];
+    const auto& B = Impl->SensorHistory[Upper].Parent[Parent];
+    OutPose = FTransform(FQuat::Slerp(A.World.GetRotation(), B.World.GetRotation(), Alpha).GetNormalized(),
+        FMath::Lerp(A.World.GetLocation(), B.World.GetLocation(), Alpha));
+    return !OutPose.ContainsNaN();
+#else
+    return false;
+#endif
+}
+
+bool FMujocoVehicleDynamics::SampleSensorMotionAtTime(const FString& ParentFrame, double SolverTime,
+    const FTransform& LocalMount, FTransform& OutPose, FVector& OutPointVelocityCmS, FVector& OutAngularVelocityRadS) const
+{
+    check(IsInGameThread());
+#if RMSIM_WITH_MUJOCO
+    ++Impl->HistoryQueries;
+    const int32 Parent = ParentFrame == TEXT("base_link") ? 0 : ParentFrame == TEXT("yaw_link") ? 1 : INDEX_NONE;
+    if (Parent == INDEX_NONE) { ++Impl->HistoryParentMisses; return false; }
+    if (LocalMount.ContainsNaN()) { ++Impl->HistoryInvalidMountMisses; return false; }
+    int32 Lower = 0, Upper = 0; double Alpha = 0;
+    if (!FindSensorHistoryBracket(SolverTime, Lower, Upper, Alpha)) return false;
+    const auto& A = Impl->SensorHistory[Lower].Parent[Parent];
+    const auto& B = Impl->SensorHistory[Upper].Parent[Parent];
+    const FTransform ParentPose(FQuat::Slerp(A.World.GetRotation(), B.World.GetRotation(), Alpha).GetNormalized(),
+        FMath::Lerp(A.World.GetLocation(), B.World.GetLocation(), Alpha));
+    OutPose = LocalMount * ParentPose;
+    OutAngularVelocityRadS = FMath::Lerp(A.AngularVelocityRadS, B.AngularVelocityRadS, Alpha);
+    OutPointVelocityCmS = FMath::Lerp(A.VelocityCmS, B.VelocityCmS, Alpha) +
+        FVector::CrossProduct(OutAngularVelocityRadS, OutPose.GetLocation() - ParentPose.GetLocation());
+    return !OutPose.ContainsNaN() && !OutPointVelocityCmS.ContainsNaN() && !OutAngularVelocityRadS.ContainsNaN();
 #else
     return false;
 #endif
@@ -417,7 +730,7 @@ bool FMujocoVehicleDynamics::ValidateState(FString& Error) const
 #endif
 }
 
-void FMujocoVehicleDynamics::CollectContacts(const TMap<FString, FVector>& BeforeVelocities)
+void FMujocoVehicleDynamics::CollectContacts(const TArray<FVector>& BeforeVelocities)
 {
 #if RMSIM_WITH_MUJOCO
     const auto* M = Impl->Model; const auto* D = Impl->Data;
@@ -427,17 +740,16 @@ void FMujocoVehicleDynamics::CollectContacts(const TMap<FString, FVector>& Befor
         if (C.efc_address < 0) continue;
         const int32 Body0 = C.geom[0] >= 0 ? M->geom_bodyid[C.geom[0]] : 0;
         const int32 Body1 = C.geom[1] >= 0 ? M->geom_bodyid[C.geom[1]] : 0;
-        FString Part; int32 Side = -1;
+        int32 VehicleBody = INDEX_NONE, Side = -1;
         for (int32 Candidate = 0; Candidate < 2; ++Candidate)
         {
             const int32 Body = Candidate == 0 ? Body0 : Body1;
-            const char* Name = Body > 0 ? mj_id2name(M, mjOBJ_BODY, Body) : nullptr;
-            if (Name && Impl->Bodies.Contains(FString(UTF8_TO_TCHAR(Name)))) { Part = UTF8_TO_TCHAR(Name); Side = Candidate; break; }
+            if (Body > 0 && !Impl->BodyNamesById[Body].IsEmpty()) { VehicleBody = Body; Side = Candidate; break; }
         }
         if (Side < 0) continue;
         const int32 OtherBody = Side == 0 ? Body1 : Body0;
-        const char* OtherBodyName = OtherBody > 0 ? mj_id2name(M, mjOBJ_BODY, OtherBody) : nullptr;
-        if (OtherBodyName && Impl->Bodies.Contains(FString(UTF8_TO_TCHAR(OtherBodyName)))) continue;
+        if (OtherBody > 0 && !Impl->BodyNamesById[OtherBody].IsEmpty()) continue;
+        const FString& Part = Impl->BodyNamesById[VehicleBody];
         mjtNum Force[6] = {}; mj_contactForce(M, D, I, Force);
         if (!FMath::IsFinite(double(Force[0])) || FMath::Abs(double(Force[0])) < 1.e-8) continue;
         FMujocoContactSample Sample; Sample.BodyName = Part;
@@ -450,7 +762,7 @@ void FMujocoVehicleDynamics::CollectContacts(const TMap<FString, FVector>& Befor
         // The owned vehicle side determines the direction even when a compound
         // body's centre of mass lies beyond this local contact surface.
         Sample.IntoObstacleNormal = PolarToUE(C.frame).GetSafeNormal() * (Side == 0 ? 1. : -1.);
-        Sample.PreImpactVelocityCmS = BeforeVelocities.FindRef(Part);
+        Sample.PreImpactVelocityCmS = BeforeVelocities[VehicleBody];
         Sample.ForceN = FMath::Abs(double(Force[0])); Sample.ImpulseNs = Sample.ForceN * M->opt.timestep;
         Sample.TimeSeconds = D->time;
         MaximumPenetrationM = FMath::Max(MaximumPenetrationM, FMath::Max(0., -double(C.dist)));
@@ -462,6 +774,7 @@ void FMujocoVehicleDynamics::CollectContacts(const TMap<FString, FVector>& Befor
 bool FMujocoVehicleDynamics::Step(double Seconds, FString& Error)
 {
     check(IsInGameThread());
+    FScopedMujocoTiming Timing(*this, EMujocoTimingScope::Step);
 #if RMSIM_WITH_MUJOCO
     if (!Impl->Model || !Impl->Data || !FMath::IsFinite(Seconds) || Seconds < 0 || Seconds > 1.)
     { Error = TEXT("invalid MuJoCo elapsed time; no elapsed simulation time discarded"); return false; }
@@ -472,23 +785,47 @@ bool FMujocoVehicleDynamics::Step(double Seconds, FString& Error)
     FrameContacts.Reset(); LastFrameSteps = Count;
     for (int32 I = 0; I < Count; ++I)
     {
-        TMap<FString, FVector> Before;
-        for (const FString& Part : OrderedBodyNames)
         {
-            FMujocoBodyState State;
-            if (GetBody(Part, State)) Before.Add(Part, State.VelocityCmS + FVector::CrossProduct(State.AngularVelocityRadS, State.CentreOfMassCm - State.World.GetLocation()));
+            FScopedMujocoTiming BeforeTiming(*this, EMujocoTimingScope::PreImpact);
+            if (!PrepareBodyDamping(Error)) return false;
         }
         const double Previous = Impl->Data->time;
-        mj_step(Impl->Model, Impl->Data);
+        {
+            FScopedMujocoTiming SolverTiming(*this, EMujocoTimingScope::Solver);
+            mj_step(Impl->Model, Impl->Data);
+        }
+        FMemory::Memcpy(Impl->Data->xfrc_applied, Impl->SavedAppliedWrenches.GetData(),
+            sizeof(mjtNum) * 6 * Impl->Model->nbody);
         if (!ValidateState(Error) || Impl->Data->time <= Previous)
         { if (Error.IsEmpty()) Error = TEXT("MuJoCo time failed to advance"); return false; }
-        CollectContacts(Before); ++TotalSteps;
+        {
+            // Capture the solved contact before refreshing any derived positions.
+            FScopedMujocoTiming ContactTiming(*this, EMujocoTimingScope::Contacts);
+            CollectContacts(Impl->BeforeVelocities);
+        }
+        ++TotalSteps;
+        {
+            FScopedMujocoTiming HistoryTiming(*this, EMujocoTimingScope::DerivedHistory);
+            // mj_step ends after integration. These minimal stages refresh xpos,
+            // xquat, xipos and cdof for the completed qpos, without a new solve.
+            mj_kinematics(Impl->Model, Impl->Data);
+            mj_comPos(Impl->Model, Impl->Data);
+            ++Impl->BodyStateGeneration;
+            if (!CaptureSensorHistory(Error)) return false;
+        }
     }
     RemainderSeconds -= Count * Dt;
     if (FMath::Abs(RemainderSeconds) < Dt * 1.e-7) RemainderSeconds = 0;
-    // mj_step integrates qpos after computing derived body transforms. Refresh
-    // once so visuals, queries and sensors all observe the same completed state.
-    mj_forward(Impl->Model, Impl->Data);
+    // Preserve the final acceleration/contact phase, with drag evaluated at
+    // the completed state. mj_forward changes no qpos/qvel, so the body-origin
+    // kinematic cache from that same state remains valid for visual/ROS readers.
+    if (!PrepareBodyDamping(Error)) return false;
+    {
+        FScopedMujocoTiming ForwardTiming(*this, EMujocoTimingScope::FinalForward);
+        mj_forward(Impl->Model, Impl->Data);
+    }
+    FMemory::Memcpy(Impl->Data->xfrc_applied, Impl->SavedAppliedWrenches.GetData(),
+        sizeof(mjtNum) * 6 * Impl->Model->nbody);
     return ValidateState(Error);
 #else
     Error = TEXT("MuJoCo SDK unavailable"); return false;
@@ -534,6 +871,27 @@ TSharedRef<FJsonObject> FMujocoVehicleDynamics::Diagnostics() const
     J->SetNumberField(TEXT("steps"), double(TotalSteps)); J->SetNumberField(TEXT("reset_count"), double(ResetCount));
     J->SetNumberField(TEXT("step_count"),double(TotalSteps));J->SetNumberField(TEXT("pose_override_count"),double(ResetCount>0?ResetCount-1:0));
     J->SetNumberField(TEXT("contact_count"),FrameContacts.Num());
+    J->SetBoolField(TEXT("native_timing_enabled"), bTimingEnabled);
+    double HistoryOldest=0, HistoryNewest=0; int32 HistoryCount=0;
+    if (GetSensorPoseHistoryRange(HistoryOldest, HistoryNewest, HistoryCount))
+    {
+        auto History=MakeShared<FJsonObject>();
+        History->SetStringField(TEXT("model"),TEXT("native_substep_kinematics_comPos; translation_lerp_quaternion_slerp; origin_velocity_lerp"));
+        History->SetNumberField(TEXT("oldest_solver_time_s"),HistoryOldest);
+        History->SetNumberField(TEXT("newest_solver_time_s"),HistoryNewest);
+        History->SetNumberField(TEXT("samples"),HistoryCount);
+        History->SetNumberField(TEXT("step_s"),Timestep());
+        History->SetNumberField(TEXT("reset_count"),double(ResetCount));
+#if RMSIM_WITH_MUJOCO
+        History->SetNumberField(TEXT("query_count"),double(Impl->HistoryQueries));
+        History->SetNumberField(TEXT("range_misses"),double(Impl->HistoryRangeMisses));
+        History->SetNumberField(TEXT("unsupported_parent_misses"),double(Impl->HistoryParentMisses));
+        History->SetNumberField(TEXT("invalid_time_misses"),double(Impl->HistoryInvalidTimeMisses));
+        History->SetNumberField(TEXT("invalid_mount_misses"),double(Impl->HistoryInvalidMountMisses));
+        History->SetNumberField(TEXT("ring_overwrites"),double(Impl->HistoryOverwrites));
+#endif
+        J->SetObjectField(TEXT("sensor_pose_history"),History);
+    }
     double PeakNormalForce=0;for(const auto& C:FrameContacts)PeakNormalForce=FMath::Max(PeakNormalForce,C.ForceN);
     J->SetNumberField(TEXT("normal_force_N"),PeakNormalForce);
     J->SetNumberField(TEXT("last_frame_substeps"), LastFrameSteps); J->SetNumberField(TEXT("unconsumed_time_s"), RemainderSeconds);
@@ -552,6 +910,67 @@ TSharedRef<FJsonObject> FMujocoVehicleDynamics::Diagnostics() const
         J->SetNumberField(TEXT("warning_count"),WarningCount);
         double Mass = 0; for (const auto& Entry : Impl->Bodies) Mass += Impl->Model->body_mass[Entry.Value];
         J->SetNumberField(TEXT("vehicle_total_mass_kg"), Mass);
+        J->SetStringField(TEXT("body_damping_model"),TEXT("source_per_second_COM_force_and_world_inertia_torque; native_force_integration"));
+        J->SetNumberField(TEXT("body_damping_dissipation_w"),Impl->LastDampingPowerW);
+        J->SetNumberField(TEXT("wheel_angular_damping_per_s"),.01);
+        if(bTimingEnabled&&Impl->Data)
+        {
+            const auto* M=Impl->Model;const auto* D=Impl->Data;
+            J->SetStringField(TEXT("actuator_sampling_phase"),TEXT("final_forward_endpoint; current solver-time force, not a prior integrated-substep force sample"));
+            TArray<TSharedPtr<FJsonValue>> States;States.Reserve(Impl->Servos.Num());
+            for(const auto& Entry:Impl->Servos)
+            {
+                const auto& S=Entry.Value;
+                auto State=MakeShared<FJsonObject>();
+                State->SetStringField(TEXT("part"),Entry.Key);
+                State->SetNumberField(TEXT("actuator_index"),S.Actuator);
+                State->SetNumberField(TEXT("joint_index"),S.Joint);
+                const bool IndicesValid=S.Actuator>=0&&S.Actuator<M->nu&&S.Joint>=0&&S.Joint<M->njnt;
+                State->SetBoolField(TEXT("indices_valid"),IndicesValid);
+                if(IndicesValid)
+                {
+                    const int32 A=S.Actuator,K=S.Joint,Dof=M->jnt_dofadr[K],Qpos=M->jnt_qposadr[K];
+                    const char* ActuatorName=mj_id2name(M,mjOBJ_ACTUATOR,A);
+                    const char* JointName=mj_id2name(M,mjOBJ_JOINT,K);
+                    State->SetStringField(TEXT("actuator_name"),ActuatorName?UTF8_TO_TCHAR(ActuatorName):TEXT(""));
+                    State->SetStringField(TEXT("joint_name"),JointName?UTF8_TO_TCHAR(JointName):TEXT(""));
+                    State->SetNumberField(TEXT("dof_index"),Dof);
+                    State->SetNumberField(TEXT("qpos_index"),Qpos);
+                    State->SetNumberField(TEXT("joint_type"),M->jnt_type[K]);
+                    State->SetNumberField(TEXT("transmission_type"),M->actuator_trntype[A]);
+                    State->SetNumberField(TEXT("transmission_joint_index"),M->actuator_trnid[2*A]);
+                    TArray<TSharedPtr<FJsonValue>> Gear;
+                    for(int32 I=0;I<6;++I)Gear.Add(MakeShared<FJsonValueNumber>(M->actuator_gear[6*A+I]));
+                    State->SetArrayField(TEXT("gear"),Gear);
+                    const bool UnitHingeMapping=Dof>=0&&Dof<M->nv&&Qpos>=0&&Qpos<M->nq&&
+                        M->jnt_type[K]==mjJNT_HINGE&&M->actuator_trntype[A]==mjTRN_JOINT&&
+                        M->actuator_trnid[2*A]==K&&FMath::IsNearlyEqual(double(M->actuator_gear[6*A]),1.,1.e-9);
+                    State->SetBoolField(TEXT("unit_hinge_mapping_verified"),UnitHingeMapping);
+                    if(UnitHingeMapping)
+                    {
+                        // ConfigureServo verifies this hinge/joint/gear mapping.
+                        // These generalized coordinates are radians; forces are N*m.
+                        State->SetStringField(TEXT("force_unit"),TEXT("N*m"));
+                        State->SetNumberField(TEXT("actuator_force"),D->actuator_force[A]);
+                        State->SetNumberField(TEXT("qfrc_actuator"),D->qfrc_actuator[Dof]);
+                        State->SetNumberField(TEXT("qfrc_constraint"),D->qfrc_constraint[Dof]);
+                        State->SetNumberField(TEXT("qfrc_passive"),D->qfrc_passive[Dof]);
+                        State->SetNumberField(TEXT("qfrc_applied"),D->qfrc_applied[Dof]);
+                        State->SetNumberField(TEXT("qfrc_bias"),D->qfrc_bias[Dof]);
+                        State->SetNumberField(TEXT("qfrc_smooth"),D->qfrc_smooth[Dof]);
+                        State->SetNumberField(TEXT("qpos_rad"),D->qpos[Qpos]);
+                        State->SetNumberField(TEXT("qvel_rad_s"),D->qvel[Dof]);
+                        State->SetNumberField(TEXT("qacc_rad_s2"),D->qacc[Dof]);
+                        State->SetNumberField(TEXT("servo_force_limit_nm"),S.Limit);
+                        State->SetBoolField(TEXT("model_force_limited"),M->actuator_forcelimited[A]!=0);
+                        State->SetArrayField(TEXT("model_force_range_nm"),{MakeShared<FJsonValueNumber>(M->actuator_forcerange[2*A]),
+                            MakeShared<FJsonValueNumber>(M->actuator_forcerange[2*A+1])});
+                    }
+                }
+                States.Add(MakeShared<FJsonValueObject>(State));
+            }
+            J->SetArrayField(TEXT("actuator_state"),States);
+        }
     }
 #endif
     return J;

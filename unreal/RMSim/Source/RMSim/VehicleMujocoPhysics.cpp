@@ -111,8 +111,25 @@ bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FStri
     ContactMotorTorqueNm=ContactParameters[TEXT("MotorTorqueNm")];ContactBrakeTorqueNm=ContactParameters[TEXT("BrakeTorqueNm")];ContactMotorDamping=ContactParameters[TEXT("MotorDampingNmS")];
     const double InitialYaw=ManualYaw,InitialPitch=ManualPitch;
     auto Native=MakeShared<FMujocoVehicleDynamics>();
-    if(!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error)||
-       !Native->Reset(GetActorTransform(),Error,InitialYaw,InitialPitch))return false;
+    if(!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error))return false;
+    const FVector SourceWorldGravity(0,0,GetWorld()->GetGravityZ());
+    if(!Native->GravityCmS2().Equals(SourceWorldGravity,1.e-4))
+        return Fail(FString::Printf(TEXT("MuJoCo gravity differs from active UE World: native=%s cm/s^2 source=%s cm/s^2; rebuild the model from the current world gravity"),
+            *Native->GravityCmS2().ToString(),*SourceWorldGravity.ToString()));
+    if(!Native->Reset(GetActorTransform(),Error,InitialYaw,InitialPitch))return false;
+    TSet<FString> DampingWheelParts;
+    for(const auto& Value:*Wheels)
+    {
+        const auto W=Value->AsObject();FString Name;
+        if(!W||!W->TryGetStringField(TEXT("part"),Name))return Fail(TEXT("MuJoCo wheel damping mapping invalid"));
+        DampingWheelParts.Add(Name);
+    }
+    for(const auto& Part:Native->BodyNames())
+    {
+        // The Chaos source overrides wheel angular damping to .01 after creating each body.
+        const double AngularDamping=DampingWheelParts.Contains(Part)?.01:ContactParameters[TEXT("AngularDamping")];
+        if(!Native->ConfigureBodyDamping(Part,ContactParameters[TEXT("LinearDamping")],AngularDamping,Error))return false;
+    }
     for(const auto& Value:*Wheels)
     {
         const auto WJ=Value->AsObject();FContactWheel W;const TArray<TSharedPtr<FJsonValue>>* Axis=nullptr;
@@ -135,11 +152,18 @@ bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FStri
         if(Manifest->TryGetObjectField(TEXT("gimbal_control"),Control))
         {
             (*Control)->TryGetNumberField(TEXT("stiffness_nm_rad"),GimbalKp);(*Control)->TryGetNumberField(TEXT("damping_nm_s"),GimbalKd);
-            (*Control)->TryGetNumberField(TEXT("max_torque_nm"),GimbalTorque);(*Control)->TryGetNumberField(TEXT("yaw_rate_rad_s"),MujocoYawRateLimit);(*Control)->TryGetNumberField(TEXT("pitch_rate_rad_s"),MujocoPitchRateLimit);
+            (*Control)->TryGetNumberField(TEXT("max_torque_nm"),GimbalTorque);
         }
     }
-    if(!FMath::IsFinite(MujocoYawRateLimit)||!FMath::IsFinite(MujocoPitchRateLimit)||MujocoYawRateLimit<=0||MujocoPitchRateLimit<=0||
-       !Native->ConfigureServo(TEXT("yaw"),GimbalKp,GimbalKd,GimbalTorque,Error)||!Native->ConfigureServo(TEXT("pitch"),GimbalKp,GimbalKd,GimbalTorque,Error))return false;
+    // The same active UE configuration supplies manual, ROS aim and native target rate budgets.
+    // Manifest rate values are model metadata; changing input configuration must not leave a stale native clamp.
+    double SourceYawDegrees=540.,SourcePitchDegrees=360.;
+    GConfig->GetDouble(TEXT("RMSim.ManualControl"),TEXT("GimbalYawSpeedDeg"),SourceYawDegrees,GGameIni);
+    GConfig->GetDouble(TEXT("RMSim.ManualControl"),TEXT("GimbalPitchSpeedDeg"),SourcePitchDegrees,GGameIni);
+    MujocoYawRateLimit=FMath::DegreesToRadians(SourceYawDegrees);MujocoPitchRateLimit=FMath::DegreesToRadians(SourcePitchDegrees);
+    if(!FMath::IsFinite(MujocoYawRateLimit)||!FMath::IsFinite(MujocoPitchRateLimit)||MujocoYawRateLimit<=0||MujocoPitchRateLimit<=0)
+        return Fail(TEXT("invalid native gimbal rate in RMSim.ManualControl source configuration"));
+    if(!Native->ConfigureServo(TEXT("yaw"),GimbalKp,GimbalKd,GimbalTorque,Error)||!Native->ConfigureServo(TEXT("pitch"),GimbalKp,GimbalKd,GimbalTorque,Error))return false;
     MujocoYawTarget=InitialYaw;MujocoPitchTarget=InitialPitch;MujocoYawTargetRate=MujocoPitchTargetRate=0;
     Native->SetServoTarget(TEXT("yaw"),MujocoYawTarget,0,true);Native->SetServoTarget(TEXT("pitch"),MujocoPitchTarget,0,false);
     MujocoDynamics=Native;
@@ -195,11 +219,31 @@ void AVehicleRig::TickMujocoPhysics(double Seconds)
     if(!MujocoDynamics->Step(Seconds,Error))
     {bMujocoFailed=true;SetContactDrive(0,0,true);UE_LOG(LogRMSim,Error,TEXT("MUJOCO_STEP_FAILED %s"),*Error);FPlatformMisc::RequestExitWithStatus(false,2);return;}
     SyncMujocoPose();
+    MujocoDynamics->FlushTiming();
+}
+
+bool AVehicleRig::SampleSensorParentWorldAtTime(const FString& ParentFrame,double SolverTime,FTransform& OutPose) const
+{
+    return MujocoDynamics && MujocoDynamics->SampleSensorParentWorldAtTime(ParentFrame,SolverTime,OutPose);
+}
+
+bool AVehicleRig::SampleSensorMotionAtTime(const FString& ParentFrame,double SolverTime,const FTransform& LocalMount,
+    FTransform& OutPose,FVector& OutPointVelocityCmS,FVector& OutAngularVelocityRadS) const
+{
+    return MujocoDynamics && MujocoDynamics->SampleSensorMotionAtTime(ParentFrame,SolverTime,LocalMount,
+        OutPose,OutPointVelocityCmS,OutAngularVelocityRadS);
+}
+
+bool AVehicleRig::GetSensorPoseHistoryRange(double& OldestSolverTime,double& NewestSolverTime,int32& SampleCount) const
+{
+    OldestSolverTime=NewestSolverTime=0;SampleCount=0;
+    return MujocoDynamics && MujocoDynamics->GetSensorPoseHistoryRange(OldestSolverTime,NewestSolverTime,SampleCount);
 }
 
 void AVehicleRig::SyncMujocoPose()
 {
     if(!MujocoDynamics)return;
+    FScopedMujocoTiming SyncTiming(*MujocoDynamics,EMujocoTimingScope::Sync);
     FMujocoBodyState Root;
     if(!MujocoDynamics->GetBody(TEXT("body"),Root))return;
     SetActorTransform(Root.World,false,nullptr,ETeleportType::None);
@@ -213,6 +257,7 @@ void AVehicleRig::SyncMujocoPose()
     double Rate=0;MujocoDynamics->GetJoint(TEXT("yaw"),ManualYaw,Rate);ManualYaw=FMath::UnwindRadians(ManualYaw);
     MujocoDynamics->GetJoint(TEXT("pitch"),ManualPitch,Rate);
     const double Now=GetWorld()->GetTimeSeconds();
+    FScopedMujocoTiming ContactTiming(*MujocoDynamics,EMujocoTimingScope::ContactIdentity);
     for(const auto& C:MujocoDynamics->Contacts())
     {
         FCollisionQueryParams Query(SCENE_QUERY_STAT(MujocoContactVisualMapping),true,this);
@@ -250,6 +295,30 @@ TSharedRef<FJsonObject> AVehicleRig::GetMujocoContactState() const
 {
     auto State=MujocoDynamics->Diagnostics();State->SetBoolField(TEXT("enabled"),bContactPhysics&&!bMujocoFailed);
     State->SetStringField(TEXT("physics_backend"),TEXT("mujoco"));State->SetNumberField(TEXT("sim_time_s"),MujocoDynamics->Time());
+    const FVector SourceGravity(0,0,GetWorld()->GetGravityZ());
+    auto Gravity=MakeShared<FJsonObject>();
+    Gravity->SetStringField(TEXT("source"),TEXT("active UE World GetGravityZ"));
+    Gravity->SetArrayField(TEXT("source_world_cm_s2"),MjVector(SourceGravity));
+    Gravity->SetArrayField(TEXT("native_world_cm_s2"),MjVector(MujocoDynamics->GravityCmS2()));
+    Gravity->SetBoolField(TEXT("matches_source"),MujocoDynamics->GravityCmS2().Equals(SourceGravity,1.e-4));
+    State->SetObjectField(TEXT("gravity_mapping"),Gravity);
+    auto GimbalRates=MakeShared<FJsonObject>();
+    GimbalRates->SetStringField(TEXT("source"),TEXT("GGameIni [RMSim.ManualControl] GimbalYawSpeedDeg/GimbalPitchSpeedDeg"));
+    GimbalRates->SetStringField(TEXT("semantics"),TEXT("source target rate budget and native feed-forward clamp; physical rate remains solver-driven"));
+    GimbalRates->SetNumberField(TEXT("source_yaw_rate_rad_s"),MujocoYawRateLimit);GimbalRates->SetNumberField(TEXT("source_pitch_rate_rad_s"),MujocoPitchRateLimit);
+    bool HasManifestRates=false;
+    if(const auto Manifest=MujocoDynamics->Manifest())
+    {
+        const TSharedPtr<FJsonObject>* Control=nullptr;double Yaw=0,Pitch=0;
+        if(Manifest->TryGetObjectField(TEXT("gimbal_control"),Control)&&
+           (*Control)->TryGetNumberField(TEXT("yaw_rate_rad_s"),Yaw)&&(*Control)->TryGetNumberField(TEXT("pitch_rate_rad_s"),Pitch))
+        {
+            HasManifestRates=true;
+            GimbalRates->SetNumberField(TEXT("manifest_yaw_rate_rad_s"),Yaw);GimbalRates->SetNumberField(TEXT("manifest_pitch_rate_rad_s"),Pitch);
+            GimbalRates->SetBoolField(TEXT("matches_manifest"),FMath::IsNearlyEqual(Yaw,MujocoYawRateLimit,1.e-9)&&FMath::IsNearlyEqual(Pitch,MujocoPitchRateLimit,1.e-9));
+        }
+    }
+    GimbalRates->SetBoolField(TEXT("manifest_rates_present"),HasManifestRates);State->SetObjectField(TEXT("gimbal_rate_mapping"),GimbalRates);
     State->SetStringField(TEXT("scope"),TEXT("native_MuJoCo_contact_and_joint_dynamics; original_UE_visuals; calibrated=false"));
     auto Params=MakeShared<FJsonObject>();for(const auto& P:ContactParameters)Params->SetNumberField(P.Key,P.Value);State->SetObjectField(TEXT("parameters"),Params);
     auto Controls=MakeShared<FJsonObject>();for(const auto& P:DriveParameters)Controls->SetNumberField(P.Key,P.Value);State->SetObjectField(TEXT("drive_parameters"),Controls);

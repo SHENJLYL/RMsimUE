@@ -79,7 +79,7 @@ def masses_for(rig,profile,config):
     for part in rig["parts"]:
         name=part["name"]
         if name=="body":
-            mass=p["ChassisMassKg"]-sum(config["gimbal_mass_kg"].values())
+            mass=p["ChassisMassKg"]  # UE welded yaw/pitch masses remain additional, as measured at runtime.
         elif name in ("yaw","pitch"):
             mass=config["gimbal_mass_kg"][name]
         elif name.startswith("wheel_"):
@@ -95,11 +95,34 @@ def masses_for(rig,profile,config):
         masses[name]=mass
     return masses
 
+def source_average_friction(profile,config,is_wheel):
+    """Match the current UE vehicle Average rule against the verified static material.
+
+    A higher vehicle priority selects the precombined coefficient for static flex
+    and static geom contacts. All solver parameters remain identical on both sides.
+    """
+    mapping=config.get("contact_mapping",{})
+    cc=config["contact"]
+    if (mapping.get("schema")!="rmsim_ue_homogeneous_static_contact_v1" or
+            mapping.get("source_friction_combine")!="Average" or
+            mapping.get("source_restitution_combine")!="Min" or
+            mapping.get("vehicle_priority")!=1 or mapping.get("static_priority")!=0 or
+            mapping.get("static_friction_binary32")!=cc["static_sliding_friction"] or
+            cc["condim"]!=3 or cc["torsional_friction"]!=0 or cc["rolling_friction"]!=0):
+        raise ValueError("Unsupported source contact mapping; inspect actual UE materials before generation")
+    key="WheelFriction" if is_wheel else "ChassisFriction"
+    source_vehicle=float(np.float32(profile["physics"][key]))
+    source_static=cc["static_sliding_friction"]
+    if not np.isfinite(source_vehicle) or not np.isfinite(source_static) or min(source_vehicle,source_static)<0:
+        raise ValueError("Invalid source friction coefficient")
+    return .5*(source_vehicle+source_static)
+
+
 def vehicle_xml(rig,profile,config,hulls,spawn,inertias=None):
     root=ET.Element("mujoco",model="RMSim_aim_sentry")
     sub(root,"compiler",angle="radian",autolimits="true",inertiafromgeom="true" if inertias is None else "false")
     sub(root,"option",timestep=config["timestep_s"],integrator=config["integrator"],
-        solver=config["solver"],iterations=config["iterations"],cone=config["cone"],gravity="0 0 -9.81")
+        solver=config["solver"],iterations=config["iterations"],cone=config["cone"],gravity=numbers(config["gravity_mps2"]))
     sub(root,"size",memory="256M")
     asset=sub(root,"asset")
     world=sub(root,"worldbody")
@@ -153,10 +176,10 @@ def vehicle_xml(rig,profile,config,hulls,spawn,inertias=None):
         for index,points in enumerate(hulls[name]):
             mesh_name=f"m_{name}_{index}"
             sub(asset,"mesh",name=mesh_name,vertex=numbers(points))
-            friction=p["WheelFriction"] if name in wheels else p["ChassisFriction"]
+            friction=source_average_friction(profile,config,name in wheels)
             cc=config["contact"]
             sub(body,"geom",name=f"g_{name}_{index}",type="mesh",mesh=mesh_name,
-                density="1000" if inertias is None else "0",contype="1",conaffinity="3",
+                density="1000" if inertias is None else "0",contype="1",conaffinity="3",priority="1",
                 friction=numbers([friction,cc["torsional_friction"],cc["rolling_friction"]]),
                 condim=cc["condim"],solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]),
                 rgba="0.3 0.4 0.6 1",group="1")
@@ -240,7 +263,7 @@ def add_static(root,groups,shell,config):
         if len(faces):
             flex=sub(deform,"flex",name=name,body="world",dim="2",radius=cc["flex_radius_m"],
                 vertex=numbers(points),element=integers(faces))
-            sub(flex,"contact",selfcollide="none",contype="2",conaffinity="1",condim=cc["condim"],
+            sub(flex,"contact",selfcollide="none",contype="2",conaffinity="1",priority="0",condim=cc["condim"],
                 friction=numbers([cc["static_sliding_friction"],cc["torsional_friction"],cc["rolling_friction"]]),
                 solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]))
             mappings.append({"name":name,"kind":"static_flex","map_mesh":item["id"],"triangles":len(faces),
@@ -248,7 +271,7 @@ def add_static(root,groups,shell,config):
         for i,vertices in enumerate(item.get("_convex_hulls",[])):
             cname=f"{name}_component_{i}"
             sub(root.find("asset"),"mesh",name=cname,vertex=numbers(vertices))
-            sub(world,"geom",name=cname,type="mesh",mesh=cname,contype="2",conaffinity="1",condim=cc["condim"],
+            sub(world,"geom",name=cname,type="mesh",mesh=cname,contype="2",conaffinity="1",priority="0",condim=cc["condim"],
                 friction=numbers([cc["static_sliding_friction"],cc["torsional_friction"],cc["rolling_friction"]]),
                 solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]))
             mappings.append({"name":cname,"kind":"original_closed_convex_component","map_mesh":item["id"],
@@ -266,7 +289,7 @@ def add_static(root,groups,shell,config):
         ("east",[hi[0]+clearance+t/2,(lo[1]+hi[1])/2,(top+bottom)/2],[t/2,(hi[1]-lo[1])/2+clearance+t,(top-bottom)/2])]
     for name,pos,size in walls:
         sub(world,"geom",name="arena_"+name,type="box",pos=numbers(pos),size=numbers(size),
-            contype="2",conaffinity="1",condim=cc["condim"],
+            contype="2",conaffinity="1",priority="0",condim=cc["condim"],
             friction=numbers([cc["static_sliding_friction"],cc["torsional_friction"],cc["rolling_friction"]]),
             solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]))
         mappings.append({"name":"arena_"+name,"kind":"boundary_box","position_m":pos,"half_size_m":size})
@@ -298,7 +321,10 @@ def main():
         "created_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "model_xml":"model.xml","rig_file":relative(rig_path,repo),"drive_profile_file":relative(profile_path,repo),
         "gimbal_control":config["gimbal_control"],"mujoco_version":mujoco.__version__,
+        "contact_mapping":dict(config["contact_mapping"],effective_wheel_sliding=source_average_friction(profile,config,True),
+            effective_chassis_sliding=source_average_friction(profile,config,False)),
         "timestep_s":config["timestep_s"],"coordinate_system":"ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "gravity_mps2":config["gravity_mps2"],"gravity_source":config["gravity_source"],"upper_mass_policy":config["upper_mass_policy"],
         "units":"SI","calibrated":False,"diagnostic_plane_only":bool(a.vehicle_only),
         "source_sha256":{relative(p,repo):digest(p) for p in (rig_path,profile_path,config_path,map_path,shell_path,Path(__file__),Path(__file__).with_name("geometry.py"),Path(__file__).with_name("model_contract.py"))}}
     report_path=output/"manifest.json"
@@ -323,7 +349,7 @@ def main():
         if a.vehicle_only:
             cc=config["contact"]
             sub(root.find("worldbody"),"geom",name="diagnostic_plane",type="plane",size="0 0 0.1",
-                contype="2",conaffinity="1",condim=cc["condim"],friction="0.8 0.005 0.0001",
+                contype="2",conaffinity="1",priority="0",condim=cc["condim"],friction=numbers([cc["static_sliding_friction"],cc["torsional_friction"],cc["rolling_friction"]]),
                 solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]))
             mappings=[{"name":"diagnostic_plane","kind":"diagnostic_only"}]
         else:mappings=add_static(root,groups,shell,config)

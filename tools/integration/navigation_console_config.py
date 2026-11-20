@@ -32,6 +32,32 @@ ROOT = Path(__file__).resolve().parents[2]
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def copy_runtime_arena(source_manifest: Path, scene_directory: Path) -> dict:
+    """Snapshot the shell and its relative JSON dependencies without rebasing physics."""
+    source_manifest = source_manifest.resolve(strict=True)
+    source_root = source_manifest.parent
+    manifest_bytes = source_manifest.read_bytes()
+    manifest = json.loads(manifest_bytes.decode('utf-8-sig'))
+    pending = [(source_manifest, Path('arena-shell.json'), manifest_bytes)]
+    for field in ('layout', 'source'):
+        value = manifest.get(field)
+        if value is None and field == 'source':
+            continue
+        if not isinstance(value, str) or not value or '..' in value or Path(value).is_absolute():
+            raise ValueError('Arena '+field+' must be a local relative path')
+        resolved = (source_root/value).resolve(strict=True)
+        if not resolved.is_relative_to(source_root) or not resolved.is_file():
+            raise ValueError('Arena '+field+' must remain inside its canonical map directory')
+        pending.append((resolved, Path(value), resolved.read_bytes()))
+    copied = []
+    for source, relative, data in pending:
+        destination = scene_directory/relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(data)
+        copied.append(dict(source=str(source), snapshot=str(destination.resolve()),
+                           relative_path=relative.as_posix(), sha256=hashlib.sha256(data).hexdigest()))
+    return dict(schema='rmsim_runtime_arena_snapshot_v1', render_profile=manifest.get('render_profile'), files=copied)
+
 def scene_geometry(scene: dict) -> str:
     """Whitespace and spawn-independent identity; geometry and asset references stay strict."""
     data = {k: v for k, v in scene.items() if k not in ('spawns', 'display_name', 'limitations', 'regions')}
