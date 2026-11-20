@@ -256,3 +256,13 @@ Native 实时节拍以当前仿真 epoch 的起点和实际 solver 时间维护�
 手动和导航的运动数值统一到车辆 drive-profile.json：前进/倒车/横移 5/2.5/4 m/s，加速/减速/制动 2/4/7 m/s²，jerk 6/20 m/s³，普通 yaw 上限 π/2 rad/s、角加减速 3/5 rad/s²。NavigationRunner 从原 sentry YAML 读取算法配置，并以同一车辆源生成运动限值和 SHA 身份。原 fake_vel_transform 先将 navigation_frame 指令转到 base_link，再进入原 velocity_smoother；已有 Runner 执行 Twist/TwistStamped 类型适配，公共 cmd_vel 保留仿真时间。VehicleDrive 对两种输入复用连续速度/方向整形状态。明确的零速目标经合法性检查后立即发布到共同车辆制动路径，smoother 剩余尾段在停止锁存期间归零；严格更新的合法非零目标恢复正常输出，disconnect/stale/epoch/reset 清理适配器。运行门禁直接比较实际节点参数与车辆端全部 27 项控制数值。
 
 MID-360 v3 使用 200,000 个 5 μs 发射槽/秒、4 通道、默认 10 Hz 完整组帧和有界发送队列。每束姿态从原生 1 ms 历史节点插值，射线查询采用当前 UE 场景快照；游戏线程调度、线程池批量求交、游戏线程光学/材质处理。IMU 以整数采样索引保持 200 Hz，真实测点速度在 t±1 ms 的支撑窗口计算比力。传感器安装原点与坐标轴按官方机械定义修正，具体近似和标定状态见 docs/sensors/mid360-physical-model.md。适用范围和真实验收见 docs/guides/mujoco-integration.md、docs/changes/2026-11-20-mujoco-integration.md。
+
+## 2026-11-20：UE5、MuJoCo 与 RViz 三窗口导航
+
+标准 `Play-Navigation.cmd` 的可见 MuJoCo 模式由同一个 `navigation_console.py` 管理 UE5、MuJoCo 显示窗口、ROS 桥、Point-LIO、AMCL/Nav2 和 RViz。专用显示环境先加载经过身份校验的完整模型并绑定本机接收端，再启动原生求解与导航；显示窗口完成首个匹配原生状态的画面，且原导航定位就绪后打开 RViz。无 RViz／离屏自动验收路径保持原有图形条件。各子进程、状态和输入身份写入同一会话目录，关闭显示窗口或 RViz、执行 Stop-Navigation.cmd 均由控制台收尾。
+
+`FMujocoVehicleDynamics` 的可选私有 publisher 在现有 Step 最终状态验证后，以 30 Hz 仿真时间槽向 127.0.0.1 非阻塞单向 UDP 发送完整 qpos、qvel、act、ctrl 和全部 body 位姿。快照携带模型与物理身份、会话 token、重置 generation、单调 sequence 和原生时间；未请求显示时不创建 socket 或采样。原动力学、控制和传感器调用顺序保持，显示端没有控制回传接口。
+
+`tools/mujoco/live_viewer.py` 使用官方 MuJoCo 4.0.1 的低层 mjv/mjr 与 GLFW 显示同一份经过校验的模型：249 个源车辆凸壳、14 组固定场地三角面和四面边界完整保留。每个快照只更新位置派生和显示数据，并核对全部 16 个 body 的位置和四元数；静态 flex 显示缓冲在严格 world 固定约束下复用。显示端不进行动力学积分、碰撞或前向动力学求解；UE 内定制运行库保持唯一车辆动力学来源。定位与导航继续只消费原传感器和估计结果。
+
+鼠标与 F／Home 仅操作 MuJoCo 观察相机。数据中断时保留最后一个有效原生画面并显示 stale 状态，旧代数、乱序、身份不符和非有限数据均拒绝。真实窗口、导航移动、复位和生命周期的具体结果以 `docs/verification/2026-11-20-three-window-navigation.json` 与对应会话记录为准。

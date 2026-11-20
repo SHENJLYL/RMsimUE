@@ -1,5 +1,17 @@
 # 当前进度
 
+## 2026-11-20：标准导航入口同时显示 UE5、MuJoCo 与 RViz
+
+`D:\simulator\Play-Navigation.cmd` 已直接打开三个实际图形窗口：UE5 场景、MuJoCo 物理模型观察窗口和 RViz 导航。MuJoCo 窗口显示同一原生求解器输出的完整车辆／场地状态，支持环绕、平移、滚轮、F 跟随与 Home 全场；关闭 MuJoCo／RViz 或执行 Stop-Navigation.cmd 统一结束本次会话。
+
+新原生模块 `acf530ea…d15f` 编译通过；协议 11、实际 MuJoCo 相机接口 4、Windows 启动／身份／生命周期 38 项通过。标准零参数会话的三种实际画面已直接查看。45.18 s 的真实导航移动观察共 217 次采样，车辆相对观测起点最大位移 4.94416 m，16 个刚体位置／姿态对照误差均为 0；期间原生 generation 从 1 增至 4 后持续更新，导航恢复。观察器未注入目标、按键或位姿，实际观察与受控 OS 操作分别记录。
+
+最终会话 `20261120T095410Z-bf326f74` 运行约 626 s，随后 MuJoCo 窗口正常关闭，viewer 与标准入口均退出 0。两个 CMD 入口保留真实退出码。原始 Windows venv 双层进程和相机 API 失败记录保留，修复已进入最终版本。
+
+车辆 drive-profile、完整源几何、1 ms 动力学／5 ms 世界步长及手动／导航同源运动数值保持。Windows 三窗口与状态显示已完成；此前实时性能分段／滚动门槛、复杂地形、原生 Ubuntu 和弗兰德斯动态迁移按各自范围继续推进。入口和操作见[导航控制台指南](../guides/navigation-console.md)，本轮[变更与实测](../changes/2026-11-20-three-window-navigation.md)，精简证据为 `docs/verification/2026-11-20-three-window-navigation.json`。
+
+接续首要任务：用户要求 MuJoCo、UE5 全屏与 RViz 同时运行时保持正常仿真速率和画面帧率。上述三窗口会话的 44.96 s 同代观测区间实测仿真 0.158698×、UE 场景 Draw 31.873 Hz；当前每次外层 Tick 固定推进 5 ms，慢速与外层帧率直接耦合。性能优化正在接续，目标为 1× 仿真和全屏 60 FPS，并保持原物理步长、完整几何、车辆配置和传感器采样预算。
+
 ## 2026-11-20：标准入口采用 MuJoCo，手动与导航参数统一
 
 标准 `Play-ManualVehicle.cmd`、`Play-Navigation.cmd` 及复用手动的训练入口已采用原生 MuJoCo，独立 `Play-MuJoCo*.cmd` 已移除。车辆使用完整 RMUC 源几何、1 ms 动力学积分、5 ms 世界步与 60 Hz 视口目标。手动和导航共同采用前进 5、倒车 2.5、横移 4 m/s，加速/减速/制动 2/4/7 m/s²，jerk 6/20 m/s³；全部 27 项控制值来自未改字节的手动 drive-profile.json。导航先转到车体坐标再经原 smoother，并接入共同 C++ 连续整形器。
