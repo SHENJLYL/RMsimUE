@@ -178,6 +178,51 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     bool VenueEnabled=true;
     if(Manifest->HasField(TEXT("venue_enabled"))&&!Manifest->TryGetBoolField(TEXT("venue_enabled"),VenueEnabled))
         return Fail(TEXT("venue_enabled must be boolean"));
+    // Far scenery is an explicit optional branch; ordinary layout instances
+    // retain their existing 100 m bounds and their original transforms.
+    const bool OutdoorBackgroundEnabled=Manifest->HasField(TEXT("outdoor_background"));
+    double SkyDiameter=800.,GroundHalfExtent=0.,GroundSurfaceZ=0.;
+    constexpr double GroundThickness=.1,BackgroundBoundsTolerance=1.e-3,BackgroundContainmentMargin=1.;
+    FVector GroundInnerLower=FVector::ZeroVector,GroundInnerUpper=FVector::ZeroVector;
+    FString OutdoorGroundMaterialPath;
+    TArray<FBox> ExpectedGroundRing;
+    if(OutdoorBackgroundEnabled)
+    {
+        const FObj* Outdoor=nullptr;const FObj* Inner=nullptr;
+        if(!VenueEnabled||!Manifest->TryGetObjectField(TEXT("outdoor_background"),Outdoor)||
+           (*Outdoor)->Values.Num()!=5||
+           !(*Outdoor)->TryGetNumberField(TEXT("sky_diameter_m"),SkyDiameter)||
+           !FMath::IsFinite(SkyDiameter)||SkyDiameter<2000.||SkyDiameter>100000.||
+           !(*Outdoor)->TryGetNumberField(TEXT("ground_half_extent_m"),GroundHalfExtent)||
+           !FMath::IsFinite(GroundHalfExtent)||GroundHalfExtent<200.||GroundHalfExtent>10000.||
+           !(*Outdoor)->TryGetNumberField(TEXT("ground_surface_z_m"),GroundSurfaceZ)||
+           !FMath::IsFinite(GroundSurfaceZ)||GroundSurfaceZ < -100.||GroundSurfaceZ>Lower.Z||
+           !(*Outdoor)->TryGetStringField(TEXT("ground_material"),OutdoorGroundMaterialPath)||
+           !OutdoorGroundMaterialPath.StartsWith(TEXT("/Game/RMSim/Maps/rmuc2027/Arena/"),ESearchCase::CaseSensitive)||
+           OutdoorGroundMaterialPath.Contains(TEXT(":"))||!FPackageName::IsValidObjectPath(OutdoorGroundMaterialPath,nullptr)||
+           !(*Outdoor)->TryGetObjectField(TEXT("ground_inner_bounds_m"),Inner)||(*Inner)->Values.Num()!=2||
+           !Vec(*Inner,TEXT("lo"),GroundInnerLower)||!Vec(*Inner,TEXT("hi"),GroundInnerUpper))
+            return Fail(TEXT("invalid optional outdoor background declaration"));
+        if(GroundInnerLower.X>=GroundInnerUpper.X||GroundInnerLower.Y>=GroundInnerUpper.Y||
+           GroundInnerLower.X<=-GroundHalfExtent||GroundInnerLower.Y<=-GroundHalfExtent||
+           GroundInnerUpper.X>=GroundHalfExtent||GroundInnerUpper.Y>=GroundHalfExtent||
+           GroundInnerLower.X>Lower.X||GroundInnerLower.Y>Lower.Y||
+           GroundInnerUpper.X<Upper.X||GroundInnerUpper.Y<Upper.Y||
+           FMath::Abs(GroundInnerLower.Z-GroundSurfaceZ)>1.e-7||FMath::Abs(GroundInnerUpper.Z-GroundSurfaceZ)>1.e-7)
+            return Fail(TEXT("outdoor ground hole must have positive XY area, enclose the source field, and share the declared surface Z"));
+        double SourceRadius=0.;
+        for(int32 I=0;I<8;++I)
+            SourceRadius=FMath::Max(SourceRadius,FVector((I&1)?Upper.X:Lower.X,(I&2)?Upper.Y:Lower.Y,(I&4)?Upper.Z:Lower.Z).Size());
+        const double GroundMaxAbsZ=FMath::Max(FMath::Abs(GroundSurfaceZ),FMath::Abs(GroundSurfaceZ-GroundThickness));
+        const double GroundRadius=FMath::Sqrt(2.*GroundHalfExtent*GroundHalfExtent+GroundMaxAbsZ*GroundMaxAbsZ);
+        if(SkyDiameter*.5-FMath::Max(SourceRadius,GroundRadius)<BackgroundContainmentMargin)
+            return Fail(TEXT("outdoor sky must enclose all source and ground corners by at least one metre"));
+        const double BottomZ=GroundSurfaceZ-GroundThickness;
+        ExpectedGroundRing.Add(FBox(FVector(-GroundHalfExtent,-GroundHalfExtent,BottomZ),FVector(GroundInnerLower.X,GroundHalfExtent,GroundSurfaceZ)));
+        ExpectedGroundRing.Add(FBox(FVector(GroundInnerUpper.X,-GroundHalfExtent,BottomZ),FVector(GroundHalfExtent,GroundHalfExtent,GroundSurfaceZ)));
+        ExpectedGroundRing.Add(FBox(FVector(GroundInnerLower.X,-GroundHalfExtent,BottomZ),FVector(GroundInnerUpper.X,GroundInnerLower.Y,GroundSurfaceZ)));
+        ExpectedGroundRing.Add(FBox(FVector(GroundInnerLower.X,GroundInnerUpper.Y,BottomZ),FVector(GroundInnerUpper.X,GroundHalfExtent,GroundSurfaceZ)));
+    }
     FObj Layout;
     if(VenueEnabled)
     {
@@ -273,6 +318,16 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         if(!Material)return Fail(TEXT("material missing: ")+Path);
         Materials.Add(Id,Material);
     }
+    UMaterialInterface* OutdoorGroundMaterial=nullptr;
+    if(OutdoorBackgroundEnabled)
+    {
+        if(!HasNativeMeshes||!Meshes.Contains(TEXT("RMExteriorGround")))
+            return Fail(TEXT("outdoor background requires the preserved source exterior-ground mesh"));
+        OutdoorGroundMaterial=LoadObject<UMaterialInterface>(nullptr,*OutdoorGroundMaterialPath);
+        if(!OutdoorGroundMaterial||
+           !OutdoorGroundMaterial->GetPathName().StartsWith(TEXT("/Game/RMSim/Maps/rmuc2027/Arena/"),ESearchCase::CaseSensitive))
+            return Fail(TEXT("outdoor ground material is missing or resolved outside the Arena prefix"));
+    }
     AActor* Host=World->SpawnActor<AActor>();
     if(!Host)return Fail(TEXT("cannot create gym"));
     Host->Tags.Add(TEXT("rmsim_campus_gym"));
@@ -284,11 +339,22 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     FString GiMethod=TEXT("none"),ReflectionMethod=TEXT("screen_space");
     bool OverrideReflection=false;
     UMaterialInstanceDynamic* Background=nullptr;
+    FGroup Environment,DistantGround;
+    TArray<UInstancedStaticMeshComponent*> SourceOutdoorGroundComponents;
     if(VenueEnabled)
     {
     Background=UMaterialInstanceDynamic::Create(Materials[TEXT("environment")],Host);
-    FGroup Environment=NewGroup(Host,Meshes[TEXT("sphere")],Background,TEXT("CampusCourtyardBackdrop"));
-    Environment.Add(FVector::ZeroVector,FVector(800,800,800));
+    Environment=NewGroup(Host,Meshes[TEXT("sphere")],Background,TEXT("CampusCourtyardBackdrop"));
+    Environment.Add(FVector::ZeroVector,FVector(SkyDiameter,SkyDiameter,SkyDiameter));
+    if(OutdoorBackgroundEnabled)
+    {
+        Environment.Component->SetAffectDistanceFieldLighting(false);
+        DistantGround=NewGroup(Host,Meshes[TEXT("cube")],OutdoorGroundMaterial,TEXT("CampusDistantGroundRing"),false);
+        DistantGround.Component->SetAffectDistanceFieldLighting(false);
+        for(const FBox& Strip:ExpectedGroundRing)DistantGround.Add(Strip.GetCenter(),Strip.GetSize());
+        UE_LOG(LogTemp,Display,TEXT("RMSIM_CAMPUS_OUTDOOR_BACKGROUND sky_diameter_m=%.3f ground_half_extent_m=%.3f ground_surface_z_m=%.9f ring_strips=4 material=%s"),
+            SkyDiameter,GroundHalfExtent,GroundSurfaceZ,*OutdoorGroundMaterial->GetPathName());
+    }
     const TArray<TSharedPtr<FJsonValue>>* Groups=nullptr;
     if(!Layout->TryGetArrayField(TEXT("groups"),Groups)||Groups->Num()>100)return Fail(TEXT("invalid layout groups"));
     for(const auto& Entry:*Groups)
@@ -303,6 +369,7 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         bool Shadow=false;O->TryGetBoolField(TEXT("cast_shadow"),Shadow);
         FGroup G=NewGroup(Host,Meshes[MeshId],MaterialId==TEXT("source")?nullptr:Materials[MaterialId],TEXT("Gym_")+Id,Shadow);
         const bool NativeGroup=NativeMeshEvidence->HasField(MeshId);
+        if(OutdoorBackgroundEnabled&&MeshId==TEXT("RMExteriorGround"))SourceOutdoorGroundComponents.Add(G.Component);
         for(const auto& Instance:*Instances)
         {
             FVector P,S,R;
@@ -713,11 +780,150 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
             FMath::Abs(SouthGlassGapMin-Clearance)<=1.e-6&&FMath::Abs(SouthGlassGapMax-Clearance)<=1.e-6&&
             FMath::Abs(NorthGlassGapMin-Clearance)<=1.e-6&&FMath::Abs(NorthGlassGapMax-Clearance)<=1.e-6;
         const bool GlassMeetsFloor=FMath::Abs(GlassBaseMin-VisualFloorZ)<=1.e-6&&FMath::Abs(GlassBaseMax-VisualFloorZ)<=1.e-6;
+        auto OutdoorEvidence=MakeShared<FJsonObject>();
+        OutdoorEvidence->SetBoolField(TEXT("enabled"),OutdoorBackgroundEnabled);
+        bool OutdoorBackgroundMatches=true;
+        if(OutdoorBackgroundEnabled)
+        {
+            auto JsonVector=[](const FVector& V)
+            {
+                TArray<TSharedPtr<FJsonValue>> A;
+                for(int32 Axis=0;Axis<3;++Axis)A.Add(MakeShared<FJsonValueNumber>(V[Axis]));
+                return A;
+            };
+            auto JsonBox=[&](const FBox& B)
+            {
+                auto O=MakeShared<FJsonObject>();O->SetArrayField(TEXT("lo"),JsonVector(B.Min));
+                O->SetArrayField(TEXT("hi"),JsonVector(B.Max));return O;
+            };
+            auto RosBox=[](const FBox& B)
+            {
+                return FBox(FVector(B.Min.X*.01,-B.Max.Y*.01,B.Min.Z*.01),FVector(B.Max.X*.01,-B.Min.Y*.01,B.Max.Z*.01));
+            };
+            auto CornerRadius=[](const FBox& B,const FVector& Centre)
+            {
+                double Radius=0.;
+                for(int32 I=0;I<8;++I)
+                    Radius=FMath::Max(Radius,(FVector((I&1)?B.Max.X:B.Min.X,(I&2)?B.Max.Y:B.Min.Y,(I&4)?B.Max.Z:B.Min.Z)-Centre).Size());
+                return Radius;
+            };
+            if(!Environment.Component||Environment.Component->GetInstanceCount()!=1||!DistantGround.Component)
+                return Fail(TEXT("configured outdoor background components are missing"));
+            FTransform SkyTransform;
+            if(!Environment.Component->GetInstanceTransform(0,SkyTransform,true))return Fail(TEXT("outdoor sky transform unavailable"));
+            const FBox SkyBox=RosBox(Environment.Mesh->GetBoundingBox().TransformBy(SkyTransform));
+            const FVector SkyCentre=SkyBox.GetCenter(),SkySize=SkyBox.GetSize();
+            const double ActualSkyRadius=SkySize.GetMin()*.5;
+            const bool SkyDimensionsMatch=SkyCentre.GetAbsMax()<=BackgroundBoundsTolerance&&
+                (SkySize-FVector(SkyDiameter,SkyDiameter,SkyDiameter)).GetAbsMax()<=BackgroundBoundsTolerance;
+            const double SourceSphereMargin=ActualSkyRadius-CornerRadius(FBox(Lower,Upper),SkyCentre);
+            const bool GroundNoCollision=DistantGround.Component->GetCollisionEnabled()==ECollisionEnabled::NoCollision;
+            const bool GroundNoNavigation=!DistantGround.Component->CanEverAffectNavigation();
+            const bool GroundNoShadow=!DistantGround.Component->CastShadow;
+            const bool GroundNoDistanceField=!DistantGround.Component->bAffectDistanceFieldLighting;
+            const bool SkyNoCollision=Environment.Component->GetCollisionEnabled()==ECollisionEnabled::NoCollision;
+            const bool SkyNoNavigation=!Environment.Component->CanEverAffectNavigation();
+            const bool SkyNoShadow=!Environment.Component->CastShadow;
+            const bool SkyNoDistanceField=!Environment.Component->bAffectDistanceFieldLighting;
+            const bool GroundMaterialMatches=DistantGround.Component->GetMaterial(0)==OutdoorGroundMaterial;
+            const int32 GroundCount=DistantGround.Component->GetInstanceCount();
+            TArray<FBox> GroundBoxes;TArray<TSharedPtr<FJsonValue>> StripEvidence;
+            FBox GroundUnion(ForceInit),SourceGroundUnion(ForceInit);
+            double MaxGroundBoundsError=0.,MaxGroundTopError=0.,MaxHoleIntrusion=0.,GroundCornerRadius=0.,GroundArea=0.;
+            bool CentreHoleEmpty=true;
+            const FVector HoleCentre=(GroundInnerLower+GroundInnerUpper)*.5;
+            const TCHAR* StripNames[]={TEXT("west"),TEXT("east"),TEXT("south"),TEXT("north")};
+            for(int32 I=0;I<GroundCount;++I)
+            {
+                FTransform T;
+                if(!DistantGround.Component->GetInstanceTransform(I,T,true))return Fail(TEXT("outdoor strip transform unavailable"));
+                const FBox B=RosBox(DistantGround.Mesh->GetBoundingBox().TransformBy(T));GroundBoxes.Add(B);GroundUnion+=B;
+                const double BoundsError=I<ExpectedGroundRing.Num()?FMath::Max((B.Min-ExpectedGroundRing[I].Min).GetAbsMax(),(B.Max-ExpectedGroundRing[I].Max).GetAbsMax()):1.e30;
+                MaxGroundBoundsError=FMath::Max(MaxGroundBoundsError,BoundsError);
+                MaxGroundTopError=FMath::Max(MaxGroundTopError,FMath::Abs(B.Max.Z-GroundSurfaceZ));
+                const double HoleOverlapX=FMath::Min(B.Max.X,GroundInnerUpper.X)-FMath::Max(B.Min.X,GroundInnerLower.X);
+                const double HoleOverlapY=FMath::Min(B.Max.Y,GroundInnerUpper.Y)-FMath::Max(B.Min.Y,GroundInnerLower.Y);
+                if(HoleOverlapX>0.&&HoleOverlapY>0.)MaxHoleIntrusion=FMath::Max(MaxHoleIntrusion,FMath::Min(HoleOverlapX,HoleOverlapY));
+                CentreHoleEmpty&=!(HoleCentre.X>=B.Min.X&&HoleCentre.X<=B.Max.X&&HoleCentre.Y>=B.Min.Y&&HoleCentre.Y<=B.Max.Y);
+                GroundCornerRadius=FMath::Max(GroundCornerRadius,CornerRadius(B,SkyCentre));
+                GroundArea+=B.GetSize().X*B.GetSize().Y;
+                auto O=MakeShared<FJsonObject>();O->SetStringField(TEXT("id"),I<4?StripNames[I]:TEXT("unexpected"));
+                O->SetObjectField(TEXT("bounds_ros_m"),JsonBox(B));O->SetArrayField(TEXT("size_m"),JsonVector(B.GetSize()));
+                O->SetNumberField(TEXT("top_z_m"),B.Max.Z);O->SetNumberField(TEXT("bottom_z_m"),B.Min.Z);
+                O->SetNumberField(TEXT("maximum_declared_bounds_error_m"),BoundsError);
+                O->SetBoolField(TEXT("no_collision"),GroundNoCollision);O->SetBoolField(TEXT("no_navigation"),GroundNoNavigation);
+                O->SetBoolField(TEXT("no_shadow"),GroundNoShadow);O->SetBoolField(TEXT("no_distance_field_lighting"),GroundNoDistanceField);
+                StripEvidence.Add(MakeShared<FJsonValueObject>(O));
+            }
+            double MaxJoinGap=0.,MaxJoinOverlap=0.,MaxPairOverlap=0.;
+            if(GroundCount==4)
+            {
+                for(int32 XI=0;XI<2;++XI)for(int32 YI=2;YI<4;++YI)
+                {
+                    const double Seam=XI==0?GroundBoxes[YI].Min.X-GroundBoxes[XI].Max.X:GroundBoxes[XI].Min.X-GroundBoxes[YI].Max.X;
+                    MaxJoinGap=FMath::Max(MaxJoinGap,Seam);MaxJoinOverlap=FMath::Max(MaxJoinOverlap,-Seam);
+                }
+                for(int32 I=0;I<4;++I)for(int32 J=I+1;J<4;++J)
+                {
+                    const double DX=FMath::Min(GroundBoxes[I].Max.X,GroundBoxes[J].Max.X)-FMath::Max(GroundBoxes[I].Min.X,GroundBoxes[J].Min.X);
+                    const double DY=FMath::Min(GroundBoxes[I].Max.Y,GroundBoxes[J].Max.Y)-FMath::Max(GroundBoxes[I].Min.Y,GroundBoxes[J].Min.Y);
+                    if(DX>0.&&DY>0.)MaxPairOverlap=FMath::Max(MaxPairOverlap,FMath::Min(DX,DY));
+                }
+            }
+            int32 SourceGroundCount=0;
+            for(auto* C:SourceOutdoorGroundComponents)
+                for(int32 I=0;I<C->GetInstanceCount();++I)
+                {
+                    FTransform T;if(!C->GetInstanceTransform(I,T,true))return Fail(TEXT("source outdoor ground transform unavailable"));
+                    SourceGroundUnion+=RosBox(C->GetStaticMesh()->GetBoundingBox().TransformBy(T));++SourceGroundCount;
+                }
+            double SourceHoleAlignmentError=1.e30;
+            if(SourceGroundCount==4)
+                SourceHoleAlignmentError=FMath::Max(FMath::Max(FMath::Abs(SourceGroundUnion.Min.X-GroundInnerLower.X),FMath::Abs(SourceGroundUnion.Min.Y-GroundInnerLower.Y)),
+                    FMath::Max(FMath::Abs(SourceGroundUnion.Max.X-GroundInnerUpper.X),FMath::Abs(SourceGroundUnion.Max.Y-GroundInnerUpper.Y)));
+            const double GroundSphereMargin=ActualSkyRadius-GroundCornerRadius;
+            const bool RingGeometryMatches=GroundCount==4&&MaxGroundBoundsError<=BackgroundBoundsTolerance&&MaxGroundTopError<=BackgroundBoundsTolerance&&
+                CentreHoleEmpty&&MaxHoleIntrusion<=BackgroundBoundsTolerance&&MaxJoinGap<=BackgroundBoundsTolerance&&
+                MaxJoinOverlap<=BackgroundBoundsTolerance&&MaxPairOverlap<=BackgroundBoundsTolerance;
+            OutdoorBackgroundMatches=SkyDimensionsMatch&&SourceSphereMargin>=BackgroundContainmentMargin&&GroundSphereMargin>=BackgroundContainmentMargin&&
+                RingGeometryMatches&&SourceGroundCount==4&&SourceHoleAlignmentError<=BackgroundBoundsTolerance&&
+                GroundNoCollision&&GroundNoNavigation&&GroundNoShadow&&GroundNoDistanceField&&GroundMaterialMatches&&
+                SkyNoCollision&&SkyNoNavigation&&SkyNoShadow&&SkyNoDistanceField;
+            OutdoorEvidence->SetBoolField(TEXT("contract_satisfied"),OutdoorBackgroundMatches);
+            OutdoorEvidence->SetStringField(TEXT("scope"),TEXT("Independent visual background; actual instance bounds and radial containment; source ground XY envelope only, whose raised curbs do not define the grass surface"));
+            OutdoorEvidence->SetNumberField(TEXT("background_bounds_tolerance_m"),BackgroundBoundsTolerance);
+            OutdoorEvidence->SetStringField(TEXT("tolerance_scope"),TEXT("kilometre-scale background instance transforms only; field and glass tolerances unchanged"));
+            OutdoorEvidence->SetNumberField(TEXT("declared_sky_diameter_m"),SkyDiameter);
+            OutdoorEvidence->SetArrayField(TEXT("actual_sky_size_m"),JsonVector(SkySize));OutdoorEvidence->SetArrayField(TEXT("actual_sky_center_ros_m"),JsonVector(SkyCentre));
+            OutdoorEvidence->SetNumberField(TEXT("actual_sky_radius_m"),ActualSkyRadius);OutdoorEvidence->SetBoolField(TEXT("sky_dimensions_match"),SkyDimensionsMatch);
+            OutdoorEvidence->SetNumberField(TEXT("sky_source_corner_margin_m"),SourceSphereMargin);OutdoorEvidence->SetNumberField(TEXT("sky_ground_corner_margin_m"),GroundSphereMargin);
+            OutdoorEvidence->SetNumberField(TEXT("minimum_required_sky_containment_m"),BackgroundContainmentMargin);
+            OutdoorEvidence->SetBoolField(TEXT("sky_no_collision"),SkyNoCollision);OutdoorEvidence->SetBoolField(TEXT("sky_no_navigation"),SkyNoNavigation);
+            OutdoorEvidence->SetBoolField(TEXT("sky_no_shadow"),SkyNoShadow);OutdoorEvidence->SetBoolField(TEXT("sky_no_distance_field_lighting"),SkyNoDistanceField);
+            OutdoorEvidence->SetNumberField(TEXT("ground_half_extent_m"),GroundHalfExtent);OutdoorEvidence->SetNumberField(TEXT("ground_surface_z_m"),GroundSurfaceZ);
+            OutdoorEvidence->SetNumberField(TEXT("ground_thickness_m"),GroundThickness);OutdoorEvidence->SetNumberField(TEXT("ground_strip_count"),GroundCount);
+            OutdoorEvidence->SetObjectField(TEXT("ground_inner_bounds_m"),JsonBox(FBox(GroundInnerLower,GroundInnerUpper)));
+            OutdoorEvidence->SetObjectField(TEXT("actual_ground_outer_bounds_m"),JsonBox(GroundUnion));
+            OutdoorEvidence->SetNumberField(TEXT("ground_maximum_bounds_error_m"),MaxGroundBoundsError);OutdoorEvidence->SetNumberField(TEXT("ground_maximum_top_error_m"),MaxGroundTopError);
+            OutdoorEvidence->SetNumberField(TEXT("ground_maximum_join_gap_m"),MaxJoinGap);OutdoorEvidence->SetNumberField(TEXT("ground_maximum_join_overlap_m"),MaxJoinOverlap);
+            OutdoorEvidence->SetNumberField(TEXT("ground_maximum_pair_overlap_depth_m"),MaxPairOverlap);OutdoorEvidence->SetNumberField(TEXT("ground_maximum_hole_intrusion_m"),MaxHoleIntrusion);
+            OutdoorEvidence->SetBoolField(TEXT("ground_center_hole_uncovered"),CentreHoleEmpty);OutdoorEvidence->SetBoolField(TEXT("four_strips_match_expected_ring"),RingGeometryMatches);
+            OutdoorEvidence->SetNumberField(TEXT("actual_ground_projected_area_m2"),GroundArea);
+            OutdoorEvidence->SetNumberField(TEXT("declared_ring_projected_area_m2"),4.*GroundHalfExtent*GroundHalfExtent-(GroundInnerUpper.X-GroundInnerLower.X)*(GroundInnerUpper.Y-GroundInnerLower.Y));
+            OutdoorEvidence->SetNumberField(TEXT("source_ground_instances"),SourceGroundCount);
+            if(SourceGroundCount)OutdoorEvidence->SetObjectField(TEXT("source_ground_actual_envelope_m"),JsonBox(SourceGroundUnion));
+            OutdoorEvidence->SetNumberField(TEXT("source_ground_hole_xy_error_m"),SourceHoleAlignmentError);
+            OutdoorEvidence->SetStringField(TEXT("requested_ground_material"),OutdoorGroundMaterialPath);OutdoorEvidence->SetStringField(TEXT("loaded_ground_material"),OutdoorGroundMaterial->GetPathName());
+            OutdoorEvidence->SetBoolField(TEXT("ground_material_matches"),GroundMaterialMatches);OutdoorEvidence->SetBoolField(TEXT("ground_no_collision"),GroundNoCollision);
+            OutdoorEvidence->SetBoolField(TEXT("ground_no_navigation"),GroundNoNavigation);OutdoorEvidence->SetBoolField(TEXT("ground_no_shadow"),GroundNoShadow);
+            OutdoorEvidence->SetBoolField(TEXT("ground_no_distance_field_lighting"),GroundNoDistanceField);OutdoorEvidence->SetArrayField(TEXT("strips"),StripEvidence);
+        }
         const bool PerimeterMatchesContract=(!OutsidePerimeter||(BoundaryOutsideTarget&&CollisionFacesAligned&&LongGlassAligned))&&GlassMeetsFloor;
         const bool LightRigMatches=VenueEnabled?LightCount==12:LightCount==0;
         auto Report=MakeShared<FJsonObject>();
-        Report->SetStringField(TEXT("status"),Passed==Tested&&Tested==96&&CosmeticNoCollision&&GateLeaves==4&&PerimeterMatchesContract&&CornersOverlap&&LightRigMatches&&Materials[TEXT("glass")]->GetBlendMode()==BLEND_Translucent?TEXT("passed"):TEXT("failed"));
+        Report->SetStringField(TEXT("status"),Passed==Tested&&Tested==96&&CosmeticNoCollision&&GateLeaves==4&&PerimeterMatchesContract&&OutdoorBackgroundMatches&&CornersOverlap&&LightRigMatches&&Materials[TEXT("glass")]->GetBlendMode()==BLEND_Translucent?TEXT("passed"):TEXT("failed"));
         Report->SetStringField(TEXT("scope"),TEXT("native collision sweeps; cosmetic glass and shut doors; no gate interaction; source CAD ignored for boundary-isolation queries only"));
+        Report->SetObjectField(TEXT("outdoor_background"),OutdoorEvidence);
         Report->SetNumberField(TEXT("sweep_samples"),Tested);Report->SetNumberField(TEXT("sweep_passed"),Passed);
         if(OutsidePerimeter)Report->SetNumberField(TEXT("outside_clearance_m"),Clearance);
         else Report->SetNumberField(TEXT("collision_inset_m"),Inset);
