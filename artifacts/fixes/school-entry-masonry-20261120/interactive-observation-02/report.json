@@ -1,0 +1,106 @@
+{
+  "status": "passed_kept_open",
+  "pid": 35380,
+  "started_utc": "2026-11-20T02:54:21.428435+00:00",
+  "requested_seconds": 60.0,
+  "observations": [
+    {
+      "elapsed_s": 0.0,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 10.0,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 20.01,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 30.01,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 40.01,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 50.01,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    },
+    {
+      "elapsed_s": 60.0,
+      "running": true,
+      "visible_window": true,
+      "client_sizes": [
+        [
+          1600,
+          1000
+        ]
+      ]
+    }
+  ],
+  "manifest_sha256": "dc502ccacf48a29dd3a2d7f02df5e210bc0447dc0e09360115964093fd92847d",
+  "layout_sha256": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4",
+  "module_sha256": "27a87ddacd95d07938276d42cb610b1885175e86e69e906b6d037cf253b8ec2b",
+  "seconds": 60.03,
+  "warnings": {
+    "GPU timeout": 0,
+    "GPU Crashed": 0,
+    "TerminateOnGPUCrash": 0,
+    "Writing Aftermath dump": 0,
+    "Non-Nanite Marking Job Queue overflow": 0,
+    "Virtual Shadow Map Page Pool overflow": 0
+  },
+  "checks": {
+    "PCD3D_SM6": true,
+    "r.Shadow.Virtual.Enable:0": true,
+    "RMSIM_CAMPUS_GYM_READY layout=81": true,
+    "native_assets=24 native_instances=81": true,
+    "IMPORT_LAB_READY": true,
+    "M_SchoolLandscape.M_SchoolLandscape": true
+  },
+  "left_running": true
+}

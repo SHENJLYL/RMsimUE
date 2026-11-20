@@ -12,6 +12,14 @@ implements: []
 
 # 当前架构
 
+## 2026-11-20：可选校园远景与入口资产
+
+`CampusGym.cpp` 支持可选 `outdoor_background`：半径 8 km 天空与外边长 4 km 的四条正交地面环带，中央孔洞匹配原校园地面 160×140 m，顶面采用真实 ExtGrass 高度。该分支独立校验尺寸、源地面孔洞、环带接缝、球面余量及 NoCollision/NoNav/NoShadow/NoDF；普通 layout 的 100 m 范围限制和比赛物理合同保持。缺少配置项时保持旧背景行为。
+
+`SchoolEntry` 命名空间保存 CC0 Grab3D 砖墙和新远草材质；入口新增 24 个模块，原馆及校园 23 mesh / 57 实例保持。远草由原生最高草面两三角形拟合 UV，四象限先独立采样，再按源矩形外距离以最大 16 m 半宽混合线性颜色及已解码法线，世界法线最终归一化。源边缘相位和原四地块保持，天空填充配置为 512。装饰层保持 `closed_perimeter_geometry` 的既有输入，导航物理身份继续为 f416f652…126e。
+
+本轮原生五视图、逐图视觉检查、源布置 92/92、导航身份与 60.03 s 可见观察均通过；最终图像与交互使用 DLL 27a87dda…8ec2b。实际模块、活动文件和局部材质更新身份见 `artifacts/fixes/school-entry-masonry-20261120/release-summary.json`。
+
 ## 2026-11-20 当前 RMUC 平台围墙
 
 `CampusGym` 将原 CAD `bounds_m` 与 `perimeter.target_bounds_m` 分开处理。活动 `outside_platform_bounds_v1` 只收拢长侧 Y 边界，X/Z 源边界保持；目标 Y 同时与已加载的两侧波浪平台 visual/collision mesh world bounds 核对。玻璃、框架、门饰与四面连续碰撞墙共用目标矩形，厚度向外，短墙长度随之改变。长玻璃内面、碰撞内面、角部闭合和落地高度分别查询；source 与 target 侵入结果单列。

@@ -1,0 +1,332 @@
+{
+  "status": "passed_static_clearances",
+  "utc": "2026-11-20T02:26:07.439068+00:00",
+  "coordinate_system": "ROS metres",
+  "layout_sha256": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4",
+  "walls": [
+    {
+      "side": "west",
+      "lo": [
+        -32.2878752,
+        -17.7712915039,
+        -0.4994
+      ],
+      "hi": [
+        -32.0158752,
+        -2.4712915039,
+        1.2754000494277955
+      ]
+    },
+    {
+      "side": "west",
+      "lo": [
+        -32.2878752,
+        16.8,
+        -0.4994
+      ],
+      "hi": [
+        -32.0158752,
+        32.1,
+        1.2754000494277955
+      ]
+    },
+    {
+      "side": "east",
+      "lo": [
+        31.9841248,
+        -17.7712915039,
+        -0.4994
+      ],
+      "hi": [
+        32.2561248,
+        -2.4712915039,
+        1.2754000494277955
+      ]
+    },
+    {
+      "side": "east",
+      "lo": [
+        31.9841248,
+        16.8,
+        -0.4994
+      ],
+      "hi": [
+        32.2561248,
+        32.1,
+        1.2754000494277955
+      ]
+    }
+  ],
+  "tree_source_triangles": 1072212,
+  "trees_checked": 26,
+  "tree_triangle_box_tests": 563576,
+  "potential_tree_wall_triangle_overlaps": 0,
+  "conservative_minimum_tree_surface_xy_clearance_below_wall_top_m": 2.774600564685059,
+  "entrance_clearances": {
+    "west_door_m": 7.311199907031252,
+    "east_door_m": 7.311199995312499,
+    "west_stair_m": 4.2631994187500055,
+    "east_stair_m": 4.263197065624997,
+    "entry_clear_width_m": 19.271291503900002
+  },
+  "path_clearances": {
+    "near_entry_path_center_y_m": 15.1650915,
+    "paving_y_m": [
+      13.7650915,
+      16.5650915
+    ],
+    "outer_curb_y_m": [
+      13.6600915,
+      16.6700915
+    ],
+    "upper_fence_paving_clearance_m": 0.23490849999999952,
+    "upper_fence_outer_curb_clearance_m": 0.1299084999999991,
+    "lower_path_paving_y_m": [
+      -2.2349085,
+      0.5650915
+    ],
+    "lower_path_outer_curb_y_m": [
+      -2.3399085,
+      0.6700915
+    ],
+    "lower_fence_paving_clearance_m": 0.2363830038999999,
+    "lower_fence_outer_curb_clearance_m": 0.1313830038999999
+  },
+  "trees": [
+    {
+      "tree_index": 0,
+      "instance_center_ros": [
+        -22.0158752,
+        35.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 1,
+      "instance_center_ros": [
+        -22.0158752,
+        -20.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 2,
+      "instance_center_ros": [
+        -14.0158752,
+        35.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 3,
+      "instance_center_ros": [
+        -14.0158752,
+        -20.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 4,
+      "instance_center_ros": [
+        -0.0158752,
+        35.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 5,
+      "instance_center_ros": [
+        -0.0158752,
+        -20.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 6,
+      "instance_center_ros": [
+        11.9841248,
+        35.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 7,
+      "instance_center_ros": [
+        11.9841248,
+        -20.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 8,
+      "instance_center_ros": [
+        21.9841248,
+        35.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 9,
+      "instance_center_ros": [
+        21.9841248,
+        -20.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 10,
+      "instance_center_ros": [
+        -36.624234542846686,
+        23.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 11,
+      "instance_center_ros": [
+        -36.624234542846686,
+        14.165091499999999,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 12,
+      "instance_center_ros": [
+        -36.624234542846686,
+        -3.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 13,
+      "instance_center_ros": [
+        -36.624234542846686,
+        -8.834908500000001,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 14,
+      "instance_center_ros": [
+        36.592486495971684,
+        23.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 15,
+      "instance_center_ros": [
+        36.592486495971684,
+        14.165091499999999,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 16,
+      "instance_center_ros": [
+        36.592486495971684,
+        -3.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 17,
+      "instance_center_ros": [
+        36.592486495971684,
+        -8.834908500000001,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 18,
+      "instance_center_ros": [
+        -34.0158752,
+        40.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 19,
+      "instance_center_ros": [
+        -34.0158752,
+        -25.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 20,
+      "instance_center_ros": [
+        33.9841248,
+        40.1650915,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 21,
+      "instance_center_ros": [
+        33.9841248,
+        -25.8349085,
+        5.391994652748108
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 22,
+      "instance_center_ros": [
+        -65.0,
+        24.0,
+        4.412595543861389
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 23,
+      "instance_center_ros": [
+        -65.0,
+        8.0,
+        4.412595543861389
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 24,
+      "instance_center_ros": [
+        -65.0,
+        -8.0,
+        4.412595543861389
+      ],
+      "wall_triangle_aabb_candidates": []
+    },
+    {
+      "tree_index": 25,
+      "instance_center_ros": [
+        -65.0,
+        -24.0,
+        4.412595543861389
+      ],
+      "wall_triangle_aabb_candidates": []
+    }
+  ],
+  "scope": "Read-only CPU native-float32 source triangle reconstruction/current layout. AABB nonintersection is conservative proof of no triangle-wall overlap; not a new UE runtime test."
+}

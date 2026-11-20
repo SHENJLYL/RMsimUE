@@ -53,7 +53,7 @@
     "rect_light_lumens": 45000,
     "shadowed_rect_lights": 0,
     "sun_intensity": 6000,
-    "sky_intensity": 64.0,
+    "sky_intensity": 512.0,
     "motion_blur": false,
     "exposure_ev100": 8.8,
     "ambient_cubemap_intensity": 0.0,
@@ -67,12 +67,30 @@
     ]
   },
   "asset_license": "Original SketchupBox model project with attribution, CC0 exterior, official DJI / RoboMaster logos. Raw source must not be redistributed separately.",
-  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky; long glass inner faces flush to the measured outer envelope of the original wave-channel platforms.",
+  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky; long glass inner faces flush to the measured outer envelope of the original wave-channel platforms. CC0 brick entrance walls preserve the existing paths; an independent distant ground ring encloses the original campus ground under the enlarged sky background.",
   "render_profile": "RMSimGymLumen",
   "navigation_package": "navigation-console-platform",
   "presentation_assets": {
     "glass_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_ClearBoundaryGlass.M_ClearBoundaryGlass",
     "environment_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolLandscape.M_SchoolLandscape",
     "environment_cubemap": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_SchoolSky8K.T_SchoolSky8K"
+  },
+  "outdoor_background": {
+    "sky_diameter_m": 16000,
+    "ground_half_extent_m": 2000,
+    "ground_surface_z_m": -0.48440000057220456,
+    "ground_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.M_ExteriorDistantGround",
+    "ground_inner_bounds_m": {
+      "lo": [
+        -80.0158752,
+        -62.8349085,
+        -0.48440000057220456
+      ],
+      "hi": [
+        79.9841248,
+        77.1650915,
+        -0.48440000057220456
+      ]
+    }
   }
 }

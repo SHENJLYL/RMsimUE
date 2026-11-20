@@ -1,0 +1,17 @@
+[
+  {
+    "path": "docs/progress/current.md",
+    "anchor": "# 当前进度\n\n",
+    "body": "## 2026-11-20：体育馆入口砖墙与连续远景\n\n学校体育馆原 23 mesh / 57 实例保持，采用 Grab3D CC0 Brick Wall 新增 24 个完整模块，组成入口外侧四段 15.3 m 长、约 1.76 m 高的砖墙；入口净宽 19.2713 m，距外台阶约 4.2632 m。活动场景合计 24 mesh / 81 实例。天空半径 8 km，独立 4 km 远地面环带接原 160×140 m 草地；源边界 UV 相位保持，外侧以最大 16 m 半宽平滑混合颜色与法线。天空填充 512，原馆、源贴图、RMUC 高平台玻璃边界和导航身份 f416f652…126e 保持。\n\n源与布置 92/92 项、最终五视图每幅 96/96 边界扫掠及背景/玻璃合同均通过，逐图确认远地面硬线平滑和天空连续。可见窗口 PID 35380 连续观察 60.03 s、7 次保持 1600×1000，六类 GPU/资源警告为 0，WM_NULL 响应约 0.0000878 s；观察结束时窗口留开。最终图像与交互同用 DLL 27a87dda…8ec2b，原近景草地纹理与局部接线保持源表现。证据：`artifacts/fixes/school-entry-masonry-20261120/release-summary.json`；变更：`docs/changes/2026-11-20-school-entry-masonry.md`。\n\n"
+  },
+  {
+    "path": ".codestable/attention.md",
+    "anchor": "本文件是 CodeStable 技能启动必读的项目注意事项入口。\n\n",
+    "body": "## 2026-11-20：入口外景边界\n\n活动入口采用 `school-entry-brickwall` 的 Grab3D CC0 完整源模块，24 个装饰实例形成四段 15.3 m 砖墙，保留 19.2713 m 开口和约 4.2632 m 台阶净距。原馆及外景 23 mesh / 57 实例保持。`outdoor_background` 以半径 8 km 天空和四块无碰撞、无导航、无阴影/DF影响的地面环带围住原 160×140 m 地块；草地真实顶面 Z=-0.48440000057220454 m。新远地面材质在源边缘保留原相位，外侧最大 16 m 半宽混合四象限采样；原地块与源贴图保持，原近景纹理及局部接线按源保留。\n\n活动 sky_intensity=512，比赛场地/玻璃/车辆与 `navigation-console-platform` 的 f416f652…126e 物理身份保持。最终五视图每幅 96/96 扫掠和背景/玻璃合同、92/92 源布置检查、60.03 s 可见窗口观察通过；最终运行 DLL 27a87dda…8ec2b，六类 GPU/资源警告 0。具体身份及前次证据在 `artifacts/fixes/school-entry-masonry-20261120/release-summary.json`。共享工程的其他任务进程和 WIP 分别保留。\n\n"
+  },
+  {
+    "path": ".codestable/architecture/ARCHITECTURE.md",
+    "anchor": "# 当前架构\n\n",
+    "body": "## 2026-11-20：可选校园远景与入口资产\n\n`CampusGym.cpp` 支持可选 `outdoor_background`：半径 8 km 天空与外边长 4 km 的四条正交地面环带，中央孔洞匹配原校园地面 160×140 m，顶面采用真实 ExtGrass 高度。该分支独立校验尺寸、源地面孔洞、环带接缝、球面余量及 NoCollision/NoNav/NoShadow/NoDF；普通 layout 的 100 m 范围限制和比赛物理合同保持。缺少配置项时保持旧背景行为。\n\n`SchoolEntry` 命名空间保存 CC0 Grab3D 砖墙和新远草材质；入口新增 24 个模块，原馆及校园 23 mesh / 57 实例保持。远草由原生最高草面两三角形拟合 UV，四象限先独立采样，再按源矩形外距离以最大 16 m 半宽混合线性颜色及已解码法线，世界法线最终归一化。源边缘相位和原四地块保持，天空填充配置为 512。装饰层保持 `closed_perimeter_geometry` 的既有输入，导航物理身份继续为 f416f652…126e。\n\n本轮原生五视图、逐图视觉检查、源布置 92/92、导航身份与 60.03 s 可见观察均通过；最终图像与交互使用 DLL 27a87dda…8ec2b。实际模块、活动文件和局部材质更新身份见 `artifacts/fixes/school-entry-masonry-20261120/release-summary.json`。\n\n"
+  }
+]

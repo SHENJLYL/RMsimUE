@@ -2,6 +2,12 @@
 
 本文件是 CodeStable 技能启动必读的项目注意事项入口。
 
+## 2026-11-20：入口外景边界
+
+活动入口采用 `school-entry-brickwall` 的 Grab3D CC0 完整源模块，24 个装饰实例形成四段 15.3 m 砖墙，保留 19.2713 m 开口和约 4.2632 m 台阶净距。原馆及外景 23 mesh / 57 实例保持。`outdoor_background` 以半径 8 km 天空和四块无碰撞、无导航、无阴影/DF影响的地面环带围住原 160×140 m 地块；草地真实顶面 Z=-0.48440000057220454 m。新远地面材质在源边缘保留原相位，外侧最大 16 m 半宽混合四象限采样；原地块与源贴图保持，原近景纹理及局部接线按源保留。
+
+活动 sky_intensity=512，比赛场地/玻璃/车辆与 `navigation-console-platform` 的 f416f652…126e 物理身份保持。最终五视图每幅 96/96 扫掠和背景/玻璃合同、92/92 源布置检查、60.03 s 可见窗口观察通过；最终运行 DLL 27a87dda…8ec2b，六类 GPU/资源警告 0。具体身份及前次证据在 `artifacts/fixes/school-entry-masonry-20261120/release-summary.json`。共享工程的其他任务进程和 WIP 分别保留。
+
 ## 2026-11-20 最新：波浪平台长玻璃墙
 
 - 用户指定长墙紧挨波浪通道所在高平台。活动 `outside_platform_bounds_v1` 以实际 native `visual/collision_blue_road` 的 Y=-7.522840576171875 m、`visual/collision_red_road` 的 Y=7.522841186523437 m 为边线；原 CAD `bounds_m` 保持，独立 `target_bounds_m` 供围墙和导航共用。

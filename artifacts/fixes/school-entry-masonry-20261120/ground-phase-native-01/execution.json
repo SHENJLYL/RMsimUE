@@ -1,0 +1,25 @@
+{
+  "status": "exited",
+  "started_utc": "2026-11-20T02:45:29.340798+00:00",
+  "command": [
+    "E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/UnrealEditor-Cmd.exe",
+    "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+    "/Engine/Maps/Entry",
+    "-ExecutePythonScript=D:\\simulator\\artifacts\\fixes\\school-entry-masonry-20261120\\update_distant_ground_phase.py",
+    "-VenueAssetRoot=D:\\simulator\\assets\\maps\\rmuc2027\\arena\\sketchupbox-school-gym\\ue-import-05-fidelity",
+    "-VenueImportReport=D:\\simulator\\artifacts\\fixes\\school-entry-masonry-20261120\\ground-phase-native-01\\report.json",
+    "-CustomConfig=RMSimGymLumen",
+    "-d3d12",
+    "-sm6",
+    "-RenderOffScreen",
+    "-unattended",
+    "-NoSplash",
+    "-NoSound",
+    "-nop4",
+    "-abslog=D:\\simulator\\artifacts\\fixes\\school-entry-masonry-20261120\\ground-phase-native-01\\ue.log"
+  ],
+  "script_sha256": "f8d354065b8f0376e50300a1eb90f4f0b121979be281f71cd7c7b0984e2c86ca",
+  "pid": 28024,
+  "exit_code": 0,
+  "seconds": 31.182984600018244
+}

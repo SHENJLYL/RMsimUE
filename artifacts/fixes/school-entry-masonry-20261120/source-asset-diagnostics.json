@@ -1,0 +1,77 @@
+{
+  "schema": "rmsim_entry_wall_source_diagnostics_v1",
+  "checked_utc": "2026-11-20T02:28:25.515851+00:00",
+  "scope": "Read-only source geometry and original texture inspection. No native assets, layout, material or prepared files changed.",
+  "prepared_sha256": "1db20684ecb1aa838c257a719036274156ce2eac22125b16bbed1f77b1b0d6b6",
+  "source_glb_sha256": "91565e4a4f70009254fb48c98cb7584d603341aedf4123809c3446adaf06809b",
+  "source_obj_sha256": "3761f858135f40b878e749cfbecf51f4788b304a2ce81f69dbf6e59f1f84f870",
+  "source_nodes": {
+    "mesh_nodes": 1,
+    "identity_parent_nodes": 1,
+    "negative_scale_or_transform": false,
+    "primitive_mode": 4
+  },
+  "source_vertex_attributes": [
+    "POSITION",
+    "NORMAL",
+    "TEXCOORD_0"
+  ],
+  "source_color_0": false,
+  "source_texture_transforms": false,
+  "source_to_prepared_exact": {
+    "positions": true,
+    "normals": true,
+    "triangle_indices": true,
+    "normal_indices": true
+  },
+  "source_math_cross_dot_normal": {
+    "all_faces": 10412,
+    "positive_faces": 10412,
+    "negative_faces": 0,
+    "min": 0.99969231366751,
+    "max": 1.000000067179426,
+    "wall_below_z2_faces": 9052,
+    "wall_negative_dot_faces": 0,
+    "coping_above_z2_faces": 1360,
+    "coping_negative_dot_faces": 0,
+    "minus_y_planar_faces": 972,
+    "plus_y_planar_faces": 972,
+    "planar_y_dot": 1.0
+  },
+  "texture_channel_byte_means": {
+    "base_color_rgb": [
+      149.9204216003418,
+      109.8458468914032,
+      95.5570285320282
+    ],
+    "normal_gl_rgb": [
+      128.07146549224854,
+      127.116530418396,
+      254.10006260871887
+    ],
+    "metallic_roughness_rgb": [
+      254.06746888160706,
+      216.64766883850098,
+      0.13143682479858398
+    ]
+  },
+  "source_occlusion_texture_present": false,
+  "source_material_rule": "MR.G roughness, MR.B metallic, MR.R unused; AO must remain 1. OpenGL normal source pixels retained.",
+  "front_back_missing_boundary_samples_xz_m": [
+    [
+      -0.9996202531645569,
+      2.075
+    ],
+    [
+      0.9996202531645573,
+      2.075
+    ]
+  ],
+  "missing_sample_context": "Both are at the upper coping joints near X=+-1m and Z=2.075m; the full wall body interior is covered on both sides.",
+  "coverage_references": [
+    "prepared/surface-integrity.json",
+    "prepared/geometry-verification.json"
+  ],
+  "native_winding_context": "Parent independently verified Engine Cube, existing ExtGrass and the new wall all use native mathcross.dot(normal) approximately -1; source/native handedness contract is consistent.",
+  "no_source_shading_repair_applied": true
+}

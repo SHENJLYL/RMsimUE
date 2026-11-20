@@ -1,0 +1,380 @@
+{
+  "schema": "rmsim_school_entry_source_and_placement_summary_v1",
+  "status": "passed_source_and_placement_snapshot",
+  "checked_utc": "2026-11-20T02:53:59.112927+00:00",
+  "project_root": "D:\\simulator",
+  "scope": "Read-only current source/file identity and layout audit, citing completed native evidence only. No UE process started or active files changed.",
+  "source": {
+    "selected_asset": "Brick Wall",
+    "author": "Grab3D",
+    "license": "CC0-1.0",
+    "source_url": "https://grab3d.com/models/city/brick-wall/",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved_utc": "2026-11-20T02:01:03.278166+00:00",
+    "provenance": {
+      "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/SOURCE.json",
+      "bytes": 1049,
+      "sha256": "eb544ef1163630764e5f741063c491af482fac16fb87da3ca2b0f248fdafbf22"
+    },
+    "notice": {
+      "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/NOTICE.txt",
+      "bytes": 398,
+      "sha256": "b7a8e5d360e90fb44efca6b4c66712910f554787819921f98ef1238c3f8189ed"
+    },
+    "files": {
+      "brick-wall.glb": {
+        "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/source/brick-wall.glb",
+        "bytes": 1495820,
+        "sha256": "91565e4a4f70009254fb48c98cb7584d603341aedf4123809c3446adaf06809b",
+        "url": "https://grab3d.com/dl/brick-wall/brick-wall.glb",
+        "matches_recorded_identity": true
+      },
+      "LICENSE.txt": {
+        "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/source/LICENSE.txt",
+        "bytes": 760,
+        "sha256": "01908a56d6cada52704b20c5094c2aa16c9d8be6f124349c986764067abfd921",
+        "url": "https://grab3d.com/dl/brick-wall/LICENSE.txt",
+        "matches_recorded_identity": true
+      },
+      "manifest.json": {
+        "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/source/manifest.json",
+        "bytes": 1712,
+        "sha256": "d50e7bd6e28ef7c4e362d444b7a67e6d37b54eca06e5b9bf2024345cb26a4b75",
+        "url": "https://grab3d.com/dl/brick-wall/manifest.json",
+        "matches_recorded_identity": true
+      }
+    },
+    "granite_experiment_selected": false
+  },
+  "prepared": {
+    "identity": {
+      "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/prepared/prepared.json",
+      "bytes": 6381,
+      "sha256": "1db20684ecb1aa838c257a719036274156ce2eac22125b16bbed1f77b1b0d6b6"
+    },
+    "source_vertices": 20860,
+    "source_triangles": 10412,
+    "file_sha256": {
+      "textures/EntryBrickWall_BaseColor.png": "61ffa5a40ea4da45d327dca3504be80589db5a770c5fe6154615a421a46e37b1",
+      "textures/EntryBrickWall_NormalGL.png": "a641798ff224fc477328266ddee83672637a2b5a55b0cac700299e26974ea2be",
+      "textures/EntryBrickWall_MetallicRoughness.png": "445c07eb066db1e2c311a8576642f5a07311bd015bbf0fcae0534957c28317c1",
+      "RMExteriorEntryBrickWall.obj": "3761f858135f40b878e749cfbecf51f4788b304a2ce81f69dbf6e59f1f84f870",
+      "RMExteriorEntryBrickWall.mtl": "554424134484152cb1ecac5b349c512969028c17c6af5bf17207b27ae115e7c3",
+      "geometry-verification.json": "ca8c288da1263976a800040c4290dd962d93f3d9ddc92806caa1d2dc503fd44a",
+      "surface-integrity.json": "76964e77ec8893406efbb73ab5e784984a2ac2a3ab0b7867bc60f91b91f3580f"
+    },
+    "texture_count": 3,
+    "texture_dimensions": [
+      2048,
+      2048
+    ],
+    "source_decoded_pixels_preserved": true,
+    "normal_convention": "OpenGL",
+    "metallic_roughness_channels": {
+      "roughness": "G",
+      "metallic": "B",
+      "R": "unused"
+    },
+    "ambient_occlusion": "constant 1, source has no AO texture"
+  },
+  "native_wall": {
+    "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Meshes/RMExteriorEntryBrickWall.RMExteriorEntryBrickWall",
+    "source_triangles": 10412,
+    "native_lod0_fallback_triangles": 10412,
+    "matched_positions_uv_material_oriented_triangles": 10412,
+    "unknown_missing_triangles": 0,
+    "unexpected_triangles": 0,
+    "built_nanite_triangle_count": 10412,
+    "nanite_cluster_geometry_individually_audited": false,
+    "native_import_exit_code": 0,
+    "report_status": "native_import_and_geometry_passed_pending_scene_visual_qa",
+    "current_native_file_sha256": {
+      "Materials/M_EntryBrickWall.uasset": "d47bf384444539cc9201aff92f031c215127097b3e6f0d872b435280e08f1c68",
+      "Materials/M_ExteriorDistantGround.uasset": "e0a81d17c4392d6117f7b1880853ed7055efea6e72c4df60343ba30530245943",
+      "Meshes/RMExteriorEntryBrickWall.uasset": "0232f3efe32250035534b65afa2504ba2f036a0df20f68c8cfa25e1e822ffcf0",
+      "Textures/T_EntryBrickWall_BaseColor_Color.uasset": "628d43c1cd1cb04eb151f35d44a4b8e2c95cc6077439beba041a18ac195c7fd3",
+      "Textures/T_EntryBrickWall_MetallicRoughness_ARM.uasset": "42bd0152702c3a40df41face9ecc27f5d11f1d3fb45e7d62c82c32186bf6a864",
+      "Textures/T_EntryBrickWall_NormalGL_Normal_GLtoDX.uasset": "9d88d0ab1c2513ee0ecb78009c53de4b01c019d98b736d1cf4d0429ba427f0b5"
+    }
+  },
+  "placement": {
+    "layout": {
+      "path": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json",
+      "bytes": 42044,
+      "sha256": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4"
+    },
+    "arena_manifest": {
+      "path": "assets/maps/rmuc2027/arena-shell.json",
+      "bytes": 3465,
+      "sha256": "dc502ccacf48a29dd3a2d7f02df5e210bc0447dc0e09360115964093fd92847d"
+    },
+    "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+    "source_module_dimensions_m": [
+      3.0,
+      0.3199999928474426,
+      2.0880000591278076
+    ],
+    "uniform_scale": 0.85,
+    "new_modules": 24,
+    "new_wings": 4,
+    "wings": [
+      {
+        "side": "west",
+        "wing": "lower",
+        "modules": 6,
+        "y_range_m": [
+          -17.7712915039,
+          -2.4712915039000003
+        ],
+        "length_m": 15.299999999999999,
+        "inner_face_ros_x_m": -32.0158752,
+        "z_range_m": [
+          -0.49940000057220457,
+          1.275400049686432
+        ],
+        "maximum_absolute_segment_gap_m": 1.7763568394002505e-15,
+        "base_burial_m": 0.015000000000000013,
+        "visible_height_m": 1.7598000502586366
+      },
+      {
+        "side": "west",
+        "wing": "upper",
+        "modules": 6,
+        "y_range_m": [
+          16.8,
+          32.1
+        ],
+        "length_m": 15.3,
+        "inner_face_ros_x_m": -32.0158752,
+        "z_range_m": [
+          -0.49940000057220457,
+          1.275400049686432
+        ],
+        "maximum_absolute_segment_gap_m": 3.552713678800501e-15,
+        "base_burial_m": 0.015000000000000013,
+        "visible_height_m": 1.7598000502586366
+      },
+      {
+        "side": "east",
+        "wing": "lower",
+        "modules": 6,
+        "y_range_m": [
+          -17.7712915039,
+          -2.4712915039000003
+        ],
+        "length_m": 15.299999999999999,
+        "inner_face_ros_x_m": 31.9841248,
+        "z_range_m": [
+          -0.49940000057220457,
+          1.275400049686432
+        ],
+        "maximum_absolute_segment_gap_m": 1.7763568394002505e-15,
+        "base_burial_m": 0.015000000000000013,
+        "visible_height_m": 1.7598000502586366
+      },
+      {
+        "side": "east",
+        "wing": "upper",
+        "modules": 6,
+        "y_range_m": [
+          16.8,
+          32.1
+        ],
+        "length_m": 15.3,
+        "inner_face_ros_x_m": 31.9841248,
+        "z_range_m": [
+          -0.49940000057220457,
+          1.275400049686432
+        ],
+        "maximum_absolute_segment_gap_m": 3.552713678800501e-15,
+        "base_burial_m": 0.015000000000000013,
+        "visible_height_m": 1.7598000502586366
+      }
+    ],
+    "entrance_clearances_m": {
+      "west_door_m": 7.311199907031252,
+      "east_door_m": 7.311199995312499,
+      "west_stair_m": 4.2631994187500055,
+      "east_stair_m": 4.263197065624997,
+      "entry_clear_width_m": 19.271291503900002
+    },
+    "path_clearances": {
+      "near_entry_path_center_y_m": 15.1650915,
+      "paving_y_m": [
+        13.7650915,
+        16.5650915
+      ],
+      "outer_curb_y_m": [
+        13.6600915,
+        16.6700915
+      ],
+      "upper_fence_paving_clearance_m": 0.23490849999999952,
+      "upper_fence_outer_curb_clearance_m": 0.1299084999999991,
+      "lower_path_paving_y_m": [
+        -2.2349085,
+        0.5650915
+      ],
+      "lower_path_outer_curb_y_m": [
+        -2.3399085,
+        0.6700915
+      ],
+      "lower_fence_paving_clearance_m": 0.2363830038999999,
+      "lower_fence_outer_curb_clearance_m": 0.1313830038999999
+    },
+    "static_audit_status": "passed_static_clearances",
+    "tree_triangle_box_tests": 563576,
+    "potential_tree_wall_triangle_overlaps": 0,
+    "conservative_tree_surface_xy_clearance_below_wall_top_m": 2.774600564685059
+  },
+  "preservation": {
+    "old_native_meshes": 23,
+    "old_layout_instances": 57,
+    "old_native_bindings_and_all_group_data_equal": true,
+    "old_native_mesh_bytes_sha256": {
+      "RMSchool_0_0": "8a442df68bf8599227e6654bec6bda62e29f86e3c7b2367fc80c66f73ae8aa6f",
+      "RMSchool_0_1": "e4a9f98113ebfe99194662cfbe8a0059fd14aa7f4b80821724f9216f43fefea2",
+      "RMSchool_0_3": "008846a17f28f4103bcb27982ac97ba5396aedc1055ea3235e86777548c44750",
+      "RMSchool_1_0": "2c5466854591936bf39ce2dac73b1c80035b4f9f8c0d6cf73a017cea3fe3ae79",
+      "RMSchool_1_1": "4f1e4bf436ec6b02d2bb00746a51d813626ef4974215c8b982a8d232c74376b4",
+      "RMSchool_1_2": "ee84f852238fa393a9d7158c6d746e361b807608e1c7222c0ba4aeacb0977365",
+      "RMSchool_1_3": "6e977ac7b6bcde0773fece2bd89bc260f48f4475caa1663ebd62110c67bcf03a",
+      "RMSchool_2_0": "caaa0f4779719a660b1d6e3c27d37506062f458ecb57d36974757ba415d3c039",
+      "RMSchool_2_1": "13f071d92ddc36de1f46cc2c72b3275444c25d323a201e872da3066701fee8cf",
+      "RMSchool_2_2": "0c95728692c5293ba1a49c73e9fb05e017be3ccf9652ec3ca8e311422861a413",
+      "RMSchool_2_3": "4da41620c950756301f1afa835c677772ffbdc0de8f2952d6f2e01cf403bf1cf",
+      "RMSchool_3_0": "b4a57b9b43c9fc05aa418121dd26998d9174719eeafc92aaa6714ab971472d4c",
+      "RMSchool_3_1": "4fd3bd7535dfbf590df784f36177a2019a576c346a0b5db18f723dbb315abdf0",
+      "RMSchool_3_2": "c56e5af02ed2e44d5ff71e13c1b41ebda3bece4f9dafdae74dc0522eec6d6572",
+      "RMSchool_3_3": "6f45af11fd60bea3441915d4045807c774f52e6e1f3caa00749d1df77aa9a879",
+      "RMSchool_4_0": "2d586c9f0752a3f9ea25a912e4403832895d111fcd33c3d2fbd0a3369d9cea17",
+      "RMSchool_4_1": "9a5be9a95691b7fe94491a03d673b00d8d462112d13889e1287b597c02ded368",
+      "RMSchool_4_2": "bc59793223133959a456724089f23e3705d9a953ec5b5262dc7868d2431ecf18",
+      "RMSchool_4_3": "31da87befeb103ac86ca6206f21aa13f0926ca8d6e1722595b30a8944fe6a512",
+      "RMExteriorGround": "40bb114f147fdb73fa068e68cde55a667de209773af6ff8d4c401c2dc6fd1590",
+      "RMExteriorBuildings": "a3e6c626cfa3cf5f66c84b940b7406e7f217b79d580068988834bc38aeb100f8",
+      "RMExteriorFurnishings": "fffbe65745a04a30a2035b434c0a885e4a55961631b3b7cc799ad9b759f768f7",
+      "RMExteriorTree": "84702221189ca3fb0501de136440a2e8ccab119246d7a3aa2ff5cdcd572e6d28"
+    },
+    "tree_instances": 26,
+    "tree_group_equal_to_baseline": true,
+    "tree_source_triangles": 1072212,
+    "tree_source_used_file_sha256": {
+      "RMExteriorTree.obj": "70f696d3f50a17d414c074b7a9e0b12ba3c273d6e9ea1cde66efd71b7212f8c9",
+      "textures/island_tree_02_arm_2k.jpg": "89e20810f614231578314846acff92821249f4124f4aa6e2f630df45d7acb6b2",
+      "textures/island_tree_02_branches_arm_2k.jpg": "a39d8291ba54adf1ca42f15abe2f622d0ac59fb13c87087a0fabc755b91dfee8",
+      "textures/island_tree_02_branches_diff_2k.jpg": "52cb2c660983836249e3f31ad286ca1bab8033e93070569b23e1867e3ae70b4d",
+      "textures/island_tree_02_branches_nor_gl_2k.jpg": "e4cac77b4f35ad47ba4fcdb9061f91acf3318d9889dd259cb5e6e132b0ab60c7",
+      "textures/island_tree_02_diff_2k.jpg": "2ca2706adc5bde6bc46fa4a4680041a1797cf6684a31629259559935a97e0057",
+      "textures/island_tree_02_leaves_alpha_2k.png": "30c36ae0d9023400035f0af9d336ed5f73a84bf8a88c8e2bec8faa07d725992b",
+      "textures/island_tree_02_leaves_arm_2k.jpg": "cf4d604711d955d74a13b656bdbf840015ac38a71e24821849efade730634cc6",
+      "textures/island_tree_02_leaves_diff_2k.jpg": "e5c56ca13525aed76572852da5f69ae87cbee9e15abe2e1eff23adf92975f14a",
+      "textures/island_tree_02_leaves_nor_gl_2k.jpg": "efa74b8b59a7466a295bf210505560002990183817b6c33663f3ec0dd438dd73",
+      "textures/island_tree_02_nor_gl_2k.jpg": "3b088058cd9c8759f1ee223fad90f860257f574ae2ba7401cd4982c687b853cf"
+    },
+    "protected_files_sha256": {
+      "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+      "assets/maps/rmuc2027/mesh-source.json": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9",
+      "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "assets/maps/rmuc2027/navigation-console-platform/scene.json": "fd9c6bad8650f5b0728ac3d636cbc991858d0d6464252017d7a53ac51807bd33"
+    },
+    "original_perimeter_equal": true
+  },
+  "ground_phase": {
+    "report_status": "passed_pending_native_visual_review",
+    "exit_code": 0,
+    "changed_native_files": [
+      "Materials/M_ExteriorDistantGround.uasset"
+    ],
+    "source_grass_textures_or_materials_modified": false,
+    "phase_crossfade": {
+      "scope": "new distant ground only",
+      "maximum_half_width_m": 16.0,
+      "source_edge_distance_zero_retains_original_phase": true,
+      "linear_color_sample_blend": true,
+      "decoded_normal_blend_then_world_normalize": true,
+      "uv_coordinates_blended": false
+    }
+  },
+  "evidence": [
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-import-03/report.json",
+      "bytes": 7618,
+      "sha256": "ef4dddce8fbf3400647b40062c24c0f3bb372d266dde5af59bcdb7a9edc5549a"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-import-03/execution.json",
+      "bytes": 1100,
+      "sha256": "199702fd44c088090a3a57dd63e32f9317c7a0988d4641f953638561dcc81711"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-import-03/RMExteriorEntryBrickWall-geometry.json",
+      "bytes": 2661,
+      "sha256": "b6a3a18614c4cefc9ec03cd8bf89a79432e7be2b358fae28932929ddd62a4c19"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/static-placement-audit-01/report.json",
+      "bytes": 7495,
+      "sha256": "efca6f0fdd22b97ac35b7bd1c86dd44c33a618a3a23bb41c30f4bbb6ecb278e5"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/ground-phase-native-01/report.json",
+      "bytes": 5162,
+      "sha256": "708cf2c8e299cdd1779a2a4e196b12ecf347be9cf0318c96ef2da9e688c30801"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/ground-phase-native-01/execution.json",
+      "bytes": 1052,
+      "sha256": "c9865063d4c656795ec1692e9e76c8118f357fee774f3d1b023d3f27b0b85de5"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/activation-01/report.json",
+      "bytes": 3651,
+      "sha256": "cd3233c1dfa9c1c96139abac3867d0e64d3d2dbb032334c704cce5fb79d4ef51"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/activation-01/layout-before.json",
+      "bytes": 31378,
+      "sha256": "64bfb32766056f33a4b706c2656472f3d2d7f954187128cd2b9cc37a91710300"
+    },
+    {
+      "path": "artifacts/fixes/school-view-fidelity-20261119/native-geometry-final/report.json",
+      "bytes": 27979,
+      "sha256": "aaa0840e10b8b6073a03dc57074bbc02ad85f02a76aeff20167d1a7a80a15f19"
+    },
+    {
+      "path": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/ue-import-05-fidelity/prepared.json",
+      "bytes": 62116,
+      "sha256": "a6d29420c1b8e16bc036c17a700bc441ac1f679688e1f7061f571420dc6a0d12"
+    },
+    {
+      "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/prepared/geometry-verification.json",
+      "bytes": 8227,
+      "sha256": "ca8c288da1263976a800040c4290dd962d93f3d9ddc92806caa1d2dc503fd44a"
+    },
+    {
+      "path": "assets/maps/rmuc2027/arena/school-entry-brickwall/prepared/surface-integrity.json",
+      "bytes": 5876,
+      "sha256": "76964e77ec8893406efbb73ab5e784984a2ac2a3ab0b7867bc60f91b91f3580f"
+    },
+    {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/source-asset-diagnostics.json",
+      "bytes": 2639,
+      "sha256": "219af548789e4ed18c36068d5b82d06b4aacbee7c14f0ee9df2be9607dda668e"
+    }
+  ],
+  "checks": {
+    "total": 92,
+    "passed": 92,
+    "failed": []
+  },
+  "not_claimed_by_this_snapshot": [
+    "final screenshot acceptance",
+    "future interactive observation",
+    "new runtime collision tests"
+  ],
+  "snapshot_script": {
+    "path": "artifacts/fixes/school-entry-masonry-20261120/summarize_source_and_placement.py",
+    "bytes": 18142,
+    "sha256": "7f34bbfe11b2370a2a024ffe28af54784adb435ee9502b47d4c6f708cbc447c8"
+  }
+}

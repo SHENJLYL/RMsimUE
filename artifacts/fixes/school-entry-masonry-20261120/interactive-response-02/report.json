@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "utc": "2026-11-20T02:55:33.761201+00:00",
+  "pid": 35380,
+  "window_handle": 3935462,
+  "client_size": [
+    1600,
+    1000
+  ],
+  "response_seconds": 8.779999916441739e-05,
+  "message": "WM_NULL",
+  "left_running_at_observation": true,
+  "process": {
+    "ProcessId": 35380,
+    "CommandLine": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator/unreal/RMSim/RMSim.uproject\" /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -windowed -CaptureDir=\"D:/simulator/artifacts/fixes/school-entry-masonry-20261120/interactive-final-02\" -MapFile=\"D:/simulator/assets/maps/rmuc2027/map.json\" -SpawnId=\"default\" -CustomConfig=RMSimGymLumen -d3d12 -sm6 -ContactPhysics "
+  },
+  "files": {
+    "assets/maps/rmuc2027/arena-shell.json": "dc502ccacf48a29dd3a2d7f02df5e210bc0447dc0e09360115964093fd92847d",
+    "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4",
+    "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+    "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+    "unreal/RMSim/Source/RMSim/CampusGym.cpp": "844b2cdbac88c79febe667919c0dd96963bac8cb767db01194129369ebc3eed0",
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "27a87ddacd95d07938276d42cb610b1885175e86e69e906b6d037cf253b8ec2b",
+    "tools/unreal/import_school_entry_assets.py": "361850a47e6ac4efe13f8dafefc1e496460c43035c72dfecff5059c568fe0535",
+    "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.uasset": "e0a81d17c4392d6117f7b1880853ed7055efea6e72c4df60343ba30530245943"
+  },
+  "runtime_log_sha256": "883887b97260a8a2533e58a013e690a613c9370dc903bbb5bd1fe4a1760046ad"
+}
