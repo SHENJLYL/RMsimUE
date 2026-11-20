@@ -9,6 +9,10 @@
 #include "Misc/SecureHash.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "Serialization/JsonWriter.h"
+#include "IPAddress.h"
+#include "SocketSubsystem.h"
+#include "Sockets.h"
 
 #ifndef RMSIM_WITH_MUJOCO
 #define RMSIM_WITH_MUJOCO 0
@@ -180,6 +184,158 @@ bool ValidateRuntimeBindings(const TSharedPtr<FJsonObject>& Manifest,const FStri
     if(!DiagnosticPlane&&!ValidateSceneIdentity(Manifest,MapAssets,Error))return false;
     Count=Bindings->Num();return true;
 }
+
+#if RMSIM_WITH_MUJOCO
+// One-way display telemetry. This object never receives packets or writes mjModel/mjData.
+class FMujocoViewerPublisher
+{
+public:
+    FMujocoViewerPublisher()=default;
+
+    static TUniquePtr<FMujocoViewerPublisher> CreateIfRequested(
+        const TSharedPtr<FJsonObject>& Manifest,const mjModel* Model)
+    {
+        FString PortText,Token;
+        const bool HasPort=FParse::Value(FCommandLine::Get(),TEXT("MujocoViewerPort="),PortText);
+        const bool HasToken=FParse::Value(FCommandLine::Get(),TEXT("MujocoViewerToken="),Token);
+        if(!HasPort&&!HasToken)return nullptr;
+        bool Digits=!PortText.IsEmpty()&&PortText.Len()<=5;
+        for(TCHAR C:PortText)Digits=Digits&&C>=TEXT('0')&&C<=TEXT('9');
+        const int32 Port=Digits?FCString::Atoi(*PortText):0;
+        FString ModelSha,PhysicsSha;
+        const int64 Scalars=Model?int64(Model->nq)+Model->nv+Model->na+Model->nu+7*int64(Model->nbody):0;
+        if(!HasPort||!HasToken||!Digits||Port<1024||Port>65535||!IsHex(Token,32)||
+           !Manifest||!Manifest->TryGetStringField(TEXT("model_sha256"),ModelSha)||!IsHex(ModelSha,64)||
+           !Manifest->TryGetStringField(TEXT("physics_identity_sha256"),PhysicsSha)||!IsHex(PhysicsSha,64)||
+           !Model||Model->nbody<1||Scalars<1||Scalars>1024)
+        {
+            UE_LOG(LogRMSim,Warning,TEXT("MUJOCO_VIEWER_DISABLED reason=invalid_config_or_model_identity"));
+            return nullptr;
+        }
+        auto Result=MakeUnique<FMujocoViewerPublisher>();
+        Result->Token=Token.ToLower();Result->ModelSha=ModelSha.ToLower();Result->PhysicsSha=PhysicsSha.ToLower();
+        Result->Sockets=ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+        if(Result->Sockets)
+        {
+            Result->Socket=Result->Sockets->CreateSocket(NAME_DGram,TEXT("RMSim read-only MuJoCo viewer"),false);
+            Result->Destination=Result->Sockets->CreateInternetAddr();
+            auto Local=Result->Sockets->CreateInternetAddr();
+            bool DestinationValid=false,LocalValid=false;
+            Result->Destination->SetIp(TEXT("127.0.0.1"),DestinationValid);Result->Destination->SetPort(Port);
+            Local->SetIp(TEXT("127.0.0.1"),LocalValid);Local->SetPort(0);
+            if(Result->Socket&&DestinationValid&&LocalValid&&Result->Socket->SetNonBlocking(true)&&Result->Socket->Bind(*Local))
+            {
+                int32 Actual=0;Result->Socket->SetSendBufferSize(64*1024,Actual);
+                Result->bReady=true;
+                UE_LOG(LogRMSim,Display,TEXT("MUJOCO_VIEWER_PUBLISHER_READY address=127.0.0.1 port=%d rate_hz=30 max_packet_bytes=61440 nq=%d nv=%d na=%d nu=%d nbody=%d"),
+                    Port,int32(Model->nq),int32(Model->nv),int32(Model->na),int32(Model->nu),int32(Model->nbody));
+                return Result;
+            }
+        }
+        UE_LOG(LogRMSim,Warning,TEXT("MUJOCO_VIEWER_DISABLED reason=socket_initialization"));
+        return nullptr;
+    }
+
+    ~FMujocoViewerPublisher()
+    {
+        if(Socket){Socket->Close();Sockets->DestroySocket(Socket);}
+        if(bReady)
+            UE_LOG(LogRMSim,Display,TEXT("MUJOCO_VIEWER_PUBLISHER_STOP sent=%llu errors=%llu skipped_slots=%llu sequence=%llu"),
+                Sent,Errors,SkippedSlots,Sequence);
+    }
+
+    void Publish(const mjModel* Model,const mjData* Data,uint64 Generation)
+    {
+        check(IsInGameThread());
+        constexpr double Rate=30.,MaxExactInteger=9007199254740991.;
+        const double Time=Data->time;
+        if(!FMath::IsFinite(Time)||Time<0||Time*Rate>=MaxExactInteger||
+           double(Generation)>=MaxExactInteger||double(Sequence)>=MaxExactInteger)
+        {ReportError(TEXT("invalid_time_or_counter"));return;}
+        // Integer slots avoid accumulated period drift. Only the current completed
+        // solver frame is sent; late slots are never backfilled or extrapolated.
+        const uint64 Slot=uint64(FMath::FloorToDouble(Time*Rate+1.e-9));
+        if(Generation==LastGeneration&&Slot<=LastSlot)return;
+        if(Generation==LastGeneration&&Slot>LastSlot+1)SkippedSlots+=Slot-LastSlot-1;
+        LastGeneration=Generation;LastSlot=Slot;
+        auto State=MakeShared<FJsonObject>();
+        State->SetStringField(TEXT("schema"),TEXT("rmsim_mujoco_viewer_state_v1"));
+        State->SetStringField(TEXT("session_token"),Token);
+        State->SetNumberField(TEXT("generation"),double(Generation));
+        State->SetNumberField(TEXT("sequence"),double(++Sequence));
+        State->SetNumberField(TEXT("sim_time_s"),Time);
+        State->SetStringField(TEXT("model_sha256"),ModelSha);
+        State->SetStringField(TEXT("physics_identity_sha256"),PhysicsSha);
+        State->SetNumberField(TEXT("nq"),Model->nq);State->SetNumberField(TEXT("nv"),Model->nv);
+        State->SetNumberField(TEXT("na"),Model->na);State->SetNumberField(TEXT("nu"),Model->nu);
+        State->SetNumberField(TEXT("nbody"),Model->nbody);
+        // Native right-handed SI, untouched qpos layout and wxyz quaternions.
+        // Every array is copied here on the GT from this same final-forward endpoint.
+        if(!AddArray(*State,TEXT("qpos"),Data->qpos,int32(Model->nq),1)||
+           !AddArray(*State,TEXT("qvel"),Data->qvel,int32(Model->nv),1)||
+           !AddArray(*State,TEXT("act"),Data->act,int32(Model->na),1)||
+           !AddArray(*State,TEXT("ctrl"),Data->ctrl,int32(Model->nu),1)||
+           !AddArray(*State,TEXT("body_xpos"),Data->xpos,int32(Model->nbody),3)||
+           !AddArray(*State,TEXT("body_xquat"),Data->xquat,int32(Model->nbody),4))
+        {ReportError(TEXT("nonfinite_snapshot"));return;}
+        FString Json;
+        if(!FJsonSerializer::Serialize(State,TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Json)))
+        {ReportError(TEXT("serialization"));return;}
+        const FTCHARToUTF8 Utf8(*Json);
+        if(Utf8.Length()>60*1024){ReportError(TEXT("packet_size"));return;}
+        int32 BytesSent=0;
+        if(!Socket->SendTo(reinterpret_cast<const uint8*>(Utf8.Get()),Utf8.Length(),BytesSent,*Destination)||
+           BytesSent!=Utf8.Length())
+        {ReportError(TEXT("send"),int32(Sockets->GetLastErrorCode()));return;}
+        ++Sent;
+    }
+
+private:
+    static bool IsHex(const FString& Text,int32 Length)
+    {
+        if(Text.Len()!=Length)return false;
+        for(TCHAR C:Text)if(!((C>=TEXT('0')&&C<=TEXT('9'))||(C>=TEXT('a')&&C<=TEXT('f'))||(C>=TEXT('A')&&C<=TEXT('F'))))return false;
+        return true;
+    }
+
+    static bool AddArray(FJsonObject& State,const TCHAR* Name,const mjtNum* Values,int32 Rows,int32 Columns)
+    {
+        TArray<TSharedPtr<FJsonValue>> Array;Array.Reserve(Rows);
+        for(int32 Row=0;Row<Rows;++Row)
+        {
+            TArray<TSharedPtr<FJsonValue>> Tuple;
+            if(Columns>1)Tuple.Reserve(Columns);
+            for(int32 Column=0;Column<Columns;++Column)
+            {
+                const double Value=Values[Row*Columns+Column];
+                if(!FMath::IsFinite(Value))return false;
+                if(Columns==1)Array.Add(MakeShared<FJsonValueNumber>(Value));
+                else Tuple.Add(MakeShared<FJsonValueNumber>(Value));
+            }
+            if(Columns>1)Array.Add(MakeShared<FJsonValueArray>(MoveTemp(Tuple)));
+        }
+        State.SetArrayField(Name,MoveTemp(Array));return true;
+    }
+
+    void ReportError(const TCHAR* Reason,int32 Code=0)
+    {
+        ++Errors;const double Wall=FPlatformTime::Seconds();
+        if(LastErrorWall<0||Wall-LastErrorWall>=5.)
+        {
+            LastErrorWall=Wall;
+            UE_LOG(LogRMSim,Warning,TEXT("MUJOCO_VIEWER_PUBLISH_ERROR reason=%s code=%d errors=%llu solver_unaffected=1"),Reason,Code,Errors);
+        }
+    }
+
+    ISocketSubsystem* Sockets=nullptr;
+    FSocket* Socket=nullptr;
+    TSharedPtr<FInternetAddr> Destination;
+    FString Token,ModelSha,PhysicsSha;
+    uint64 Sequence=0,Sent=0,Errors=0,SkippedSlots=0,LastGeneration=MAX_uint64,LastSlot=0;
+    double LastErrorWall=-1;
+    bool bReady=false;
+};
+#endif
 }
 
 struct FMujocoVehicleDynamics::FImplementation
@@ -187,6 +343,7 @@ struct FMujocoVehicleDynamics::FImplementation
 #if RMSIM_WITH_MUJOCO
     mjModel* Model = nullptr;
     mjData* Data = nullptr;
+    TUniquePtr<FMujocoViewerPublisher> ViewerPublisher;
     int32 RootJoint = -1;
     TMap<FString, int32> Bodies;
     TArray<int32> OrderedBodyIds;
@@ -214,7 +371,7 @@ struct FMujocoVehicleDynamics::FImplementation
     double TimingWindowStart = 0;
     struct FServo { int32 Joint = -1, Actuator = -1; double Kp = 0, Kd = 0, Limit = 0; };
     TMap<FString, FServo> Servos;
-    ~FImplementation() { if (Data) mj_deleteData(Data); if (Model) mj_deleteModel(Model); }
+    ~FImplementation() { ViewerPublisher.Reset(); if (Data) mj_deleteData(Data); if (Model) mj_deleteModel(Model); }
 #endif
 };
 
@@ -301,7 +458,9 @@ bool FMujocoVehicleDynamics::Initialize(const FString& Filename, const TArray<FS
     { Error = TEXT("MuJoCo free joint is not on the body root"); return false; }
     ModelMd5 = LexToString(FMD5Hash::HashFile(*ModelPath));
     mj_forward(M, Impl->Data);
-    return ValidateState(Error) && CaptureSensorHistory(Error);
+    if(!ValidateState(Error)||!CaptureSensorHistory(Error))return false;
+    Impl->ViewerPublisher=FMujocoViewerPublisher::CreateIfRequested(ManifestObject,M);
+    return true;
 #else
     Error = TEXT("This build has no native MuJoCo SDK; run the pinned dependency setup and rebuild");
     return false;
@@ -826,7 +985,9 @@ bool FMujocoVehicleDynamics::Step(double Seconds, FString& Error)
     }
     FMemory::Memcpy(Impl->Data->xfrc_applied, Impl->SavedAppliedWrenches.GetData(),
         sizeof(mjtNum) * 6 * Impl->Model->nbody);
-    return ValidateState(Error);
+    if(!ValidateState(Error))return false;
+    if(Impl->ViewerPublisher)Impl->ViewerPublisher->Publish(Impl->Model,Impl->Data,ResetCount);
+    return true;
 #else
     Error = TEXT("MuJoCo SDK unavailable"); return false;
 #endif

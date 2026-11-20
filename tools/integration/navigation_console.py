@@ -1,12 +1,14 @@
-"""Own one UE + ROS + RViz session. Closing RViz stops only this session's processes."""
+"""Own one UE + MuJoCo viewer + ROS + RViz session and its process lifetime."""
 from __future__ import annotations
 import argparse
 import datetime
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -35,6 +37,251 @@ def terminate_owned(process: subprocess.Popen) -> None:
 
 class StopRequested(Exception):
     pass
+
+
+def mujoco_viewer_enabled(args) -> bool:
+    return args.physics_backend == 'mujoco' and not args.no_rviz and not args.offscreen
+
+
+def mujoco_viewer_environment(python: Path, inherited: dict) -> tuple[dict, dict]:
+    """Use the prepared viewer venv without inheriting the ROS DLL/Python paths."""
+    venv = python.parent.parent
+    configuration = {}
+    for line in (venv/'pyvenv.cfg').read_text(encoding='utf-8').splitlines():
+        key, separator, value = line.partition('=')
+        if separator:
+            configuration[key.strip().lower()] = value.strip()
+    home = Path(configuration.get('home', ''))
+    if not configuration.get('home') or not home.is_dir():
+        raise RuntimeError('MuJoCo viewer venv has no valid base Python home')
+    if configuration.get('include-system-site-packages', '').lower() != 'false':
+        raise RuntimeError('MuJoCo viewer requires its isolated prepared venv')
+    blocked = {'PATH', 'VIRTUAL_ENV', 'QT_PLUGIN_PATH', 'QT_QPA_PLATFORM_PLUGIN_PATH',
+               'LD_LIBRARY_PATH', 'DYLD_LIBRARY_PATH', 'MUJOCO_GL', 'MUJOCO_EGL_DEVICE_ID'}
+    prefixes = ('PYTHON', 'ROS_', 'RMW_', 'AMENT_', 'COLCON_', 'CONDA_', 'PIXI_', '_CE_')
+    environment = {key:value for key,value in inherited.items()
+                   if key.upper() not in blocked and not key.upper().startswith(prefixes)}
+    system_root = Path(inherited.get('SystemRoot', inherited.get('SYSTEMROOT', 'C:/Windows')))
+    search_path = [python.parent, home, home/'DLLs', system_root/'System32', system_root,
+                   system_root/'System32/Wbem', system_root/'System32/WindowsPowerShell/v1.0']
+    environment.update(PATH=os.pathsep.join(str(item) for item in search_path),
+                       VIRTUAL_ENV=str(venv), PYTHONNOUSERSITE='1')
+    return environment, {'policy':'isolated_mujoco_venv_and_windows_system_paths',
+                         'base_python_home':str(home), 'path':list(map(str, search_path)),
+                         'inherits_ros_python_or_dll_paths':False}
+
+
+def prepare_mujoco_viewer(manifest: Path, model_spec: dict, output: Path, inherited: dict) -> dict:
+    python = ROOT/'artifacts/environments/mujoco-4.0.1/Scripts/python.exe'
+    source = ROOT/'tools/mujoco/live_viewer.py'
+    protocol = source.with_name('viewer_protocol.py')
+    for path in (python, source, protocol):
+        if not path.is_file():
+            raise RuntimeError('Missing MuJoCo viewer prerequisite: '+str(path))
+    environment, environment_policy = mujoco_viewer_environment(python, inherited)
+    check = ('import importlib.metadata as m,json,sys; import mujoco,numpy,glfw; '
+             'assert mujoco.__version__ == "4.0.1", "MuJoCo viewer needs 4.0.1"; '
+             'print(json.dumps({"python":sys.executable,"base_prefix":sys.base_prefix,'
+             '"versions":{n:m.version(n) for n in ("mujoco","mujoco-core","numpy","glfw")},'
+             '"module_files":{n:x.__file__ for n,x in (("mujoco",mujoco),("numpy",numpy),("glfw",glfw))}}))')
+    options = {'creationflags':subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
+    result = subprocess.run([str(python), '-I', '-c', check], env=environment,
+                            capture_output=True, text=True, timeout=30, **options)
+    if result.returncode:
+        raise RuntimeError('MuJoCo viewer dependency check failed: '+result.stderr[-3000:])
+    dependencies = json.loads(result.stdout)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as reserve:
+        reserve.bind(('127.0.0.1', 0))
+        port = reserve.getsockname()[1]
+    # The viewer confirms its bind before UE is launched. A port race fails the
+    # startup explicitly; no control listener or retrying background process exists.
+    token = uuid.uuid4().hex
+    directory = output/'mujoco-viewer'
+    directory.mkdir(exist_ok=False)
+    expected = {'manifest_sha256':digest(manifest), 'model_sha256':model_spec['model_sha256'],
+                'physics_identity_sha256':model_spec['physics_identity_sha256'], 'port':port,
+                'session_token_sha256':hashlib.sha256(token.encode('ascii')).hexdigest()}
+    status_file = directory/'status.json'
+    command = [str(python), str(source), '--manifest', str(manifest), '--port', str(port),
+               '--session-token', token, '--status-file', str(status_file), '--parent-pid', str(os.getpid())]
+    provenance = dict(enabled=True, transport='read_only_loopback_udp', host='127.0.0.1',
+        status_file=str(status_file), python=str(python), python_sha256=digest(python),
+        source_sha256={str(path.relative_to(ROOT)).replace('\\','/'):digest(path) for path in (source, protocol)},
+        environment=environment_policy, dependencies=dependencies, stream_hz=30, max_datagram_bytes=60*1024,
+        startup_policy='bind_before_ue_then_first_native_frame_and_navigation_ready',
+        close_policy='normal_viewer_or_rviz_close_stops_owned_session',
+        scope='read-only native state visualization; UE owns all dynamics and control', **expected)
+    return dict(command=command, environment=environment, expected=expected, token=token,
+                status_file=status_file, provenance=provenance)
+
+
+def bind_mujoco_viewer_process(process, actual_pid: int, command: list[str]) -> dict:
+    """Pin the actual Windows venv child to its owned redirector and exact argv."""
+    if type(actual_pid) is not int or actual_pid <= 0 or process.poll() is not None:
+        raise ValueError('MuJoCo viewer cannot bind to an invalid PID or exited launcher')
+    if actual_pid == process.pid:
+        return dict(pid=actual_pid, launcher_pid=process.pid, method='owned_popen_process', _handles=[])
+    if os.name != 'nt':
+        raise ValueError('MuJoCo viewer PID does not match its owned process')
+    import base64
+    import ctypes
+    from ctypes import wintypes
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel.OpenProcess.restype = wintypes.HANDLE
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    kernel.GetProcessTimes.argtypes = [wintypes.HANDLE, *([ctypes.POINTER(wintypes.FILETIME)]*4)]
+    kernel.GetProcessTimes.restype = wintypes.BOOL
+    kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    kernel.WaitForSingleObject.restype = wintypes.DWORD
+    kernel.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    kernel.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel.QueryFullProcessImageNameW.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.LPWSTR, ctypes.POINTER(wintypes.DWORD)]
+    kernel.QueryFullProcessImageNameW.restype = wintypes.BOOL
+    handles = []
+    def creation(handle):
+        fields = [wintypes.FILETIME() for _ in range(4)]
+        if not kernel.GetProcessTimes(handle, *[ctypes.byref(value) for value in fields]):
+            raise ctypes.WinError(ctypes.get_last_error())
+        return (fields[0].dwHighDateTime << 32) | fields[0].dwLowDateTime
+    def opened(pid):
+        handle = kernel.OpenProcess(0x00100000 | 0x1000, False, pid)
+        if not handle:
+            raise ctypes.WinError(ctypes.get_last_error())
+        handles.append(handle)
+        if kernel.WaitForSingleObject(handle, 0) != 258:
+            raise ValueError('MuJoCo viewer process chain contains an exited process')
+        return handle
+    try:
+        # Keep the child's process object alive while resolving its ancestry.
+        # Popen also retains the original redirector handle throughout this check.
+        actual_handle = opened(actual_pid)
+        original_creation = creation(int(process._handle))
+        script = ("[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false);"
+                  f"$candidateId={actual_pid};$ownerId={int(process.pid)};$rows=@();$found=$false;"
+                  "for($depth=0;$depth -lt 16;$depth++){"
+                  "$item=Get-CimInstance Win32_Process -Filter ('ProcessId='+$candidateId);"
+                  "if($null -eq $item){throw 'Process disappeared during viewer identity check'};"
+                  "$rows+=@([pscustomobject]@{pid=[int]$item.ProcessId;parent_pid=[int]$item.ParentProcessId;command_line=$item.CommandLine});"
+                  "if($candidateId -eq $ownerId){$found=$true;break};$candidateId=[int]$item.ParentProcessId};"
+                  "if(-not $found){throw 'Viewer is not a descendant of its owned launcher'};"
+                  "ConvertTo-Json -InputObject @($rows) -Depth 4 -Compress")
+        powershell = Path(os.environ.get('SystemRoot', 'C:/Windows'))/'System32/WindowsPowerShell/v1.0/powershell.exe'
+        result = subprocess.run([str(powershell), '-NoProfile', '-NonInteractive', '-EncodedCommand',
+                                 base64.b64encode(script.encode('utf-16le')).decode('ascii')],
+                                capture_output=True, text=True, encoding='utf-8', timeout=10,
+                                creationflags=subprocess.CREATE_NO_WINDOW)
+        if result.returncode:
+            raise ValueError('MuJoCo viewer ancestry check failed: '+result.stderr[-1500:])
+        chain = json.loads(result.stdout.lstrip('\ufeff'))
+        if not isinstance(chain, list) or not 2 <= len(chain) <= 16 or chain[0]['pid'] != actual_pid or chain[-1]['pid'] != process.pid:
+            raise ValueError('Invalid MuJoCo viewer process ancestry')
+        records = []
+        for index, item in enumerate(chain):
+            handle = actual_handle if index == 0 else opened(item['pid'])
+            born = creation(handle)
+            if index and (records[-1]['parent_pid'] != item['pid'] or born > records[-1]['creation_filetime']):
+                raise ValueError('MuJoCo viewer process ancestry changed or a PID was reused')
+            records.append(dict(pid=item['pid'], parent_pid=item['parent_pid'], creation_filetime=born))
+        if records[-1]['creation_filetime'] != original_creation or process.poll() is not None:
+            raise ValueError('MuJoCo viewer launcher identity changed during binding')
+        capacity = wintypes.DWORD(32768); image_buffer = ctypes.create_unicode_buffer(capacity.value)
+        if not kernel.QueryFullProcessImageNameW(actual_handle, 0, image_buffer, ctypes.byref(capacity)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        cfg = Path(command[0]).parent.parent/'pyvenv.cfg'
+        values = dict((key.strip().lower(), value.strip()) for line in cfg.read_text().splitlines()
+                      for key, separator, value in [line.partition('=')] if separator)
+        normalize = lambda value:os.path.normcase(str(Path(value).resolve()))
+        allowed_images = {normalize(command[0]), normalize(values.get('executable', str(Path(values['home'])/'python.exe')))}
+        if normalize(image_buffer.value) not in allowed_images:
+            raise ValueError('MuJoCo viewer child uses an unexpected Python executable')
+        shell = ctypes.WinDLL('shell32', use_last_error=True)
+        shell.CommandLineToArgvW.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+        shell.CommandLineToArgvW.restype = ctypes.POINTER(wintypes.LPWSTR)
+        kernel.LocalFree.argtypes = [wintypes.HLOCAL]; kernel.LocalFree.restype = wintypes.HLOCAL
+        count = ctypes.c_int()
+        argv_pointer = shell.CommandLineToArgvW(chain[0]['command_line'], ctypes.byref(count))
+        if not argv_pointer:
+            raise ctypes.WinError(ctypes.get_last_error())
+        try:
+            actual_argv = [argv_pointer[index] for index in range(count.value)]
+        finally:
+            kernel.LocalFree(ctypes.cast(argv_pointer, wintypes.HLOCAL))
+        if len(actual_argv) != len(command) or normalize(actual_argv[0]) not in allowed_images:
+            raise ValueError('MuJoCo viewer process command does not match the owned launch')
+        for index in range(1, len(command)):
+            path_argument = index == 1 or command[index-1] in ('--manifest', '--status-file')
+            if (normalize(actual_argv[index]) != normalize(command[index]) if path_argument else actual_argv[index] != command[index]):
+                raise ValueError('MuJoCo viewer process argument does not match the owned launch at index '+str(index))
+        if process.poll() is not None or any(kernel.WaitForSingleObject(handle, 0) != 258 for handle in handles):
+            raise ValueError('MuJoCo viewer process exited during identity verification')
+        return dict(pid=actual_pid, launcher_pid=process.pid, method='windows_owned_venv_descendant',
+                    executable=image_buffer.value, command_sha256=hashlib.sha256(chain[0]['command_line'].encode('utf-8')).hexdigest(),
+                    ancestry=records, _handles=handles, _kernel=kernel, _actual_handle=actual_handle)
+    except Exception:
+        for handle in handles:
+            kernel.CloseHandle(handle)
+        raise
+
+
+def close_mujoco_viewer_binding(binding):
+    if binding and binding.get('_handles'):
+        for handle in binding['_handles']:
+            binding['_kernel'].CloseHandle(handle)
+        binding['_handles'].clear()
+
+
+def mujoco_viewer_exit_code(binding, process):
+    if not binding or binding['pid'] == process.pid:
+        return process.poll()
+    import ctypes
+    from ctypes import wintypes
+    kernel, handle = binding['_kernel'], binding['_actual_handle']
+    waited = kernel.WaitForSingleObject(handle, 0)
+    if waited == 258:
+        return None
+    if waited != 0:
+        raise ctypes.WinError(ctypes.get_last_error())
+    code = wintypes.DWORD()
+    if not kernel.GetExitCodeProcess(handle, ctypes.byref(code)):
+        raise ctypes.WinError(ctypes.get_last_error())
+    return code.value
+
+
+def read_mujoco_viewer_status(path: Path, expected: dict, pid, now: float) -> dict | None:
+    try:
+        if path.stat().st_size > 65536:
+            raise ValueError('MuJoCo viewer status exceeds 64 KiB')
+        status = json.loads(path.read_text(encoding='utf-8'))
+    except (FileNotFoundError, PermissionError):
+        return None
+    if not isinstance(status, dict) or status.get('schema') != 'rmsim_mujoco_viewer_status_v1':
+        raise ValueError('Invalid MuJoCo viewer status schema')
+    phase = status.get('phase')
+    if phase not in ('loading', 'waiting', 'ready', 'stale', 'closed', 'error'):
+        raise ValueError('Invalid MuJoCo viewer phase')
+    for key, value in expected.items():
+        if status.get(key) is not None and status[key] != value:
+            raise ValueError('MuJoCo viewer identity mismatch: '+key)
+        if (phase in ('waiting', 'ready', 'stale') or key in ('port', 'session_token_sha256')) and status.get(key) != value:
+            raise ValueError('MuJoCo viewer identity is incomplete: '+key)
+    expected_pid = pid(status.get('pid')) if callable(pid) else pid
+    if status.get('pid') != expected_pid:
+        raise ValueError('MuJoCo viewer PID does not match its owned process')
+    stamp = status.get('status_written_monotonic_s')
+    if isinstance(stamp, bool) or not isinstance(stamp, (int, float)) or not math.isfinite(stamp) or stamp < 0 or stamp > now+1:
+        raise ValueError('Invalid MuJoCo viewer status timestamp')
+    status['status_age_seconds'] = max(0., now-stamp)
+    status['status_fresh'] = status['status_age_seconds'] <= 2.
+    if phase in ('waiting', 'ready', 'stale') and status.get('bound') is not True:
+        raise ValueError('MuJoCo viewer has not bound its read-only input')
+    if phase == 'ready':
+        frames = status.get('frames')
+        if isinstance(frames, bool) or not isinstance(frames, int) or frames < 1 or status.get('body_pose_matches') is not True:
+            raise ValueError('MuJoCo viewer ready without a verified displayed native frame')
+    return status
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -156,9 +403,10 @@ def main() -> int:
              'cpu_policy_requested':args.cpu_policy,'process_policy':None,
              'navigation_source':str(navigation_source),'gimbal_follow_profile':str(follow_source),'lidar_profile':str(lidar_source),
              'navigation_drive_profile':navigation_drive_profile,
+             'mujoco_viewer':{'enabled':mujoco_viewer_enabled(args)},
              'navigation':None, 'bridge':None, 'estimated_pose':None, 'clock_ns':0,
              'map_received':False, 'path_points':0, 'actions':{}, 'pids':{},
-             'scope':'Point-LIO local mapping + AMCL map localization + original Nav2; monitor consumes no evaluation truth'}
+             'scope':'Point-LIO local mapping + AMCL map localization + original Nav2 consume no evaluation truth; optional MuJoCo viewer uses native state only for display and identity validation'}
     history = []
     status_sequence = 0
     def nav_status(message):
@@ -194,13 +442,19 @@ def main() -> int:
         node.create_subscription(GoalStatusArray, '/'+name+'/_action/status', lambda m,n=name:action_status(n,m), latched)
     children: dict[str, subprocess.Popen] = {}
     logs = []
+    viewer_plan = None
+    viewer_status = None
+    viewer_binding = None
+    next_viewer_poll = 0.
     def save():
         nonlocal status_sequence
         status_sequence += 1
         state['snapshot_sequence'] = status_sequence
         state['snapshot_written_monotonic_s'] = time.monotonic()
         state['status_period_seconds'] = .5
-        state['pids'] = {name:p.pid for name,p in children.items() if p.poll() is None}
+        state['launcher_pids'] = {name:p.pid for name,p in children.items() if p.poll() is None}
+        state['pids'] = {name:(viewer_binding['pid'] if name == 'mujoco_viewer' else p.pid)
+                         for name,p in children.items() if p.poll() is None and (name != 'mujoco_viewer' or viewer_binding)}
         state['updated_utc'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         if not atomic_json(output/'status.json', state):
             state['snapshot_write_deferrals'] = state.get('snapshot_write_deferrals', 0)+1
@@ -226,6 +480,47 @@ def main() -> int:
             state['process_policy'].update(path=str(policy_path), sha256=digest(policy_path))
             print('Owned UE CPU policy: '+json.dumps(state['process_policy']), flush=True)
         save(); return process
+
+    def poll_viewer():
+        nonlocal viewer_status, next_viewer_poll, viewer_binding
+        if viewer_plan is None:
+            return None
+        process = children['mujoco_viewer']
+        now = time.monotonic()
+        def resolve_pid(actual_pid):
+            nonlocal viewer_binding
+            if viewer_binding is None:
+                viewer_binding = bind_mujoco_viewer_process(process, actual_pid, viewer_plan['command'])
+                state['mujoco_viewer_process'] = {key:value for key,value in viewer_binding.items() if not key.startswith('_')}
+            elif viewer_binding['pid'] != actual_pid:
+                raise ValueError('MuJoCo viewer changed its bound process identity')
+            return viewer_binding['pid']
+        if now >= next_viewer_poll:
+            next_viewer_poll = now+.1
+            received = read_mujoco_viewer_status(viewer_plan['status_file'], viewer_plan['expected'], resolve_pid, now)
+            if received is not None:
+                viewer_status = received
+        if viewer_status is not None:
+            viewer_status['status_age_seconds'] = max(0., now-viewer_status['status_written_monotonic_s'])
+            viewer_status['status_fresh'] = viewer_status['status_age_seconds'] <= 2.
+            state['mujoco_viewer'] = dict(viewer_status, enabled=True)
+            if viewer_status['phase'] == 'error':
+                raise RuntimeError('MuJoCo viewer failed: '+str(viewer_status.get('error') or viewer_status.get('exit_reason') or 'see mujoco_viewer.log'))
+        exit_code = mujoco_viewer_exit_code(viewer_binding, process)
+        launcher_exit = process.poll()
+        if exit_code is None and launcher_exit is not None:
+            raise RuntimeError('MuJoCo viewer launcher exited while its bound window process was still running')
+        if exit_code is not None:
+            state['mujoco_viewer_exit_code'] = exit_code
+            if exit_code != 0:
+                raise RuntimeError('MuJoCo viewer exited with code '+str(exit_code)+'; see mujoco_viewer.log')
+            if viewer_status is None or viewer_status['phase'] not in ('closed', 'ready', 'stale'):
+                raise RuntimeError('MuJoCo viewer exited before displaying a native frame; see mujoco_viewer.log')
+            raise StopRequested()
+        if viewer_status is not None and viewer_status['phase'] == 'closed':
+            raise StopRequested()
+        return viewer_status
+
     try:
         editor = (args.engine_root/'Engine/Binaries/Win64/UnrealEditor.exe').resolve()
         project = ROOT/'unreal/RMSim/RMSim.uproject'
@@ -233,8 +528,9 @@ def main() -> int:
         ros2 = shutil.which('ros2')
         if not editor.is_file() or not ros2 or (not args.no_rviz and not rviz.is_file()):
             raise RuntimeError('Missing UE/ROS/RViz prerequisites; run tools/environment/Prepare-NavigationConsole.cmd')
+        if mujoco_viewer_enabled(args):
+            viewer_plan = prepare_mujoco_viewer(args.mujoco_model, model_spec, output, original)
         # A dedicated port is checked before taking any UI ownership.
-        import socket
         with socket.socket() as check:
             check.bind(('127.0.0.1', args.port))
         provenance = dict(scene=scene, transport=transport, git_head=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
@@ -258,6 +554,8 @@ def main() -> int:
                           verify_lidar_queries=args.verify_lidar_queries,lidar_serial_query=args.lidar_serial_query,
                           profile_frames=args.profile_frames)
         provenance['physics_backend'] = args.physics_backend
+        provenance['mujoco_viewer'] = (viewer_plan['provenance'] if viewer_plan else
+                                      dict(enabled=False, reason='headless_or_explicit_non_mujoco_mode'))
         if args.physics_backend == 'mujoco':
             provenance['mujoco_model'] = str(args.mujoco_model)
             provenance['mujoco_model_sha256'] = digest(args.mujoco_model)
@@ -316,6 +614,9 @@ def main() -> int:
             '-MapFile='+scene['scene_file'], '-abslog='+str(output/'runtime.log')]]
         if args.physics_backend == 'mujoco':
             ue_command.extend(['-PhysicsBackend=mujoco','-MujocoModel='+str(args.mujoco_model)])
+        if viewer_plan:
+            ue_command.extend(['-MujocoViewerPort='+str(viewer_plan['expected']['port']),
+                               '-MujocoViewerToken='+viewer_plan['token']])
         worker_budget = prepare_ue_worker_budget(ue_command, paced=args.pace_real_time, mode=args.cpu_policy)
         ue_command = worker_budget['command']
         provenance['worker_budget'] = worker_budget
@@ -330,6 +631,23 @@ def main() -> int:
         if not worker_budget['launch_allowed']:
             raise ValueError('UE worker budget conflicts with the explicit launch arguments: '+worker_budget.get('error',''))
         print('Owned UE worker budget: '+json.dumps(state['worker_budget']), flush=True)
+        deadline = time.monotonic()+180
+        last_save = 0.
+        if viewer_plan:
+            launch('mujoco_viewer', viewer_plan['command'], viewer_plan['environment'])
+            print('Opening read-only MuJoCo viewer. Waiting for its model and loopback input...', flush=True)
+            while True:
+                rclpy.spin_once(node, timeout_sec=.05)
+                if (output/'stop.request').exists():
+                    raise StopRequested()
+                visible = poll_viewer()
+                if visible and visible['phase'] in ('waiting', 'ready') and visible['status_fresh']:
+                    break
+                if time.monotonic() > deadline:
+                    raise TimeoutError('MuJoCo viewer did not bind within the 180s startup budget')
+                if time.monotonic()-last_save > .5:
+                    state['phase'] = 'opening_mujoco_viewer'
+                    save(); last_save = time.monotonic()
         launch('ue', ue_command, original)
         launch('pointlio', [ros2,'run','rmsim_bridge','point_lio','--ros-args','-p','imu_id:=mid360_imu','-p','sentry_source:='+str(navigation_source),'-p','output_directory:='+str(output/'pointlio')], local_environment)
         launch('navigation', [ros2,'run','rmsim_bridge','navigation','--ros-args','-p',
@@ -343,22 +661,26 @@ def main() -> int:
             '-p','output_directory:='+str(output/'navigation')], local_environment)
         launch('bridge', [ros2,'run','rmsim_bridge','bridge','--ros-args','-p','port:='+str(args.port),'-p','aim_control:=true',
             '-p','navigation_follow:=true','-p','navigation_follow_profile:='+str(follow_source)], local_environment)
-        print('Starting native navigation. Waiting for measured localization and Nav2 readiness...', flush=True)
-        deadline = time.monotonic()+180; last_save = 0.
+        if not viewer_plan:
+            deadline = time.monotonic()+180
+        print('Starting native navigation. Waiting for measured localization, Nav2 and enabled viewer readiness...', flush=True)
         while True:
             rclpy.spin_once(node, timeout_sec=.05)
             if (output/'stop.request').exists(): raise StopRequested()
+            visible = poll_viewer()
             exited={name:p.poll() for name,p in children.items() if p.poll() is not None}
             if exited:
                 state['component_exits']=exited
                 raise RuntimeError('Owned component exited during startup: '+str(exited)+'; see component logs')
             nav = state['navigation'] or {}
-            if nav.get('phase')=='running' and state['map_received'] and state['estimated_pose']:
+            viewer_ready = not viewer_plan or (visible and visible['phase']=='ready' and visible['status_fresh'])
+            if nav.get('phase')=='running' and state['map_received'] and state['estimated_pose'] and viewer_ready:
                 break
             if nav.get('phase')=='map_mismatch': raise RuntimeError('Scene/navigation map identity mismatch')
-            if time.monotonic()>deadline: raise TimeoutError('Navigation did not become ready within 180s')
+            if time.monotonic()>deadline: raise TimeoutError('Navigation and enabled viewer did not become ready within the 180s startup budget')
             if time.monotonic()-last_save>.5:
-                state['phase']=nav.get('phase','starting'); save(); last_save=time.monotonic()
+                state['phase']='waiting_mujoco_viewer' if nav.get('phase')=='running' and not viewer_ready else nav.get('phase','starting')
+                save(); last_save=time.monotonic()
         state['phase']='ready'
         if not args.no_rviz:
             gui_environment = dict(local_environment)
@@ -367,12 +689,14 @@ def main() -> int:
             gui_environment['QT_QPA_PLATFORM_PLUGIN_PATH'] = str(prefix/'plugins/platforms')
             launch('rviz', [rviz,'-d',config,'--ros-args','-p','use_sim_time:=true'], gui_environment)
         save()
-        print('READY: RViz Nav2 Goal selects a destination. Waypoint mode queues destinations. Cancel stops navigation.', flush=True)
-        print('Close RViz or press Ctrl+C here to stop this entire owned session.', flush=True)
+        print('READY: '+('UE5 + synchronized MuJoCo viewer + RViz. ' if viewer_plan else '')+
+              'RViz Nav2 Goal selects a destination. Waypoint mode queues destinations. Cancel stops navigation.', flush=True)
+        print('Close RViz or the MuJoCo viewer, or press Ctrl+C here, to stop this entire owned session.', flush=True)
         ready_at=time.monotonic()
         while not args.run_seconds or time.monotonic()-ready_at<args.run_seconds:
             rclpy.spin_once(node, timeout_sec=.05)
             if (output/'stop.request').exists(): raise StopRequested()
+            visible = poll_viewer()
             if 'rviz' in children and children['rviz'].poll() is not None:
                 state['rviz_exit_code']=children['rviz'].returncode
                 if children['rviz'].returncode != 0: raise RuntimeError('RViz exited with code '+str(children['rviz'].returncode)+'; see rviz.log')
@@ -380,7 +704,8 @@ def main() -> int:
             if any(p.poll() is not None for name,p in children.items() if name!='rviz'):
                 raise RuntimeError('An owned simulator or algorithm process exited')
             if time.monotonic()-last_save>.5:
-                state['phase']='ready' if (state['navigation'] or {}).get('phase')=='running' else 'recovering'
+                viewer_ready = not viewer_plan or (visible and visible['phase']=='ready' and visible['status_fresh'])
+                state['phase']='ready' if (state['navigation'] or {}).get('phase')=='running' and viewer_ready else 'recovering'
                 save(); last_save=time.monotonic()
         state['phase']='stopped'
     except (KeyboardInterrupt, StopRequested):
@@ -393,6 +718,7 @@ def main() -> int:
         for name, process in reversed(list(children.items())):
             try: terminate_owned(process)
             except Exception as error: state.setdefault('cleanup_errors', []).append(name+': '+str(error))
+        close_mujoco_viewer_binding(viewer_binding)
         save()
         for log in logs: log.close()
         node.destroy_node(); rclpy.shutdown()
