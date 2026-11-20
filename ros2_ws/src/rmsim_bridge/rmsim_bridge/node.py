@@ -206,7 +206,7 @@ class BridgeNode(Node):
             diagnostic.update(session=self.state['session'], epoch=self.state['epoch'], tick=self.state['tick'],
                               sim_time_ns=self.state['sim_time_ns'], command=self.state['command'])
             diagnostic.update(simulation_rate=self.state.get('simulation_rate'),fixed_step_s=self.state.get('fixed_step_s'))
-            for key in ('clock_source', 'rendering', 'drive'):
+            for key in ('clock_source', 'physics_backend', 'dynamics_step_s', 'rendering', 'drive'):
                 if key in self.state:
                     diagnostic[key] = self.state[key]
             if 'map' in self.state:diagnostic['map']=self.state['map']

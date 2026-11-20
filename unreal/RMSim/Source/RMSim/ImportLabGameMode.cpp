@@ -147,8 +147,15 @@ void AImportLabGameMode::BeginPlay()
     bContactProbeActive = bTractionProbeActive||bGyroProbeActive||FParse::Param(FCommandLine::Get(), TEXT("ContactProbe"));
     bRosAimControl=FParse::Param(FCommandLine::Get(),TEXT("RosAimControl"));
     bRosControl=FParse::Param(FCommandLine::Get(),TEXT("RosControl"))||FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
-    double FixedStep=0;
+    FString PhysicsBackend=TEXT("chaos");
+    FParse::Value(FCommandLine::Get(),TEXT("PhysicsBackend="),PhysicsBackend);
+    if(PhysicsBackend!=TEXT("chaos")&&PhysicsBackend!=TEXT("mujoco"))
+    {Abort(TEXT("PhysicsBackend must be chaos or mujoco"));return;}
+    const bool MujocoRequested=PhysicsBackend==TEXT("mujoco");
+    double FixedStep=MujocoRequested?(FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"))?.001:.005):0;
     FParse::Value(FCommandLine::Get(),TEXT("SimStepSeconds="),FixedStep);
+    if(MujocoRequested&&(FixedStep<=0||FixedStep>.005))
+    {Abort(TEXT("MuJoCo requires a fixed engine step of 0.0005..0.005 seconds"));return;}
     if(!FMath::IsFinite(FixedStep)||FixedStep<0||(FixedStep>0&&(FixedStep<.0005||FixedStep>.02)))
     {Abort(TEXT("SimStepSeconds must be0 or0.0005..0.02"));return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl")))
@@ -176,7 +183,7 @@ void AImportLabGameMode::BeginPlay()
     {Abort(TEXT("unknown development IMU fixture"));return;}
 #endif
     bRosBridgeEnabled=bRosControl||bRosAimControl||FParse::Param(FCommandLine::Get(),TEXT("RosBridge"))||FParse::Param(FCommandLine::Get(),TEXT("RosImu"))||FParse::Param(FCommandLine::Get(),TEXT("RosLidar"));
-    bContactMode = bRosBridgeEnabled||bContactProbeActive || FParse::Param(FCommandLine::Get(), TEXT("ContactPhysics"));
+    bContactMode = MujocoRequested||bRosBridgeEnabled||bContactProbeActive || FParse::Param(FCommandLine::Get(), TEXT("ContactPhysics"));
     bCombatProbeActive = FParse::Param(FCommandLine::Get(), TEXT("CombatProbe"));
     bTrainingMode = bCombatProbeActive || FParse::Param(FCommandLine::Get(), TEXT("TrainingMode"));
     bControlProbeActive = bContactProbeActive || bTerrainProbeActive || bCombatProbeActive || FParse::Param(FCommandLine::Get(), TEXT("ControlProbe"));
@@ -189,7 +196,8 @@ void AImportLabGameMode::BeginPlay()
         ControlReport = MakeShared<FJsonObject>();
         ControlReport->SetStringField(TEXT("run_id"), FGuid::NewGuid().ToString());
         ControlReport->SetStringField(TEXT("started_utc"), FDateTime::UtcNow().ToIso8601());
-        ControlReport->SetStringField(TEXT("scope"),bContactProbeActive?TEXT("native_Chaos_world_ticks_and_wheel_motor_commands"):
+        ControlReport->SetStringField(TEXT("requested_physics_backend"),PhysicsBackend);
+        ControlReport->SetStringField(TEXT("scope"),bContactProbeActive?(MujocoRequested?TEXT("native_MuJoCo_world_ticks_and_wheel_motor_commands"):TEXT("native_Chaos_world_ticks_and_wheel_motor_commands")):
             bTerrainProbeActive ? TEXT("mesh_terrain_shared_controls_not_vehicle_dynamics") : TEXT("shared_manual_input_pipeline_not_OS_input"));
         ControlReport->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
         ControlReport->SetBoolField(TEXT("os_keyboard_test"), false);

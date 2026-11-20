@@ -44,6 +44,8 @@ def main() -> int:
     parser.add_argument('--port', type=int, default=9451)
     parser.add_argument('--domain', type=int, default=71)
     parser.add_argument('--control-profile', choices=['simulation','reality'], default='simulation', help='Use original sentry_ws Nav2 controller, smoother, planner and costmap configuration')
+    parser.add_argument('--physics-backend', choices=['chaos','mujoco'], default='chaos')
+    parser.add_argument('--mujoco-model', type=Path, help='Prepared MuJoCo scene manifest; required for the MuJoCo backend')
     parser.add_argument('--navigation-source', type=Path, help='Explicit vehicle-supplied sentry_ws Nav2 YAML; omit to use workspace preset')
     parser.add_argument('--localization-map-yaml', type=Path, help='Optional validated AMCL map; navigation and costmap keep the scene map')
     parser.add_argument('--initial-pose-offset', nargs=3, type=float, default=None, metavar=('DX_M','DY_M','DYAW_RAD'), help='Explicit localization-recovery test offset from the scene default spawn; XY offsets use map axes')
@@ -63,6 +65,15 @@ def main() -> int:
     parser.add_argument('--pace-real-time',action=argparse.BooleanOptionalAction,default=True,help='Pace actual fixed physics ticks against wall time; overload remains observable')
     parser.add_argument('--cpu-policy', choices=['performance','system'], default='performance', help='Owned paced UE process: dynamic performance CPU Sets on Windows, or preserve system policy')
     args = parser.parse_args()
+    if args.physics_backend == 'mujoco':
+        if args.mujoco_model is None or not args.mujoco_model.is_file():
+            parser.error('--physics-backend mujoco requires --mujoco-model')
+        args.mujoco_model = args.mujoco_model.resolve()
+        model_spec = json.loads(args.mujoco_model.read_text(encoding='utf-8-sig'))
+        if model_spec.get('diagnostic_plane_only') or model_spec.get('scene',{}).get('diagnostic_plane_only'):
+            parser.error('Navigation requires a complete scene model, not a diagnostic plane')
+        if args.sim_step > .005:
+            parser.error('MuJoCo sensor integration requires --sim-step at most 0.005')
     if args.offscreen and not args.no_rviz: parser.error('--offscreen requires --no-rviz')
     if args.no_rhi and (not args.offscreen or not args.no_rviz): parser.error('--no-rhi requires headless diagnostic fixture')
     if args.profile_sensor_timing and not args.offscreen: parser.error('--profile-sensor-timing needs an offscreen fixture')
@@ -79,6 +90,25 @@ def main() -> int:
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     scene = prepare_scene(args.scene, output/'scene', args.localization_map_yaml, args.initial_pose_offset)
+    if args.physics_backend == 'mujoco':
+        if args.scene != 'rmuc2027':
+            raise ValueError('The prepared MuJoCo scene is RMUC2027; choose its matching scene')
+        # Keep the physical shell beside the exact scene snapshot sent to UE.
+        # Its material/lighting fields stay intact and the verifier seals physics.
+        (Path(scene['scene_file']).parent/'arena-shell.json').write_bytes(
+            (ROOT/'assets/maps/rmuc2027/arena-shell.json').read_bytes())
+        verification = subprocess.run([sys.executable, str(ROOT/'tools/mujoco/verify_model.py'),
+            '--manifest', str(args.mujoco_model), '--map-file', str(scene['scene_file']),
+            '--preflight-only', '--output', str(output/'mujoco-preflight')], capture_output=True, text=True)
+        if verification.returncode:
+            raise RuntimeError('MuJoCo source/model preflight failed; see '+str(output/'mujoco-preflight/report.json'))
+        mujoco_sdk_root = ROOT/'third_party/mujoco-sdk/4.0.1-rmsim-static-world-flex.3/windows-x86_64'
+        mujoco_sdk = json.loads((mujoco_sdk_root/'rmsim-build-manifest.json').read_text(encoding='utf-8-sig'))
+        mujoco_runtime = ROOT/'unreal/RMSim/Binaries/Win64/mujoco.dll'
+        mujoco_runtime_sha256 = digest(mujoco_runtime)
+        if (mujoco_sdk.get('runtime_version_string') != '4.0.1+rmsim.static-world-flex.3'
+                or mujoco_runtime_sha256 != digest(mujoco_sdk_root/'bin/mujoco.dll')):
+            raise ValueError('Staged MuJoCo runtime does not match the selected static-flex SDK')
     localization_map = None
     effective_localization_map_yaml = scene['localization_map_yaml']
     if effective_localization_map_yaml:
@@ -131,7 +161,7 @@ def main() -> int:
         state['bridge_received_monotonic_s'] = time.monotonic()
         state['bridge'] = {k:value.get(k) for k in (
             'connected','state_fresh','session','epoch','sim_time_ns','command',
-            'simulation_rate','clock_source','fixed_step_s','aim','aim_adapter',
+            'simulation_rate','clock_source','physics_backend','dynamics_step_s','fixed_step_s','aim','aim_adapter',
             'imu','lidar','rendering','camera_config','published_images')}
     def pose(message):
         p, q = message.pose.pose.position, message.pose.pose.orientation
@@ -218,6 +248,16 @@ def main() -> int:
                           sensor_timing_diagnostic=args.profile_sensor_timing,status_period_seconds=.5,
                           verify_lidar_queries=args.verify_lidar_queries,lidar_serial_query=args.lidar_serial_query,
                           profile_frames=args.profile_frames)
+        provenance['physics_backend'] = args.physics_backend
+        if args.physics_backend == 'mujoco':
+            provenance['mujoco_model'] = str(args.mujoco_model)
+            provenance['mujoco_model_sha256'] = digest(args.mujoco_model)
+            provenance['mujoco_sdk'] = mujoco_sdk
+            provenance['mujoco_sdk_root'] = str(mujoco_sdk_root)
+            provenance['mujoco_runtime_file'] = str(mujoco_runtime)
+            provenance['mujoco_runtime_sha256'] = mujoco_runtime_sha256
+            provenance['ue_query_scene_max_substep_seconds'] = provenance['physics_max_substep_seconds']
+            provenance['physics_max_substep_seconds'] = json.loads(args.mujoco_model.read_text(encoding='utf-8-sig'))['timestep_s']
         provenance['localization_map'] = localization_map
         provenance['cpu_policy_requested'] = args.cpu_policy
         provenance['cpu_policy_platform'] = os.name
@@ -260,6 +300,8 @@ def main() -> int:
             '-ImuProfile='+str(ROOT/'assets/vehicles/aim_sentry/sensors/mid360-imu.json'),'-SimStepSeconds='+str(args.sim_step),'-RosCameraWidth=320','-RosCameraHeight=240','-RosCameraHz='+str(args.camera_hz),
             '-RosPort='+str(args.port), '-MeshRigFile='+str(ROOT/'assets/vehicles/aim_sentry/ue_mesh_rig.json'),
             '-MapFile='+scene['scene_file'], '-abslog='+str(output/'runtime.log')]]
+        if args.physics_backend == 'mujoco':
+            ue_command.extend(['-PhysicsBackend=mujoco','-MujocoModel='+str(args.mujoco_model)])
         worker_budget = prepare_ue_worker_budget(ue_command, paced=args.pace_real_time, mode=args.cpu_policy)
         ue_command = worker_budget['command']
         provenance['worker_budget'] = worker_budget

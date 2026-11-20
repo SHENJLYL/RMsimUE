@@ -1,4 +1,5 @@
 #include "VehicleRig.h"
+#include "MujocoVehicleDynamics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Dom/JsonObject.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
@@ -60,6 +61,7 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
 void AVehicleRig::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    if(MujocoDynamics){TickMujocoPhysics(DeltaSeconds);return;}
     if(bContactPhysics&&bExternalDriveLease&&FPlatformTime::Seconds()>ExternalDriveDeadline)
         SetContactDrive(0,0,true);
     if(bContactPhysics)
@@ -80,16 +82,25 @@ void AVehicleRig::RenewExternalDriveLease(double Seconds)
 
 double AVehicleRig::GetMeasuredYawRate() const
 {
+    if(MujocoDynamics){FMujocoBodyState S;return MujocoDynamics->GetBody(TEXT("body"),S)?-FVector::DotProduct(S.AngularVelocityRadS,GetActorUpVector()):0.;}
     return ContactChassis?-FVector::DotProduct(ContactChassis->GetPhysicsAngularVelocityInRadians(),GetActorUpVector()):0.;
 }
 
 FVector AVehicleRig::GetCommandOriginVelocity() const
 {
+    if(MujocoDynamics)return GetVelocity();
     return ContactChassis?ContactChassis->GetPhysicsLinearVelocityAtPoint(GetActorLocation()):GetVelocity();
 }
 
 bool AVehicleRig::SampleChassisImu(const FTransform& Mount,FTransform& SensorWorld,FVector& PointVelocityCm,FVector& AngularVelocityRad) const
 {
+    if(MujocoDynamics)
+    {
+        FMujocoBodyState S;if(!MujocoDynamics->GetBody(TEXT("body"),S))return false;
+        SensorWorld=Mount*S.World;AngularVelocityRad=S.AngularVelocityRadS;
+        PointVelocityCm=S.VelocityCmS+FVector::CrossProduct(S.AngularVelocityRadS,SensorWorld.GetLocation()-S.World.GetLocation());
+        return !SensorWorld.ContainsNaN()&&!PointVelocityCm.ContainsNaN()&&!AngularVelocityRad.ContainsNaN();
+    }
     if(!ContactChassis||!ContactChassis->IsSimulatingPhysics())return false;
     SensorWorld=Mount*GetActorTransform();
     PointVelocityCm=ContactChassis->GetPhysicsLinearVelocityAtPoint(SensorWorld.GetLocation());
@@ -228,11 +239,12 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
     for(auto& W:ContactWheels)
     {
         double Speed=Vx-Wz*W.LeftOffsetMetres;
-        if(W.SteerJoint&&W.SteeringBody)
+        if((W.SteerJoint||MujocoDynamics)&&W.SteeringBody)
         {
             const double PreviousSteeringTarget=W.SteeringTargetRad;
             const FVector LocalForward=GetActorTransform().InverseTransformVectorNoScale(W.SteeringBody->GetForwardVector());
             W.SteeringMeasuredRad=-FMath::Atan2(LocalForward.Y,LocalForward.X);
+            if(MujocoDynamics){double Rate=0;MujocoDynamics->GetJoint(W.SteeringPart,W.SteeringMeasuredRad,Rate);W.SteeringMeasuredRad=FMath::UnwindRadians(W.SteeringMeasuredRad);}
             const double SideSpeed=Vy+Wz*W.RestLocalCm.X/100;
             const double Magnitude=FMath::Sqrt(Speed*Speed+SideSpeed*SideSpeed);
             if(Parking)
@@ -250,18 +262,22 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
                 Speed*=FMath::Max(0.,FMath::Cos(FMath::FindDeltaAngleRadians(W.SteeringMeasuredRad,Desired)));
             }
             else Speed=0;
-            W.SteerJoint->ConstraintInstance.SetAngularOrientationTarget(FQuat(FVector::ForwardVector,W.SteeringTargetRad));
-            // The orientation target moves during gyro compensation. A zero velocity
-            // target would damp that intended motion and create a persistent phase lag.
+            // Native implicit PD uses the same moving steering target and rate.
             const double TargetRate=FMath::FindDeltaAngleRadians(PreviousSteeringTarget,W.SteeringTargetRad)/Seconds;
-            W.SteerJoint->SetAngularVelocityTarget(FVector(TargetRate/(2*PI),0,0));
-            if(WakeForDrive)W.SteeringBody->WakeAllRigidBodies();
+            if(MujocoDynamics)MujocoDynamics->SetServoTarget(W.SteeringPart,W.SteeringTargetRad,TargetRate,true);
+            else
+            {
+                W.SteerJoint->ConstraintInstance.SetAngularOrientationTarget(FQuat(FVector::ForwardVector,W.SteeringTargetRad));
+                W.SteerJoint->SetAngularVelocityTarget(FVector(TargetRate/(2*PI),0,0));
+                if(WakeForDrive)W.SteeringBody->WakeAllRigidBodies();
+            }
         }
         Speed*=Desaturate;
         const double DesiredOmega=Speed/W.RadiusMetres*W.AxisLocal.Y;
         const auto* Parent=W.SteeringBody?W.SteeringBody:W.Slider;
         const FVector WheelAxis=Parent->GetComponentQuat().RotateVector(W.AxisLocal);
-        const double ActualOmega=FVector::DotProduct(W.Wheel->GetPhysicsAngularVelocityInRadians()-Parent->GetPhysicsAngularVelocityInRadians(),WheelAxis);
+        double ActualOmega=FVector::DotProduct(W.Wheel->GetPhysicsAngularVelocityInRadians()-Parent->GetPhysicsAngularVelocityInRadians(),WheelAxis);
+        if(MujocoDynamics){double Position=0;MujocoDynamics->GetJoint(W.WheelPart,Position,ActualOmega);}
         if(bFreeRollingDiagnostic||(FMath::Abs(DesiredOmega)>1&&FMath::Abs(W.PreviousWheelTargetRadS)>1&&DesiredOmega*W.PreviousWheelTargetRadS<0))W.WheelIntegralBiasRadS=0;
         if(!bFreeRollingDiagnostic)
         {
@@ -272,13 +288,23 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
         W.PreviousWheelTargetRadS=DesiredOmega;
         // PI velocity control: keep native implicit damping for stable substeps and
         // add a bounded integral torque via target bias. This holds gravity at zero speed.
-        W.RequestedRevolutionsPerSecond=-(DesiredOmega+W.WheelIntegralBiasRadS)/(2*PI);
-        W.Axle->SetAngularVelocityDriveTwistAndSwing(!bFreeRollingDiagnostic,false);
-        W.Axle->SetAngularDriveParams(0,ContactMotorDamping*10000,(bContactBrake?ContactBrakeTorqueNm:ContactMotorTorqueNm)*10000);
-        W.Axle->SetAngularVelocityTarget(FVector(W.RequestedRevolutionsPerSecond,0,0));
-        if(WakeForDrive){W.Wheel->WakeAllRigidBodies();W.Slider->WakeAllRigidBodies();}
+        if(MujocoDynamics)
+        {
+            W.RequestedRevolutionsPerSecond=(DesiredOmega+W.WheelIntegralBiasRadS)/(2*PI);
+            MujocoDynamics->SetForceLimit(W.WheelPart,bContactBrake?ContactBrakeTorqueNm:ContactMotorTorqueNm);
+            if(bFreeRollingDiagnostic)MujocoDynamics->SetTorque(W.WheelPart,0);
+            else MujocoDynamics->SetServoTarget(W.WheelPart,0,DesiredOmega+W.WheelIntegralBiasRadS,false);
+        }
+        else
+        {
+            W.RequestedRevolutionsPerSecond=-(DesiredOmega+W.WheelIntegralBiasRadS)/(2*PI);
+            W.Axle->SetAngularVelocityDriveTwistAndSwing(!bFreeRollingDiagnostic,false);
+            W.Axle->SetAngularDriveParams(0,ContactMotorDamping*10000,(bContactBrake?ContactBrakeTorqueNm:ContactMotorTorqueNm)*10000);
+            W.Axle->SetAngularVelocityTarget(FVector(W.RequestedRevolutionsPerSecond,0,0));
+            if(WakeForDrive){W.Wheel->WakeAllRigidBodies();W.Slider->WakeAllRigidBodies();}
+        }
     }
     // Repeatedly waking a resting island restarts contact settling every frame.
     // New drive commands wake it here; external contacts still wake it in Chaos.
-    if(WakeForDrive)ContactChassis->WakeAllRigidBodies();
+    if(WakeForDrive&&!MujocoDynamics)ContactChassis->WakeAllRigidBodies();
 }

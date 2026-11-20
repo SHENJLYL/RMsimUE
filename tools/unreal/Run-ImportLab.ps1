@@ -25,6 +25,10 @@ param(
     [string]$ImuProfile='',
     [switch]$RosLidar,
     [string]$LidarProfile='',
+    [ValidateSet('chaos','mujoco')][string]$PhysicsBackend='chaos',
+    [string]$MujocoModel='',
+    [switch]$SimRealTimePace,
+    [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz=0,
     [double]$SimStepSeconds=0,
     [int]$RosPort=9451,
     [int]$TimeoutSeconds = 90
@@ -114,7 +118,15 @@ try {
     if ($RosLidar -or $LidarProfile) { $arguments += '-RosLidar' }
     if ($LidarProfile) { $arguments += '-LidarProfile='+(Quote-UnrealArgument (Resolve-Path -LiteralPath $LidarProfile).Path) }
     if ($SimStepSeconds -ne 0) { $arguments += '-SimStepSeconds='+$SimStepSeconds.ToString($culture) }
-    if ($ContactPhysics) { $arguments += '-ContactPhysics' }
+    if ($PhysicsBackend -eq 'mujoco') {
+        if (-not $MujocoModel) { throw 'MuJoCo requires a prepared model manifest.' }
+        $arguments += @('-PhysicsBackend=mujoco',('-MujocoModel='+(Quote-UnrealArgument (Resolve-Path -LiteralPath $MujocoModel).Path)))
+        if ($SimStepSeconds -eq 0) { $arguments += $(if($RosMotorControl){'-SimStepSeconds=0.001'}else{'-SimStepSeconds=0.005'}) }
+    }
+    if ($SimRealTimePace) { $arguments += '-SimRealTimePace' }
+    if ($PhysicsBackend -eq 'mujoco' -and $ViewportHz -eq 0) { $ViewportHz=60 }
+    if ($ViewportHz -gt 0) { $arguments += '-RMSimViewportHz='+$ViewportHz.ToString($culture) }
+    if ($ContactPhysics -or $PhysicsBackend -eq 'mujoco') { $arguments += '-ContactPhysics' }
     $runStartedUtc = [DateTime]::UtcNow
     if ($ManualProbe) {
         $process = Start-Process -FilePath $ue.Editor -ArgumentList $arguments -WindowStyle Hidden -PassThru

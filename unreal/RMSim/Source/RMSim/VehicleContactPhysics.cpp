@@ -1,4 +1,7 @@
 #include "VehicleRig.h"
+#include "MujocoVehicleDynamics.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "RosCoordinates.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -41,6 +44,14 @@ bool ContactAxis(const FContactObject& J,const TCHAR* Field,FVector& V)
 
 bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Error)
 {
+    FString Backend=TEXT("chaos");FParse::Value(FCommandLine::Get(),TEXT("PhysicsBackend="),Backend);
+    if(Backend.Equals(TEXT("mujoco"),ESearchCase::IgnoreCase))
+    {
+        FString Model;
+        if(!FParse::Value(FCommandLine::Get(),TEXT("MujocoModel="),Model)||Model.IsEmpty()){Error=TEXT("MuJoCo requires a model manifest/XML");return false;}
+        return InitializeMujocoPhysics(Filename,Model,Error);
+    }
+    if(!Backend.Equals(TEXT("chaos"),ESearchCase::IgnoreCase)){Error=TEXT("unsupported physics backend: ")+Backend;return false;}
     auto Fail=[&Error](const FString& Why){Error=Why;return false;};
     if(bContactPhysics||!ContactBodies.IsEmpty()||!GetWorld()||Links.IsEmpty())return Fail(TEXT("contact rig already active or visual rig unavailable"));
     FString Text;FContactObject Spec;
@@ -264,6 +275,7 @@ bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Erro
 
 void AVehicleRig::ResetContactPose(const FTransform& Pose)
 {
+    if(MujocoDynamics){ResetMujocoPose(Pose);return;}
     if(!bContactPhysics||Pose.ContainsNaN())return;
     ++MotionGeneration;
     // Explicit respawn only, never used by wheel driving or terrain traversal.
@@ -284,6 +296,7 @@ void AVehicleRig::ResetContactPose(const FTransform& Pose)
 
 TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
 {
+    if(MujocoDynamics)return GetMujocoContactState();
     auto State=MakeShared<FJsonObject>();State->SetBoolField(TEXT("enabled"),bContactPhysics);
     State->SetStringField(TEXT("scope"),TEXT("native_Chaos_contact_and_constraints; demo masses/friction/springs; fixed_neutral_gimbal_collision"));
     auto Params=MakeShared<FJsonObject>();for(const auto& Item:ContactParameters)Params->SetNumberField(Item.Key,Item.Value);
@@ -469,13 +482,14 @@ void AVehicleRig::ObserveContact(UPrimitiveComponent* Component,AActor* OtherAct
 
 void AVehicleRig::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    if(GetWorld()&&!ContactBodies.IsEmpty())
+    if(!MujocoDynamics&&GetWorld()&&!ContactBodies.IsEmpty())
     {
         TArray<FPhysicsActorHandle> Handles;
         for(auto* B:ContactBodies)if(IsValid(B))if(auto* BI=B->GetBodyInstance())
             if(const FPhysicsActorHandle Handle=BI->GetPhysicsActor())Handles.AddUnique(Handle);
         FPhysicsCommand::ExecuteWrite(GetWorld()->GetPhysicsScene(),[&](){FChaosEngineInterface::RemoveDisabledCollisionsFor_AssumesLocked(Handles);});
     }
+    MujocoDynamics.Reset();
     bContactPhysics=false;
     Super::EndPlay(EndPlayReason); // Actor-owned constraints and components follow normal UE teardown.
 }

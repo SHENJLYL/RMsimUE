@@ -68,8 +68,7 @@ void LittleEndian(TArray<uint8>& Bytes,uint32 Value)
 
 double URosBridgeComponent::SolverTime() const
 {
-    auto* Scene=GetWorld()?GetWorld()->GetPhysicsScene():nullptr;
-    return Scene&&Scene->GetSolver()?double(Scene->GetSolver()->GetSolverTime()):0.;
+    return IsValid(Rig) ? Rig->GetSimulationTimeSeconds() : 0.;
 }
 
 bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,FString& Error)
@@ -140,7 +139,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     }
     EpochSolverTime=SolverTime();LastPollWall=FPlatformTime::Seconds();
     Rig->EnableExternalDriveLease(bControl);
-    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=127.0.0.1:%d control=%d camera=%dx%d %.1fHz physics_clock=Chaos"),Port,bControl,Width,Height,CameraHz);
+    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=127.0.0.1:%d control=%d camera=%dx%d %.1fHz physics_clock=%s"),Port,bControl,Width,Height,CameraHz,Rig->GetPhysicsBackendName());
     return true;
 }
 
@@ -330,7 +329,9 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
     if(CameraBytes+LidarBytes.Num()>16*1024*1024)return false;
     State->SetStringField(TEXT("last_disconnect"),LastDisconnect);State->SetNumberField(TEXT("slow_reader_disconnects"),SlowReaderDisconnects);
     State->SetBoolField(TEXT("development_stall_injected"),bStallInjected);
-    State->SetStringField(TEXT("clock_source"),TEXT("synchronous_Chaos_solver"));
+    State->SetStringField(TEXT("clock_source"),Rig->IsMujocoPhysics()?TEXT("synchronous_MuJoCo_solver"):TEXT("synchronous_Chaos_solver"));
+    State->SetStringField(TEXT("physics_backend"),Rig->GetPhysicsBackendName());
+    State->SetNumberField(TEXT("dynamics_step_s"),Rig->GetDynamicsStepSeconds());
     State->SetNumberField(TEXT("simulation_rate"),RealTimeFactor);
     State->SetNumberField(TEXT("fixed_step_s"),FApp::UseFixedTimeStep()?FApp::GetFixedDeltaTime():0);
     FString Json;FJsonSerializer::Serialize(State,TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Json));

@@ -10,6 +10,7 @@ class UStaticMeshComponent;
 class UPhysicsConstraintComponent;
 class UPhysicalMaterial;
 class UPrimitiveComponent;
+class FMujocoVehicleDynamics;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogRMSim, Log, All);
 
@@ -61,6 +62,13 @@ class RMSIM_API AVehicleRig : public AActor
 public:
     AVehicleRig();
     virtual void Tick(float DeltaSeconds) override;
+    virtual FVector GetVelocity() const override;
+    bool IsMujocoPhysics() const { return MujocoDynamics.IsValid(); }
+    const TCHAR* GetPhysicsBackendName() const { return IsMujocoPhysics()?TEXT("mujoco"):bContactPhysics?TEXT("chaos"):TEXT("kinematic"); }
+    double GetSimulationTimeSeconds() const;
+    double GetDynamicsStepSeconds() const;
+    double GetDynamicsGravityCmS2() const;
+    FVector GetDynamicsGravityVectorCmS2() const;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     virtual void DispatchPhysicsCollisionHit(const FRigidBodyCollisionInfo& MyInfo,
         const FRigidBodyCollisionInfo& OtherInfo,const FCollisionImpactData& CollisionData) override;
@@ -122,6 +130,19 @@ public:
     const FString& GetTerrainBlockReason() const { return TerrainBlockReason; }
 
 private:
+    TSharedPtr<FMujocoVehicleDynamics> MujocoDynamics;
+    UPROPERTY() TMap<FString,UStaticMeshComponent*> MujocoQueryBodies;
+    bool InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error);
+    void TickMujocoPhysics(double Seconds);
+    void SyncMujocoPose();
+    void ResetMujocoPose(const FTransform& Pose);
+    bool SetMujocoGimbal(double Yaw,double Pitch,FString& Error);
+    TSharedRef<FJsonObject> GetMujocoContactState() const;
+    double MujocoFrameSeconds=.005;
+    double MujocoYawTarget=0,MujocoPitchTarget=0,MujocoYawTargetRate=0,MujocoPitchTargetRate=0;
+    double MujocoYawRateLimit=9.42477796076938,MujocoPitchRateLimit=6.283185307179586;
+    bool bMujocoFailed=false;
+
     struct FJointBinding
     {
         USceneComponent* Child = nullptr;

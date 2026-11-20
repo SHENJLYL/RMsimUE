@@ -61,7 +61,7 @@ bool URosImuComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FS
         C.Seed=int32(Seed);C.Random.Initialize(C.Seed);Names.Add(C.Id);Channels.Add(C);
     }
     Rig=Vehicle;RobotId=Rig->GetVehicleId();MotionGeneration=Rig->GetMotionGeneration();
-    ProfileHash=LexToString(FMD5Hash::HashFile(*Profile));GravityZ=GetWorld()->GetGravityZ();
+    ProfileHash=LexToString(FMD5Hash::HashFile(*Profile));GravityZ=Rig->GetDynamicsGravityCmS2();
     UE_LOG(LogRMSim,Display,TEXT("IMU_READY sensors=%d profile=%s orientation=unavailable SI=true calibrated=false"),Channels.Num(),*Profile);
     return true;
 }
@@ -92,7 +92,8 @@ void URosImuComponent::Advance(double Time,bool Collect)
         MotionGeneration=Rig->GetMotionGeneration();
         for(auto& C:Channels){C.HasHistory=false;C.HasRelativeHistory=false;C.Pending.Reset();C.NextDue=Time;++C.HistoryResets;}
     }
-    GravityZ=GetWorld()->GetGravityZ();
+    const FVector Gravity=Rig->GetDynamicsGravityVectorCmS2();
+    GravityZ=Gravity.Z;
     for(auto& C:Channels)
     {
         if(Time+1.e-9<C.NextDue)continue;
@@ -122,7 +123,7 @@ void URosImuComponent::Advance(double Time,bool Collect)
         if(!C.HasHistory){C.PreviousVelocity=Velocity;C.PreviousTime=Time;C.HasHistory=true;continue;}
         const double Dt=Time-C.PreviousTime;
         if(Dt<=1.e-8){++C.Invalid;C.HasHistory=false;continue;}
-        const FVector WorldSpecific=(Velocity-C.PreviousVelocity)/Dt-FVector(0,0,GravityZ);
+        const FVector WorldSpecific=(Velocity-C.PreviousVelocity)/Dt-Gravity;
         const FVector LocalSpecific=Pose.GetRotation().UnrotateVector(WorldSpecific)/100;
         const FVector LocalOmega=Pose.GetRotation().UnrotateVector(Omega);
         FVector Accel(LocalSpecific.X,-LocalSpecific.Y,LocalSpecific.Z);

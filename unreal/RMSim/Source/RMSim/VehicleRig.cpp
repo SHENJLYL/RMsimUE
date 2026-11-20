@@ -1,4 +1,5 @@
 #include "VehicleRig.h"
+#include "MujocoVehicleDynamics.h"
 #include "RosCoordinates.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/StaticMeshComponent.h"
@@ -279,6 +280,12 @@ bool AVehicleRig::AddSensor(const FObject& Sensor, FString& Error)
 
 bool AVehicleRig::SetJointAngle(const FString& JointName, double AngleRad, FString& Error)
 {
+    if(MujocoDynamics)
+    {
+        if(JointName==YawJoint)return SetMujocoGimbal(AngleRad,ManualPitch,Error);
+        if(JointName==PitchJoint)return SetMujocoGimbal(ManualYaw,AngleRad,Error);
+        Error=TEXT("MuJoCo owns dynamic joint poses; use actuator commands");return false;
+    }
     FJointBinding* Joint = Joints.Find(JointName);
     if (!Joint || Joint->Type == TEXT("fixed") || !FMath::IsFinite(AngleRad))
         return Fail(Error, TEXT("unknown/fixed joint or nonfinite angle"));
@@ -292,6 +299,7 @@ bool AVehicleRig::SetJointAngle(const FString& JointName, double AngleRad, FStri
 
 bool AVehicleRig::SetGimbal(double YawRad, double PitchRad, FString& Error)
 {
+    if(MujocoDynamics)return SetMujocoGimbal(YawRad,PitchRad,Error);
     if (YawJoint.IsEmpty() && PitchJoint.IsEmpty())
         return (YawRad == 0.0 && PitchRad == 0.0) || Fail(Error, TEXT("vehicle has no gimbal mapping"));
     if (!SetJointAngle(YawJoint, YawRad, Error) || !SetJointAngle(PitchJoint, PitchRad, Error)) return false;
@@ -311,6 +319,12 @@ bool AVehicleRig::GetRosGimbalGeometry(const USceneCaptureComponent2D* Camera,FS
 
 void AVehicleRig::NudgeGimbal(double DeltaYawRad, double DeltaPitchRad)
 {
+    if(MujocoDynamics)
+    {
+        const auto* P=Joints.Find(PitchJoint);FString Error;
+        if(P)SetMujocoGimbal(ManualYaw+DeltaYawRad,FMath::Clamp(ManualPitch+DeltaPitchRad,P->Lower,P->Upper),Error);
+        return;
+    }
     auto Apply = [this](const FString& Name, double Delta, double& Current)
     {
         const FJointBinding* Joint = Joints.Find(Name);
