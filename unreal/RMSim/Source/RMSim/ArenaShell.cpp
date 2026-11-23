@@ -204,7 +204,7 @@ bool FArenaShell::Spawn(UWorld* World,const FMapStage& Stage,
     }
     TMap<FString,UStaticMesh*> Meshes;
     for(const TCHAR* ModelName:{TEXT("wall"),TEXT("stairs"),TEXT("column"),
-                                TEXT("border-straight"),TEXT("wall-gate")})
+                                TEXT("banner"),TEXT("border-straight"),TEXT("wall-gate")})
     {
         FString Asset;
         if(!Models->TryGetStringField(ModelName,Asset)||
@@ -277,6 +277,10 @@ bool FArenaShell::Spawn(UWorld* World,const FMapStage& Stage,
                                    FacadeColor,TEXT("KenneyWallPanels"));
     FInstanceGroup Gates=Group(Visual,Origin,Meshes[TEXT("wall-gate")],Palette[TEXT("supports")],
                               Color(Colors,TEXT("supports"),FLinearColor(.25,.28,.34)),TEXT("KenneyConcourses"));
+    FInstanceGroup RedBanner=Group(Visual,Origin,Meshes[TEXT("banner")],Palette[TEXT("accent_red")],
+                                  Color(Colors,TEXT("accent_red"),FLinearColor(.76,.1,.115)),TEXT("KenneyRedBanners"));
+    FInstanceGroup BlueBanner=Group(Visual,Origin,Meshes[TEXT("banner")],Palette[TEXT("accent_blue")],
+                                   Color(Colors,TEXT("accent_blue"),FLinearColor(.10,.33,.82)),TEXT("KenneyBlueBanners"));
 
     for(const FWall& Wall:Walls)
     {
@@ -352,8 +356,11 @@ bool FArenaShell::Spawn(UWorld* World,const FMapStage& Stage,
         }
     for(int32 Index=0;Index<8;++Index)
     {
-        const double XBorder=Center.X+(Index-3.5)*3.5;
-        Add(Borders,FVector(XBorder,Center.Y+HY+FirstSetback+.10,VisualTop+.30),FVector(.9,.26,.43));
+        const double XBanner=Center.X+(Index-3.5)*3.5;
+        Add((Index%2)?RedBanner:BlueBanner,
+            FVector(XBanner,Center.Y-HY-FirstSetback-3*TierDepth+.35,CanopyHeight-1.45),
+            FVector(.7,.30,1.28));
+        Add(Borders,FVector(XBanner,Center.Y+HY+FirstSetback+.10,VisualTop+.30),FVector(.9,.26,.43));
     }
     for(const double Sign:{-1.,1.})
     {
@@ -368,7 +375,7 @@ bool FArenaShell::Spawn(UWorld* World,const FMapStage& Stage,
     const int32 CosmeticInstances=Facade.Instances+Bench.Instances+Rear.Instances+
         Steel.Instances+Canopy.Instances+Red.Instances+Blue.Instances+Light.Instances+
         Stairs.Instances+Columns.Instances+Borders.Instances+ArenaWalls.Instances+
-        Gates.Instances;
+        Gates.Instances+RedBanner.Instances+BlueBanner.Instances;
     FString ProbePath;
     if(FParse::Value(FCommandLine::Get(),TEXT("ArenaProbeOutput="),ProbePath))
     {

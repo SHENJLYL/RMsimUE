@@ -1,0 +1,284 @@
+{
+  "schema": "rmsim_realtime_window_audit_v1",
+  "status": "failed_short_windows_preserved_with_passed_unchanged_retest",
+  "sources": {
+    "session_directory": "D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\realtime-03",
+    "clock_report": "clock/verification.json",
+    "raw_telemetry": "clock/observations.json",
+    "runtime_log": "runtime.log",
+    "runtime_provenance_sha256": "655167497449229f81edab4523407094ca6d744e0e90a6df4c09c8c41ee51a0c",
+    "clock_script_sha256": "dafc2756c609786bd7d895f028069abae9f891e9bb9917210e50734551912173"
+  },
+  "identity": {
+    "session_identity": [
+      "8186217D4EB7D17B18FF03AC61A31F11",
+      0
+    ],
+    "constant_session_and_epoch": true,
+    "observation_count": 873,
+    "unique_bridge_receipt_count": 176,
+    "measurement_start_monotonic_s": 132979.0771086,
+    "measurement_end_monotonic_s": 133069.0771086,
+    "measurement_start_utc": "2026-11-19T04:04:48.895Z",
+    "requested_wall_seconds": 90
+  },
+  "result": {
+    "status": "failed",
+    "passed_checks": 30,
+    "total_checks": 32,
+    "failed_check_names": [
+      "all_ten_second_windows_0p98_to_1p02",
+      "all_rolling_ten_second_windows_0p98_to_1p02"
+    ],
+    "overall_realtime_factor": 1.0000441612856468,
+    "actual_scene_draw_hz": 59.99944543287373,
+    "fixed_windows": [
+      {
+        "start_seconds": 10,
+        "duration_seconds": 10,
+        "factor": 0.9670896500512562
+      },
+      {
+        "start_seconds": 20,
+        "duration_seconds": 10,
+        "factor": 1.0360101324367001
+      }
+    ],
+    "failed_rolling_windows": [
+      {
+        "start_seconds": 10,
+        "duration_seconds": 10,
+        "factor": 0.9670896500512562
+      },
+      {
+        "start_seconds": 19,
+        "duration_seconds": 10,
+        "factor": 1.0213113476215099
+      },
+      {
+        "start_seconds": 20,
+        "duration_seconds": 10,
+        "factor": 1.0360101324367001
+      }
+    ],
+    "rolling_window_count": 81,
+    "window_factor_min": 0.9670896500512562,
+    "window_factor_max": 1.0360101324367001,
+    "sensor_rates": {
+      "imu": {
+        "imu": {
+          "measured_hz": 200.0000044693482,
+          "increments": {
+            "measured_samples": 18025,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        },
+        "mid360_imu": {
+          "measured_hz": 200.0000044693482,
+          "increments": {
+            "measured_samples": 18025,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        }
+      },
+      "lidar": {
+        "rays_per_second": 200000.0044693482,
+        "scans_per_second": 9.997226298301399,
+        "increments": {
+          "traced_rays": 18025000,
+          "published_scans": 901,
+          "dropped_scans": 0,
+          "history_resets": 0
+        }
+      }
+    }
+  },
+  "method": {
+    "measurement_basis": "simulation stamps paired with console bridge-receipt monotonic stamps",
+    "clock_residual": "(sim_time - first_sim_time) - (bridge_received_monotonic_s - first_bridge_received_monotonic_s), without changing the production acceptance calculation",
+    "snapshot_latency": "snapshot_written_monotonic_s minus bridge_received_monotonic_s",
+    "raw_telemetry_unmodified": true
+  },
+  "incident": {
+    "approximate_utc_range": [
+      "2026-11-19T04:05:05.895Z",
+      "2026-11-19T04:05:10.895Z"
+    ],
+    "observations": [
+      {
+        "relative_wall_s": 17.514923200011253,
+        "sim_time_s": 40.209999101,
+        "sim_minus_wall_progress_s": 0.010076407988748315,
+        "reported_simulation_rate": 1.0031399559928655,
+        "scene_draw_hz": 59.75158606837663,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 9.009998757392168e-05
+      },
+      {
+        "relative_wall_s": 18.018974999984493,
+        "sim_time_s": 40.679999091,
+        "sim_minus_wall_progress_s": -0.02397540198449377,
+        "reported_simulation_rate": 0.9720467044698293,
+        "scene_draw_hz": 60.70166359472831,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.012399200000800192
+      },
+      {
+        "relative_wall_s": 18.507346600003075,
+        "sim_time_s": 41.109999081,
+        "sim_minus_wall_progress_s": -0.08234701200307626,
+        "reported_simulation_rate": 0.9720467044698293,
+        "scene_draw_hz": 60.70166359472831,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.033196000003954396
+      },
+      {
+        "relative_wall_s": 19.046332199999597,
+        "sim_time_s": 41.519999072,
+        "sim_minus_wall_progress_s": -0.21133262099959893,
+        "reported_simulation_rate": 0.8237825126491461,
+        "scene_draw_hz": 59.94762533958994,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 8.030000026337802e-05
+      },
+      {
+        "relative_wall_s": 19.528605700004846,
+        "sim_time_s": 41.884999064,
+        "sim_minus_wall_progress_s": -0.32860612900484654,
+        "reported_simulation_rate": 0.8237825126491461,
+        "scene_draw_hz": 59.94762533958994,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.028300999983912334
+      },
+      {
+        "relative_wall_s": 20.04840410000179,
+        "sim_time_s": 42.384999053,
+        "sim_minus_wall_progress_s": -0.34840454000178767,
+        "reported_simulation_rate": 0.8382313967026276,
+        "scene_draw_hz": 60.209176625046226,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.028001700004097074
+      },
+      {
+        "relative_wall_s": 20.573039899987634,
+        "sim_time_s": 43.044999038,
+        "sim_minus_wall_progress_s": -0.2130403549876334,
+        "reported_simulation_rate": 0.8382313967026276,
+        "scene_draw_hz": 60.209176625046226,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.010331600002245978
+      },
+      {
+        "relative_wall_s": 21.085142600000836,
+        "sim_time_s": 43.784999021,
+        "sim_minus_wall_progress_s": 0.01485692799916194,
+        "reported_simulation_rate": 1.374671837881162,
+        "scene_draw_hz": 59.92262787181555,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 0.027607199997873977
+      },
+      {
+        "relative_wall_s": 21.61829419998685,
+        "sim_time_s": 44.30499901,
+        "sim_minus_wall_progress_s": 0.0017053170131546835,
+        "reported_simulation_rate": 1.374671837881162,
+        "scene_draw_hz": 59.92262787181555,
+        "scene_dropped_deadlines": 158,
+        "scene_cadence_resyncs": 5,
+        "snapshot_write_delay_s": 7.71000050008297e-05
+      }
+    ],
+    "maximum_observed_lag_s": 0.34840454000178767,
+    "native_reported_rate_min": 0.8237825126491461,
+    "native_reported_rate_max": 1.374671837881162,
+    "render_dropped_deadlines_values": [
+      158
+    ],
+    "render_cadence_resync_values": [
+      5
+    ],
+    "render_cumulative_max_deadline_lag_s_values": [
+      2.062296036630869
+    ],
+    "render_max_lag_note": "The cumulative 2.062296 s maximum was already present in the first measured snapshot and did not increase in the observation window; do not assign it to this incident."
+  },
+  "log_evidence": [
+    "[2026.11.19-04.05.06:264][ 16]LogRMSim: Display: RMSIM_LIDAR_TIMING rays=1001000 wall_total_ms=1458.817 wall_us_per_ray=1.457 sim_elapsed=5.005 query_mode=parallel_staged",
+    "[2026.11.19-04.05.11:252][ 17]LogRMSim: Display: RMSIM_LIDAR_TIMING rays=1001000 wall_total_ms=1702.113 wall_us_per_ray=1.700 sim_elapsed=5.005 query_mode=parallel_staged"
+  ],
+  "interpretation": {
+    "supported": "Producer-associated simulation clock progress fell behind wall time by about 0.3484 s near observation t=18..20 s, then caught up by t=21.085 s. Native reported simulation rate moved from about 0.824 to 1.375. This is a real transient in the producer-associated simulation clock, rather than a delayed status-file write: incident snapshot write delay stayed below 0.034 s and the native simulation-rate telemetry shows the same slowdown/catch-up.",
+    "rendering": "Scene draw cadence stayed near 60 Hz; dropped deadlines and resync counters did not increase. The records do not establish a GPU stall.",
+    "lidar": "The nearest five-simulation-second LiDAR timing records total 1458.817 ms and 1702.113 ms. The log has no incident-specific error or exceptional LiDAR budget increase sufficient to identify the transient cause.",
+    "attribution": "No concurrent CPU/GPU process timeline was recorded for the incident. The existing evidence cannot attribute it to another authorized chat or identify a specific competing process.",
+    "acceptance": "Keep realtime-03 failed for its two short-window gates. Overall 1x, preserved sensors and successful navigation do not replace those failed gates.",
+    "next_step": "Completed one unchanged-parameter idle repetition in realtime-04: 32 clock and 14 action checks passed. Preserve realtime-03 as failed; no additional test or timing/physics/navigation change is required for this delivery.",
+    "repeat_scope": "The repeat establishes that the same module and settings passed the original gates once under the subsequent execution conditions. No change was made to repair or mask the transient seen in realtime-03, and its specific cause remains unassigned."
+  },
+  "followup": {
+    "reporting_basis": "Final report values supplied by the parent/root after inspecting the completed native runs; this audit update launched no runtime.",
+    "realtime_03": {
+      "session_directory": "D:/simulator/artifacts/maps/campus-gym-20261119/realtime-03",
+      "overall_status": "failed_clock_short_windows",
+      "geometry": "restored legacy collision/LiDAR protection: inset 0.25 m, thickness 0.48 m, bottom -1.25 m, top 4.8 m",
+      "action_status": "passed",
+      "action_checks_passed": 14,
+      "action_checks_total": 14,
+      "clock_status": "failed",
+      "clock_checks_passed": 30,
+      "clock_checks_total": 32,
+      "single_goal_actual_error_m": 0.11615278439713532,
+      "waypoint_actual_error_m": 0.08144515592268442,
+      "cancel_braking_distance_m": 0.12574418436414267,
+      "cancel_drift_m": 0.0,
+      "overall_realtime_factor": 1.0000441612856468,
+      "scene_draw_hz": 59.99944543287373
+    },
+    "realtime_04": {
+      "session_directory": "D:/simulator/artifacts/maps/campus-gym-20261119/realtime-04",
+      "status": "passed",
+      "action_status": "passed",
+      "action_checks_passed": 14,
+      "action_checks_total": 14,
+      "clock_status": "passed",
+      "clock_checks_passed": 32,
+      "clock_checks_total": 32,
+      "single_goal_actual_error_m": 0.07006501645189686,
+      "waypoint_actual_error_m": 0.06487789710390221,
+      "cancel_braking_distance_m": 0.09020762938704889,
+      "cancel_drift_m": 0.0,
+      "overall_realtime_factor": 1.0000360190791153,
+      "scene_draw_hz": 59.99742299022542,
+      "fixed_10s_factor_range": [
+        0.9975909680672828,
+        1.001220532331061
+      ],
+      "rolling_10s_factor_range": [
+        0.990139865442275,
+        1.0101391641433524
+      ],
+      "input_hashes_unchanged": true,
+      "native_module_same_as_realtime_03": true,
+      "module_sha256_prefix": "4b362baa",
+      "module_identity_note": "Only the prefix was included in the follow-up summary; use the session runtime-provenance.json for the complete SHA-256.",
+      "cleanup_errors_reported": [],
+      "exit_code_reported": 0,
+      "configuration_changes_from_realtime_03": [],
+      "scope": "One unchanged-parameter repetition passed after the final native views ended. The failed realtime-03 clock gates remain recorded; this result does not establish elimination of all scheduling jitter."
+    }
+  }
+}

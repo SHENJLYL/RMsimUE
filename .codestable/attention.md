@@ -236,3 +236,11 @@ C 环视保持实际云台单位世界方向，Shift scope 持续读取角方向
 - HUD DrawLine 默认 Canvas 项忽略 alpha；原网格用真实 translucent 路径。sRGB 字节必须显式转换，避免 UI 变亮。
 - tiny_text_hud 为 PT Sans reduced-height、1080p18px、forceAutoHint=no；fontFx64 转换为2.0。当前 MapFontRenderer 复用原字体字节，实现源 glow／coverage gamma 缓存。
 - FontFace 导入需要完整 Editor／Slate；NullRHI commandlet 路径不适用。Texture 须等待 Editor.AsyncAssetCompilationFinishAll 后再验尺寸和保存；失败证据保留，重试使用新目录。
+
+## 2026-11-19 校园体育馆基线
+
+- `rmsim_campus_gym_v1` 是 RMUC2027 的地图美术扩展；原 `rmsim_arena_shell_v1` 分派与 legacy fixture 保留。入口 `assets/maps/rmuc2027/arena-shell.json`，重建入口 `tools/unreal/setup_campus_gym.py`。
+- 用户要求玻璃门永久关闭且仅作装饰。不得新增 F 交互、开门状态或车辆出场通道。四面连续保护墙覆盖门区及四角。
+- 物理/LiDAR 围墙保持既有验收几何：内缩 0.25 m、厚 0.48 m、Z=-1.25～4.80 m。可见玻璃顶面 Z=2.60 m、厚 12 mm，内表面对齐保护墙的场内侧。改变视觉样式不得无记录地移动定位边界。
+- 源素材有固定哈希、CC0 来源及派生说明；新 UE Content 保持生成和忽略，现有 14 个 legacy 资产许可白名单未扩大。原源模型与导航真值边界保持。
+- 验收对应具体模块与构建树；发布切片的场景结果与当前统一工作区的导航结果分开记录。基线、实际检查及失败记录见 `.codestable/features/2026-11-19-campus-gym/acceptance.md` 与 `artifacts/maps/campus-gym-20261119/release-summary.json`。

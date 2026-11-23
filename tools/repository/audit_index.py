@@ -15,6 +15,19 @@ PATTERNS = {
 }
 GENERATED = re.compile(r"(?:^ros2_ws/(?:build|install|log)[^/]*/|^unreal/RMSim/(?:Content|Binaries|Intermediate|Saved|DerivedDataCache)/|(?:^|/)\.pixi/)")
 
+# Exactly 6 licensed CC0 Kenney meshes and 8 low-cost palette materials are
+# shipped as ready-to-load UE assets. No other generated Content is allowed.
+PINNED_ARENA_UE_ASSET = re.compile(
+    r"^unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/(?:"
+    r"Kenney/(?:banner|border_straight|column|stairs|wall|wall_gate)|"
+    r"Materials/Mat_(?:Facade|Seats|UpperSeats|Supports|Roof|AccentRed|AccentBlue|AccentLight)"
+    r")\.uasset$"
+)
+
+def approved_arena_asset(path: str, size: int) -> bool:
+    return size <= 100 * 1024 and bool(PINNED_ARENA_UE_ASSET.fullmatch(path))
+
+
 
 def audit() -> dict:
     root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
@@ -39,7 +52,7 @@ def audit() -> dict:
         items.append({"path": path, "bytes": len(data), "blob": oid.decode()})
         if len(data) > 10 * 1024 * 1024:
             findings.append({"path": path, "kind": "over_10_MiB", "bytes": len(data)})
-        if GENERATED.search(path):
+        if GENERATED.search(path) and not approved_arena_asset(path, len(data)):
             findings.append({"path": path, "kind": "generated_directory"})
         if Path(path).name in {".env", "local.env", "credentials.json", "secrets.json"} or Path(path).suffix.lower() in {".pem", ".key", ".pfx", ".p12"}:
             findings.append({"path": path, "kind": "credential_filename"})

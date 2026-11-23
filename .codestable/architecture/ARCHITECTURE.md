@@ -266,3 +266,13 @@ MID-360 v3 使用 200,000 个 5 μs 发射槽/秒、4 通道、默认 10 Hz 完�
 `tools/mujoco/live_viewer.py` 使用官方 MuJoCo 4.0.1 的低层 mjv/mjr 与 GLFW 显示同一份经过校验的模型：249 个源车辆凸壳、14 组固定场地三角面和四面边界完整保留。每个快照只更新位置派生和显示数据，并核对全部 16 个 body 的位置和四元数；静态 flex 显示缓冲在严格 world 固定约束下复用。显示端不进行动力学积分、碰撞或前向动力学求解；UE 内定制运行库保持唯一车辆动力学来源。定位与导航继续只消费原传感器和估计结果。
 
 鼠标与 F／Home 仅操作 MuJoCo 观察相机。数据中断时保留最后一个有效原生画面并显示 stale 状态，旧代数、乱序、身份不符和非有限数据均拒绝。真实窗口、导航移动、复位和生命周期的具体结果以 `docs/verification/2026-11-20-three-window-navigation.json` 与对应会话记录为准。
+
+当前Windows原生84项、图形13项与离线120/2跳过完成验收，见artifacts/navigation/sentry-console-20261117/release-summary.json。硬件云台电流环、传感器标定、新组合实际R/断线、全场/多车和原生Ubuntu继续沿长期规划推进。
+
+## RMUC 校园体育馆扩展（2026-11-19）
+
+`ArenaShell` 按地图扩展 schema 分派：`rmsim_campus_gym_v1` 由 `CampusGym` 加载有界 SI 布局、CC0 派生座椅和 PBR/HDR 材质；旧 arena schema 保留。场外建筑及固定玻璃门采用无碰撞的实例化装饰网格。四个独立连续静态碰撞墙保留既有比赛及 LiDAR 边界，装饰门区没有通行开口。当前场外视觉不参与导航与雷达查询。
+
+体育馆拥有地图范围内的曝光、环境和面积灯设置。`ImportLabGameMode` 在该扩展激活时使用地图灯光，并提供显式 `GymView` 验收视角；其他地图沿用各自的现有路径。PNG 捕获使用有效 `FImage` 与实际压缩字节，严格验收包含 PNG 结构及文件尾部。
+
+`prepare_campus_gym_assets.py` 核验来源哈希，`build_campus_gym_layout.py` 生成布局，`import_campus_gym_assets.py` 在原生 UE 中重建选定生成资产，`setup_campus_gym.py` 串联并记录各阶段。`test_campus_gym.py` 绑定输入与模块身份，验证原生场景、连续边界和图像。功能指南与范围见 `docs/guides/campus-gym.md`，证据见 `artifacts/maps/campus-gym-20261119/release-summary.json`。

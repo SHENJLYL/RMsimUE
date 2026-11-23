@@ -15,82 +15,32 @@
       3.497683048248291
     ]
   },
-  "layout": "arena/sketchupbox-school-gym/layout.json",
-  "source": "arena/sketchupbox-school-gym/SOURCE.json",
+  "layout": "arena/campus-gym/layout.json",
+  "source": "arena/campus-gym/SOURCE.json",
   "perimeter": {
     "mode": "continuous_closed",
     "glass_top_m": 2.6,
     "collision_bottom_m": -1.25,
+    "inset_m": 0.25,
     "collision_thickness_m": 0.48,
     "max_panel_width_m": 1.5,
     "doors": "fixed_closed_decorative",
     "interaction": false,
     "collision_top_m": 4.8,
-    "visual_alignment": "platform_edges_outer_face",
-    "physics_contract": "outside_platform_bounds_v1",
-    "outside_clearance_m": 0.0,
-    "visual_floor_z_m": -0.3009999990463257,
-    "target_bounds_m": {
-      "lo": [
-        -13.999996185302734,
-        -7.522840576171875,
-        -0.3009999990463257
-      ],
-      "hi": [
-        13.999996185302734,
-        7.522841186523437,
-        3.497683048248291
-      ]
-    },
-    "platform_reference_meshes": {
-      "south": "blue_road",
-      "north": "red_road"
-    },
-    "platform_reference_note": "Target Y anchors are the extrema of the actual saved visual and collision LOD0 vertices, also equal to native bounds; source FBX float conversion offsets are recorded separately."
+    "visual_alignment": "collision_inner_face",
+    "physics_contract": "preserve_validated_arena_shell_v1"
   },
   "lighting": {
-    "mode": "downloaded_gym_lumen",
-    "rect_light_lumens": 45000,
-    "shadowed_rect_lights": 0,
-    "sun_intensity": 6000,
-    "sky_intensity": 512.0,
+    "mode": "campus_indoor",
+    "rect_light_lumens": 65000,
+    "shadowed_rect_lights": 2,
+    "sun_intensity": 10000,
+    "sky_intensity": 96,
     "motion_blur": false,
-    "exposure_ev100": 8.8,
-    "ambient_cubemap_intensity": 0.0,
-    "background_brightness": 512.0,
-    "gi_method": "lumen",
-    "reflection_method": "lumen",
-    "sun_rotation_ue_deg": [
-      -47.885557,
-      124.258123,
-      0.0
-    ]
+    "exposure_ev100": 8.0,
+    "ambient_cubemap_intensity": 0.4,
+    "background_brightness": 1024.0
   },
-  "asset_license": "Original SketchupBox model project with attribution, CC0 exterior, official DJI / RoboMaster logos. Raw source must not be redistributed separately.",
-  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky; long glass inner faces flush to the measured outer envelope of the original wave-channel platforms. CC0 brick entrance walls preserve the existing paths; an independent distant ground ring encloses the original campus ground under the enlarged sky background.",
-  "render_profile": "RMSimGymLumen",
-  "navigation_package": "navigation-console-platform",
-  "presentation_assets": {
-    "glass_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_ClearBoundaryGlass.M_ClearBoundaryGlass",
-    "environment_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolLandscape.M_SchoolLandscape",
-    "environment_cubemap": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_SchoolSky8K.T_SchoolSky8K"
-  },
-  "outdoor_background": {
-    "sky_diameter_m": 16000,
-    "ground_half_extent_m": 2000,
-    "ground_surface_z_m": -0.48440000057220456,
-    "ground_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.M_ExteriorDistantGround",
-    "ground_inner_bounds_m": {
-      "lo": [
-        -80.0158752,
-        -62.8349085,
-        -0.48440000057220456
-      ],
-      "hi": [
-        79.9841248,
-        77.1650915,
-        -0.48440000057220456
-      ]
-    }
-  }
+  "asset_license": "CC0-1.0",
+  "notes": "Competition CAD and vehicle configuration remain unchanged. The four collision slabs have no door opening. Glass/door seams are purely visual."
 }
