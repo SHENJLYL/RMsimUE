@@ -66,9 +66,37 @@ assets/maps/wt_vlaanderen/terrain-details/source-landclass.json -text whitespace
 assets/maps/wt_vlaanderen/terrain-details/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/vehicles/aim_sentry/drive-profile.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
+# Preserve exact bytes of checksum-pinned CC0 sources.
+assets/maps/rmuc2027/arena/campus-gym/LICENSE.txt -text whitespace=cr-at-eol
+assets/maps/rmuc2027/arena/campus-gym/environments/quadrangle_cloudy_1k.hdr -text
+assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.glb -text
+assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.mtl -text whitespace=cr-at-eol,-blank-at-eof
+assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.obj -text whitespace=cr-at-eol
+assets/maps/rmuc2027/arena/campus-gym/models/SeatRow_Frame.png -text
+assets/maps/rmuc2027/arena/campus-gym/models/SeatRow_Plastic.png -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_Color.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_NormalDX.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_Roughness.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Color.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Metalness.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_NormalDX.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Roughness.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Color.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_NormalDX.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Roughness.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Color.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_NormalDX.jpg -text
+assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Roughness.jpg -text
+
 # Preserve exact prepared scene bytes bound by the platform navigation recipe.
 assets/maps/rmuc2027/navigation-console/scene.json -text whitespace=cr-at-eol
 assets/maps/rmuc2027/navigation-console-platform/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-support/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-platform-support/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-support-v2/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-platform-support-v2/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-platform-support-v2/navigation-profile.yaml -text whitespace=cr-at-eol
+assets/vehicles/aim_sentry/mujoco/backend.json -text whitespace=cr-at-eol
 
 assets/maps/rmuc2027/arena/school-entry-brickwall/SOURCE.json -text whitespace=cr-at-eol
 assets/maps/rmuc2027/arena/school-entry-brickwall/NOTICE.txt -text whitespace=cr-at-eol

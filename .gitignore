@@ -101,17 +101,29 @@ Thumbs.db
 /assets/maps/wt_vlaanderen/materials.json
 /assets/maps/wt_vlaanderen/instances.json
 
-# Local experiment data. Keep compact, real test/provenance records only.
+# ROS recordings and SQLite sidecars stay local.
+*.db3
+*.db3-*
+*.mcap
+*.mcap.active
+*.bag
+*.bag.active
+
+# Local experiment data. Opt in only to release summaries and source notices.
 /artifacts/**
 !/artifacts/**/
 !/artifacts/**/release-summary.json
 !/artifacts/**/checkpoint-summary.json
-!/artifacts/**/summary.json
-!/artifacts/**/verification.json
-!/artifacts/**/runtime-provenance.json
-!/artifacts/**/provenance.json
 !/artifacts/**/SOURCE.md
-# Transcripts, screenshots, meshes, dense trajectories and runtime DLLs remain local.
+/artifacts/**/rosbag/
+/artifacts/**/publish-worktree/
+/artifacts/dependencies/
+/artifacts/repository/
+/artifacts/navigation/console-live/
+/artifacts/navigation/fast-26s-candidate/
+/artifacts/navigation/cross-field-turns-20261122/
+/artifacts/navigation/mpc-manifest-smoke-*/
+/artifacts/navigation/external-*/
 
 # Additional generated terrain/instance storage
 /assets/**/*.u16
@@ -168,6 +180,28 @@ Thumbs.db
 /artifacts/control/camera-heading-20261119/**
 !/artifacts/control/camera-heading-20261119/release-summary.json
 
+# Pinned CC0 campus gym sources; generated UE assets remain local.
+!/assets/maps/rmuc2027/arena/campus-gym/LICENSE.txt
+!/assets/maps/rmuc2027/arena/campus-gym/environments/quadrangle_cloudy_1k.hdr
+!/assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.glb
+!/assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.mtl
+!/assets/maps/rmuc2027/arena/campus-gym/models/SeatRow.obj
+!/assets/maps/rmuc2027/arena/campus-gym/models/SeatRow_Frame.png
+!/assets/maps/rmuc2027/arena/campus-gym/models/SeatRow_Plastic.png
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_Color.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_NormalDX.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Concrete046_1K-JPG_Roughness.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Color.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Metalness.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_NormalDX.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Metal050A_1K-JPG_Roughness.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Color.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_NormalDX.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Roughness.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Color.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_NormalDX.jpg
+!/assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Roughness.jpg
+
 # Source-restricted school gym and regenerated fidelity payloads remain local.
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/source/*.skp
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/converted/
@@ -176,6 +210,22 @@ Thumbs.db
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-fidelity/*.hdr
 /assets/maps/rmuc2027/arena/campus-exterior/prepared-tree-fidelity-*/
 /assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-full-fidelity/*.hdr
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/prepared-*/
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/source-material-recovery-validated/
+/assets/maps/rmuc2027/arena/campus-exterior/prepared-*/
+/assets/maps/rmuc2027/arena/downloaded-gym/prepared/
+/assets/maps/rmuc2027/arena/school-entry-brickwall/prepared/
+/assets/maps/rmuc2027/arena/school-entry-brickwall/source/reference-preview.webp
+/assets/maps/rmuc2027/arena/school-entry-masonry/prepared/
+
+# Extracted game content and local asset installers.
+/assets/maps/wt_vlaanderen/overview/ui/
+/assets/maps/wt_vlaanderen/terrain-reflectance/source/land_micro_detail.dshl
+/assets/maps/wt_vlaanderen/terrain-reflectance/source/make_clipmap.dshl
+/assets/maps/wt_vlaanderen/terrain-reflectance/source/texExp.cpp
+/tools/maps/install_official_gym_branding.py
+/tools/maps/install_downloaded_gym_asset_tools.py
+/Run-CrossField-30s-Test.cmd
 
 # Official MuJoCo SDK and source-derived physics caches (reproducible locally).
 /third_party/mujoco-sdk/

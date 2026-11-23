@@ -6,7 +6,7 @@
 
 源码、车辆/地图小型描述、配置、依赖锁、上游补丁、CodeStable 文档及精简验证记录进入 Git。主要目录包括 `unreal/RMSim/Source`、`Config`、`ros2_ws/src`、`src`、`tools`、`tests`、`schemas`、`.codestable` 和 `docs`。来源声明、上游许可证及 `third_party/patches` 保留。
 
-`artifacts` 只跟踪实际 verification、release-summary、checkpoint-summary 和 provenance 等精简结果。失败结果同样保留；截图、日志和稠密轨迹留在本机。
+`artifacts` 自动放行 `release-summary.json`、`checkpoint-summary.json`、`SOURCE.md` 和明确列出的历史路径。新增证据经审核后可用精简文档保存到 `docs/verification`。逐次运行日志、ROS 录包、截图、稠密轨迹以及嵌套工作树留在本机。
 
 ## 保留本地内容
 
