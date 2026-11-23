@@ -5,6 +5,7 @@
 #include "TrainingRange.h"
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
+#include "RMSimViewportClient.h"
 #include "WTFoliageCrushComponent.h"
 #include "WTGeneratedCollisionComponent.h"
 #include "RosCoordinates.h"
@@ -38,6 +39,9 @@
 #include "HAL/PlatformProperties.h"
 #include "HAL/PlatformTime.h"
 #include "HAL/PlatformProcess.h"
+#if PLATFORM_WINDOWS
+#include "Timing/WindowsDeadlineWait.h"
+#endif
 #include "Misc/CoreDelegates.h"
 #include "ImageUtils.h"
 #include "ImageCore.h"
@@ -163,10 +167,24 @@ void AImportLabGameMode::BeginPlay()
         if(FixedStep>0&&!FMath::IsNearlyEqual(FixedStep,.001,1.e-9)){Abort(TEXT("original LK motor mode requires1ms physics"));return;}
         FixedStep=.001;
     }
-    if(FixedStep>0)
+    const bool PaceRequested=FParse::Param(FCommandLine::Get(),TEXT("SimRealTimePace"));
+    const bool Dedicated=MujocoRequested&&PaceRequested&&!bContactProbeActive&&
+        !FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"))&&
+        !FParse::Param(FCommandLine::Get(),TEXT("MujocoSynchronous"));
+    if(Dedicated)
+    {
+        DedicatedMujocoStep=FixedStep;
+        FApp::SetUseFixedTimeStep(false);
+        double RequestedHz=0;
+        FParse::Value(FCommandLine::Get(),TEXT("RMSimViewportHz="),RequestedHz);
+        if(GEngine&&FMath::IsFinite(RequestedHz)&&RequestedHz>=10&&RequestedHz<=144)
+            GEngine->SetMaxFPS(float(RequestedHz));
+        UE_LOG(LogRMSim,Display,TEXT("SIM_REALTIME_PACE fixed_step_s=%.6f mode=dedicated_native_solver"),FixedStep);
+    }
+    else if(FixedStep>0)
     {
         FApp::SetFixedDeltaTime(FixedStep);FApp::SetUseFixedTimeStep(true);
-        if(FParse::Param(FCommandLine::Get(),TEXT("SimRealTimePace")))
+        if(PaceRequested)
         {
             // Fixed-time engine updates bypass the normal MaxFPS sleep path.
             // Pace actual solver ticks against a monotonic absolute deadline.
@@ -433,6 +451,24 @@ void AImportLabGameMode::UpdateOverview()
     Overview->SetActorRotation((Focus - Overview->GetActorLocation()).Rotation());
 }
 
+bool AImportLabGameMode::GetMujocoRenderDeadline(double& OutWallDeadline,double& OutSolverSeconds,
+    double& OutStepSeconds,uint64& OutGeneration) const
+{
+    const UWorld* World=GetWorld();
+    if(!bMujocoRealTimePace||!bSpawnValidated||!IsValid(Rig)||!Rig->IsMujocoPhysics()||
+        !World||World->IsPaused()||NextPhysicsFrameWall<0.||MujocoPaceLastSimSeconds<0.||
+        !FMath::IsFinite(RealTimeStepSeconds)||RealTimeStepSeconds<=0.)return false;
+    const double SolverSeconds=Rig->GetSimulationTimeSeconds();
+    const uint64 Generation=Rig->GetMotionGeneration();
+    if(!FMath::IsFinite(SolverSeconds)||SolverSeconds<MujocoPaceLastSimSeconds||
+        Generation!=MujocoPaceMotionGeneration)return false;
+    const double Deadline=NextPhysicsFrameWall+(SolverSeconds-MujocoPaceLastSimSeconds);
+    if(!FMath::IsFinite(Deadline))return false;
+    OutWallDeadline=Deadline;OutSolverSeconds=SolverSeconds;
+    OutStepSeconds=RealTimeStepSeconds;OutGeneration=Generation;
+    return true;
+}
+
 void AImportLabGameMode::PacePhysicsFrame()
 {
     if(RealTimeStepSeconds<=0)return;
@@ -449,6 +485,8 @@ void AImportLabGameMode::PacePhysicsFrame()
         double NonzeroSleepSeconds=0.,ZeroSleepSeconds=0.;
         double WorkSeconds=0.,MaxWorkSeconds=0.;
         uint64 Calls=0,NonzeroSleepCalls=0,ZeroSleepCalls=0;
+        uint64 TimerWaitCalls=0,FallbackSleepCalls=0,WaitFailures=0;
+        double MaxDeadlineOvershootSeconds=0.;
         uint64 WorkSamples=0,WorkOver5ms=0,AnchorsAtStart=0,LagWarningsAtStart=0;
     };
     static FPaceTimingWindow PaceTiming;
@@ -472,6 +510,7 @@ void AImportLabGameMode::PacePhysicsFrame()
                 TEXT("sleep_requested_nonzero_ms=%.3f sleep_actual_ms=%.3f ")
                 TEXT("sleep_actual_nonzero_ms=%.3f sleep_actual_zero_ms=%.3f ")
                 TEXT("sleep_nonzero_calls=%llu sleep_zero_calls=%llu ")
+                TEXT("high_res_timer_wait_calls=%llu fallback_sleep_calls=%llu wait_failures=%llu max_wait_overshoot_ms=%.6f ")
                 TEXT("work_samples=%llu work_total_ms=%.3f work_mean_ms=%.6f work_max_ms=%.3f work_gt_5ms_calls=%llu ")
                 TEXT("anchors_delta=%llu lag_warnings_delta=%llu late_debt_s=%.6f max_lag_s=%.6f generation=%llu"),
                 WallElapsed,MujocoPaceLastSimSeconds-PaceTiming.StartSim,PaceTiming.Calls,
@@ -479,6 +518,8 @@ void AImportLabGameMode::PacePhysicsFrame()
                 PaceTiming.RequestedSleepSeconds*1000.,PaceTiming.ActualSleepSeconds*1000.,
                 PaceTiming.NonzeroSleepSeconds*1000.,PaceTiming.ZeroSleepSeconds*1000.,
                 PaceTiming.NonzeroSleepCalls,PaceTiming.ZeroSleepCalls,
+                PaceTiming.TimerWaitCalls,PaceTiming.FallbackSleepCalls,PaceTiming.WaitFailures,
+                PaceTiming.MaxDeadlineOvershootSeconds*1000.,
                 PaceTiming.WorkSamples,PaceTiming.WorkSeconds*1000.,
                 PaceTiming.WorkSamples?PaceTiming.WorkSeconds*1000./double(PaceTiming.WorkSamples):0.,
                 PaceTiming.MaxWorkSeconds*1000.,PaceTiming.WorkOver5ms,
@@ -626,6 +667,33 @@ void AImportLabGameMode::PacePhysicsFrame()
         if(NextPhysicsFrameWall<0){NextPhysicsFrameWall=FPlatformTime::Seconds();return;}
         NextPhysicsFrameWall+=RealTimeStepSeconds;
     }
+#if PLATFORM_WINDOWS
+    if(bMujocoRealTimePace)
+    {
+        if(!MujocoDeadlineWait)MujocoDeadlineWait=MakeShared<FRMSimWindowsDeadlineWait>();
+        const auto Wait=MujocoDeadlineWait->WaitUntil(NextPhysicsFrameWall,[]{return FPlatformTime::Seconds();});
+        if(Wait.NewFailures)
+        {
+            const auto& Stats=MujocoDeadlineWait->GetStatistics();
+            UE_LOG(LogRMSim,Warning,TEXT("SIM_REALTIME_PACE_WAIT_FALLBACK backend=mujoco win32_error=%u failures=%llu policy=positive_millisecond_sleep minimum_ms=1 deadline_policy=retain_absolute"),
+                Stats.LastError,static_cast<uint64>(Stats.Failures));
+        }
+        if(bProfilePace)
+        {
+            PaceTiming.TimerWaitCalls+=Wait.TimerWaitCalls;
+            PaceTiming.FallbackSleepCalls+=Wait.FallbackSleepCalls;
+            PaceTiming.WaitFailures+=Wait.NewFailures;
+            PaceTiming.NonzeroSleepCalls+=Wait.TimerWaitCalls+Wait.FallbackSleepCalls;
+            PaceTiming.RequestedSleepSeconds+=Wait.RequestedSeconds;
+            PaceTiming.ActualSleepSeconds+=Wait.ActualWaitSeconds;
+            PaceTiming.NonzeroSleepSeconds+=Wait.ActualWaitSeconds;
+            PaceTiming.MaxDeadlineOvershootSeconds=FMath::Max(PaceTiming.MaxDeadlineOvershootSeconds,Wait.DeadlineOvershootSeconds);
+        }
+        FinishPaceTiming();
+        return;
+    }
+#endif
+    // Non-Windows and the existing Chaos path keep their original wait policy.
     for(double Remaining=NextPhysicsFrameWall-FPlatformTime::Seconds();Remaining>0;
         Remaining=NextPhysicsFrameWall-FPlatformTime::Seconds())
     {
@@ -655,6 +723,18 @@ void AImportLabGameMode::PacePhysicsFrame()
 void AImportLabGameMode::EndPlay(const EEndPlayReason::Type Reason)
 {
     FCoreDelegates::OnBeginFrame.Remove(RealTimePaceHandle);
+#if PLATFORM_WINDOWS
+    if(MujocoDeadlineWait)
+    {
+        MujocoDeadlineWait->CancelAndClose();
+        const auto& Wait=MujocoDeadlineWait->GetStatistics();
+        UE_LOG(LogRMSim,Display,TEXT("SIM_REALTIME_PACE_WAIT_SUMMARY backend=mujoco policy=high_resolution_one_shot timer_creates=%llu timer_wait_calls=%llu fallback_sleep_calls=%llu failures=%llu cancel_calls=%llu cancel_failures=%llu close_calls=%llu close_failures=%llu last_win32_error=%u"),
+            static_cast<uint64>(Wait.CreateCalls),static_cast<uint64>(Wait.TimerWaitCalls),static_cast<uint64>(Wait.FallbackSleepCalls),
+            static_cast<uint64>(Wait.Failures),static_cast<uint64>(Wait.CancelCalls),static_cast<uint64>(Wait.CancelFailures),
+            static_cast<uint64>(Wait.CloseCalls),static_cast<uint64>(Wait.CloseFailures),Wait.LastError);
+        MujocoDeadlineWait.Reset();
+    }
+#endif
     if(bMujocoRealTimePace)
         UE_LOG(LogRMSim,Display,TEXT("SIM_REALTIME_PACE_SUMMARY backend=mujoco anchors=%llu lag_warnings=%llu late_debt_s=%.6f max_lag_s=%.6f deadline_policy=retain_absolute physics_steps_skipped=0"),
             MujocoPaceAnchorCount,MujocoPaceLagWarningCount,MujocoPaceCurrentLagSeconds,MujocoPaceMaxLagSeconds);
@@ -716,6 +796,24 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
             RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
             if(!RosBridge->Initialize(Rig,GetAimCapture(),Training,bRosControl,BridgeError)){Abort(BridgeError);return;}
             RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain,StageMap.bSavedScene);
+            if(RosBridge->SupportsOperatorGyro()&&FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroStart")))
+            {
+                double StartupRate = GyroSpeedRadS;
+                if (FParse::Value(FCommandLine::Get(), TEXT("RosOperatorGyroStartRate="), StartupRate) &&
+                    FMath::IsFinite(StartupRate))
+                {
+                    GyroSpeedRadS = FMath::Clamp(StartupRate, Rig->GetDriveParameter(TEXT("GyroMinRadS")),
+                        Rig->GetDriveParameter(TEXT("GyroMaxRadS")));
+                }
+                bGyroMode=true;
+                RosBridge->SetOperatorGyro(GyroSpeedRadS);
+            }
+        }
+        if(UsesDedicatedMujoco())
+        {
+            FString WorkerError;
+            if(!Rig->StartDedicatedMujoco(DedicatedMujocoStep,WorkerError)){Abort(WorkerError);return;}
+            DedicatedPreviousSimTime=Rig->GetSimulationTimeSeconds();
         }
         bSpawnValidated = true;
         if(StageMap.bSavedScene)
@@ -808,9 +906,17 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         if (Elapsed >= CaptureDelay) TickControlProbe();
         return;
     }
+    if(UsesDedicatedMujoco())
+    {
+        const double Now=Rig->GetSimulationTimeSeconds();
+        // Local training and gimbal input share the consumed physical clock.
+        DeltaSeconds=float(FMath::Max(0.,Now-DedicatedPreviousSimTime));
+        DedicatedPreviousSimTime=Now;
+    }
     TickManualControl(DeltaSeconds);
     if(!ImuFixture.IsEmpty())TickImuFixture(DeltaSeconds);
     if(RosBridge)RosBridge->Advance();
+    else if(UsesDedicatedMujoco())Rig->SubmitDedicatedMujocoInputs();
     Elapsed += DeltaSeconds;
     if (!bCaptured && !CaptureDirectory.IsEmpty() && Elapsed >= CaptureDelay)
     {
@@ -863,12 +969,29 @@ void AImportLabGameMode::UpdatePlayerView(APlayerController* PC)
     }
     const FVector Pivot = Rig->GetActorLocation() + FVector(0, 0, ChasePivotHeightCm);
     const FRotator Look(OrbitPitch, OrbitYaw, 0.0);
-    FVector Position = Pivot - Look.Vector() * ChaseDistanceCm;
+    const FVector Direction = Look.Vector();
     FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimChaseCamera), false, Rig);
     FHitResult Hit;
-    if (GetWorld()->SweepSingleByChannel(Hit, Pivot, Position, FQuat::Identity, ECC_Camera,
-        FCollisionShape::MakeSphere(12.0f), Query)) Position = Hit.Location;
-    ChaseCamera->SetActorLocationAndRotation(Position, Look);
+    const bool Obstructed = GetWorld()->SweepSingleByChannel(Hit, Pivot,
+        Pivot - Direction * ChaseDistanceCm, FQuat::Identity, ECC_Camera,
+        FCollisionShape::MakeSphere(12.0f), Query);
+    const double ClearDistance = Obstructed ? ChaseDistanceCm * Hit.Time : ChaseDistanceCm;
+    const double Now = FPlatformTime::Seconds();
+    const uint64 Generation = Rig->GetMotionGeneration();
+    if (LastChaseViewWall <= 0.0 || ChaseViewGeneration != Generation ||
+        ClearDistance <= ChaseVisibleDistanceCm)
+    {
+        ChaseVisibleDistanceCm = ClearDistance;
+    }
+    else
+    {
+        const double Delta = FMath::Clamp(Now - LastChaseViewWall, 0.0, 0.05);
+        ChaseVisibleDistanceCm = FMath::Lerp(ChaseVisibleDistanceCm, ClearDistance,
+            1.0 - FMath::Exp(-12.0 * Delta));
+    }
+    LastChaseViewWall = Now;
+    ChaseViewGeneration = Generation;
+    ChaseCamera->SetActorLocationAndRotation(Pivot - Direction * ChaseVisibleDistanceCm, Look);
     ChaseCamera->GetCameraComponent()->SetFieldOfView(55.0f);
     if (USceneCaptureComponent2D* Aim = GetAimCapture())
     {
@@ -1043,7 +1166,7 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
         ScopeBaseFov = FMath::Clamp(ScopeBaseFov - CameraWheelSteps * 3.0, 15.0, 30.0);
     else ChaseDistanceCm = FMath::Clamp(ChaseDistanceCm - CameraWheelSteps * 35.0, 180.0, 800.0);
 
-    if(Rig->IsContactPhysics()&&AllowTrigger&&!bRosControl)
+    if(Rig->IsContactPhysics()&&AllowTrigger&&(!bRosControl||(RosBridge&&RosBridge->SupportsOperatorGyro())))
     {
         if(Input.ToggleGyro&&Rig->HasSteeringModules())bGyroMode=!bGyroMode;
         GyroSpeedRadS=FMath::Clamp(GyroSpeedRadS+Input.GyroSpeedSteps*Rig->GetDriveParameter(TEXT("GyroStepRadS")),
@@ -1051,7 +1174,11 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     }
     const double Throttle = FMath::Clamp(Input.Throttle, -1.0, 1.0);
     const bool Brake = Input.Brake;
-    if(RosBridge)RosBridge->SetOperatorBrake(Brake);
+    if(RosBridge)
+    {
+        RosBridge->SetOperatorBrake(Brake);
+        RosBridge->SetOperatorGyro(bGyroMode?GyroSpeedRadS:0.0);
+    }
     const double TargetSpeed = Brake ? 0.0 : (Throttle > 0.0 ? 300.0 : Throttle < 0.0 ? -150.0 : 0.0);
     const bool Slowing = TargetSpeed == 0.0 || SpeedCmPerSecond * TargetSpeed < 0.0;
     SpeedCmPerSecond = FMath::FInterpConstantTo(SpeedCmPerSecond, TargetSpeed, Step, Brake ? 900.0 : Slowing ? 300.0 : 180.0);
@@ -1088,8 +1215,21 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
             }
             else
             {
-                AimWorldTarget = TraceViewPoint(ChaseCamera->GetActorLocation(), ChaseCamera->GetActorForwardVector());
-                DesiredWorldDirection = (AimWorldTarget - Aim->GetComponentLocation()).GetSafeNormal();
+                const FVector ViewDirection = ChaseCamera->GetActorForwardVector().GetSafeNormal();
+                const FVector Muzzle = Aim->GetComponentLocation();
+                AimWorldTarget = TraceViewPoint(ChaseCamera->GetActorLocation(), ViewDirection);
+                const FVector ToTarget = AimWorldTarget - Muzzle;
+                const FVector2D ViewPlanar(ViewDirection.X, ViewDirection.Y);
+                const FVector2D TargetPlanar(ToTarget.X, ToTarget.Y);
+                // A chase-camera occluder can sit behind the muzzle. Converging
+                // on it turns yaw by 180 degrees and reverses gun-relative WASD.
+                // Check planar depth too: a downward ray can have positive 3D
+                // depth while its horizontal target still lies behind the gun.
+                const bool TargetIsForward = FVector::DotProduct(ToTarget, ViewDirection) > KINDA_SMALL_NUMBER &&
+                    (ViewPlanar.IsNearlyZero() || FVector2D::DotProduct(TargetPlanar, ViewPlanar) > KINDA_SMALL_NUMBER);
+                DesiredWorldDirection = TargetIsForward ? ToTarget.GetSafeNormal() : ViewDirection;
+                if (!TargetIsForward)
+                    AimWorldTarget = TraceViewPoint(Muzzle, DesiredWorldDirection);
                 bAimTargetValid = true;
             }
             const FRotator DesiredLocal = Rig->GetActorTransform().InverseTransformVectorNoScale(DesiredWorldDirection).Rotation();
@@ -1167,6 +1307,7 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
     State->SetNumberField(TEXT("view_yaw_deg"), OrbitYaw);
     State->SetNumberField(TEXT("view_pitch_deg"), OrbitPitch);
     State->SetNumberField(TEXT("chase_distance_cm"), ChaseDistanceCm);
+    State->SetNumberField(TEXT("chase_visible_distance_cm"), ChaseVisibleDistanceCm);
     State->SetNumberField(TEXT("scope_base_fov_deg"), ScopeBaseFov);
     State->SetNumberField(TEXT("mouse_degrees_per_raw_count"), MouseSensitivity);
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
@@ -1217,15 +1358,18 @@ FString AImportLabGameMode::GetControlHudText() const
     const FString Mode = bFreeLook ? TEXT("FREE LOOK") : bSightMode ?
         FString::Printf(TEXT("SIGHT %.0f deg"), bSightZoom ? 15.0 : ScopeBaseFov) : TEXT("CHASE 55 deg");
     const FString Region = Rig ? FString::Join(StageMap.RegionsAt(Rig->GetActorLocation()), TEXT(", ")) : FString();
+    const auto* Viewport=GEngine?Cast<URMSimViewportClient>(GEngine->GameViewport):nullptr;
+    const double DrawHz=Viewport?Viewport->GetMeasuredSceneHz():0.;
+    const FString DrawFps=DrawHz>0.?FString::Printf(TEXT("%.0f"),DrawHz):TEXT("--");
     const FString BlockReason=Rig?Rig->GetTerrainBlockReason():FString();
     const FString Gyro=Rig&&Rig->IsContactPhysics()?FString::Printf(TEXT("\nG gyro %s   Z/X speed   set %.1f / actual %.1f rad/s%s"),
         bGyroMode?TEXT("ON"):TEXT("OFF"),GyroSpeedRadS,Rig->GetMeasuredYawRate(),
         TEXT("  |  WASD turret-relative move")):FString();
-    return FString::Printf(TEXT("%.1f km/h  |  %s%s  |  %s%s  |  %.0f fps\nW/S turret forward/back   A/D strafe   Q/E turn   Ctrl slow   SPACE brake   R reset\nMouse aim   Hold C orbit view   Shift sight   RMB zoom   Wheel camera"),
+    return FString::Printf(TEXT("%.1f km/h  |  %s%s  |  %s%s  |  scene %s fps / world %.0f Hz\nW/S turret forward/back   A/D strafe   Q/E turn   Ctrl slow   SPACE brake   R reset\nMouse aim   Hold C orbit view   Shift sight   RMB zoom   Wheel camera"),
         SpeedCmPerSecond * 0.036, *Mode, bHadInputFocus ? TEXT("") : TEXT("  |  Click to focus"),
-        *StageMap.DisplayName, Region.IsEmpty() ? TEXT("") : *(TEXT(" / ")+Region),FrameAverageSeconds>1.e-6?1./FrameAverageSeconds:0.) + (Training?TEXT("\n")+Training->Hud():FString()) +
+        *StageMap.DisplayName, Region.IsEmpty() ? TEXT("") : *(TEXT(" / ")+Region),*DrawFps,FrameAverageSeconds>1.e-6?1./FrameAverageSeconds:0.) + (Training?TEXT("\n")+Training->Hud():FString()) +
         Gyro+(bPrecisionDrive?TEXT("\nPRECISION drive"):FString())+(RosBridge?TEXT("\n")+RosBridge->StatusText():FString())+
-        (bRosControl?TEXT("\nROS owns chassis; Space operator brake / R reset / mouse observe"):FString())+
+        (bRosControl?TEXT("\nROS translation / G gyro / Space operator brake / R reset"):FString())+
         (bRosAimControl?TEXT("\nROS owns aim/fire; mouse observes; Space inhibit / R reset"):FString())+
         (BlockReason.IsEmpty()?FString():TEXT("\nBlocked: ")+BlockReason);
 }

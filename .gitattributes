@@ -96,3 +96,13 @@ assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Roughness.jpg -tex
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Color.jpg -text
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_NormalDX.jpg -text
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Roughness.jpg -text
+
+assets/maps/rmuc2027/navigation-console-platform-support-v2/scene.json -text whitespace=cr-at-eol
+
+assets/maps/rmuc2027/navigation-console-support-v2/scene.json -text whitespace=cr-at-eol
+
+# Canonical prepared backend bytes are a native launch checksum input.
+assets/vehicles/aim_sentry/mujoco/backend.json -text whitespace=cr-at-eol
+# Unified diff context retains its mandatory single-space prefix on blank lines.
+third_party/patches/mujoco/mujoco_viewer_static_flex_vbo_4.0.1-rmsim1.patch whitespace=-blank-at-eol
+third_party/patches/rmuc-navigation-default.patch whitespace=-blank-at-eol

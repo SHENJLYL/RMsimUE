@@ -34,18 +34,24 @@ def adapter_fixture():
     tree=ast.parse(path.read_text(encoding='utf-8'))
     original=next(node for node in tree.body if isinstance(node,ast.ClassDef) and node.name=='NavigationRunner')
     names={'velocity_adapter_ready','reset_velocity_adapter','finite_planar_velocity','stop_velocity',
-           'on_body_velocity','publish_body_velocity','on_smoothed_body_velocity','observe'}
+           'on_body_velocity','publish_body_velocity','on_smoothed_body_velocity','observe',
+           'on_idle_spin_action_status','publish_navigation_brake','on_navigation_velocity'}
     body=[node for node in original.body if isinstance(node,ast.FunctionDef) and node.name in names]
     test_class=ast.ClassDef(name='Adapter',bases=[],keywords=[],body=body,decorator_list=[])
-    namespace={'math':math,'json':json,'time':time,'Twist':twist,'TwistStamped':Stamped}
+    statuses=SimpleNamespace(STATUS_ACCEPTED=1,STATUS_EXECUTING=2,STATUS_CANCELING=3)
+    namespace={'math':math,'json':json,'time':time,'Twist':twist,'TwistStamped':Stamped,
+               'GoalStatus':statuses}
     exec(compile(ast.fix_missing_locations(ast.Module(body=[test_class],type_ignores=[])),str(path),'exec'),namespace)
     adapter=namespace['Adapter']()
+    adapter.motion_released=True
     adapter.robot='aim_sentry';adapter.drive_identity={'enabled':True};adapter.nav_started=True
     adapter.state={'connected':True,'state_fresh':True,'session':'session-a','epoch':0}
     adapter.identity=['session-a',0];adapter.now_ns=2_000_000_000
     adapter.get_clock=lambda:SimpleNamespace(now=lambda:SimpleNamespace(nanoseconds=adapter.now_ns))
     adapter.smoother_config={'velocity_timeout':1.,'smoothing_frequency':20.}
     adapter.inputs=[];adapter.outputs=[]
+    adapter.idle_spin_active_goals={}
+    adapter.navigation_executing_goals={}
     adapter.body_velocity_pub=SimpleNamespace(publish=adapter.inputs.append)
     adapter.public_velocity_pub=SimpleNamespace(publish=adapter.outputs.append)
     adapter.velocity_adapter_counts=dict(accepted_inputs=0,published_outputs=0,rejected_inputs=0,rejected_outputs=0,
@@ -66,6 +72,15 @@ class NavigationDriveProfileTests(unittest.TestCase):
     def adapted(self,mode='simulation',profile=None):
         return prepare(self.reference,self.map,'aim_sentry',[.6,-.4,.15],mode,
                        drive_profile=str(profile or self.profile))
+
+    def test_velocity_waits_for_display_release(self):
+        adapter=adapter_fixture()
+        adapter.motion_released=False
+        adapter.on_navigation_velocity(twist(1.0))
+        self.assertIsNone(adapter.navigation_motion_ns)
+        adapter.motion_released=True
+        adapter.on_navigation_velocity(twist(1.0))
+        self.assertEqual(adapter.navigation_motion_ns,adapter.now_ns)
 
     def test_standard_vehicle_caps_and_all_shaper_controls_are_source_bound(self):
         data=load_drive_profile(self.profile);control=json.loads(self.profile.read_text())['control']
@@ -88,10 +103,15 @@ class NavigationDriveProfileTests(unittest.TestCase):
                 self.assertIn('velocity_smoother',NAVIGATION_NODES)
                 original=copy.deepcopy(baseline['controller_server']['ros__parameters']['FollowPath'])
                 original.update(identity['controller_limits'])
+                original.update(collision_deceleration=4.0, tracking_deceleration=4.0 if mode=='simulation' else 2.0,
+                                collision_reaction_time=.45, external_rotation_possible=True)
                 self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath'],original)
                 smoother=copy.deepcopy(baseline['velocity_smoother']['ros__parameters'])
                 smoother.update(identity['smoother_limits'])
                 self.assertEqual(cfg['velocity_smoother']['ros__parameters'],smoother)
+                local = baseline['local_costmap']['local_costmap']['ros__parameters']
+                local['always_send_full_costmap'] = True
+                self.assertTrue(cfg['fake_vel_transform']['ros__parameters']['project_heading_to_stamp'])
                 for name in ('planner_server','local_costmap','global_costmap','amcl','behavior_server'):
                     self.assertEqual(cfg[name],baseline[name])
 
@@ -113,10 +133,13 @@ class NavigationDriveProfileTests(unittest.TestCase):
         path=self.directory/'vehicle-drive.json';path.write_text(json.dumps(data))
         cfg,metadata=self.adapted(profile=path)
         smooth=cfg['velocity_smoother']['ros__parameters']
-        self.assertEqual(smooth['max_velocity'],[2.2,1.8,.9])
-        self.assertEqual(smooth['min_velocity'],[-1.1,-1.8,-.9])
-        self.assertEqual(smooth['max_accel'],[1.7,1.7,2.3])
-        self.assertEqual(smooth['max_decel'],[-3.8,-3.8,-4.2])
+        self.assertEqual(smooth['max_velocity'],[2.2,2.2,.9])
+        self.assertEqual(smooth['min_velocity'],[-2.2,-2.2,-.9])
+        self.assertEqual(smooth['max_accel'],[math.hypot(1.7,8.)]*2+[2.3])
+        self.assertEqual(smooth['max_decel'],[-math.hypot(3.8,8.)]*2+[-4.2])
+        controller = cfg['controller_server']['ros__parameters']['FollowPath']
+        self.assertEqual(controller['v_linear_min'], -1.1)
+        self.assertEqual(controller['v_linear_max'], 2.2)
         self.assertEqual(metadata['drive_profile']['vehicle_control'],control)
 
     def test_invalid_profile_never_silently_falls_back(self):
@@ -133,22 +156,28 @@ class NavigationDriveProfileTests(unittest.TestCase):
         topics,remaps=velocity_routes('aim_sentry')
         self.assertEqual(len(set(topics.values())),5)
         fake=cfg['fake_vel_transform']['ros__parameters']
-        self.assertEqual(fake['input_cmd_vel_topic'],topics['navigation_raw'])
+        self.assertEqual(identity['smoother_frame'], 'navigation')
+        self.assertEqual(fake['input_cmd_vel_topic'],identity['topics']['navigation_smoothed'])
+        self.assertEqual(identity['topics']['public'],topics['public'])
+        self.assertNotIn('public_odometry',identity['topics'])
         self.assertEqual(fake['output_cmd_vel_topic'],topics['body_stamped'])
         self.assertNotEqual(fake['output_cmd_vel_topic'],topics['public'])
         self.assertEqual(cfg['behavior_server']['ros__parameters']['robot_base_frame'],'aim_sentry/navigation_frame')
         self.assertEqual(remaps['controller_server'],remaps['behavior_server'])
-        self.assertEqual(identity['topic_remaps'],remaps)
-        # Every chassis heading gets the same forward/reverse/lateral caps after rotation.
-        caps=identity['smoother_limits']
+        self.assertEqual(identity['topic_remaps']['controller_server'],remaps['controller_server'])
+        self.assertEqual(identity['topic_remaps']['behavior_server'],remaps['behavior_server'])
+        self.assertEqual(identity['topic_remaps']['velocity_smoother'],[
+            ('cmd_vel', topics['navigation_raw']), ('cmd_vel_smoothed', identity['topics']['navigation_smoothed'])])
+        # The final command uses the same local axes throughout a rotation.
+        caps=identity['vehicle_control']
         for angle in (0.,math.pi/2,math.pi,-math.pi/2):
             for x,y in ((5.,0.),(-2.5,0.),(0.,4.),(0.,-4.)):
                 nav_x=x*math.cos(angle)-y*math.sin(angle)
                 nav_y=x*math.sin(angle)+y*math.cos(angle)
                 body=(nav_x*math.cos(angle)+nav_y*math.sin(angle),-nav_x*math.sin(angle)+nav_y*math.cos(angle))
                 self.assertAlmostEqual(body[0],x);self.assertAlmostEqual(body[1],y)
-                self.assertGreaterEqual(body[0]+1e-12,caps['min_velocity'][0])
-                self.assertLessEqual(body[1]-1e-12,caps['max_velocity'][1])
+                self.assertGreaterEqual(body[0]+1e-12,-caps['MaxReverseSpeedMps'])
+                self.assertLessEqual(body[1]-1e-12,caps['MaxLateralSpeedMps'])
 
     def test_callback_preserves_values_body_frame_and_actual_sim_clock_stamp(self):
         adapter=adapter_fixture();message=Stamped()
@@ -222,6 +251,32 @@ class NavigationStopIntentTests(unittest.TestCase):
         self.assertEqual(adapter.body_stop_ns,2_000_000_000)
         self.assertEqual(adapter.velocity_adapter_counts['immediate_stops'],1)
         self.assertEqual(len(adapter.inputs),1)
+
+    def test_action_cancels_without_a_velocity_zero_and_rejects_smoother_tail(self):
+        adapter=adapter_fixture()
+        def status(action, phase):
+            message = SimpleNamespace(status_list=[SimpleNamespace(status=phase)])
+            adapter.on_idle_spin_action_status(action, message)
+
+        status('navigate_to_pose', 2)
+        status('follow_path', 2)
+        adapter.on_navigation_velocity(twist(2.))
+        status('follow_path', 4)
+        self.assertEqual(adapter.outputs, [])
+        status('navigate_to_pose', 3)
+        self.assertTrue(adapter.navigation_result_brake)
+        self.assert_zero(adapter.outputs[-1])
+        adapter.now_ns += 25_000_000
+        adapter.on_navigation_velocity(twist(2.))
+        self.assertIsNone(adapter.navigation_motion_ns)
+        adapter.on_body_velocity(self.target(adapter,2.))
+        adapter.on_smoothed_body_velocity(twist(2.))
+        self.assert_zero(adapter.outputs[-1])
+        status('navigate_to_pose', 5)
+        status('navigate_to_pose', 1)
+        self.assertFalse(adapter.navigation_result_brake)
+        adapter.on_navigation_velocity(twist(2.))
+        self.assertEqual(adapter.navigation_motion_ns, adapter.now_ns)
 
     def test_stop_threshold_matches_bridge_and_normalizes_all_axes_to_exact_zero(self):
         adapter=adapter_fixture()

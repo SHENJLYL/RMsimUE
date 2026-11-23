@@ -24,5 +24,6 @@ for metadata in (prefix/'conda-meta').glob('ros2-nav2-*.json'):
     if package['name']=='ros2-nav2-rviz-plugins':continue
     if package['name'].removeprefix('ros2-').replace('-','_') in native_overlays:continue
     plugins.extend(prefix/file for file in package['files'] if file.lower().endswith('.dll'))
+sources.append(prefix/'Library/lib/nav2_theta_star_planner')
 assert len(programs)>=16 and plugins
 stage_runtime(root/'artifacts/runtime/navigation/windows',programs,sources,plugins)

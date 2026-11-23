@@ -170,12 +170,42 @@ def restore_packaged_map(manifest: Path) -> None:
                          (result.stderr or result.stdout)[-3000:])
 
 
+def select_navigation_source(scene: dict, control_profile: str, output: Path, explicit: Path | None = None) -> Path:
+    if explicit is not None:
+        return explicit.resolve()
+    package = scene.get('simulation_navigation_package')
+    if control_profile != 'simulation' or package is None:
+        return (ROOT/'ros2_ws/src/pb2025_nav_bringup/config'/control_profile/'nav2_params.yaml').resolve()
+
+    directory = Path(package['directory'])
+    profile = package['profile']
+    source = directory/'navigation-profile.yaml'
+    support = directory/'terrain-support.bin'
+    if profile['file'] != source.name or digest(source) != profile['sha256']:
+        raise ValueError('RMUC default navigation source differs from the map package')
+    raw = profile['ground_support']
+    if raw['file'] != support.name:
+        raise ValueError('RMUC support grid differs from the map package')
+    if not support.is_file() or not Path(scene['map_yaml']).with_name('terrain-ground.bin').is_file():
+        raise ValueError('Restore local RMUC ground grids with '+str(directory/'restore_navigation_ground.py'))
+    if digest(support) != raw['sha256']:
+        raise ValueError('RMUC support grid differs from the map package')
+    text, references = re.subn(r'(?m)^([ \t]*ground_support_file:[ \t]*)terrain-support\.bin[ \t]*$',
+                              lambda match: match[1] + json.dumps(str(support.resolve())),
+                              source.read_text(encoding='utf-8'))
+    if references == 0:
+        raise ValueError('RMUC default navigation source has no support-grid reference')
+    bound = output/'navigation-source.yaml'
+    bound.write_text(text, encoding='utf-8', newline='\n')
+    return bound.resolve()
+
+
 def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, initial_pose_offset=None) -> dict:
     if scene_name not in ('rmuc2027', 'import_lab'):
         raise ValueError('Unknown console scene')
     output.mkdir(parents=True, exist_ok=False)
     nav = output / 'navigation'
-    source, specification = None, {}
+    source, specification, release = None, {}, {}
     if scene_name == 'rmuc2027':
         map_root = ROOT / 'assets/maps/rmuc2027'
         perimeter_file = map_root / 'arena-shell.json'
@@ -184,10 +214,21 @@ def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, ini
         if not isinstance(package_name, str) or not re.fullmatch(r'[a-z0-9_-]+', package_name):
             raise ValueError('Invalid declared navigation package directory')
         source = map_root / package_name
-        specification = json.loads((source / 'SOURCE.json').read_text(encoding='utf-8-sig'))
-        scene = json.loads((source / 'scene.json').read_text(encoding='utf-8-sig'))
-        if scene_geometry(scene) != specification['scene_geometry_sha256']:
+        source_manifest = source / 'SOURCE.json'
+        specification = json.loads(source_manifest.read_text(encoding='utf-8-sig'))
+        release_file = source / 'navigation-release.json'
+        if release_file.is_file():
+            release = json.loads(release_file.read_text(encoding='utf-8-sig'))
+            if release.get('schema') != 'rmsim_navigation_release_v1' or release.get('map_package_sha256') != digest(source_manifest):
+                raise ValueError('Navigation release differs from the map package')
+        navigation_scene = json.loads((source / 'scene.json').read_text(encoding='utf-8-sig'))
+        scene = json.loads((map_root / 'map.json').read_text(encoding='utf-8-sig'))
+        geometry_sha256 = specification['scene_geometry_sha256']
+        if scene_geometry(navigation_scene) != geometry_sha256:
             raise ValueError('RMUC navigation raster does not match the declared scene geometry')
+        if scene_geometry(scene) != geometry_sha256:
+            raise ValueError('RMUC navigation raster does not match the canonical RMUC map; regenerate the package')
+        scene['spawns'] = navigation_scene['spawns']
         boundary = specification.get('runtime_boundary')
         outside_contract = perimeter.get('perimeter', {}).get('physics_contract') in ('outside_source_bounds_v1', 'outside_platform_bounds_v1')
         if outside_contract or boundary is not None:
@@ -208,6 +249,23 @@ def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, ini
         shutil.copyfile(raster, nav / 'map.pgm')
         shutil.copyfile(source / 'map.yaml', nav / 'map.yaml')
         metadata = copy.deepcopy(specification['map_metadata'])
+        if 'navigation_clearance' in release:
+            metadata['navigation_clearance'] = release['navigation_clearance']
+        ground = release.get('surveyed_ground', specification.get('surveyed_ground'))
+        if ground:
+            filename = 'terrain-ground.bin'
+            if ground.get('file') != filename:
+                raise ValueError('Surveyed ground file differs from the active map package')
+            reference_file = source / filename
+            if reference_file.is_file():
+                if digest(reference_file) != ground.get('sha256'):
+                    raise ValueError('Surveyed ground file differs from the active map package')
+                shutil.copyfile(reference_file, nav / filename)
+                metadata['surveyed_ground'] = {'file':filename, 'sha256':ground['sha256']}
+            else:
+                metadata['surveyed_ground_status'] = 'reference_missing'
+                print(f'Surveyed ground reference missing at {reference_file}', flush=True)
+
         if boundary is not None:
             metadata['runtime_boundary_manifest_path'] = str(perimeter_file.resolve())
         descriptor_file = source.parent / 'mesh-source.json'
@@ -236,10 +294,12 @@ def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, ini
                                                        restore=restore_packaged_map)
     package_identity = ({'manifest_path': str((source / 'SOURCE.json').resolve()),
                          'manifest_sha256': digest(source / 'SOURCE.json')} if selection == 'package_default' else None)
+    profile = release.get('simulation_navigation')
     return dict(scene=scene_name, scene_file=str(scene_file), map_yaml=str(nav / 'map.yaml'),
                 initial_pose=initial, initial_pose_prior=initial_prior, view=view, scene_sha256=digest(scene_file), raster_sha256=digest(nav / 'map.pgm'),
                 localization_map_yaml=selected_map, localization_map_selection=selection,
-                localization_map_package=package_identity)
+                localization_map_package=package_identity,
+                simulation_navigation_package={'directory': str(source.resolve()), 'profile': profile} if profile else None)
 
 def rviz_configuration(view: dict) -> dict:
     def topic(name, transient=False, sensor=False):
@@ -266,7 +326,7 @@ def rviz_configuration(view: dict) -> dict:
         {'Class':'rviz_default_plugins/PointCloud2','Name':'Point-LIO registered cloud','Enabled':True,'Value':True,
          'Topic':topic('/registered_scan', sensor=True),'Size (Pixels)':1,'Size (m)':.012,
          'Style':'Points','Color Transformer':'FlatColor','Color':'90; 160; 170','Position Transformer':'XYZ',
-         'Decay Time':2.,'Alpha':.45},
+         'Decay Time':0.,'Alpha':.45},
         {'Class':'rviz_default_plugins/MarkerArray','Name':'Selected waypoints','Enabled':True,'Value':True,
          'Topic':topic('/waypoints')},
         {'Class':'rviz_default_plugins/TF','Name':'Coordinate frames','Enabled':False,'Show Names':True,'Marker Scale':.25}]

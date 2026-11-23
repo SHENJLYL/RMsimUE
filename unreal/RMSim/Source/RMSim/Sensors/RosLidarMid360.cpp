@@ -130,6 +130,7 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
     if(PreviousTime>=0)MaxStep=FMath::Max(MaxStep,FMath::Max(0.,Time-PreviousTime));
     PreviousTime=Time;
     const int64 NowNs=FMath::RoundToInt64(Time*1.e9);
+    // Dedicated mode replays each actual 5 ms query endpoint separately.
     const auto Batch=PulseClock.Advance(NowNs,Connected?4096:0);
     RayIndex=PulseClock.NextIndex();
     if(!Connected)

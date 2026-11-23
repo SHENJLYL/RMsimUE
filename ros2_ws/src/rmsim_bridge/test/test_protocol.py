@@ -93,6 +93,20 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual((decoded['vx'], decoded['vy'], decoded['wz']), (1.25, -.5, -.7))
         self.assertEqual((decoded['session'], decoded['epoch'], decoded['seq']), ('run-one', 1, 9))
 
+    def test_gyro_idle_requires_zero_twist_and_explicit_capability(self):
+        current = state()
+        args = (current, 9, 990_000_000, 'aim_sentry/base_link')
+        with self.assertRaises(ProtocolError):
+            command_packet(*args, [0.] * 6, 'aim_sentry', operator_idle=True)
+        current['drive'] = {'operator_gyro_available': True}
+        parked = json.loads(command_packet(*args, [0.] * 6, 'aim_sentry', operator_idle=True))
+        self.assertEqual(parked['kind'], 'operator_idle')
+        self.assertEqual((parked['vx'], parked['vy'], parked['wz']), (0., 0., 0.))
+        brake = json.loads(command_packet(*args, [0.] * 6, 'aim_sentry'))
+        self.assertEqual(brake['kind'], 'command')
+        with self.assertRaises(ProtocolError):
+            command_packet(*args, [0., 0., 0., 0., 0., 5.], 'aim_sentry', operator_idle=True)
+
     def test_bad_command_never_silently_changes_frame_or_axes(self):
         invalid=[('map', 1_000_000_000, [1, 0, 0, 0, 0, 0]),
                  ('aim_sentry/base_link', 749_999_999, [1, 0, 0, 0, 0, 0]),

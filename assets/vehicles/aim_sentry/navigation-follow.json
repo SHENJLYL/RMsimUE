@@ -3,10 +3,10 @@
   "source_commit": "95c66c28717e0b4d0f586c2ebf8df99d47a24ab0",
   "control": {
     "min_yaw_rate": 0.3,
-    "max_yaw_rate": 1.0,
-    "max_yaw_accel": 2.0,
+    "max_yaw_rate": 3.0,
+    "max_yaw_accel": 8.0,
     "yaw_tolerance": 0.02,
     "min_speed": 0.03,
-    "input_timeout_s": 0.2
+    "input_timeout_s": 0.25
   }
 }

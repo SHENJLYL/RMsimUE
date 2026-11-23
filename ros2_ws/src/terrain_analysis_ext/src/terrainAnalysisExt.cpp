@@ -14,9 +14,16 @@
 //
 // Original work based on sensor_scan_generation package by Hongbiao Zhu.
 
+#include <algorithm>
 #include <math.h>
+#include <stdexcept>
 #include <queue>
 
+#include "terrain_analysis/slope_ground.hpp"
+#include "terrain_analysis/surveyed_ground_ros.hpp"
+#include "message_filters/subscriber.h"
+#include "message_filters/sync_policies/exact_time.h"
+#include "message_filters/synchronizer.h"
 #include "nav_msgs/msg/odometry.hpp"
 #include "pcl/filters/voxel_grid.h"
 #include "pcl/kdtree/kdtree_flann.h"
@@ -84,7 +91,9 @@ int planarVoxelConn[kPlanarVoxelNum] = {0};
 std::vector<float> planarPointElev[kPlanarVoxelNum];
 std::queue<int> planarVoxelQueue;
 
+builtin_interfaces::msg::Time laserCloudStamp;
 double laserCloudTime = 0;
+double localTerrainTime = -1.0;
 bool newlaserCloud = false;
 
 double systemInitTime = 0;
@@ -114,7 +123,8 @@ void odometryHandler(const nav_msgs::msg::Odometry::ConstSharedPtr odom) {
 // registered laser scan callback function
 void laserCloudHandler(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr laserCloud2) {
-  laserCloudTime = rclcpp::Time(laserCloud2->header.stamp).seconds();
+  laserCloudStamp = laserCloud2->header.stamp;
+  laserCloudTime = rclcpp::Time(laserCloudStamp).seconds();
 
   if (!systemInited) {
     systemInitTime = laserCloudTime;
@@ -153,6 +163,7 @@ void laserCloudHandler(
 // local terrain cloud callback function
 void terrainCloudLocalHandler(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr terrainCloudLocal2) {
+  localTerrainTime = rclcpp::Time(terrainCloudLocal2->header.stamp).seconds();
   terrainCloudLocal->clear();
   pcl::fromROSMsg(*terrainCloudLocal2, *terrainCloudLocal);
 }
@@ -174,7 +185,14 @@ int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
   auto nh = rclcpp::Node::make_shared("terrainAnalysisExt");
   const auto odom_frame = nh->declare_parameter<std::string>("odom_frame", "odom");
+  terrain_analysis::SurveyedGroundFilter surveyed_ground(nh);
 
+  const double max_slope_deg = nh->declare_parameter<double>("maxPassableSlopeDeg", 0.0);
+  if (!std::isfinite(max_slope_deg) || max_slope_deg < 0.0 || max_slope_deg > 45.0) {
+    throw std::invalid_argument("maxPassableSlopeDeg must be between 0 and 45");
+  }
+  const double max_gradient = std::tan(max_slope_deg * M_PI / 180.0);
+  terrain_analysis::SlopeGround slope_ground(planarVoxelWidth);
   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
   nh->declare_parameter<double>("decayTime", decayTime);
   nh->declare_parameter<double>("noDecayDis", noDecayDis);
@@ -211,11 +229,19 @@ int main(int argc, char **argv) {
   nh->get_parameter("ceilingFilteringThre", ceilingFilteringThre);
   nh->get_parameter("localTerrainMapRadius", localTerrainMapRadius);
 
-  auto subOdometry = nh->create_subscription<nav_msgs::msg::Odometry>(
-      "lidar_odometry", 5, odometryHandler);
-
-  auto subLaserCloud = nh->create_subscription<sensor_msgs::msg::PointCloud2>(
-      "registered_scan", 5, laserCloudHandler);
+  // Both messages describe the same Point-LIO scan. DDS can deliver either
+  // first. Using the previous pose changes the terrain crop and view angles
+  // during a turn even if all scans and odometry samples are received.
+  using TerrainInputs = message_filters::sync_policies::ExactTime<
+    nav_msgs::msg::Odometry, sensor_msgs::msg::PointCloud2>;
+  message_filters::Subscriber<nav_msgs::msg::Odometry> odometry(nh.get(), "lidar_odometry");
+  message_filters::Subscriber<sensor_msgs::msg::PointCloud2> cloud(nh.get(), "registered_scan");
+  message_filters::Synchronizer<TerrainInputs> inputs(TerrainInputs(8), odometry, cloud);
+  inputs.registerCallback(+[](const nav_msgs::msg::Odometry::ConstSharedPtr & pose,
+      const sensor_msgs::msg::PointCloud2::ConstSharedPtr & scan) {
+    odometryHandler(pose);
+    laserCloudHandler(scan);
+  });
 
   auto subJoystick =
       nh->create_subscription<sensor_msgs::msg::Joy>("joy", 5, joystickHandler);
@@ -344,7 +370,21 @@ int main(int argc, char **argv) {
         }
       }
 
+      const double oldest_return = laserCloudTime - systemInitTime - decayTime;
+      const double persistent_radius_sq = noDecayDis * noDecayDis;
       for (int ind = 0; ind < kTerrainVoxelNum; ind++) {
+        // Apply the lifetime before downsampling or using the cache. Otherwise
+        // expired points affect the height fit until this voxel is refreshed,
+        // and the voxel filter can blend expired positions into fresh samples.
+        auto & voxel = *terrainVoxelCloud[ind];
+        const auto expired = [&](const pcl::PointXYZI & sample) {
+          if (sample.intensity > oldest_return) {return false;}
+          const double dx = sample.x - vehicleX;
+          const double dy = sample.y - vehicleY;
+          return noDecayDis <= 0.0 || dx * dx + dy * dy >= persistent_radius_sq;
+        };
+        const auto first_expired = std::remove_if(voxel.begin(), voxel.end(), expired);
+        voxel.erase(first_expired, voxel.end());
         if (terrainVoxelUpdateNum[ind] >= voxelPointUpdateThre ||
             laserCloudTime - systemInitTime - terrainVoxelUpdateTime[ind] >=
                 voxelTimeUpdateThre ||
@@ -387,6 +427,7 @@ int main(int argc, char **argv) {
       }
 
       // estimate ground and compute elevation for each point
+      slope_ground.reset(max_gradient);
       for (int i = 0; i < kPlanarVoxelNum; i++) {
         planarVoxelElev[i] = 0;
         planarVoxelConn[i] = 0;
@@ -414,6 +455,7 @@ int main(int argc, char **argv) {
           if (point.y - vehicleY + planarVoxelSize / 2 < 0)
             indY--;
 
+          slope_ground.observe(indX, indY, point.x, point.y, point.z);
           for (int dX = -1; dX <= 1; dX++) {
             for (int dY = -1; dY <= 1; dY++) {
               if (indX + dX >= 0 && indX + dX < planarVoxelWidth &&
@@ -501,6 +543,8 @@ int main(int argc, char **argv) {
       }
 
       // compute terrain map beyond localTerrainMapRadius
+      slope_ground.fit();
+      int slope_obstacles_removed = 0;
       terrainCloudElev->clear();
       int terrainCloudElevSize = 0;
       for (int i = 0; i < terrainCloudSize; i++) {
@@ -528,6 +572,12 @@ int main(int argc, char **argv) {
               indY < planarVoxelWidth) {
             int ind = planarVoxelWidth * indX + indY;
             float disZ = fabs(point.z - planarVoxelElev[ind]);
+            if (const auto elevation = slope_ground.elevationAboveSupport(
+                indX, indY, point.x, point.y, point.z)) {
+              const float relative = static_cast<float>(*elevation);
+              slope_obstacles_removed += disZ >= 0.10f && relative < 0.10f;
+              disZ = std::min(disZ, relative);
+            }
             if (disZ < vehicleHeight &&
                 (planarVoxelConn[ind] == 2 || !checkTerrainConn)) {
               terrainCloudElev->push_back(point);
@@ -543,7 +593,9 @@ int main(int argc, char **argv) {
       }
 
       // merge in local terrain map within localTerrainMapRadius
-      int terrainCloudLocalSize = terrainCloudLocal->points.size();
+      const auto local_age = laserCloudTime - localTerrainTime;
+      const int terrainCloudLocalSize = local_age >= 0.0 && local_age <= 0.15 ?
+        static_cast<int>(terrainCloudLocal->points.size()) : 0;
       for (int i = 0; i < terrainCloudLocalSize; i++) {
         point = terrainCloudLocal->points[i];
         float dis = sqrt((point.x - vehicleX) * (point.x - vehicleX) +
@@ -555,11 +607,17 @@ int main(int argc, char **argv) {
 
       clearingCloud = false;
 
+      surveyed_ground.apply(terrainCloudElev->points, odom_frame, laserCloudStamp,
+        vehicleX, vehicleY, max_gradient, &laserCloud->points);
+
       // publish points with elevation
+      if (slope_obstacles_removed > 0) {
+        RCLCPP_INFO_THROTTLE(nh->get_logger(), *nh->get_clock(), 1000,
+          "Supported slope returns below obstacle threshold: %d", slope_obstacles_removed);
+      }
       sensor_msgs::msg::PointCloud2 terrainCloud2;
       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
-      terrainCloud2.header.stamp =
-          rclcpp::Time(static_cast<uint64_t>(laserCloudTime * 1e9));
+      terrainCloud2.header.stamp = laserCloudStamp;
       terrainCloud2.header.frame_id = odom_frame;
       pubTerrainCloud->publish(terrainCloud2);
     }

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -14,7 +15,9 @@ import sys
 import time
 import uuid
 
-from navigation_console_config import ROOT, prepare_scene, rviz_configuration, digest, atomic_json, copy_runtime_arena
+from navigation_console_config import (
+    ROOT, atomic_json, copy_runtime_arena, digest, prepare_scene, rviz_configuration, select_navigation_source,
+)
 from runtime_identity import capture_pointlio_inputs
 from platform_cpu_policy import apply_owned_process_policy, prepare_ue_worker_budget, worker_budget_digest
 
@@ -40,7 +43,28 @@ class StopRequested(Exception):
 
 
 def mujoco_viewer_enabled(args) -> bool:
-    return args.physics_backend == 'mujoco' and not args.no_rviz and not args.offscreen
+    return args.mujoco_viewer and args.physics_backend == 'mujoco' and not args.no_rviz and not args.offscreen
+
+
+def ue_display_configuration(args) -> tuple[dict, list[str]]:
+    """Describe requested startup pixels; actual client pixels are observed separately."""
+    if args.fullscreen and args.offscreen:
+        raise ValueError('--fullscreen cannot be combined with --offscreen')
+    width = args.width if args.width is not None else (640 if args.offscreen else 1120)
+    height = args.height if args.height is not None else (360 if args.offscreen else 860)
+    if any(type(value) is not int or not 64 <= value <= 16384 for value in (width, height)):
+        raise ValueError('Display width and height must be integers in 64..16384 pixels')
+    mode = 'offscreen' if args.offscreen else ('fullscreen' if args.fullscreen else 'windowed')
+    flags = (['-RenderOffScreen', '-unattended'] if args.offscreen else
+             ['-fullscreen' if args.fullscreen else '-windowed'])
+    flags.extend(['-ResX='+str(width), '-ResY='+str(height)])
+    if not args.offscreen and not args.fullscreen:
+        flags.extend(['-WinX=20', '-WinY=40'])
+    requested = dict(mode=mode, width_pixels=width, height_pixels=height,
+        width_explicit=args.width is not None, height_explicit=args.height is not None,
+        actual_client_size_verified=False,
+        scope='requested UE startup flags; actual client pixels and foreground require separate observation')
+    return requested, flags
 
 
 def mujoco_viewer_environment(python: Path, inherited: dict) -> tuple[dict, dict]:
@@ -71,25 +95,60 @@ def mujoco_viewer_environment(python: Path, inherited: dict) -> tuple[dict, dict
                          'inherits_ros_python_or_dll_paths':False}
 
 
-def prepare_mujoco_viewer(manifest: Path, model_spec: dict, output: Path, inherited: dict) -> dict:
-    python = ROOT/'artifacts/environments/mujoco-4.0.1/Scripts/python.exe'
-    source = ROOT/'tools/mujoco/live_viewer.py'
-    protocol = source.with_name('viewer_protocol.py')
-    for path in (python, source, protocol):
-        if not path.is_file():
-            raise RuntimeError('Missing MuJoCo viewer prerequisite: '+str(path))
-    environment, environment_policy = mujoco_viewer_environment(python, inherited)
+def optimized_mujoco_viewer_runtime(source: Path) -> dict:
+    """Load the shared receipt validator without changing the ROS import path."""
+    helper = ROOT/'tools/mujoco/viewer_runtime.py'
+    if not helper.is_file():
+        raise RuntimeError('Missing optimized MuJoCo viewer runtime validator: '+str(helper))
+    spec = importlib.util.spec_from_file_location('_rmsim_viewer_runtime_preflight', helper)
+    if spec is None or spec.loader is None:
+        raise RuntimeError('Cannot load optimized MuJoCo viewer runtime validator')
+    module = importlib.util.module_from_spec(spec)
+    # Keep annotations/dataclasses resolvable during module execution. This
+    # private name cannot replace the ROS modules or alter their search paths.
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module.validate_optimized_viewer_runtime(ROOT, source)
+
+
+def check_mujoco_viewer_dependencies(python: Path, source: Path, environment: dict,
+                                    runtime: dict) -> dict:
+    """Import the exact overlay and verify its loaded DLL; no GL context is created."""
     check = ('import importlib.metadata as m,json,sys; import mujoco,numpy,glfw; '
              'assert mujoco.__version__ == "4.0.1", "MuJoCo viewer needs 4.0.1"; '
+             f'sys.path.insert(0,{str(source.parent)!r}); from live_viewer import runtime_identity; '
              'print(json.dumps({"python":sys.executable,"base_prefix":sys.base_prefix,'
              '"versions":{n:m.version(n) for n in ("mujoco","mujoco-core","numpy","glfw")},'
-             '"module_files":{n:x.__file__ for n,x in (("mujoco",mujoco),("numpy",numpy),("glfw",glfw))}}))')
+             '"module_files":{n:x.__file__ for n,x in (("mujoco",mujoco),("numpy",numpy),("glfw",glfw))},'
+             '"runtime":runtime_identity(mujoco)}))')
     options = {'creationflags':subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
     result = subprocess.run([str(python), '-I', '-c', check], env=environment,
                             capture_output=True, text=True, timeout=30, **options)
     if result.returncode:
         raise RuntimeError('MuJoCo viewer dependency check failed: '+result.stderr[-3000:])
     dependencies = json.loads(result.stdout)
+    loaded = dependencies.get('runtime')
+    if (not isinstance(loaded, dict) or loaded.get('dll_sha256') != runtime['runtime_identity']['viewer_dll_sha256']
+            or not isinstance(loaded.get('dll_path'), str)
+            or Path(loaded['dll_path']).resolve() != Path(runtime['dll_path']).resolve()):
+        raise RuntimeError('MuJoCo viewer loaded DLL does not match its validated renderer overlay')
+    return dependencies
+
+
+def prepare_mujoco_viewer(manifest: Path, model_spec: dict, output: Path, inherited: dict, *,
+                          timing_diagnostic: bool = False, continuous_render_diagnostic: bool = False,
+                          pause_when_covered: bool = False) -> dict:
+    source = ROOT/'tools/mujoco/live_viewer.py'
+    protocol = source.with_name('viewer_protocol.py')
+    for path in (source, protocol):
+        if not path.is_file():
+            raise RuntimeError('Missing MuJoCo viewer prerequisite: '+str(path))
+    runtime = optimized_mujoco_viewer_runtime(source)
+    python = Path(runtime['python'])
+    if not python.is_file():
+        raise RuntimeError('Missing validated MuJoCo viewer interpreter: '+str(python))
+    environment, environment_policy = mujoco_viewer_environment(python, inherited)
+    dependencies = check_mujoco_viewer_dependencies(python, source, environment, runtime)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as reserve:
         reserve.bind(('127.0.0.1', 0))
         port = reserve.getsockname()[1]
@@ -100,18 +159,31 @@ def prepare_mujoco_viewer(manifest: Path, model_spec: dict, output: Path, inheri
     directory.mkdir(exist_ok=False)
     expected = {'manifest_sha256':digest(manifest), 'model_sha256':model_spec['model_sha256'],
                 'physics_identity_sha256':model_spec['physics_identity_sha256'], 'port':port,
-                'session_token_sha256':hashlib.sha256(token.encode('ascii')).hexdigest()}
+                'session_token_sha256':hashlib.sha256(token.encode('ascii')).hexdigest(),
+                'renderer_runtime_identity':runtime['runtime_identity']}
     status_file = directory/'status.json'
     command = [str(python), str(source), '--manifest', str(manifest), '--port', str(port),
-               '--session-token', token, '--status-file', str(status_file), '--parent-pid', str(os.getpid())]
+               '--session-token', token, '--status-file', str(status_file), '--parent-pid', str(os.getpid()),
+               '--static-flex-gpu-cache']
+    if timing_diagnostic:
+        command.append('--timing-diagnostic')
+    if continuous_render_diagnostic:
+        command.append('--continuous-render-diagnostic')
+    occluder_pid = directory/'owned-ue.pid' if pause_when_covered and os.name == 'nt' else None
+    if occluder_pid is not None:
+        command.extend(['--occluder-pid-file', str(occluder_pid)])
     provenance = dict(enabled=True, transport='read_only_loopback_udp', host='127.0.0.1',
         status_file=str(status_file), python=str(python), python_sha256=digest(python),
-        source_sha256={str(path.relative_to(ROOT)).replace('\\','/'):digest(path) for path in (source, protocol)},
+        source_sha256={**runtime['source_sha256'],
+            str(source.with_name('viewer_runtime.py').relative_to(ROOT)).replace('\\','/'):digest(source.with_name('viewer_runtime.py'))},
         environment=environment_policy, dependencies=dependencies, stream_hz=30, max_datagram_bytes=60*1024,
+        renderer_runtime=runtime, static_flex_gpu_cache=True,
+        timing_diagnostic=timing_diagnostic, continuous_render_diagnostic=continuous_render_diagnostic,
+        pause_when_covered=occluder_pid is not None,
         startup_policy='bind_before_ue_then_first_native_frame_and_navigation_ready',
         close_policy='normal_viewer_or_rviz_close_stops_owned_session',
         scope='read-only native state visualization; UE owns all dynamics and control', **expected)
-    return dict(command=command, environment=environment, expected=expected, token=token,
+    return dict(command=command, environment=environment, expected=expected, token=token, occluder_pid=occluder_pid,
                 status_file=status_file, provenance=provenance)
 
 
@@ -193,7 +265,17 @@ def bind_mujoco_viewer_process(process, actual_pid: int, command: list[str]) -> 
         values = dict((key.strip().lower(), value.strip()) for line in cfg.read_text().splitlines()
                       for key, separator, value in [line.partition('=')] if separator)
         normalize = lambda value:os.path.normcase(str(Path(value).resolve()))
-        allowed_images = {normalize(command[0]), normalize(values.get('executable', str(Path(values['home'])/'python.exe')))}
+        # A venv created by another venv records that redirector as executable;
+        # Windows ultimately runs the interpreter from the explicit base home.
+        base_home = Path(values['home'])
+        if not base_home.is_absolute():
+            raise ValueError('MuJoCo viewer venv base Python home is not absolute')
+        base_image = (base_home/'python.exe').resolve(strict=True)
+        if not base_image.is_file():
+            raise ValueError('MuJoCo viewer venv base Python image is unavailable')
+        allowed_images = {normalize(command[0]), normalize(base_image)}
+        if values.get('executable'):
+            allowed_images.add(normalize(values['executable']))
         if normalize(image_buffer.value) not in allowed_images:
             raise ValueError('MuJoCo viewer child uses an unexpected Python executable')
         shell = ctypes.WinDLL('shell32', use_last_error=True)
@@ -276,6 +358,22 @@ def read_mujoco_viewer_status(path: Path, expected: dict, pid, now: float) -> di
     status['status_fresh'] = status['status_age_seconds'] <= 2.
     if phase in ('waiting', 'ready', 'stale') and status.get('bound') is not True:
         raise ValueError('MuJoCo viewer has not bound its read-only input')
+    if 'renderer_runtime_identity' in expected and phase in ('waiting', 'ready', 'stale'):
+        cache = status.get('renderer_cache')
+        if (not isinstance(cache, dict) or cache.get('schema') != 'rmsim_static_flex_vbo_v1'
+                or cache.get('version') != 'rmsim.viewer-static-flex-vbo.1'
+                or any(cache.get(key) is not True for key in ('requested', 'available', 'enabled'))):
+            raise ValueError('MuJoCo viewer optimized renderer cache is not enabled')
+        if any(type(cache.get(key)) is not int or cache[key] != 0 for key in ('failures', 'rejected_contexts')):
+            raise ValueError('MuJoCo viewer renderer cache reported a failure')
+        if phase in ('ready', 'stale'):
+            counts = status.get('compiled_model_counts')
+            flex_count = counts.get('nflex') if isinstance(counts, dict) else None
+            if (type(flex_count) is not int or flex_count <= 0
+                    or type(cache.get('live_flex')) is not int or cache['live_flex'] != flex_count
+                    or any(type(cache.get(key)) is not int or cache[key] <= 0
+                           for key in ('live_bytes', 'fast_batches'))):
+                raise ValueError('MuJoCo viewer renderer cache lacks complete displayed flex coverage')
     if phase == 'ready':
         frames = status.get('frames')
         if isinstance(frames, bool) or not isinstance(frames, int) or frames < 1 or status.get('body_pose_matches') is not True:
@@ -293,7 +391,7 @@ def main() -> int:
     parser.add_argument('--control-profile', choices=['simulation','reality'], default='simulation', help='Use original sentry_ws Nav2 controller, smoother, planner and costmap configuration')
     parser.add_argument('--physics-backend', choices=['chaos','mujoco'], default='mujoco', help='Standard vehicle dynamics backend; chaos is available only for explicit engine diagnostics')
     parser.add_argument('--mujoco-model', type=Path, help='Prepared MuJoCo scene manifest; required for the MuJoCo backend')
-    parser.add_argument('--navigation-source', type=Path, help='Explicit vehicle-supplied sentry_ws Nav2 YAML; omit to use workspace preset')
+    parser.add_argument('--navigation-source', type=Path, help='Explicit vehicle-supplied sentry_ws Nav2 YAML; omit to use the default for the selected scene and profile')
     parser.add_argument('--localization-map-yaml', type=Path, help='Optional validated AMCL map; navigation and costmap keep the scene map')
     parser.add_argument('--initial-pose-offset', nargs=3, type=float, default=None, metavar=('DX_M','DY_M','DYAW_RAD'), help='Explicit localization-recovery test offset from the scene default spawn; XY offsets use map axes')
     parser.add_argument('--navigation-follow-profile',type=Path,help='Vehicle-supplied high-level navigation gimbal-follow profile')
@@ -301,6 +399,12 @@ def main() -> int:
     parser.add_argument('--sim-step', type=float, choices=[0.001,0.002,0.005,0.01], default=0.005, help='Fixed physics-step seconds; acceptance required for non-default values')
     parser.add_argument('--no-rviz', action='store_true', help='Integration-test mode; normal users use RViz')
     parser.add_argument('--offscreen', action='store_true', help='Owned integration fixture only; requires --no-rviz')
+    parser.add_argument('--fullscreen', action='store_true', help='Request a fullscreen UE window; actual client pixels must be observed separately')
+    parser.add_argument('--width', type=int, help='Requested UE client width; visible default 1120, offscreen default 640')
+    parser.add_argument('--height', type=int, help='Requested UE client height; visible default 860, offscreen default 360')
+    parser.add_argument('--mujoco-viewer', action='store_true', help='Opt into the independent MuJoCo graphics window')
+    parser.add_argument('--viewer-timing-diagnostic', action='store_true', help='Explicit MuJoCo display timing diagnostics; requires the visible native viewer')
+    parser.add_argument('--viewer-continuous-render-diagnostic', action='store_true', help='Explicit continuous-render viewer baseline; native physics and snapshots remain unchanged')
     parser.add_argument('--no-rhi', action='store_true', help='Diagnostic renderer isolation only: no GUI, no hardware camera validation')
     parser.add_argument('--profile-sensor-timing',action='store_true', help='Native engine isolated raycast/camera timing logs')
     parser.add_argument('--profile-mujoco-timing',action='store_true',help='Native dynamics timing attribution for offscreen fixtures')
@@ -309,10 +413,27 @@ def main() -> int:
     parser.add_argument('--lidar-serial-query',action='store_true',help='Diagnostic serial scene-query reference')
     parser.add_argument('--run-seconds', type=float, default=0., help='Optional bounded integration run')
     parser.add_argument('--viewport-hz',type=float,default=60.,help='Scene rendering cadence independent of 200Hz physical sampling')
+    parser.add_argument('--render-scale',type=int,default=100,help='UE primary render resolution percentage (50–100)')
+    parser.add_argument('--operator-gyro', action=argparse.BooleanOptionalAction, default=True,
+                        help='Start this navigation session with operator spin armed')
+    parser.add_argument('--operator-gyro-rate', type=float,
+                        help='Initial armed spin rate in rad/s when --operator-gyro is selected')
     parser.add_argument('--camera-hz',type=float,default=0.,help='ROS RGB stream: 0 disables capture; 1..60 enables images independently of the UE viewport')
     parser.add_argument('--pace-real-time',action=argparse.BooleanOptionalAction,default=True,help='Pace actual fixed physics ticks against wall time; overload remains observable')
     parser.add_argument('--cpu-policy', choices=['performance','system'], default='performance', help='Owned paced UE process: dynamic performance CPU Sets on Windows, or preserve system policy')
     args = parser.parse_args()
+    if args.operator_gyro_rate is not None and (
+        not args.operator_gyro or not math.isfinite(args.operator_gyro_rate)
+        or not 0.1 <= args.operator_gyro_rate <= 5.0
+    ):
+        parser.error('--operator-gyro-rate requires --operator-gyro and a rate from 0.1 to 5 rad/s')
+    args.mujoco_viewer |= args.viewer_timing_diagnostic or args.viewer_continuous_render_diagnostic
+    try:
+        display_request, base_display_flags = ue_display_configuration(args)
+    except ValueError as error:
+        parser.error(str(error))
+    if args.mujoco_viewer and not mujoco_viewer_enabled(args):
+        parser.error('The optional MuJoCo viewer requires a visible MuJoCo navigation session with RViz')
     if args.physics_backend == 'mujoco':
         if args.mujoco_model is None:
             args.mujoco_model = ROOT/'assets/vehicles/aim_sentry/mujoco'/args.scene/'manifest.json'
@@ -332,6 +453,8 @@ def main() -> int:
     if args.verify_lidar_queries and args.lidar_serial_query:parser.error('Choose one LiDAR query diagnostic')
     if (args.verify_lidar_queries or args.lidar_serial_query) and not args.offscreen:parser.error('LiDAR query diagnostics require an offscreen fixture')
     if args.viewport_hz!=0 and not 10<=args.viewport_hz<=144:parser.error('Viewport Hz must be 0 or 10..144')
+    if not 50<=args.render_scale<=100 or (args.no_rhi and args.render_scale!=100):
+        parser.error('Render scale must be 50..100 and requires rendering')
     if args.camera_hz!=0 and not 1<=args.camera_hz<=60:parser.error('Camera Hz must be 0 or 1..60')
     if not 1024 <= args.port <= 65535 or not 0 <= args.domain <= 232 or args.run_seconds < 0:
         parser.error('Invalid port, ROS domain or duration')
@@ -342,12 +465,13 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=False)
     scene = prepare_scene(args.scene, output/'scene', args.localization_map_yaml, args.initial_pose_offset)
     runtime_arena = None
+    if args.scene == 'rmuc2027':
+        # Both physics backends stage the canonical venue for the same RMUC map.
+        runtime_arena = copy_runtime_arena(ROOT/'assets/maps/rmuc2027/arena-shell.json',
+                                           Path(scene['scene_file']).parent)
     if args.physics_backend == 'mujoco':
         if args.scene != 'rmuc2027':
             raise ValueError('The prepared MuJoCo scene is RMUC2027; choose its matching scene')
-        # UE resolves the layout relative to this shell; snapshot both unchanged.
-        runtime_arena = copy_runtime_arena(ROOT/'assets/maps/rmuc2027/arena-shell.json',
-                                           Path(scene['scene_file']).parent)
         verification = subprocess.run([sys.executable, str(ROOT/'tools/mujoco/verify_model.py'),
             '--manifest', str(args.mujoco_model), '--map-file', str(scene['scene_file']),
             '--preflight-only', '--output', str(output/'mujoco-preflight')], capture_output=True, text=True)
@@ -365,7 +489,7 @@ def main() -> int:
     if effective_localization_map_yaml:
         from rmsim_bridge.navigation_map_identity import validate_localization_map
         localization_map = validate_localization_map(scene['map_yaml'], effective_localization_map_yaml)
-    navigation_source = (args.navigation_source or ROOT/'ros2_ws/src/pb2025_nav_bringup/config'/args.control_profile/'nav2_params.yaml').resolve()
+    navigation_source = select_navigation_source(scene, args.control_profile, output, args.navigation_source)
     drive_source = (ROOT/'assets/vehicles/aim_sentry/drive-profile.json').resolve()
     from rmsim_bridge.navigation_drive_profile import load_drive_profile
     navigation_drive_profile = load_drive_profile(drive_source)
@@ -377,7 +501,15 @@ def main() -> int:
     from rmsim_bridge.sentry_navigation_source import source_profile
     source_profile(ROOT/'ros2_ws/src/pb2025_nav_bringup/config/reality/nav2_params.yaml',args.control_profile,str(navigation_source))
     config = output/'navigation.rviz'
-    config.write_text(json.dumps(rviz_configuration(scene['view']), indent=2)+'\n', encoding='utf-8')
+    rviz_config = rviz_configuration(scene['view'])
+    coverage_prefix = ROOT/'ros2_ws/install_rviz_coverage'
+    coverage_library = coverage_prefix/'bin/rmsim_rviz_coverage.dll'
+    rviz_coverage = (os.name == 'nt' and not args.no_rviz and coverage_library.is_file() and
+        (coverage_prefix/'share/ament_index/resource_index/rviz_common__pluginlib__plugin/rmsim_rviz_coverage').is_file())
+    if rviz_coverage:
+        rviz_config['Visualization Manager']['Displays'].append({
+            'Class':'rmsim_rviz_coverage/FullscreenCoverage','Name':'Fullscreen coverage','Enabled':True,'Value':True})
+    config.write_text(json.dumps(rviz_config, indent=2)+'\n', encoding='utf-8')
     from ament_index_python.packages import get_package_share_directory, get_package_prefix
     from rmsim_bridge.native_transport import loopback_environment
     profile = Path(get_package_share_directory('rmsim_bridge'))/'config/fastdds-loopback-udp.xml'
@@ -400,6 +532,9 @@ def main() -> int:
              'control_profile':args.control_profile,'sim_step_seconds':args.sim_step,'no_rhi_diagnostic':args.no_rhi,
              'sensor_timing_diagnostic':args.profile_sensor_timing,'mujoco_timing_diagnostic':args.profile_mujoco_timing,'viewport_hz':args.viewport_hz,'pace_real_time':args.pace_real_time,
              'camera_hz':args.camera_hz,'camera_capture_enabled':args.camera_hz>0 and not args.no_rhi,
+             'display_request':display_request,'render_scale_percent':args.render_scale,
+             'viewer_timing_diagnostic':args.viewer_timing_diagnostic,
+             'viewer_continuous_render_diagnostic':args.viewer_continuous_render_diagnostic,
              'cpu_policy_requested':args.cpu_policy,'process_policy':None,
              'navigation_source':str(navigation_source),'gimbal_follow_profile':str(follow_source),'lidar_profile':str(lidar_source),
              'navigation_drive_profile':navigation_drive_profile,
@@ -427,7 +562,12 @@ def main() -> int:
         value = [{'id':bytes(item.goal_info.goal_id.uuid).hex(), 'status':item.status} for item in message.status_list]
         if state['actions'].get(name) != value:
             state['actions'][name] = value
-            history.append({'wall':time.time(), 'clock_ns':state['clock_ns'], 'action':name, 'goals':value})
+            event = {'wall':time.time(), 'monotonic_s':time.monotonic(), 'clock_ns':state['clock_ns'], 'action':name, 'goals':value}
+            if state.get('rviz_ready_frame'):
+                frame = state['rviz_ready_frame']
+                event['wall_since_rviz_ready_s'] = event['monotonic_s'] - frame['monotonic_s']
+                event['sim_since_rviz_ready_s'] = (state['clock_ns'] - frame['clock_ns'])*1e-9
+            history.append(event)
     def on_map(message):
         state['map_received'] = message.header.frame_id == 'aim_sentry/map' and message.info.width > 0
         state['map_size'] = [message.info.width, message.info.height]
@@ -529,7 +669,11 @@ def main() -> int:
         if not editor.is_file() or not ros2 or (not args.no_rviz and not rviz.is_file()):
             raise RuntimeError('Missing UE/ROS/RViz prerequisites; run tools/environment/Prepare-NavigationConsole.cmd')
         if mujoco_viewer_enabled(args):
-            viewer_plan = prepare_mujoco_viewer(args.mujoco_model, model_spec, output, original)
+            viewer_plan = prepare_mujoco_viewer(args.mujoco_model, model_spec, output, original,
+                timing_diagnostic=args.viewer_timing_diagnostic,
+                continuous_render_diagnostic=args.viewer_continuous_render_diagnostic,
+                pause_when_covered=not args.viewer_continuous_render_diagnostic and
+                    os.environ.get('RMSIM_VIEWER_RENDER_COVERED_DIAGNOSTIC') != '1')
         # A dedicated port is checked before taking any UI ownership.
         with socket.socket() as check:
             check.bind(('127.0.0.1', args.port))
@@ -550,12 +694,14 @@ def main() -> int:
                           physics_max_substep_seconds=.005,
                           physics_config_override='-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005',
                           offscreen=args.offscreen,no_rviz=args.no_rviz,
+                          display_request=display_request,render_scale_percent=args.render_scale,
+                          viewer_timing_diagnostic=args.viewer_timing_diagnostic,
+                          viewer_continuous_render_diagnostic=args.viewer_continuous_render_diagnostic,
                           sensor_timing_diagnostic=args.profile_sensor_timing,mujoco_timing_diagnostic=args.profile_mujoco_timing,status_period_seconds=.5,
                           verify_lidar_queries=args.verify_lidar_queries,lidar_serial_query=args.lidar_serial_query,
                           profile_frames=args.profile_frames)
         provenance['physics_backend'] = args.physics_backend
-        provenance['mujoco_viewer'] = (viewer_plan['provenance'] if viewer_plan else
-                                      dict(enabled=False, reason='headless_or_explicit_non_mujoco_mode'))
+        provenance['mujoco_viewer'] = viewer_plan['provenance'] if viewer_plan else dict(enabled=False, reason='not_requested')
         if args.physics_backend == 'mujoco':
             provenance['mujoco_model'] = str(args.mujoco_model)
             provenance['mujoco_model_sha256'] = digest(args.mujoco_model)
@@ -571,6 +717,9 @@ def main() -> int:
         provenance['cpu_policy_source_sha256'] = digest(Path(__file__).with_name('platform_cpu_policy.py'))
         provenance['process_policy_path'] = str(output/'process-policy/verification.json')
         provenance['ros_process_transport'] = {name:dict(transport) for name in ('monitor','bridge','pointlio','navigation','rviz')}
+        provenance['rviz_fullscreen_coverage'] = dict(installed=rviz_coverage,
+            plugin_sha256=digest(coverage_library) if rviz_coverage else None,
+            diagnostic_unpaused=os.environ.get('RMSIM_RVIZ_RENDER_COVERED_DIAGNOSTIC')=='1')
         provenance['git_worktree_status'] = subprocess.check_output(
             ['git','status','--porcelain=v1','--untracked-files=normal'],cwd=ROOT,text=True).splitlines()
         source_root=ROOT/'ros2_ws/src/rmsim_bridge/rmsim_bridge'
@@ -591,14 +740,38 @@ def main() -> int:
             provenance['runtime_arena'] = runtime_arena
         provenance['dependency_lock_sha256']=digest(ROOT/'tools/environment/pixi.lock')
         provenance['capture_scope']='inputs captured before process launch; source/installed Python text compared'
-        display_flags=['-RenderOffScreen','-unattended','-ResX=640','-ResY=360'] if args.offscreen else ['-windowed','-ResX=1120','-ResY=860','-WinX=20','-WinY=40']
+        display_flags=list(base_display_flags)
         if runtime_arena and runtime_arena['render_profile'] == 'RMSimGymLumen':
             display_flags.extend(['-CustomConfig=RMSimGymLumen', '-d3d12', '-sm6'])
+        if args.render_scale!=100:
+            display_flags.append(f'-ExecCmds=r.ScreenPercentage {args.render_scale}')
         if args.no_rhi: display_flags.append('-nullrhi')
         if args.profile_sensor_timing: display_flags.append('-ProfileSensorTiming')
         if args.profile_mujoco_timing: display_flags.append('-ProfileMujocoTiming')
         if args.profile_frames:
             display_flags.extend(['-csvCaptureFrames='+str(args.profile_frames),'-csvCategories=PhysicsVerbose,PhysicsCounters','-csvCompression=0','-csvStatCounts'])
+        gpu_diagnostic = os.environ.get('RMSIM_GPU_SCHEDULING_DIAGNOSTIC')
+        if gpu_diagnostic in ('1', 'passes'):
+            if not args.fullscreen or args.run_seconds <= 0 or args.no_rhi or args.profile_frames:
+                raise ValueError('GPU scheduling diagnostic requires a bounded fullscreen run with its own capture')
+            # These variables change GPU queue placement and RHI buffering only.
+            # Restore their established defaults between the two independent trials.
+            events = [
+                '1000:r.ProfileGPU.ShowUI 0', '2000:r.Lumen.Reflections.AsyncCompute',
+                '2000:r.GTSyncType', '4000:r.Lumen.Reflections.AsyncCompute 1',
+                '8000:r.Lumen.Reflections.AsyncCompute 0', '12000:r.GTSyncType -2',
+                '16000:r.GTSyncType 0',
+            ]
+            frames = 16800
+            if gpu_diagnostic == 'passes':
+                # A solver-only tick can have no scene pass. Sample adjacent
+                # engine frames here to capture one that actually renders.
+                events = ['1000:r.ProfileGPU.ShowUI 0']
+                events.extend(f'{frame}:ProfileGPU' for frame in range(5200, 5254))
+                frames = 5700
+            display_flags.extend(['-csvCaptureFrames='+str(frames), '-csvCompression=0',
+                                  '-csvExecCmds='+','.join(events)])
+            provenance['gpu_scheduling_diagnostic'] = events
         if args.verify_lidar_queries: display_flags.append('-VerifyLidarQueries')
         if args.lidar_serial_query: display_flags.append('-LidarSerialQuery')
         if args.viewport_hz: display_flags.append('-RMSimViewportHz='+str(args.viewport_hz))
@@ -607,11 +780,15 @@ def main() -> int:
             '-game',*display_flags,'-NoSplash','-NoSound',
             # Apply before world/Chaos creation; manual entry points retain their 1/240 s substeps.
             provenance['physics_config_override'],
-            '-RosControl','-RosAimControl','-RosImu','-RosLidar',
+            '-RosControl','-RosAimControl','-RosImu','-RosLidar','-RosOperatorGyroControl',
             '-LidarProfile='+str(lidar_source),
             '-ImuProfile='+str(ROOT/'assets/vehicles/aim_sentry/sensors/mid360-imu.json'),'-SimStepSeconds='+str(args.sim_step),'-RosCameraWidth=320','-RosCameraHeight=240','-RosCameraHz='+str(args.camera_hz),
             '-RosPort='+str(args.port), '-MeshRigFile='+str(ROOT/'assets/vehicles/aim_sentry/ue_mesh_rig.json'),
             '-MapFile='+scene['scene_file'], '-abslog='+str(output/'runtime.log')]]
+        if args.operator_gyro:
+            ue_command.append('-RosOperatorGyroStart')
+            startup_rate = args.operator_gyro_rate if args.operator_gyro_rate is not None else 5.0
+            ue_command.append('-RosOperatorGyroStartRate='+str(startup_rate))
         if args.physics_backend == 'mujoco':
             ue_command.extend(['-PhysicsBackend=mujoco','-MujocoModel='+str(args.mujoco_model)])
         if viewer_plan:
@@ -648,7 +825,13 @@ def main() -> int:
                 if time.monotonic()-last_save > .5:
                     state['phase'] = 'opening_mujoco_viewer'
                     save(); last_save = time.monotonic()
+        launch('recorder', [sys.executable, ROOT/'tools/integration/navigation_bag.py', output], local_environment)
         launch('ue', ue_command, original)
+        if viewer_plan and viewer_plan.get('occluder_pid') is not None:
+            destination = viewer_plan['occluder_pid']
+            temporary = destination.with_suffix('.tmp')
+            temporary.write_text(str(children['ue'].pid), encoding='ascii')
+            temporary.replace(destination)
         launch('pointlio', [ros2,'run','rmsim_bridge','point_lio','--ros-args','-p','imu_id:=mid360_imu','-p','sentry_source:='+str(navigation_source),'-p','output_directory:='+str(output/'pointlio')], local_environment)
         launch('navigation', [ros2,'run','rmsim_bridge','navigation','--ros-args','-p',
             'reference_config:='+str(ROOT/'ros2_ws/src/pb2025_nav_bringup/config/reality/nav2_params.yaml'),
@@ -657,6 +840,7 @@ def main() -> int:
             '-p','initial_pose:='+json.dumps(scene['initial_pose']),
             '-p','control_profile:='+args.control_profile,'-p','control_source:='+str(navigation_source),
             '-p','drive_profile:='+str(drive_source),
+            '-p','motion_ready_file:='+str(output/'drive-ready.json'),
             '-p','native_runtime:='+str(ROOT/'artifacts/runtime/navigation/windows'),
             '-p','output_directory:='+str(output/'navigation')], local_environment)
         launch('bridge', [ros2,'run','rmsim_bridge','bridge','--ros-args','-p','port:='+str(args.port),'-p','aim_control:=true',
@@ -674,24 +858,57 @@ def main() -> int:
                 raise RuntimeError('Owned component exited during startup: '+str(exited)+'; see component logs')
             nav = state['navigation'] or {}
             viewer_ready = not viewer_plan or (visible and visible['phase']=='ready' and visible['status_fresh'])
-            if nav.get('phase')=='running' and state['map_received'] and state['estimated_pose'] and viewer_ready:
+            if (nav.get('phase')=='running' and state['map_received'] and state['estimated_pose'] and viewer_ready
+                    and (output/'bag-ready.json').is_file()):
                 break
             if nav.get('phase')=='map_mismatch': raise RuntimeError('Scene/navigation map identity mismatch')
             if time.monotonic()>deadline: raise TimeoutError('Navigation and enabled viewer did not become ready within the 180s startup budget')
             if time.monotonic()-last_save>.5:
                 state['phase']='waiting_mujoco_viewer' if nav.get('phase')=='running' and not viewer_ready else nav.get('phase','starting')
                 save(); last_save=time.monotonic()
-        state['phase']='ready'
+        state['phase']='opening_rviz' if not args.no_rviz else 'ready'
         if not args.no_rviz:
             gui_environment = dict(local_environment)
             prefix = Path(os.environ['CONDA_PREFIX'])/'Library'
             gui_environment['QT_PLUGIN_PATH'] = str(prefix/'plugins')
             gui_environment['QT_QPA_PLATFORM_PLUGIN_PATH'] = str(prefix/'plugins/platforms')
-            launch('rviz', [rviz,'-d',config,'--ros-args','-p','use_sim_time:=true'], gui_environment)
+            if rviz_coverage:
+                for variable, directory in (('AMENT_PREFIX_PATH', coverage_prefix), ('PATH', coverage_prefix/'bin')):
+                    gui_environment[variable] = str(directory)+os.pathsep+gui_environment.get(variable,'')
+                gui_environment['RMSIM_RVIZ_OCCLUDER_PID'] = str(children['ue'].pid)
+                gui_environment['RMSIM_RVIZ_READY_PATH'] = str(output/'rviz-first-frame.json')
+            if not rviz_coverage:
+                raise RuntimeError('Visible navigation requires the RViz frame readiness plugin. Run Prepare-NavigationConsole.cmd.')
+            observer = launch('rviz', [rviz,'-d',config,'--ros-args','-p','use_sim_time:=true'], gui_environment)
+            frame_file = output/'rviz-first-frame.json'
+            frame_deadline = time.monotonic() + 120
+            while True:
+                rclpy.spin_once(node, timeout_sec=.025)
+                if (output/'stop.request').exists(): raise StopRequested()
+                if any(p.poll() is not None for p in children.values()):
+                    raise RuntimeError('An owned component exited before RViz rendered the navigation scene')
+                if frame_file.is_file():
+                    frame = json.loads(frame_file.read_text(encoding='utf-8'))
+                    if (frame.get('pid') != observer.pid or frame.get('draws',0) < 1 or
+                            [frame.get('map_width'),frame.get('map_height')] != state.get('map_size') or
+                            not frame.get('local_map') or not frame.get('robot_tf') or frame.get('clock_ns',0) <= 0):
+                        raise RuntimeError('RViz frame does not match the active navigation scene')
+                    if (state.get('navigation') or {}).get('phase') == 'running' and atomic_json(output/'drive-ready.json', frame):
+                        state['rviz_ready_frame'] = frame
+                        break
+                if time.monotonic() >= frame_deadline: raise TimeoutError('RViz navigation scene first frame')
+                if time.monotonic()-last_save > .5:
+                    save(); last_save=time.monotonic()
+            state['phase']='ready'
         save()
-        print('READY: '+('UE5 + synchronized MuJoCo viewer + RViz. ' if viewer_plan else '')+
-              'RViz Nav2 Goal selects a destination. Waypoint mode queues destinations. Cancel stops navigation.', flush=True)
-        print('Close RViz or the MuJoCo viewer, or press Ctrl+C here, to stop this entire owned session.', flush=True)
+        if args.no_rviz:
+            if not atomic_json(output/'drive-ready.json', {'headless':True}): raise RuntimeError('Could not release headless motion')
+            print('READY: UE5 and ROS navigation. Press Ctrl+C here to stop this session.', flush=True)
+        else:
+            windows = 'UE5 + synchronized MuJoCo viewer + RViz' if viewer_plan else 'UE5 + RViz'
+            close_windows = 'RViz or the MuJoCo viewer' if viewer_plan else 'RViz'
+            print(f'READY: {windows}. RViz Nav2 Goal selects a destination. Waypoint mode queues destinations. Cancel stops navigation.', flush=True)
+            print(f'Close {close_windows}, or press Ctrl+C here, to stop this entire owned session.', flush=True)
         ready_at=time.monotonic()
         while not args.run_seconds or time.monotonic()-ready_at<args.run_seconds:
             rclpy.spin_once(node, timeout_sec=.05)
@@ -701,8 +918,10 @@ def main() -> int:
                 state['rviz_exit_code']=children['rviz'].returncode
                 if children['rviz'].returncode != 0: raise RuntimeError('RViz exited with code '+str(children['rviz'].returncode)+'; see rviz.log')
                 break
-            if any(p.poll() is not None for name,p in children.items() if name!='rviz'):
-                raise RuntimeError('An owned simulator or algorithm process exited')
+            exited={name:p.returncode for name,p in children.items() if name!='rviz' and p.poll() is not None}
+            if exited:
+                state['component_exits']=exited
+                raise RuntimeError('Owned component exited during run: '+str(exited)+'; see component logs')
             if time.monotonic()-last_save>.5:
                 viewer_ready = not viewer_plan or (visible and visible['phase']=='ready' and visible['status_fresh'])
                 state['phase']='ready' if (state['navigation'] or {}).get('phase')=='running' and viewer_ready else 'recovering'
@@ -716,8 +935,22 @@ def main() -> int:
         (output/'failure-trace.txt').write_text(traceback.format_exc(),encoding='utf-8')
     finally:
         for name, process in reversed(list(children.items())):
+            if name == 'recorder': continue
             try: terminate_owned(process)
             except Exception as error: state.setdefault('cleanup_errors', []).append(name+': '+str(error))
+        if 'recorder' in children:
+            recorder = children['recorder']
+            try:
+                (output/'bag-stop.request').touch()
+                if recorder.wait(timeout=120) != 0:
+                    raise RuntimeError('Recorder failed; see recorder.log and rosbag')
+                reviewed = json.loads((output/'bag-review.json').read_text(encoding='utf-8'))
+                if not reviewed['verified']: raise RuntimeError('Required bag streams failed readback')
+                state['recording'] = {'verified': True, 'directory': str(output/'rosbag'),
+                                      'messages': reviewed['message_count']}
+            except Exception as error:
+                state.setdefault('cleanup_errors',[]).append('recorder: '+str(error))
+                if recorder.poll() is None: terminate_owned(recorder)
         close_mujoco_viewer_binding(viewer_binding)
         save()
         for log in logs: log.close()

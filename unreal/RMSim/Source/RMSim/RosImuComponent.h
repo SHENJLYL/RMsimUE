@@ -48,5 +48,6 @@ private:
     int64 ProfileSampleCount=0;
     static double Gaussian(FRandomStream& Random);
     void AdvanceNative(double Time,bool Collect,double EpochSolverTime);
+    int32 PendingSamplesPerChannel() const;
     void PublishSample(FChannel& Channel,double Time,double IntegrationDt,FVector Accel,FVector Gyro,bool Collect,int64 SampleIndex=-1);
 };

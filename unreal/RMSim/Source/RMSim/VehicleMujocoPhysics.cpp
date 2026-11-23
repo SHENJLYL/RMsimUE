@@ -194,32 +194,133 @@ bool AVehicleRig::SetMujocoGimbal(double Yaw,double Pitch,FString& Error)
     if(!MujocoDynamics||!PitchBinding||!FMath::IsFinite(Yaw)||!FMath::IsFinite(Pitch)||Pitch<PitchBinding->Lower||Pitch>PitchBinding->Upper)
     {Error=TEXT("invalid MuJoCo gimbal target");return false;}
     MujocoYawTarget=FMath::UnwindRadians(Yaw);MujocoPitchTarget=Pitch;
+    DedicatedGimbalExpiry=0;
     const double Dt=FMath::Max(.0001,MujocoFrameSeconds);
     MujocoYawTargetRate=FMath::Clamp(FMath::FindDeltaAngleRadians(ManualYaw,Yaw)/Dt,-MujocoYawRateLimit,MujocoYawRateLimit);
     MujocoPitchTargetRate=FMath::Clamp((Pitch-ManualPitch)/Dt,-MujocoPitchRateLimit,MujocoPitchRateLimit);
     return true;
 }
 
+bool AVehicleRig::SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall)
+{
+    FString Error;
+    if(DedicatedMujocoPeriod<=0||!SetMujocoGimbal(Yaw,Pitch,Error))return false;
+    MujocoYawTargetRate=FMath::Clamp(YawRate,-MujocoYawRateLimit,MujocoYawRateLimit);
+    MujocoPitchTargetRate=FMath::Clamp(PitchRate,-MujocoPitchRateLimit,MujocoPitchRateLimit);
+    DedicatedGimbalTime=MujocoDynamics->Time();
+    DedicatedGimbalExpiry=ExpiresWall;
+    return true;
+}
+
+bool AVehicleRig::StartDedicatedMujoco(double PeriodSeconds, FString& Error)
+{
+    if(!MujocoDynamics)
+    {
+        Error=TEXT("dedicated MuJoCo requires a ready native vehicle");
+        return false;
+    }
+    if(!MujocoDynamics->StartDedicated(PeriodSeconds,Error))return false;
+    DedicatedMujocoPeriod=PeriodSeconds;
+    PrimaryActorTick.bTickEvenWhenPaused=true;
+    return true;
+}
+
+void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query)
+{
+    check(IsInGameThread());
+    if(!MujocoDynamics)return;
+    const auto& Names=MujocoDynamics->BodyNames();
+    bool Reposed=false;
+    MujocoDynamics->VisitDedicatedQueryFrames([&](double Time,const TArray<FTransform>& Parts,bool Latest)
+    {
+        // Both self-occlusion and arena rays use the original UE collision channels.
+        // The arena is fixed. Replay the exact native robot poses, then leave the
+        // latest frame restored before ROS, gameplay or the viewport reads it.
+        if(ApplyScenePoses&&(!Latest||Reposed))
+        {
+            for(int32 I=0;I<Names.Num();++I)
+                if(Names[I]==TEXT("body"))SetActorTransform(Parts[I],false,nullptr,ETeleportType::None);
+            for(int32 I=0;I<Names.Num();++I)
+            {
+                if(auto* const* Link=Links.Find(Names[I]))(*Link)->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
+                if(auto* Body=MujocoQueryBodies.FindRef(Names[I]))Body->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
+            }
+            Reposed=true;
+        }
+        Query(Time);
+    });
+}
+
 void AVehicleRig::TickMujocoPhysics(double Seconds)
 {
     if(!MujocoDynamics||bMujocoFailed)return;
+    const bool Dedicated=MujocoDynamics->IsDedicated();
+    const auto Fail=[this](const FString& Error)
+    {
+        bMujocoFailed=true;
+        SetContactDrive(0,0,true);
+        UE_LOG(LogRMSim,Error,TEXT("MUJOCO_STEP_FAILED %s"),*Error);
+        FPlatformMisc::RequestExitWithStatus(false,2);
+    };
+    if(Dedicated)
+    {
+        const bool Paused=GetWorld()->IsPaused();
+        MujocoDynamics->SetDedicatedPaused(Paused);
+        if(Paused)return;
+        const double Before=MujocoDynamics->Time();
+        bool Updated=false;
+        FString Error;
+        if(!MujocoDynamics->ConsumeDedicatedFrame(Updated,Error)){Fail(Error);return;}
+        // With no new completed batch, leave the worker's prior lease intact.
+        // Republishing old staged actuator targets could extend their lifetime.
+        if(!Updated)return;
+        SyncMujocoPose();
+        DedicatedControlSeconds=MujocoDynamics->Time()-Before;
+        if(DedicatedControlSeconds>0)MujocoFrameSeconds=DedicatedControlSeconds;
+        return;
+    }
     // The fixed-step source is double precision; AActor::Tick narrows it to
     // float, which otherwise turns the first 5 ms frame into four 1 ms steps.
     if(FApp::UseFixedTimeStep())Seconds=FApp::GetFixedDeltaTime();
-    MujocoFrameSeconds=Seconds;
-    if(bExternalDriveLease&&FPlatformTime::Seconds()>ExternalDriveDeadline)SetContactDrive(0,0,true);
-    const bool CurrentActive=bMotorCurrentControl&&bMotorCommandValid&&!bContactBrake&&bExternalDriveLease&&FPlatformTime::Seconds()<=ExternalDriveDeadline;
-    if(CurrentActive!=bApplyingMotorCurrent)SetMotorServosEnabled(!CurrentActive);
-    if(CurrentActive)ApplyMotorCurrentDrive();else UpdateContactDrive(Seconds);
-    MujocoDynamics->SetServoTarget(TEXT("yaw"),MujocoYawTarget,MujocoYawTargetRate,true);
-    MujocoDynamics->SetServoTarget(TEXT("pitch"),MujocoPitchTarget,MujocoPitchTargetRate,false);
-    // A one-frame velocity feed-forward must not persist without a fresh target.
-    MujocoYawTargetRate=0;MujocoPitchTargetRate=0;
+    if(Seconds>0)MujocoFrameSeconds=Seconds;
+    RefreshMujocoInputs(Seconds,FPlatformTime::Seconds());
     FString Error;
     if(!MujocoDynamics->Step(Seconds,Error))
-    {bMujocoFailed=true;SetContactDrive(0,0,true);UE_LOG(LogRMSim,Error,TEXT("MUJOCO_STEP_FAILED %s"),*Error);FPlatformMisc::RequestExitWithStatus(false,2);return;}
+    {Fail(Error);return;}
     SyncMujocoPose();
     MujocoDynamics->FlushTiming();
+}
+
+void AVehicleRig::RefreshMujocoInputs(double Seconds,double Now)
+{
+    const bool LeaseExpired=bExternalDriveLease&&Now>ExternalDriveDeadline;
+    if(LeaseExpired)SetContactDrive(0,0,true);
+    const bool CurrentActive=bMotorCurrentControl&&bMotorCommandValid&&!bContactBrake&&bExternalDriveLease&&!LeaseExpired;
+    if(CurrentActive!=bApplyingMotorCurrent)SetMotorServosEnabled(!CurrentActive);
+    if(CurrentActive)ApplyMotorCurrentDrive();else UpdateContactDrive(Seconds);
+    if(MujocoDynamics->IsDedicated()&&DedicatedGimbalExpiry>0)
+    {
+        MujocoDynamics->SetServoTrajectory(TEXT("yaw"),MujocoYawTarget,MujocoYawTargetRate,true,DedicatedGimbalTime,DedicatedGimbalExpiry);
+        MujocoDynamics->SetServoTrajectory(TEXT("pitch"),MujocoPitchTarget,MujocoPitchTargetRate,false,DedicatedGimbalTime,DedicatedGimbalExpiry);
+    }
+    else
+    {
+        MujocoDynamics->SetServoTarget(TEXT("yaw"),MujocoYawTarget,MujocoYawTargetRate,true);
+        MujocoDynamics->SetServoTarget(TEXT("pitch"),MujocoPitchTarget,MujocoPitchTargetRate,false);
+        MujocoYawTargetRate=0;MujocoPitchTargetRate=0;
+    }
+}
+
+void AVehicleRig::SubmitDedicatedMujocoInputs()
+{
+    if(!MujocoDynamics||!MujocoDynamics->IsDedicated()||bMujocoFailed||DedicatedControlSeconds<=0)return;
+    const double Now=FPlatformTime::Seconds();
+    const double Seconds=DedicatedControlSeconds;
+    DedicatedControlSeconds=0;
+    RefreshMujocoInputs(Seconds,Now);
+    // The worker also enforces the wall lease with the game thread stalled.
+    const double Deadline=bExternalDriveLease&&!bContactBrake?FMath::Min(Now+.25,ExternalDriveDeadline):Now+.25;
+    MujocoDynamics->SubmitDedicatedControls(Deadline);
 }
 
 bool AVehicleRig::SampleSensorParentWorldAtTime(const FString& ParentFrame,double SolverTime,FTransform& OutPose) const
@@ -287,8 +388,21 @@ void AVehicleRig::ResetMujocoPose(const FTransform& Pose)
     ++MotionGeneration;ObstacleContacts.Reset();ObstacleContactWriteIndex=0;ContactObservations.Reset();
     bFreeRollingDiagnostic=false;DriveAcceleration=FVector2D::ZeroVector;DriveFilteredWorld=FVector2D::ZeroVector;
     DriveFilteredYaw=0;DriveSpeedAcceleration=0;DriveDirectionRate=0;MujocoYawTarget=MujocoPitchTarget=MujocoYawTargetRate=MujocoPitchTargetRate=0;
+    DedicatedGimbalExpiry=0;
+    DedicatedControlSeconds=0;
     for(auto& W:ContactWheels){W.SteeringTargetRad=0;W.SteeringMeasuredRad=0;W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;}
     SyncMujocoPose();SetContactDrive(0,0,true);ExternalDriveDeadline=0;
+    if(DedicatedMujocoPeriod>0&&!StartDedicatedMujoco(DedicatedMujocoPeriod,Error))
+    {
+        bMujocoFailed=true;
+        UE_LOG(LogRMSim,Error,TEXT("MUJOCO_DEDICATED_RESET_FAILED %s"),*Error);
+        FPlatformMisc::RequestExitWithStatus(false,2);
+    }
+}
+
+int32 AVehicleRig::GetMujocoWarningCount() const
+{
+    return MujocoDynamics ? MujocoDynamics->WarningCount() : 0;
 }
 
 TSharedRef<FJsonObject> AVehicleRig::GetMujocoContactState() const

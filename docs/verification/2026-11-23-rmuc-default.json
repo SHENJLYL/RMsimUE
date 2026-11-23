@@ -1,0 +1,181 @@
+{
+  "status": "selected_default_by_user",
+  "platform": "native Windows",
+  "scene": "rmuc2027",
+  "start_xy_m": [
+    7.86,
+    -6.78
+  ],
+  "goal_xy_m": [
+    -8.32,
+    6.16
+  ],
+  "gyro_setpoint_rad_s": 5.0,
+  "timing_origin": "first verified rendered RViz frame with map and robot TF",
+  "default_reference_wall_s": 37.82,
+  "default_reference_is_measured": true,
+  "canonical_model_xml_sha256": "a225ee330a0f0eeb981b7d09431afacbcf46ecbbb6c451f3afeedb679988cbf5",
+  "map_navigation_manifest": {
+    "schema": "rmsim_navigation_release_v1",
+    "surveyed_ground": {
+      "file": "terrain-ground.bin",
+      "sha256": "be5ecd0a11fe6869904a7b1f7bb015f13bbccda8ccb1a1f0f62b7a7871e1aca6"
+    },
+    "simulation_navigation": {
+      "file": "navigation-profile.yaml",
+      "sha256": "1343f5dd82ee4a37993e00cbcd08f5f974eb48a1e65ed246e8d469d39cded6d6",
+      "ground_support": {
+        "file": "terrain-support.bin",
+        "sha256": "abf39a8bfe19158690a8773355e0b3669dc2321d070a6a6df959d36aa3009c28"
+      }
+    },
+    "navigation_clearance": {
+      "preferred_curve_m": 0.84,
+      "inflation_radius_m": 0.45
+    },
+    "map_package_sha256": "24497ab1772bc8a118780596db713b7e96ab75875bf424b31b17278b81d08778"
+  },
+  "match_proof": {
+    "effective_ROS_parameter_groups_compared": 21,
+    "vehicle_chassis_contact_hulls": 128,
+    "original_lifecycle": "benchmark start pose only; normal launcher uses the configured default map spawn"
+  },
+  "cross_field": {
+    "run": "seed-gyro-max-configured-wave-contact-trace-curve-body-contact",
+    "action_timing": [
+      {
+        "goal": [
+          -8.32,
+          6.16
+        ],
+        "wall_s": 37.80504920000385,
+        "sim_s": 37.620000000000005,
+        "wall_since_rviz_ready_s": 37.82390789999772,
+        "sim_since_rviz_ready_s": 37.65
+      }
+    ],
+    "clearance": [
+      {
+        "goal": [
+          -8.32,
+          6.16
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.23099414769797252,
+        "truth_samples": 1554,
+        "checked_poses": 5580,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 0.46587024833080815,
+        "max_truth_interval_s": 0.08500000000000085
+      }
+    ],
+    "rosbag_verified": true,
+    "lidar_integrity": {
+      "common_timestamps": 604,
+      "unpaired_timestamps": 0,
+      "missing_paired_scans_between_first_and_last": 0,
+      "publisher": {
+        "published_scans": 604,
+        "frame_hz": 10,
+        "incomplete_scan_drops": 0,
+        "skipped_scan_windows": 0,
+        "dropped_scans": 0
+      }
+    },
+    "alerts": [
+      "scene_draw_hitch"
+    ],
+    "recorder_metadata_sha256": "f560303f983e96ea62d2ada9f6a1b4e3b893505f84588fa26805a1bcf2a0b604"
+  },
+  "three_platform_goals": {
+    "run": "regions-three-wave-contact-trace-body-contact",
+    "action_timing": [
+      {
+        "goal": [
+          9.35,
+          6.15
+        ],
+        "wall_s": 5.108605300003546,
+        "sim_s": 5.100000000000001,
+        "wall_since_rviz_ready_s": 5.131322699999146,
+        "sim_since_rviz_ready_s": 5.145
+      },
+      {
+        "goal": [
+          7.55,
+          0.0
+        ],
+        "wall_s": 8.420360199997958,
+        "sim_s": 8.349999999999998,
+        "wall_since_rviz_ready_s": 14.559623899993312,
+        "sim_since_rviz_ready_s": 14.499999999999996
+      },
+      {
+        "goal": [
+          8.95,
+          0.25
+        ],
+        "wall_s": 2.0820620999948005,
+        "sim_s": 2.094999999999999,
+        "wall_since_rviz_ready_s": 17.64353769999434,
+        "sim_since_rviz_ready_s": 17.59
+      }
+    ],
+    "clearance": [
+      {
+        "goal": [
+          9.35,
+          6.15
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.11733307471307931,
+        "truth_samples": 245,
+        "checked_poses": 541,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 0.6947219539831133,
+        "max_truth_interval_s": 0.030000000000001137
+      },
+      {
+        "goal": [
+          7.55,
+          0.0
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.15263313117048966,
+        "truth_samples": 383,
+        "checked_poses": 1273,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 0.8765406665252169,
+        "max_truth_interval_s": 0.03500000000000014
+      },
+      {
+        "goal": [
+          8.95,
+          0.25
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.07730103414488702,
+        "truth_samples": 126,
+        "checked_poses": 320,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 4.679875409230374,
+        "max_truth_interval_s": 0.035000000000003695
+      }
+    ],
+    "rosbag_verified": true,
+    "lidar_integrity": {
+      "common_timestamps": 390,
+      "unpaired_timestamps": 0,
+      "missing_paired_scans_between_first_and_last": 0,
+      "publisher": {
+        "published_scans": 390,
+        "frame_hz": 10,
+        "incomplete_scan_drops": 0,
+        "skipped_scan_windows": 0,
+        "dropped_scans": 0
+      }
+    },
+    "alerts": [],
+    "recorder_metadata_sha256": "e3bfbe3184721954cff4cdd057f53ce593412943f41030e60bb68ebf06d8d29e"
+  }
+}

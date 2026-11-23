@@ -18,6 +18,8 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
     cfg={key:copy.deepcopy(source[key]) for key in selected}
     upstream_blocks, upstream_identity = source_profile(reference, control_profile, control_source)
     cfg.update(upstream_blocks)
+    for name, limit in upstream_identity.get('max_passable_slope_deg', {}).items():
+        cfg[name]['ros__parameters']['maxPassableSlopeDeg'] = limit
     def clock(value):
         if isinstance(value,dict):
             for key,item in value.items():
@@ -55,15 +57,61 @@ def prepare(reference,map_yaml,robot,initial_pose,control_profile='legacy',contr
     get('behavior_server').update(local_frame=odom,global_frame=odom,robot_base_frame=fake)
     # In RMSim, vehicle capabilities come from the same package as manual driving.
     # Keep the selected source algorithms and the active original velocity smoother.
+    follow = get('controller_server')['FollowPath']
+    if drive_profile and control_profile in ('simulation', 'reality'):
+        # Smooth translation before it is projected to the rotating chassis.
+        # The vehicle still applies its body-axis speed and acceleration limits.
+        fixed_frame = follow.setdefault('smooth_in_navigation_frame', True)
+        follow.setdefault('allow_heading_rate_shaping', fixed_frame)
     drive_identity=apply_drive_profile(cfg,drive_profile,robot) if drive_profile else None
+    follow['collision_body_frame'] = stabilized
+    layer = cfg['local_costmap']['local_costmap']['ros__parameters']['intensity_voxel_layer']
+    follow['collision_observation_range'] = min(
+        float(layer[name]['obstacle_max_range']) for name in layer['observation_sources'].split())
+    if drive_identity:
+        # Native navigation also accepts the operator's independent spin command.
+        follow['external_rotation_possible'] = True
+        get('fake_vel_transform')['project_heading_to_stamp'] = True
+        vehicle = drive_identity['vehicle_control']
+        decel = vehicle['LinearDecelerationMps2']
+        update_hz = cfg['local_costmap']['local_costmap']['ros__parameters']['update_frequency']
+        follow['collision_deceleration'] = decel
+        follow['tracking_deceleration'] = min(
+            float(follow.get('tracking_deceleration', vehicle['LinearAccelerationMps2'])), decel)
+        # Map/controller latency plus time to slew from acceleration into braking.
+        follow['collision_reaction_time'] = (1.0 / update_hz + 1.0 / get('controller_server')['controller_frequency']
+            + (vehicle['LinearAccelerationMps2'] + decel) / vehicle['DecelerationJerkMps3'])
     footprint='[[-0.26,-0.26],[-0.26,0.26],[0.26,0.26],[0.26,-0.26]]'
     for key in ['local_costmap','global_costmap']:
         params=cfg[key][key]['ros__parameters'];params.update(global_frame=odom if key=='local_costmap' else world,robot_base_frame=fake,footprint=footprint,footprint_padding=.01)
         params.pop('robot_radius',None)
+        if drive_identity and key=='local_costmap':
+            # Idle-spin safety must receive current geometry even when the rolling origin is stationary.
+            params['always_send_full_costmap'] = True
         layer=params['intensity_voxel_layer']
         for name in layer['observation_sources'].split():
             layer[name]['topic']='/'+name;layer[name]['sensor_frame']=robot+'/lidar_link'
     metadata=json.loads((map_yaml.parent/'metadata.json').read_text(encoding='utf-8-sig'))
+    ground = metadata.get('surveyed_ground')
+    clearances = metadata.get('navigation_clearance')
+    default_source = reference.parent.parent/'simulation/nav2_params.yaml'
+    if (clearances and control_profile=='simulation' and
+            Path(upstream_identity['source_path']).resolve()==default_source.resolve()):
+        planner = get('planner_server')['GridBased']
+        if planner['plugin'] != 'pb_nav2_plugins::ClearancePlanner':
+            planner['route_backend'] = planner['plugin']
+        planner.update(plugin='pb_nav2_plugins::ClearancePlanner',
+                       curve_clearance=float(clearances['preferred_curve_m']))
+        for name in ('local_costmap','global_costmap'):
+            cfg[name][name]['ros__parameters']['inflation_layer']['inflation_radius'] = float(clearances['inflation_radius_m'])
+    if ground:
+        import hashlib
+        file = map_yaml.parent/'terrain-ground.bin'
+        if ground.get('file') != file.name or hashlib.sha256(file.read_bytes()).hexdigest() != ground.get('sha256'):
+            raise ValueError('Invalid surveyed ground reference for the selected map')
+        for name in ('terrain_analysis','terrain_analysis_ext'):
+            get(name).update(surveyed_ground_file=str(file), surveyed_ground_frame=world,
+                             surveyed_ground_align_xy=True, surveyed_ground_observed_plane=True)
     if drive_identity:metadata['drive_profile']=drive_identity
     if 'source_md5' not in metadata:raise ValueError('Re-export the map with source identity metadata.')
     localization_nodes=list(LOCALIZATION_NODES)

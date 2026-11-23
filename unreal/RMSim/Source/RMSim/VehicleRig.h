@@ -64,6 +64,11 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual FVector GetVelocity() const override;
     bool IsMujocoPhysics() const { return MujocoDynamics.IsValid(); }
+    bool StartDedicatedMujoco(double PeriodSeconds, FString& Error);
+    double GetDedicatedMujocoPeriod() const { return DedicatedMujocoPeriod; }
+    bool SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall);
+    void ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query);
+    void SubmitDedicatedMujocoInputs();
     const TCHAR* GetPhysicsBackendName() const { return IsMujocoPhysics()?TEXT("mujoco"):bContactPhysics?TEXT("chaos"):TEXT("kinematic"); }
     double GetSimulationTimeSeconds() const;
     double GetDynamicsStepSeconds() const;
@@ -89,7 +94,7 @@ public:
     void SetContactDrive(double ForwardMetresPerSecond,double YawRadiansPerSecond,bool Brake);
     bool SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake);
     // ROS base_link targets retain navigation heading and pass the shared vehicle profile shaper.
-    bool SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake);
+    bool SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake,bool OperatorGyro=false);
     TSharedRef<FJsonObject> GetVelocityCommandState() const;
     double GetDriveParameter(const TCHAR* Name) const { return DriveParameters.FindRef(Name); }
     double GetMeasuredYawRate() const;
@@ -126,6 +131,7 @@ public:
     TSharedRef<FJsonObject> GetMotorFeedback() const;
     bool HasSteeringModules() const { return bSwerveContact; }
     void SetFreeRollingDiagnostic(bool Enabled,double SteeringRosRadians);
+    int32 GetMujocoWarningCount() const;
     TSharedRef<FJsonObject> GetContactState() const;
     void ResetContactPose(const FTransform& Pose);
     FManualRigState GetManualState() const;
@@ -142,11 +148,15 @@ private:
     UPROPERTY() TMap<FString,UStaticMeshComponent*> MujocoQueryBodies;
     bool InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error);
     void TickMujocoPhysics(double Seconds);
+    void RefreshMujocoInputs(double Seconds,double Now);
     void SyncMujocoPose();
     void ResetMujocoPose(const FTransform& Pose);
     bool SetMujocoGimbal(double Yaw,double Pitch,FString& Error);
     TSharedRef<FJsonObject> GetMujocoContactState() const;
     double MujocoFrameSeconds=.005;
+    double DedicatedMujocoPeriod=0;
+    double DedicatedControlSeconds=0;
+    double DedicatedGimbalTime=0,DedicatedGimbalExpiry=0;
     double MujocoYawTarget=0,MujocoPitchTarget=0,MujocoYawTargetRate=0,MujocoPitchTargetRate=0;
     double MujocoYawRateLimit=9.42477796076938,MujocoPitchRateLimit=6.283185307179586;
     bool bMujocoFailed=false;
@@ -217,6 +227,7 @@ private:
     bool bSwerveContact=false,bDriveWorldFrame=false;
     bool bFreeRollingDiagnostic=false;
     bool bExternalDriveLease=false,bExternalVelocityTracking=false,bAppliedExternalVelocityTracking=false;
+    bool bExternalOperatorGyro=false;
     FVector2D DriveAppliedRequestedWorld=FVector2D::ZeroVector;
     double DriveAppliedRequestedYaw=0;
     bool bMotorCurrentControl=false,bApplyingMotorCurrent=false,bMotorCommandValid=false;

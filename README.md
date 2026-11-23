@@ -1,5 +1,7 @@
 # RM Simulator
 
+RMUC 默认配置已固定为 37.82 秒实测版本。Windows 运行 `Play-Navigation.cmd`，跨场从 RViz 就绪起计时。 [运行模式和验收](docs/changes/2026-11-23-rmuc-default.md)
+
 UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接触物理驾驶、射击训练和原控制/传感器链路；长期目标保留 Windows/Ubuntu 原生同源算法、通用车辆包、可换地图、高画质和联机权威比赛。
 
 [当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-20-mujoco-integration.md) · [仓库与本地资源](docs/guides/repository.md)

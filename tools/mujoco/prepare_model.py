@@ -178,11 +178,15 @@ def vehicle_xml(rig,profile,config,hulls,spawn,inertias=None):
             sub(asset,"mesh",name=mesh_name,vertex=numbers(points))
             friction=source_average_friction(profile,config,name in wheels)
             cc=config["contact"]
-            sub(body,"geom",name=f"g_{name}_{index}",type="mesh",mesh=mesh_name,
+            geom=sub(body,"geom",name=f"g_{name}_{index}",type="mesh",mesh=mesh_name,
                 density="1000" if inertias is None else "0",contype="1",conaffinity="3",priority="1",
                 friction=numbers([friction,cc["torsional_friction"],cc["rolling_friction"]]),
                 condim=cc["condim"],solref=numbers(cc["solref"]),solimp=numbers(cc["solimp"]),
                 rgba="0.3 0.4 0.6 1",group="1")
+            if name=="body" and "chassis_contact_response" in config:
+                response=config["chassis_contact_response"]
+                for key in ("solref","solimp"):
+                    geom.set(key," ".join(map(str,response[key])))
     # Only intra-vehicle exclusions. A second vehicle retains inter-vehicle collisions.
     for first,second in itertools.combinations(parts,2):
         sub(contact,"exclude",body1=first,body2=second)
@@ -346,6 +350,10 @@ def main():
             report["geometry_manifest"]=str((geometry_dir/"geometry.json").resolve())
             report["geometry_manifest_sha256"]=digest(geometry_dir/"geometry.json")
         root=vehicle_xml(rig,profile,config,hulls,spawn,inertias)
+        if "chassis_contact_response" in config:
+            chassis_geoms=root.find("./worldbody/body[@name='body']").findall("./geom")
+            report["chassis_contact_response"]=dict(config["chassis_contact_response"],
+                scope="chassis convex hull contacts only",hulls=[geom.attrib["name"] for geom in chassis_geoms])
         if a.vehicle_only:
             cc=config["contact"]
             sub(root.find("worldbody"),"geom",name="diagnostic_plane",type="plane",size="0 0 0.1",

@@ -276,6 +276,20 @@ void publish_odometry(
   }
   set_posestamp(odomAftMapped.pose.pose);
 
+  // ROS odometry twist is expressed in the child (IMU) frame.
+  const auto & q = odomAftMapped.pose.pose.orientation;
+  const Eigen::Quaterniond attitude(q.w, q.x, q.y, q.z);
+  const Eigen::Vector3d world_velocity = use_imu_as_input ?
+    Eigen::Vector3d(kf_input.x_.vel) : Eigen::Vector3d(kf_output.x_.vel);
+  const Eigen::Vector3d velocity = attitude.conjugate() * world_velocity;
+  const Eigen::Vector3d angular = use_imu_as_input ?
+    Eigen::Vector3d(angvel_avr - kf_input.x_.bg) : Eigen::Vector3d(kf_output.x_.omg);
+  odomAftMapped.twist.twist.linear.x = velocity.x();
+  odomAftMapped.twist.twist.linear.y = velocity.y();
+  odomAftMapped.twist.twist.linear.z = velocity.z();
+  odomAftMapped.twist.twist.angular.x = angular.x();
+  odomAftMapped.twist.twist.angular.y = angular.y();
+  odomAftMapped.twist.twist.angular.z = angular.z();
   pubOdomAftMapped->publish(odomAftMapped);
 
   if (tf_send_en) {
@@ -374,18 +388,22 @@ int main(int argc, char ** argv)
   /*** ROS subscribe initialization ***/
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_pcl_pc;
   rclcpp::Subscription<livox_ros_driver2::msg::CustomMsg>::SharedPtr sub_pcl_livox;
+  const bool reliable_sensors = nh->declare_parameter<bool>("common.reliable_sensors", false);
+  auto lidar_qos = rclcpp::SensorDataQoS();
+  if (reliable_sensors) {lidar_qos.keep_last(32).reliable();}
   if (p_pre->lidar_type == AVIA) {
     sub_pcl_livox = nh->create_subscription<livox_ros_driver2::msg::CustomMsg>(
-      lid_topic, rclcpp::SensorDataQoS(),
+      lid_topic, lidar_qos,
       [](const livox_ros_driver2::msg::CustomMsg::SharedPtr msg) { livox_pcl_cbk(msg); });
   } else {
     sub_pcl_pc = nh->create_subscription<sensor_msgs::msg::PointCloud2>(
-      lid_topic, rclcpp::SensorDataQoS(),
+      lid_topic, lidar_qos,
       [](const sensor_msgs::msg::PointCloud2::SharedPtr msg) { standard_pcl_cbk(msg); });
   }
   auto imu_qos = rclcpp::SensorDataQoS();
+  if (reliable_sensors) {imu_qos.reliable();}
   imu_qos.keep_last(static_cast<std::size_t>(imu_qos_depth));
-  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=best_effort history=keep_last", imu_qos_depth);
+  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=%s history=keep_last", imu_qos_depth, reliable_sensors ? "reliable" : "best_effort");
   auto sub_imu =
     nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, imu_qos, imu_cbk);
   auto pub_laser_cloud_full_res =

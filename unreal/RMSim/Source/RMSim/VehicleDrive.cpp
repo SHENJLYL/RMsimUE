@@ -10,6 +10,14 @@ namespace
 {
 FVector2D LimitVector(const FVector2D& V,double Maximum)
 { return V.SizeSquared()>Maximum*Maximum?V.GetSafeNormal()*Maximum:V; }
+FVector2D LimitBodyComponents(const AVehicleRig& Rig,const FVector2D& Velocity)
+{
+    const double XLimit=Rig.GetDriveParameter(Velocity.X>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
+    const double YLimit=Rig.GetDriveParameter(TEXT("MaxLateralSpeedMps"));
+    const double Scale=FMath::Max(1.0,FMath::Max(FMath::Abs(Velocity.X)/XLimit,FMath::Abs(Velocity.Y)/YLimit));
+    return Velocity/Scale;
+}
+
 void DriveBasis(const FRotator& Rotation,FVector2D& Forward,FVector2D& Left)
 {
     const double Yaw=-FMath::DegreesToRadians(Rotation.Yaw);
@@ -40,7 +48,7 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
         {TEXT("LinearJerkMps3"),4,.1,100},{TEXT("DecelerationJerkMps3"),20,.1,100},{TEXT("ManualYawRateRadS"),PI/2,.1,10},
         {TEXT("LateralAccelerationMps2"),10,.1,30},{TEXT("DirectionJerkMps3"),100,.1,200},
         {TEXT("AngularAccelerationRadS2"),3,.1,50},{TEXT("AngularDecelerationRadS2"),5,.1,50},
-        {TEXT("GyroDefaultRadS"),2,.1,10},{TEXT("GyroMinRadS"),.5,.1,10},{TEXT("GyroMaxRadS"),4,.1,10},
+        {TEXT("GyroDefaultRadS"),2,.1,10},{TEXT("GyroMinRadS"),.1,.1,10},{TEXT("GyroMaxRadS"),5,.1,10},
         {TEXT("GyroStepRadS"),.5,.05,5},{TEXT("SteeringRateRadS"),15.7079632679,.1,50},
         {TEXT("SteeringStiffnessNmRad"),80,.1,1000},{TEXT("SteeringDampingNmS"),8,.01,100},
         {TEXT("SteeringTorqueNm"),8,.1,100},{TEXT("MaxWheelSpeedMps"),4,.1,25},
@@ -55,6 +63,13 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
     if(GetDriveParameter(TEXT("GyroMinRadS"))>GetDriveParameter(TEXT("GyroDefaultRadS"))||
        GetDriveParameter(TEXT("GyroDefaultRadS"))>GetDriveParameter(TEXT("GyroMaxRadS")))
     {Error=TEXT("gyro default must lie between minimum and maximum");return false;}
+    // Older vehicle packages may specify a higher maximum. Keep their profiles
+    // loadable and apply the simulator-wide cap at the shared drive boundary.
+    for (const TCHAR* Key : {TEXT("GyroMinRadS"), TEXT("GyroDefaultRadS"), TEXT("GyroMaxRadS")})
+    {
+        double& Rate = DriveParameters.FindChecked(Key);
+        Rate = FMath::Min(Rate, 5.0);
+    }
     return true;
 }
 
@@ -120,11 +135,25 @@ void AVehicleRig::SetFreeRollingDiagnostic(bool Enabled,double SteeringRosRadian
 
 bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake)
 {
+    const bool EnteringExternalBrake=bExternalVelocityTracking && bExternalDriveLease && Brake && !bContactBrake;
     bExternalVelocityTracking=false;
+    bExternalOperatorGyro=false;
     if(!bContactPhysics)return false;
     if(!FMath::IsFinite(LinearMetresPerSecond.X)||!FMath::IsFinite(LinearMetresPerSecond.Y)||!FMath::IsFinite(YawRadiansPerSecond)||
         (!bSwerveContact&&(WorldFrame||FMath::Abs(LinearMetresPerSecond.Y)>1.e-6)))
     {DriveRequestedLinear=FVector2D::ZeroVector;ContactDriveForward=0;ContactDriveYaw=0;bContactBrake=true;return false;}
+    if(EnteringExternalBrake)
+    {
+        // Cancel positive motor demand accumulated while the chassis was catching up.
+        // Only the actuator reference changes; braking remains torque and contact limited.
+        const FVector MeasuredCm=GetCommandOriginVelocity();
+        const FVector2D MeasuredWorld(MeasuredCm.X*.01,-MeasuredCm.Y*.01);
+        const FVector2D Direction=DriveFilteredWorld.GetSafeNormal();
+        const double Along=FVector2D::DotProduct(MeasuredWorld,Direction);
+        if(FMath::IsFinite(Along))
+            DriveFilteredWorld=Direction*FMath::Clamp(Along,0.0,DriveFilteredWorld.Size());
+        DriveSpeedAcceleration=FMath::Min(DriveSpeedAcceleration,0.0);
+    }
     bDriveWorldFrame=WorldFrame;bContactBrake=Brake;
     if(Brake)bMotorCommandValid=false;
     DriveRequestedLinear=LimitVector(LinearMetresPerSecond,GetDriveParameter(TEXT("MaxForwardSpeedMps")));
@@ -133,7 +162,7 @@ bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,d
     return true;
 }
 
-bool AVehicleRig::SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake)
+bool AVehicleRig::SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake,bool OperatorGyro)
 {
     if(!bExternalDriveLease)return false;
     FVector2D LimitedLinear=LinearMetresPerSecond;
@@ -142,14 +171,25 @@ bool AVehicleRig::SetExternalVelocityTarget(const FVector2D& LinearMetresPerSeco
     // Preserve non-finite rejection in SetContactPlanarDrive instead of clamping it away.
     if(FMath::IsFinite(LimitedLinear.X)&&FMath::IsFinite(LimitedLinear.Y)&&FMath::IsFinite(LimitedYaw))
     {
-        LimitedLinear.X=FMath::Clamp(LimitedLinear.X,-GetDriveParameter(TEXT("MaxReverseSpeedMps")),GetDriveParameter(TEXT("MaxForwardSpeedMps")));
-        const double LateralLimit=GetDriveParameter(TEXT("MaxLateralSpeedMps"));
-        LimitedLinear.Y=FMath::Clamp(LimitedLinear.Y,-LateralLimit,LateralLimit);
-        const double YawLimit=GetDriveParameter(TEXT("ManualYawRateRadS"));
+        if(OperatorGyro)
+        {
+            // Hold the translation direction while the body rotates between packets.
+            const FVector2D Body=LimitBodyComponents(*this,LimitedLinear);
+            FVector2D Forward,Left;DriveBasis(GetActorRotation(),Forward,Left);
+            LimitedLinear=Forward*Body.X+Left*Body.Y;
+        }
+        else
+        {
+            LimitedLinear.X=FMath::Clamp(LimitedLinear.X,-GetDriveParameter(TEXT("MaxReverseSpeedMps")),GetDriveParameter(TEXT("MaxForwardSpeedMps")));
+            const double LateralLimit=GetDriveParameter(TEXT("MaxLateralSpeedMps"));
+            LimitedLinear.Y=FMath::Clamp(LimitedLinear.Y,-LateralLimit,LateralLimit);
+        }
+        const double YawLimit=GetDriveParameter(OperatorGyro?TEXT("GyroMaxRadS"):TEXT("ManualYawRateRadS"));
         LimitedYaw=FMath::Clamp(LimitedYaw,-YawLimit,YawLimit);
     }
-    const bool Accepted=SetContactPlanarDrive(LimitedLinear,LimitedYaw,false,Brake);
+    const bool Accepted=SetContactPlanarDrive(LimitedLinear,LimitedYaw,OperatorGyro,Brake);
     bExternalVelocityTracking=Accepted;
+    bExternalOperatorGyro=Accepted&&OperatorGyro;
     return Accepted;
 }
 
@@ -185,8 +225,13 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
 {
     if(Seconds<=0||!ContactChassis)return;
     FVector2D Forward,Left;DriveBasis(GetActorRotation(),Forward,Left);
-    const FVector2D Target=bContactBrake?FVector2D::ZeroVector:
+    FVector2D Target=bContactBrake?FVector2D::ZeroVector:
         bDriveWorldFrame?DriveRequestedLinear:Forward*DriveRequestedLinear.X+Left*DriveRequestedLinear.Y;
+    if(bExternalOperatorGyro&&!bContactBrake)
+    {
+        const auto Body=LimitBodyComponents(*this,{FVector2D::DotProduct(Target,Forward),FVector2D::DotProduct(Target,Left)});
+        Target=Forward*Body.X+Left*Body.Y;
+    }
     const FVector2D PreviousWorld=DriveFilteredWorld;
     const double TargetYaw=bContactBrake?0:ContactDriveYaw;
     DriveAppliedRequestedWorld=Target;DriveAppliedRequestedYaw=TargetYaw;
@@ -237,7 +282,16 @@ void AVehicleRig::UpdateContactDrive(double Seconds)
     const FVector2D MeasuredWorld(Measured.X,-Measured.Y);
     const FVector2D Corrected=DriveFilteredWorld+(DriveFilteredWorld-MeasuredWorld)*GetDriveParameter(TEXT("LinearVelocityFeedback"));
     const double Vx=FVector2D::DotProduct(Corrected,Forward),Vy=bSwerveContact?FVector2D::DotProduct(Corrected,Left):0.;
-    const double Wz=DriveFilteredYaw+(DriveFilteredYaw-GetMeasuredYawRate())*GetDriveParameter(TEXT("YawVelocityFeedback"));
+    const double MeasuredYaw=GetMeasuredYawRate();
+    double Wz=DriveFilteredYaw+(DriveFilteredYaw-MeasuredYaw)*GetDriveParameter(TEXT("YawVelocityFeedback"));
+    // Resist contact-induced overspeed with wheel torque. The rigid body state
+    // remains the physics solver's output, including impacts and airborne motion.
+    const double GyroLimit=GetDriveParameter(TEXT("GyroMaxRadS"));
+    const double Excess=FMath::Abs(MeasuredYaw)-GyroLimit;
+    if (Excess>-0.15)
+    {
+        Wz-=FMath::Sign(MeasuredYaw)*FMath::Min(3.0,1.5*(Excess+0.15));
+    }
     const bool Parking=Target.IsNearlyZero(1.e-4)&&FMath::Abs(TargetYaw)<1.e-4&&DriveFilteredWorld.Size()<.015&&FMath::Abs(DriveFilteredYaw)<.02;
     const bool WakeForDrive=!Parking||bFreeRollingDiagnostic;
     double Largest=GetDriveParameter(TEXT("MaxWheelSpeedMps"));

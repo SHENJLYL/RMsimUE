@@ -1,0 +1,345 @@
+--- a/src/render/classic/CMakeLists.txt
++++ b/src/render/classic/CMakeLists.txt
+@@ -22,6 +22,8 @@
+     render_gl2.h
+     render_gl3.c
+     render_gl3.h
++    render_staticflex_vbo.c
++    render_staticflex_vbo.h
+     render_util.c
+     render_util.h
+ )
+--- a/src/render/classic/render_context.c
++++ b/src/render/classic/render_context.c
+@@ -24,6 +24,7 @@
+ #include <mujoco/mjvisualize.h>
+ #include <mujoco/mujoco.h>
+ #include "render/classic/render_util.h"
++#include "render/classic/render_staticflex_vbo.h"
+ #include "render/classic/glad/glad.h"
+ 
+ // bitmap font definitions
+@@ -1758,6 +1759,9 @@
+   makeSkin(m, con);
+   makeFont(con, fontscale);
+ 
++  // Viewer-only opt-in. Metadata remains private; all public ABI sizes stay fixed.
++  mjr_rmsimStaticFlexInit(m, con);
++
+   // enable seamless cube maps if supported
+   if (mjGLAD_GL_ARB_seamless_cube_map) {
+     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+@@ -1922,6 +1926,7 @@
+ 
+ // free resources in custom OpenGL context
+ void mjr_freeContext(mjrContext* con) {
++  mjr_rmsimStaticFlexFree(con);
+   int had_resources = contextHasResources(con);
+ 
+   // save flags
+--- a/src/render/classic/render_gl3.c
++++ b/src/render/classic/render_gl3.c
+@@ -27,6 +27,7 @@
+ #include "render/classic/render_context.h"
+ #include "render/classic/render_gl2.h"
+ #include "render/classic/render_util.h"
++#include "render/classic/render_staticflex_vbo.h"
+ #include "render/classic/glad/glad.h"
+ 
+ 
+@@ -582,11 +583,14 @@
+     if (facenum) {
+       glEnableClientState(GL_VERTEX_ARRAY);
+       glEnableClientState(GL_NORMAL_ARRAY);
+-      glVertexPointer(3, GL_FLOAT, 0, scn->flexface + 9*faceadr);
+-      glNormalPointer(GL_FLOAT, 0, scn->flexnormal + 9*faceadr);
++      int cached = mjr_rmsimStaticFlexBind(con, scn, geom, faceadr, facenum);
++      if (!cached) {
++        glVertexPointer(3, GL_FLOAT, 0, scn->flexface + 9*faceadr);
++        glNormalPointer(GL_FLOAT, 0, scn->flexnormal + 9*faceadr);
++      }
+       if (geom->texcoord && geom->matid>=0) {
+         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+-        glTexCoordPointer(2, GL_FLOAT, 0, scn->flextexcoord + 6*faceadr);
++        if (!cached) glTexCoordPointer(2, GL_FLOAT, 0, scn->flextexcoord + 6*faceadr);
+       }
+       glDrawArrays(GL_TRIANGLES, 0, 3*facenum);
+       glDisableClientState(GL_VERTEX_ARRAY);
+@@ -594,6 +598,7 @@
+       if (geom->texcoord && geom->matid>=0) {
+         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+       }
++      if (cached) glBindBuffer(GL_ARRAY_BUFFER, 0);
+     }
+     break;
+   }
+--- /dev/null
++++ b/src/render/classic/render_staticflex_vbo.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: Apache-2.0
++// Exact, opt-in GPU storage for the immutable world-fixed flexes in RMSim's
++// read-only viewer. The official MuJoCo model/data/context/scene ABI is retained.
++
++#include "render/classic/render_staticflex_vbo.h"
++
++#include <inttypes.h>
++#include <limits.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "engine/engine_macro.h"
++#include "render/classic/glad/glad.h"
++
++typedef struct FlexVbo_ {
++  GLuint buffers[3];
++  int faceadr, capacity, used, textured;
++  uint64_t bytes;
++} FlexVbo;
++
++typedef struct FlexContext_ {
++  const mjrContext* context;
++  const mjvScene* scene;
++  const float *face, *normal, *texcoord;
++  int nflex, disabled;
++  FlexVbo* flex;
++  struct FlexContext_* next;
++} FlexContext;
++
++// OpenGL contexts and their resources are used and freed on their owner thread.
++// A thread-local registry avoids public-struct changes, cross-context GL object
++// names, shared locks in the draw path, and Python object-address extraction.
++static mjTHREADLOCAL FlexContext* contexts = NULL;
++static mjTHREADLOCAL int enabled = 0;
++static mjTHREADLOCAL uint64_t registered_contexts = 0, live_contexts = 0;
++static mjTHREADLOCAL uint64_t live_flex = 0, live_bytes = 0, uploaded_bytes = 0;
++static mjTHREADLOCAL uint64_t uploads = 0, fast_batches = 0, fallback_batches = 0;
++static mjTHREADLOCAL uint64_t failures = 0, rejected_contexts = 0;
++static mjTHREADLOCAL const char* first_failure = "none";
++static mjTHREADLOCAL char status_text[1536];
++
++void rmsim_mjr_setStaticFlexCacheEnabled(int value) {
++  enabled = value == 1;
++}
++
++const char* rmsim_mjr_staticFlexCacheStatus(void) {
++  snprintf(status_text, sizeof(status_text),
++    "{\"schema\":\"rmsim_static_flex_vbo_v1\",\"version\":\"rmsim.viewer-static-flex-vbo.1\","
++    "\"enabled\":%s,\"registered_contexts\":%" PRIu64 ",\"live_contexts\":%" PRIu64 ","
++    "\"live_flex\":%" PRIu64 ",\"live_bytes\":%" PRIu64 ",\"uploaded_bytes\":%" PRIu64 ","
++    "\"uploads\":%" PRIu64 ",\"fast_batches\":%" PRIu64 ",\"fallback_batches\":%" PRIu64 ","
++    "\"failures\":%" PRIu64 ",\"rejected_contexts\":%" PRIu64 ",\"first_failure\":\"%s\"}",
++    enabled ? "true" : "false", registered_contexts, live_contexts,
++    live_flex, live_bytes, uploaded_bytes, uploads, fast_batches, fallback_batches,
++    failures, rejected_contexts, first_failure);
++  return status_text;
++}
++
++static void fail(const char* reason) {
++  if (!failures) first_failure = reason;
++  failures++;
++}
++
++static void freeBuffers(FlexContext* entry) {
++  for (int i = 0; i < entry->nflex; i++) {
++    FlexVbo* flex = entry->flex + i;
++    if (flex->buffers[0] || flex->buffers[1] || flex->buffers[2]) {
++      glDeleteBuffers(3, flex->buffers);
++      flex->buffers[0] = flex->buffers[1] = flex->buffers[2] = 0;
++    }
++    if (flex->bytes) {
++      live_bytes -= flex->bytes;
++      live_flex--;
++      flex->bytes = 0;
++    }
++  }
++}
++
++void mjr_rmsimStaticFlexFree(const mjrContext* con) {
++  FlexContext** link = &contexts;
++  while (*link) {
++    FlexContext* entry = *link;
++    if (entry->context == con) {
++      *link = entry->next;
++      freeBuffers(entry);
++      free(entry->flex);
++      free(entry);
++      live_contexts--;
++      return;
++    }
++    link = &entry->next;
++  }
++}
++
++void mjr_rmsimStaticFlexInit(const mjModel* m, const mjrContext* con) {
++  if (!enabled || !m || m->nflex <= 0) return;
++  // This extension intentionally supports the viewer's sealed model contract,
++  // not a generic mutable/deforming flex scene.
++  if (m->nflex > INT_MAX || m->nskin || m->nplugin) {
++    rejected_contexts++;
++    fail("unsupported_model");
++    return;
++  }
++  for (int f = 0; f < m->nflex; f++) {
++    if (m->flex_dim[f] != 2 || m->flex_interp[f]) {
++      rejected_contexts++;
++      fail("flex_not_world_fixed_2d");
++      return;
++    }
++    for (int v = 0; v < m->flex_vertnum[f]; v++) {
++      if (m->flex_vertbodyid[m->flex_vertadr[f] + v] != 0) {
++        rejected_contexts++;
++        fail("flex_not_world_fixed_2d");
++        return;
++      }
++    }
++  }
++  FlexContext* entry = (FlexContext*)calloc(1, sizeof(FlexContext));
++  if (!entry) {
++    fail("metadata_allocation");
++    return;
++  }
++  entry->nflex = (int)m->nflex;
++  entry->flex = (FlexVbo*)calloc((size_t)entry->nflex, sizeof(FlexVbo));
++  if (!entry->flex) {
++    free(entry);
++    fail("metadata_allocation");
++    return;
++  }
++  for (int f = 0; f < entry->nflex; f++) {
++    entry->flex[f].textured = m->flex_texcoordadr[f] >= 0;
++  }
++  entry->context = con;
++  entry->next = contexts;
++  contexts = entry;
++  registered_contexts++;
++  live_contexts++;
++}
++
++static int uploadBuffer(GLuint* name, const float* source, size_t bytes) {
++  // Querying allocation size is confined to first upload. It never waits for
++  // GPU completion or reads back vertices during normal rendering.
++  if (!source || !bytes || bytes > INT_MAX) return 0;
++  glGenBuffers(1, name);
++  if (!*name) return 0;
++  glBindBuffer(GL_ARRAY_BUFFER, *name);
++  glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)bytes, source, GL_STATIC_DRAW);
++  GLint actual = 0;
++  glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &actual);
++  return actual >= 0 && (size_t)actual == bytes;
++}
++
++static int disableContext(FlexContext* entry, const char* reason) {
++  entry->disabled = 1;
++  freeBuffers(entry);
++  fail(reason);
++  fallback_batches++;
++  return 0;
++}
++
++int mjr_rmsimStaticFlexBind(const mjrContext* con, const mjvScene* scn,
++                          const mjvGeom* geom, int faceadr, int facenum) {
++  if (!enabled) {
++    fallback_batches++;
++    return 0;
++  }
++  FlexContext* entry = contexts;
++  while (entry && entry->context != con) entry = entry->next;
++  if (!entry || entry->disabled) {
++    fallback_batches++;
++    return 0;
++  }
++  if (scn->nflex != entry->nflex || geom->objid < 0 || geom->objid >= entry->nflex ||
++      !scn->flexfaceopt || scn->flexskinopt || scn->flexvertopt || scn->flexedgeopt) {
++    return disableContext(entry, "unsupported_scene");
++  }
++  if (!entry->scene) {
++    entry->scene = scn;
++    entry->face = scn->flexface;
++    entry->normal = scn->flexnormal;
++    entry->texcoord = scn->flextexcoord;
++  } else if (entry->scene != scn || entry->face != scn->flexface ||
++             entry->normal != scn->flexnormal || entry->texcoord != scn->flextexcoord) {
++    return disableContext(entry, "scene_buffers_changed");
++  }
++  FlexVbo* flex = entry->flex + geom->objid;
++  int base = scn->flexfaceadr[geom->objid];
++  int used = scn->flexfaceused[geom->objid];
++  int capacity = scn->flexfacenum[geom->objid];
++  int64_t offset = (int64_t)faceadr - base;
++  int textured = geom->texcoord && geom->matid >= 0;
++  if (base < 0 || used <= 0 || capacity < used || offset < 0 || facenum <= 0 ||
++      offset + facenum > used || (textured && !flex->textured) ||
++      !scn->flexface || !scn->flexnormal || (flex->textured && !scn->flextexcoord)) {
++    return disableContext(entry, "invalid_face_slice");
++  }
++  if (flex->bytes && (flex->faceadr != base || flex->used != used || flex->capacity != capacity)) {
++    return disableContext(entry, "face_layout_changed");
++  }
++  if (!flex->bytes) {
++    size_t vertex_bytes = (size_t)used * 9 * sizeof(float);
++    size_t uv_bytes = (size_t)used * 6 * sizeof(float);
++    GLint prior_binding = 0;
++    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &prior_binding);
++    int valid = uploadBuffer(flex->buffers, scn->flexface + (size_t)base*9, vertex_bytes) &&
++                uploadBuffer(flex->buffers+1, scn->flexnormal + (size_t)base*9, vertex_bytes);
++    if (valid && flex->textured) {
++      valid = uploadBuffer(flex->buffers+2, scn->flextexcoord + (size_t)base*6, uv_bytes);
++    }
++    glBindBuffer(GL_ARRAY_BUFFER, (GLuint)prior_binding);
++    if (!valid) return disableContext(entry, "gpu_buffer_allocation");
++    flex->faceadr = base;
++    flex->used = used;
++    flex->capacity = capacity;
++    flex->bytes = 2*(uint64_t)vertex_bytes + (flex->textured ? (uint64_t)uv_bytes : 0);
++    live_bytes += flex->bytes;
++    uploaded_bytes += flex->bytes;
++    live_flex++;
++    uploads++;
++  }
++  glBindBuffer(GL_ARRAY_BUFFER, flex->buffers[0]);
++  glVertexPointer(3, GL_FLOAT, 0, (const void*)((uintptr_t)offset*9*sizeof(float)));
++  glBindBuffer(GL_ARRAY_BUFFER, flex->buffers[1]);
++  glNormalPointer(GL_FLOAT, 0, (const void*)((uintptr_t)offset*9*sizeof(float)));
++  if (textured) {
++    glBindBuffer(GL_ARRAY_BUFFER, flex->buffers[2]);
++    glTexCoordPointer(2, GL_FLOAT, 0, (const void*)((uintptr_t)offset*6*sizeof(float)));
++  }
++  fast_batches++;
++  return 1;
++}
+--- /dev/null
++++ b/src/render/classic/render_staticflex_vbo.h
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: Apache-2.0
++// RMSim display-only extension. No public MuJoCo structure layout is changed.
++#ifndef MUJOCO_SRC_RENDER_CLASSIC_RENDER_STATICFLEX_VBO_H_
++#define MUJOCO_SRC_RENDER_CLASSIC_RENDER_STATICFLEX_VBO_H_
++
++#include <mujoco/mjexport.h>
++#include <mujoco/mjmodel.h>
++#include <mujoco/mjrender.h>
++#include <mujoco/mjvisualize.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++// Explicit opt-in on the thread owning the GL context, before mjr_makeContext.
++// The caller promises the sealed, world-fixed face buffers are immutable for
++// that context's lifetime. Recreate the context if the scene geometry changes.
++// Disable/re-enable may be used to compare the original draw path without
++// changing the model, scene, camera or any shader/material state.
++MJAPI void rmsim_mjr_setStaticFlexCacheEnabled(int enabled);
++MJAPI const char* rmsim_mjr_staticFlexCacheStatus(void);
++
++// Internal context-lifetime hooks and the existing renderer's face-array bind.
++void mjr_rmsimStaticFlexInit(const mjModel* m, const mjrContext* con);
++void mjr_rmsimStaticFlexFree(const mjrContext* con);
++int mjr_rmsimStaticFlexBind(const mjrContext* con, const mjvScene* scn,
++                          const mjvGeom* geom, int faceadr, int facenum);
++
++#ifdef __cplusplus
++}
++#endif
++#endif

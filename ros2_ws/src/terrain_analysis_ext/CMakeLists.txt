@@ -24,6 +24,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(terrain_analysis REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -38,6 +39,7 @@ find_package(pcl_ros REQUIRED)
 add_executable(terrainAnalysisExt src/terrainAnalysisExt.cpp)
 ament_target_dependencies(
   terrainAnalysisExt
+  terrain_analysis
   rclcpp
   std_msgs
   sensor_msgs

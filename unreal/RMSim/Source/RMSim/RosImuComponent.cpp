@@ -151,6 +151,12 @@ void URosImuComponent::Advance(double Time,bool Collect,double EpochSolverTime)
     }
 }
 
+int32 URosImuComponent::PendingSamplesPerChannel() const
+{
+    // The existing wire contract caps the combined IMU batch at 128.
+    return Rig&&Rig->GetDedicatedMujocoPeriod()>0?128/FMath::Max(1,Channels.Num()):32;
+}
+
 void URosImuComponent::PublishSample(FChannel& C,double Time,double IntegrationDt,FVector Accel,FVector Gyro,bool Collect,int64 SampleIndex)
 {
     ++C.Sequence;
@@ -174,7 +180,7 @@ void URosImuComponent::PublishSample(FChannel& C,double Time,double IntegrationD
         const int64 Stamp=SampleIndex>=0?RMSimSensors::EpochSampleGrid::StampNs(SampleIndex,C.Rate):FMath::RoundToInt64(Time*1.e9);
         J->SetNumberField(TEXT("stamp_ns"),double(Stamp));J->SetNumberField(TEXT("integration_dt_s"),IntegrationDt);
         J->SetArrayField(TEXT("angular_velocity_rad_s"),ImuVector(Gyro));J->SetArrayField(TEXT("specific_force_mps2"),ImuVector(Accel));
-        if(C.Pending.Num()==32){C.Pending.RemoveAt(0,1,EAllowShrinking::No);++C.Dropped;}
+        if(C.Pending.Num()>=PendingSamplesPerChannel()){C.Pending.RemoveAt(0,1,EAllowShrinking::No);++C.Dropped;}
         C.Pending.Add(MakeShared<FJsonValueObject>(J));
 
         if(bProfileTiming)ProfilePackWall+=FPlatformTime::Seconds()-PackStarted;

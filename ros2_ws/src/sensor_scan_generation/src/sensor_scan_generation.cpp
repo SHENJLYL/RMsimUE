@@ -15,6 +15,8 @@
 #include "sensor_scan_generation/sensor_scan_generation.hpp"
 
 #include <chrono>
+#include <cmath>
+#include <stdexcept>
 #include "pcl_ros/transforms.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
@@ -27,10 +29,18 @@ SensorScanGenerationNode::SensorScanGenerationNode(const rclcpp::NodeOptions & o
   this->declare_parameter<std::string>("lidar_frame", "");
   this->declare_parameter<std::string>("base_frame", "");
   this->declare_parameter<std::string>("robot_base_frame", "");
+  direct_control_odom_ = this->declare_parameter<bool>("direct_control_odom", false);
+  velocity_window_s_ = this->declare_parameter<double>("odometry_velocity_window_s", 0.0);
+  if (!std::isfinite(velocity_window_s_) || velocity_window_s_ < 0.0 || velocity_window_s_ > 0.25) {
+    throw std::invalid_argument("odometry_velocity_window_s must be in [0, 0.25]");
+  }
 
   this->get_parameter("lidar_frame", lidar_frame_);
   this->get_parameter("base_frame", base_frame_);
   this->get_parameter("robot_base_frame", robot_base_frame_);
+  if (direct_control_odom_ && base_frame_ != robot_base_frame_) {
+    throw std::invalid_argument("Direct odometry requires the controller base frame");
+  }
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
@@ -59,7 +69,9 @@ SensorScanGenerationNode::SensorScanGenerationNode(const rclcpp::NodeOptions & o
     &SensorScanGenerationNode::laserCloudAndOdometryHandler, this, std::placeholders::_1,
     std::placeholders::_2));
   odometry_sub_.registerCallback([this](const nav_msgs::msg::Odometry::ConstSharedPtr & m) {
-    ++received_odometry_; latest_odom_stamp_ = rclcpp::Time(m->header.stamp).seconds();
+    ++received_odometry_;
+    latest_odom_stamp_ = rclcpp::Time(m->header.stamp).seconds();
+    if (direct_control_odom_) {publishDirectOdometry(*m);}
   });
   laser_cloud_sub_.registerCallback([this](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m) {
     ++received_clouds_; latest_cloud_stamp_ = rclcpp::Time(m->header.stamp).seconds();
@@ -98,14 +110,65 @@ void SensorScanGenerationNode::laserCloudAndOdometryHandler(
   tf_odom_to_chassis = tf_odom_to_lidar * tf_lidar_to_chassis;
   tf_odom_to_robot_base = tf_odom_to_lidar * tf_lidar_to_robot_base_;
 
-  publishTransform(
-    tf_odom_to_chassis, odometry_msg->header.frame_id, base_frame_, pcd_msg->header.stamp);
-  publishOdometry(
-    tf_odom_to_robot_base, odometry_msg->header.frame_id, robot_base_frame_, pcd_msg->header.stamp);
+  if (!direct_control_odom_) {
+    publishTransform(
+      tf_odom_to_chassis, odometry_msg->header.frame_id, base_frame_, pcd_msg->header.stamp);
+    publishOdometry(
+      tf_odom_to_robot_base, odometry_msg->header.frame_id, robot_base_frame_, pcd_msg->header.stamp);
+  }
 
   sensor_msgs::msg::PointCloud2 out;
   pcl_ros::transformPointCloud(lidar_frame_, tf_odom_to_lidar.inverse(), *pcd_msg, out);
   pub_laser_cloud_->publish(out);
+}
+
+void SensorScanGenerationNode::publishDirectOdometry(const nav_msgs::msg::Odometry & input)
+{
+  const rclcpp::Time stamp(input.header.stamp, get_clock()->get_clock_type());
+  if (latest_mount_ && stamp <= latest_mount_->stamp) {return;}
+  const double dt = latest_mount_ ? (stamp - latest_mount_->stamp).seconds() : 0.;
+  if (latest_mount_ && dt < 0.02) {return;}
+  tf2::Transform mount;
+  try {
+    mount = getTransform(lidar_frame_, robot_base_frame_, stamp);
+  } catch (const tf2::TransformException &) {
+    return;  // The next stamped estimator update retries.
+  }
+  const auto previous = latest_mount_;
+  latest_mount_ = PoseSample{stamp, mount};
+  if (!previous || dt > 0.16) {return;}
+
+  const tf2::Vector3 v(input.twist.twist.linear.x, input.twist.twist.linear.y, input.twist.twist.linear.z);
+  const tf2::Vector3 w(input.twist.twist.angular.x, input.twist.twist.angular.y, input.twist.twist.angular.z);
+  const auto finite = [](const tf2::Vector3 & a) {
+      return std::isfinite(a.x()) && std::isfinite(a.y()) && std::isfinite(a.z());
+    };
+  if (!finite(v) || !finite(w)) {return;}
+  const auto relative_velocity = (mount.getOrigin() - previous->transform.getOrigin()) / dt;
+  auto relative_rotation = mount.getRotation() * previous->transform.getRotation().inverse();
+  relative_rotation.normalize();
+  if (relative_rotation.w() < 0.0) {
+    relative_rotation = tf2::Quaternion(-relative_rotation.x(), -relative_rotation.y(),
+      -relative_rotation.z(), -relative_rotation.w());
+  }
+  const auto relative_rate = relative_rotation.getAxis() * (relative_rotation.getAngle() / dt);
+  const auto inverse = mount.getRotation().inverse();
+  // Account for both lever-arm velocity and articulation of the sensor mount.
+  const auto base_v = tf2::quatRotate(inverse, v + w.cross(mount.getOrigin()) + relative_velocity);
+  const auto base_w = tf2::quatRotate(inverse, w + relative_rate);
+  if (!finite(base_v) || !finite(base_w)) {return;}
+
+  tf2::Transform lidar;
+  tf2::fromMsg(input.pose.pose, lidar);
+  const auto body = lidar * mount;
+  nav_msgs::msg::Odometry out;
+  out.header = input.header;
+  out.child_frame_id = robot_base_frame_;
+  tf2::toMsg(body, out.pose.pose);
+  out.twist.twist.linear = tf2::toMsg(base_v);
+  out.twist.twist.angular = tf2::toMsg(base_w);
+  publishTransform(body, input.header.frame_id, robot_base_frame_, stamp);
+  pub_chassis_odometry_->publish(out);
 }
 
 tf2::Transform SensorScanGenerationNode::getTransform(
@@ -147,13 +210,25 @@ void SensorScanGenerationNode::publishOdometry(
   out.pose.pose.position.z = origin.z();
   out.pose.pose.orientation = tf2::toMsg(transform.getRotation());
 
-  if (previous_odometry_valid_) {
-    const double dt = (stamp - previous_odometry_stamp_).seconds();
+  if (!velocity_samples_.empty() && stamp <= velocity_samples_.back().stamp) {
+    velocity_samples_.clear();
+  }
+  // Pose and stamp are unchanged. Estimate twist over a short interval to
+  // prevent single LIO scan corrections from driving the stopping envelope.
+  while (velocity_samples_.size() > 1 &&
+    (stamp - velocity_samples_[1].stamp).seconds() >= velocity_window_s_)
+  {
+    velocity_samples_.pop_front();
+  }
+  if (!velocity_samples_.empty()) {
+    const auto & previous = velocity_samples_.front();
+    const auto & previous_transform = previous.transform;
+    const double dt = (stamp - previous.stamp).seconds();
     if (dt > 0.0) {
       const auto inverse_rotation = transform.getRotation().inverse();
       const auto linear_velocity = tf2::quatRotate(
-        inverse_rotation, (transform.getOrigin() - previous_transform_.getOrigin()) / dt);
-      auto delta = transform.getRotation() * previous_transform_.getRotation().inverse();
+        inverse_rotation, (transform.getOrigin() - previous_transform.getOrigin()) / dt);
+      auto delta = transform.getRotation() * previous_transform.getRotation().inverse();
       delta.normalize();
       if (delta.w() < 0.0) {
         delta = tf2::Quaternion(-delta.x(), -delta.y(), -delta.z(), -delta.w());
@@ -168,9 +243,7 @@ void SensorScanGenerationNode::publishOdometry(
       out.twist.twist.angular.z = angular_velocity.z();
     }
   }
-  previous_transform_ = transform;
-  previous_odometry_stamp_ = stamp;
-  previous_odometry_valid_ = true;
+  velocity_samples_.push_back({stamp, transform});
 
   pub_chassis_odometry_->publish(out);
 }
