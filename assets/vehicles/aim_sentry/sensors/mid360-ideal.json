@@ -1,0 +1,28 @@
+{
+  "schema": "rm_lidar_runtime_v2",
+  "calibrated": false,
+  "id": "lidar",
+  "parent_frame": "yaw_link",
+  "origin": {
+    "xyz": [
+      0.20351015609318657,
+      0.0737599152673861,
+      0.17595173400188763
+    ],
+    "rpy": [
+      -0.7853990793228149,
+      -3.5730013792090176e-07,
+      -1.570754885673523
+    ]
+  },
+  "pattern": "spherical_fibonacci",
+  "rays_per_second": 200000,
+  "frame_hz": 10,
+  "elevation_min_rad": -0.12217304763960307,
+  "elevation_max_rad": 0.9075712110370514,
+  "min_range_m": 0.1,
+  "max_range_m": 40.0,
+  "range_noise_std_m": 0.0,
+  "reflectivity": 100,
+  "noise_seed": 2027
+}

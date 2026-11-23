@@ -1,4 +1,5 @@
 #include "parameters.h"
+#include <stdexcept>
 
 bool is_first_frame = true;
 double lidar_end_time = 0.0, first_lidar_time = 0.0, time_con = 0.0;
@@ -22,6 +23,7 @@ double filter_size_surf_min = 0.5, filter_size_map_min = 0.5, fov_deg = 180;
 // double cube_len = 2000;
 float DET_RANGE = 450;
 bool imu_en = true;
+int imu_qos_depth = 5;
 double imu_time_inte = 0.005;
 double laser_point_cov = 0.01, acc_norm;
 double vel_cov, acc_cov_input, gyr_cov_input;
@@ -89,6 +91,12 @@ void readParameters(std::shared_ptr<rclcpp::Node> & nh)
 
     nh->declare_parameter<std::string>("common.imu_topic", ".livox.imu");
     nh->get_parameter("common.imu_topic", imu_topic);
+
+    nh->declare_parameter<int>("common.imu_qos_depth", 5);
+    nh->get_parameter("common.imu_qos_depth", imu_qos_depth);
+    if (imu_qos_depth < 1 || imu_qos_depth > 4096) {
+      throw std::invalid_argument("common.imu_qos_depth must be an integer in [1, 4096]");
+    }
 
     nh->declare_parameter<bool>("common.con_frame", false);
     nh->get_parameter("common.con_frame", con_frame);

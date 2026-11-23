@@ -4,13 +4,17 @@ param(
     [string]$InputFile = '',
     [string]$MapFile = '',
     [string]$SpawnId = 'default',
+    [ValidateSet('Default','D3D11','D3D12')][string]$GraphicsRhi = 'Default',
+    [switch]$SingleShaderWorker,
     [switch]$Terrain,
     [switch]$Combat,
     [switch]$Contact,
     [double]$ContactDistanceCm = 340,
     [double]$ContactSpeedMps = 1,
     [switch]$ContactIntegration,
+    [switch]$ContactReset,
     [switch]$Gyro,
+    [switch]$CameraDrive,
     [switch]$GyroRoute,
     [double]$GyroSpinRadS=2,
     [switch]$SteeringResponse,
@@ -22,13 +26,20 @@ param(
     [switch]$WithTraining,
     [double]$TraversalDistanceCm = 0,
     [switch]$MapOverview,
-    [int]$TimeoutSeconds = 180
+    [int]$TimeoutSeconds = 180,
+    [ValidateSet('chaos','mujoco')][string]$PhysicsBackend='chaos',
+    [string]$MujocoModel='',
+    [switch]$AllowDiagnosticPlane
 )
 . (Join-Path $PSScriptRoot 'Common.ps1')
+. (Join-Path $PSScriptRoot 'SceneMap.ps1')
 try {
+    if ($ContactReset -and $WithTraining) { throw 'ContactReset and WithTraining cannot be combined.' }
     $ue = Get-UnrealTools -EngineRoot $EngineRoot
     if (-not $InputFile) { $InputFile = Join-Path $PSScriptRoot '../../assets/vehicles/aim_sentry/ue_mesh_rig.json' }
     if (-not $MapFile) { $MapFile = Join-Path $PSScriptRoot '../../assets/maps/import_lab/map.json' }
+    $mapLaunch=Get-RMSimMapLaunch -MapFile $MapFile -Project $ue.Project -SpawnId $SpawnId
+    $MapFile=$mapLaunch.MapFile
     $inputPath = (Resolve-Path -LiteralPath $InputFile).Path
     $evidence = [IO.Path]::GetFullPath($EvidenceDirectory)
     if (Test-Path -LiteralPath $evidence) { throw 'Use a new evidence directory; old results must not be reused.' }
@@ -37,22 +48,39 @@ try {
     if (@($Terrain,$Combat,$Contact,$Gyro,$Traction | Where-Object { $_ }).Count -gt 1) { throw 'Choose one probe type.' }
     $probeFlag = if ($Traction) { '-TractionProbe' } elseif ($Gyro) { '-GyroProbe' } elseif ($Contact) { '-ContactProbe' } elseif ($Combat) { '-CombatProbe' } elseif ($Terrain) { '-TerrainProbe' } else { '-ControlProbe' }
     $arguments = @((Quote-UnrealArgument $ue.Project),
-        '/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode',
+        $mapLaunch.WorldUrl,
         '-game', '-RenderOffScreen', '-unattended', '-NoSplash', '-NoSound', $probeFlag,
         ('-MapFile=' + (Quote-UnrealArgument (Resolve-Path -LiteralPath $MapFile).Path)),
         ('-SpawnId=' + (Quote-UnrealArgument $SpawnId)),
         ('-MeshRigFile=' + (Quote-UnrealArgument $inputPath)),
         ('-EvidenceDir=' + (Quote-UnrealArgument $evidence)),
         ('-abslog=' + (Quote-UnrealArgument (Join-Path $evidence 'runtime.log'))))
+    $arguments += @($mapLaunch.RuntimeArguments)
+    if($PhysicsBackend -eq 'mujoco'){
+        if(-not $MujocoModel){throw 'MuJoCo controls probe requires a prepared manifest.'}
+        $modelPath=(Resolve-Path -LiteralPath $MujocoModel).Path
+        $manifest=Get-Content -LiteralPath $modelPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if($manifest.diagnostic_plane_only -and -not $AllowDiagnosticPlane){throw 'Diagnostic plane requires explicit AllowDiagnosticPlane.'}
+        $arguments+=@('-PhysicsBackend=mujoco',('-MujocoModel='+(Quote-UnrealArgument $modelPath)),'-SimStepSeconds=0.005')
+        if($AllowDiagnosticPlane){$arguments+='-MujocoAllowDiagnosticPlane'}
+    }
     if ($MapOverview) { $arguments += '-MapOverview' }
+    if ($GraphicsRhi -eq 'D3D11') { $arguments += '-d3d11' }
+    elseif ($GraphicsRhi -eq 'D3D12') { $arguments += '-d3d12' }
+    if ($SingleShaderWorker) { $arguments += '-NoShaderWorker' }
     if ($WithTraining) { $arguments += '-TrainingMode' }
     if ($ContactIntegration) {
         if (-not $Contact -or -not $WithTraining) { throw 'ContactIntegration needs Contact and WithTraining.' }
         $arguments += '-ContactIntegration'
     }
+    if ($ContactReset) {
+        if (-not $Contact -or $ContactIntegration) { throw 'ContactReset needs Contact and cannot be combined with ContactIntegration.' }
+        $arguments += '-ContactReset'
+    }
     if ($Contact -or $Gyro) { $arguments += '-ContactDistanceCm=' + $ContactDistanceCm.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($Contact -or $Gyro) { $arguments += '-ContactSpeedMps=' + $ContactSpeedMps.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($GyroRoute) { if(-not $Gyro){throw 'GyroRoute needs Gyro.'};$arguments += '-GyroRoute' }
+    if ($CameraDrive) { if(-not $Gyro){throw 'CameraDrive needs Gyro.'};$arguments += '-CameraDriveProbe' }
     if ($GyroRoute) { $arguments += '-GyroSpinRadS='+$GyroSpinRadS.ToString([Globalization.CultureInfo]::InvariantCulture) }
     if ($SteeringResponse) { if(-not $Gyro){throw 'SteeringResponse needs Gyro.'};$arguments += '-SteeringResponse' }
     if ($PrecisionTrace) { if(-not $SteeringResponse){throw 'PrecisionTrace needs SteeringResponse.'};$arguments += '-PrecisionTrace' }
@@ -81,11 +109,13 @@ try {
     if ($Terrain -and $TraversalDistanceCm -gt 0) { $expected = @('supported_spawn','source_ramp_traversal') }
     if ($Contact) { $expected = @('physical_settle','physical_forward_route','physical_brake','physical_reverse_route') }
     if ($ContactIntegration) { $expected += @('physical_shared_left_turn','physical_shared_right_turn','physical_shared_aim_fire','physical_wall_stop','physical_shared_reset','physical_fall_recovery') }
+    if ($ContactReset) { $expected += 'physical_shared_reset_without_training' }
     if ($Gyro) { $expected=@('gyro_supported_spawn','normal_camera_forward_smooth','released_keys_active_brake','normal_camera_left_strafe','normal_strafe_brake','gyro_camera_forward_direction','gyro_faster_key','gyro_slower_minimum','gyro_faster_maximum','gyro_mouse_pitch_world_aim','gyro_toggle_off_brakes_spin') }
     if ($Gyro -and -not $GyroRoute) { $expected+=@('normal_forward_after_camera_turn','camera_turn_release_brake','normal_right_after_camera_turn','steering_response_rest_pose','steering_step_response','moving_turn_initial_velocity','moving_direction_response','precision_key_speed_cap') }
     if ($SteeringResponse) { $expected=@('steering_response_rest_pose','steering_step_response','moving_turn_initial_velocity','moving_direction_response','precision_key_speed_cap') }
     if ($PrecisionTrace) { $expected+='precision_steady_spin' }
     if ($GyroRoute) { $expected=@('gyro_supported_spawn','gyro_spin_up','gyro_forward_wave_route','gyro_route_brake','gyro_reverse_wave_route') }
+    if ($CameraDrive) { $expected=@('camera_drive_ready','c_orbit_drives_turret_heading','shift_scope_drives_turret_heading','shift_exit_clears_sticky_scope','five_mps_speed_profile','five_mps_brake_to_stop') }
     if ($Traction) { $expected=@('traction_supported_slope','parallel_wheels_free_roll','transverse_wheels_settle','transverse_contact_grip','traction_reset_for_hold','released_keys_hold_slope','downhill_drive_before_release','downhill_key_release_brake','parked_external_impulse_wakes_body','parked_external_impulse_recovery') }
     if ($report.status -ne 'passed' -or $report.complete -ne $true -or @($report.checks).Count -ne $expected.Count) {
         throw 'Control report incomplete or failed.'
@@ -99,9 +129,11 @@ try {
     if ($Combat) { $phases = @('training-start','armor-hit','occluded','clear-lane','victory') }
     if ($Contact) { $phases = @('contact-rest','contact-end','contact-return') }
     if ($ContactIntegration) { $phases += @('contact-fire','contact-wall','contact-recovered') }
+    if ($ContactReset) { $phases += 'contact-reset' }
     if ($Gyro) { $phases=@('gyro-start','gyro-moving','gyro-aim','gyro-camera-relative','gyro-response','moving-response') }
     if ($SteeringResponse) { $phases=@('gyro-response','moving-response') }
     if ($GyroRoute) { $phases=@('gyro-start','gyro-end','gyro-return') }
+    if ($CameraDrive) { $phases=@('gyro-start','gyro-c-free-look','gyro-scope','gyro-chase') }
     if ($Traction) { $phases=@('traction-cross','traction-hold') }
     foreach ($phase in $phases) {
         foreach ($camera in @('overview','aim_camera')) {
@@ -121,6 +153,8 @@ try {
     }
     [pscustomobject]@{run_id=$report.run_id;checks=$expected.Count;decoded_captures=($phases.Count*2);passed=$true;
         os_input_verified=$false;scope=$report.scope;process_exit=$process.ExitCode;
+        requested_rhi=$GraphicsRhi;single_shaderworker=[bool]$SingleShaderWorker;
+        map_runtime_arguments=@($mapLaunch.RuntimeArguments);
         drive_profile_sha256=$profileHash;
         module_sha256=(Get-FileHash -LiteralPath (Join-Path (Split-Path -Parent $ue.Project) 'Binaries/Win64/UnrealEditor-RMSim.dll') -Algorithm SHA256).Hash;
         rig_sha256=(Get-FileHash -LiteralPath $inputPath -Algorithm SHA256).Hash;

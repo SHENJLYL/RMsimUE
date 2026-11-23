@@ -1,0 +1,4438 @@
+{
+  "schema": "wt_landclass_rodata_v1",
+  "source": {
+    "name": "avg_vlaanderen_detailed_biome",
+    "group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_locations.grp",
+    "resource_id": 258,
+    "class_id": 66804164,
+    "offset": 17793408,
+    "resource_bytes": 195056,
+    "resource_sha256": "8cf1aa8f23f927e07c5034bc91d485c35102bc9d46655d458126da30ecbb6b80",
+    "decompressed_bytes": 610308,
+    "decompressed_sha256": "c585726c4690113a430dcc54616c72e1d6416926c99c7e44ae94b75b9571d31b",
+    "rodata_size": 13728,
+    "header_u32": [
+      13728,
+      9464,
+      4,
+      0,
+      0,
+      3512,
+      4,
+      0,
+      0,
+      48,
+      0,
+      4294967295,
+      0,
+      928,
+      80,
+      0
+    ],
+    "strings": [
+      "burnt_grass",
+      "colorFrom",
+      "colorTo",
+      "detail",
+      "detailMul1",
+      "detailMul2",
+      "detail_weights_mul",
+      "details",
+      "grass_a",
+      "grass_b",
+      "grass_city_a",
+      "grass_city_b",
+      "grass_dead",
+      "grass_microdetail_removal_bits",
+      "grass_soil_a",
+      "grass_weight",
+      "landClassTextures",
+      "obj_plant_generate",
+      "texture",
+      "america_detailed_grass_masks",
+      "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_burn_trees_mask_8.tif",
+      "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_forest_mask_8.tif",
+      "avg_vlaanderen_detailed_biome_tex_b",
+      "avg_vlaanderen_detailed_biome_tex_d",
+      "avg_vlaanderen_detailed_biome_tex_f",
+      "biome_detail_asphalt_a_tex_d",
+      "biome_detail_asphalt_a_tex_r",
+      "biome_detail_asphalt_c_tex_d",
+      "biome_detail_asphalt_c_tex_r",
+      "biome_detail_burnt_grass_a_tex_d",
+      "biome_detail_burnt_grass_a_tex_r",
+      "biome_detail_city_tile_a_tex_d",
+      "biome_detail_city_tile_a_tex_r",
+      "biome_detail_forest_floor_a_tex_d",
+      "biome_detail_forest_floor_a_tex_r",
+      "biome_detail_grass_a_tex_d",
+      "biome_detail_grass_a_tex_r",
+      "biome_detail_grass_b_tex_d",
+      "biome_detail_grass_b_tex_r",
+      "biome_detail_grass_dead_a_tex_d",
+      "biome_detail_grass_dead_a_tex_r",
+      "biome_detail_moss_a_tex_d",
+      "biome_detail_moss_a_tex_r",
+      "biome_detail_mud_b_tex_d",
+      "biome_detail_mud_b_tex_r",
+      "biome_detail_pebbles_shore_a_tex_d",
+      "biome_detail_pebbles_shore_a_tex_r",
+      "biome_detail_rock_boulders_a_tex_d",
+      "biome_detail_rock_boulders_a_tex_r",
+      "biome_detail_rock_chunks_a_tex_d",
+      "biome_detail_rock_chunks_a_tex_r",
+      "biome_detail_rocks_smooth_tex_d",
+      "biome_detail_rocks_smooth_tex_r",
+      "biome_detail_roots_b_tex_d",
+      "biome_detail_roots_b_tex_r",
+      "biome_detail_sand_d_tex_d",
+      "biome_detail_sand_d_tex_r",
+      "biome_detail_sand_soil_a_tex_d",
+      "biome_detail_sand_soil_a_tex_r",
+      "biome_detail_sett_small_old_tex_d",
+      "biome_detail_sett_small_old_tex_r",
+      "biome_detail_slope_soil_a_tex_d",
+      "biome_detail_slope_soil_a_tex_r",
+      "biome_detail_slope_soil_d_tex_d",
+      "biome_detail_slope_soil_d_tex_r",
+      "biome_detail_soil_a_tex_d",
+      "biome_detail_soil_a_tex_r",
+      "biome_detail_soil_b_tex_d",
+      "biome_detail_soil_b_tex_r",
+      "biome_detail_trampled_soil_a_tex_d"
+    ]
+  },
+  "rodata_bytes": 13728,
+  "tail_bytes": 596576,
+  "name_count": 80,
+  "block_count": 125,
+  "root": {
+    "name": null,
+    "offset": 0,
+    "params": [
+      {
+        "name": "landBBoxLim0",
+        "type": "point2",
+        "value": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "landBBoxLim1",
+        "type": "point2",
+        "value": [
+          2048.0,
+          2048.0
+        ]
+      },
+      {
+        "name": "riResCount",
+        "type": "int",
+        "value": 23
+      },
+      {
+        "name": "hasHash",
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "blocks": [
+      {
+        "name": "detail",
+        "offset": 3512,
+        "params": [
+          {
+            "name": "texture",
+            "type": "string",
+            "value": "avg_vlaanderen_detailed_biome_tex_d"
+          },
+          {
+            "name": "shader",
+            "type": "string",
+            "value": "landmesh_indexed_landclass"
+          },
+          {
+            "name": "size",
+            "type": "point2",
+            "value": [
+              2048.0,
+              2048.0
+            ]
+          }
+        ],
+        "blocks": [
+          {
+            "name": "landClassTextures",
+            "offset": 3704,
+            "params": [
+              {
+                "name": "indices",
+                "type": "string",
+                "value": "avg_vlaanderen_detailed_biome_tex_b"
+              },
+              {
+                "name": "grass_weight",
+                "type": "string",
+                "value": "america_detailed_grass_masks"
+              },
+              {
+                "name": "flowmap",
+                "type": "string",
+                "value": "avg_vlaanderen_detailed_biome_tex_f"
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "landClassParams",
+            "offset": 3752,
+            "params": [
+              {
+                "name": "detailMul1",
+                "type": "real",
+                "value": 11.119999885559082
+              },
+              {
+                "name": "detailMul2",
+                "type": "real",
+                "value": 11.229999542236328
+              },
+              {
+                "name": "randomRotatePeriod",
+                "type": "real",
+                "value": 73.0
+              },
+              {
+                "name": "randomVariationPeriod",
+                "type": "real",
+                "value": 0.880979597568512
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "details",
+            "offset": 3800,
+            "params": [],
+            "blocks": [
+              {
+                "name": "soil_a",
+                "offset": 3848,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_soil_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_soil_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "soil_b",
+                "offset": 3896,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_soil_b_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_soil_b_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "sand_a",
+                "offset": 3944,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_sand_soil_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_sand_soil_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "sand_d",
+                "offset": 3992,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_sand_d_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_sand_d_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_a",
+                "offset": 4040,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_b",
+                "offset": 4088,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_b_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_b_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_dead",
+                "offset": 4136,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_city_a",
+                "offset": 4184,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_city_b",
+                "offset": 4232,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_b_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_b_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "grass_soil_a",
+                "offset": 4280,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_grass_dead_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "ground_rocks_a",
+                "offset": 4328,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_pebbles_shore_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_pebbles_shore_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "rock_chunks_a",
+                "offset": 4376,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_rock_chunks_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_rock_chunks_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "soil_rough_a",
+                "offset": 4424,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_mud_b_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_mud_b_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "slope_soil_a",
+                "offset": 4472,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_slope_soil_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_slope_soil_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "forest_a",
+                "offset": 4520,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_moss_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_moss_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "forest_b",
+                "offset": 4568,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_forest_floor_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_forest_floor_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "rock_boulders_a",
+                "offset": 4616,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_rock_boulders_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_rock_boulders_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "cliff_a",
+                "offset": 4664,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_rocks_smooth_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_rocks_smooth_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "asphalt_a",
+                "offset": 4712,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_asphalt_c_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_asphalt_c_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "asphalt_b",
+                "offset": 4760,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_asphalt_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_asphalt_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "burnt_grass",
+                "offset": 4808,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_burnt_grass_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_burnt_grass_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "roots_b",
+                "offset": 4856,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_roots_b_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_roots_b_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "trench_soil",
+                "offset": 4904,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_slope_soil_d_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_slope_soil_d_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "citytile_a",
+                "offset": 4952,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_city_tile_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_city_tile_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "concrete_cracked_a",
+                "offset": 5000,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_trampled_soil_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_trampled_soil_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "sett_a",
+                "offset": 5048,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_sett_small_old_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_sett_small_old_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "pebbles",
+                "offset": 5096,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": "biome_detail_pebbles_shore_a_tex_d"
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": "biome_detail_pebbles_shore_a_tex_r"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "empty_a",
+                "offset": 5144,
+                "params": [
+                  {
+                    "name": "albedo",
+                    "type": "string",
+                    "value": ""
+                  },
+                  {
+                    "name": "reflectance",
+                    "type": "string",
+                    "value": ""
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "scheme",
+                "offset": 5192,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "puddle_prob",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  },
+                  {
+                    "name": "detail_weights_mul",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5240,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.10000000149011612,
+                      0.10000000149011612
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 50331648
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5288,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 16777216
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5336,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 33554432
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5384,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "forest_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 16777216
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5432,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "forest_b"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 33554432
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5480,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5528,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "soil_b"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "soil_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 16777216
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5576,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "rock_boulders_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "rock_boulders_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5624,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "asphalt_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "asphalt_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5672,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5720,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5768,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5816,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5864,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5912,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 5960,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "soil_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6008,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "forest_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "forest_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6056,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "soil_b"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "soil_rough_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6104,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "slope_soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      -1.0,
+                      -1.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 33554432
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6152,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "slope_soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6200,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "slope_soil_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "slope_soil_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      -1.0,
+                      -1.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 50331648
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6248,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "rock_chunks_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "slope_soil_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      -1.0,
+                      -1.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6296,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "rock_chunks_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "ground_rocks_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      -1.0,
+                      -1.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6344,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "cliff_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "cliff_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      -1.0,
+                      -1.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6392,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "burnt_grass"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "roots_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.15000000596046448,
+                      0.15000000596046448
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      5.0,
+                      0.5
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6440,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "sand_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.20000000298023224,
+                      0.20000000298023224
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6488,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6536,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_dead"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "grass_city_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.4000000059604645,
+                      0.4000000059604645
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      5.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6584,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "trench_soil"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "trench_soil"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.20000000298023224,
+                      0.20000000298023224
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6632,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6680,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6728,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6776,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6824,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_b"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6872,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "soil_rough_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "soil_rough_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6920,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "sett_a"
+                  },
+                  {
+                    "name": "second",
+                    "type": "string",
+                    "value": "concrete_cracked_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.30000001192092896,
+                      0.20000000298023224
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 6968,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_city_a"
+                  },
+                  {
+                    "name": "random_flowmap",
+                    "type": "point2",
+                    "value": [
+                      0.5,
+                      0.699999988079071
+                    ]
+                  },
+                  {
+                    "name": "height_scale",
+                    "type": "point2",
+                    "value": [
+                      0.8500000238418579,
+                      0.8500000238418579
+                    ]
+                  },
+                  {
+                    "name": "invert_height",
+                    "type": "point2",
+                    "value": [
+                      0.0,
+                      0.0
+                    ]
+                  },
+                  {
+                    "name": "grass_microdetail_removal_bits",
+                    "type": "int",
+                    "value": 50331648
+                  },
+                  {
+                    "name": "normal_scale",
+                    "type": "point2",
+                    "value": [
+                      1.0,
+                      1.0
+                    ]
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7016,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7064,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7112,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7160,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7208,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7256,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7304,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7352,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7400,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7448,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7496,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7544,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7592,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7640,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7688,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7736,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7784,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7832,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7880,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7928,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 7976,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8024,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8072,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8120,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8168,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8216,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8264,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              },
+              {
+                "name": "detail",
+                "offset": 8312,
+                "params": [
+                  {
+                    "name": "texture",
+                    "type": "string",
+                    "value": "grass_a"
+                  }
+                ],
+                "blocks": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "obj_plant_generate",
+        "offset": 3560,
+        "params": [
+          {
+            "name": "place_on_collision",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "rseed",
+            "type": "int",
+            "value": 145234
+          },
+          {
+            "name": "densityMap",
+            "type": "string",
+            "value": "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_burn_trees_mask_8.tif"
+          },
+          {
+            "name": "mapSize",
+            "type": "point2",
+            "value": [
+              2048.0,
+              2048.0
+            ]
+          },
+          {
+            "name": "mapOfs",
+            "type": "point2",
+            "value": [
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "name": "placeAboveHt",
+            "type": "real",
+            "value": 10.0
+          },
+          {
+            "name": "colorFrom",
+            "type": "color",
+            "value": 3194908255
+          },
+          {
+            "name": "colorTo",
+            "type": "color",
+            "value": 3867306583
+          }
+        ],
+        "blocks": [
+          {
+            "name": "object",
+            "offset": 8360,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 22
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8408,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 21
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8456,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 8.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 20
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8504,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 8.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 19
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8552,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 18
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8600,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 17
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8648,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 16
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8696,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 15
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8744,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 14
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8792,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 13
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8840,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 12
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8888,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 11
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8936,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 10
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 8984,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 9
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9032,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 8
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9080,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 7
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9128,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.800000011920929,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.20000000298023224
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 6
+              }
+            ],
+            "blocks": []
+          }
+        ]
+      },
+      {
+        "name": "obj_plant_generate",
+        "offset": 3608,
+        "params": [
+          {
+            "name": "place_on_collision",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "rseed",
+            "type": "int",
+            "value": 634757
+          },
+          {
+            "name": "densityMap",
+            "type": "string",
+            "value": "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_forest_mask_8.tif"
+          },
+          {
+            "name": "mapSize",
+            "type": "point2",
+            "value": [
+              2048.0,
+              2048.0
+            ]
+          },
+          {
+            "name": "mapOfs",
+            "type": "point2",
+            "value": [
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "name": "placeAboveHt",
+            "type": "real",
+            "value": 10.0
+          }
+        ],
+        "blocks": [
+          {
+            "name": "object",
+            "offset": 9176,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.4000000059604645
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.4000000059604645
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 5
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9224,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.4000000059604645
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  1.0,
+                  0.4000000059604645
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 4
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9272,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 3.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.6000000238418579,
+                  0.30000001192092896
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.699999988079071,
+                  0.30000001192092896
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 3
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9320,
+            "params": [
+              {
+                "name": "orientation",
+                "type": "string",
+                "value": "world"
+              },
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 3.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  180.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  5.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.6000000238418579,
+                  0.30000001192092896
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.699999988079071,
+                  0.30000001192092896
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9368,
+            "params": [
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  360.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "offset_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  1.0
+                ]
+              },
+              {
+                "name": "offset_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "offset_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  1.100000023841858,
+                  0.30000001192092896
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.5,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "blocks": []
+          },
+          {
+            "name": "object",
+            "offset": 9416,
+            "params": [
+              {
+                "name": "weight",
+                "type": "real",
+                "value": 4.0
+              },
+              {
+                "name": "rot_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "rot_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  360.0
+                ]
+              },
+              {
+                "name": "rot_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "offset_x",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "offset_y",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "offset_z",
+                "type": "point2",
+                "value": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "name": "scale",
+                "type": "point2",
+                "value": [
+                  0.5,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "name": "yScale",
+                "type": "point2",
+                "value": [
+                  0.5,
+                  0.10000000149011612
+                ]
+              },
+              {
+                "name": "riResId",
+                "type": "int",
+                "value": 0
+              }
+            ],
+            "blocks": []
+          }
+        ]
+      },
+      {
+        "name": "posInst",
+        "offset": 3656,
+        "params": [],
+        "blocks": []
+      }
+    ]
+  }
+}

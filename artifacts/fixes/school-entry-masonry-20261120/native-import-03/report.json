@@ -1,0 +1,208 @@
+{
+  "status": "native_import_and_geometry_passed_pending_scene_visual_qa",
+  "asset_root": "D:\\simulator\\assets\\maps\\rmuc2027\\arena\\school-entry-brickwall\\prepared",
+  "prepared_sha256": "1db20684ecb1aa838c257a719036274156ce2eac22125b16bbed1f77b1b0d6b6",
+  "native_base": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry",
+  "materials": [
+    {
+      "slot": "EntryBrickWall",
+      "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_EntryBrickWall.M_EntryBrickWall",
+      "semantic": "source",
+      "source_linear_factor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "constant_gamma_conversion_applied": false,
+      "base_color_texture": "textures/EntryBrickWall_BaseColor.png",
+      "alpha_texture": null,
+      "arm_texture": "textures/EntryBrickWall_MetallicRoughness.png",
+      "normal_texture": "textures/EntryBrickWall_NormalGL.png",
+      "normal_convention": "OpenGL",
+      "normal_scale": 1.0,
+      "blend_mode": "<BlendMode.BLEND_OPAQUE: 0>",
+      "shading_model": "<MaterialShadingModel.MSM_DEFAULT_LIT: 1>",
+      "two_sided": true,
+      "source_uv_policy": "Mesh UVs preserved, KHR transforms already baked by preparation.",
+      "ambient_occlusion": "constant_1_as_source_has_no_occlusion_texture"
+    }
+  ],
+  "textures": [
+    {
+      "source": "textures/EntryBrickWall_BaseColor.png",
+      "source_sha256": "61ffa5a40ea4da45d327dca3504be80589db5a770c5fe6154615a421a46e37b1",
+      "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Textures/T_EntryBrickWall_BaseColor_Color.T_EntryBrickWall_BaseColor_Color",
+      "role": "Color",
+      "srgb": true,
+      "max_texture_size": 2048,
+      "flip_green_channel": false,
+      "source_dimensions": [
+        2048,
+        2048
+      ],
+      "source_pixels_modified": false,
+      "native_size_readback": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "source": "textures/EntryBrickWall_MetallicRoughness.png",
+      "source_sha256": "445c07eb066db1e2c311a8576642f5a07311bd015bbf0fcae0534957c28317c1",
+      "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Textures/T_EntryBrickWall_MetallicRoughness_ARM.T_EntryBrickWall_MetallicRoughness_ARM",
+      "role": "ARM",
+      "srgb": false,
+      "max_texture_size": 2048,
+      "flip_green_channel": false,
+      "source_dimensions": [
+        2048,
+        2048
+      ],
+      "source_pixels_modified": false,
+      "native_size_readback": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "source": "textures/EntryBrickWall_NormalGL.png",
+      "source_sha256": "a641798ff224fc477328266ddee83672637a2b5a55b0cac700299e26974ea2be",
+      "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Textures/T_EntryBrickWall_NormalGL_Normal_GLtoDX.T_EntryBrickWall_NormalGL_Normal_GLtoDX",
+      "role": "Normal",
+      "srgb": false,
+      "max_texture_size": 2048,
+      "flip_green_channel": true,
+      "source_dimensions": [
+        2048,
+        2048
+      ],
+      "source_pixels_modified": false,
+      "native_size_readback": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Meshes/RMExteriorEntryBrickWall.RMExteriorEntryBrickWall",
+      "source_sha256": "3761f858135f40b878e749cfbecf51f4788b304a2ce81f69dbf6e59f1f84f870",
+      "transport_sha256": "ef65cb23e67130dc967f1dd5a9e10d2f9ea6816b25c7c0b45f95563e362b6612",
+      "transport_y_reflection_compensated": true,
+      "source_triangles": 10412,
+      "strict_zero_area_triangles_removed": 0,
+      "imported_source_triangles": 10412,
+      "near_degenerate_triangles_dropped_by_UE": 0,
+      "retention_ratio": 1.0,
+      "material_slots": [
+        {
+          "slot": "EntryBrickWall",
+          "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_EntryBrickWall.M_EntryBrickWall"
+        }
+      ],
+      "bounds_min_cm": [
+        -150.0,
+        -16.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        150.0,
+        16.0,
+        208.8000030517578
+      ],
+      "nanite_enabled": true,
+      "generate_distance_field": true,
+      "built_nanite_triangles": 10412,
+      "distance_field_resolution_scale": 1.0,
+      "lumen_mesh_cards": 32,
+      "import_uniform_scale": 100.0,
+      "independent_geometry_status": "passed",
+      "native_render_triangles": 10412
+    }
+  ],
+  "scope": "Independent CC0 entrance assets and distant-ground material only",
+  "distant_ground_material": {
+    "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.M_ExteriorDistantGround",
+    "original_ground_asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorGround.RMExteriorGround",
+    "original_ground_layout_sha256": "64bfb32766056f33a4b706c2656472f3d2d7f954187128cd2b9cc37a91710300",
+    "source_textures": [
+      "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_Grass005_Color_Color.T_Grass005_Color_Color",
+      "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_Grass005_NormalDX_Normal.T_Grass005_NormalDX_Normal"
+    ],
+    "original_linear_color_factor": [
+      0.5,
+      0.8,
+      0.5,
+      1
+    ],
+    "uv_affine_coefficients_native_local_metres": [
+      [
+        -0.003125,
+        -0.0,
+        0.75
+      ],
+      [
+        -0.0,
+        0.0035714285714285713,
+        0.375
+      ]
+    ],
+    "uv_affine_max_error": 0.0,
+    "grass_planar_z_spread_m": 0.0,
+    "grass_top_native_local_z_m": -0.62,
+    "grass_top_source_triangles": 2,
+    "source_grass_sides_and_bottom_excluded_from_top_mapping": true,
+    "native_local_bounds_center_xy_m": [
+      0.0,
+      0.0
+    ],
+    "world_tile_origin_ue_m": [
+      -0.01587520000000353,
+      -7.165091500000002
+    ],
+    "tile_center_half_separation_m": [
+      40.0,
+      35.0
+    ],
+    "tangent_world": [
+      -1.0,
+      -0.0,
+      0.0
+    ],
+    "bitangent_world": [
+      -0.0,
+      1.0,
+      0.0
+    ],
+    "original_textures_or_materials_modified": false,
+    "material_code": "float2 W=WorldPosition.xy*0.01;\nfloat2 O=float2(-0.015875200000003531,-7.1650915000000017);\nfloat2 C=O+float2(W.x>=O.x?40:-40,W.y>=O.y?35:-35);\nfloat2 L=W-C+float2(0,0);\nreturn float2(dot(float3(L,1),float3(-0.0031250000000000002,-0,0.75)),dot(float3(L,1),float3(-0,0.0035714285714285713,0.375)));"
+  },
+  "script_sha256": "755dcf29b4f56a29412bdde6f7da2b94a83dd896652eb303790ed41e3adceaeb",
+  "native_files": {
+    "Materials/M_EntryBrickWall.uasset": {
+      "bytes": 13587,
+      "sha256": "d47bf384444539cc9201aff92f031c215127097b3e6f0d872b435280e08f1c68"
+    },
+    "Materials/M_ExteriorDistantGround.uasset": {
+      "bytes": 14717,
+      "sha256": "5fdfd984beb490a17bac9877ab0bb346f4bd74156646bd6f961377739e3a7d7a"
+    },
+    "Meshes/RMExteriorEntryBrickWall.uasset": {
+      "bytes": 319541,
+      "sha256": "0232f3efe32250035534b65afa2504ba2f036a0df20f68c8cfa25e1e822ffcf0"
+    },
+    "Textures/T_EntryBrickWall_BaseColor_Color.uasset": {
+      "bytes": 4863545,
+      "sha256": "628d43c1cd1cb04eb151f35d44a4b8e2c95cc6077439beba041a18ac195c7fd3"
+    },
+    "Textures/T_EntryBrickWall_MetallicRoughness_ARM.uasset": {
+      "bytes": 476996,
+      "sha256": "42bd0152702c3a40df41face9ecc27f5d11f1d3fb45e7d62c82c32186bf6a864"
+    },
+    "Textures/T_EntryBrickWall_NormalGL_Normal_GLtoDX.uasset": {
+      "bytes": 256085,
+      "sha256": "9d88d0ab1c2513ee0ecb78009c53de4b01c019d98b736d1cf4d0429ba427f0b5"
+    }
+  }
+}

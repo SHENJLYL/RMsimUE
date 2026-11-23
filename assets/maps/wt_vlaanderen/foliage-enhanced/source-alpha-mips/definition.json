@@ -1,0 +1,1743 @@
+{
+  "schema": "wt_grass_source_alpha_mips_v1",
+  "status": "passed",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "baseline_definition_file": "foliage-before.json",
+  "baseline_definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "source_records": [
+    {
+      "file": "original-foliage-source.json",
+      "sha256": "ddcc8b649a18a917adbbe69c3b294d08a5158d245b1470f997d51f9f9f86e8d9"
+    },
+    {
+      "file": "original-small-grass-source.json",
+      "sha256": "2d45ac003403ade7c3e8a6fca42b23b03a33526755175893f5407e145426d82c"
+    }
+  ],
+  "clip_value": 0.5,
+  "source_format": "BC4_UNORM (ATI1)",
+  "output_format": "DXGI_FORMAT_R8_UNORM",
+  "channel": "R",
+  "source_decoding": "Pillow BC4 decode, original byte order and every authored mip retained; no filtering or gamma conversion",
+  "mip_policy": "LeaveExistingMips; no alpha-coverage rescaling; no resizing or regeneration",
+  "platform_build": "existing TC_VECTOR_DISPLACEMENTMAP: uncompressed BGRA8, source R sampled; no second BC4 encoding",
+  "clip_provenance": {
+    "small_grass": "fixed grass_generate.dshl:385 source opacity minimum 0.5; clip(alpha-opacity) at 785-793",
+    "original_random_grass": "UE cutout calibration at 0.5, supported by original authored per-mip coverage; closed shader threshold not asserted",
+    "distance_fade": "existing UE per-instance cull fade retained; source varying distance opacity is not reproduced"
+  },
+  "unchanged": [
+    "original PNG bytes",
+    "models and bounds",
+    "weight maps and hard-surface exclusions",
+    "density and scales",
+    "source RGB endpoints and gamma",
+    "source normals and transmission",
+    "scene manifest",
+    "native assets"
+  ],
+  "textures": [
+    {
+      "model_id": "grass_blueberry_a",
+      "name": "grass_blueberry_a_tex_m_a",
+      "size": [
+        512,
+        512
+      ],
+      "source_levels": 10,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 6010320,
+      "payload_bytes": 72816,
+      "payload_sha256": "6a8cf385471b2a535b487e8104e56840f6d4b1332626502094c754ccb23ca9cf",
+      "source_ddsx_header_hex": "444453784154493111800460000200020a00000000000173b8aa0200701c0100",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "a20c0ea1aabbf7fc85d8e1d57b926478a3b1c281665584b207c29d1a13f8e303",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "1e83456e87f40f0c556406b4be52c82b7fc8a5105add8b2c4cd7ee847dc761a2",
+      "dds_file": "textures/grass_blueberry_a_Alpha.dds",
+      "dds_sha256": "68add9d45a412cb4f55d52af2da8b8ccc708f58e1fee1e6cfa961e5a02d6e72f",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            512,
+            512
+          ],
+          "bytes": 262144,
+          "pixel_sha256": "05e3504ec9b4d576d8ba87a175c0c29d921c163be8bc89de8a27d0448d17c812",
+          "source_bc4_bytes": 131072,
+          "source_bc4_sha256": "9bfb7cd00dc3e180afb453e7ef3a36f59194a63e0b73fd3e6fc7cb31e72b2ed5",
+          "source_coverage_at_1_3": 0.3427085876464844,
+          "source_coverage_at_0_5": 0.17908859252929688,
+          "diagnostic_box_coverage_at_0_5": 0.17908859252929688
+        },
+        {
+          "level": 1,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "fdc3be2db6ee019cfcfea4802d5d8dc18e9d9bf3c036daad1dd283c5d3e4a73a",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "0b557982962bf87edac5944e5897719c9b15d534097a711f9dda7eba09ce4a05",
+          "source_coverage_at_1_3": 0.204925537109375,
+          "source_coverage_at_0_5": 0.18206787109375,
+          "diagnostic_box_coverage_at_0_5": 0.172210693359375
+        },
+        {
+          "level": 2,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "67488e7e4f289054f3aa4c861437c00b92a130514916dc65af3bfd68a09a281c",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "b6bb534bbd3772a7cd25d65eab41785f2b21bdd2e9224d77ea8a1fbf4e1db6d0",
+          "source_coverage_at_1_3": 0.21856689453125,
+          "source_coverage_at_0_5": 0.1796875,
+          "diagnostic_box_coverage_at_0_5": 0.171875
+        },
+        {
+          "level": 3,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "3666aa399943d51a949ecdca2ac884dd2e896847f9a56ed96ab0185cf7f034c7",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "a210a570e49db01102918b1c7b73edcd787b2eab8ec83de2ac5311c78e566cc1",
+          "source_coverage_at_1_3": 0.240234375,
+          "source_coverage_at_0_5": 0.178955078125,
+          "diagnostic_box_coverage_at_0_5": 0.16650390625
+        },
+        {
+          "level": 4,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "ec19a9ef8a405e6d43eac2a255b6d4ae153cc09c5d4c6e33e6021ec91c4d8323",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "edd8d9524f6778973036cfde5fd53d2cad2d6cf9b7655aa20d07f92c43a602a8",
+          "source_coverage_at_1_3": 0.2763671875,
+          "source_coverage_at_0_5": 0.1796875,
+          "diagnostic_box_coverage_at_0_5": 0.1435546875
+        },
+        {
+          "level": 5,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "534b15a19d6e664ba789eda4139c9c37ae66f067a63f01fc36c6827a1af5dbae",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "13e1e61f7a077c1632add0c21e1fef33a81d2023ff4ebbc8060ab6deb83c96fd",
+          "source_coverage_at_1_3": 0.2890625,
+          "source_coverage_at_0_5": 0.1796875,
+          "diagnostic_box_coverage_at_0_5": 0.11328125
+        },
+        {
+          "level": 6,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "74a4408cabd1fa8a00b0148b12d60196c1c99d6e2f3a5b5b6c3f896dc1ad53a9",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "80677d4aacdfafe42e9fbd89af6d5e03cd43c6d60064a7f8fda117dfdb943ae1",
+          "source_coverage_at_1_3": 0.28125,
+          "source_coverage_at_0_5": 0.1875,
+          "diagnostic_box_coverage_at_0_5": 0.0625
+        },
+        {
+          "level": 7,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "88b78a9e14113953c136ff98e5ca40ce0a12d76a6f6f7a34e340dfb1f4ac2246",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "d589b641046bb0ce7be92a8af64920a5bccbb9cfca05441e89d98fc53ffb08fb",
+          "source_coverage_at_1_3": 0.5,
+          "source_coverage_at_0_5": 0.25,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "80dfdcdee065742507b416439a8709785cc9e5aa89770319fe29081d0690e435",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "5d845efd2a87b8273a2827ff87d0e28a5ed62a6780384bd636085d9004a5e57c",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "7ace431cb61584cb9b8dc7ec08cf38ac0a2d649660be86d349fb43108b542fa4",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "254d2f5775f31ff89459251725ffc64d769fe63b65e3cc4383689748f193d7f4",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_daisies_a",
+      "name": "grass_daisies_a_tex_m_a",
+      "size": [
+        512,
+        256
+      ],
+      "source_levels": 10,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 6722592,
+      "payload_bytes": 36544,
+      "payload_sha256": "3b561b97329875eb92d8fe0eb9b0fa3b7298bbc81eaf8de74906220b07a80f3d",
+      "source_ddsx_header_hex": "444453784154493111800460000100020a0000000000016368550100c08e0000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "b242db839a6f6e2972389aa049d6466f8b96369f32e2e2259d3f39e3f1137e83",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "49612f8ed154b5cd38b448752e989f5927ec88f79ff8c04d698b1a24ee2e28ea",
+      "dds_file": "textures/grass_daisies_a_Alpha.dds",
+      "dds_sha256": "348b0f9a8e701f60087d51cd06874bcba62440358fbcf439b9a5a93590276bf5",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            512,
+            256
+          ],
+          "bytes": 131072,
+          "pixel_sha256": "658bf6fcfaf321a41b1a0b80a6abbb5709f75372efba0d2f2d73281695097ca1",
+          "source_bc4_bytes": 65536,
+          "source_bc4_sha256": "3fb8b6ad3bb9c54cdcd716d18a438e4897f28c1723fce01ce3898f1913fd5693",
+          "source_coverage_at_1_3": 0.37109375,
+          "source_coverage_at_0_5": 0.22975921630859375,
+          "diagnostic_box_coverage_at_0_5": 0.22975921630859375
+        },
+        {
+          "level": 1,
+          "size": [
+            256,
+            128
+          ],
+          "bytes": 32768,
+          "pixel_sha256": "3136d6b5368df053268a0cf2c9603fb4823e22a628390d6bfdbdfaa70c6a256e",
+          "source_bc4_bytes": 16384,
+          "source_bc4_sha256": "1b6cfa978d541a0f7468e8e6e90aeacccbea361b96302141a036740000f8004e",
+          "source_coverage_at_1_3": 0.255279541015625,
+          "source_coverage_at_0_5": 0.2293701171875,
+          "diagnostic_box_coverage_at_0_5": 0.22161865234375
+        },
+        {
+          "level": 2,
+          "size": [
+            128,
+            64
+          ],
+          "bytes": 8192,
+          "pixel_sha256": "ff6ac672b3a708fe03a1dcb7d94dc8c94f3bf594b19c7788d5b100ea2a53ed6c",
+          "source_bc4_bytes": 4096,
+          "source_bc4_sha256": "d1b9c8fe1c07823178adda4766accacbea5c9572377678d0c696579078ebb0a8",
+          "source_coverage_at_1_3": 0.2628173828125,
+          "source_coverage_at_0_5": 0.2294921875,
+          "diagnostic_box_coverage_at_0_5": 0.2225341796875
+        },
+        {
+          "level": 3,
+          "size": [
+            64,
+            32
+          ],
+          "bytes": 2048,
+          "pixel_sha256": "aeff8d36aa5459fefcb0930da2a29d849d11292981752f86b74870a1e663c431",
+          "source_bc4_bytes": 1024,
+          "source_bc4_sha256": "7dea63310fd229bfee659673d94dee7e67410317724dcaad2114f7b9caafca11",
+          "source_coverage_at_1_3": 0.27197265625,
+          "source_coverage_at_0_5": 0.23046875,
+          "diagnostic_box_coverage_at_0_5": 0.224609375
+        },
+        {
+          "level": 4,
+          "size": [
+            32,
+            16
+          ],
+          "bytes": 512,
+          "pixel_sha256": "376637efa159dd862f3d7c57430a03cfbbefd13de55317d07f4dae565cc0252b",
+          "source_bc4_bytes": 256,
+          "source_bc4_sha256": "9e457dd1e787511347b13bea66d08779bbea17683bac262a0602952c9bf216ef",
+          "source_coverage_at_1_3": 0.291015625,
+          "source_coverage_at_0_5": 0.2265625,
+          "diagnostic_box_coverage_at_0_5": 0.2109375
+        },
+        {
+          "level": 5,
+          "size": [
+            16,
+            8
+          ],
+          "bytes": 128,
+          "pixel_sha256": "d17af70d3cbab641ee6703ec5b8466982b4d246d786e247ed2994d741b28b0d9",
+          "source_bc4_bytes": 64,
+          "source_bc4_sha256": "996f92228c403196cbe71004d6b75724ee9bdd0a8afde296ae3dd68a6217ee82",
+          "source_coverage_at_1_3": 0.3046875,
+          "source_coverage_at_0_5": 0.2265625,
+          "diagnostic_box_coverage_at_0_5": 0.2109375
+        },
+        {
+          "level": 6,
+          "size": [
+            8,
+            4
+          ],
+          "bytes": 32,
+          "pixel_sha256": "68bb96af810cfaf03249573955f74439759b910a4f45d48de337ce4afef26328",
+          "source_bc4_bytes": 16,
+          "source_bc4_sha256": "4d5505c1edd9ef0a8606eaa07ec1b75252c76552ac9167edcafd3307681c7541",
+          "source_coverage_at_1_3": 0.34375,
+          "source_coverage_at_0_5": 0.1875,
+          "diagnostic_box_coverage_at_0_5": 0.0625
+        },
+        {
+          "level": 7,
+          "size": [
+            4,
+            2
+          ],
+          "bytes": 8,
+          "pixel_sha256": "d2f73b035bd8f4c78fb976da7b5e8d34f571bc975511694f61521acc0f60b72a",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "d53f128ea96c74d8360530051a40be4a85243991c10475ade201462e0ef81904",
+          "source_coverage_at_1_3": 0.75,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            2,
+            1
+          ],
+          "bytes": 2,
+          "pixel_sha256": "d218fa1e93db2cfb14e0e3892e9eb9c4b641deb5982da361f623b432bebf6a6d",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "e7da56714a47ba724b79f9e0319f9e1f7a6ad0ff2d827883a4ff6882bc8436ea",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_fill_a",
+      "name": "grass_fill_a_tex_m_a",
+      "size": [
+        512,
+        128
+      ],
+      "source_levels": 10,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 6781640,
+      "payload_bytes": 30376,
+      "payload_sha256": "713dcc7a59bbb0c9a594e9bae6b589c0b7b3ab6d990eb2834fa631b9b69ce74b",
+      "source_ddsx_header_hex": "444453784154493111800460800000020a00000000000153c8aa0000a8760000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "c10b5c8324177e5cf81da54cf828b6d85ded2a9fa062e3665e69782ff39dd4ce",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "2e478d36d8d452b1c77732cab7bf8f63ebfd58f3ef0bd080b705457e133bdf72",
+      "dds_file": "textures/grass_fill_a_Alpha.dds",
+      "dds_sha256": "cbb4ea2030f8f739848210643ab19c0f774629e9ba9f71b5b4d3741e7c059182",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            512,
+            128
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "c3bab683d6505cbf990545068ac7aa3bfc6bac82ee8c6dc4f099af6bcd9f56d1",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "7f834eba4fb177404205009ccb2c171cf8c514260c104644387df97a14c73404",
+          "source_coverage_at_1_3": 0.6764068603515625,
+          "source_coverage_at_0_5": 0.2789764404296875,
+          "diagnostic_box_coverage_at_0_5": 0.2789764404296875
+        },
+        {
+          "level": 1,
+          "size": [
+            256,
+            64
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "43f412d35fd260022c9a81ed7bf2f9b77ea9c2d648e34561c263b6a5c5a36224",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "d9fdcc5261686fb0f24aec4f0f74288f57c27a3d1131ede391f0a9f64ef9ade8",
+          "source_coverage_at_1_3": 0.37725830078125,
+          "source_coverage_at_0_5": 0.27423095703125,
+          "diagnostic_box_coverage_at_0_5": 0.23974609375
+        },
+        {
+          "level": 2,
+          "size": [
+            128,
+            32
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "45704ca9ebbfb6f728eeff0dad9e40af83e8f77a25bb876f8babfed9d7bc6181",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "63e0d1a9d2a6a81dd9a5c6c1018bf06324c69dcb648762b2da81d1e3b5a00a6f",
+          "source_coverage_at_1_3": 0.419189453125,
+          "source_coverage_at_0_5": 0.28125,
+          "diagnostic_box_coverage_at_0_5": 0.23095703125
+        },
+        {
+          "level": 3,
+          "size": [
+            64,
+            16
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "072052d58a8003be62e506ffe93c247c1f2d60e55fce9771cee21afdea1876ec",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "559da1418f6cf1f274c0686d489094924edf95dd9b3661bc0097ddd4f45bbb4a",
+          "source_coverage_at_1_3": 0.4306640625,
+          "source_coverage_at_0_5": 0.2705078125,
+          "diagnostic_box_coverage_at_0_5": 0.2216796875
+        },
+        {
+          "level": 4,
+          "size": [
+            32,
+            8
+          ],
+          "bytes": 256,
+          "pixel_sha256": "1bb51ddc886fe1f4c7d6d7b113bf66e9e164dda987ab5a00c61e98ed736b08c6",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "6b1c39ce399f82bb5c2def379330b1313d89655205990b0806468b16b14d017b",
+          "source_coverage_at_1_3": 0.44921875,
+          "source_coverage_at_0_5": 0.27734375,
+          "diagnostic_box_coverage_at_0_5": 0.2421875
+        },
+        {
+          "level": 5,
+          "size": [
+            16,
+            4
+          ],
+          "bytes": 64,
+          "pixel_sha256": "9045cad1efaeba9add054503edae36a5c715c389c3d0e353512a3bc69e07e3d9",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "f41d97d4c9f5d4706dc3ae6ee564cd9e46e83d5d1c133e8367dbfb60a1692acb",
+          "source_coverage_at_1_3": 0.4375,
+          "source_coverage_at_0_5": 0.234375,
+          "diagnostic_box_coverage_at_0_5": 0.234375
+        },
+        {
+          "level": 6,
+          "size": [
+            8,
+            2
+          ],
+          "bytes": 16,
+          "pixel_sha256": "7aafe54b25803a6bf0aa3e32932fdbc8fe4cb951574e46d76cb23e1a1752f861",
+          "source_bc4_bytes": 16,
+          "source_bc4_sha256": "ff9b6f7bad9dc154c2f181b29aba09480017cb2478c9aafc022d6da32aad28c4",
+          "source_coverage_at_1_3": 0.5,
+          "source_coverage_at_0_5": 0.3125,
+          "diagnostic_box_coverage_at_0_5": 0.1875
+        },
+        {
+          "level": 7,
+          "size": [
+            4,
+            1
+          ],
+          "bytes": 4,
+          "pixel_sha256": "5e4a0bd7c5e2192bf799378f486140f0d7a2e75502a0d9b4bd853b876fd51632",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "ddd4c3c8f68e1c2546d1a9d767ee55652a3fa88ed95a8d63777ea911d956e764",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.25,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            2,
+            1
+          ],
+          "bytes": 2,
+          "pixel_sha256": "c9b88b46478db86b70d119ed86370e5d6092a1ddb079fdb810142a2d1fe9e4e9",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "a2a9d76b9f0b743c734ad6822e20612da9dec1832c2525b471515b24a8b3e038",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_heather_a",
+      "name": "grass_heather_tex_m_a",
+      "size": [
+        1024,
+        1024
+      ],
+      "source_levels": 11,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 7381088,
+      "payload_bytes": 233992,
+      "payload_sha256": "c6efeabd518179eea41a332bee02ab7ac92d80c83754bbabc6bf17cbafb77a82",
+      "source_ddsx_header_hex": "444453784154493111800460000400040b00000000000183b8aa0a0008920300",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "903dd23b6ed6d1eacba46b21cf266ab3f702f2fc16e2a8a28593a48e74f32c26",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "fccad8a73a16a7be5906323cb99383de4d131663133ccebacad7b126e32ca4e9",
+      "dds_file": "textures/grass_heather_a_Alpha.dds",
+      "dds_sha256": "2a78ba5dd30871be35848347c90c06d7a7514a63f696f87e85d1256364709f42",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            1024,
+            1024
+          ],
+          "bytes": 1048576,
+          "pixel_sha256": "bdeac527281f7c343bf50f9717460b390a8df602563ac3b2e49b9d138f6e91cb",
+          "source_bc4_bytes": 524288,
+          "source_bc4_sha256": "607b9f3a1aa16d3b29282ec9f8961a9d49ca0a56f54c0a944fc82690e5b8fa10",
+          "source_coverage_at_1_3": 0.30471229553222656,
+          "source_coverage_at_0_5": 0.1884927749633789,
+          "diagnostic_box_coverage_at_0_5": 0.1884927749633789
+        },
+        {
+          "level": 1,
+          "size": [
+            512,
+            512
+          ],
+          "bytes": 262144,
+          "pixel_sha256": "681ce8291dcfb30ccd8e9bce703a94a59143c780770d37a05c9093c46df7eafa",
+          "source_bc4_bytes": 131072,
+          "source_bc4_sha256": "7963ab9ac313fcb639b31436b0451d32db42a45ae7cde940239c4d076168cdea",
+          "source_coverage_at_1_3": 0.20758438110351562,
+          "source_coverage_at_0_5": 0.19129562377929688,
+          "diagnostic_box_coverage_at_0_5": 0.18756103515625
+        },
+        {
+          "level": 2,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "6d6ae94b9fd3197268fbfa2dbead98904d2af5d792eb1d555616133c05ea6cf5",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "8e93435027e8bf08ce4f2961e4093c05c70ff521f4c41e18234854ea3ccd9780",
+          "source_coverage_at_1_3": 0.2201080322265625,
+          "source_coverage_at_0_5": 0.1933441162109375,
+          "diagnostic_box_coverage_at_0_5": 0.1911468505859375
+        },
+        {
+          "level": 3,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "3eea90f538f4174629da6d46ed4a19d75fa6e5533ada4e153e7a5f92afb4c793",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "d5f6cbd9904470b3527c61ff998b4262f6194caeb45c82bcaf2bff44ab525026",
+          "source_coverage_at_1_3": 0.234375,
+          "source_coverage_at_0_5": 0.1953125,
+          "diagnostic_box_coverage_at_0_5": 0.19073486328125
+        },
+        {
+          "level": 4,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "21765785eac14103a0bdb3f24b176d2df7838cc5d0690a7a03af4c6e5469a8e4",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "a375275764195d72360108aed97790bdd7c731163890106c2c0d76ff13cc5d44",
+          "source_coverage_at_1_3": 0.26025390625,
+          "source_coverage_at_0_5": 0.186767578125,
+          "diagnostic_box_coverage_at_0_5": 0.16650390625
+        },
+        {
+          "level": 5,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "be12057aa030c7c9d6b6e1040a8f86388f79b01d31de5080290e04796abfbd6d",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "079e75e348e5f7022fdeefb5edff61b205e4d82d96ef0febed63dc18f7c3ac99",
+          "source_coverage_at_1_3": 0.2861328125,
+          "source_coverage_at_0_5": 0.18359375,
+          "diagnostic_box_coverage_at_0_5": 0.1220703125
+        },
+        {
+          "level": 6,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "61c3709995f213356142f302ed6f2fe0a45a073ca5822d939625cabea8661210",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "cd1f920fd5a3be492e2cdf8350496000679a50dad87de261a914a5bdaf4bbc43",
+          "source_coverage_at_1_3": 0.33203125,
+          "source_coverage_at_0_5": 0.1796875,
+          "diagnostic_box_coverage_at_0_5": 0.0546875
+        },
+        {
+          "level": 7,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "c3241fa18a1c9a376cc06e5419f3f0965db61a4332c2c98f0fe28252be609b18",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "32acc3bb983cfb72357b0d831f0f6176c3e14cf3c0f072f0491c167875864e22",
+          "source_coverage_at_1_3": 0.46875,
+          "source_coverage_at_0_5": 0.1875,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "bb79721c0013957e804d798c18af04404e3db0f435a6b3808021e3a538104b4d",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "20abfe48ef129c7e1002c1d9360436f2f22702284a93d13a1fb812d525f12ac6",
+          "source_coverage_at_1_3": 0.5625,
+          "source_coverage_at_0_5": 0.25,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "9239516613cdf200ee4f1036ae8ebd4096a4f9d1b9138ec00dfb77d46f229c70",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "d264803cce2b49358773182225fd1add74e838cc3a85e53bba9b1a58e6b7591e",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 10,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "b12dc850a3b0a3b79fc2255e175241ce20489fe45df93ff35c42c6c348df4fbf",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "e2b383381baefa6412bfbf22bc4003b6611780037bdda33005168848175723f5",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 1.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_paigle_a",
+      "name": "grass_paigle_a_tex_m_a",
+      "size": [
+        512,
+        256
+      ],
+      "source_levels": 10,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 8693992,
+      "payload_bytes": 44304,
+      "payload_sha256": "a533ad362cacca620384ff196b8695eef7636df43144caec32798a8d6955367b",
+      "source_ddsx_header_hex": "444453784154493111800460000100020a000000000001636855010010ad0000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "5de3c73e928af954e8fbb0fd324ef53b9368dbc6aa68e8a7fdb7dd0f85b5022a",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "a270509275644ecbabd31aed7e5420ee3da3302b9be05fbd2fdefd09c429a3a6",
+      "dds_file": "textures/grass_paigle_a_Alpha.dds",
+      "dds_sha256": "8bf9b2c09062accd4b94e9c76b5b2a14d1fd49761ae788be31be9782c4aafb9c",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            512,
+            256
+          ],
+          "bytes": 131072,
+          "pixel_sha256": "eeb1c7b2dd3e35e9d1798545f58344f06629aedce657bbd275b10c8095c69a27",
+          "source_bc4_bytes": 65536,
+          "source_bc4_sha256": "72cd1cea9600b2f49149bd81d3f390a97194eb2f9af4ef0503d00b777bd70856",
+          "source_coverage_at_1_3": 0.477935791015625,
+          "source_coverage_at_0_5": 0.29583740234375,
+          "diagnostic_box_coverage_at_0_5": 0.29583740234375
+        },
+        {
+          "level": 1,
+          "size": [
+            256,
+            128
+          ],
+          "bytes": 32768,
+          "pixel_sha256": "fc17894487368c1a63b82de080c7d8c8497b272a8523dd1137ea0f6dc743c26d",
+          "source_bc4_bytes": 16384,
+          "source_bc4_sha256": "d3d9132d2e44e9ffce9b56931ef664d30eb5eb708112c73b4d2b083b7a86d318",
+          "source_coverage_at_1_3": 0.321868896484375,
+          "source_coverage_at_0_5": 0.296142578125,
+          "diagnostic_box_coverage_at_0_5": 0.286407470703125
+        },
+        {
+          "level": 2,
+          "size": [
+            128,
+            64
+          ],
+          "bytes": 8192,
+          "pixel_sha256": "bb7a8e6dad231908a32b7d97aa6948e27ae3c0574066e5e5cb5b59dd2bbf8b64",
+          "source_bc4_bytes": 4096,
+          "source_bc4_sha256": "b528e1815aad02cad342455a4d1db939bcbb224fa9b51d10aae8eda81edd5d93",
+          "source_coverage_at_1_3": 0.330810546875,
+          "source_coverage_at_0_5": 0.2940673828125,
+          "diagnostic_box_coverage_at_0_5": 0.2879638671875
+        },
+        {
+          "level": 3,
+          "size": [
+            64,
+            32
+          ],
+          "bytes": 2048,
+          "pixel_sha256": "fb6029bea053ca5008c805119242f9d5b38f8b1abad328769d29ae76792c62ba",
+          "source_bc4_bytes": 1024,
+          "source_bc4_sha256": "5cddf8201ed385de0b8b1f5ec304051aa21f899b3987cad0a2b5508b99af2f59",
+          "source_coverage_at_1_3": 0.34326171875,
+          "source_coverage_at_0_5": 0.2939453125,
+          "diagnostic_box_coverage_at_0_5": 0.28369140625
+        },
+        {
+          "level": 4,
+          "size": [
+            32,
+            16
+          ],
+          "bytes": 512,
+          "pixel_sha256": "8ea89d0e7612a3aa744ee6eba08611f83f85c1c3fbd8f13371654c00582d86c7",
+          "source_bc4_bytes": 256,
+          "source_bc4_sha256": "37ef82e6b757da3cfe2e9971efdacbbb6c8c9f0b29d6334f85230f8f2680c694",
+          "source_coverage_at_1_3": 0.345703125,
+          "source_coverage_at_0_5": 0.29296875,
+          "diagnostic_box_coverage_at_0_5": 0.27734375
+        },
+        {
+          "level": 5,
+          "size": [
+            16,
+            8
+          ],
+          "bytes": 128,
+          "pixel_sha256": "4d473084a46cae7f5bbba3d47959fb5067ab0772be7109a215164f75e4c4fe4e",
+          "source_bc4_bytes": 64,
+          "source_bc4_sha256": "88ed7d9901dc90c8ac1c2124e97685bd9e825d88d5ef5bd87c165d5e44cb74ff",
+          "source_coverage_at_1_3": 0.3203125,
+          "source_coverage_at_0_5": 0.296875,
+          "diagnostic_box_coverage_at_0_5": 0.2734375
+        },
+        {
+          "level": 6,
+          "size": [
+            8,
+            4
+          ],
+          "bytes": 32,
+          "pixel_sha256": "4ca338e8c96c4968123e4f324990e39402806e9f921c69cca18cfe03802247fa",
+          "source_bc4_bytes": 16,
+          "source_bc4_sha256": "f55caa247c1e3c3eec5db114f659f1c058ebc3a582d493ba25f257043be91121",
+          "source_coverage_at_1_3": 0.46875,
+          "source_coverage_at_0_5": 0.34375,
+          "diagnostic_box_coverage_at_0_5": 0.28125
+        },
+        {
+          "level": 7,
+          "size": [
+            4,
+            2
+          ],
+          "bytes": 8,
+          "pixel_sha256": "500395d7b19e976c76918f2d0a899453e895bae1b1c15c2d909dbdece106de22",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "3a49ec7dae1ce76f650b707c30494b24f7a8e2b4a520025a7e9393c0117dd851",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.375,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            2,
+            1
+          ],
+          "bytes": 2,
+          "pixel_sha256": "4ca3666b54471bc946c602e7c07152c3d58b6a5148962c6dcd95c37c68011426",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_simple_a",
+      "name": "grass_simple_a_tex_m_a",
+      "size": [
+        1024,
+        1024
+      ],
+      "source_levels": 11,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 11292456,
+      "payload_bytes": 195960,
+      "payload_sha256": "1de4819d8a3bc67f4fc3d1ebd16ab6b85950de6e21f75f6adf90749b2847f3de",
+      "source_ddsx_header_hex": "444453784154493111800460000400040b00000000000183b8aa0a0078fd0200",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "bb431eaa0cead985c96dbbb8d7caec34f2f09bab18f3493637b25d623d184b3c",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "6d5de9c7ce7488dad8b46c9a3a3426ffe423dd85415fd33778721b5b020c13ca",
+      "dds_file": "textures/grass_simple_a_Alpha.dds",
+      "dds_sha256": "2ccfe38e7d74399d21ce59c0365f6529c6112929ede874dcd34f11d5887727c8",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            1024,
+            1024
+          ],
+          "bytes": 1048576,
+          "pixel_sha256": "e13b9a91c3dba3d255e2600c2a9a9a68ed4fccb185e0c3fc3d3befce2b563306",
+          "source_bc4_bytes": 524288,
+          "source_bc4_sha256": "727fb3ca6ab315b91e598d6d70ad01e16bc0084177efbcc7acd0782c85a01820",
+          "source_coverage_at_1_3": 0.2881765365600586,
+          "source_coverage_at_0_5": 0.14910507202148438,
+          "diagnostic_box_coverage_at_0_5": 0.14910507202148438
+        },
+        {
+          "level": 1,
+          "size": [
+            512,
+            512
+          ],
+          "bytes": 262144,
+          "pixel_sha256": "893fb966b6e41fc02008df7fba3368fb651fd3a79449b6f99da763d893e759aa",
+          "source_bc4_bytes": 131072,
+          "source_bc4_sha256": "e0f1b5eb2ddef6a4b897e4d8fbb19b530b26f37a53397fc184ed69522fb45a39",
+          "source_coverage_at_1_3": 0.17094802856445312,
+          "source_coverage_at_0_5": 0.15087509155273438,
+          "diagnostic_box_coverage_at_0_5": 0.14748001098632812
+        },
+        {
+          "level": 2,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "10a67ecbb7a521ebafe412f5d5ae271c6a1d695bbe61a64c538ab4ddc5958002",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "8bdfad420c7f8de989021e745be182a726a2a3e19c8630e26bcd0b1a072eeebc",
+          "source_coverage_at_1_3": 0.1902313232421875,
+          "source_coverage_at_0_5": 0.151092529296875,
+          "diagnostic_box_coverage_at_0_5": 0.1426544189453125
+        },
+        {
+          "level": 3,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "5dd9532464170b8a744010d5e5a2f685c5b9750aa1afb0dbc991a8cf8b1d7f39",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "ce841c352d912c791589433a24182c61a88788e515f22e84253bf4a4536db7b2",
+          "source_coverage_at_1_3": 0.208251953125,
+          "source_coverage_at_0_5": 0.14556884765625,
+          "diagnostic_box_coverage_at_0_5": 0.1287841796875
+        },
+        {
+          "level": 4,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "bd34147de10217a5f9243c32229fb43b4e81498354ac9bdc6c69c194eb55ae25",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "c7afc4411d49bf0f5fbcf5159889d0a5fb653b02bc45a674a45ce537c8872674",
+          "source_coverage_at_1_3": 0.21826171875,
+          "source_coverage_at_0_5": 0.147705078125,
+          "diagnostic_box_coverage_at_0_5": 0.1123046875
+        },
+        {
+          "level": 5,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "b807b18fa06d7ea99136e0d964490411ceb1e2e0b069090f52273612a9ee4f7c",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "8edf4fc111b7cbee2b4fec28e282ce22fa2c38c716fe6f6e189b7f9e0325d689",
+          "source_coverage_at_1_3": 0.2275390625,
+          "source_coverage_at_0_5": 0.1513671875,
+          "diagnostic_box_coverage_at_0_5": 0.10546875
+        },
+        {
+          "level": 6,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "5486f6d6cb6e47d1c6d48cb31e24756dbfe6aa4edd0d6d63ac975bfef2692ea4",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "5208487fa118f514d84e32a7837c87075f4bf79b6889286e3a856c2d966ccd59",
+          "source_coverage_at_1_3": 0.2265625,
+          "source_coverage_at_0_5": 0.15234375,
+          "diagnostic_box_coverage_at_0_5": 0.08984375
+        },
+        {
+          "level": 7,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "ead94a42129f1d7b444fb3f779372f9f81a7c695c02b18aab7958827dafcb6bf",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "194bfd27b7bd1fa7074e1a9df58f16079caacac25c0564ef6cc0d5c71f8f7e7e",
+          "source_coverage_at_1_3": 0.359375,
+          "source_coverage_at_0_5": 0.15625,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "685c8f9259aea63295a6a7dc8c71e2669c7a257defb6a380eac49061de4310d3",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "95b24da502de6658dc4049b7310ce5617d3d51d80bec44fc725f7203cca65664",
+          "source_coverage_at_1_3": 0.5,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "490c886e532e5942cd9e579eba773b419f89be3981dc0c7eb66ff66d3cac7462",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "f679d923dbbd6ce536d59e11ab82a785ddee01a7f670e4b69669185104a671b8",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 10,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "2a0ab732b4e9d85ef7dc25303b64ab527c25a4d77815ebb579f396ec6caccad3",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "9c76538a5f9d872003f93052958628f11a28c23d7c755955c3f1372bc15e5c0d",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 1.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "grass_tulip_b",
+      "name": "grass_tulip_b_tex_m_a",
+      "size": [
+        1024,
+        1024
+      ],
+      "source_levels": 11,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 12943688,
+      "payload_bytes": 203064,
+      "payload_sha256": "adbd40598b215bd992b6f31d51954c3c5b229759e18a2c16f7a40d21a34fb3b7",
+      "source_ddsx_header_hex": "444453784154493111800460000400040b00000000000183b8aa0a0038190300",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "wrap",
+      "ue_address_v": "wrap",
+      "address_provenance": "original wrap",
+      "prepared_png_sha256": "9f1918a239bb2f57e5f97b03e9b1347776efa08fe263988582470b315a7e71c3",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "61f7cb23ed86a67aec23ece9946a398560b195ae5f90d27b054c161701d6cd73",
+      "dds_file": "textures/grass_tulip_b_Alpha.dds",
+      "dds_sha256": "64240470196f31a08802fda97e992d65de76e00ac5b1807104a794581d872a2f",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            1024,
+            1024
+          ],
+          "bytes": 1048576,
+          "pixel_sha256": "f32ed17cf19570b95a76d9bdabea36f0f920a7c281ceb9d8642cd735fa947ea5",
+          "source_bc4_bytes": 524288,
+          "source_bc4_sha256": "dffd18b7250e6e78ab2b7d07122bc2100c24e48d8fe5dd76f003bedc5ef2aff3",
+          "source_coverage_at_1_3": 0.3036317825317383,
+          "source_coverage_at_0_5": 0.22515106201171875,
+          "diagnostic_box_coverage_at_0_5": 0.22515106201171875
+        },
+        {
+          "level": 1,
+          "size": [
+            512,
+            512
+          ],
+          "bytes": 262144,
+          "pixel_sha256": "875e7bf0aa8ff1b0f68b7ca37538e8edefe4f37ee93bbd4d7f184df7571b2695",
+          "source_bc4_bytes": 131072,
+          "source_bc4_sha256": "bf1ebb9324316ff00d8c1e8e55943087eb88cab65171179cf509ce762ba7cd63",
+          "source_coverage_at_1_3": 0.5983085632324219,
+          "source_coverage_at_0_5": 0.22479248046875,
+          "diagnostic_box_coverage_at_0_5": 0.22411727905273438
+        },
+        {
+          "level": 2,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "838ccc628202b2b31b99d18da79943a5e22215f9f8c690742e7da1ac5e69513a",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "72d6aa2bfc27448bbfc7dd2cae1358b890340889b4d36102b3dcbc277abe2d3e",
+          "source_coverage_at_1_3": 0.5970001220703125,
+          "source_coverage_at_0_5": 0.2234954833984375,
+          "diagnostic_box_coverage_at_0_5": 0.2257232666015625
+        },
+        {
+          "level": 3,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "4080609b73ceff11b8ee06947d647d6143d5f13da01f98774694e138a13e8bf9",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "893eefd9c5a57e22f52e76e496dcd68105d53d161dea91e9795cddee51f68874",
+          "source_coverage_at_1_3": 0.59814453125,
+          "source_coverage_at_0_5": 0.2275390625,
+          "diagnostic_box_coverage_at_0_5": 0.22711181640625
+        },
+        {
+          "level": 4,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "d0d1eb774c303323156a8b3cc225a1880543d1290fa334ccd85abf6d0406d31d",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "9b4af6531619b4da443a82668f83d7fa5afebe07ec2810fcfad2ebace9263f3f",
+          "source_coverage_at_1_3": 0.598388671875,
+          "source_coverage_at_0_5": 0.212646484375,
+          "diagnostic_box_coverage_at_0_5": 0.2021484375
+        },
+        {
+          "level": 5,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "b483517ce02b8f29c5af4c7a19ab7d80e463cbf1e1f6a25e8e2d2e6c3811913c",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "83882b9a582a64e33337c48de341a0e94b119ac065b514b24ae161464beb6711",
+          "source_coverage_at_1_3": 0.6015625,
+          "source_coverage_at_0_5": 0.216796875,
+          "diagnostic_box_coverage_at_0_5": 0.1787109375
+        },
+        {
+          "level": 6,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "b9f46dd4b5a52203784551980fedebba716f94461b82185cf5278f92d8aa451d",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "a672f2fe68f9574dc42f3247aa40a0ebd452eef4f3e746f17edf2fb27377be7d",
+          "source_coverage_at_1_3": 0.6328125,
+          "source_coverage_at_0_5": 0.19921875,
+          "diagnostic_box_coverage_at_0_5": 0.14453125
+        },
+        {
+          "level": 7,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "691fd3712e0d6d402f51e35d1fcd74731851cf8d29cfecd91a9cd5e36060e304",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "7cb3720a3e5f1c17bcff86db3825ee4bb1b1cfec1c144cdf232d45042439f4b9",
+          "source_coverage_at_1_3": 0.625,
+          "source_coverage_at_0_5": 0.28125,
+          "diagnostic_box_coverage_at_0_5": 0.09375
+        },
+        {
+          "level": 8,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "e86fed7c39aaabd83f957e17aaf0b70ecd53eb3b947a1dadf219749e2754fced",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "1cefb4e6f4c7c3e57f8f2c205bca5d63cb852c108994f260a3d25bfebd8f8a15",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.1875,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 9,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "1b24d516189f03262fcc5e05ead2d25eea4b76c6b8923c587a1b99877213410a",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "48d684519db67349069159f788212dcbe75b612cde36eca42c00073f2cf800c4",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 10,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "8de0b3c47f112c59745f717a626932264c422a7563954872e237b223af4ad643",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "9194a86089e0de39889a301655848567fb58cc0031e4f800f77ddf2ab26d77be",
+          "source_coverage_at_1_3": 0.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "ue_generic_grass_small_a",
+      "name": "grass_generic_grass_small_a_tex_d_a",
+      "size": [
+        256,
+        256
+      ],
+      "source_levels": 9,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 16672792,
+      "payload_bytes": 21112,
+      "payload_sha256": "bdef1a4144268640e9f3705676978c65a92ce859894b23854d44115f330cb84d",
+      "source_ddsx_header_hex": "444453784154493111800460000100010900000000000163b8aa000078520000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "clamp",
+      "ue_address_v": "clamp",
+      "address_provenance": "existing UE single-atlas card clamp; original source is wrap",
+      "prepared_png_sha256": "2c02e85c80e01a54861359fd38f017a47ee772e7f5ff4d04fa2637629810d965",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "7a9fe7bf335bb96d8fa8b1653c10d9ae3a9602aaabf972a72556dd0ddf42f5e5",
+      "dds_file": "textures/ue_generic_grass_small_a_Alpha.dds",
+      "dds_sha256": "e71e945a71a6f33c553cded23af649d150d3c2c0850675b56f2b666044b3eff0",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "c0c9b450761973e2246efe3d3d0de354d09035bc1b81787020018f4639b8f303",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "7a9af5f39828a1fc5020a08e358776bd421933916b97b859e910c08bdb462b78",
+          "source_coverage_at_1_3": 0.3373260498046875,
+          "source_coverage_at_0_5": 0.1315155029296875,
+          "diagnostic_box_coverage_at_0_5": 0.1315155029296875
+        },
+        {
+          "level": 1,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "88203c9042a23a6e5aa002d277bc301341725a752f3c8be9f6020c9188a42907",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "127bc43ffe725ec39b93d0f5c20645c4791f1bc1e77adedae66b91b9c3b03242",
+          "source_coverage_at_1_3": 0.5133056640625,
+          "source_coverage_at_0_5": 0.13409423828125,
+          "diagnostic_box_coverage_at_0_5": 0.1273193359375
+        },
+        {
+          "level": 2,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "b2586379ec2a949dcc4bd61a3f44ce7658a13d813c52c128104821364e8e292d",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "23645098ccdd9cc4a58663ba96cb56a6e2bda98c8dc897752efae961864ebc94",
+          "source_coverage_at_1_3": 0.50732421875,
+          "source_coverage_at_0_5": 0.12451171875,
+          "diagnostic_box_coverage_at_0_5": 0.110595703125
+        },
+        {
+          "level": 3,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "b1b2423432e250f618d5f80f58791fcb0df53918ec18270d1710c43c1000ae7c",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "d660dc77ba77253480b6c328f920094d11e7f2de8a58744621907766dcd54641",
+          "source_coverage_at_1_3": 0.51953125,
+          "source_coverage_at_0_5": 0.1337890625,
+          "diagnostic_box_coverage_at_0_5": 0.06640625
+        },
+        {
+          "level": 4,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "6cc0f96a373c3db4a499dbb6e09ddc1419938ccf631528262660a74302c8279f",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "d791641e189bbb0c4fca5c698badae8e1362c0ff41bd2f9529bc5d72e36d0555",
+          "source_coverage_at_1_3": 0.61328125,
+          "source_coverage_at_0_5": 0.13671875,
+          "diagnostic_box_coverage_at_0_5": 0.0234375
+        },
+        {
+          "level": 5,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "78e76a4b4c2215e5b7e8f7ee67a48a08f142f8351dd4b04bf6c7fafb7b8139de",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "c571e53c64b9caa724640558a8e9be70004f27da2bc4562b2e0b60e6fc94a23a",
+          "source_coverage_at_1_3": 0.65625,
+          "source_coverage_at_0_5": 0.125,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 6,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "c855c4b4b50c533f999d94ec50020d97c5001a7ed5e0fb4fe81317a23a8d3477",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "e1e2a7cb3738a4f4c78456f17d866efd64752a6403089a7fa5c23dbabc88f19f",
+          "source_coverage_at_1_3": 0.6875,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 7,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "3fc2bd5595b4e298a140aa5e2cde0ba043ed6e679e917d9d23f66dc7608c51a2",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "c53e55c4d77d96eadac5d29f3268263d9e22a4682552846eefa4f1e991906932",
+          "source_coverage_at_1_3": 0.5,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "ue_generic_grass_tall_a",
+      "name": "grass_generic_grass_tall_a_tex_d_a",
+      "size": [
+        256,
+        256
+      ],
+      "source_levels": 9,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 17001096,
+      "payload_bytes": 26488,
+      "payload_sha256": "d340e39072cc3849fb455341eed42591386520215590908987e0261f55e4dbb9",
+      "source_ddsx_header_hex": "444453784154493111800460000100010900000000000163b8aa000078670000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "clamp",
+      "ue_address_v": "clamp",
+      "address_provenance": "existing UE single-atlas card clamp; original source is wrap",
+      "prepared_png_sha256": "c1f8923f96996732b978cd94e563456c2d7a8199329979efb32104bac83d00f4",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "00b4ef64f5dfdf74e1ef2bc43d3c24749b33e54d588da07218a37e20bbc057d8",
+      "dds_file": "textures/ue_generic_grass_tall_a_Alpha.dds",
+      "dds_sha256": "3b96f46d57b85adf6895545ebf0cdf4b0e0907d8e4207fc53d6acb1b63ca0e95",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "13d875daf5e45e07921cc4ec76dc13d45d3a6bd9a1686012ede25f289d241730",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "738ed31f259e54bf3e3b5dd8376e037e3e3cab3600bd1086aadb120786cd2be9",
+          "source_coverage_at_1_3": 0.5089874267578125,
+          "source_coverage_at_0_5": 0.2139434814453125,
+          "diagnostic_box_coverage_at_0_5": 0.2139434814453125
+        },
+        {
+          "level": 1,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "fe5a58f0fb39d82c98142abf6d4618d6f266c1c9fe5e5f451d331e5ede40fb0b",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "215c0fc73a739389c566ab798449866c50ef13fab1fd99139bc63e885a1b38a4",
+          "source_coverage_at_1_3": 0.66497802734375,
+          "source_coverage_at_0_5": 0.21978759765625,
+          "diagnostic_box_coverage_at_0_5": 0.2059326171875
+        },
+        {
+          "level": 2,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "4519e340593b9d13e4cc415bced637aae2418df3e2a83040e10cc42a30b1a93f",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "71c27c0e2d5dfda8b3af2e680a1d14436ce27c7ca581d68faf2a069c3313157c",
+          "source_coverage_at_1_3": 0.665283203125,
+          "source_coverage_at_0_5": 0.227294921875,
+          "diagnostic_box_coverage_at_0_5": 0.1826171875
+        },
+        {
+          "level": 3,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "81dd39e1e4e2c93707164e9f98caaea81eaddaf185536617e05680120c581f0c",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "9b88e372029ce0ea67c9fa9e6ee7a32d5ee427e69b7416da48fa7fc5fc41362d",
+          "source_coverage_at_1_3": 0.66796875,
+          "source_coverage_at_0_5": 0.18359375,
+          "diagnostic_box_coverage_at_0_5": 0.1357421875
+        },
+        {
+          "level": 4,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "343f9bca912031cdb9896c2eb9799524ae7b5991a8c85e23c1ee2caf3c5e6050",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "dff2243e2ca456563f9061fe2adca01b0838606527fb168bff77982e08bec632",
+          "source_coverage_at_1_3": 0.69140625,
+          "source_coverage_at_0_5": 0.17578125,
+          "diagnostic_box_coverage_at_0_5": 0.1171875
+        },
+        {
+          "level": 5,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "7809a0d6c48d5d5f29ed389267f30c0d0060bb87cb05b63c2a680859cfaadf0f",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "f0b8fd1f0816ab5acb1b1c32374544c5736a5f7639b04c1729315aaa8aeb1251",
+          "source_coverage_at_1_3": 0.6875,
+          "source_coverage_at_0_5": 0.25,
+          "diagnostic_box_coverage_at_0_5": 0.0625
+        },
+        {
+          "level": 6,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "13509177eff63eb1e2100f227b8b798fd1fd0a1d98534637fafee047b2987f0b",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "0b22a85c10a3427ff77299b1b8110ce2c2ee12ff8925626ce75104c42ee6af02",
+          "source_coverage_at_1_3": 0.625,
+          "source_coverage_at_0_5": 0.25,
+          "diagnostic_box_coverage_at_0_5": 0.0625
+        },
+        {
+          "level": 7,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "0348dd4c4f87fe388e056d4df2711b69d5eb1a61c63e9cb11bd8b0d9acb25511",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "583c72919d6c394c1034e855b6bf60ca5a113393d9e603cee65c4c53e946bf43",
+          "source_coverage_at_1_3": 0.5,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "ue_generic_grass_tall_b",
+      "name": "grass_generic_grass_tall_b_tex_d_a",
+      "size": [
+        256,
+        256
+      ],
+      "source_levels": 9,
+      "source_pack": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "payload_offset": 17345904,
+      "payload_bytes": 28704,
+      "payload_sha256": "dee1688119355ca9699275ccc075f6e401cdc1dccd685f68a35dd60710cd4c5e",
+      "source_ddsx_header_hex": "444453784154493111800460000100010900000000000163b8aa000020700000",
+      "source_ddsx_flags": 294929,
+      "source_gamma_equal_one": true,
+      "source_address_u": "wrap",
+      "source_address_v": "wrap",
+      "ue_address_u": "clamp",
+      "ue_address_v": "clamp",
+      "address_provenance": "existing UE single-atlas card clamp; original source is wrap",
+      "prepared_png_sha256": "106add098a05763ad049b97174a210e7e1786855018ba570fb7868c40c49ac10",
+      "top_mip_exact_equals_prepared_png": true,
+      "all_source_dds_mip_bytes_accounted": true,
+      "source_bc4_dds_sha256": "27a5c35e497f53e1a2952f98b4223e5a396528a7370f9b2bd31cf4970e1c3516",
+      "dds_file": "textures/ue_generic_grass_tall_b_Alpha.dds",
+      "dds_sha256": "e59f28ba4b5876071996fc7228a01e417a2aaa130237b25bea3fd0bd9dd2c98c",
+      "channel": "R",
+      "mips": [
+        {
+          "level": 0,
+          "size": [
+            256,
+            256
+          ],
+          "bytes": 65536,
+          "pixel_sha256": "0087b7ba8f78ab9b30f6c99a95968f36c889efe0c169db90657b703c656fec81",
+          "source_bc4_bytes": 32768,
+          "source_bc4_sha256": "bd19869e386ea1bd83ac9e41e152d274d9f1e8c0cb78034bd3c5ca5449c7ac27",
+          "source_coverage_at_1_3": 0.512298583984375,
+          "source_coverage_at_0_5": 0.2361602783203125,
+          "diagnostic_box_coverage_at_0_5": 0.2361602783203125
+        },
+        {
+          "level": 1,
+          "size": [
+            128,
+            128
+          ],
+          "bytes": 16384,
+          "pixel_sha256": "68c141d652b3ca33ee65a9738d16b0697d5f9a140b4e1dcdc2aea33668d3a467",
+          "source_bc4_bytes": 8192,
+          "source_bc4_sha256": "8299f0fae5c87bb127ba6d66bf6bc4fd0791cf7dad696be17633cc9fc947f98e",
+          "source_coverage_at_1_3": 0.670166015625,
+          "source_coverage_at_0_5": 0.24139404296875,
+          "diagnostic_box_coverage_at_0_5": 0.2294921875
+        },
+        {
+          "level": 2,
+          "size": [
+            64,
+            64
+          ],
+          "bytes": 4096,
+          "pixel_sha256": "c355b547ca5a1543b70d4c9c9ee58dd55a1cbd9a6190864a30f5aa64767706c5",
+          "source_bc4_bytes": 2048,
+          "source_bc4_sha256": "9dda68330dec93b6880c3f9b2f6591d93e327d88d0ad6d37caa75c2b2a9bbee4",
+          "source_coverage_at_1_3": 0.671875,
+          "source_coverage_at_0_5": 0.230224609375,
+          "diagnostic_box_coverage_at_0_5": 0.212646484375
+        },
+        {
+          "level": 3,
+          "size": [
+            32,
+            32
+          ],
+          "bytes": 1024,
+          "pixel_sha256": "12fe763ec2da2598c566094739353f7999ad8668904172104f18ee3d37f2dcee",
+          "source_bc4_bytes": 512,
+          "source_bc4_sha256": "9db05aa03427c2534f5b64a536596bbbbf953a719669ad27999a56ddc793734b",
+          "source_coverage_at_1_3": 0.6728515625,
+          "source_coverage_at_0_5": 0.2109375,
+          "diagnostic_box_coverage_at_0_5": 0.1728515625
+        },
+        {
+          "level": 4,
+          "size": [
+            16,
+            16
+          ],
+          "bytes": 256,
+          "pixel_sha256": "a7718ef62c35d2a985d162cf0c954182d899cc919653c257dc8c01a5d0a85d5a",
+          "source_bc4_bytes": 128,
+          "source_bc4_sha256": "e14ae6fa46c3836dbcd6fb86c12a884d5b44a9cf7d4a6f7e278f451ee4cd2196",
+          "source_coverage_at_1_3": 0.6953125,
+          "source_coverage_at_0_5": 0.234375,
+          "diagnostic_box_coverage_at_0_5": 0.17578125
+        },
+        {
+          "level": 5,
+          "size": [
+            8,
+            8
+          ],
+          "bytes": 64,
+          "pixel_sha256": "f17c0743c5ceec44a401db8f5b26048b708d997d6db59a8b724d9e289524406a",
+          "source_bc4_bytes": 32,
+          "source_bc4_sha256": "55ab96d5115d250e6cc24404b300ed025f7c7ec41f9702f338aa96c3bd30bc6d",
+          "source_coverage_at_1_3": 0.65625,
+          "source_coverage_at_0_5": 0.203125,
+          "diagnostic_box_coverage_at_0_5": 0.171875
+        },
+        {
+          "level": 6,
+          "size": [
+            4,
+            4
+          ],
+          "bytes": 16,
+          "pixel_sha256": "e92c9be175e30e2830e232f51c9eac59a88f663557d5d92859675e4878582e88",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "b7a47729af0b795c89ef4e3c59bbc721c3d07dfaf9ec7fbeaf559c46205b106d",
+          "source_coverage_at_1_3": 0.6875,
+          "source_coverage_at_0_5": 0.3125,
+          "diagnostic_box_coverage_at_0_5": 0.0625
+        },
+        {
+          "level": 7,
+          "size": [
+            2,
+            2
+          ],
+          "bytes": 4,
+          "pixel_sha256": "0b74383425be9ddc6ecd840a231dcffe84d86ace609ead604d39721e680fc868",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "649a17b434f658f8d7f20d49ab2885619e1f94fa91a134158ad776deebfea50b",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.5,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        },
+        {
+          "level": 8,
+          "size": [
+            1,
+            1
+          ],
+          "bytes": 1,
+          "pixel_sha256": "620bfdaa346b088fb49998d92f19a7eaf6bfc2fb0aee015753966da1028cb731",
+          "source_bc4_bytes": 8,
+          "source_bc4_sha256": "8a32c8a0e70df3ffcfd898a6fd1856087c70faa82b5e17d7fea11c8fa6ef8030",
+          "source_coverage_at_1_3": 1.0,
+          "source_coverage_at_0_5": 0.0,
+          "diagnostic_box_coverage_at_0_5": 0.0
+        }
+      ]
+    }
+  ],
+  "total_mips": 100,
+  "total_r8_pixel_bytes": 5242880
+}

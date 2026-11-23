@@ -1,0 +1,23 @@
+﻿{
+    "schema":  "rmsim_unit_suite_execution_v1",
+    "status":  "passed",
+    "observed_utc":  "2026-11-18T05:03:08.0311461Z",
+    "command":  "\u0026 \u0027C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\u0027 -B -m unittest discover -s D:\\simulator-wt-vlaanderen\\tests\\map_tools -v",
+    "process_id":  18436,
+    "exit_code":  0,
+    "tests_run":  57,
+    "failures":  0,
+    "errors":  0,
+    "skipped":  0,
+    "unittest_duration_seconds":  1.046,
+    "tool_runtime_seconds":  1.69,
+    "scope":  "actual CPython 3.14 full map_tools suite; source contracts, source geometry accounting, binary container bounds and calibrated terrain adapters",
+    "test_files_sha256":  {
+                              "test_wt_mesh_geometry.py":  "6e17c93a9bbdbb10c60ebe70d75e48b3a35df1ee3ef15d46d4d855339322fdf9",
+                              "test_map.py":  "62972af68455cbf1f12ad738edb9395423562b12e6dd4b7990ccfaedcc9f6819",
+                              "test_wt_material_slots.py":  "5b5ae0d624cfe6db56509f4b2a8d0a1ec570f0620865a4122a63092e913a7a2a",
+                              "test_wt_landclass.py":  "9d0c9839ba07c684c9c4961bf0628e0f7e9a8962b1c5d3f2d5e3d02bc9e5708f",
+                              "test_wt_water.py":  "d77a4a7f9f2a12c5c24d152d35342064f7ca7b110d558598fd93abd4f657e131",
+                              "test_wt_binary_formats.py":  "a1a81a3b30e3dec76d5cd1b597bb7881fae1a1fd3f32cff0b2cea109d9f5f388"
+                          }
+}

@@ -1,0 +1,95 @@
+{
+  "status": "passed_pending_native_visual_review",
+  "scope": "Distant-ground phase blending only; original source ground and entry-wall assets retained",
+  "before_native_files": {
+    "Materials/M_EntryBrickWall.uasset": "d47bf384444539cc9201aff92f031c215127097b3e6f0d872b435280e08f1c68",
+    "Materials/M_ExteriorDistantGround.uasset": "5fdfd984beb490a17bac9877ab0bb346f4bd74156646bd6f961377739e3a7d7a",
+    "Meshes/RMExteriorEntryBrickWall.uasset": "0232f3efe32250035534b65afa2504ba2f036a0df20f68c8cfa25e1e822ffcf0",
+    "Textures/T_EntryBrickWall_BaseColor_Color.uasset": "628d43c1cd1cb04eb151f35d44a4b8e2c95cc6077439beba041a18ac195c7fd3",
+    "Textures/T_EntryBrickWall_MetallicRoughness_ARM.uasset": "42bd0152702c3a40df41face9ecc27f5d11f1d3fb45e7d62c82c32186bf6a864",
+    "Textures/T_EntryBrickWall_NormalGL_Normal_GLtoDX.uasset": "9d88d0ab1c2513ee0ecb78009c53de4b01c019d98b736d1cf4d0429ba427f0b5"
+  },
+  "distant_ground_material": {
+    "asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.M_ExteriorDistantGround",
+    "original_ground_asset": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Meshes/RMExteriorGround.RMExteriorGround",
+    "original_ground_layout_sha256": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4",
+    "source_textures": [
+      "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_Grass005_Color_Color.T_Grass005_Color_Color",
+      "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_Grass005_NormalDX_Normal.T_Grass005_NormalDX_Normal"
+    ],
+    "original_linear_color_factor": [
+      0.5,
+      0.8,
+      0.5,
+      1
+    ],
+    "uv_affine_coefficients_native_local_metres": [
+      [
+        -0.003125,
+        -0.0,
+        0.75
+      ],
+      [
+        -0.0,
+        0.0035714285714285713,
+        0.375
+      ]
+    ],
+    "uv_affine_max_error": 0.0,
+    "grass_planar_z_spread_m": 0.0,
+    "grass_top_native_local_z_m": -0.62,
+    "grass_top_source_triangles": 2,
+    "source_grass_sides_and_bottom_excluded_from_top_mapping": true,
+    "native_local_bounds_center_xy_m": [
+      0.0,
+      0.0
+    ],
+    "world_tile_origin_ue_m": [
+      -0.01587520000000353,
+      -7.165091500000002
+    ],
+    "tile_center_half_separation_m": [
+      40.0,
+      35.0
+    ],
+    "tangent_world": [
+      -1.0,
+      -0.0,
+      0.0
+    ],
+    "bitangent_world": [
+      -0.0,
+      1.0,
+      0.0
+    ],
+    "original_textures_or_materials_modified": false,
+    "quadrant_uv_codes": [
+      "float2 L=WorldPosition.xy*0.01-float2(-40.015875200000004,-42.165091500000003)+float2(0,0);\nreturn float2(dot(float3(L,1),float3(-0.0031250000000000002,-0,0.75)),dot(float3(L,1),float3(-0,0.0035714285714285713,0.375)));",
+      "float2 L=WorldPosition.xy*0.01-float2(39.984124799999996,-42.165091500000003)+float2(0,0);\nreturn float2(dot(float3(L,1),float3(-0.0031250000000000002,-0,0.75)),dot(float3(L,1),float3(-0,0.0035714285714285713,0.375)));",
+      "float2 L=WorldPosition.xy*0.01-float2(-40.015875200000004,27.834908499999997)+float2(0,0);\nreturn float2(dot(float3(L,1),float3(-0.0031250000000000002,-0,0.75)),dot(float3(L,1),float3(-0,0.0035714285714285713,0.375)));",
+      "float2 L=WorldPosition.xy*0.01-float2(39.984124799999996,27.834908499999997)+float2(0,0);\nreturn float2(dot(float3(L,1),float3(-0.0031250000000000002,-0,0.75)),dot(float3(L,1),float3(-0,0.0035714285714285713,0.375)));"
+    ],
+    "phase_blend_weight_code": "float2 W=WorldPosition.xy*0.01;\nfloat2 O=float2(-0.015875200000003531,-7.1650915000000017);\nfloat2 Q=W-O;\nfloat d=max(max(abs(Q.x)-80,abs(Q.y)-70),0.0);\nfloat f=min(d,16.0);\nif(f<0.00001) return float2(Q.x>=0.0?1.0:0.0,Q.y>=0.0?1.0:0.0);\nreturn smoothstep(float2(-f,-f),float2(f,f),Q);",
+    "phase_crossfade": {
+      "scope": "new distant ground only",
+      "maximum_half_width_m": 16.0,
+      "source_edge_distance_zero_retains_original_phase": true,
+      "linear_color_sample_blend": true,
+      "decoded_normal_blend_then_world_normalize": true,
+      "uv_coordinates_blended": false
+    }
+  },
+  "after_native_files": {
+    "Materials/M_EntryBrickWall.uasset": "d47bf384444539cc9201aff92f031c215127097b3e6f0d872b435280e08f1c68",
+    "Materials/M_ExteriorDistantGround.uasset": "e0a81d17c4392d6117f7b1880853ed7055efea6e72c4df60343ba30530245943",
+    "Meshes/RMExteriorEntryBrickWall.uasset": "0232f3efe32250035534b65afa2504ba2f036a0df20f68c8cfa25e1e822ffcf0",
+    "Textures/T_EntryBrickWall_BaseColor_Color.uasset": "628d43c1cd1cb04eb151f35d44a4b8e2c95cc6077439beba041a18ac195c7fd3",
+    "Textures/T_EntryBrickWall_MetallicRoughness_ARM.uasset": "42bd0152702c3a40df41face9ecc27f5d11f1d3fb45e7d62c82c32186bf6a864",
+    "Textures/T_EntryBrickWall_NormalGL_Normal_GLtoDX.uasset": "9d88d0ab1c2513ee0ecb78009c53de4b01c019d98b736d1cf4d0429ba427f0b5"
+  },
+  "changed_native_files": [
+    "Materials/M_ExteriorDistantGround.uasset"
+  ],
+  "importer_sha256": "361850a47e6ac4efe13f8dafefc1e496460c43035c72dfecff5059c568fe0535",
+  "script_sha256": "f8d354065b8f0376e50300a1eb90f4f0b121979be281f71cd7c7b0984e2c86ca"
+}

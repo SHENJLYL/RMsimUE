@@ -1,0 +1,255 @@
+﻿{
+    "schema":  "rm_prepared_launch_guard_verification_v1",
+    "status":  "passed",
+    "started_utc":  "2026-11-18T01:17:56.7974376Z",
+    "scope":  "production launcher in CheckOnly mode with mocked tools/CIM/map calls and real cross-thread named mutexes",
+    "ue_started":  false,
+    "processes_terminated":  false,
+    "script_sha256":  "5078311317957c0679d73bacceb5351538d84d38e786250160f8b718269bb397",
+    "import_wrapper_sha256":  "b72535082fe15cf333bbe45856b38130e7738128dfef93985b54f0502cc09758",
+    "harness_sha256":  "b83291be9abfd885b3986554ca33d4e64c68bab2e3b7affab3e31f16f21e5ee6",
+    "checks":  [
+                   {
+                       "name":  "empty_process_list",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_game_default_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_game_allowmultiple",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_editor_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "allowmultiple_keeps_editor_block",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_commandlet_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "allowmultiple_keeps_commandlet_block",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_dotnet_ubt_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_ubt_exe_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "same_project_build_bat_blocked",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "other_worktree_editor_and_build_allowed",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "project_prefix_suffix_is_not_same_project",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "case_and_slash_normalization",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "gamepad_is_not_game_flag",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  1,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "RMSim project has an active editor, import or build: PID 12345",
+                                      "Wait for that project session to finish before starting this preview."
+                                  ]
+                   },
+                   {
+                       "name":  "unrelated_dotnet_allowed",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "shared_import_mutex_blocks_even_allowmultiple",
+                       "passed":  true,
+                       "expected_exit":  20,
+                       "actual_exit":  20,
+                       "allow_multiple":  true,
+                       "cim_queries":  0,
+                       "map_preflights":  0,
+                       "output":  [
+                                      "A launch or scene import is already active for this project."
+                                  ]
+                   },
+                   {
+                       "name":  "shared_mutex_released_after_contention",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "other_worktree_mutex_does_not_block",
+                       "passed":  true,
+                       "expected_exit":  0,
+                       "actual_exit":  0,
+                       "allow_multiple":  false,
+                       "cim_queries":  1,
+                       "map_preflights":  1,
+                       "output":  [
+                                      "Launch preflight passed: /Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode"
+                                  ]
+                   },
+                   {
+                       "name":  "mutex_released_on_all_return_paths",
+                       "passed":  true
+                   }
+               ],
+    "ast_passed":  true,
+    "shared_mutex_name":  "Local\\RMSimSceneImport_ca4de374ed8de25b2c22b483440e16f0baba12a2b46bd55f5ea238d58bff928f",
+    "check_count":  19,
+    "finished_utc":  "2026-11-18T01:17:57.3896716Z",
+    "forbidden_process_calls":  0,
+    "execution":  {
+                      "command":  "powershell.exe -NoProfile -File D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt_existing\\prepared-launch-20261118-01\\verify-prepared-launch.ps1",
+                      "observed_exit_code":  0,
+                      "log":  "run-02.log",
+                      "retained_fixture_failure":  "verification-fixture-failed-01.json",
+                      "fixture_failure_reason":  "The initial mock used script-scope variables across the production script scope; the mock was corrected to use isolated test-process globals."
+                  }
+}

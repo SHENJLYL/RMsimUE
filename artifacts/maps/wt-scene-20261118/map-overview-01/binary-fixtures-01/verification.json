@@ -1,0 +1,59 @@
+{
+  "schema": "wt_binary_fixture_verification_v1",
+  "status": "passed",
+  "finished_utc": "2026-11-18T04:50:18.461205+00:00",
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+  "target": "tests\\map_tools\\test_wt_binary_formats.py",
+  "target_sha256": "a1a81a3b30e3dec76d5cd1b597bb7881fae1a1fd3f32cff0b2cea109d9f5f388",
+  "migrated_from": "tools\\maps\\test_wt_container_decoders.py",
+  "original_sha256": "e6d4b18935f0a29aa1fc99b4edb598d0ab6751a616edc0349dc6f1468eebb642",
+  "original_removed_after_success": true,
+  "fixture_and_test_function_ast_equal": true,
+  "preserved_test_cases": 23,
+  "executed_on_python314": 23,
+  "skipped_on_python314": 0,
+  "simulated_missing_zstd": {
+    "tests_discovered": 23,
+    "tests_skipped": 23,
+    "mechanism": "sys.modules['compression']=None in a separate Python process",
+    "coverage": "dependency absence only; not a native Python 3.10/3.11 execution"
+  },
+  "python310_syntax_parse_passed": true,
+  "production_parser_sha256": {
+    "wt_blk.py": "2710ac448051ac7354391373bbc626498c0d744f6811b1733055f297bf570820",
+    "wt_vromfs.py": "8eccf3eb507554ebb745f441cd0a3ad9ba1c90db37e2eee5fcaf6acbcad00874"
+  },
+  "runs": [
+    {
+      "name": "python314",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/map_tools",
+        "-p",
+        "test_wt_binary_formats.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "artifacts\\maps\\wt-scene-20261118\\map-overview-01\\binary-fixtures-01\\python314.log",
+      "log_sha256": "930fbe5ba5285394f9078c600c16d91232b0b210616674854969d9fe4ce5c56e"
+    },
+    {
+      "name": "missing_zstd",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "-c",
+        "import sys,unittest; sys.modules['compression']=None; suite=unittest.defaultTestLoader.discover('tests/map_tools',pattern='test_wt_binary_formats.py'); result=unittest.TextTestRunner(verbosity=2).run(suite); assert result.testsRun==23 and len(result.skipped)==23 and result.wasSuccessful(); sys.exit(0)"
+      ],
+      "exit_code": 0,
+      "log": "artifacts\\maps\\wt-scene-20261118\\map-overview-01\\binary-fixtures-01\\missing_zstd.log",
+      "log_sha256": "ec2afcf598ac9dac3f04ece1edff341b89590615a44ae4ebc0ceda94839289da"
+    }
+  ]
+}

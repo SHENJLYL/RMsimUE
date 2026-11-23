@@ -1,0 +1,497 @@
+diff --git a/include/mujoco/mujoco.h b/include/mujoco/mujoco.h
+index d1a70cb..2028191 100644
+--- a/include/mujoco/mujoco.h
++++ b/include/mujoco/mujoco.h
+@@ -311,6 +311,10 @@ MJAPI void mj_resetCallbacks(void);
+ // Set constant fields of mjModel, corresponding to qpos0 configuration.
+ MJAPI void mj_setConst(mjModel* m, mjData* d);
+ 
++// RMsim extension: invalidate world-fixed flex caches after direct geometry edits.
++// mj_setConst does this automatically; structural model edits require recompilation.
++MJAPI void mjrmsim_invalidateStaticFlex(mjModel* m);
++
+ // Set actuator_lengthrange for specified actuator; return 1 if ok, 0 if error.
+ // Nullable: error
+ MJAPI int mj_setLengthRange(mjModel* m, mjData* d, int index,
+diff --git a/src/engine/CMakeLists.txt b/src/engine/CMakeLists.txt
+index 2f421f3..e447d45 100644
+--- a/src/engine/CMakeLists.txt
++++ b/src/engine/CMakeLists.txt
+@@ -81,6 +81,8 @@ set(MUJOCO_ENGINE_SRCS
+     engine_solver.c
+     engine_solver.h
+     engine_sort.h
++    engine_staticflex.c
++    engine_staticflex.h
+     engine_support.c
+     engine_support.h
+     engine_thread.cc
+diff --git a/src/engine/engine_collision_driver.c b/src/engine/engine_collision_driver.c
+index 44bdab5..635cc13 100644
+--- a/src/engine/engine_collision_driver.c
++++ b/src/engine/engine_collision_driver.c
+@@ -15,6 +15,7 @@
+ #include "engine/engine_collision_driver.h"
+ 
+ #include <stddef.h>
++#include <float.h>
+ #include <stdint.h>
+ #include <string.h>
+ 
+@@ -37,6 +38,7 @@
+ #include "engine/engine_memory.h"
+ #include "engine/engine_sleep.h"
+ #include "engine/engine_sort.h"
++#include "engine/engine_staticflex.h"
+ #include "engine/engine_util_blas.h"
+ #include "engine/engine_util_errmem.h"
+ #include "engine/engine_util_misc.h"
+@@ -1470,6 +1472,34 @@ static void makeAAMM(const mjModel* m, mjData* d,
+     int flex_vertnum = m->flex_vertnum[f];
+     const mjtNum* vbase = d->flexvert_xpos + 3*m->flex_vertadr[f];
+ 
++    // The world-space root encloses every triangle plus its collision radius.
++    // A linear projection of this enclosing box remains an enclosing interval:
++    // dot(axis, center) +/- sum(abs(axis[k])*half[k]). Rotation may add candidates
++    // but cannot exclude a true intersection; the unchanged triangle BVH then
++    // rejects the extras. Add margin once (radius is already in the root).
++    if (mj_staticFlexWorld(m, f) && mj_staticFlexCurrent(m, d, 1) &&
++        m->flex_bvhadr[f] >= m->nbvhstatic) {
++      const mjtNum* root = d->bvh_aabb_dyn +
++                          6*(m->flex_bvhadr[f] - m->nbvhstatic);
++      mjtNum margin = override_margin ? override_margin
++                                     : m->flex_margin[f] + m->flex_gap[f];
++      for (int j=0; j < 3; ++j) {
++        const mjtNum* axis = frame + 3*j;
++        mjtNum center = mju_dot3(axis, root);
++        mjtNum half = mju_abs(axis[0])*root[3] + mju_abs(axis[1])*root[4] +
++                      mju_abs(axis[2])*root[5];
++        // Round outward, including dot-product cancellation at large coordinates.
++        mjtNum scale = mju_abs(axis[0]*root[0]) + mju_abs(axis[1]*root[1]) +
++                       mju_abs(axis[2]*root[2]) + half + mju_abs(margin) + 1;
++        mjtNum roundoff = 32*DBL_EPSILON*scale;
++        aamm[j] = center - half - margin - roundoff;
++        aamm[j+3] = center + half + margin + roundoff;
++      }
++      *x_min = aamm[0]; *y_min = aamm[1]; *z_min = aamm[2];
++      *x_max = aamm[3]; *y_max = aamm[4]; *z_max = aamm[5];
++      return;
++    }
++
+     // process flex vertices
+     for (int i=0; i < flex_vertnum; i++) {
+       mjtNum v[3];
+@@ -1733,7 +1763,7 @@ mjSORT(bfsort, mjPacked32, mjPacked32cmp);
+ // broadphase collision detector
+ static int mj_broadphase(const mjModel* m, mjData* d, mjPacked32* bfpair, int maxpair) {
+   int npair = 0, nbody = m->nbody, ngeom = m->ngeom;
+-  int nvert = m->nflexvert, nflex = m->nflex, nbodyflex = m->nbody + m->nflex;
++  int nflex = m->nflex, nbodyflex = m->nbody + m->nflex;
+   int dsbl_filterparent = mjDISABLED(mjDSBL_FILTERPARENT);
+   int sleep_filter = mjENABLED(mjENBL_SLEEP) && d->nbody_awake < nbody;
+   mjtNum cov[9], cen[3], eigval[3], eigvec[9], frame[9], quat[4];
+@@ -1790,10 +1820,13 @@ static int mj_broadphase(const mjModel* m, mjData* d, mjPacked32* bfpair, int ma
+       cnt++;
+     }
+   }
+-  for (int i=0; i < nvert; i++) {
+-    if (m->flex_vertbodyid[i]) {
+-      mju_addTo3(cen, d->flexvert_xpos+3*i);
+-      cnt++;
++  for (int f=0; f < nflex; ++f) {
++    if (mj_staticFlexWorld(m, f)) continue;
++    for (int i=m->flex_vertadr[f]; i < m->flex_vertadr[f] + m->flex_vertnum[f]; ++i) {
++      if (m->flex_vertbodyid[i]) {
++        mju_addTo3(cen, d->flexvert_xpos+3*i);
++        cnt++;
++      }
+     }
+   }
+   if (cnt == 0) {
+@@ -1808,9 +1841,12 @@ static int mj_broadphase(const mjModel* m, mjData* d, mjPacked32* bfpair, int ma
+       updateCov(cov, d->geom_xpos+3*i, cen);
+     }
+   }
+-  for (int i=0; i < nvert; i++) {
+-    if (m->flex_vertbodyid[i]) {
+-      updateCov(cov, d->flexvert_xpos+3*i, cen);
++  for (int f=0; f < nflex; ++f) {
++    if (mj_staticFlexWorld(m, f)) continue;
++    for (int i=m->flex_vertadr[f]; i < m->flex_vertadr[f] + m->flex_vertnum[f]; ++i) {
++      if (m->flex_vertbodyid[i]) {
++        updateCov(cov, d->flexvert_xpos+3*i, cen);
++      }
+     }
+   }
+   mju_scl(cov, cov, 1.0/cnt, 9);
+diff --git a/src/engine/engine_core_smooth.c b/src/engine/engine_core_smooth.c
+index 8736ea5..ffe6f42 100644
+--- a/src/engine/engine_core_smooth.c
++++ b/src/engine/engine_core_smooth.c
+@@ -28,6 +28,7 @@
+ #include "engine/engine_macro.h"
+ #include "engine/engine_memory.h"
+ #include "engine/engine_sleep.h"
++#include "engine/engine_staticflex.h"
+ #include "engine/engine_util_blas.h"
+ #include "engine/engine_util_errmem.h"
+ #include "engine/engine_util_misc.h"
+@@ -549,11 +550,20 @@ void mj_flexSkip(const mjModel* m, mjData* d, int skiprigid) {
+     return;
+   }
+ 
++  const int midphase = !mjDISABLED(mjDSBL_MIDPHASE);
++  const int cached_static = mj_staticFlexCurrent(m, d, midphase);
++
+   // geometry updates invalidate the lazily prepared Cartesian stretch Hessian
+   memset(d->flex_hessian_valid, 0, m->nflex * sizeof(mjtBool));
+ 
+   // compute Cartesian positions of flex vertices
+   for (int f=0; f < m->nflex; f++) {
++    if (cached_static && mj_staticFlexWorld(m, f)) continue;
++    if (mj_staticFlexWorld(m, f)) {
++      // Initialize the identically-zero velocities on every geometry refresh,
++      // including debug resets and model revisions, before committing the cache.
++      mju_zero(d->flexedge_velocity + m->flex_edgeadr[f], m->flex_edgenum[f]);
++    }
+     int vstart = m->flex_vertadr[f];
+     int vend = m->flex_vertadr[f] + m->flex_vertnum[f];
+     int nstart = m->flex_nodeadr[f];
+@@ -592,6 +602,7 @@ void mj_flexSkip(const mjModel* m, mjData* d, int skiprigid) {
+ 
+   // compute flex element aabb
+   for (int f=0; f < m->nflex; f++) {
++    if (cached_static && mj_staticFlexWorld(m, f)) continue;
+     int dim = m->flex_dim[f];
+     mjtNum box[2];
+     mjtNum pad = mj_rodBoxSize(m, f, box) ? mju_max(m->flex_radius[f], mju_norm(box, 2))
+@@ -629,6 +640,7 @@ void mj_flexSkip(const mjModel* m, mjData* d, int skiprigid) {
+   // update flex bhv_aabb_dyn if needed
+   if (!mjDISABLED(mjDSBL_MIDPHASE)) {
+     for (int f=0; f < m->nflex; f++) {
++      if (cached_static && mj_staticFlexWorld(m, f)) continue;
+       if (m->flex_bvhadr[f] >= 0) {
+         int flex_bvhadr = m->flex_bvhadr[f];
+         int flex_bvhnum = m->flex_bvhnum[f];
+@@ -647,6 +659,8 @@ void mj_flexSkip(const mjModel* m, mjData* d, int skiprigid) {
+     }
+   }
+ 
++  mj_staticFlexCommit(m, d, midphase);
++
+   // allocate space
+   mj_markStack(d);
+   mjtNum* jac1 = mjSTACKALLOC(d, 3*nv, mjtNum);
+diff --git a/src/engine/engine_forward.c b/src/engine/engine_forward.c
+index ea17d01..8e35438 100644
+--- a/src/engine/engine_forward.c
++++ b/src/engine/engine_forward.c
+@@ -39,6 +39,7 @@
+ #include "engine/engine_plugin.h"
+ #include "engine/engine_sensor.h"
+ #include "engine/engine_sleep.h"
++#include "engine/engine_staticflex.h"
+ #include "engine/engine_solver.h"
+ #include "engine/engine_support.h"
+ #include "engine/engine_inline.h"
+@@ -188,8 +189,10 @@ void mj_fwdVelocity(const mjModel* m, mjData* d) {
+   d->flg_energyvel = 0;
+ 
+   // flexedge velocity: skip interp and rigid flexes (edge Jacobians are zero)
+-  mju_zero(d->flexedge_velocity, m->nflexedge);
+   for (int f = 0; f < m->nflex; f++) {
++    if (!(mj_staticFlexWorld(m, f) && mj_staticFlexCurrent(m, d, 0))) {
++      mju_zero(d->flexedge_velocity + m->flex_edgeadr[f], m->flex_edgenum[f]);
++    }
+     if (m->flex_rigid[f] || m->flex_interp[f]) continue;
+     int adr = m->flex_edgeadr[f];
+     int num = m->flex_edgenum[f];
+diff --git a/src/engine/engine_io.c b/src/engine/engine_io.c
+index ac04c3c..8654d42 100644
+--- a/src/engine/engine_io.c
++++ b/src/engine/engine_io.c
+@@ -34,6 +34,7 @@
+ #include "engine/engine_memory.h"
+ #include "engine/engine_plugin.h"
+ #include "engine/engine_sleep.h"
++#include "engine/engine_staticflex.h"
+ #include "engine/engine_thread.h"
+ #include "engine/engine_util_blas.h"
+ #include "engine/engine_util_errmem.h"
+@@ -229,6 +230,7 @@ static mjtSize safeAddToBufferSize(intptr_t* offset, mjtSize* nbuffer,
+ 
+ // free model memory without destroying the struct
+ static void freeModelBuffers(mjModel* m) {
++  mj_staticFlexFree(m);
+   mju_free(m->buffer);
+ }
+ 
+@@ -413,7 +415,8 @@ void mj_makeModel(mjModel** dest,
+ #undef X
+ 
+   // allocate buffer
+-  m->buffer = mju_malloc(m->nbuffer);
++  m->buffer = mju_malloc(mj_staticFlexTailOffset(m->nbuffer) +
++                         sizeof(mjStaticFlexModelCache));
+   if (!m->buffer) {
+     if (allocate) mju_free(m);
+     mjERROR("could not allocate mjModel buffer");
+@@ -421,6 +424,7 @@ void mj_makeModel(mjModel** dest,
+ 
+   // clear, set pointers in buffer
+   memset(m->buffer, 0, m->nbuffer);
++  memset(mj_staticFlexModel(m), 0, sizeof(mjStaticFlexModelCache));
+ #ifdef MEMORY_SANITIZER
+   // tell msan to treat the entire buffer as uninitialized
+   __msan_allocated_memory(m->buffer, m->nbuffer);
+@@ -487,6 +491,7 @@ mjModel* mj_copyModel(mjModel* dest, const mjModel* src) {
+     #undef X
+   }
+ 
++  mj_staticFlexRebuild(dest);
+   return dest;
+ }
+ 
+@@ -519,6 +524,8 @@ void mjv_copyModel(mjModel* dest, const mjModel* src) {
+   // redefine XNV to be the same as X
+   #undef XNV
+   #define XNV X
++
++  mj_staticFlexRebuild(dest);
+ }
+ 
+ 
+@@ -699,6 +706,7 @@ mjModel* mj_loadModelBuffer(const void* buffer, mjtSize buffer_sz) {
+     return NULL;
+   }
+ 
++  mj_staticFlexRebuild(m);
+   return m;
+ }
+ 
+@@ -1131,11 +1139,13 @@ void mj_makeRawData(mjData** dest, const mjModel* m) {
+   d->narena = m->narena;
+ 
+   // allocate buffer
+-  d->buffer = mju_malloc(d->nbuffer);
++  d->buffer = mju_malloc(mj_staticFlexTailOffset(d->nbuffer) +
++                         sizeof(mjStaticFlexDataCache));
+   if (!d->buffer) {
+     if (allocate) mju_free(d);
+     mjERROR("could not allocate mjData buffer");
+   }
++  mj_staticFlexInvalidate(d);
+ 
+   // allocate arena
+   d->arena = mju_malloc(d->narena);
+@@ -1213,6 +1223,7 @@ mjData* mj_copyDataVisual(mjData* dest, const mjModel* m, const mjData* src, int
+   dest->threadpool = save_threadpool;
+   dest->threadlock = 0;
+   mj_setPtrData(m, dest);
++  mj_staticFlexInvalidate(dest);
+ 
+   // save plugin_data, since the X macro copying block below will override it
+   const size_t plugin_data_size = sizeof(*dest->plugin_data) * dest->nplugin;
+@@ -1387,6 +1398,7 @@ void mj_resetPlastic(const mjModel* m, mjData* d) {
+ // clear data, set defaults; must not call mju_error (warn instead), as callers rely on
+ // mj_resetData as an infallible recovery path to restore a valid mjData after a trapped error
+ static void _resetData(const mjModel* m, mjData* d, unsigned char debug_value) {
++  mj_staticFlexInvalidate(d);
+   // warn if history buffers cannot be initialized
+   mjtNum dt = m->opt.timestep;
+   if (m->nhistory && dt <= 0) {
+diff --git a/src/engine/engine_setconst.c b/src/engine/engine_setconst.c
+index b3f5b50..2ab2b78 100644
+--- a/src/engine/engine_setconst.c
++++ b/src/engine/engine_setconst.c
+@@ -29,6 +29,7 @@
+ #include "engine/engine_memory.h"
+ #include "engine/engine_metric.h"
+ #include "engine/engine_sleep.h"
++#include "engine/engine_staticflex.h"
+ #include "engine/engine_util_blas.h"
+ #include "engine/engine_util_errmem.h"
+ #include "engine/engine_util_solve.h"
+@@ -1653,6 +1654,8 @@ static void setSpringLength(mjModel* m, mjData* d) {
+ 
+ // run the groups of mj_setConst computations selected by the bits of groups, in order
+ void mj_setConstGroups(mjModel* m, mjData* d, int groups) {
++  // All live mjData records observe this revision on their next flex update.
++  mj_staticFlexRebuild(m);
+   // quantities independent of the configuration
+   if (groups & mjSCGROUP_FIXED) {
+     // compute npolygonmax and nmeshdegmax
+diff --git a/src/engine/engine_staticflex.c b/src/engine/engine_staticflex.c
+new file mode 100644
+index 0000000..292f3a1
+--- /dev/null
++++ b/src/engine/engine_staticflex.c
+@@ -0,0 +1,71 @@
++// Copyright 2026 RMsimUE5 contributors
++// Licensed under the Apache License, Version 2.0.
++
++#include "engine/engine_staticflex.h"
++
++#include <stdint.h>
++#include <string.h>
++#include "engine/engine_util_errmem.h"
++
++void mj_staticFlexRebuild(mjModel* m) {
++  mjStaticFlexModelCache* cache = mj_staticFlexModel(m);
++  if (cache->revision == UINT64_MAX) {
++    mjERROR("static flex revision exhausted; create a new model");
++  }
++  ++cache->revision;
++  if (cache->count != m->nflex) {
++    mju_free(cache->world);
++    cache->world = NULL;
++    cache->count = 0;
++    if (m->nflex) {
++      cache->world = (mjtByte*)mju_malloc((size_t)m->nflex);
++      if (!cache->world) {
++        mjERROR("could not allocate static flex eligibility");
++      }
++      cache->count = m->nflex;
++    }
++  }
++  for (int f=0; f < m->nflex; ++f) {
++    int eligible = m->flex_dim[f] == 2 && m->flex_rigid[f] &&
++                   !m->flex_interp[f] && m->flex_nodenum[f] == 0 && !m->flex_passive[f] &&
++                   !m->flex_plasticmode[f] && m->flex_vertnum[f] > 0;
++    for (int i=m->flex_vertadr[f]; eligible &&
++         i < m->flex_vertadr[f] + m->flex_vertnum[f]; ++i) {
++      if (m->flex_vertbodyid[i] != 0) eligible = 0;
++    }
++    cache->world[f] = eligible;
++  }
++}
++
++void mj_staticFlexFree(mjModel* m) {
++  if (m->buffer) mju_free(mj_staticFlexModel(m)->world);
++}
++
++void mj_staticFlexInvalidate(mjData* d) {
++  memset(mj_staticFlexData(d), 0, sizeof(mjStaticFlexDataCache));
++}
++
++int mj_staticFlexWorld(const mjModel* m, int f) {
++  const mjStaticFlexModelCache* cache = mj_staticFlexModel(m);
++  return cache->revision && f >= 0 && f < cache->count && cache->world[f];
++}
++
++int mj_staticFlexCurrent(const mjModel* m, const mjData* d, int needbvh) {
++  const mjStaticFlexDataCache* cache = mj_staticFlexData(d);
++  return cache->valid && cache->owner == m &&
++         cache->revision == mj_staticFlexModel(m)->revision &&
++         (!needbvh || cache->bvh);
++}
++
++void mj_staticFlexCommit(const mjModel* m, mjData* d, int bvh) {
++  mjStaticFlexDataCache* cache = mj_staticFlexData(d);
++  const int retained_bvh = mj_staticFlexCurrent(m, d, 1);
++  cache->owner = m;
++  cache->revision = mj_staticFlexModel(m)->revision;
++  cache->valid = 1;
++  cache->bvh = bvh || retained_bvh;
++}
++
++void mjrmsim_invalidateStaticFlex(mjModel* m) {
++  mj_staticFlexRebuild(m);
++}
+diff --git a/src/engine/engine_staticflex.h b/src/engine/engine_staticflex.h
+new file mode 100644
+index 0000000..dade333
+--- /dev/null
++++ b/src/engine/engine_staticflex.h
+@@ -0,0 +1,62 @@
++// Copyright 2026 RMsimUE5 contributors
++// Licensed under the Apache License, Version 2.0.
++
++#ifndef MUJOCO_SRC_ENGINE_ENGINE_STATICFLEX_H_
++#define MUJOCO_SRC_ENGINE_ENGINE_STATICFLEX_H_
++
++#include <stddef.h>
++#include <stdint.h>
++#include <mujoco/mjdata.h>
++#include <mujoco/mjexport.h>
++#include <mujoco/mjmodel.h>
++
++// Private allocation metadata. These records live after the public buffer,
++// not inside mjModel/mjData, so public sizes, field offsets and MJB stay intact.
++// Model/data allocations must belong to this runtime, as with the stock ABI.
++typedef struct mjStaticFlexModelCache_ {
++  uint64_t revision;
++  int count;
++  mjtByte* world;
++} mjStaticFlexModelCache;
++
++typedef struct mjStaticFlexDataCache_ {
++  const mjModel* owner;
++  uint64_t revision;
++  mjtBool valid;
++  mjtBool bvh;
++} mjStaticFlexDataCache;
++
++static inline size_t mj_staticFlexTailOffset(mjtSize nbuffer) {
++#ifdef _MSC_VER
++  const size_t model_align = __alignof(mjStaticFlexModelCache);
++  const size_t data_align = __alignof(mjStaticFlexDataCache);
++#else
++  const size_t model_align = _Alignof(mjStaticFlexModelCache);
++  const size_t data_align = _Alignof(mjStaticFlexDataCache);
++#endif
++  const size_t a = model_align > data_align ? model_align : data_align;
++  return ((size_t)nbuffer + a - 1) / a * a;
++}
++
++static inline mjStaticFlexModelCache* mj_staticFlexModel(const mjModel* m) {
++  return (mjStaticFlexModelCache*)((char*)m->buffer + mj_staticFlexTailOffset(m->nbuffer));
++}
++
++static inline mjStaticFlexDataCache* mj_staticFlexData(const mjData* d) {
++  return (mjStaticFlexDataCache*)((char*)d->buffer + mj_staticFlexTailOffset(d->nbuffer));
++}
++
++// Eligibility is recomputed after compilation, MJB load, model copy and
++// mj_setConstGroups. Only 2D rigid non-interpolated flexes entirely on world qualify.
++void mj_staticFlexRebuild(mjModel* m);
++void mj_staticFlexFree(mjModel* m);
++void mj_staticFlexInvalidate(mjData* d);
++int mj_staticFlexWorld(const mjModel* m, int f);
++int mj_staticFlexCurrent(const mjModel* m, const mjData* d, int needbvh);
++void mj_staticFlexCommit(const mjModel* m, mjData* d, int bvh);
++
++// Explicit invalidation for callers editing compiled static geometry directly.
++// mj_setConst performs this automatically. Structural changes still need recompile.
++MJAPI void mjrmsim_invalidateStaticFlex(mjModel* m);
++
++#endif
+diff --git a/src/engine/engine_support.c b/src/engine/engine_support.c
+index 5c469e8..fbd6ee5 100644
+--- a/src/engine/engine_support.c
++++ b/src/engine/engine_support.c
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ #include "engine/engine_support.h"
++#include "engine/engine_staticflex.h"
+ 
+ #include <inttypes.h>  // IWYU pragma: keep
+ #include <stddef.h>
+@@ -286,6 +287,7 @@ void mj_extractState(const mjModel* m, const mjtNum* src, int srcsig, mjtNum* ds
+ 
+ // set state
+ void mj_setState(const mjModel* m, mjData* d, const mjtNum* state, int sig) {
++  mj_staticFlexInvalidate(d);
+   if (sig < 0) {
+     mjERROR("invalid state signature %d < 0", sig);
+     return;
+@@ -887,7 +889,7 @@ int mj_version(void) {
+ 
+ // current version of MuJoCo as a null-terminated string
+ const char* mj_versionString(void) {
+-  static const char versionstring[] = mjVERSIONSTRING;
++  static const char versionstring[] = mjVERSIONSTRING "+rmsim.static-world-flex.2";
+   return versionstring;
+ }
+ 

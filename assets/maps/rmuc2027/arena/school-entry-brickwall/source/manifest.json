@@ -1,0 +1,47 @@
+{
+ "slug": "brick-wall",
+ "triangles": 10412,
+ "texture_px": 2048,
+ "triangles_light": null,
+ "texture_px_light": null,
+ "files": {
+  "glb": {
+   "name": "brick-wall.glb",
+   "bytes": 1495820
+  },
+  "blend": {
+   "name": "brick-wall.blend",
+   "bytes": 1185880
+  },
+  "fbx": {
+   "name": "brick-wall.fbx",
+   "bytes": 1660412
+  },
+  "obj": {
+   "name": "brick-wall-obj.zip",
+   "bytes": 982828
+  },
+  "usdz": {
+   "name": "brick-wall.usdz",
+   "bytes": 1675962
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "3.000 x 0.320 x 2.088",
+  "triangles": 10412,
+  "textures": "PBR 2048px: base color, roughness, metallic, normal (baked)",
+  "generator": "Created by grab3d",
+  "created": "2026-10-25",
+  "real_size": "3.0 m tileable brick wall, 240 mm thick, 2.09 m high incl. 320 mm concrete coping; standard bricks 240 x 115 x 71 mm, 10 mm joints, 12 courses per metre",
+  "notes": "Tileable along X: module ends at x = -1.5 / +1.5 m with half a head joint on each side, English-style block bond (stretcher and header courses alternating, period 0.25 m) and coping stones every 0.5 m, so walls of any length continue without a visible joint. Every brick is real geometry with its own shade (mixed firing), raked joints 6 mm deep, efflorescence and dirt near the ground. Pitched concrete coping with drip grooves.",
+  "set": "Urban Street Kit"
+ },
+ "origin": {
+  "method": "procedural",
+  "detail": "Built procedurally with Blender scripts. The scripts were written with the help of an AI coding assistant. No generative AI model produced the geometry or textures directly.",
+  "ai_content": false,
+  "ai_assisted_code": true
+ }
+}

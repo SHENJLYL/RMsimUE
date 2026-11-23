@@ -22,6 +22,13 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 )
 
 if(BUILD_TESTING)
+  enable_testing()
+  add_executable(swept_footprint_test test/swept_footprint_test.cpp)
+  target_include_directories(swept_footprint_test PRIVATE include)
+  add_test(NAME swept_footprint COMMAND swept_footprint_test)
+  add_executable(pursuit_damping_test test/pursuit_damping_test.cpp src/pid.cpp)
+  target_include_directories(pursuit_damping_test PRIVATE include)
+  add_test(NAME pursuit_damping COMMAND pursuit_damping_test)
   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
   set(ament_cmake_clang_tidy_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-tidy")
   find_package(ament_lint_auto REQUIRED)

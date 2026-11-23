@@ -1,0 +1,30 @@
+{
+  "schema": "wt_native_rvt_asset_smoke_v1",
+  "status": "failed",
+  "complete": true,
+  "started_utc": "2026-11-18T02:33:11.353347+00:00",
+  "world_loaded_by_script": false,
+  "world_saved_by_script": false,
+  "material_graphs_modified": false,
+  "rendered_projection_verified": false,
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "r_virtual_textures": 1,
+  "file_hashes": {
+    "D:\\simulator-wt-vlaanderen\\tools\\unreal\\test_wt_rvt_asset.py": "becea754aa7894f7f7dbf590072b863162174be9005cd1d4f7fd8df344fceebe",
+    "D:\\simulator-wt-vlaanderen\\tools\\unreal\\wt_runtime_virtual_texture.py": "3cb27d0c6a00b02734891633b6643089489167eb220bffdb0e9bd3bfa1f53307",
+    "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Config\\DefaultEngine.ini": "b855505a79da553fd830ae63009f63935bea03293da78b9bad8e9998d6a90d12",
+    "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Binaries\\Win64\\UnrealEditor-RMSim.dll": "32cf7979b2f71a49d6d8c992c85a2941f641e5f95492e15ed919a54ed965fec9"
+  },
+  "world_sha256_before": "325ead2d7056c6223339db2c283fb183f150a58f9febd1b70533ec6c1f1ca007",
+  "api_classes_present": {
+    "RuntimeVirtualTexture": true,
+    "RuntimeVirtualTextureFactory": true,
+    "RuntimeVirtualTextureMaterialType": true,
+    "RuntimeVirtualTextureVolume": true,
+    "RuntimeVirtualTextureComponent": true,
+    "VirtualTexturePoolConfig": false
+  },
+  "error": "module 'unreal' has no attribute 'VirtualTexturePoolConfig'",
+  "traceback": "Traceback (most recent call last):\n  File \"D:/simulator-wt-vlaanderen/tools/unreal/test_wt_rvt_asset.py\", line 54, in run\n    rvt = ensure_rvt()\n          ^^^^^^^^^^^^\n  File \"D:\\simulator-wt-vlaanderen\\tools\\unreal\\wt_runtime_virtual_texture.py\", line 148, in ensure_rvt\n    _pool_state()\n  File \"D:\\simulator-wt-vlaanderen\\tools\\unreal\\wt_runtime_virtual_texture.py\", line 104, in _pool_state\n    config = unreal.get_default_object(unreal.VirtualTexturePoolConfig)\n                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'unreal' has no attribute 'VirtualTexturePoolConfig'\n",
+  "finished_utc": "2026-11-18T02:33:11.392100+00:00"
+}

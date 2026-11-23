@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "scope": "AST, standard-library import, and scoped cleanup review only; no native process launched or stopped",
+  "created_utc": "2026-11-18T02:23:31.810236+00:00",
+  "files": [
+    {
+      "path": "tools/integration/run_navigation_realtime_acceptance.py",
+      "sha256": "f0debc7b08943564cbaf60c2da1d497ced7f0a15833eb1db8855649e1878ac5f",
+      "ast_passed": true
+    },
+    {
+      "path": "tools/integration/navigation_console.py",
+      "sha256": "5b0d0d88e4ee5e5862816efae32d54f78d08ef9e17bdd34265e805bbedf8561a",
+      "ast_passed": true
+    },
+    {
+      "path": "tools/integration/summarize_navigation_realtime.py",
+      "sha256": "6e66851a75e916e99699374012a912d7b7ef09c9b0dd40ef5620b5b48e405d27",
+      "ast_passed": true
+    },
+    {
+      "path": "tools/integration/runtime_identity.py",
+      "sha256": "883552b28ee8ec09a0b285a4e0d8b806d04407cf6442b0386759b6beefbfe7b5",
+      "ast_passed": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "no_latest_pointer_or_global_console_stop_used",
+      "passed": true
+    },
+    {
+      "name": "stop_request_is_scoped_to_selected_session",
+      "passed": true
+    },
+    {
+      "name": "observer_cleanup_uses_tracked_popen_children",
+      "passed": true
+    },
+    {
+      "name": "git_diff_check_clean",
+      "passed": true,
+      "output": ""
+    },
+    {
+      "name": "base_python_imports_without_ros",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,1001 @@
+{
+  "schema": "wt_grass_native_bake_v1",
+  "status": "passed",
+  "started_utc": "2026-11-18T09:55:48.296993+00:00",
+  "command": " D:/simulator/unreal/RMSim/RMSim.uproject -run=pythonscript -script=D:/simulator/tools/unreal/author_wt_grass.py -FoliagePackage=D:/simulator/assets/maps/wt_vlaanderen -FoliageReport=D:/simulator/artifacts/maps/wt-refine-20261118/grass-visual-native-01/verification.json -AbsLog=D:/simulator/artifacts/maps/wt-refine-20261118/grass-visual-native-01/engine.log -d3d11 -AllowCommandletRendering -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound -ini:Engine:[DevOptions.Shaders]:ShaderCompilerCoreCountThreshold=1024,[DevOptions.Shaders]:NumUnusedShaderCompilingThreads=20,[DevOptions.Shaders]:NumUnusedShaderCompilingThreadsDuringGame=20,[DevOptions.Shaders]:bLogJobCompletionTimes=True",
+  "resume_authored_assets": false,
+  "independent_material_104_gate": "pending",
+  "independent_grass_27_gate": "pending",
+  "scripts_sha256": {
+    "author_wt_grass.py": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+    "wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+  },
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "foliage_definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "world_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "map_file_sha256_before": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+  "scene_import_report_sha256_before": "67e65404ac4a0ffd3770ce4d430218586122e087597e20a0fd8c6a348cfa41f3",
+  "authoring": {
+    "schema": "wt_grass_native_import_v1",
+    "status": "authored_pending_weight_bake",
+    "version": 3,
+    "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+    "definition_file": "foliage-enhanced/foliage.json",
+    "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+    "importer_sha256": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917",
+    "source_models": [
+      {
+        "id": "grass_blueberry_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a",
+        "source_sha256": "f2ace0804b7247da734855ddfa210485f044dc70e2bf43e8238b6724f20c6723",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -49.035675048828125,
+              -49.03567123413086,
+              0.0
+            ],
+            "hi": [
+              49.035675048828125,
+              49.03567123413086,
+              63.36573791503906
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.4903567135334015,
+              -0.4903567135334015,
+              0.0
+            ],
+            "hi": [
+              0.4903567135334015,
+              0.4903567135334015,
+              0.6336573958396912
+            ]
+          },
+          "max_error_cm": 3.6954879760742188e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_daisies_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a",
+        "source_sha256": "4082f47f49382a87d0e1868eee0a97f772bc846f7a6f19da87fc34a0ce964150",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -20.18756103515625,
+              -20.187557220458984,
+              -1.4635429382324219
+            ],
+            "hi": [
+              20.18756103515625,
+              20.187557220458984,
+              24.603878021240234
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.20187558233737946,
+              -0.20187556743621826,
+              -0.014635428786277771
+            ],
+            "hi": [
+              0.20187558233737946,
+              0.20187556743621826,
+              0.2460387796163559
+            ]
+          },
+          "max_error_cm": 2.8014183044433594e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_fill_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a",
+        "source_sha256": "4e0c212e41011ba92660fe1891214d414907e460c7268655d3eb9df9772fd781",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -125.4447021484375,
+              -30.46118927001953,
+              -44.391685485839844
+            ],
+            "hi": [
+              125.4447021484375,
+              30.461172103881836,
+              69.79183197021484
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -1.2544469833374023,
+              -0.3046117126941681,
+              -0.44391685724258423
+            ],
+            "hi": [
+              1.2544469833374023,
+              0.3046118915081024,
+              0.6979182958602905
+            ]
+          },
+          "max_error_cm": 3.814697265625e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_heather_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a",
+        "source_sha256": "22d4d93a477f4dd7712ec46fbac20643eb8d80b5a3dc0a394d7fb09a523eafb0",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -58.631874084472656,
+              -58.631874084472656,
+              0.0
+            ],
+            "hi": [
+              58.631874084472656,
+              58.631874084472656,
+              51.54882049560547
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.5863186717033386,
+              -0.5863187313079834,
+              0.0
+            ],
+            "hi": [
+              0.5863186717033386,
+              0.5863187313079834,
+              0.5154882073402405
+            ]
+          },
+          "max_error_cm": 6.9141387939453125e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_paigle_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a",
+        "source_sha256": "dc90dfd9621eb53fccf5e6854509ba1150b001474e4261655e67c9e99f8a7149",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -30.92139434814453,
+              -30.921390533447266,
+              0.0
+            ],
+            "hi": [
+              30.92139434814453,
+              30.921390533447266,
+              31.013233184814453
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.30921390652656555,
+              -0.30921390652656555,
+              0.0
+            ],
+            "hi": [
+              0.30921390652656555,
+              0.30921390652656555,
+              0.31013232469558716
+            ]
+          },
+          "max_error_cm": 3.6954879760742188e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_simple_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a",
+        "source_sha256": "f9117f31558a9484a8d9a56edfc5d3f8a80fb444fd499fe64afcee15dcb94556",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -57.637447357177734,
+              -57.6374397277832,
+              0.0
+            ],
+            "hi": [
+              57.637447357177734,
+              57.6374397277832,
+              87.00074768066406
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.5763744115829468,
+              -0.5763744115829468,
+              0.0
+            ],
+            "hi": [
+              0.5763744115829468,
+              0.5763744115829468,
+              0.8700075149536133
+            ]
+          },
+          "max_error_cm": 6.198883056640625e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "grass_tulip_b",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+        "source_sha256": "9adb6296b767a780852b03be3ad2900f3728a2b674f189af36c04c1889b0d5ab",
+        "triangles": 8,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -49.035675048828125,
+              -49.03567123413086,
+              0.0
+            ],
+            "hi": [
+              49.035675048828125,
+              49.03567123413086,
+              63.36573791503906
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.4903567135334015,
+              -0.4903567135334015,
+              0.0
+            ],
+            "hi": [
+              0.4903567135334015,
+              0.4903567135334015,
+              0.6336573958396912
+            ]
+          },
+          "max_error_cm": 3.6954879760742188e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "ue_generic_grass_small_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a",
+        "source_sha256": "3830795ce6b961a2eda7e2046ebde4ea29301b1814d8e38604badaa08854d502",
+        "triangles": 6,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -28.550790786743164,
+              -26.34988021850586,
+              0.0
+            ],
+            "hi": [
+              16.98000144958496,
+              23.86998748779297,
+              16.253236770629883
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.2855078876018524,
+              -0.23869989812374115,
+              0.0
+            ],
+            "hi": [
+              0.16979999840259552,
+              0.26349878311157227,
+              0.16253237426280975
+            ]
+          },
+          "max_error_cm": 2.3245811462402344e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "ue_generic_grass_tall_a",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_a.ue_generic_grass_tall_a",
+        "source_sha256": "7b2702f2aa73c28d370c364f38446ec23ae52aa000b94b2e88d20044082ec033",
+        "triangles": 6,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -19.704078674316406,
+              -20.59840202331543,
+              0.0
+            ],
+            "hi": [
+              14.40000057220459,
+              19.94389533996582,
+              36.94459533691406
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.19704078137874603,
+              -0.19943897426128387,
+              0.0
+            ],
+            "hi": [
+              0.14399999380111694,
+              0.20598401129245758,
+              0.36944594979286194
+            ]
+          },
+          "max_error_cm": 2.086162567138672e-06,
+          "tolerance_cm": 0.01
+        }
+      },
+      {
+        "id": "ue_generic_grass_tall_b",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_b.ue_generic_grass_tall_b",
+        "source_sha256": "2af84f61d6f8efe84d17eafefc92ac96291afcdca14084dd90300585bedcff6f",
+        "triangles": 6,
+        "bounds": {
+          "ue_bounds_cm": {
+            "lo": [
+              -17.399368286132812,
+              -20.6358642578125,
+              0.0
+            ],
+            "hi": [
+              15.260001182556152,
+              19.726457595825195,
+              29.555675506591797
+            ]
+          },
+          "source_bounds_m": {
+            "lo": [
+              -0.17399366199970245,
+              -0.19726458191871643,
+              0.0
+            ],
+            "hi": [
+              0.1526000052690506,
+              0.2063586264848709,
+              0.2955567538738251
+            ]
+          },
+          "max_error_cm": 2.086162567138672e-06,
+          "tolerance_cm": 0.01
+        }
+      }
+    ],
+    "grass_types": [
+      {
+        "id": "layer_00",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_00.WT_layer_00",
+        "model_id": "grass_tulip_b",
+        "density_per_100m2": 8.0,
+        "weight_texture": "WT_GrassWeights0",
+        "weight_channel": 0,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_01",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_01.WT_layer_01",
+        "model_id": "grass_tulip_b",
+        "density_per_100m2": 8.0,
+        "weight_texture": "WT_GrassWeights0",
+        "weight_channel": 1,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_02",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_02.WT_layer_02",
+        "model_id": "grass_tulip_b",
+        "density_per_100m2": 8.0,
+        "weight_texture": "WT_GrassWeights0",
+        "weight_channel": 2,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_03",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_03.WT_layer_03",
+        "model_id": "grass_tulip_b",
+        "density_per_100m2": 8.0,
+        "weight_texture": "WT_GrassWeights0",
+        "weight_channel": 3,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_04",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_04.WT_layer_04",
+        "model_id": "grass_tulip_b",
+        "density_per_100m2": 8.0,
+        "weight_texture": "WT_GrassWeights1",
+        "weight_channel": 0,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_05",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_05.WT_layer_05",
+        "model_id": "grass_paigle_a",
+        "density_per_100m2": 6.0,
+        "weight_texture": "WT_GrassWeights1",
+        "weight_channel": 1,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_06",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_06.WT_layer_06",
+        "model_id": "grass_fill_a",
+        "density_per_100m2": 12.0,
+        "weight_texture": "WT_GrassWeights1",
+        "weight_channel": 2,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_07",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_07.WT_layer_07",
+        "model_id": "grass_blueberry_a",
+        "density_per_100m2": 6.0,
+        "weight_texture": "WT_GrassWeights1",
+        "weight_channel": 3,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_08",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_08.WT_layer_08",
+        "model_id": "grass_daisies_a",
+        "density_per_100m2": 6.0,
+        "weight_texture": "WT_GrassWeights2",
+        "weight_channel": 0,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_09",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_09.WT_layer_09",
+        "model_id": "grass_heather_a",
+        "density_per_100m2": 6.0,
+        "weight_texture": "WT_GrassWeights2",
+        "weight_channel": 1,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_10",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_10.WT_layer_10",
+        "model_id": "grass_simple_a",
+        "density_per_100m2": 16.0,
+        "weight_texture": "WT_GrassWeights2",
+        "weight_channel": 2,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_11",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_11.WT_layer_11",
+        "model_id": "grass_simple_a",
+        "density_per_100m2": 16.0,
+        "weight_texture": "WT_GrassWeights2",
+        "weight_channel": 3,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "layer_12",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_12.WT_layer_12",
+        "model_id": "grass_fill_a",
+        "density_per_100m2": 12.0,
+        "weight_texture": "WT_GrassWeights3",
+        "weight_channel": 0,
+        "start_cull_distance_cm": 9000,
+        "end_cull_distance_cm": 14000,
+        "collision": false
+      },
+      {
+        "id": "ue_short_grass_0",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_0.WT_ue_short_grass_0",
+        "model_id": "ue_generic_grass_small_a",
+        "density_per_100m2": 200.0,
+        "weight_texture": "WT_GrassWeights3",
+        "weight_channel": 1,
+        "start_cull_distance_cm": 7000,
+        "end_cull_distance_cm": 11000,
+        "collision": false
+      },
+      {
+        "id": "ue_short_grass_1",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_1.WT_ue_short_grass_1",
+        "model_id": "ue_generic_grass_tall_a",
+        "density_per_100m2": 150.0,
+        "weight_texture": "WT_GrassWeights3",
+        "weight_channel": 2,
+        "start_cull_distance_cm": 7000,
+        "end_cull_distance_cm": 11000,
+        "collision": false
+      },
+      {
+        "id": "ue_short_grass_2",
+        "asset": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_2.WT_ue_short_grass_2",
+        "model_id": "ue_generic_grass_tall_b",
+        "density_per_100m2": 120.0,
+        "weight_texture": "WT_GrassWeights3",
+        "weight_channel": 3,
+        "start_cull_distance_cm": 7000,
+        "end_cull_distance_cm": 11000,
+        "collision": false
+      }
+    ],
+    "weight_assets": {
+      "WT_GrassWeights0": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/WT_GrassWeights0.WT_GrassWeights0",
+      "WT_GrassWeights1": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/WT_GrassWeights1.WT_GrassWeights1",
+      "WT_GrassWeights2": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/WT_GrassWeights2.WT_GrassWeights2",
+      "WT_GrassWeights3": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/WT_GrassWeights3.WT_GrassWeights3"
+    },
+    "terrain": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain",
+    "grass_parent": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/WT_Grass.WT_Grass",
+    "allocation": "native Landscape Grass streams clusters around rendered views",
+    "cull_distance_conversion": "source distance rounded to nearest UE centimetre",
+    "source_collision": false,
+    "wind_animation": false,
+    "instance_distribution": "UE Halton with deterministic per-instance variation",
+    "layer_colour_formula": "source RGB masks and T0_a.r alpha; pow(source RGB endpoints,2.2), original alpha retained",
+    "visual_adapter": {
+      "schema": "wt_grass_visual_adapter_v2",
+      "source_normal_channels": {
+        "x": "A",
+        "y": "G",
+        "translucency": "B",
+        "smoothness": "R"
+      },
+      "source_normal_reference": "grass_generate.dshl:821-826",
+      "root_normals": "source ground-up, with tilted-tip normals from original vertical_angle parameters",
+      "source_tip_reference": "grass_generate_inc.dshl:254-257,525-529",
+      "ue_surface_adaptation": "world-space grass normals preserve the upper hemisphere for two-sided cards; source AG detail, B transmission and R gloss",
+      "minimum_normal_up_component": 0.2,
+      "ue_single_atlas_per_card": true,
+      "original_color_endpoints_unchanged": true,
+      "source_gamma_conversion_count": 1,
+      "density_per_100m2": [
+        200,
+        150,
+        120
+      ],
+      "hard_footprint_exclusions_unchanged": true,
+      "flower_scale_z": [
+        0.35,
+        0.65
+      ],
+      "baseline_definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99"
+    },
+    "source_normal_assets": {
+      "ue_generic_grass_small_a": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_small_a_PackedNormal.ue_generic_grass_small_a_PackedNormal",
+      "ue_generic_grass_tall_a": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_a_PackedNormal.ue_generic_grass_tall_a_PackedNormal",
+      "ue_generic_grass_tall_b": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_b_PackedNormal.ue_generic_grass_tall_b_PackedNormal"
+    },
+    "source_normal_channels": "AG normal XY, B translucency, R smoothness; source linear DDSx GAMMA_EQ_1",
+    "source_colour_contract": "gpuGrass.cpp srgb_color4; grass_generate.dshl:817-819; fast_grass.cpp:44-51/140-145",
+    "limitations": [
+      "UE distribution/short-card enhancement is not original Dagor grass placement",
+      "wind animation not implemented",
+      "native render acceptance at three spatial views is separate from preparation"
+    ]
+  },
+  "native_bake_attempts": [
+    {
+      "status": "incomplete",
+      "landscape_components": 1089,
+      "components_with_valid_data": 1089,
+      "components_with_weights": 1015,
+      "outdated_grass_maps_after_build": 1054,
+      "generated_hism_components": 536,
+      "generated_instances": 115911,
+      "collision_enabled_grass_components": 0,
+      "finish_assets_seconds": 0.03970640152692795,
+      "build_maps_seconds": 0.6058962978422642,
+      "update_instances_seconds": 0.01433350145816803,
+      "attempt": 1,
+      "elapsed_seconds": 0.7810000000026776
+    },
+    {
+      "status": "built",
+      "landscape_components": 1089,
+      "components_with_valid_data": 1089,
+      "components_with_weights": 1015,
+      "outdated_grass_maps_after_build": 0,
+      "generated_hism_components": 536,
+      "generated_instances": 115911,
+      "collision_enabled_grass_components": 0,
+      "finish_assets_seconds": 0.000346500426530838,
+      "build_maps_seconds": 9.837835799902678,
+      "update_instances_seconds": 0.0005927011370658875,
+      "attempt": 2,
+      "elapsed_seconds": 10.73399999999674
+    }
+  ],
+  "native_bake_policy": {
+    "max_attempts": 3,
+    "retry_budget_seconds": 300,
+    "require_strictly_decreasing_outdated": true,
+    "fixed_sleep_seconds": 0
+  },
+  "native_bake": {
+    "schema": "rmsim_landscape_grass_readback_v1",
+    "landscape": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Landscape_0",
+    "landscape_components": 1089,
+    "components_with_valid_data": 1089,
+    "components_with_weights": 1015,
+    "height_weight_bytes": 194592768,
+    "layers": [
+      {
+        "name": "layer_10",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_10.WT_layer_10",
+        "varieties": 1,
+        "weighted_components": 993,
+        "nonzero_weight_samples": 4319792,
+        "weight_byte_sum": 180753604,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a",
+            "density_per_100m2": 16,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.3799999952316284,
+            "scale_x_max": 0.699999988079071,
+            "scale_z_min": 0.2800000011920929,
+            "scale_z_max": 0.5199999809265137
+          }
+        ]
+      },
+      {
+        "name": "layer_11",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_11.WT_layer_11",
+        "varieties": 1,
+        "weighted_components": 1004,
+        "nonzero_weight_samples": 5683463,
+        "weight_byte_sum": 254989348,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a",
+            "density_per_100m2": 16,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.3799999952316284,
+            "scale_x_max": 0.699999988079071,
+            "scale_z_min": 0.2800000011920929,
+            "scale_z_max": 0.5199999809265137
+          }
+        ]
+      },
+      {
+        "name": "layer_12",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_12.WT_layer_12",
+        "varieties": 1,
+        "weighted_components": 1006,
+        "nonzero_weight_samples": 6976343,
+        "weight_byte_sum": 349158943,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a",
+            "density_per_100m2": 12,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.3799999952316284,
+            "scale_x_max": 0.699999988079071,
+            "scale_z_min": 0.2800000011920929,
+            "scale_z_max": 0.5199999809265137
+          }
+        ]
+      },
+      {
+        "name": "layer_00",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_00.WT_layer_00",
+        "varieties": 1,
+        "weighted_components": 112,
+        "nonzero_weight_samples": 298693,
+        "weight_byte_sum": 5644606,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+            "density_per_100m2": 8,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_01",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_01.WT_layer_01",
+        "varieties": 1,
+        "weighted_components": 11,
+        "nonzero_weight_samples": 1361,
+        "weight_byte_sum": 13592,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+            "density_per_100m2": 8,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_02",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_02.WT_layer_02",
+        "varieties": 1,
+        "weighted_components": 44,
+        "nonzero_weight_samples": 139909,
+        "weight_byte_sum": 2564065,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+            "density_per_100m2": 8,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_03",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_03.WT_layer_03",
+        "varieties": 1,
+        "weighted_components": 15,
+        "nonzero_weight_samples": 37205,
+        "weight_byte_sum": 863421,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+            "density_per_100m2": 8,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_04",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_04.WT_layer_04",
+        "varieties": 1,
+        "weighted_components": 26,
+        "nonzero_weight_samples": 84801,
+        "weight_byte_sum": 1962334,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b",
+            "density_per_100m2": 8,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_05",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_05.WT_layer_05",
+        "varieties": 1,
+        "weighted_components": 496,
+        "nonzero_weight_samples": 1433382,
+        "weight_byte_sum": 29902056,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a",
+            "density_per_100m2": 6,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_06",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_06.WT_layer_06",
+        "varieties": 1,
+        "weighted_components": 544,
+        "nonzero_weight_samples": 2545116,
+        "weight_byte_sum": 134385980,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a",
+            "density_per_100m2": 12,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.3799999952316284,
+            "scale_x_max": 0.699999988079071,
+            "scale_z_min": 0.2800000011920929,
+            "scale_z_max": 0.5199999809265137
+          }
+        ]
+      },
+      {
+        "name": "layer_07",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_07.WT_layer_07",
+        "varieties": 1,
+        "weighted_components": 496,
+        "nonzero_weight_samples": 1433382,
+        "weight_byte_sum": 29902056,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a",
+            "density_per_100m2": 6,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_08",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_08.WT_layer_08",
+        "varieties": 1,
+        "weighted_components": 938,
+        "nonzero_weight_samples": 1037852,
+        "weight_byte_sum": 15836601,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a",
+            "density_per_100m2": 6,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "layer_09",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_layer_09.WT_layer_09",
+        "varieties": 1,
+        "weighted_components": 971,
+        "nonzero_weight_samples": 2318643,
+        "weight_byte_sum": 39475276,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a",
+            "density_per_100m2": 6,
+            "start_cull_cm": 9000,
+            "end_cull_cm": 14000,
+            "scale_x_min": 0.4000000059604645,
+            "scale_x_max": 0.75,
+            "scale_z_min": 0.3499999940395355,
+            "scale_z_max": 0.6499999761581421
+          }
+        ]
+      },
+      {
+        "name": "ue_short_grass_0",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_0.WT_ue_short_grass_0",
+        "varieties": 1,
+        "weighted_components": 1015,
+        "nonzero_weight_samples": 11049259,
+        "weight_byte_sum": 1809792727,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a",
+            "density_per_100m2": 200,
+            "start_cull_cm": 7000,
+            "end_cull_cm": 11000,
+            "scale_x_min": 0.6499999761581421,
+            "scale_x_max": 1.399999976158142,
+            "scale_z_min": 0.699999988079071,
+            "scale_z_max": 1.399999976158142
+          }
+        ]
+      },
+      {
+        "name": "ue_short_grass_1",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_1.WT_ue_short_grass_1",
+        "varieties": 1,
+        "weighted_components": 1014,
+        "nonzero_weight_samples": 10512261,
+        "weight_byte_sum": 846390255,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_a.ue_generic_grass_tall_a",
+            "density_per_100m2": 150,
+            "start_cull_cm": 7000,
+            "end_cull_cm": 11000,
+            "scale_x_min": 0.6499999761581421,
+            "scale_x_max": 1.399999976158142,
+            "scale_z_min": 0.550000011920929,
+            "scale_z_max": 0.949999988079071
+          }
+        ]
+      },
+      {
+        "name": "ue_short_grass_2",
+        "grass_type": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Types/WT_ue_short_grass_2.WT_ue_short_grass_2",
+        "varieties": 1,
+        "weighted_components": 1014,
+        "nonzero_weight_samples": 10511530,
+        "weight_byte_sum": 845003240,
+        "variety_settings": [
+          {
+            "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_b.ue_generic_grass_tall_b",
+            "density_per_100m2": 120,
+            "start_cull_cm": 7000,
+            "end_cull_cm": 11000,
+            "scale_x_min": 0.6499999761581421,
+            "scale_x_max": 1.399999976158142,
+            "scale_z_min": 0.550000011920929,
+            "scale_z_max": 0.949999988079071
+          }
+        ]
+      }
+    ],
+    "instances_by_mesh": {
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b": 0,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a": 48,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a": 1539,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a": 38,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a": 30,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a": 74,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a": 1877,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a": 73015,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_a.ue_generic_grass_tall_a": 21869,
+      "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_b.ue_generic_grass_tall_b": 17421
+    },
+    "generated_hism_components": 536,
+    "generated_instances": 115911,
+    "instance_count_method": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+    "collision_enabled_grass_components": 0,
+    "status": "built",
+    "finish_assets_seconds": 0.000346500426530838,
+    "build_maps_seconds": 9.837835799902678,
+    "update_instances_seconds": 0.0005927011370658875,
+    "outdated_grass_maps_after_build": 0,
+    "preview_camera_count": 2,
+    "synchronous_instance_update_returned": true
+  },
+  "map_file_sha256_after": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "scene_import_report_sha256_after": "3c3bbe0975c69043fb0a21774a184999c071cece3b95f087629fb9448e652478",
+  "generated_instances": 115911,
+  "grass_layer_count": 16,
+  "source_geometry_changed": false,
+  "vehicle_physics_changed": false,
+  "finished_utc": "2026-11-18T09:57:12.953854+00:00"
+}

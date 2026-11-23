@@ -1,0 +1,216 @@
+{
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16",
+  "identity_scope": "historical rmuc-16 package before LF text canonicalization; no current-map release acceptance",
+  "release_candidate": false,
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\runtime-provenance.json",
+  "runtime_provenance_sha256": "2d9deaa4f091ec4f030c557838f44c93b95b6717c39fe04d53c5b09262bf8cd6",
+  "recorded_package_manifest_sha256": "6684af7ab92c428ef71d5eea8d31d227453d2c411c3b20af070736265a3327b6",
+  "current_package_manifest_sha256": "f5536d0d2d61d42e8710f8eb0dd30d4601863ee3e781a65e1e590ada7f98e240",
+  "historical_map_evidence_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\historical-map-inputs\\verification.json",
+  "historical_map_evidence_sha256": "55f686e0b4df42c8c3f535457e8e2aa9e4b0f0d4287ff269136159a4fd485cd5",
+  "historical_map_snapshot_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf",
+  "source_control_config_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10",
+  "status": "passed_for_historical_session",
+  "checks": [
+    {
+      "name": "recorded_navigation_has_all_original_fourteen_checks",
+      "passed": true
+    },
+    {
+      "name": "recorded_navigation_optional_xyz_capture_is_disabled",
+      "passed": true
+    },
+    {
+      "name": "recorded_production_clock_has_all_thirty_two_checks",
+      "passed": true
+    },
+    {
+      "name": "raw_clock_observations_reproduce_every_recorded_derived_value",
+      "passed": true,
+      "replay_checks": 32,
+      "raw_observations_sha256": "8cd06669398f9f24181f01dd30fd44dc6a6cabe76b6012b48df88af8fe8bbfb0",
+      "mismatched_fields": [],
+      "comparison": "Exact comparison after JSON serialization normalization; no timestamps, ratios, windows, thresholds or check values changed"
+    },
+    {
+      "name": "ninety_second_clock_covers_entire_action",
+      "passed": true,
+      "action_interval": {
+        "valid": true,
+        "samples": 1353,
+        "session_identity": [
+          "A842FF3C41C49A107E15208547B37CA8",
+          0
+        ],
+        "start_monotonic_s": 49842.6092846,
+        "end_monotonic_s": 49876.528993,
+        "start_sim_time_s": 28.844999355000002,
+        "end_sim_time_s": 62.769998597000004,
+        "phases": [
+          "cancel_settle",
+          "cancel_test",
+          "single_goal",
+          "waiting",
+          "waypoints"
+        ]
+      }
+    },
+    {
+      "name": "action_clock_and_status_share_one_native_identity",
+      "passed": true
+    },
+    {
+      "name": "action_and_clock_runtime_provenance_hashes_match",
+      "passed": true
+    },
+    {
+      "name": "observer_code_matches_recorded_scripts",
+      "passed": true
+    },
+    {
+      "name": "recorded_navigation_uses_current_source_five_meters_per_second",
+      "passed": true
+    },
+    {
+      "name": "original_physical_arrival_and_cancel_tolerances_pass",
+      "passed": true
+    },
+    {
+      "name": "recorded_default_map_manifest_has_preserved_original_bytes",
+      "passed": true
+    },
+    {
+      "name": "native_navigation_verified_both_recorded_map_inputs",
+      "passed": true
+    },
+    {
+      "name": "native_estimator_received_every_action_window_imu_sample",
+      "passed": true
+    },
+    {
+      "name": "startup_lidar_serial_oracle_has_all_six_checks",
+      "passed": true
+    }
+  ],
+  "created_utc": "2026-11-18T05:12:58.399849+00:00",
+  "evidence_wrapper_sha256": "bc978b6ade825e0f67676c806bb536732e047f4a274fdc75d77f03180b607094",
+  "original_checks": {
+    "navigation": 14,
+    "clock": 32,
+    "pointlio_imu_receipts": 19,
+    "startup_lidar_oracle": 6
+  },
+  "metrics": {
+    "single_error_m": 0.18230726781510592,
+    "final_waypoint_error_m": 0.10423550973155371,
+    "cancel": {
+      "name": "cancelled_vehicle_stopped",
+      "passed": true,
+      "braking_m": 0.0877755829795157,
+      "drift_m": 0.0
+    },
+    "realtime_factor": 1.0000240071886457,
+    "rolling_ten_second_factor_range": [
+      0.9972637629863428,
+      1.0028683018200226
+    ],
+    "rolling_windows": 81,
+    "scene_draw_hz": 59.97810843892667,
+    "scene_draw_rolling_range_hz": [
+      59.73812222800179,
+      60.13848720955832
+    ],
+    "sensor_rates": {
+      "imu": {
+        "imu": {
+          "measured_hz": 200.00000447145945,
+          "increments": {
+            "measured_samples": 18097,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        },
+        "mid360_imu": {
+          "measured_hz": 200.00000447145945,
+          "increments": {
+            "measured_samples": 18097,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        }
+      },
+      "lidar": {
+        "rays_per_second": 200000.00447145946,
+        "scans_per_second": 10.001657956936,
+        "increments": {
+          "traced_rays": 18097000,
+          "published_scans": 905,
+          "dropped_scans": 0,
+          "history_resets": 0
+        }
+      }
+    },
+    "imu_enclosing_interval": {
+      "first_log_line": 12,
+      "last_log_line": 20,
+      "sim_window_s": [
+        27.214999392,
+        67.349998495
+      ],
+      "duration_s": 40.134999103,
+      "counter_delta": {
+        "received": 8027,
+        "accepted": 8027,
+        "inferred_missing": 0,
+        "header_gaps": 0,
+        "duplicates": 0,
+        "backwards": 0
+      },
+      "expected_samples": 8027,
+      "max_header_interval_s": 0.005,
+      "max_callback_wall_gap_s": 0.061226,
+      "qualification": "The full measured enclosing interval must be loss-free; boundary segments are not interpolated."
+    }
+  },
+  "evidence": [
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\actions\\verification.json",
+      "sha256": "e022b05b100d4ce2ae24f27fd7036983ff6fc54c2131360c476591edcbb63ab8"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\actions\\trace.json",
+      "sha256": "5a8c3a1037cdf2c2c63014bc61385d4036ffa867b30223ff7fa48a69f4692b09"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\clock\\verification.json",
+      "sha256": "afd6976734932efcba02a121c919c2aa91bc4b2535231ac9b5df78dc3c86966e"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\clock\\observations.json",
+      "sha256": "8cd06669398f9f24181f01dd30fd44dc6a6cabe76b6012b48df88af8fe8bbfb0"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\status.json",
+      "sha256": "90738c65a91476cd3433ccc9a2e00da3e90821bb0c0042417954b6514f7004cf"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\imu-receipts\\verification.json",
+      "sha256": "e28ae3d84ba2c17dbb39a35a340cd36a6ce86edd73a212f45cf3630cf65ada92"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\oracle\\verification.json",
+      "sha256": "371ddb8c26a63678920f8f555154facfb5e80a3b9448842ce6ebb882fe253870"
+    }
+  ],
+  "amendment_created_utc": "2026-11-18T05:13:37.537374+00:00",
+  "amends": {
+    "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\analysis\\final-historical-audit-01\\verification.json",
+    "sha256": "6a1f037b4f7d391b4dba5fcad53fe5b91b6ae23bb8fd42446856e7d88ea70b2d",
+    "reason": "The initial audit compared an in-memory session tuple to its JSON array; all 32 derived checks and numerical values already matched"
+  },
+  "amendment_script_sha256": "1530cf3d304f1ba2e792c841ae168a5c1c5e09fcd737612682969c31eff797b8"
+}

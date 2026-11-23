@@ -1,0 +1,1294 @@
+{
+  "schema": "rmsim_native_map_gui_acceptance_v1",
+  "status": "passed",
+  "observed_utc": "2026-11-18T06:13:35.520672+00:00",
+  "scope": "Real public-entry viewport, OS keyboard input, saved Flanders scene, native HUD coordinates and parent-reviewed screenshots.",
+  "checks": [
+    {
+      "name": "owned_live_viewport_and_current_combined_module",
+      "status": "passed"
+    },
+    {
+      "name": "source_georeference_image_world_manifest_and_module_bindings",
+      "status": "passed"
+    },
+    {
+      "name": "hud_reads_native_actor_pose_and_live_telemetry_only_updates_on_supported_key_edges",
+      "status": "passed"
+    },
+    {
+      "name": "twelve_real_os_key_actions_and_sixteen_current_process_driving_edges",
+      "status": "passed"
+    },
+    {
+      "name": "four_m_toggles_match_os_holds_and_calibrated_native_hud_uv",
+      "status": "passed"
+    },
+    {
+      "name": "actual_physics_actor_pose_projects_to_map_position_heading_and_stable_final_vehicle",
+      "status": "passed"
+    },
+    {
+      "name": "eight_pngs_bound_to_owned_viewport_and_root_visual_review",
+      "status": "passed"
+    }
+  ],
+  "process": {
+    "schema": "rmsim_readonly_live_process_observation_v1",
+    "observed_utc": "2026-11-18T06:10:49.1710163Z",
+    "process_id": 43760,
+    "parent_process_id": 42532,
+    "created_utc": "2026-11-18T05:55:49.2358180Z",
+    "name": "UnrealEditor.exe",
+    "executable": "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "command": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\" \"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\" /Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode -game -ResX=1600 -ResY=1000 -NoSplash -MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\" -GimbalYaw=0 -GimbalPitch=0 -ForceDPCVars=r.Streaming.PoolSize=4096 -windowed -InputEvidence=\"D:/simulator-wt-vlaanderen/artifacts/gameplay/gyro-control/live-input.json\" -MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\" -SpawnId=\"default\" -d3d11 -NoShaderWorker -ContactPhysics ",
+    "main_window_handle": 11603146,
+    "running": true,
+    "loaded_module_path": "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Binaries\\Win64\\UnrealEditor-RMSim.dll",
+    "loaded_module_file_sha256": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+    "observation_method": "Get-CimInstance Win32_Process and Get-Process.Modules; no debugger or process mutation",
+    "evidence": {
+      "path": "artifacts/maps/wt-scene-20261118/gui-final-acceptance/process-observation.json",
+      "sha256": "2d05c3b56edba58f329eeadab20c55b347929a3e3937f76434d921f4a31e41ba",
+      "bytes": 1425
+    }
+  },
+  "module_scope": "Current combined workspace module, including concurrent destruction development.",
+  "entry": {
+    "public_entry": {
+      "path": "Play-WarThunder.cmd",
+      "sha256": "05927a7a1c7c29fd0cafe899a1cf03bb56f3bc4672396913bea2e76013d3b6fe",
+      "bytes": 602
+    },
+    "reported_launch_method": "Parent launched Play-WarThunder.cmd and observed its live UnrealEditor viewport.",
+    "input_method": "Win32 SendInput on the owned foreground viewport; no actor pose overrides were used for this GUI trial.",
+    "viewport_left_open": true
+  },
+  "source_identity": {
+    "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "map_definition": {
+      "path": "assets/maps/wt_vlaanderen/map.json",
+      "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431",
+      "bytes": 710
+    },
+    "scene_manifest": {
+      "path": "assets/maps/wt_vlaanderen/scene-source.json",
+      "sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+      "bytes": 1677248
+    },
+    "saved_world": {
+      "path": "unreal/RMSim/Content/RMSim/Maps/wt_vlaanderen/World.umap",
+      "sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+      "bytes": 235623415
+    },
+    "overview_definition": {
+      "path": "assets/maps/wt_vlaanderen/overview.json",
+      "sha256": "1a9c1233bb6758abb54800dfb3fe8bc49a91a43645cf63cc11c3cde4d2ac730b",
+      "bytes": 1883
+    },
+    "original_minimap_png": {
+      "path": "assets/maps/wt_vlaanderen/overview/avg_vlaanderen_tankmap.png",
+      "sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851",
+      "bytes": 973658
+    },
+    "georeference": {
+      "path": "assets/maps/wt_vlaanderen/overview/calibration.json",
+      "sha256": "ff43453d9b85949747969a6fa0b01c702c0468c5236b3b9a4a22abc4590ba33d",
+      "bytes": 27775
+    },
+    "native_saved_scene_audit": {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/summary.json",
+      "sha256": "d4895104610a4568b5c7fb49428698e44ce0ab56d77eb3516c36e1d880a9056c",
+      "bytes": 15921
+    },
+    "image_ros_corners_m": {
+      "top_left": [
+        0.0,
+        -2048.0
+      ],
+      "top_right": [
+        2048.0,
+        -2048.0
+      ],
+      "bottom_left": [
+        0.0,
+        0.0
+      ]
+    },
+    "minimap_span_m": 512,
+    "image_dimensions": [
+      1024,
+      1024
+    ],
+    "texture_asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapOverview.WT_MapOverview",
+    "corner_semantics": "continuous texture edges UV(0,0), UV(1,0), UV(0,1); not texel centers"
+  },
+  "supporting_sources_at_audit": [
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapOverview.cpp",
+      "sha256": "ef40ce1a43a2dde7d6112c5573c181c76cbc8f7f7503598bcfe11e5c1f5f0fc5",
+      "bytes": 20892
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapOverview.h",
+      "sha256": "5330c221547d1494ee4c81bfede6ef41ebb4eca7aada2976d29d6946173ecffc",
+      "bytes": 1556
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp",
+      "sha256": "2df4ef3e197bb48040248ac9700536912bbf63a4d78088c7537b7b4f5f619fff",
+      "bytes": 64714
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+      "sha256": "a5e5fe0accc1d6ee3a750bc39c305ad52b76643202b7fbe642d084f836ac05f4",
+      "bytes": 7448
+    },
+    {
+      "path": "tools/unreal/Start-PreparedVehicle.ps1",
+      "sha256": "08885a50dcf10d0d04238fc308c8012db1613e81a6322d320759e960fa7d02f4",
+      "bytes": 4730
+    },
+    {
+      "path": "tools/unreal/Run-ImportLab.ps1",
+      "sha256": "e41f023f5abf44c5d440ed6954c82451327a3f0c2654b43f7f3b1c3f293d2bf0",
+      "bytes": 6761
+    },
+    {
+      "path": "artifacts/maps/wt-scene-20261118/send-owned-map-key.ps1",
+      "sha256": "e3e2cfb16df4c5ec0fed2de380243faff528586e114cfb61c6ad4f726508c2a6",
+      "bytes": 5546
+    }
+  ],
+  "inputs": {
+    "action_count": 12,
+    "action_counts_by_key": {
+      "M": 4,
+      "W": 3,
+      "A": 2,
+      "Space": 2,
+      "Q": 1
+    },
+    "driving_supported_edge_count": 16,
+    "driving_event_counts": {
+      "W_press": 3,
+      "W_release": 3,
+      "A_press": 2,
+      "A_release": 2,
+      "Space_press": 2,
+      "Space_release": 2,
+      "TurnLeft_press": 1,
+      "TurnLeft_release": 1
+    },
+    "map_toggle_count": 4,
+    "all_key_up_sent": true,
+    "foreground_guard_interval_ms": 40,
+    "foreground_guard_basis": "Every hold loop checks the owned foreground PID; an exception records failed. All executions recorded sent.",
+    "stale_initial_live_input_records_excluded": [
+      {
+        "input_number": 1,
+        "updated_utc": "2026-11-18T03:54:25.933Z",
+        "reason": "Predates current process creation; excluded from this run's pose and event counts."
+      },
+      {
+        "input_number": 2,
+        "updated_utc": "2026-11-18T03:54:25.933Z",
+        "reason": "Predates current process creation; excluded from this run's pose and event counts."
+      }
+    ],
+    "first_current_process_driving_sample": "2026-11-18T05:59:26.259Z",
+    "sampling_semantics": "live-input.json updates only on supported driving-key edges. M has its own HUD log. A released vehicle can keep slowing, so a later screenshot is not required to equal the last release-event pose.",
+    "actions": [
+      {
+        "number": 1,
+        "key": "M",
+        "requested_duration_ms": 500,
+        "actual_hold_ms": 521,
+        "started_utc": "2026-11-18T05:57:54.5334930Z",
+        "finished_utc": "2026-11-18T05:57:55.1172437Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-01-m-open/execution.json",
+          "sha256": "c76b84b0f0a3e3ce530e6084f7787193c5864fa8140a03c7aeed454f1dc02047",
+          "bytes": 1220
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-01-m-open/before-live-input.json",
+          "sha256": "cc70fe940caa69ce93e4415dee2020f6e7a89bf342a6e27305129fbfcf4a3e5c",
+          "bytes": 52970
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-01-m-open/after-live-input.json",
+          "sha256": "cc70fe940caa69ce93e4415dee2020f6e7a89bf342a6e27305129fbfcf4a3e5c",
+          "bytes": 52970
+        },
+        "before_live_input_from_current_process": false,
+        "after_live_input_from_current_process": false,
+        "driving_edge_delta": {},
+        "evidence_route": "Native MAP_OVERVIEW_TOGGLE log and reviewed PNG; M is outside live-input supported driving keys."
+      },
+      {
+        "number": 2,
+        "key": "M",
+        "requested_duration_ms": 500,
+        "actual_hold_ms": 524,
+        "started_utc": "2026-11-18T05:59:15.9386241Z",
+        "finished_utc": "2026-11-18T05:59:16.5254318Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-02-m-close/execution.json",
+          "sha256": "b7467d28a8a8919201b8797ac2bce68c9767f09e29d4c252355b44637429461f",
+          "bytes": 1220
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-02-m-close/before-live-input.json",
+          "sha256": "cc70fe940caa69ce93e4415dee2020f6e7a89bf342a6e27305129fbfcf4a3e5c",
+          "bytes": 52970
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-02-m-close/after-live-input.json",
+          "sha256": "cc70fe940caa69ce93e4415dee2020f6e7a89bf342a6e27305129fbfcf4a3e5c",
+          "bytes": 52970
+        },
+        "before_live_input_from_current_process": false,
+        "after_live_input_from_current_process": false,
+        "driving_edge_delta": {},
+        "evidence_route": "Native MAP_OVERVIEW_TOGGLE log and reviewed PNG; M is outside live-input supported driving keys."
+      },
+      {
+        "number": 3,
+        "key": "W",
+        "requested_duration_ms": 8000,
+        "actual_hold_ms": 8002,
+        "started_utc": "2026-11-18T05:59:18.1844403Z",
+        "finished_utc": "2026-11-18T05:59:26.2521533Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-03-forward/execution.json",
+          "sha256": "d80ff814c44b69c2284de257a4a0211bf26f9972ccbafec517f769de0c940de7",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-03-forward/before-live-input.json",
+          "sha256": "cc70fe940caa69ce93e4415dee2020f6e7a89bf342a6e27305129fbfcf4a3e5c",
+          "bytes": 52970
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-03-forward/after-live-input.json",
+          "sha256": "273652084aa2d97d6784c07acb989e1c984d1eb00e3a7bc31af3e62b47547da0",
+          "bytes": 49231
+        },
+        "before_live_input_from_current_process": false,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "W_press": 1,
+          "W_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T05:59:26.259Z",
+          "ue_actor_position_cm": [
+            104602.3054116361,
+            101995.70660592176,
+            -138.3580101137535
+          ],
+          "ue_actor_rotation_xyzw": [
+            0.03603375770149027,
+            -0.00307123019487102,
+            -0.03700559282618556,
+            0.9986604637966716
+          ],
+          "vehicle_ros_m": [
+            1046.023054116361,
+            -1019.9570660592176,
+            -1.383580101137535
+          ],
+          "image_uv": [
+            0.5107534443927544,
+            0.5019740888382727
+          ],
+          "ue_xy_heading_degrees": -4.251455670564327,
+          "screen_forward_unit_xy": [
+            0.9972483019592376,
+            0.0741338265531819
+          ],
+          "speed_cm_per_second": 298.21782761445905,
+          "physical_chassis_velocity_cm_s": [
+            298.24981689453125,
+            -1.5442887544631958,
+            1.8788793087005615
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0.026338908821344376,
+            0.0010522399097681046,
+            0.007281155325472355
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 4,
+        "key": "A",
+        "requested_duration_ms": 4000,
+        "actual_hold_ms": 4014,
+        "started_utc": "2026-11-18T06:00:53.2219283Z",
+        "finished_utc": "2026-11-18T06:00:57.3006551Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-04-strafe/execution.json",
+          "sha256": "ceca7061ef417864a202356f4c15be1d1386148daf1f60369b6594f3141dfd90",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-04-strafe/before-live-input.json",
+          "sha256": "273652084aa2d97d6784c07acb989e1c984d1eb00e3a7bc31af3e62b47547da0",
+          "bytes": 49231
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-04-strafe/after-live-input.json",
+          "sha256": "578aa40bebb579b8f8b7cacef9d644d0621d0703d933505b122f0239b1e0b46a",
+          "bytes": 49245
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "A_press": 1,
+          "A_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:00:57.309Z",
+          "ue_actor_position_cm": [
+            104771.42740148272,
+            101461.98126302143,
+            -143.54012496800866
+          ],
+          "ue_actor_rotation_xyzw": [
+            0.021709117807211277,
+            0.005304283871634755,
+            -0.003403674076383578,
+            0.9997444642404498
+          ],
+          "vehicle_ros_m": [
+            1047.7142740148272,
+            -1014.6198126302143,
+            -1.4354012496800865
+          ],
+          "image_uv": [
+            0.5115792353588023,
+            0.5045801696141532
+          ],
+          "ue_xy_heading_degrees": -0.3767617821326328,
+          "screen_forward_unit_xy": [
+            0.999978379941756,
+            0.0065756862045799145
+          ],
+          "speed_cm_per_second": 199.15989840359202,
+          "physical_chassis_velocity_cm_s": [
+            -0.08008705824613571,
+            -199.56044006347656,
+            -3.5405538082122803
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0.030807262286543846,
+            -0.01750435307621956,
+            0.006494393106549978
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 5,
+        "key": "W",
+        "requested_duration_ms": 8000,
+        "actual_hold_ms": 8015,
+        "started_utc": "2026-11-18T06:00:58.9788988Z",
+        "finished_utc": "2026-11-18T06:01:07.0528996Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-05-forward-grass/execution.json",
+          "sha256": "b3aa018d22af61a1556968a4a3c865543b384c16632506923cf9ca7aab7b44c6",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-05-forward-grass/before-live-input.json",
+          "sha256": "578aa40bebb579b8f8b7cacef9d644d0621d0703d933505b122f0239b1e0b46a",
+          "bytes": 49245
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-05-forward-grass/after-live-input.json",
+          "sha256": "694b857e5453510cc69f39e9429ac16dc5e5ca416cc555a0465e307ca9b1ed5a",
+          "bytes": 49155
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "W_press": 1,
+          "W_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:01:07.061Z",
+          "ue_actor_position_cm": [
+            106574.37001709387,
+            101381.29660457133,
+            -98.821973477684
+          ],
+          "ue_actor_rotation_xyzw": [
+            0.02351973947833777,
+            -0.04482915991731654,
+            -0.03953820089374085,
+            0.997934816982585
+          ],
+          "vehicle_ros_m": [
+            1065.7437001709386,
+            -1013.8129660457132,
+            -0.98821973477684
+          ],
+          "image_uv": [
+            0.5203826660990911,
+            0.5049741376729916
+          ],
+          "ue_xy_heading_degrees": -4.665282825569309,
+          "screen_forward_unit_xy": [
+            0.9966868527759803,
+            0.08133460212917536
+          ],
+          "speed_cm_per_second": 297.1794048297227,
+          "physical_chassis_velocity_cm_s": [
+            296.9906311035156,
+            -0.19592341780662537,
+            21.485641479492188
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            -0.0031232850160449743,
+            -0.011598215438425541,
+            -0.014466363936662674
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 6,
+        "key": "W",
+        "requested_duration_ms": 4000,
+        "actual_hold_ms": 4034,
+        "started_utc": "2026-11-18T06:03:20.5267736Z",
+        "finished_utc": "2026-11-18T06:03:24.6258528Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-06-enter-grass/execution.json",
+          "sha256": "82da352f2353e70074f9f4a65bb0b3a112acf898df9e0f34dcfa76a299fa0f5c",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-06-enter-grass/before-live-input.json",
+          "sha256": "694b857e5453510cc69f39e9429ac16dc5e5ca416cc555a0465e307ca9b1ed5a",
+          "bytes": 49155
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-06-enter-grass/after-live-input.json",
+          "sha256": "a224afeb799bab60bd08b2070a9ee8e5ee9578d59563f6cfb16fed7eb621a2e5",
+          "bytes": 49076
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "W_press": 1,
+          "W_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:03:24.629Z",
+          "ue_actor_position_cm": [
+            107355.17935122139,
+            101382.38582982912,
+            -46.44649383996995
+          ],
+          "ue_actor_rotation_xyzw": [
+            -0.009379930595376902,
+            -0.045334535621102616,
+            -0.072809761709109,
+            0.9962708142778787
+          ],
+          "vehicle_ros_m": [
+            1073.5517935122139,
+            -1013.8238582982912,
+            -0.46446493839969955
+          ],
+          "image_uv": [
+            0.5241952116758857,
+            0.5049688191902875
+          ],
+          "ue_xy_heading_degrees": -8.327794649709004,
+          "screen_forward_unit_xy": [
+            0.9894556442693293,
+            0.1448362110232332
+          ],
+          "speed_cm_per_second": 298.0123921912186,
+          "physical_chassis_velocity_cm_s": [
+            299.4069519042969,
+            0.19035211205482483,
+            19.983470916748047
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0.033810000866651535,
+            0.1054321750998497,
+            -0.006311994045972824
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 7,
+        "key": "A",
+        "requested_duration_ms": 1500,
+        "actual_hold_ms": 1530,
+        "started_utc": "2026-11-18T06:03:26.2813806Z",
+        "finished_utc": "2026-11-18T06:03:27.8819569Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-07-align-grass/execution.json",
+          "sha256": "9d446ce7254a5ea90bf48d2c96022b8bc961e735425f0539a865ad4fe9371954",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-07-align-grass/before-live-input.json",
+          "sha256": "a224afeb799bab60bd08b2070a9ee8e5ee9578d59563f6cfb16fed7eb621a2e5",
+          "bytes": 49076
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-07-align-grass/after-live-input.json",
+          "sha256": "393fc293543c71880c748f5b62397330c34d8b37856d06e6cb243210178e53f3",
+          "bytes": 49246
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "A_press": 1,
+          "A_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:03:27.886Z",
+          "ue_actor_position_cm": [
+            107523.37522023857,
+            101300.26677264382,
+            -31.998082151750154
+          ],
+          "ue_actor_rotation_xyzw": [
+            -0.018716976372916395,
+            -0.0384290672088702,
+            -0.08113244317375645,
+            0.995786326605045
+          ],
+          "vehicle_ros_m": [
+            1075.2337522023856,
+            -1013.0026677264382,
+            -0.3199808215175015
+          ],
+          "image_uv": [
+            0.5250164805675711,
+            0.5053697911492001
+          ],
+          "ue_xy_heading_degrees": -9.244742844992064,
+          "screen_forward_unit_xy": [
+            0.9870111112856161,
+            0.16065200340715705
+          ],
+          "speed_cm_per_second": 114.62972568163121,
+          "physical_chassis_velocity_cm_s": [
+            -0.6008999943733215,
+            -114.29273223876953,
+            4.664397716522217
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            -0.025048620998859406,
+            0.0002577144477982074,
+            -0.001370221027173102
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 8,
+        "key": "Space",
+        "requested_duration_ms": 400,
+        "actual_hold_ms": 429,
+        "started_utc": "2026-11-18T06:04:56.3350642Z",
+        "finished_utc": "2026-11-18T06:04:56.8365847Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-08-grass-brake/execution.json",
+          "sha256": "1f3b5574bf42c23eb8bc459a563e874b6cb9091f6f1bad8db336bb0081141156",
+          "bytes": 1224
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-08-grass-brake/before-live-input.json",
+          "sha256": "393fc293543c71880c748f5b62397330c34d8b37856d06e6cb243210178e53f3",
+          "bytes": 49246
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-08-grass-brake/after-live-input.json",
+          "sha256": "c7e5abc447a72b9727b1ee0cfe5008a7282ffefedcc836647858bcf15bcffe22",
+          "bytes": 44446
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "Space_press": 1,
+          "Space_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:04:56.837Z",
+          "ue_actor_position_cm": [
+            107523.19418063933,
+            101265.64368808924,
+            -30.58570480710192
+          ],
+          "ue_actor_rotation_xyzw": [
+            -0.00041061173016406806,
+            -0.03602494202193974,
+            -0.0787835174399877,
+            0.9962405293552888
+          ],
+          "vehicle_ros_m": [
+            1075.2319418063933,
+            -1012.6564368808924,
+            -0.3058570480710192
+          ],
+          "image_uv": [
+            0.525015596585153,
+            0.5055388491792517
+          ],
+          "ue_xy_heading_degrees": -9.053212351664573,
+          "screen_forward_unit_xy": [
+            0.9875426291589503,
+            0.15735169396555
+          ],
+          "speed_cm_per_second": 0,
+          "physical_chassis_velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 9,
+        "key": "Q",
+        "requested_duration_ms": 1000,
+        "actual_hold_ms": 1012,
+        "started_utc": "2026-11-18T06:05:44.2464415Z",
+        "finished_utc": "2026-11-18T06:05:45.3234457Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-09-yaw/execution.json",
+          "sha256": "91bfedbd760e34688adb30682d725d0784479cdcb6d0604ec3fd4d3e36a256e4",
+          "bytes": 1222
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-09-yaw/before-live-input.json",
+          "sha256": "c7e5abc447a72b9727b1ee0cfe5008a7282ffefedcc836647858bcf15bcffe22",
+          "bytes": 44446
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-09-yaw/after-live-input.json",
+          "sha256": "9b9089c82a822922a5cd2434d62d1cc6c461e9299e10b569a67a46df9897931b",
+          "bytes": 49144
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "TurnLeft_press": 1,
+          "TurnLeft_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:05:45.332Z",
+          "ue_actor_position_cm": [
+            107523.23677277497,
+            101265.65430499146,
+            -30.585038682628397
+          ],
+          "ue_actor_rotation_xyzw": [
+            0.023910150324827156,
+            -0.05424876972773906,
+            -0.618278036741079,
+            0.7837203869863719
+          ],
+          "vehicle_ros_m": [
+            1075.2323677277498,
+            -1012.6565430499146,
+            -0.30585038682628396
+          ],
+          "image_uv": [
+            0.5250158045545653,
+            0.5055387973389089
+          ],
+          "ue_xy_heading_degrees": -76.70689411624785,
+          "screen_forward_unit_xy": [
+            0.2299326377483754,
+            0.9732065464730878
+          ],
+          "speed_cm_per_second": 0.3876477047403981,
+          "physical_chassis_velocity_cm_s": [
+            -2.037196636199951,
+            3.0519120693206787,
+            -0.2694171369075775
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0.13367660343647003,
+            -0.09225912392139435,
+            -1.55623459815979
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 10,
+        "key": "Space",
+        "requested_duration_ms": 400,
+        "actual_hold_ms": 428,
+        "started_utc": "2026-11-18T06:05:46.9656748Z",
+        "finished_utc": "2026-11-18T06:05:47.4603690Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-10-yaw-brake/execution.json",
+          "sha256": "2b44b87943dbfc8843693880db7fc5662b2fc2558095739e12f215accb7e6846",
+          "bytes": 1224
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-10-yaw-brake/before-live-input.json",
+          "sha256": "9b9089c82a822922a5cd2434d62d1cc6c461e9299e10b569a67a46df9897931b",
+          "bytes": 49144
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-10-yaw-brake/after-live-input.json",
+          "sha256": "74afcc3388bfbd90d6b967cdca9adcc40d3c3cdccab5da69656058952d8f042b",
+          "bytes": 44426
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {
+          "Space_press": 1,
+          "Space_release": 1
+        },
+        "after_last_supported_edge_pose": {
+          "sample_utc": "2026-11-18T06:05:47.461Z",
+          "ue_actor_position_cm": [
+            107523.23512805886,
+            101265.60262443782,
+            -30.632244495512598
+          ],
+          "ue_actor_rotation_xyzw": [
+            0.030264843074513707,
+            -0.05501676690500255,
+            -0.7072947579099768,
+            0.7041245060825986
+          ],
+          "vehicle_ros_m": [
+            1075.2323512805885,
+            -1012.6560262443782,
+            -0.306322444955126
+          ],
+          "image_uv": [
+            0.5250157965237249,
+            0.5055390496853622
+          ],
+          "ue_xy_heading_degrees": -90.3775474681877,
+          "screen_forward_unit_xy": [
+            -0.0065893987160372735,
+            0.9999782896766114
+          ],
+          "speed_cm_per_second": 0,
+          "physical_chassis_velocity_cm_s": [
+            0,
+            0,
+            0
+          ],
+          "physical_chassis_angular_velocity_rad_s": [
+            0,
+            0,
+            0
+          ],
+          "window_focused": true,
+          "contact_physics": true,
+          "simulating_physics": true
+        }
+      },
+      {
+        "number": 11,
+        "key": "M",
+        "requested_duration_ms": 500,
+        "actual_hold_ms": 507,
+        "started_utc": "2026-11-18T06:05:50.7614307Z",
+        "finished_utc": "2026-11-18T06:05:51.3294602Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-11-fullmap-after-move/execution.json",
+          "sha256": "ed9c9fe7aa1ceb70952a212d7b9d99a7a4557c0f90506a81408724e720f0f456",
+          "bytes": 1220
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-11-fullmap-after-move/before-live-input.json",
+          "sha256": "74afcc3388bfbd90d6b967cdca9adcc40d3c3cdccab5da69656058952d8f042b",
+          "bytes": 44426
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-11-fullmap-after-move/after-live-input.json",
+          "sha256": "74afcc3388bfbd90d6b967cdca9adcc40d3c3cdccab5da69656058952d8f042b",
+          "bytes": 44426
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {},
+        "evidence_route": "Native MAP_OVERVIEW_TOGGLE log and reviewed PNG; M is outside live-input supported driving keys."
+      },
+      {
+        "number": 12,
+        "key": "M",
+        "requested_duration_ms": 500,
+        "actual_hold_ms": 511,
+        "started_utc": "2026-11-18T06:07:23.3724097Z",
+        "finished_utc": "2026-11-18T06:07:23.9547878Z",
+        "status": "sent",
+        "key_up_sent": true,
+        "execution": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-12-fullmap-close-handoff/execution.json",
+          "sha256": "b30a1ae427b16bd52c000813d9294941070b55b0ee3eb00d6d48dc6656951996",
+          "bytes": 1220
+        },
+        "before_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-12-fullmap-close-handoff/before-live-input.json",
+          "sha256": "74afcc3388bfbd90d6b967cdca9adcc40d3c3cdccab5da69656058952d8f042b",
+          "bytes": 44426
+        },
+        "after_live_input": {
+          "path": "artifacts/maps/wt-scene-20261118/gui-input-12-fullmap-close-handoff/after-live-input.json",
+          "sha256": "74afcc3388bfbd90d6b967cdca9adcc40d3c3cdccab5da69656058952d8f042b",
+          "bytes": 44426
+        },
+        "before_live_input_from_current_process": true,
+        "after_live_input_from_current_process": true,
+        "driving_edge_delta": {},
+        "evidence_route": "Native MAP_OVERVIEW_TOGGLE log and reviewed PNG; M is outside live-input supported driving keys."
+      }
+    ]
+  },
+  "native_log": {
+    "source_path": "unreal/RMSim/Saved/Logs/RMSim.log",
+    "snapshot": {
+      "path": "artifacts/maps/wt-scene-20261118/gui-final-acceptance/runtime-snapshot.log",
+      "sha256": "e809a1b7035dd2b40912afe4e608cb53780a182df21d5dc8985676dd30413de0",
+      "bytes": 509538
+    },
+    "source_bytes_read_once": 509538,
+    "scope": "Snapshot while PID 43760 remains running; later log appends are outside this artifact.",
+    "ready": "[2026.11.18-05.56.05:257][  1]LogTemp: Display: MAP_OVERVIEW_READY map=wt_vlaanderen texture=/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapOverview.WT_MapOverview image=1024x1024 span_m=512.000 source=427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f top_left_ros_m=(0.000000,-2048.000000) axis_u_m=(2048.000000,0.000000) axis_v_m=(0.000000,2048.000000) vehicle_uv=(0.501953125,0.501953125)",
+    "toggles": [
+      {
+        "utc": "2026-11-18T05:57:54.613000+00:00",
+        "expanded": 1,
+        "map_id": "wt_vlaanderen",
+        "vehicle_ros_m_printed": [
+          1028.0,
+          -1020.0,
+          -1.381
+        ],
+        "vehicle_uv_printed": [
+          0.50195323,
+          0.501953088
+        ],
+        "max_uv_residual_from_rounded_ros": 1.0500000002799936e-07,
+        "rounding_bound_uv": 2.44640626e-07
+      },
+      {
+        "utc": "2026-11-18T05:59:16+00:00",
+        "expanded": 0,
+        "map_id": "wt_vlaanderen",
+        "vehicle_ros_m_printed": [
+          1028.0,
+          -1020.0,
+          -1.381
+        ],
+        "vehicle_uv_printed": [
+          0.50195323,
+          0.501953088
+        ],
+        "max_uv_residual_from_rounded_ros": 1.0500000002799936e-07,
+        "rounding_bound_uv": 2.44640626e-07
+      },
+      {
+        "utc": "2026-11-18T06:05:50.826000+00:00",
+        "expanded": 1,
+        "map_id": "wt_vlaanderen",
+        "vehicle_ros_m_printed": [
+          1075.232,
+          -1012.656,
+          -0.306
+        ],
+        "vehicle_uv_printed": [
+          0.525015797,
+          0.50553905
+        ],
+        "max_uv_residual_from_rounded_ros": 1.720000000204891e-07,
+        "rounding_bound_uv": 2.44640626e-07
+      },
+      {
+        "utc": "2026-11-18T06:07:23.441000+00:00",
+        "expanded": 0,
+        "map_id": "wt_vlaanderen",
+        "vehicle_ros_m_printed": [
+          1075.232,
+          -1012.656,
+          -0.306
+        ],
+        "vehicle_uv_printed": [
+          0.525015797,
+          0.50553905
+        ],
+        "max_uv_residual_from_rounded_ros": 1.720000000204891e-07,
+        "rounding_bound_uv": 2.44640626e-07
+      }
+    ],
+    "render_readiness_lines": [
+      "[2026.11.18-05.56.07:410][ 24]LogRMSim: Display: SCENE_RENDER_READY assets=0 textures=0 meshes=0 shaders=0 pending=0 wanted=0 streaming_id=0->0 completed_frames=2 elapsed=2.095s"
+    ],
+    "texture_pool_lines": [
+      "[2026.11.18-05.56.04:920][  0]LogContentStreaming: Texture pool size now 4096 MB"
+    ],
+    "map_unavailable_count": 0
+  },
+  "coordinate_calculation": {
+    "ue_to_ros": "ROS metres = (UE X, -UE Y, UE Z) / 100",
+    "ros_to_uv": "u = ROS X / 2048; v = 1 + ROS Y / 2048",
+    "quaternion_forward_ue_xy": "fx = 1 - 2*(qy*qy + qz*qz); fy = 2*(qx*qy + qw*qz)",
+    "screen_direction": "normalize(fx, -fy), because this calibrated square image has +ROS X right and +ROS Y down",
+    "spawn_ros_m": [
+      1028,
+      -1020,
+      -1.3805752992630005
+    ],
+    "spawn_image_uv": [
+      0.501953125,
+      0.501953125
+    ],
+    "spawn_continuous_image_coordinates": [
+      514,
+      514
+    ],
+    "final_supported_edge_pose": {
+      "sample_utc": "2026-11-18T06:05:47.461Z",
+      "ue_actor_position_cm": [
+        107523.23512805886,
+        101265.60262443782,
+        -30.632244495512598
+      ],
+      "ue_actor_rotation_xyzw": [
+        0.030264843074513707,
+        -0.05501676690500255,
+        -0.7072947579099768,
+        0.7041245060825986
+      ],
+      "vehicle_ros_m": [
+        1075.2323512805885,
+        -1012.6560262443782,
+        -0.306322444955126
+      ],
+      "image_uv": [
+        0.5250157965237249,
+        0.5055390496853622
+      ],
+      "ue_xy_heading_degrees": -90.3775474681877,
+      "screen_forward_unit_xy": [
+        -0.0065893987160372735,
+        0.9999782896766114
+      ],
+      "speed_cm_per_second": 0,
+      "physical_chassis_velocity_cm_s": [
+        0,
+        0,
+        0
+      ],
+      "physical_chassis_angular_velocity_rad_s": [
+        0,
+        0,
+        0
+      ],
+      "window_focused": true,
+      "contact_physics": true,
+      "simulating_physics": true
+    },
+    "final_minus_spawn_ros_xy_m": [
+      47.232351280588546,
+      7.343973755621846
+    ],
+    "final_distance_from_spawn_xy_m": 47.79988449793762,
+    "before_q_stable_heading_degrees": -9.053212351664573,
+    "after_q_and_brake_stable_heading_degrees": -90.3775474681877,
+    "heading_change_degrees": -81.32433511652313,
+    "final_hud_rounded_ros_xy_m": [
+      1075.2,
+      -1012.7
+    ],
+    "pose_sampling_scope": "Final supported driving edge at 06:05:47.461Z. Subsequent native M logs independently confirm the same UV; screenshot observations remain timestamped separately.",
+    "ros_or_sensor_feedback_modified": false
+  },
+  "screenshots": [
+    {
+      "number": 1,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-01-minimap/entry.png",
+        "sha256": "c4b14a1833f0c17101b7f8e360515f45e1c257f08728daddba9896fa53bf769f",
+        "bytes": 3161955
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-01-minimap/window-context.json",
+        "sha256": "4c852e194344f736d921bcdcd2f75b5bce72574d5cdfa8ee4d18627aa32f7a91",
+        "bytes": 1390
+      },
+      "captured_utc": "2026-11-18T05:56:37.4623984Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "Minimap visible at ROS (1028.0,-1020.0), with vehicle and spawn markers.",
+      "screenshot_hud_ros_xy_m": [
+        1028,
+        -1020
+      ]
+    },
+    {
+      "number": 2,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-02-fullmap/entry.png",
+        "sha256": "04a684daa00bbbc0800f523f8c51d496b8966500e6aa421a0bb4961028213a82",
+        "bytes": 1953170
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-02-fullmap/window-context.json",
+        "sha256": "b4eaace63b4430be8feaa5c6653ac1f0a880f6499b3a674cb3c250ce9cd893c6",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T05:58:27.0196276Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "First real M press expands the complete original map.",
+      "screenshot_hud_ros_xy_m": [
+        1028,
+        -1020
+      ]
+    },
+    {
+      "number": 3,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-03-move-minimap/entry.png",
+        "sha256": "1c58a2357c3a323bbb0c37ff6bc726a7e36d93ff297d4a8f9f351cb09a5217f1",
+        "bytes": 3217485
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-03-move-minimap/window-context.json",
+        "sha256": "a4d75401ccf0056f17afb63bcae1b9a1369d7c63288e0ae25fce38aa9afaf6a7",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T05:59:40.8932881Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "After M closes and W driving, minimap HUD (1047.7,-1019.9); vehicle separates from spawn.",
+      "screenshot_hud_ros_xy_m": [
+        1047.7,
+        -1019.9
+      ]
+    },
+    {
+      "number": 4,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-04-grass-approach/entry.png",
+        "sha256": "cfdca112bde2ea766845bb9bb075da1808d2ea498870f6a5c11e305d972996b0",
+        "bytes": 2775713
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-04-grass-approach/window-context.json",
+        "sha256": "82941c4ef174e065bfebb64c42ac809b0c9547fbab51a0d16ee5afd67e7efe63",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T06:02:04.3790113Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "After A/W driving, HUD (1067.4,-1013.8); source grass/flowers and green far terrain visible.",
+      "screenshot_hud_ros_xy_m": [
+        1067.4,
+        -1013.8
+      ]
+    },
+    {
+      "number": 5,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-05-grass-field/entry.png",
+        "sha256": "8ebe6b3381ac074936d85f540d19d808b41b3a7254b97aa70daf4785ba4f1771",
+        "bytes": 3209099
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-05-grass-field/window-context.json",
+        "sha256": "73b3ab924faeca6bc56c267db85e7bcec2dc4beb3fd3c4e90b37f2c945d17e6d",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T06:04:58.5929853Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "Vehicle physically in source grass with pink/white flowers, HUD (1075.2,-1012.7); green/brown terrain visible.",
+      "screenshot_hud_ros_xy_m": [
+        1075.2,
+        -1012.7
+      ]
+    },
+    {
+      "number": 6,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-06-heading/entry.png",
+        "sha256": "a09ac4607200e7397fe612f5932f012bcdfb5f9ab5c361b647662500120c7e62",
+        "bytes": 3210627
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-06-heading/window-context.json",
+        "sha256": "2aa76838697867fbc6204ff358891167b1ebffecd60ef3d0ffee891385dd92c0",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T06:05:49.2318709Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "After Q and brake, minimap vehicle arrow points down, separate from spawn; HUD (1075.2,-1012.7).",
+      "screenshot_hud_ros_xy_m": [
+        1075.2,
+        -1012.7
+      ]
+    },
+    {
+      "number": 7,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-07-fullmap-heading/entry.png",
+        "sha256": "cc4750009dcc2fb64733c01b3cb6abb57132951662a098adaedce750cde013fe",
+        "bytes": 1965682
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-07-fullmap-heading/window-context.json",
+        "sha256": "07f389452b7c293700f0bfb6b17d816b69ce53fc5bef1b1b06b6e01d7cc7c49b",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T06:05:53.0605888Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "Second full-map opening shows the same downward heading and separated vehicle/spawn at HUD (1075.2,-1012.7).",
+      "screenshot_hud_ros_xy_m": [
+        1075.2,
+        -1012.7
+      ]
+    },
+    {
+      "number": 8,
+      "image": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-08-handoff/entry.png",
+        "sha256": "8d6def2075d33a7a6a96c578142b7f8527c1058b6e7d67d56c9d4a616728877e",
+        "bytes": 3209788
+      },
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "window_context": {
+        "path": "artifacts/maps/wt-scene-20261118/gui-final-08-handoff/window-context.json",
+        "sha256": "dd1859419d228d2a8281bdea51044150033e1c7527ba584c8c680fb35f8ca03a",
+        "bytes": 1388
+      },
+      "captured_utc": "2026-11-18T06:07:25.7990885Z",
+      "window_handle": 11603146,
+      "foreground_process_id": 43760,
+      "root_visual_review": "passed",
+      "root_visual_observation": "M closed for handoff; downward minimap arrow, separate spawn, HUD (1075.2,-1012.7), vehicle stopped in visible grass/flowers.",
+      "screenshot_hud_ros_xy_m": [
+        1075.2,
+        -1012.7
+      ]
+    }
+  ],
+  "visual_review": {
+    "reviewer": "/root agent",
+    "method": "Parent directly inspected all eight actual native viewport PNGs and reported findings in this task.",
+    "reviewed_image_count": 8,
+    "capture_context_scope": "window-context.json image_reviewed=false records the capture tool's initial state; this later parent visual review is recorded separately here.",
+    "old_white_placeholder_ground_observed": false,
+    "texture_pool_red_warning_observed": false,
+    "warning_observation_scope": "Parent reviewed screenshots 05 through 08.",
+    "grass_and_pink_white_flowers_observed": true,
+    "source_green_brown_terrain_observed": true,
+    "minimap_follow_position_and_heading_observed": true,
+    "two_full_map_open_close_cycles_observed": true,
+    "handoff_map_state": "minimap",
+    "handoff_process_state": "Owned GUI PID 43760 left open for user driving."
+  },
+  "generator": {
+    "path": "artifacts/maps/wt-scene-20261118/gui-final-acceptance/audit-gui.py",
+    "sha256": "ed933068df7dd90a5da98a38bfd31454fda5a754e451c8443294ddb74dc539ef",
+    "bytes": 22818
+  },
+  "completed_utc": "2026-11-18T06:13:35.979603+00:00"
+}

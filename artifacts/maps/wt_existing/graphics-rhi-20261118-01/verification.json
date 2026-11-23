@@ -1,0 +1,621 @@
+﻿{
+    "schema":  "rm_graphics_rhi_forwarding_verification_v1",
+    "status":  "passed",
+    "started_utc":  "2026-11-18T01:47:05.2921603Z",
+    "scope":  "actual production scripts with mocked process boundaries; no native runtime results fabricated",
+    "unreal_executed":  false,
+    "processes_terminated":  false,
+    "source_files":  [
+                         {
+                             "sha256":  "0af7c209de67b417d2933f0ee575067972f0555f0d71b1f9b593271a17ee3b8d",
+                             "path":  "tools/unreal/Run-ImportLab.ps1"
+                         },
+                         {
+                             "sha256":  "0599dac6199296a99cefc681125ef4dfb60c9d5ea06ec502958ff4e4187cd2bb",
+                             "path":  "tools/unreal/Test-ManualControls.ps1"
+                         },
+                         {
+                             "sha256":  "9590c06b92e046efdc3b3b853b758cc9c4197b6649fd2a7f04a46833e031a3c5",
+                             "path":  "tools/unreal/Start-PreparedVehicle.ps1"
+                         }
+                     ],
+    "checks":  [
+                   {
+                       "name":  "Run_ast_and_default",
+                       "passed":  true,
+                       "details":  {
+                                       "parse_errors":  0,
+                                       "default_rhi":  "Default"
+                                   }
+                   },
+                   {
+                       "name":  "Run_Default_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\""
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_Default_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-NoShaderWorker"
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_D3D11_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-d3d11"
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_D3D11_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-d3d11",
+                                                                  "-NoShaderWorker"
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_D3D12_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-d3d12"
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_D3D12_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-ResX=1600",
+                                                                  "-ResY=1000",
+                                                                  "-NoSplash",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-GimbalYaw=0",
+                                                                  "-GimbalPitch=0",
+                                                                  "-windowed",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-d3d12",
+                                                                  "-NoShaderWorker"
+                                                              ],
+                                       "exit_code":  -999
+                                   }
+                   },
+                   {
+                       "name":  "Run_invalid_rhi_rejected",
+                       "passed":  true,
+                       "details":  {
+                                       "process_boundary_calls":  0,
+                                       "rejected":  true
+                                   }
+                   },
+                   {
+                       "name":  "Test_ast_and_default",
+                       "passed":  true,
+                       "details":  {
+                                       "parse_errors":  0,
+                                       "default_rhi":  "Default"
+                                   }
+                   },
+                   {
+                       "name":  "Test_Default_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-Default-False-d8396772ebde4548bfeaedbb994b7b06\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-Default-False-d8396772ebde4548bfeaedbb994b7b06/runtime.log\"",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_Default_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-Default-True-4efa0a966374431cb4216b1de70fc75d\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-Default-True-4efa0a966374431cb4216b1de70fc75d/runtime.log\"",
+                                                                  "-NoShaderWorker",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_D3D11_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D11-False-638eb64d13ea47909ca876ab666bcbce\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D11-False-638eb64d13ea47909ca876ab666bcbce/runtime.log\"",
+                                                                  "-d3d11",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_D3D11_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D11-True-6f58dde826f741c5886df68452345066\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D11-True-6f58dde826f741c5886df68452345066/runtime.log\"",
+                                                                  "-d3d11",
+                                                                  "-NoShaderWorker",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_D3D12_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D12-False-3b553a57f16e4a85b59679ace7706b1c\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D12-False-3b553a57f16e4a85b59679ace7706b1c/runtime.log\"",
+                                                                  "-d3d12",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_D3D12_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "\"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\"",
+                                                                  "/Game/RMSim/Maps/wt_vlaanderen/World?game=/Script/RMSim.ImportLabGameMode",
+                                                                  "-game",
+                                                                  "-RenderOffScreen",
+                                                                  "-unattended",
+                                                                  "-NoSplash",
+                                                                  "-NoSound",
+                                                                  "-ContactProbe",
+                                                                  "-MapFile=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen/map.json\"",
+                                                                  "-SpawnId=\"default\"",
+                                                                  "-MeshRigFile=\"D:/simulator-wt-vlaanderen/assets/vehicles/aim_sentry/ue_mesh_rig.json\"",
+                                                                  "-EvidenceDir=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D12-True-a61e7189304f407698eca611d74c4171\"",
+                                                                  "-abslog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt_existing/graphics-rhi-20261118-01/fixture-Test-D3D12-True-a61e7189304f407698eca611d74c4171/runtime.log\"",
+                                                                  "-d3d12",
+                                                                  "-NoShaderWorker",
+                                                                  "-ContactReset",
+                                                                  "-ContactDistanceCm=340",
+                                                                  "-ContactSpeedMps=1"
+                                                              ],
+                                       "exit_code":  3
+                                   }
+                   },
+                   {
+                       "name":  "Test_invalid_rhi_rejected",
+                       "passed":  true,
+                       "details":  {
+                                       "process_boundary_calls":  0,
+                                       "rejected":  true
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_ast_and_default",
+                       "passed":  true,
+                       "details":  {
+                                       "parse_errors":  0,
+                                       "default_rhi":  "Default"
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_Default_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "Default",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_Default_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "Default",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "Default",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json",
+                                                                  "-SingleShaderWorker"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_D3D11_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "D3D11",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_D3D11_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D11",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "D3D11",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json",
+                                                                  "-SingleShaderWorker"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_D3D12_worker_False",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  false,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "D3D12",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_D3D12_worker_True",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "process_boundary_calls":  1,
+                                       "requested_rhi":  "D3D12",
+                                       "captured_arguments":  [
+                                                                  "-NoProfile",
+                                                                  "-File",
+                                                                  "D:\\simulator-wt-vlaanderen\\tools\\unreal\\Run-ImportLab.ps1",
+                                                                  "-EngineRoot",
+                                                                  "fixture-engine",
+                                                                  "-InputType",
+                                                                  "MeshRig",
+                                                                  "-InputFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+                                                                  "-MapFile",
+                                                                  "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+                                                                  "-SpawnId",
+                                                                  "default",
+                                                                  "-GraphicsRhi",
+                                                                  "D3D12",
+                                                                  "-ContactPhysics",
+                                                                  "-InputEvidence",
+                                                                  "D:\\simulator-wt-vlaanderen\\artifacts\\gameplay\\gyro-control\\live-input.json",
+                                                                  "-SingleShaderWorker"
+                                                              ],
+                                       "exit_code":  0
+                                   }
+                   },
+                   {
+                       "name":  "Prepared_invalid_rhi_rejected",
+                       "passed":  true,
+                       "details":  {
+                                       "process_boundary_calls":  0,
+                                       "rejected":  true
+                                   }
+                   },
+                   {
+                       "name":  "verification_preserves_requested_rhi_and_worker",
+                       "passed":  true,
+                       "details":  {
+                                       "fields":  [
+                                                      "requested_rhi",
+                                                      "single_shaderworker"
+                                                  ],
+                                       "inspection":  "production verification object"
+                                   }
+                   },
+                   {
+                       "name":  "flanders_entry_fixed_d3d11_worker",
+                       "passed":  true,
+                       "details":  {
+                                       "single_shaderworker":  true,
+                                       "requested_rhi":  "D3D11",
+                                       "cmd_executed":  false
+                                   }
+                   },
+                   {
+                       "name":  "other_play_entries_keep_default",
+                       "passed":  true,
+                       "details":  [
+                                       {
+                                           "path":  "Play-ManualVehicle.cmd",
+                                           "sha256":  "6848032545ec061dcdbaaaefbb3f030d70d3c02e01c9aaf75e27108b0b4c64fa",
+                                           "new_rhi_parameter_present":  false
+                                       },
+                                       {
+                                           "path":  "Play-Navigation.cmd",
+                                           "sha256":  "2a2d6f1da1e472b6085e57a17b96a43f762a3c5f8cf53c77f3e49dd9feb4645a",
+                                           "new_rhi_parameter_present":  false
+                                       }
+                                   ]
+                   }
+               ],
+    "check_count":  27,
+    "finished_utc":  "2026-11-18T01:47:06.1105321Z",
+    "forbidden_process_calls":  0,
+    "harness_sha256":  "eb8efdcca27aa866b9240c2a8a2c74f14f6a4cb571ae34b33b8f733999000569"
+}

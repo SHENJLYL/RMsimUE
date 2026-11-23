@@ -1,0 +1,37 @@
+{
+  "status": "failed",
+  "cases": [
+    {
+      "name": "engine-build-05",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\build_runtime_05.py"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_s": 20.765903500003333
+    },
+    {
+      "name": "bridge-build-06",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\build_bridge_06.py"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_s": 10.398152200003096
+    },
+    {
+      "name": "rmuc-08",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-08",
+        "--seconds",
+        "90"
+      ],
+      "exit_code": 2,
+      "elapsed_wall_s": 129.60522010000568
+    }
+  ],
+  "error": "RuntimeError('Candidate case failed: rmuc-08')"
+}

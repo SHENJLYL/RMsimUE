@@ -1,0 +1,156 @@
+{
+  "status": "passed",
+  "inputs_unchanged": true,
+  "frozen_inputs": {
+    "tools\\unreal\\Build-ImportLab.ps1": "604db00b88439b6ad15393f6eb0768c822a69dcbfb7edb14466006fb8053ca47",
+    "unreal\\RMSim\\RMSim.uproject": "f61181f3467f6afd38bdbea32213faa4db0c65ad7bda8926ab9149c8b35c75d3",
+    "unreal\\RMSim\\Source\\RMSim\\CombatProbe.cpp": "78e2378322fc7c6394ca7f782f454b458c910e78c3bbe5846a09bcd1d4b596ff",
+    "unreal\\RMSim\\Source\\RMSim\\ContactProbe.cpp": "7208d66a86ce1e971721b5c15c7345e11e4cad8c3766a9f23d0fbd270b30331c",
+    "unreal\\RMSim\\Source\\RMSim\\Control\\SentrySwerveKinematics.h": "84cf3907108cefa30ee634cee289f172014dd30f216d8841fc981b52162094b5",
+    "unreal\\RMSim\\Source\\RMSim\\GyroProbe.cpp": "0e2e1f358de28c7a806d54dc4de5448aec038488dae2f9f3c922662d0dd8d4c8",
+    "unreal\\RMSim\\Source\\RMSim\\ImportLabGameMode.cpp": "ba4d04f2adbce485724104239f3a5ab79157d9b4b247a1caa103b04dd1f9d6e8",
+    "unreal\\RMSim\\Source\\RMSim\\ImportLabGameMode.h": "3d6cafcc5449ea35eea716fd5c10afd189cc0b2496303454d8e35e5625ca4b95",
+    "unreal\\RMSim\\Source\\RMSim\\ImuFixture.cpp": "aa0a04ecdbf3fd21a96d8270667e6b0b6fc6303c93a041db91765e36db86d76a",
+    "unreal\\RMSim\\Source\\RMSim\\ManualControlProbe.cpp": "999592e6556342343b7ef4e706e2dfee843e70b9f8bfbaaa83059ac0e67adf86",
+    "unreal\\RMSim\\Source\\RMSim\\MapImportLibrary.cpp": "15bef529e17c630f55963badf40b3c08dd325bc31e5af7eb80b17094433e5f41",
+    "unreal\\RMSim\\Source\\RMSim\\MapImportLibrary.h": "49746ec6c5331e3a0496c7759945ce8cee72b11f53079d324383f05c1703b3cc",
+    "unreal\\RMSim\\Source\\RMSim\\MapStage.cpp": "c7ba9a3db1a2562aabc335524a5e4bf0abba22cea6ecfa8f36c7fd256d93eca8",
+    "unreal\\RMSim\\Source\\RMSim\\MapStage.h": "138714912781b9e15f5e2aaf8f8022cc5f9bbeaa99735ac1977683c537cc5f2f",
+    "unreal\\RMSim\\Source\\RMSim\\MeshMap.cpp": "6a97903da1fd499c68884a39e49b78309d32678f06e488dde2c1b4aa66064bc9",
+    "unreal\\RMSim\\Source\\RMSim\\Rendering\\SceneDrawCadence.h": "eefe250d29ac87e514bc6ca095264d70eeab0227891a574f25da4332398df57f",
+    "unreal\\RMSim\\Source\\RMSim\\RMSim.Build.cs": "efb448e4d8692dfa0f94dabcb1812a5d1c2cac0db573f6e19fdfe3b0deb733f7",
+    "unreal\\RMSim\\Source\\RMSim\\RMSim.cpp": "2ee8a82f63ac09c567742f553c546bae32ec45e7ed0d91ef45673fdbb6b73ef8",
+    "unreal\\RMSim\\Source\\RMSim\\RMSimGameEngine.cpp": "8657a497cb26c4115a03809d6ea9b88c5a5f5a34b6c233d743240da97f3b682e",
+    "unreal\\RMSim\\Source\\RMSim\\RMSimGameEngine.h": "f4555b439d0ce0f00d4caee723516f3a8b0abe981d956d0998169e9d162636a7",
+    "unreal\\RMSim\\Source\\RMSim\\RMSimViewportClient.cpp": "5a1efb949eb2e10ebd9330a09a95cc5fa1de6a4ebfd5a6e922e903ea1a95c121",
+    "unreal\\RMSim\\Source\\RMSim\\RMSimViewportClient.h": "f35454f33fe85f8aec63624b525ddbb67c1d85c8dd8f8ae3f8df3e9318ff7e8f",
+    "unreal\\RMSim\\Source\\RMSim\\RosAimController.cpp": "b8a9d3a2e9bc3ef284acb661f8b5209d08269a62fa6109313ed54c17be940be6",
+    "unreal\\RMSim\\Source\\RMSim\\RosAimController.h": "04224fbf0eab64f5e19c9c1acd3f47d55393f236c3a15a6cdcf7993d07cd534c",
+    "unreal\\RMSim\\Source\\RMSim\\RosBridgeComponent.cpp": "3167b9948e4b54465c5c338a4155d3a73b93e3989ed53e926408f341fe956536",
+    "unreal\\RMSim\\Source\\RMSim\\RosBridgeComponent.h": "ae49137945341d6a34b77a4b4ff6b7d36d9a218f5c5feff02ec9add8d1ecd106",
+    "unreal\\RMSim\\Source\\RMSim\\RosCoordinates.h": "9cc91f4abff0cb58610ae8eabeb2035aaadef7886946df45f29bfdfe1c3a9a2a",
+    "unreal\\RMSim\\Source\\RMSim\\RosImuComponent.cpp": "0689b14c78c82abf7b6b3c39a766f32684f37e0de2f94aed64e1c4b6d6d972ee",
+    "unreal\\RMSim\\Source\\RMSim\\RosImuComponent.h": "a902dd7627997fb3a875d6090469f6e35df060abeafceb2a15150a02fcfc52ba",
+    "unreal\\RMSim\\Source\\RMSim\\RosLidarComponent.cpp": "1b1dd66169a93072acbc37c941a53cb712efb8bd82c68c2beebc7d6429212bb2",
+    "unreal\\RMSim\\Source\\RMSim\\RosLidarComponent.h": "a1ce57096e31a026dd93c22706388ec071e32b67014ce6017a99a3e8eeb83ad3",
+    "unreal\\RMSim\\Source\\RMSim\\Sensors\\ScanCadence.h": "9472fdd4c16f58cb83b4bc61672b4a9d8d1d0060fd90d035ae520eafd937e85f",
+    "unreal\\RMSim\\Source\\RMSim\\SuspensionProbe.cpp": "f41966f590a3818b17cc93d9bc76fcea7c51b4a76dc3adfdb85cf82e9269d052",
+    "unreal\\RMSim\\Source\\RMSim\\TerrainProbe.cpp": "af533210c8b7d3a3a4036a2d26f9db944ef438446087452f27152ef39ba1501b",
+    "unreal\\RMSim\\Source\\RMSim\\TractionProbe.cpp": "26549892675d1cb13cc802abb34eda23c7bb0712160f3886166fda26ba20dde0",
+    "unreal\\RMSim\\Source\\RMSim\\TrainingRange.cpp": "1aa8da6f701484af1228207eeea36eb9f96190b0481e61f6a489dee3c6a47697",
+    "unreal\\RMSim\\Source\\RMSim\\TrainingRange.h": "2a4e9f94cf8b1a6fccaa606f10808d3ea745bfec1cc70d39bcdac6f972cdaa90",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleContactPhysics.cpp": "2dcea773e7b8872d63d4902ccbdcb6aec344fa1de5f12cfbdb20369adb61c201",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleDrive.cpp": "89a17c8cda814732a4b4fe8f663316b25cfc38a87ebc966b8df45da2925f4d07",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleMotorDrive.cpp": "8a367025587921fcbf1057ac2d80aabeac87ae80a98f051ac455606e1af67826",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleRig.cpp": "4aa3c7efd5e19690ab3164b35218ae244bfe3447e0697b874f74e3fec6913b5e",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleRig.h": "20cece26e9eedc95eb4aded00c60ebb7fc98d4b763f49937f380f0cf1497716d",
+    "unreal\\RMSim\\Source\\RMSim\\VehicleTerrain.cpp": "538ef9dff6a32d44561debc9c23603223910fbbd0f3b14b22b8bf1c249e71c4a",
+    "unreal\\RMSim\\Source\\RMSim.Target.cs": "3aebca7ec5d9306d3b543ea7ffe156bbeeee551c296f2445b5e34f77f7c02176",
+    "unreal\\RMSim\\Source\\RMSimEditor.Target.cs": "0d7171494e96489d230803633bcf429c90b7e1c0fbf91801e782a66216d979fc",
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+    "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+    "assets/maps/rmuc2027/navigation-console/SOURCE.json": "f5536d0d2d61d42e8710f8eb0dd30d4601863ee3e781a65e1e590ada7f98e240",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "be50ccce20d0d3d799079f76be5ff3cd620f1b6a4a19451750364c8cb4dfe778",
+    "tools/integration/navigation_console.py": "0dcee87b6b0b3b3de2e1e6dfc135464195b72fa369cb1fa34691bae382640d24",
+    "tools/integration/navigation_console_config.py": "674b05f8ede2b29fce487ecf79a94446b9a1b24515e192039c28e2f791b24d66",
+    "tools/integration/platform_cpu_policy.py": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+    "tools/integration/run_navigation_realtime_acceptance.py": "7b9f75f49f3f1e625a7449281d96ae746d5897c5b70a5dc19c16fddd3bb5396c"
+  },
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+    "--session",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-17",
+    "--seconds",
+    "90"
+  ],
+  "exit_code": 0,
+  "elapsed_wall_s": 129.74543290000292,
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "background_processes_before": [
+    {
+      "ProcessId": 39768,
+      "Name": "UnrealEditor-Cmd.exe",
+      "CreationDate": "/Date(1794979189174)/",
+      "KernelModeTime": 210937500,
+      "UserModeTime": 734531250,
+      "CommandLine": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe\" \"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\" -run=pythonscript -script=\"D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py\" -FoliagePackage=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen\" -FoliageReport=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-06-resume/verification.json\" -AbsLog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-06-resume/engine.log\" -d3d11 -AllowCommandletRendering -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound -ini:Engine:[DevOptions.Shaders]:ShaderCompilerCoreCountThreshold=1024,[DevOptions.Shaders]:NumUnusedShaderCompilingThreads=20,[DevOptions.Shaders]:NumUnusedShaderCompilingThreadsDuringGame=20,[DevOptions.Shaders]:bLogJobCompletionTimes=True -ResumeAuthoredAssets "
+    },
+    {
+      "ProcessId": 18600,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197239)/",
+      "KernelModeTime": 46250000,
+      "UserModeTime": 961250000,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/0/\" 39768 0 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 28400,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197284)/",
+      "KernelModeTime": 46250000,
+      "UserModeTime": 962343750,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/1/\" 39768 1 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 37468,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197288)/",
+      "KernelModeTime": 50468750,
+      "UserModeTime": 953750000,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/2/\" 39768 2 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 42460,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197291)/",
+      "KernelModeTime": 49687500,
+      "UserModeTime": 957968750,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/3/\" 39768 3 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    }
+  ],
+  "background_processes_after": [
+    {
+      "ProcessId": 39768,
+      "Name": "UnrealEditor-Cmd.exe",
+      "CreationDate": "/Date(1794979189174)/",
+      "KernelModeTime": 450156250,
+      "UserModeTime": 758125000,
+      "CommandLine": "\"E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe\" \"D:/simulator-wt-vlaanderen/unreal/RMSim/RMSim.uproject\" -run=pythonscript -script=\"D:/simulator-wt-vlaanderen/tools/unreal/author_wt_grass.py\" -FoliagePackage=\"D:/simulator-wt-vlaanderen/assets/maps/wt_vlaanderen\" -FoliageReport=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-06-resume/verification.json\" -AbsLog=\"D:/simulator-wt-vlaanderen/artifacts/maps/wt-scene-20261118/grass-native-06-resume/engine.log\" -d3d11 -AllowCommandletRendering -ForceDPCVars=r.Streaming.PoolSize=4096 -unattended -nop4 -NoSplash -nosound -ini:Engine:[DevOptions.Shaders]:ShaderCompilerCoreCountThreshold=1024,[DevOptions.Shaders]:NumUnusedShaderCompilingThreads=20,[DevOptions.Shaders]:NumUnusedShaderCompilingThreadsDuringGame=20,[DevOptions.Shaders]:bLogJobCompletionTimes=True -ResumeAuthoredAssets "
+    },
+    {
+      "ProcessId": 18600,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197239)/",
+      "KernelModeTime": 89843750,
+      "UserModeTime": 2129375000,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/0/\" 39768 0 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 28400,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197284)/",
+      "KernelModeTime": 94218750,
+      "UserModeTime": 2130781250,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/1/\" 39768 1 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 37468,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197288)/",
+      "KernelModeTime": 101093750,
+      "UserModeTime": 2116718750,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/2/\" 39768 2 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    },
+    {
+      "ProcessId": 42460,
+      "Name": "ShaderCompileWorker.exe",
+      "CreationDate": "/Date(1794979197291)/",
+      "KernelModeTime": 97968750,
+      "UserModeTime": 2128437500,
+      "CommandLine": "\"E:/simulator-tools/UE_5.8/Engine/Binaries/Win64/ShaderCompileWorker.exe\" \"C:/Users/SHEN/AppData/Local/Temp/UnrealShaderWorkingDir/B731B5C34DDFCCC9496BF7A65BE047D7/3/\" 39768 3 WorkerInputOnly.in WorkerOutputOnly.out -communicatethroughfile  -TimeToLive=20.000000 -Multiprocess -nothreading"
+    }
+  ],
+  "diagnostic_cloud_capture": false
+}

@@ -1,0 +1,82 @@
+{
+  "scope": "Native Windows MSVC production-helper test and fixed measured frame-time replay; distinct from live UE/ROS acceptance",
+  "input_csv": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-04\\cpu-profile\\Profile-20261118-101344.csv",
+  "input_csv_sha256": "07afed95c4ecaa8330500fac24f40887c17a6e524429a8a4aff2fd5f2f084c8c",
+  "input_data_frames": 16000,
+  "excluded_warmup_frames": 1000,
+  "replay_input_sha256": "0e2523c7f9d5a3ae00a6afa18d290b4a493b79a1de72e6d3c0af44724bc59436",
+  "files_sha256": {
+    "unreal/RMSim/Source/RMSim/Rendering/SceneDrawCadence.h": "eefe250d29ac87e514bc6ca095264d70eeab0227891a574f25da4332398df57f",
+    "unreal/RMSim/Source/RMSim/RMSimViewportClient.cpp": "5a1efb949eb2e10ebd9330a09a95cc5fa1de6a4ebfd5a6e922e903ea1a95c121",
+    "unreal/RMSim/Source/RMSim/RMSimViewportClient.h": "f35454f33fe85f8aec63624b525ddbb67c1d85c8dd8f8ae3f8df3e9318ff7e8f",
+    "tests/control/test_scene_draw_cadence.cpp": "fd957e862140e5ca60a515286f2202631ba0280b4c6471efe11e02067fb0332f"
+  },
+  "build_command": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scene-cadence-native-01\\build-test.cmd"
+  ],
+  "build_returncode": 0,
+  "test_command": [
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scene-cadence-native-01\\test_scene_draw_cadence.exe",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\scene-cadence-native-01\\rmuc04-frame-times-after-warmup-ms.txt"
+  ],
+  "test_returncode": 0,
+  "result": {
+    "status": "passed",
+    "checks": 47,
+    "rates": [
+      {
+        "target_hz": 10,
+        "epoch": 0,
+        "actual_draws": 600,
+        "seconds": 60
+      },
+      {
+        "target_hz": 30,
+        "epoch": 0,
+        "actual_draws": 1800,
+        "seconds": 60
+      },
+      {
+        "target_hz": 60,
+        "epoch": 0,
+        "actual_draws": 3600,
+        "seconds": 60
+      },
+      {
+        "target_hz": 120,
+        "epoch": 0,
+        "actual_draws": 7200,
+        "seconds": 60
+      },
+      {
+        "target_hz": 144,
+        "epoch": 0,
+        "actual_draws": 8640,
+        "seconds": 60
+      },
+      {
+        "target_hz": 60,
+        "epoch": 1000000,
+        "actual_draws": 3600,
+        "seconds": 60
+      }
+    ],
+    "replay": {
+      "opportunities": 15000,
+      "seconds": 75.0013418,
+      "old_actual_draws": 4346,
+      "new_actual_draws": 4491,
+      "old_hz": 57.9456299807,
+      "new_hz": 59.878928726,
+      "dropped_deadlines": 9,
+      "catchup_draws": 145,
+      "resyncs": 3
+    },
+    "scope": "standalone production-helper test and fixed frame-time replay; native UE render acceptance remains separate"
+  },
+  "status": "passed",
+  "wall_elapsed_s": 2.8027665999979945
+}

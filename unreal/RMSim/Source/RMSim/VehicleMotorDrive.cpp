@@ -1,4 +1,5 @@
 #include "VehicleRig.h"
+#include "MujocoVehicleDynamics.h"
 #include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Dom/JsonObject.h"
@@ -21,7 +22,7 @@ bool AVehicleRig::EnableMotorCurrentControl(double WheelNmPerAmp,double SteerNmP
     TSet<int> Corners;
     for(const auto& W:ContactWheels)
     {
-        if(!W.SteeringBody||!W.SteerJoint)return false;
+        if(!W.SteeringBody||(!W.SteerJoint&&!MujocoDynamics))return false;
         Corners.Add(Corner(W.RestLocalCm.X,W.LeftOffsetMetres));
     }
     if(Corners.Num()!=4)return false;
@@ -50,6 +51,7 @@ void AVehicleRig::SetMotorServosEnabled(bool Enabled)
     bApplyingMotorCurrent=!Enabled;
     for(auto& W:ContactWheels)
     {
+        if(MujocoDynamics){W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;continue;}
         W.SteerJoint->SetOrientationDriveTwistAndSwing(Enabled,false);
         W.SteerJoint->SetAngularVelocityDriveTwistAndSwing(Enabled,false);
         if(Enabled)W.SteerJoint->SetAngularDriveParams(GetDriveParameter(TEXT("SteeringStiffnessNmRad"))*10000,
@@ -65,6 +67,15 @@ void AVehicleRig::ApplyMotorCurrentDrive()
     for(auto& W:ContactWheels)
     {
         const int Index=Corner(W.RestLocalCm.X,W.LeftOffsetMetres);
+        if(MujocoDynamics)
+        {
+            MujocoDynamics->SetForceLimit(W.WheelPart,ContactMotorTorqueNm);
+            MujocoDynamics->SetForceLimit(W.SteeringPart,GetDriveParameter(TEXT("SteeringTorqueNm")));
+            MujocoDynamics->SetTorque(W.SteeringPart,-SteerCurrentCommands[Index]*AmpsPerCount*SteerTorqueNmPerAmp);
+            MujocoDynamics->SetTorque(W.WheelPart,WheelCurrentCommands[Index]*AmpsPerCount*WheelTorqueNmPerAmp*W.AxisLocal.Y);
+            double Rate=0;MujocoDynamics->GetJoint(W.SteeringPart,W.SteeringMeasuredRad,Rate);
+            W.SteeringTargetRad=FMath::UnwindRadians(W.SteeringMeasuredRad);continue;
+        }
         const FVector SteerAxis=W.Slider->GetUpVector();
         const FVector WheelAxis=W.SteeringBody->GetComponentQuat().RotateVector(W.AxisLocal);
         // Physical shaft torques and equal reactions; no velocity/position override.
@@ -99,6 +110,15 @@ TSharedRef<FJsonObject> AVehicleRig::GetMotorFeedback() const
             J->SetNumberField(TEXT("speed_deg_s"),FMath::Clamp(FMath::RoundToInt(FMath::RadiansToDegrees(Speed)),-32768,32767));
             J->SetNumberField(TEXT("current"),FMath::RoundToInt(Current));return MakeShared<FJsonValueObject>(J);
         };
+        if(MujocoDynamics)
+        {
+            double SteerAngle=0,SteerVelocity=0,WheelAngle=0,WheelVelocity=0;
+            MujocoDynamics->GetJoint(W.SteeringPart,SteerAngle,SteerVelocity);
+            MujocoDynamics->GetJoint(W.WheelPart,WheelAngle,WheelVelocity);
+            const bool Active=bApplyingMotorCurrent&&bMotorCommandValid&&!bContactBrake;
+            Steers[Index]=Feedback(-SteerAngle,-SteerVelocity,Active?SteerCurrentCommands[Index]:0);
+            Wheels[Index]=Feedback(WheelAngle*W.AxisLocal.Y,WheelVelocity*W.AxisLocal.Y,Active?WheelCurrentCommands[Index]:0);continue;
+        }
         const FVector Forward=W.Slider->GetComponentTransform().InverseTransformVectorNoScale(W.SteeringBody->GetForwardVector());
         const double Angle=FMath::Atan2(Forward.Y,Forward.X);
         const double SteerSpeed=FVector::DotProduct(W.SteeringBody->GetPhysicsAngularVelocityInRadians()-W.Slider->GetPhysicsAngularVelocityInRadians(),W.Slider->GetUpVector());

@@ -1,0 +1,149 @@
+{
+  "schema": "wt_unified_main_control_review_v1",
+  "status": "passed",
+  "scope": "read-only source merge review; live behavior uses subsequent native GUI/control gates",
+  "files": [
+    {
+      "file": "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp",
+      "snapshot_sha256": "ba4d04f2adbce485724104239f3a5ab79157d9b4b247a1caa103b04dd1f9d6e8",
+      "current_sha256": "9ae18af705879ddc94e346c472fdcb858fa3d33723d72bcc4098f79259f843bf",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+      "snapshot_sha256": "3d6cafcc5449ea35eea716fd5c10afd189cc0b2496303454d8e35e5625ca4b95",
+      "current_sha256": "9d910510d9c52f480d9e2d13deab2a50bac868035968a0de81ed54fb80fc4e77",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/VehicleRig.cpp",
+      "snapshot_sha256": "4aa3c7efd5e19690ab3164b35218ae244bfe3447e0697b874f74e3fec6913b5e",
+      "current_sha256": "4aa3c7efd5e19690ab3164b35218ae244bfe3447e0697b874f74e3fec6913b5e",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/VehicleRig.h",
+      "snapshot_sha256": "20cece26e9eedc95eb4aded00c60ebb7fc98d4b763f49937f380f0cf1497716d",
+      "current_sha256": "db238688e31ee3c9f697071937a1478fc13c950d1cdfb27c10ce61035c79e9e4",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/VehicleDrive.cpp",
+      "snapshot_sha256": "89a17c8cda814732a4b4fe8f663316b25cfc38a87ebc966b8df45da2925f4d07",
+      "current_sha256": "89a17c8cda814732a4b4fe8f663316b25cfc38a87ebc966b8df45da2925f4d07",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/VehicleContactPhysics.cpp",
+      "snapshot_sha256": "2dcea773e7b8872d63d4902ccbdcb6aec344fa1de5f12cfbdb20369adb61c201",
+      "current_sha256": "c3125850761c80d65dde968105f054723f78ffbb1e5e1dba8644a93ed1ee330d",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RMSimGameEngine.cpp",
+      "snapshot_sha256": "8657a497cb26c4115a03809d6ea9b88c5a5f5a34b6c233d743240da97f3b682e",
+      "current_sha256": "8657a497cb26c4115a03809d6ea9b88c5a5f5a34b6c233d743240da97f3b682e",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RMSimGameEngine.h",
+      "snapshot_sha256": "f4555b439d0ce0f00d4caee723516f3a8b0abe981d956d0998169e9d162636a7",
+      "current_sha256": "f4555b439d0ce0f00d4caee723516f3a8b0abe981d956d0998169e9d162636a7",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RMSimViewportClient.cpp",
+      "snapshot_sha256": "5a1efb949eb2e10ebd9330a09a95cc5fa1de6a4ebfd5a6e922e903ea1a95c121",
+      "current_sha256": "5a1efb949eb2e10ebd9330a09a95cc5fa1de6a4ebfd5a6e922e903ea1a95c121",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RMSimViewportClient.h",
+      "snapshot_sha256": "f35454f33fe85f8aec63624b525ddbb67c1d85c8dd8f8ae3f8df3e9318ff7e8f",
+      "current_sha256": "f35454f33fe85f8aec63624b525ddbb67c1d85c8dd8f8ae3f8df3e9318ff7e8f",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp",
+      "snapshot_sha256": "3167b9948e4b54465c5c338a4155d3a73b93e3989ed53e926408f341fe956536",
+      "current_sha256": "a7f797a65e8255102b3a910d7748d65d081234742bf43ca0fadd165b617f257c",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RosBridgeComponent.h",
+      "snapshot_sha256": "ae49137945341d6a34b77a4b4ff6b7d36d9a218f5c5feff02ec9add8d1ecd106",
+      "current_sha256": "2e827d18b20b4dc36db4c865833835514a1483499d158a4f3eeb4cea42cb3b0f",
+      "byte_identical": false
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RosLidarComponent.cpp",
+      "snapshot_sha256": "1b1dd66169a93072acbc37c941a53cb712efb8bd82c68c2beebc7d6429212bb2",
+      "current_sha256": "1b1dd66169a93072acbc37c941a53cb712efb8bd82c68c2beebc7d6429212bb2",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/RosLidarComponent.h",
+      "snapshot_sha256": "a1ce57096e31a026dd93c22706388ec071e32b67014ce6017a99a3e8eeb83ad3",
+      "current_sha256": "a1ce57096e31a026dd93c22706388ec071e32b67014ce6017a99a3e8eeb83ad3",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/Rendering/SceneDrawCadence.h",
+      "snapshot_sha256": "eefe250d29ac87e514bc6ca095264d70eeab0227891a574f25da4332398df57f",
+      "current_sha256": "eefe250d29ac87e514bc6ca095264d70eeab0227891a574f25da4332398df57f",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Source/RMSim/Sensors/ScanCadence.h",
+      "snapshot_sha256": "9472fdd4c16f58cb83b4bc61672b4a9d8d1d0060fd90d035ae520eafd937e85f",
+      "current_sha256": "9472fdd4c16f58cb83b4bc61672b4a9d8d1d0060fd90d035ae520eafd937e85f",
+      "byte_identical": true
+    },
+    {
+      "file": "assets/vehicles/aim_sentry/drive-profile.json",
+      "snapshot_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "current_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "byte_identical": true
+    },
+    {
+      "file": "unreal/RMSim/Config/DefaultEngine.ini",
+      "snapshot_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+      "current_sha256": "f4230933dc6a22b2b3ab3732e8db8c07925c078e65e5a863bca3bef5f7ac6286",
+      "byte_identical": false
+    }
+  ],
+  "findings": [
+    "main C/Shift/WASD implementation unchanged; C preserves physical aim, movement follows actual gimbal",
+    "drive profile unchanged: forward5/reverse2.5/lateral4 metres per second",
+    "main realtime viewport/game engine/cadence/LiDAR implementation unchanged",
+    "RosBridge only adds saved-scene identity classification",
+    "new map functionality is gated by saved-scene state; DefaultEngine adds RVT support and exact local pool"
+  ],
+  "grass_alpha": {
+    "mode": "Masked",
+    "clip": 0.3333333333333333,
+    "formula": "source paired Alpha.r * PerInstanceFadeAmount",
+    "linear": true,
+    "short_texture_size": [
+      256,
+      256
+    ],
+    "alpha_max": [
+      189,
+      226,
+      240
+    ],
+    "passing_fraction": [
+      0.3373260498,
+      0.5089874268,
+      0.512298584
+    ],
+    "cull_cm": [
+      7000,
+      11000
+    ],
+    "native_appearance": "pending; normal mip filtering may thin distant blades; no opaque background code path identified"
+  },
+  "no_production_files_changed": true,
+  "no_native_process_started": true
+}

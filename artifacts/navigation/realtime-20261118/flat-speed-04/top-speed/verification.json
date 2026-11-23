@@ -1,0 +1,457 @@
+{
+  "schema_version": 2,
+  "status": "failed",
+  "script_sha256": "83febc0ec41178148ba3c14fcad4f3162853fb11e5b51af149b5f845db7f1391",
+  "scope": "original Nav2 staging and formal actions; source-owned speed and smoothing; formal actual >=80% cap sustained for 0.3 s; truth only for evaluation",
+  "checks": [
+    {
+      "name": "observer_matches_the_requested_session",
+      "passed": true
+    },
+    {
+      "name": "fresh_import_lab_native_stack",
+      "passed": true,
+      "identity": [
+        "82252C4246757C6BDC66FE8E718AFE24",
+        0
+      ],
+      "start": [
+        2.2205285687437737e-06,
+        -0.0005169281574049611,
+        -0.01158141125993021
+      ]
+    },
+    {
+      "name": "source_speed_and_smoother_selected",
+      "passed": true
+    },
+    {
+      "name": "synchronized_drive_telemetry_available",
+      "passed": true
+    },
+    {
+      "name": "staging_original_nav2_goal_accepted",
+      "passed": true,
+      "goal": [
+        -8.5,
+        0.0
+      ],
+      "goal_id_hex": "34c61aab279a42e5bb41d62772bbe3e5",
+      "session_identity": [
+        "82252C4246757C6BDC66FE8E718AFE24",
+        0
+      ]
+    },
+    {
+      "name": "staging_original_nav2_action_succeeded",
+      "passed": true,
+      "status": 4
+    },
+    {
+      "name": "staging_actual_position_within_original_25cm",
+      "passed": true,
+      "error_m": 0.12249437842491898,
+      "tolerance_m": 0.25
+    },
+    {
+      "name": "staging_vehicle_stationary_before_formal_goal",
+      "passed": true,
+      "speed_mps": 0.0,
+      "stationary_seconds": 0.5049999889999981
+    },
+    {
+      "name": "staged_lane_has_source_speed_and_collision_clearance",
+      "passed": true,
+      "declared_length_m": 17.0,
+      "actual_length_m": 16.877645734594395,
+      "theoretical_minimum_length_m": 11.2,
+      "wall_clearance_m": 0.8323044737829957
+    },
+    {
+      "name": "original_nav2_goal_accepted",
+      "passed": true,
+      "goal": [
+        8.5,
+        0.0
+      ],
+      "goal_id_hex": "767e8789d7cc4bada4fa25f498f80759",
+      "session_identity": [
+        "82252C4246757C6BDC66FE8E718AFE24",
+        0
+      ]
+    },
+    {
+      "name": "actual_speed_sustained_at_source_threshold",
+      "passed": false,
+      "required_speed_mps": 4.0,
+      "required_duration_s": 0.3,
+      "observed_speed_mps": 0.9317707915850381,
+      "peak_mps": 3.0972900332906517,
+      "goal_finished_before_threshold": true
+    }
+  ],
+  "actions": [
+    {
+      "phase": "staging",
+      "session_identity": [
+        "82252C4246757C6BDC66FE8E718AFE24",
+        0
+      ],
+      "frame_id": "aim_sentry/map",
+      "goal_position_m": [
+        -8.5,
+        0.0,
+        0.0
+      ],
+      "goal_orientation_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "requested_stamp": 13.569999697,
+      "requested_wall": 50210.4589896,
+      "accepted": true,
+      "goal_id_hex": "34c61aab279a42e5bb41d62772bbe3e5",
+      "accepted_stamp": 13.569999697,
+      "accepted_wall": 50210.4608225,
+      "result_status": 4,
+      "result_stamp": 24.219999459,
+      "result_wall": 50221.0947148,
+      "result_position_m": [
+        -8.375919652091559,
+        -0.005857368982092788,
+        -0.011361157152494758
+      ]
+    },
+    {
+      "phase": "formal",
+      "session_identity": [
+        "82252C4246757C6BDC66FE8E718AFE24",
+        0
+      ],
+      "frame_id": "aim_sentry/map",
+      "goal_position_m": [
+        8.5,
+        0.0,
+        0.0
+      ],
+      "goal_orientation_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "requested_stamp": 24.789999446,
+      "requested_wall": 50221.6216085,
+      "accepted": true,
+      "goal_id_hex": "767e8789d7cc4bada4fa25f498f80759",
+      "accepted_stamp": 24.789999446,
+      "accepted_wall": 50221.6220134,
+      "result_status": 4,
+      "result_stamp": 32.569999272,
+      "result_wall": 50229.4084408,
+      "result_position_m": [
+        8.578879037949033,
+        -0.007271041678829511,
+        -0.009592589820967189
+      ]
+    }
+  ],
+  "contract": {
+    "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-04\\runtime-provenance.json",
+    "runtime_provenance_sha256": "83d928d46a9c2c80fa02ea1ad105c5c212a6d5e1f4c3f8b441d39dff227a4c41",
+    "scene_sha256": "7f7818d94d19e115ea04ecf319bd8c6ff7009fea6b45bb76078cd3ef6ef4b8fe",
+    "map_id": "import_lab",
+    "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+    "source_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10",
+    "source_cap_mps": 5.0,
+    "source_accel_mps2": 0.8,
+    "source_decel_mps2": 3.0,
+    "source_smoother_max_velocity": [
+      5.0,
+      2.0,
+      3.0
+    ],
+    "source_smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "source_smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "speed_threshold_mps": 4.0,
+    "sustained_seconds": 0.3,
+    "fixture_version": 2,
+    "goal": [
+      8.5,
+      0.0
+    ],
+    "start": [
+      -8.5,
+      0.0
+    ],
+    "spawn_start": [
+      0,
+      0
+    ],
+    "staging_goal": [
+      -8.5,
+      0.0
+    ],
+    "staging_position_tolerance_m": 0.25,
+    "staging_stop_speed_mps": 0.05,
+    "staging_stop_seconds": 0.5,
+    "staging_lane": {
+      "start_m": [
+        0,
+        0
+      ],
+      "goal_m": [
+        -8.5,
+        0.0
+      ],
+      "length_m": 8.5,
+      "swept_radius_m": 0.4676955262170047,
+      "wall_clearance_m": 0.8323044737829957,
+      "boundary_inner_half_extents_m": [
+        9.8,
+        9.8
+      ],
+      "obstacle_clearances": [
+        {
+          "id": "probe_box",
+          "additional_box_padding_clearance_m": 2.7323044737513738
+        },
+        {
+          "id": "tall_box",
+          "additional_box_padding_clearance_m": 3.63230447376436
+        }
+      ],
+      "clearance_method": "original conservative expanded oriented box and inner-wall test"
+    },
+    "formal_lane": {
+      "start_m": [
+        -8.5,
+        0.0
+      ],
+      "goal_m": [
+        8.5,
+        0.0
+      ],
+      "length_m": 17.0,
+      "swept_radius_m": 0.4676955262170047,
+      "wall_clearance_m": 0.8323044737829957,
+      "boundary_inner_half_extents_m": [
+        9.8,
+        9.8
+      ],
+      "obstacle_clearances": [
+        {
+          "id": "probe_box",
+          "additional_box_padding_clearance_m": 0.2323044737792207
+        },
+        {
+          "id": "tall_box",
+          "additional_box_padding_clearance_m": 0.5323044737715644
+        }
+      ],
+      "clearance_method": "original conservative expanded oriented box and inner-wall test",
+      "source_theoretical_minimum_length_m": 11.2,
+      "approach_velocity_scaling_dist_m": 2.0,
+      "length_before_approach_m": 15.0,
+      "theoretical_length_formula": "threshold^2/(2*source_accel) + threshold*sustained_seconds"
+    },
+    "approach_velocity_scaling_dist_m": 2.0,
+    "swept_radius_m": 0.4676955262170047,
+    "cancellation_latency_budget_s": 0.14500000000000002,
+    "latency_components_s": {
+      "controller_cycle": 0.05,
+      "smoother_cycle": 0.05,
+      "bridge_roundtrip_budget": 0.04,
+      "physics_step": 0.005
+    },
+    "tracking_time_allowance_s": 0.1,
+    "tracking_distance_allowance_m": 0.05,
+    "stop_time_allowance_s": 0.15
+  },
+  "runtime_provenance_sha256": "83d928d46a9c2c80fa02ea1ad105c5c212a6d5e1f4c3f8b441d39dff227a4c41",
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "82252C4246757C6BDC66FE8E718AFE24",
+      0
+    ],
+    "pids": {
+      "loam_interface": 46756,
+      "sensor_scan_generation": 45520,
+      "terrain_analysis": 43524,
+      "terrain_analysis_ext": 15568,
+      "pointcloud_to_laserscan": 42468,
+      "fake_vel_transform": 26048,
+      "map_server": 27216,
+      "amcl": 14656,
+      "lifecycle_manager_localization": 21884,
+      "controller_server": 11376,
+      "planner_server": 25068,
+      "smoother_server": 46688,
+      "behavior_server": 17752,
+      "bt_navigator": 47020,
+      "waypoint_follower": 45432,
+      "velocity_smoother": 20764,
+      "lifecycle_manager_navigation": 27540
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-04\\navigation\\20261118T050457Z-44264",
+    "map_id": "import_lab",
+    "initial_pose_sent": true,
+    "localization_map": null,
+    "localization_map_verified": true,
+    "localization_map_topics": null,
+    "map_input_fault": "",
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10"
+    },
+    "navigation_velocity_limit_mps": 5.0,
+    "smoother_max_velocity": [
+      5.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_truth": {
+    "stamp": 32.569999272,
+    "stamp_ns": 32569999272,
+    "wall": 50229.4012217,
+    "position": [
+      8.578879037949033,
+      -0.007271041678829511,
+      -0.009592589820967189
+    ],
+    "orientation_xyzw": [
+      -0.01604929979742358,
+      0.05405920136412648,
+      0.025538402327910485,
+      0.9980820671319685
+    ],
+    "frame_id": "rmsim_world",
+    "phase": "formal",
+    "session_identity": [
+      "82252C4246757C6BDC66FE8E718AFE24",
+      0
+    ],
+    "speed_mps": 0.9317707915850381
+  },
+  "staging_peak_speed_mps": 1.495646607086111,
+  "staging": {
+    "actual_position_m": [
+      -8.377644725580197,
+      -0.005836057518730638,
+      -0.01178298193337847
+    ],
+    "goal_m": [
+      -8.5,
+      0.0
+    ],
+    "action_status": 4,
+    "action_succeeded": true,
+    "actual_error_m": 0.12249437842491898,
+    "position_tolerance_m": 0.25,
+    "within_position_tolerance": true,
+    "speed_mps": 0.0,
+    "stop_speed_limit_mps": 0.05,
+    "stationary_seconds": 0.5049999889999981,
+    "required_stationary_seconds": 0.5,
+    "stopped": true,
+    "session_identity": [
+      "82252C4246757C6BDC66FE8E718AFE24",
+      0
+    ],
+    "goal_id_hex": "34c61aab279a42e5bb41d62772bbe3e5",
+    "stopped_start_stamp": 24.284999457,
+    "stopped_confirmed_stamp": 24.789999446
+  },
+  "measured_lane": {
+    "start_m": [
+      -8.377644725580197,
+      -0.005836057518730638
+    ],
+    "goal_m": [
+      8.5,
+      0.0
+    ],
+    "length_m": 16.877645734594395,
+    "swept_radius_m": 0.4676955262170047,
+    "wall_clearance_m": 0.8323044737829957,
+    "boundary_inner_half_extents_m": [
+      9.8,
+      9.8
+    ],
+    "obstacle_clearances": [
+      {
+        "id": "probe_box",
+        "additional_box_padding_clearance_m": 0.23368714067853646
+      },
+      {
+        "id": "tall_box",
+        "additional_box_padding_clearance_m": 0.5304378734467017
+      }
+    ],
+    "clearance_method": "original conservative expanded oriented box and inner-wall test",
+    "source_theoretical_minimum_length_m": 11.2,
+    "approach_velocity_scaling_dist_m": 2.0,
+    "length_before_approach_m": 14.877645734594395,
+    "theoretical_length_formula": "threshold^2/(2*source_accel) + threshold*sustained_seconds"
+  },
+  "formal_measurement": {
+    "session_identity": [
+      "82252C4246757C6BDC66FE8E718AFE24",
+      0
+    ],
+    "start_stamp": 24.789999446,
+    "start_wall": 50221.6215948,
+    "actual_start_position_m": [
+      -8.377644725580197,
+      -0.005836057518730638,
+      -0.01178298193337847
+    ],
+    "measurement_phase": "formal",
+    "goal_id_hex": "767e8789d7cc4bada4fa25f498f80759",
+    "sustained": {
+      "start_stamp": null,
+      "confirmed_stamp": 32.569999272,
+      "threshold_mps": 4.0,
+      "required_duration_s": 0.3
+    }
+  },
+  "actual_peak_speed_mps": 3.0972900332906517,
+  "error": "AssertionError('actual_speed_sustained_at_source_threshold')",
+  "trace_sha256": "169638ee750610da4d2e2828700ab0e69ed07a82303cd456fe89b5f344baf5fc"
+}

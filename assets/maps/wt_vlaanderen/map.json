@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "rm_scene_map",
+  "id": "wt_vlaanderen",
+  "display_name": "War Thunder - Flanders",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "level_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "bounds_m": {
+    "lo": [
+      -16384,
+      -16368,
+      -27.94476318359375
+    ],
+    "hi": [
+      16368,
+      16384,
+      76.86274719238281
+    ]
+  },
+  "spawns": [
+    {
+      "id": "default",
+      "team": "blue",
+      "position_m": [
+        439.0,
+        -148.3000030517578,
+        -3.467716648308154
+      ],
+      "yaw_rad": -2.0472659359862844
+    }
+  ],
+  "regions": []
+}

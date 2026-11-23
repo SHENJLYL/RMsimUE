@@ -9,6 +9,9 @@ description = "Validate portable RoboMaster vehicle packages and export restrict
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+test = ["jsonschema>=4"]
+
 [project.scripts]
 rm-vehicle = "rm_vehicle_tools.__main__:main"
 rm-map = "rm_map_tools.__main__:main"

@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "scope": "Production navigation default with no CSV CPU profiler; strict physical, sensor, rolling-clock and action thresholds unchanged",
+  "cases": [
+    {
+      "name": "rmuc-09",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-09",
+        "--seconds",
+        "90",
+        "--profile-frames",
+        "0"
+      ],
+      "exit_code": 2,
+      "elapsed_wall_s": 128.40275040000415
+    }
+  ],
+  "error": "RuntimeError('Candidate case failed: rmuc-09')"
+}

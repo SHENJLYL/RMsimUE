@@ -24,9 +24,11 @@ public:
     void Advance();
     void ResetEpoch();
     void SetOperatorBrake(bool Brake);
+    bool SupportsOperatorGyro() const {return bOperatorGyroAvailable;}
+    void SetOperatorGyro(double RateRadS);
     FString StatusText() const;
     bool HasClient() const { return Client!=nullptr; }
-    void SetMapIdentity(const FString& Id,const FString& Source,bool Mesh);
+    void SetMapIdentity(const FString& Id,const FString& Source,bool Mesh,bool SavedScene=false);
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
@@ -42,16 +44,25 @@ private:
     FString LastDisconnect;
     FString MapId,MapHash,MapKind;
     int64 SlowReaderDisconnects=0;
-    bool bControl=false,bOperatorBrake=false,bMotorControl=false;
-    bool bStallProbe=false,bStallInjected=false;
+    bool bControl=false,bOperatorBrake=false,bMotorControl=false,bOperatorGyroAvailable=false;
+    double OperatorGyroRateRadS=0.0;
+    double NavigationFrameYawRad=0.0;
+    bool bStallProbe=false,bStallInjected=false,bProfileSensorTiming=false;
+    double ProfileCameraWall=0,ProfileCameraStartSim=0;
+    int64 ProfileCameraCount=0;
     int32 Port=9451,Width=1280,Height=720,SendOffset=0;
     int64 Epoch=0,TickIndex=0,AcceptedSeq=-1,RejectedCommands=0,Images=0;
+    // Generic ROS retains 10Hz RGB; zero disables pixels while preserving TF/calibration.
     double CameraHz=10,HFovDegrees=60,EpochSolverTime=0,LastCommandWall=-1,LastPollWall=0,LastStateWall=0,LastSendProgressWall=0,NextImageSim=0;
     TArray<TSharedPtr<FJsonValue>> SensorMountSamples;
     int64 DroppedSensorMountSamples=0;
     TArray<uint8> Inbound,Outbound;
-    TArray<FColor> Pixels;
-    double LastSimTime=0,RealTimeFactor=0;
+    struct FCameraReadback;
+    TArray<TSharedPtr<FCameraReadback,ESPMode::ThreadSafe>> CameraReadbacks,FreeCameraReadbacks;
+    int64 CameraConnection=0,CameraReadbackMisses=0;
+    double LastSimTime=0,RealTimeFactor=0,RateWindowWall=0,RateWindowSim=0;
+    double StallCommandFloor=-1.,LastGameTickGapMs=0.;
+    int64 GameTickStalls=0;
     double SolverTime() const;
     void CloseSocket(FSocket*& Socket);
     void Disconnect(const FString& Reason);
@@ -59,5 +70,6 @@ private:
     bool ReadCommand(const TArray<uint8>& Line,double SimTime);
     void Receive(double SimTime);
     void SendPending();
-    bool QueueState(double SimTime,bool Capture);
+    void AdvanceCamera(double SimTime);
+    bool QueueState(double SimTime);
 };

@@ -1,0 +1,125 @@
+{
+  "schema": "wt_native_water_update_summary_v1",
+  "status": "passed",
+  "scope": "one_original_water_instance_and_one_dedicated_parent",
+  "pid": 21252,
+  "exit_code": 0,
+  "duration_seconds": 14.1722834,
+  "started_utc": "2026-11-18T05:46:24.8303190Z",
+  "finished_utc": "2026-11-18T05:46:39.0006039Z",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "module_sha256": "1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a",
+  "module_scope": "This exact execution binary also contains concurrent destruction-session changes; this record verifies the source water assets only.",
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "world_unchanged": true,
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_manifest_unchanged": true,
+  "source_water_contract": {
+    "schema": "wt_water_base_color_contract_v1",
+    "source_map_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "material_id": "WT_3baf052e10b5a3ecdbf7",
+    "source_mesh_id": "world_static_000",
+    "source_mesh_sha256": "07344e0ea99562383042088cb40887143744ab7847ab7d4aa68f07ea8e5772c7",
+    "material_slot": 4,
+    "source_audit_sha256": "83b8e07465427ec32048b667ccec72081eb52779ec170acbdffd0c64c2f56323",
+    "decoded_level_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+    "source_level_entry": "levels/avg_vlaanderen.blk",
+    "source_globals": {
+      "water_aces_color_and_density": [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.0,
+        15.0
+      ],
+      "water_aces_params": [
+        1.0,
+        0.30000001192092896,
+        5.0,
+        0.0
+      ]
+    },
+    "bound_source_rgb": [
+      0.20000000298023224,
+      0.20000000298023224,
+      0.0
+    ],
+    "geometry": {
+      "original_ponds": 3,
+      "source_triangles": 23,
+      "preserve_original_vertex_height": true
+    },
+    "ue_adapter": {
+      "blend": "Opaque",
+      "roughness": 1.0,
+      "metallic": 0.0,
+      "specular": 0.5,
+      "two_sided": true,
+      "world_position_offset": false
+    },
+    "renderer_coverage": "source_base_color_only",
+    "unresolved_source_semantics": [
+      "density W=15 consuming formula and units",
+      "water_aces_params consuming formula",
+      "original wave, reflection and refraction resources"
+    ]
+  },
+  "actual_color_rgba": [
+    0.20000000298023224,
+    0.20000000298023224,
+    0.0,
+    1.0
+  ],
+  "asset_count": 2,
+  "assets": [
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Water.WT_Parent_Water",
+      "file_sha256_before": "2667a168c9f083484fdea41ac5ee8d1aa786680ef3fe4aad79455dcbe1315743",
+      "file_sha256_after": "59c72d73f0cf4aa21918804855f86d09fe2cf232c8d68893698100941ca69108",
+      "completed_shader_statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 260,
+        "num_samplers": 3,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 3,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      }
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_3baf052e10b5a3ecdbf7.WT_3baf052e10b5a3ecdbf7",
+      "file_sha256_before": "3652b3556d638b279065028a8f07d80c8108fa1508d1ccb4af7d5f67b17ac952",
+      "file_sha256_after": "a1d6732b33b25d83ce3128efe4df9fb9d51c352b32033bf9fe2e2a0f09a3162c",
+      "completed_shader_statistics": {
+        "num_vertex_shader_instructions": 136,
+        "num_pixel_shader_instructions": 260,
+        "num_samplers": 3,
+        "num_vertex_texture_samples": 0,
+        "num_pixel_texture_samples": 3,
+        "num_virtual_texture_samples": 0,
+        "num_uv_scalars": 0,
+        "num_interpolator_scalars": 0
+      }
+    }
+  ],
+  "parent_graph_expressions": 4,
+  "checks": {
+    "source_identity": true,
+    "source_rgb": true,
+    "parent_graph": true,
+    "real_completed_shader_statistics": true,
+    "original_world_unchanged": true,
+    "original_source_manifest_unchanged": true
+  },
+  "check_count": 6,
+  "corrected_setter_guard_source_sha256": "6118aa0b5de326818f4a106445d28beff21bd46f20efadf89e0a786f03eab9fd",
+  "material_provenance_sha256_after": "002fb347cf305ba4c10778ed6a1f925caad81e13ba12357269f81ac18a1e99e5",
+  "independent_reload_verified": false,
+  "rendering_visual_quality_verified": false,
+  "execution_file": "execution.json",
+  "execution_sha256": "9773798293a4f3cafe358214516d246021ed118bbcefc495b4e911e207159cda",
+  "verification_file": "audit/verification.json",
+  "verification_sha256": "3a67f097c26285962760b36774e35587e85c9bbac15bc72fa55a3c435fb387aa",
+  "previous_failed_attempt": "../water-native-01/summary.json",
+  "previous_failed_summary_sha256": "6238e4d4ae77171add295a8ca95bd4ba067bb5b98e0e1263c306bc278ccc8f0a"
+}

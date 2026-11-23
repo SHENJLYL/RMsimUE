@@ -1,0 +1,310 @@
+{
+  "schema": "wt_saved_scene_supplement_reload_summary_v1",
+  "status": "passed",
+  "execution": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-03\\execution.json",
+    "sha256": "eb13c2c71956829629025db6bd40123ccf89c071abb176ff224e3bba745fbbb0",
+    "pid": 23056,
+    "exit_code": 0,
+    "duration_seconds": 16.1295905,
+    "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+    "module_sha256_after": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+    "world_sha256_before": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "world_sha256_after": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "status": "passed"
+  },
+  "verification": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-03\\audit\\verification.json",
+    "sha256": "9ed7722d89df42ebf30882a5cb3c8203cef4a5f7911836d4421ac5acabe6ff01"
+  },
+  "scene_checker_sha256": "2735196e00d39f130fe32423148398a8568b03402092c81ff34c6a3753368014",
+  "actual_check_count": 22,
+  "checks": [
+    {
+      "name": "native_api_available",
+      "passed": true
+    },
+    {
+      "name": "import_provenance",
+      "passed": true
+    },
+    {
+      "name": "saved_map_hash",
+      "passed": true
+    },
+    {
+      "name": "source_vertex_opacity_proofs",
+      "passed": true
+    },
+    {
+      "name": "imported_ground_decal_rvt_contract",
+      "passed": true
+    },
+    {
+      "name": "source_degenerate_geometry_fixture",
+      "passed": true
+    },
+    {
+      "name": "saved_world_loaded",
+      "passed": true
+    },
+    {
+      "name": "native_ground_decal_rvt_configuration",
+      "passed": true
+    },
+    {
+      "name": "world_source_identity",
+      "passed": true
+    },
+    {
+      "name": "native_original_mission_supplement",
+      "passed": true
+    },
+    {
+      "name": "native_scene_inventory",
+      "passed": true
+    },
+    {
+      "name": "saved_native_geometry_coverage",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_exists",
+      "passed": true
+    },
+    {
+      "name": "original_height_bytes",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_components",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2040_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2024",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2072_2040",
+      "passed": true
+    },
+    {
+      "name": "native_original_object_collision",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_saved_map",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_proof_bound_files",
+      "passed": true
+    }
+  ],
+  "base_inventory": {
+    "visual_groups": 726,
+    "expected_visual_groups": 726,
+    "collision_groups": 642,
+    "expected_collision_groups": 642,
+    "visual_placements": 35922,
+    "expected_visual_placements": 35922,
+    "collision_placements": 20033,
+    "expected_collision_placements": 20033,
+    "source_stored_instances": 45675,
+    "affine_baked_source_instances": 9850,
+    "loaded_hism_components": 1368,
+    "actor_count": 789,
+    "verified_mission_actors": 55,
+    "verified_mission_hism_components": 108,
+    "total_loaded_hism_components": 1476
+  },
+  "geometry_totals": {
+    "referenced_meshes": 1365,
+    "source_triangles": 13478813,
+    "expected_native_triangles": 13478779,
+    "actual_native_triangles": 13478779,
+    "strictly_coincident_source_triangles": 34
+  },
+  "verified_mission": {
+    "actors": 55,
+    "visual_hisms": 55,
+    "collision_hisms": 53,
+    "hism_components": 108,
+    "visual_instances": 67,
+    "collision_instances": 65,
+    "source_manifest_sha256": "e2e9bc224a7e7b101f1dd719df3cb201356ee3ded7907b61f869ba4610b2c283",
+    "scene_manifest_sha256": "2709c747a0e1087eb168b1f33607b8ca4d813a1d779248f44b04d49a58ceb864",
+    "preparation_verification_sha256": "ce1c6a05079fbeedf8eec70a50fa2c7ce43302b9f50b0bf9a7265fb4d18b2cff",
+    "instances_manifest_sha256": "4122f89818112ecb1b9fae3dcdf610d2a2770347825b8d1986a662bcaa72ae79",
+    "native_mesh_sha256_count": 108,
+    "max_instance_pose_error_cm": 0.0,
+    "max_bounds_error_cm": 0.0007169560703914613,
+    "source_visual_bounds_ue_cm": {
+      "lo": [
+        40030.055392302376,
+        91836.85561953133,
+        -1885.703444401
+      ],
+      "hi": [
+        61697.98815270363,
+        112283.39088460643,
+        4233.928107617703
+      ]
+    },
+    "native_visual_bounds_ue_cm": {
+      "lo": [
+        40030.055419921875,
+        91836.85522460938,
+        -1885.7033739089966
+      ],
+      "hi": [
+        61697.987548828125,
+        112283.3916015625,
+        4233.928217887878
+      ]
+    },
+    "verified_by": "original source preflight plus native actor/mesh/role/transform readback",
+    "unknown_extra_components_accepted": false
+  },
+  "proof_bound_file_count": 314,
+  "proof_bound_files_unchanged": true,
+  "world_unchanged": true,
+  "source_unchanged": true,
+  "module_unchanged": true,
+  "native_assets_written": [],
+  "rendered_quality_verified": false,
+  "vehicle_driving_verified": false,
+  "earlier_failures": [
+    {
+      "evidence": "scene-reload-01",
+      "execution": {
+        "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-01\\execution.json",
+        "sha256": "96663a12d950ebd2bd023d8a5901fba28cce1555f9cbfdfe41f5a8fc3158c7e7",
+        "pid": 51376,
+        "exit_code": -1,
+        "duration_seconds": 19.311074899999998,
+        "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+        "module_sha256_after": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+        "world_sha256_before": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+        "world_sha256_after": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+        "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+        "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+        "status": "failed"
+      },
+      "verification": {
+        "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-01\\audit\\verification.json",
+        "sha256": "d238b1eb275961debe599c1fc6188656daa5de885ab7ed9bbc0fc72085603519",
+        "status": "failed"
+      },
+      "error": "native_scene_inventory: {\"errors\": [], \"visual_groups\": 726, \"expected_visual_groups\": 726, \"collision_groups\": 642, \"expected_collision_groups\": 642, \"visual_placements\": 35922, \"expected_visual_placements\": 35922, \"collision_placements\": 20033, \"expected_collision_placements\": 20033, \"source_stored_instances\": 45675, \"affine_baked_source_instances\": 9850, \"loaded_hism_components\": 1476, \"actor_count\": 789}",
+      "failed_checks": [
+        {
+          "name": "native_scene_inventory",
+          "passed": false,
+          "errors": [],
+          "visual_groups": 726,
+          "expected_visual_groups": 726,
+          "collision_groups": 642,
+          "expected_collision_groups": 642,
+          "visual_placements": 35922,
+          "expected_visual_placements": 35922,
+          "collision_placements": 20033,
+          "expected_collision_placements": 20033,
+          "source_stored_instances": 45675,
+          "affine_baked_source_instances": 9850,
+          "loaded_hism_components": 1476,
+          "actor_count": 789
+        }
+      ],
+      "base_inventory": {
+        "visual_groups": 726,
+        "expected_visual_groups": 726,
+        "collision_groups": 642,
+        "expected_collision_groups": 642,
+        "visual_placements": 35922,
+        "expected_visual_placements": 35922,
+        "collision_placements": 20033,
+        "expected_collision_placements": 20033,
+        "source_stored_instances": 45675,
+        "affine_baked_source_instances": 9850,
+        "loaded_hism_components": 1476,
+        "actor_count": 789
+      },
+      "scene_checker_sha256": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+      "native_assets_changed": false
+    },
+    {
+      "evidence": "scene-reload-02",
+      "execution": {
+        "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-02\\execution.json",
+        "sha256": "4bbf82199c598ae830a14b6490f9dccde8f323b858c786d0d3e96fcc00b222c2",
+        "pid": 42896,
+        "exit_code": -1,
+        "duration_seconds": 13.1883316,
+        "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+        "module_sha256_after": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+        "world_sha256_before": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+        "world_sha256_after": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+        "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+        "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+        "status": "failed"
+      },
+      "verification": {
+        "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-reload-02\\audit\\verification.json",
+        "sha256": "6fbfccced692ee049110974ecda49189366a2b99f4e09982b7b82b4d1112bbfc",
+        "status": "failed"
+      },
+      "error": "native_scene_inventory: {\"errors\": [], \"visual_groups\": 726, \"expected_visual_groups\": 726, \"collision_groups\": 642, \"expected_collision_groups\": 642, \"visual_placements\": 35922, \"expected_visual_placements\": 35922, \"collision_placements\": 20033, \"expected_collision_placements\": 20033, \"source_stored_instances\": 45675, \"affine_baked_source_instances\": 9850, \"loaded_hism_components\": 1476, \"actor_count\": 789}",
+      "failed_checks": [
+        {
+          "name": "native_scene_inventory",
+          "passed": false,
+          "errors": [],
+          "visual_groups": 726,
+          "expected_visual_groups": 726,
+          "collision_groups": 642,
+          "expected_collision_groups": 642,
+          "visual_placements": 35922,
+          "expected_visual_placements": 35922,
+          "collision_placements": 20033,
+          "expected_collision_placements": 20033,
+          "source_stored_instances": 45675,
+          "affine_baked_source_instances": 9850,
+          "loaded_hism_components": 1476,
+          "actor_count": 789
+        }
+      ],
+      "base_inventory": {
+        "visual_groups": 726,
+        "expected_visual_groups": 726,
+        "collision_groups": 642,
+        "expected_collision_groups": 642,
+        "visual_placements": 35922,
+        "expected_visual_placements": 35922,
+        "collision_placements": 20033,
+        "expected_collision_placements": 20033,
+        "source_stored_instances": 45675,
+        "affine_baked_source_instances": 9850,
+        "loaded_hism_components": 1476,
+        "actor_count": 789
+      },
+      "scene_checker_sha256": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+      "native_assets_changed": false
+    }
+  ],
+  "source_change": {
+    "before_sha256": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+    "after_sha256": "2735196e00d39f130fe32423148398a8568b03402092c81ff34c6a3753368014",
+    "diff_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\scene-mission-checker-01\\verify_wt_scene.diff"
+  }
+}

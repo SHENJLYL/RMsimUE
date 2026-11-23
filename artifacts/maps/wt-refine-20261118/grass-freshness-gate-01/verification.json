@@ -1,0 +1,14 @@
+{
+  "schema": "wt_grass_generation_freshness_source_change_v1",
+  "status": "ready_for_native_build",
+  "source_sha256": {
+    "unreal/RMSim/Source/RMSim/MapVegetationLibrary.cpp": "d6e879e8299457474e5feb89a12931d032015b9888abd7e8cab95efac4165e63",
+    "tools/unreal/verify_wt_grass.py": "b7d98caae63e9c4bb63b1fef3516771684d7ec5467f8abedad4313efbd9e291d"
+  },
+  "validator_ast_passed": true,
+  "guard_cases_file": "guard-cases.json",
+  "guard_cases_sha256": "b9bf3515b7ce7c91508037796d97766d307ca95182db46fec53b72e1f125c80d",
+  "native_compile_run": false,
+  "native_readback_run": false,
+  "scope": "Read-only saved/current generation comparison; Build path and author source unchanged."
+}

@@ -160,12 +160,16 @@ def intrinsics(width, height, hfov_rad):
     return [focal, 0., width/2, 0., focal, height/2, 0., 0., 1.]
 
 
-def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id):
+def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id, *, operator_idle=False, navigation_frame=False):
     """values = linear x/y/z, angular x/y/z; unsupported components never disappear silently."""
     integer(sequence, 'sequence', 1)
     integer(stamp_ns, 'command stamp')
-    if frame_id != robot_id + '/base_link':
-        raise ProtocolError('cmd_vel must use the robot base_link frame')
+    frame = '/odom' if navigation_frame else '/base_link'
+    if frame_id != robot_id + frame:
+        required = 'odometry' if navigation_frame else 'robot base_link'
+        raise ProtocolError(f'cmd_vel must use the {required} frame')
+    if navigation_frame and not (state.get('drive') or {}).get('operator_gyro_available'):
+        raise ProtocolError('navigation velocity requires a native odometry frame')
     if len(values) != 6:
         raise ProtocolError('invalid twist')
     values = [number(v, 'twist') for v in values]
@@ -177,6 +181,10 @@ def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id):
     payload = dict(v=1, kind='command', session=state['session'], epoch=state['epoch'],
                    seq=sequence, stamp_ns=stamp_ns, frame_id=frame_id,
                    vx=values[0], vy=values[1], wz=values[5])
+    if operator_idle:
+        if any(values) or not (state.get('drive') or {}).get('operator_gyro_available'):
+            raise ProtocolError('operator idle spin requires zero twist and gyro capability')
+        payload['kind'] = 'operator_idle'
     raw = json.dumps(payload, allow_nan=False, separators=(',', ':')).encode('utf-8') + b'\n'
     if len(raw) > 4096:
         raise ProtocolError('command line exceeds limit')
@@ -226,7 +234,16 @@ def validate_imu(data,robot,sim_time):
     profiles=data.get('profiles');samples=data.get('samples');stats=data.get('stats')
     if not isinstance(profiles,list) or not 1<=len(profiles)<=4 or not isinstance(samples,list) or len(samples)>128 or not isinstance(stats,list) or len(stats)!=len(profiles):
         raise ProtocolError('invalid IMU batch size')
+    physical_v3 = data.get('profile_schema') == 'rm_imu_runtime_v3'
+    if physical_v3:
+        model = data.get('physical_model')
+        if (not isinstance(model, dict) or model.get('schema') != 'rm_mid360_imu_physical_v1'
+                or model.get('measurement_calibrated') is not False
+                or abs(number(model.get('support_latency_s'), 'IMU support latency')-.001) > 1e-12
+                or abs(number(model.get('integration_window_s'), 'IMU differentiation window')-.002) > 1e-12):
+            raise ProtocolError('invalid native-history IMU measurement model')
     ids=set()
+    physical_profiles={}
     for p in profiles:
         if not isinstance(p,dict):raise ProtocolError('invalid IMU profile')
         name=identifier(p.get('id'))
@@ -240,11 +257,22 @@ def validate_imu(data,robot,sim_time):
             values=vector(p.get(key),3,key)
             if 'std' in key and any(x<0 for x in values):raise ProtocolError('negative IMU noise')
         integer(p.get('noise_seed'),'IMU seed',0,2147483647)
+        if physical_v3:
+            measurement = p.get('measurement')
+            if not isinstance(measurement, dict):
+                raise ProtocolError('missing IMU range and quantization model')
+            for key in ('accel_range_mps2','gyro_range_rad_s','accel_quantization_mps2','gyro_quantization_rad_s'):
+                if number(measurement.get(key),key) < 0:
+                    raise ProtocolError('negative IMU measurement parameter')
+            physical_profiles[name] = (p['rate_hz'],measurement)
     seen_stats=set()
     for item in stats:
         if not isinstance(item,dict) or item.get('id') not in ids or item['id'] in seen_stats:raise ProtocolError('invalid IMU counters')
         seen_stats.add(item['id'])
         for key in ('measured_samples','missed_periods','dropped_samples','history_resets','invalid_samples'):integer(item.get(key),key)
+        if physical_v3:
+            for key in ('accel_saturated_axes','gyro_saturated_axes','history_misses','warmup_samples','delivery_suppressed_samples'):
+                integer(item.get(key),key)
     previous={}
     for s in samples:
         if not isinstance(s,dict) or s.get('id') not in ids:raise ProtocolError('unknown IMU sample id')
@@ -252,6 +280,19 @@ def validate_imu(data,robot,sim_time):
         if stamp>sim_time:raise ProtocolError('IMU sample ahead of physics state')
         if not 0<number(s.get('integration_dt_s'),'IMU integration interval')<=3600:raise ProtocolError('invalid IMU integration interval')
         vector(s.get('angular_velocity_rad_s'),3,'IMU gyro');vector(s.get('specific_force_mps2'),3,'IMU acceleration')
+        if physical_v3:
+            rate, measurement = physical_profiles[s['id']]
+            sample_index = round(stamp*rate/1_000_000_000)
+            grid_stamp = round(sample_index*1_000_000_000/rate)
+            if (abs(stamp-grid_stamp)>1 or stamp + 1_000_000 > sim_time
+                    or abs(s['integration_dt_s']-.002) > 1e-10):
+                raise ProtocolError('IMU sample lacks native support or left its emission grid')
+            for field,limit_key,quantum_key in (
+                    ('angular_velocity_rad_s','gyro_range_rad_s','gyro_quantization_rad_s'),
+                    ('specific_force_mps2','accel_range_mps2','accel_quantization_mps2')):
+                limit=measurement[limit_key]
+                if limit and any(abs(v)>limit+measurement[quantum_key]*.5+1e-7 for v in s[field]):
+                    raise ProtocolError('IMU sample exceeds the configured physical range')
         old=previous.get(s['id'])
         if old and (seq<=old[0] or stamp<=old[1]):raise ProtocolError('IMU batch not ordered')
         previous[s['id']]=(seq,stamp)
@@ -267,15 +308,66 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
     mount_pose(data,robot)
     if not isinstance(data.get('model'),str) or not isinstance(data.get('profile_md5'),str):raise ProtocolError('missing LiDAR model identity')
     # Parent-relative fixed transform validated above; dynamic joint samples are separate.
-    if not 100<=number(data.get('rays_per_second'),'ray rate')<=200000 or not 1<=number(data.get('frame_hz'),'LiDAR frame rate')<=30:raise ProtocolError('invalid LiDAR rate')
+    ray_rate = number(data.get('rays_per_second'), 'ray rate')
+    frame_rate = number(data.get('frame_hz'), 'LiDAR frame rate')
+    physical_v3 = data.get('profile_schema') == 'rm_lidar_runtime_v3'
+    capacity, period_ns, expected_slots = 2, 0, 0
+    if physical_v3:
+        model = data.get('physical_model')
+        if not isinstance(model, dict) or model.get('schema') != 'rm_mid360_physical_v1':
+            raise ProtocolError('invalid MID-360 physical model')
+        if ray_rate != 200000 or frame_rate not in (5, 10, 20, 50, 100):
+            raise ProtocolError('invalid MID-360 emission or publication rate')
+        if (integer(model.get('emission_interval_ns'), 'emission interval') != 5000
+                or integer(model.get('laser_channels'), 'laser channels') != 4
+                or model.get('retains_no_returns') is not True
+                or model.get('measurement_calibrated') is not False):
+            raise ProtocolError('invalid MID-360 measurement contract')
+        if (model.get('scan_pattern') not in ('spherical_fibonacci_approx', 'recorded_direction_replay')
+                or model.get('pose_time_model') != 'native_substep_translation_lerp_quaternion_slerp'
+                or model.get('scene_time_model') != 'current_ue_world_snapshot'):
+            raise ProtocolError('unsupported MID-360 scan or pose model')
+        for key,low_bound,high_bound in (
+                ('angular_noise_std_rad',0,.1),('range_noise_std_m',0,1),
+                ('near_range_noise_std_m',0,1),('noise_near_distance_m',.01,10),
+                ('noise_reference_distance_m',.01,100),('nir_default_reflectance',0,1)):
+            if not low_bound<=number(model.get(key),key)<=high_bound:
+                raise ProtocolError('invalid MID-360 measurement parameter: '+key)
+        if model['noise_reference_distance_m']<=model['noise_near_distance_m']:
+            raise ProtocolError('invalid MID-360 range-noise distance anchors')
+        for key,expected in (('range_reference_low_reflectance',.1),('range_reference_low_m',40),
+                             ('range_reference_high_reflectance',.8),('range_reference_high_m',70)):
+            if abs(number(model.get(key),key)-expected)>1e-12:
+                raise ProtocolError('MID-360 public detection anchor changed')
+        materials=model.get('nir_material_reflectance')
+        if (type(model.get('incidence_cosine')) is not bool or not isinstance(materials,dict)
+                or len(materials)>128):
+            raise ProtocolError('invalid MID-360 near-infrared material model')
+        for material,reflectance in materials.items():
+            if not isinstance(material,str) or not 1<=len(material)<=128 or not 0<=number(reflectance,'NIR reflectance')<=1:
+                raise ProtocolError('invalid MID-360 material reflectance')
+        capacity = integer(model.get('pending_scan_capacity'), 'pending scan capacity', 2, 8)
+        for key in ('emitted_slots', 'delivery_suppressed_slots', 'disconnected_slots', 'skipped_scan_windows'):
+            integer(data.get(key), key)
+        rejected = data.get('rejection_counts')
+        if not isinstance(rejected, dict):
+            raise ProtocolError('missing MID-360 rejection counters')
+        for key in ('no_hit', 'self_occluded', 'below_min_range', 'above_max_range',
+                    'insufficient_signal', 'missing_pose_history', 'optical_pass_limit', 'noise_outside_range'):
+            integer(rejected.get(key), 'rejected ' + key)
+        period_ns, expected_slots = round(1_000_000_000 / frame_rate), round(ray_rate / frame_rate)
+    elif not 100 <= ray_rate <= 200000 or not 1 <= frame_rate <= 30:
+        raise ProtocolError('invalid LiDAR rate')
     lo=number(data.get('min_range_m'),'minimum range');hi=number(data.get('max_range_m'),'maximum range')
     if not 0<lo<hi<=200:raise ProtocolError('invalid LiDAR range')
     low=number(data.get('elevation_min_rad'),'minimum elevation');high=number(data.get('elevation_max_rad'),'maximum elevation')
     if not -math.pi/2<=low<high<=math.pi/2:raise ProtocolError('invalid LiDAR elevation')
+    if physical_v3 and (lo<.1 or hi>70 or abs(low-math.radians(-7))>1e-9 or abs(high-math.radians(52))>1e-9):
+        raise ProtocolError('MID-360 range or field of view differs from its physical profile')
     for key in ('traced_rays','returns','missed_rays','dropped_scans','history_resets'):integer(data.get(key),key)
     if number(data.get('max_physics_step_s'),'physical time quantization')<0:raise ProtocolError('invalid LiDAR time quantization')
     scans=data.get('scans')
-    if not isinstance(scans,list) or len(scans)>2:raise ProtocolError('invalid bounded LiDAR scans')
+    if not isinstance(scans,list) or len(scans)>capacity:raise ProtocolError('invalid bounded LiDAR scans')
     offset=camera_bytes;previous=-1
     for scan in scans:
         if not isinstance(scan,dict):raise ProtocolError('invalid LiDAR scan')
@@ -285,10 +377,21 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
         length=integer(scan.get('byte_length'),'LiDAR bytes',0,65536*20)
         declared_offset=integer(scan.get('byte_offset'),'LiDAR offset',0,MAX_IMAGE)
         if seq<=previous or not start<=end<=sim_time or declared_offset!=offset or length!=n*20 or offset+length>len(payload):raise ProtocolError('invalid LiDAR payload layout/time')
+        if physical_v3 and (end - start != period_ns or start % period_ns or n != expected_slots):
+            raise ProtocolError('MID-360 scan must contain one complete emission window')
         last_time=-1
-        for dt,x,y,z,reflectivity,tag,line,pad in LIDAR_POINT.iter_unpack(memoryview(payload)[offset:offset+length]):
+        for slot,(dt,x,y,z,reflectivity,tag,line,pad) in enumerate(LIDAR_POINT.iter_unpack(memoryview(payload)[offset:offset+length])):
             if not all(math.isfinite(v) for v in (x,y,z)) or line>=4 or tag!=0 or pad!=0 or dt<last_time or start+dt>end+2:raise ProtocolError('invalid LiDAR return')
-            if x*x+y*y+z*z>(hi+.001)**2:raise ProtocolError('LiDAR return exceeds configured range')
+            radius2 = x*x+y*y+z*z
+            if radius2>(hi+.001)**2:raise ProtocolError('LiDAR return exceeds configured range')
+            if physical_v3:
+                if dt != slot * 5000 or line != ((start // 5000 + slot) % 4):
+                    raise ProtocolError('MID-360 emission time or channel sequence was altered')
+                if radius2 == 0:
+                    if reflectivity != 0:
+                        raise ProtocolError('MID-360 unavailable return must retain a zero slot')
+                elif radius2 < max(0., lo-.001)**2:
+                    raise ProtocolError('MID-360 return is inside the configured blind zone')
             last_time=dt
         offset+=length;previous=seq
     if offset!=len(payload):raise ProtocolError('unclaimed binary payload')

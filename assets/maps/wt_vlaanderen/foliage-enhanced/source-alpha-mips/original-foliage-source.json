@@ -1,0 +1,7965 @@
+{
+  "schema": "wt_foliage_source_v1",
+  "status": "prepared_source_inputs_pending_ue_foliage_adapter",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "official_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "source_config": {
+    "file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+    "sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+    "verification_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\verification.json",
+    "verification_sha256": "76e6a345fec4defa6610fbd076b0567063daccf4c547696abfebbf9a38ce6133",
+    "archive": {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\aces.vromfs.bin",
+      "sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+      "magic": "VRFx",
+      "target": 1129316352,
+      "header_size": 24,
+      "extension_flags": 0,
+      "version": 37552145,
+      "packed_size": 19892327,
+      "decoded_size": 27649792,
+      "body_sha256": "d337a4e5904179cef9654c110f55d0db9e8286ac83503cac8ffb52ed265f3f27",
+      "file_count": 26022
+    },
+    "entry": {
+      "name": "levels/avg_vlaanderen.blk",
+      "source_sha256": "2de8930e9f443ab6218567378514ff76b8ce86fd7cf2f06428c94e878fa23b9c",
+      "output": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+      "output_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+      "format_label": 5,
+      "decoded_bytes": 4563,
+      "local_names": 0,
+      "shared_names": 220116,
+      "blocks": 48,
+      "parameters": 514,
+      "complex_bytes": 216
+    }
+  },
+  "source_landclass": {
+    "file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\foliage-01\\landclasses\\avg_vlaanderen_detailed_biome.json",
+    "sha256": "66cb40e875ef86b612bd89bdc38a561a419061ce8e4597538ae3ee6f6640ade7",
+    "resource": {
+      "name": "avg_vlaanderen_detailed_biome",
+      "group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_locations.grp",
+      "resource_id": 258,
+      "class_id": 66804164,
+      "offset": 17793408,
+      "resource_bytes": 195056,
+      "resource_sha256": "8cf1aa8f23f927e07c5034bc91d485c35102bc9d46655d458126da30ecbb6b80",
+      "decompressed_bytes": 610308,
+      "decompressed_sha256": "c585726c4690113a430dcc54616c72e1d6416926c99c7e44ae94b75b9571d31b",
+      "rodata_size": 13728,
+      "header_u32": [
+        13728,
+        9464,
+        4,
+        0,
+        0,
+        3512,
+        4,
+        0,
+        0,
+        48,
+        0,
+        4294967295,
+        0,
+        928,
+        80,
+        0
+      ],
+      "strings": [
+        "burnt_grass",
+        "colorFrom",
+        "colorTo",
+        "detail",
+        "detailMul1",
+        "detailMul2",
+        "detail_weights_mul",
+        "details",
+        "grass_a",
+        "grass_b",
+        "grass_city_a",
+        "grass_city_b",
+        "grass_dead",
+        "grass_microdetail_removal_bits",
+        "grass_soil_a",
+        "grass_weight",
+        "landClassTextures",
+        "obj_plant_generate",
+        "texture",
+        "america_detailed_grass_masks",
+        "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_burn_trees_mask_8.tif",
+        "assets/landclasses/air_vs_ground_detailed/avg_vlaanderen/avg_vlaanderen_forest_mask_8.tif",
+        "avg_vlaanderen_detailed_biome_tex_b",
+        "avg_vlaanderen_detailed_biome_tex_d",
+        "avg_vlaanderen_detailed_biome_tex_f",
+        "biome_detail_asphalt_a_tex_d",
+        "biome_detail_asphalt_a_tex_r",
+        "biome_detail_asphalt_c_tex_d",
+        "biome_detail_asphalt_c_tex_r",
+        "biome_detail_burnt_grass_a_tex_d",
+        "biome_detail_burnt_grass_a_tex_r",
+        "biome_detail_city_tile_a_tex_d",
+        "biome_detail_city_tile_a_tex_r",
+        "biome_detail_forest_floor_a_tex_d",
+        "biome_detail_forest_floor_a_tex_r",
+        "biome_detail_grass_a_tex_d",
+        "biome_detail_grass_a_tex_r",
+        "biome_detail_grass_b_tex_d",
+        "biome_detail_grass_b_tex_r",
+        "biome_detail_grass_dead_a_tex_d",
+        "biome_detail_grass_dead_a_tex_r",
+        "biome_detail_moss_a_tex_d",
+        "biome_detail_moss_a_tex_r",
+        "biome_detail_mud_b_tex_d",
+        "biome_detail_mud_b_tex_r",
+        "biome_detail_pebbles_shore_a_tex_d",
+        "biome_detail_pebbles_shore_a_tex_r",
+        "biome_detail_rock_boulders_a_tex_d",
+        "biome_detail_rock_boulders_a_tex_r",
+        "biome_detail_rock_chunks_a_tex_d",
+        "biome_detail_rock_chunks_a_tex_r",
+        "biome_detail_rocks_smooth_tex_d",
+        "biome_detail_rocks_smooth_tex_r",
+        "biome_detail_roots_b_tex_d",
+        "biome_detail_roots_b_tex_r",
+        "biome_detail_sand_d_tex_d",
+        "biome_detail_sand_d_tex_r",
+        "biome_detail_sand_soil_a_tex_d",
+        "biome_detail_sand_soil_a_tex_r",
+        "biome_detail_sett_small_old_tex_d",
+        "biome_detail_sett_small_old_tex_r",
+        "biome_detail_slope_soil_a_tex_d",
+        "biome_detail_slope_soil_a_tex_r",
+        "biome_detail_slope_soil_d_tex_d",
+        "biome_detail_slope_soil_d_tex_r",
+        "biome_detail_soil_a_tex_d",
+        "biome_detail_soil_a_tex_r",
+        "biome_detail_soil_b_tex_d",
+        "biome_detail_soil_b_tex_r",
+        "biome_detail_trampled_soil_a_tex_d"
+      ]
+    }
+  },
+  "random_grass_source": {
+    "name": "randomGrass",
+    "params": [
+      {
+        "name": "density",
+        "type": "real",
+        "value": 2.0
+      },
+      {
+        "name": "maxRadius",
+        "type": "real",
+        "value": 300.0
+      },
+      {
+        "name": "sowPerlinFreq",
+        "type": "real",
+        "value": 0.10000000149011612
+      },
+      {
+        "name": "fadeDelta",
+        "type": "real",
+        "value": 100.0
+      },
+      {
+        "name": "lodFadeDelta",
+        "type": "real",
+        "value": 30.0
+      },
+      {
+        "name": "minLodDensity",
+        "type": "real",
+        "value": 0.4000000059604645
+      },
+      {
+        "name": "blendToLandDelta",
+        "type": "real",
+        "value": 100.0
+      },
+      {
+        "name": "texSize",
+        "type": "int",
+        "value": 1024
+      },
+      {
+        "name": "noise_first_rnd",
+        "type": "real",
+        "value": 23.14069938659668
+      },
+      {
+        "name": "noise_first_val_mul",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "noise_first_val_add",
+        "type": "real",
+        "value": 0.0
+      },
+      {
+        "name": "noise_second_rnd",
+        "type": "real",
+        "value": 0.05000000074505806
+      },
+      {
+        "name": "noise_second_val_mul",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "noise_second_val_add",
+        "type": "real",
+        "value": 0.0
+      },
+      {
+        "name": "directWindMul",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "noiseWindMul",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "windPerlinFreq",
+        "type": "real",
+        "value": 50000.0
+      },
+      {
+        "name": "directWindFreq",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "directWindModulationFreq",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "windWaveLength",
+        "type": "real",
+        "value": 100.0
+      },
+      {
+        "name": "windToColor",
+        "type": "real",
+        "value": 0.20000000298023224
+      },
+      {
+        "name": "helicopterHorMul",
+        "type": "real",
+        "value": 2.0
+      },
+      {
+        "name": "helicopterVerMul",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "helicopterToDirectWindMul",
+        "type": "real",
+        "value": 2.0
+      },
+      {
+        "name": "helicopterFalloff",
+        "type": "real",
+        "value": 0.0010000000474974513
+      },
+      {
+        "name": "useGrassMaskBiomes",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "normandy_fields_a",
+        "type": "string",
+        "value": "normandy_fields_a_mask"
+      }
+    ],
+    "children": [
+      {
+        "name": "small_grass",
+        "params": [
+          {
+            "name": "grass_grid_size",
+            "type": "real",
+            "value": 0.75
+          },
+          {
+            "name": "grass_distance",
+            "type": "real",
+            "value": 200.0
+          },
+          {
+            "name": "hor_size_mul",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "alphaSuffix",
+            "type": "string",
+            "value": "_a"
+          }
+        ],
+        "children": [
+          {
+            "name": "grass_types",
+            "params": [],
+            "children": [
+              {
+                "name": "generic_grass_tall_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_grass_tall_a_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_grass_tall_a_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_rnd_add",
+                    "type": "real",
+                    "value": 0.10000000149011612
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.0625
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      23,
+                      80,
+                      56,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      66,
+                      92,
+                      110,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      31,
+                      31,
+                      31,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      65,
+                      116,
+                      101,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      30,
+                      73,
+                      57,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      24,
+                      90,
+                      91,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.699999988079071
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "vertical_angle_add",
+                    "type": "real",
+                    "value": 0.10000000149011612
+                  },
+                  {
+                    "name": "vertical_angle_mul",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.15000000596046448
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "generic_grass_tall_b",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_grass_tall_b_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_grass_tall_b_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_rnd_add",
+                    "type": "real",
+                    "value": 0.10000000149011612
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.0625
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      44,
+                      125,
+                      107,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      71,
+                      122,
+                      131,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      67,
+                      67,
+                      67,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      103,
+                      100,
+                      100,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      36,
+                      109,
+                      100,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      83,
+                      115,
+                      152,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.699999988079071
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "vertical_angle_add",
+                    "type": "real",
+                    "value": 0.10000000149011612
+                  },
+                  {
+                    "name": "vertical_angle_mul",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.15000000596046448
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "generic_bush_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_bush_a_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_bush_a_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "stiffness",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      1,
+                      51,
+                      24,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      5,
+                      64,
+                      53,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      5,
+                      5,
+                      5,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      200,
+                      200,
+                      200,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      8,
+                      11,
+                      47,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      34,
+                      38,
+                      45,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.699999988079071
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  },
+                  {
+                    "name": "vertical_angle_add",
+                    "type": "real",
+                    "value": -0.20000000298023224
+                  },
+                  {
+                    "name": "vertical_angle_mul",
+                    "type": "real",
+                    "value": 0.5
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "generic_bush_dead_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_bush_dead_a_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_bush_dead_a_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "stiffness",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      1,
+                      51,
+                      24,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      5,
+                      64,
+                      53,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      5,
+                      5,
+                      5,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      200,
+                      200,
+                      200,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      8,
+                      11,
+                      47,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      34,
+                      38,
+                      45,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.699999988079071
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  },
+                  {
+                    "name": "vertical_angle_add",
+                    "type": "real",
+                    "value": -0.20000000298023224
+                  },
+                  {
+                    "name": "vertical_angle_mul",
+                    "type": "real",
+                    "value": 0.5
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "generic_grass_small_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_grass_small_a_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_grass_small_a_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "stiffness",
+                    "type": "real",
+                    "value": 0.20000000298023224
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      1,
+                      32,
+                      17,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      26,
+                      54,
+                      49,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      5,
+                      5,
+                      5,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      200,
+                      200,
+                      200,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      24,
+                      50,
+                      28,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      28,
+                      60,
+                      45,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.10000000149011612
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.8999999761581421
+                  },
+                  {
+                    "name": "vertical_angle_add",
+                    "type": "real",
+                    "value": 0.6000000238418579
+                  },
+                  {
+                    "name": "vertical_angle_mul",
+                    "type": "real",
+                    "value": 0.699999988079071
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "grass_typha_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_typha_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_typha_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.800000011920929
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      1,
+                      12,
+                      25,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      8,
+                      55,
+                      72,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      6,
+                      39,
+                      25,
+                      0
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      8,
+                      95,
+                      90,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      40,
+                      94,
+                      87,
+                      102
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      112,
+                      110,
+                      110,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.6000000238418579
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.15000000596046448
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "flowers_blue",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_matricaria_chamomilla_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_matricaria_chamomilla_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0499999523162842
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      0,
+                      187,
+                      195,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      8,
+                      55,
+                      72,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      255,
+                      255,
+                      255,
+                      0
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      255,
+                      255,
+                      255,
+                      0
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      148,
+                      65,
+                      71,
+                      102
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      229,
+                      161,
+                      35,
+                      102
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.6000000238418579
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.15000000596046448
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "wheat_a",
+                "params": [
+                  {
+                    "name": "diffuse",
+                    "type": "string",
+                    "value": "grass_generic_grass_small_a_tex_d"
+                  },
+                  {
+                    "name": "normal",
+                    "type": "string",
+                    "value": "grass_generic_grass_small_a_tex_n"
+                  },
+                  {
+                    "name": "size_lod_mul",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "size_lod_wide_mul",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "tile_tc_x",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "variations",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "height",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "ht_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "hor_size",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "hor_size_rnd_add",
+                    "type": "real",
+                    "value": 0.30000001192092896
+                  },
+                  {
+                    "name": "color_mask_r_from",
+                    "type": "color",
+                    "value": [
+                      97,
+                      116,
+                      117,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_r_to",
+                    "type": "color",
+                    "value": [
+                      8,
+                      55,
+                      72,
+                      90
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_from",
+                    "type": "color",
+                    "value": [
+                      47,
+                      64,
+                      63,
+                      0
+                    ]
+                  },
+                  {
+                    "name": "color_mask_g_to",
+                    "type": "color",
+                    "value": [
+                      255,
+                      255,
+                      255,
+                      0
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_from",
+                    "type": "color",
+                    "value": [
+                      55,
+                      95,
+                      96,
+                      102
+                    ]
+                  },
+                  {
+                    "name": "color_mask_b_to",
+                    "type": "color",
+                    "value": [
+                      57,
+                      63,
+                      61,
+                      102
+                    ]
+                  },
+                  {
+                    "name": "height_from_weight_mul",
+                    "type": "real",
+                    "value": 0.4000000059604645
+                  },
+                  {
+                    "name": "height_from_weight_add",
+                    "type": "real",
+                    "value": 0.6000000238418579
+                  },
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "nograss",
+                "params": [
+                  {
+                    "name": "density_from_weight_mul",
+                    "type": "real",
+                    "value": 0.0
+                  },
+                  {
+                    "name": "density_from_weight_add",
+                    "type": "real",
+                    "value": 0.0
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "decals",
+            "params": [],
+            "children": [
+              {
+                "name": "filling_grass",
+                "params": [
+                  {
+                    "name": "id",
+                    "type": "int",
+                    "value": 0
+                  },
+                  {
+                    "name": "generic_grass_tall_a",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "generic_bush_a",
+                    "type": "real",
+                    "value": 1.5
+                  },
+                  {
+                    "name": "generic_grass_tall_b",
+                    "type": "real",
+                    "value": 2.0
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "hills_grass",
+                "params": [
+                  {
+                    "name": "id",
+                    "type": "int",
+                    "value": 1
+                  },
+                  {
+                    "name": "generic_grass_tall_a",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "generic_bush_dead_a",
+                    "type": "real",
+                    "value": 1.0
+                  }
+                ],
+                "children": []
+              },
+              {
+                "name": "forest_grass",
+                "params": [
+                  {
+                    "name": "id",
+                    "type": "int",
+                    "value": 27
+                  },
+                  {
+                    "name": "flowers_blue",
+                    "type": "real",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "generic_grass_tall_a",
+                    "type": "real",
+                    "value": 2.0
+                  }
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 29
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_tulip_b"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              61,
+              50,
+              109,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              20,
+              19,
+              83,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              48,
+              65,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              230,
+              245,
+              240,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              20,
+              86,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              29,
+              52,
+              40,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 30
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_tulip_b"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              23,
+              90,
+              93,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              50,
+              95,
+              106,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              48,
+              65,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              230,
+              245,
+              240,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              20,
+              86,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              29,
+              52,
+              40,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 31
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_tulip_b"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              82,
+              48,
+              69,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              101,
+              47,
+              111,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              48,
+              65,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              230,
+              245,
+              240,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              20,
+              86,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              29,
+              52,
+              40,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 32
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_tulip_b"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              118,
+              108,
+              120,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              80,
+              97,
+              99,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              48,
+              65,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              230,
+              245,
+              240,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              20,
+              86,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              29,
+              52,
+              40,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 33
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_tulip_b"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              32,
+              55,
+              84,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              15,
+              63,
+              91,
+              0
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              48,
+              65,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              230,
+              245,
+              240,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              20,
+              86,
+              55,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              29,
+              52,
+              40,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 27
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_paigle_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 2.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.2000000476837158
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.800000011920929
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.399999976158142
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              126,
+              157,
+              171,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              115,
+              136,
+              145,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              69,
+              75,
+              80,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              89,
+              99,
+              102,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              29,
+              33,
+              35,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              11,
+              22,
+              30,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 27
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_fill_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.2000000476837158
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.800000011920929
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.399999976158142
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              49,
+              80,
+              152,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              94,
+              109,
+              127,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              25,
+              15,
+              7,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              127,
+              202,
+              209,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              19,
+              32,
+              35,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              78,
+              194,
+              238,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 27
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_blueberry_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.2000000476837158
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.800000011920929
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 1.399999976158142
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              49,
+              80,
+              152,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              94,
+              109,
+              127,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              25,
+              15,
+              7,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              127,
+              202,
+              209,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              19,
+              32,
+              35,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              78,
+              194,
+              238,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 0
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_daisies_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 0.4000000059604645
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.8999999761581421
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.5
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 0.8999999761581421
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.019999999552965164
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              242,
+              236,
+              216,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              204,
+              195,
+              167,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              48,
+              177,
+              252,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              71,
+              157,
+              237,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 1
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_heather_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.4000000059604645
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              88,
+              45,
+              168,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              158,
+              78,
+              132,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              55,
+              104,
+              80,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              18,
+              90,
+              75,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              33,
+              37,
+              51,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 1
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_simple_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 6.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.8999999761581421
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              49,
+              80,
+              152,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              94,
+              109,
+              127,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              25,
+              15,
+              7,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              127,
+              202,
+              209,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              19,
+              32,
+              35,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              78,
+              194,
+              238,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "id",
+            "type": "int",
+            "value": 0
+          },
+          {
+            "name": "id",
+            "type": "int",
+            "value": 1
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_simple_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 4.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.8999999761581421
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 0.30000001192092896
+          },
+          {
+            "name": "windMul",
+            "type": "real",
+            "value": 0.05000000074505806
+          },
+          {
+            "name": "radiusMul",
+            "type": "real",
+            "value": 0.699999988079071
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              49,
+              80,
+              152,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              94,
+              109,
+              127,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              25,
+              15,
+              7,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              127,
+              202,
+              209,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              19,
+              32,
+              35,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              78,
+              194,
+              238,
+              127
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              54,
+              24,
+              2,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "layer",
+        "params": [
+          {
+            "name": "maskChannel",
+            "type": "point4",
+            "value": [
+              1.0,
+              1.0,
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "name": "res",
+            "type": "string",
+            "value": "grass_fill_a"
+          },
+          {
+            "name": "density",
+            "type": "real",
+            "value": 5.0
+          },
+          {
+            "name": "horScale",
+            "type": "real",
+            "value": 1.2000000476837158
+          },
+          {
+            "name": "horMinScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "verScale",
+            "type": "real",
+            "value": 1.2000000476837158
+          },
+          {
+            "name": "verMinScale",
+            "type": "real",
+            "value": 0.5
+          },
+          {
+            "name": "color_mask_r_from",
+            "type": "color",
+            "value": [
+              28,
+              173,
+              67,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_r_to",
+            "type": "color",
+            "value": [
+              40,
+              148,
+              89,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_from",
+            "type": "color",
+            "value": [
+              27,
+              30,
+              43,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_g_to",
+            "type": "color",
+            "value": [
+              186,
+              242,
+              247,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_from",
+            "type": "color",
+            "value": [
+              47,
+              85,
+              44,
+              255
+            ]
+          },
+          {
+            "name": "color_mask_b_to",
+            "type": "color",
+            "value": [
+              87,
+              200,
+              141,
+              255
+            ]
+          }
+        ],
+        "children": []
+      }
+    ]
+  },
+  "models": [
+    {
+      "id": "grass_blueberry_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 505,
+      "source_offset": 5499616,
+      "source_bytes": 1504,
+      "source_sha256": "99d0837e1c89b20611736e0e69a66732684e41cb75df4e239beeb5e5863c9403",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.4903567135334015,
+          0.0,
+          -0.4903567135334015
+        ],
+        "hi": [
+          0.4903567135334015,
+          0.6336573958396912,
+          0.4903567135334015
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.7045472860336304,
+          -0.10986328125,
+          -0.7045472264289856
+        ],
+        "hi": [
+          0.7045472860336304,
+          0.759284496307373,
+          0.7045471668243408
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_blueberry_a",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_blueberry_a_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_blueberry_a/mesh.npz",
+      "sha256": "86c9ca2ce2d100c1cd063f87ca8e42ee8d54ab5897fdd7d2770c3347bbc6ea58",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_daisies_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 513,
+      "source_offset": 5510112,
+      "source_bytes": 1504,
+      "source_sha256": "8d6c50313ff85a36da25f993d2baf80c772ce0b87f4eb829b00f988e02b63526",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.20187558233737946,
+          -0.014635428786277771,
+          -0.20187556743621826
+        ],
+        "hi": [
+          0.20187558233737946,
+          0.2460387796163559,
+          0.20187556743621826
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.3248061239719391,
+          -0.03899553418159485,
+          -0.3248061537742615
+        ],
+        "hi": [
+          0.3248061239719391,
+          0.27039891481399536,
+          0.3248061239719391
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_daisies_a",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_daisies_a_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_daisies_a/mesh.npz",
+      "sha256": "c08944dcad48dbc923ec69c622f55d8c863d371170e6ff229d1764351101d642",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_fill_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 514,
+      "source_offset": 5511616,
+      "source_bytes": 1328,
+      "source_sha256": "400c89d6d268934ce3c0955327e32f5b7cb60f76466718ea4131de3c89ff61c1",
+      "lod": 0,
+      "vertices": 15,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -1.2544469833374023,
+          -0.44391685724258423,
+          -0.3046118915081024
+        ],
+        "hi": [
+          1.2544469833374023,
+          0.6979182958602905,
+          0.3046117126941681
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -1.3768011331558228,
+          -0.44391685724258423,
+          -0.35898709297180176
+        ],
+        "hi": [
+          1.3768011331558228,
+          0.8956437706947327,
+          0.3046117126941681
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_fill_a",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_fill_a_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_fill_a/mesh.npz",
+      "sha256": "77f0819875da1a4809b581a952757bd2ab71f721a81406bb599702fe8f409941",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_heather_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 519,
+      "source_offset": 5517872,
+      "source_bytes": 1504,
+      "source_sha256": "110b78bdadd657d0f06d20826b1fede48d67022e3e757e5c6accb88d5da791a0",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.5863186717033386,
+          0.0,
+          -0.5863187313079834
+        ],
+        "hi": [
+          0.5863186717033386,
+          0.5154882073402405,
+          0.5863187313079834
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.6160222291946411,
+          0.0,
+          -0.6160222887992859
+        ],
+        "hi": [
+          0.6160222291946411,
+          0.5440545082092285,
+          0.6160222887992859
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_heather",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_heather_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_heather_a/mesh.npz",
+      "sha256": "f24b1016e0a0d1626b4e1ce7ea285a297ea65324780d6023e556598643ae4315",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_paigle_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 522,
+      "source_offset": 5522384,
+      "source_bytes": 1504,
+      "source_sha256": "bfb218b04e16755e840834d8e8ab9a29748a1c72bcf36827688116af9ef41fd2",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.30921390652656555,
+          0.0,
+          -0.30921390652656555
+        ],
+        "hi": [
+          0.30921390652656555,
+          0.31013232469558716,
+          0.30921390652656555
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.44682952761650085,
+          -0.06901219487190247,
+          -0.44682952761650085
+        ],
+        "hi": [
+          0.44682952761650085,
+          0.379144549369812,
+          0.44682952761650085
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_paigle_a",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_paigle_a_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_paigle_a/mesh.npz",
+      "sha256": "8550887b477fc4e3534de995a137b6f86aee95a82b17820f354c13f8f3bb8bf0",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_simple_a",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 536,
+      "source_offset": 5541552,
+      "source_bytes": 1504,
+      "source_sha256": "dead709637faa15dd679d1c6f73c8d79a9e302a7e7cdb2384e2afaa485a4b8ad",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.5763744115829468,
+          0.0,
+          -0.5763744115829468
+        ],
+        "hi": [
+          0.5763744115829468,
+          0.8700075149536133,
+          0.5763744115829468
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.8542742729187012,
+          -0.05443403869867325,
+          -0.8542742729187012
+        ],
+        "hi": [
+          0.8542742729187012,
+          0.924441397190094,
+          0.8542742729187012
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_simple_a",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_simple_a_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_simple_a/mesh.npz",
+      "sha256": "960a2009dab5581ba197fb90b49a3ff01b860d6fb8e9a2b6b58fa9df635a3c92",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    },
+    {
+      "id": "grass_tulip_b",
+      "source_class_id": "0xa7d3ed6a",
+      "source_group": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.grp",
+      "source_group_sha256": "3f052603257a0d5208e30478e6ec2c77bda6e41563d09ffedebd4dcf79a8fdd6",
+      "source_resource_id": 543,
+      "source_offset": 5552624,
+      "source_bytes": 1504,
+      "source_sha256": "cd77c94e7e59ab572b677fd46b0d72b800978890e6eb8c7aeebde995a9929fc8",
+      "lod": 0,
+      "vertices": 16,
+      "triangles": 8,
+      "strict_coincident_triangles": 0,
+      "bounds_dagor_m": {
+        "lo": [
+          -0.4903567135334015,
+          0.0,
+          -0.4903567135334015
+        ],
+        "hi": [
+          0.4903567135334015,
+          0.6336573958396912,
+          0.4903567135334015
+        ]
+      },
+      "declared_bounds_dagor_m": {
+        "lo": [
+          -0.7045472860336304,
+          -0.10986328125,
+          -0.7045472264289856
+        ],
+        "hi": [
+          0.7045472860336304,
+          0.759284496307373,
+          0.7045471668243408
+        ]
+      },
+      "bound_error_m": 0.0,
+      "materials": [
+        {
+          "name": "grass_tulip_b",
+          "shader": "random_grass",
+          "parameters": "",
+          "texture_slots": [
+            "grass_tulip_b_tex_m*",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "used_material_ids": [
+        0
+      ],
+      "file": "models/grass_tulip_b/mesh.npz",
+      "sha256": "86c9ca2ce2d100c1cd063f87ca8e42ee8d54ab5897fdd7d2770c3347bbc6ea58",
+      "coordinates": "original Dagor metres, Y up",
+      "collision": "none_visual_foliage"
+    }
+  ],
+  "textures": [
+    {
+      "name": "america_detailed_grass_masks",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_american_valley-hq.dxp.bin",
+      "offset": 756848,
+      "packed_bytes": 113568,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGBA",
+      "sha256": "7b31dea31c637027465a0c6871b4db51659e99990e073d8828fe1c9c2bd9c07e",
+      "file": "textures/america_detailed_grass_masks.png",
+      "reused_from": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\result.json",
+      "original_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\america_detailed_grass_masks.png"
+    },
+    {
+      "name": "avg_vlaanderen_detailed_biome_tex_b",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_vlaanderen.dxp.bin",
+      "offset": 65536,
+      "packed_bytes": 2006576,
+      "file": "textures/avg_vlaanderen_detailed_biome_tex_b.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "mode": "L",
+      "sha256": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05",
+      "reused_from": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\result.json",
+      "original_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\avg_vlaanderen_detailed_biome_tex_b.png"
+    },
+    {
+      "name": "grass_blueberry_a_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 5936608,
+      "packed_bytes": 73712,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_blueberry_a_tex_m.png",
+      "sha256": "f22a934fa9c144356100ac9ab61e4c0492577b330475a6dd9fe08db8c9661a22"
+    },
+    {
+      "name": "grass_blueberry_a_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 6010320,
+      "packed_bytes": 72816,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "L",
+      "file": "textures/grass_blueberry_a_tex_m_a.png",
+      "sha256": "a20c0ea1aabbf7fc85d8e1d57b926478a3b1c281665584b207c29d1a13f8e303"
+    },
+    {
+      "name": "grass_daisies_a_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 6686040,
+      "packed_bytes": 36552,
+      "size": [
+        512,
+        256
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_daisies_a_tex_m.png",
+      "sha256": "9ee457117b6e38b26493e0a0dadab9685f6c9e189b39e7aeb323aadf62352c11"
+    },
+    {
+      "name": "grass_daisies_a_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 6722592,
+      "packed_bytes": 36544,
+      "size": [
+        512,
+        256
+      ],
+      "mode": "L",
+      "file": "textures/grass_daisies_a_tex_m_a.png",
+      "sha256": "b242db839a6f6e2972389aa049d6466f8b96369f32e2e2259d3f39e3f1137e83"
+    },
+    {
+      "name": "grass_fill_a_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 6759136,
+      "packed_bytes": 22504,
+      "size": [
+        512,
+        128
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_fill_a_tex_m.png",
+      "sha256": "ba515e12b9f22273da64563077b7574e8dcc92298f250fb71338497891a6d415"
+    },
+    {
+      "name": "grass_fill_a_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 6781640,
+      "packed_bytes": 30376,
+      "size": [
+        512,
+        128
+      ],
+      "mode": "L",
+      "file": "textures/grass_fill_a_tex_m_a.png",
+      "sha256": "c10b5c8324177e5cf81da54cf828b6d85ded2a9fa062e3665e69782ff39dd4ce"
+    },
+    {
+      "name": "grass_heather_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 7143072,
+      "packed_bytes": 238016,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_heather_tex_m.png",
+      "sha256": "cbbf82579f8d0f641283f6d5a1da52a1d05d57a8a77bd5f1375bbc95c0dfd3e8"
+    },
+    {
+      "name": "grass_heather_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 7381088,
+      "packed_bytes": 233992,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "L",
+      "file": "textures/grass_heather_tex_m_a.png",
+      "sha256": "903dd23b6ed6d1eacba46b21cf266ab3f702f2fc16e2a8a28593a48e74f32c26"
+    },
+    {
+      "name": "grass_paigle_a_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 8654328,
+      "packed_bytes": 39664,
+      "size": [
+        512,
+        256
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_paigle_a_tex_m.png",
+      "sha256": "dcc3a795e791c2cb1e71cbbc35d277d76794c1d3ec351744fde813d8f66f0a0c"
+    },
+    {
+      "name": "grass_paigle_a_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 8693992,
+      "packed_bytes": 44304,
+      "size": [
+        512,
+        256
+      ],
+      "mode": "L",
+      "file": "textures/grass_paigle_a_tex_m_a.png",
+      "sha256": "5de3c73e928af954e8fbb0fd324ef53b9368dbc6aa68e8a7fdb7dd0f85b5022a"
+    },
+    {
+      "name": "grass_simple_a_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 11058960,
+      "packed_bytes": 233496,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_simple_a_tex_m.png",
+      "sha256": "59d4f1bca4f61dd2d2b32748b192947c4d5ad73bcde9dbc62bf92854e367d593"
+    },
+    {
+      "name": "grass_simple_a_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 11292456,
+      "packed_bytes": 195960,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "L",
+      "file": "textures/grass_simple_a_tex_m_a.png",
+      "sha256": "bb431eaa0cead985c96dbbb8d7caec34f2f09bab18f3493637b25d623d184b3c"
+    },
+    {
+      "name": "grass_tulip_b_tex_m",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 12710624,
+      "packed_bytes": 233064,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "file": "textures/grass_tulip_b_tex_m.png",
+      "sha256": "465b309ab62c6020abbb09cf342f66f6b31a18acf6b4985da09e55239e6f5413"
+    },
+    {
+      "name": "grass_tulip_b_tex_m_a",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\vegetation.dxp.bin",
+      "offset": 12943688,
+      "packed_bytes": 203064,
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "L",
+      "file": "textures/grass_tulip_b_tex_m_a.png",
+      "sha256": "9f1918a239bb2f57e5f97b03e9b1347776efa08fe263988582470b315a7e71c3"
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer_00",
+      "model": "grass_tulip_b",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 29
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_tulip_b"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            61,
+            50,
+            109,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            20,
+            19,
+            83,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            48,
+            65,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            230,
+            245,
+            240,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            20,
+            86,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            29,
+            52,
+            40,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            61,
+            50,
+            109,
+            0
+          ],
+          "rgba": [
+            109,
+            50,
+            61,
+            0
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            20,
+            19,
+            83,
+            0
+          ],
+          "rgba": [
+            83,
+            19,
+            20,
+            0
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            48,
+            65,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            65,
+            48,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            230,
+            245,
+            240,
+            255
+          ],
+          "rgba": [
+            240,
+            245,
+            230,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            20,
+            86,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            86,
+            20,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            29,
+            52,
+            40,
+            255
+          ],
+          "rgba": [
+            40,
+            52,
+            29,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        29
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_29.png",
+        "sha256": "72943e2e14817cefc8e64bf9e614e5198fa31787675afd861f1037283a82c053",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 538986,
+        "eligible_area_m2": 134746.5,
+        "biome_ids": [
+          29
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_01",
+      "model": "grass_tulip_b",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 30
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_tulip_b"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            23,
+            90,
+            93,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            50,
+            95,
+            106,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            48,
+            65,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            230,
+            245,
+            240,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            20,
+            86,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            29,
+            52,
+            40,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            23,
+            90,
+            93,
+            0
+          ],
+          "rgba": [
+            93,
+            90,
+            23,
+            0
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            50,
+            95,
+            106,
+            0
+          ],
+          "rgba": [
+            106,
+            95,
+            50,
+            0
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            48,
+            65,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            65,
+            48,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            230,
+            245,
+            240,
+            255
+          ],
+          "rgba": [
+            240,
+            245,
+            230,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            20,
+            86,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            86,
+            20,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            29,
+            52,
+            40,
+            255
+          ],
+          "rgba": [
+            40,
+            52,
+            29,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        30
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_30.png",
+        "sha256": "66458f62feec26f267e2dd11d239799d0be489bd6100ffb29581e54d4e16a7e7",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 5117,
+        "eligible_area_m2": 1279.25,
+        "biome_ids": [
+          30
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_02",
+      "model": "grass_tulip_b",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 31
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_tulip_b"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            82,
+            48,
+            69,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            101,
+            47,
+            111,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            48,
+            65,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            230,
+            245,
+            240,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            20,
+            86,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            29,
+            52,
+            40,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            82,
+            48,
+            69,
+            0
+          ],
+          "rgba": [
+            69,
+            48,
+            82,
+            0
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            101,
+            47,
+            111,
+            0
+          ],
+          "rgba": [
+            111,
+            47,
+            101,
+            0
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            48,
+            65,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            65,
+            48,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            230,
+            245,
+            240,
+            255
+          ],
+          "rgba": [
+            240,
+            245,
+            230,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            20,
+            86,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            86,
+            20,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            29,
+            52,
+            40,
+            255
+          ],
+          "rgba": [
+            40,
+            52,
+            29,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        31
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_31.png",
+        "sha256": "5ce63c1aec077b4c1859fe5612f8f07da4c3bc8cfd2b5b58a645180b8c54659e",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 229724,
+        "eligible_area_m2": 57431.0,
+        "biome_ids": [
+          31
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_03",
+      "model": "grass_tulip_b",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 32
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_tulip_b"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            118,
+            108,
+            120,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            80,
+            97,
+            99,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            48,
+            65,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            230,
+            245,
+            240,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            20,
+            86,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            29,
+            52,
+            40,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            118,
+            108,
+            120,
+            0
+          ],
+          "rgba": [
+            120,
+            108,
+            118,
+            0
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            80,
+            97,
+            99,
+            0
+          ],
+          "rgba": [
+            99,
+            97,
+            80,
+            0
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            48,
+            65,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            65,
+            48,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            230,
+            245,
+            240,
+            255
+          ],
+          "rgba": [
+            240,
+            245,
+            230,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            20,
+            86,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            86,
+            20,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            29,
+            52,
+            40,
+            255
+          ],
+          "rgba": [
+            40,
+            52,
+            29,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        32
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_32.png",
+        "sha256": "d3a8cf93f2eeed7518a45c08f7ee4466d1f8734042a9a220de421aa7d20038b2",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 54708,
+        "eligible_area_m2": 13677.0,
+        "biome_ids": [
+          32
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_04",
+      "model": "grass_tulip_b",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 33
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_tulip_b"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            32,
+            55,
+            84,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            15,
+            63,
+            91,
+            0
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            48,
+            65,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            230,
+            245,
+            240,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            20,
+            86,
+            55,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            29,
+            52,
+            40,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            32,
+            55,
+            84,
+            0
+          ],
+          "rgba": [
+            84,
+            55,
+            32,
+            0
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            15,
+            63,
+            91,
+            0
+          ],
+          "rgba": [
+            91,
+            63,
+            15,
+            0
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            48,
+            65,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            65,
+            48,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            230,
+            245,
+            240,
+            255
+          ],
+          "rgba": [
+            240,
+            245,
+            230,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            20,
+            86,
+            55,
+            255
+          ],
+          "rgba": [
+            55,
+            86,
+            20,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            29,
+            52,
+            40,
+            255
+          ],
+          "rgba": [
+            40,
+            52,
+            29,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        33
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_33.png",
+        "sha256": "87e9c30d4174d1151a8a0540918e850f670cee78796080d98c20f1b565c2a1a1",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 114883,
+        "eligible_area_m2": 28720.75,
+        "biome_ids": [
+          33
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_05",
+      "model": "grass_paigle_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_paigle_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 2.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.5
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.399999976158142
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            126,
+            157,
+            171,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            115,
+            136,
+            145,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            69,
+            75,
+            80,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            89,
+            99,
+            102,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            29,
+            33,
+            35,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            11,
+            22,
+            30,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 2.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            126,
+            157,
+            171,
+            127
+          ],
+          "rgba": [
+            171,
+            157,
+            126,
+            127
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            115,
+            136,
+            145,
+            127
+          ],
+          "rgba": [
+            145,
+            136,
+            115,
+            127
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            69,
+            75,
+            80,
+            255
+          ],
+          "rgba": [
+            80,
+            75,
+            69,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            89,
+            99,
+            102,
+            255
+          ],
+          "rgba": [
+            102,
+            99,
+            89,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            29,
+            33,
+            35,
+            127
+          ],
+          "rgba": [
+            35,
+            33,
+            29,
+            127
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            11,
+            22,
+            30,
+            127
+          ],
+          "rgba": [
+            30,
+            22,
+            11,
+            127
+          ]
+        }
+      },
+      "biome_ids": [
+        27
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_27.png",
+        "sha256": "ca81cb3486c12f3453cbb62dc1e0dc231797eea0be1f27ec38a2ff67ff0fd82d",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 2551675,
+        "eligible_area_m2": 637918.75,
+        "biome_ids": [
+          27
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_06",
+      "model": "grass_fill_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_fill_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.5
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.399999976158142
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            49,
+            80,
+            152,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            94,
+            109,
+            127,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            25,
+            15,
+            7,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            127,
+            202,
+            209,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            19,
+            32,
+            35,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            78,
+            194,
+            238,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            49,
+            80,
+            152,
+            127
+          ],
+          "rgba": [
+            152,
+            80,
+            49,
+            127
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            94,
+            109,
+            127,
+            127
+          ],
+          "rgba": [
+            127,
+            109,
+            94,
+            127
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            25,
+            15,
+            7,
+            255
+          ],
+          "rgba": [
+            7,
+            15,
+            25,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            127,
+            202,
+            209,
+            255
+          ],
+          "rgba": [
+            209,
+            202,
+            127,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            19,
+            32,
+            35,
+            127
+          ],
+          "rgba": [
+            35,
+            32,
+            19,
+            127
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            78,
+            194,
+            238,
+            127
+          ],
+          "rgba": [
+            238,
+            194,
+            78,
+            127
+          ]
+        }
+      },
+      "biome_ids": [
+        27
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_27.png",
+        "sha256": "ca81cb3486c12f3453cbb62dc1e0dc231797eea0be1f27ec38a2ff67ff0fd82d",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 2551675,
+        "eligible_area_m2": 637918.75,
+        "biome_ids": [
+          27
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_07",
+      "model": "grass_blueberry_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 27
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_blueberry_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.5
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 1.399999976158142
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            49,
+            80,
+            152,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            94,
+            109,
+            127,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            25,
+            15,
+            7,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            127,
+            202,
+            209,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            19,
+            32,
+            35,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            78,
+            194,
+            238,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 1.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            49,
+            80,
+            152,
+            127
+          ],
+          "rgba": [
+            152,
+            80,
+            49,
+            127
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            94,
+            109,
+            127,
+            127
+          ],
+          "rgba": [
+            127,
+            109,
+            94,
+            127
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            25,
+            15,
+            7,
+            255
+          ],
+          "rgba": [
+            7,
+            15,
+            25,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            127,
+            202,
+            209,
+            255
+          ],
+          "rgba": [
+            209,
+            202,
+            127,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            19,
+            32,
+            35,
+            127
+          ],
+          "rgba": [
+            35,
+            32,
+            19,
+            127
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            78,
+            194,
+            238,
+            127
+          ],
+          "rgba": [
+            238,
+            194,
+            78,
+            127
+          ]
+        }
+      },
+      "biome_ids": [
+        27
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_27.png",
+        "sha256": "ca81cb3486c12f3453cbb62dc1e0dc231797eea0be1f27ec38a2ff67ff0fd82d",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 2551675,
+        "eligible_area_m2": 637918.75,
+        "biome_ids": [
+          27
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_08",
+      "model": "grass_daisies_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_daisies_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 0.4000000059604645
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.5
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.8999999761581421
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.5
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 0.8999999761581421
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.019999999552965164
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            242,
+            236,
+            216,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            204,
+            195,
+            167,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            48,
+            177,
+            252,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            71,
+            157,
+            237,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 0.4000000059604645,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            242,
+            236,
+            216,
+            255
+          ],
+          "rgba": [
+            216,
+            236,
+            242,
+            255
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            204,
+            195,
+            167,
+            255
+          ],
+          "rgba": [
+            167,
+            195,
+            204,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            48,
+            177,
+            252,
+            255
+          ],
+          "rgba": [
+            252,
+            177,
+            48,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            71,
+            157,
+            237,
+            255
+          ],
+          "rgba": [
+            237,
+            157,
+            71,
+            255
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            54,
+            24,
+            2,
+            255
+          ],
+          "rgba": [
+            2,
+            24,
+            54,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            186,
+            242,
+            247,
+            255
+          ],
+          "rgba": [
+            247,
+            242,
+            186,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        0
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_0.png",
+        "sha256": "75b80b0216d0ac401d46c1553219a358a541cba873f0683edc4ce065588f2c39",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 2281175,
+        "eligible_area_m2": 570293.75,
+        "biome_ids": [
+          0
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_09",
+      "model": "grass_heather_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_heather_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.0
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.4000000059604645
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            88,
+            45,
+            168,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            158,
+            78,
+            132,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            55,
+            104,
+            80,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            18,
+            90,
+            75,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            33,
+            37,
+            51,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 1.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            88,
+            45,
+            168,
+            255
+          ],
+          "rgba": [
+            168,
+            45,
+            88,
+            255
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            158,
+            78,
+            132,
+            255
+          ],
+          "rgba": [
+            132,
+            78,
+            158,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            55,
+            104,
+            80,
+            255
+          ],
+          "rgba": [
+            80,
+            104,
+            55,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            18,
+            90,
+            75,
+            255
+          ],
+          "rgba": [
+            75,
+            90,
+            18,
+            255
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            33,
+            37,
+            51,
+            255
+          ],
+          "rgba": [
+            51,
+            37,
+            33,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            186,
+            242,
+            247,
+            255
+          ],
+          "rgba": [
+            247,
+            242,
+            186,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        1
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_1.png",
+        "sha256": "fbd8a0ec6345a250e7131d15f5747031dda0fe3c920c9fcba5193273008dae9e",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 5364453,
+        "eligible_area_m2": 1341113.25,
+        "biome_ids": [
+          1
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_10",
+      "model": "grass_simple_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_simple_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 6.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.8999999761581421
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            49,
+            80,
+            152,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            94,
+            109,
+            127,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            25,
+            15,
+            7,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            127,
+            202,
+            209,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            19,
+            32,
+            35,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            78,
+            194,
+            238,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 6.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            49,
+            80,
+            152,
+            127
+          ],
+          "rgba": [
+            152,
+            80,
+            49,
+            127
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            94,
+            109,
+            127,
+            127
+          ],
+          "rgba": [
+            127,
+            109,
+            94,
+            127
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            25,
+            15,
+            7,
+            255
+          ],
+          "rgba": [
+            7,
+            15,
+            25,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            127,
+            202,
+            209,
+            255
+          ],
+          "rgba": [
+            209,
+            202,
+            127,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            19,
+            32,
+            35,
+            127
+          ],
+          "rgba": [
+            35,
+            32,
+            19,
+            127
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            78,
+            194,
+            238,
+            127
+          ],
+          "rgba": [
+            238,
+            194,
+            78,
+            127
+          ]
+        }
+      },
+      "biome_ids": [
+        1
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_1.png",
+        "sha256": "fbd8a0ec6345a250e7131d15f5747031dda0fe3c920c9fcba5193273008dae9e",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 5364453,
+        "eligible_area_m2": 1341113.25,
+        "biome_ids": [
+          1
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_11",
+      "model": "grass_simple_a",
+      "source_parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_simple_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 4.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.8999999761581421
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 0.30000001192092896
+        },
+        {
+          "name": "windMul",
+          "type": "real",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "radiusMul",
+          "type": "real",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            49,
+            80,
+            152,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            94,
+            109,
+            127,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            25,
+            15,
+            7,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            127,
+            202,
+            209,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            19,
+            32,
+            35,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            78,
+            194,
+            238,
+            127
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            54,
+            24,
+            2,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        }
+      ],
+      "source_density": 4.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            49,
+            80,
+            152,
+            127
+          ],
+          "rgba": [
+            152,
+            80,
+            49,
+            127
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            94,
+            109,
+            127,
+            127
+          ],
+          "rgba": [
+            127,
+            109,
+            94,
+            127
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            25,
+            15,
+            7,
+            255
+          ],
+          "rgba": [
+            7,
+            15,
+            25,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            127,
+            202,
+            209,
+            255
+          ],
+          "rgba": [
+            209,
+            202,
+            127,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            19,
+            32,
+            35,
+            127
+          ],
+          "rgba": [
+            35,
+            32,
+            19,
+            127
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            78,
+            194,
+            238,
+            127
+          ],
+          "rgba": [
+            238,
+            194,
+            78,
+            127
+          ]
+        }
+      },
+      "biome_ids": [
+        0,
+        1
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_0_1.png",
+        "sha256": "03f86935800f3af75b92e3f4381026e90412cc51758d13b1d1aff7c470170e2b",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 7645628,
+        "eligible_area_m2": 1911407.0,
+        "biome_ids": [
+          0,
+          1
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    },
+    {
+      "id": "layer_12",
+      "model": "grass_fill_a",
+      "source_parameters": [
+        {
+          "name": "maskChannel",
+          "type": "point4",
+          "value": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "name": "res",
+          "type": "string",
+          "value": "grass_fill_a"
+        },
+        {
+          "name": "density",
+          "type": "real",
+          "value": 5.0
+        },
+        {
+          "name": "horScale",
+          "type": "real",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "horMinScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "verScale",
+          "type": "real",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "verMinScale",
+          "type": "real",
+          "value": 0.5
+        },
+        {
+          "name": "color_mask_r_from",
+          "type": "color",
+          "value": [
+            28,
+            173,
+            67,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_r_to",
+          "type": "color",
+          "value": [
+            40,
+            148,
+            89,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_from",
+          "type": "color",
+          "value": [
+            27,
+            30,
+            43,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_g_to",
+          "type": "color",
+          "value": [
+            186,
+            242,
+            247,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_from",
+          "type": "color",
+          "value": [
+            47,
+            85,
+            44,
+            255
+          ]
+        },
+        {
+          "name": "color_mask_b_to",
+          "type": "color",
+          "value": [
+            87,
+            200,
+            141,
+            255
+          ]
+        }
+      ],
+      "source_density": 5.0,
+      "source_colors": {
+        "color_mask_r_from": {
+          "source_bgra": [
+            28,
+            173,
+            67,
+            255
+          ],
+          "rgba": [
+            67,
+            173,
+            28,
+            255
+          ]
+        },
+        "color_mask_r_to": {
+          "source_bgra": [
+            40,
+            148,
+            89,
+            255
+          ],
+          "rgba": [
+            89,
+            148,
+            40,
+            255
+          ]
+        },
+        "color_mask_g_from": {
+          "source_bgra": [
+            27,
+            30,
+            43,
+            255
+          ],
+          "rgba": [
+            43,
+            30,
+            27,
+            255
+          ]
+        },
+        "color_mask_g_to": {
+          "source_bgra": [
+            186,
+            242,
+            247,
+            255
+          ],
+          "rgba": [
+            247,
+            242,
+            186,
+            255
+          ]
+        },
+        "color_mask_b_from": {
+          "source_bgra": [
+            47,
+            85,
+            44,
+            255
+          ],
+          "rgba": [
+            44,
+            85,
+            47,
+            255
+          ]
+        },
+        "color_mask_b_to": {
+          "source_bgra": [
+            87,
+            200,
+            141,
+            255
+          ],
+          "rgba": [
+            141,
+            200,
+            87,
+            255
+          ]
+        }
+      },
+      "biome_ids": [
+        0,
+        1,
+        2
+      ],
+      "eligibility_mask": {
+        "file": "masks/biomes_0_1_2.png",
+        "sha256": "8e874cf1d28bbc31a70dbdfbdfe742de79259508c6a25ecc60b2da48505d3e7f",
+        "width": 4096,
+        "height": 4096,
+        "eligible_pixels": 9958466,
+        "eligible_area_m2": 2489616.5,
+        "biome_ids": [
+          0,
+          1,
+          2
+        ]
+      },
+      "density_interpretation": "original renderer relative layer density; not UE instances per square metre"
+    }
+  ],
+  "core_region": {
+    "dagor_xz_min": [
+      0.0,
+      0.0
+    ],
+    "dagor_xz_max": [
+      2048.0,
+      2048.0
+    ],
+    "ros_xy_min": [
+      0.0,
+      -2048.0
+    ],
+    "ros_xy_max": [
+      2048.0,
+      0.0
+    ],
+    "source_index_texture": {
+      "name": "avg_vlaanderen_detailed_biome_tex_b",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_vlaanderen.dxp.bin",
+      "offset": 65536,
+      "packed_bytes": 2006576,
+      "file": "textures/avg_vlaanderen_detailed_biome_tex_b.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "mode": "L",
+      "sha256": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05",
+      "reused_from": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\result.json",
+      "original_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\avg_vlaanderen_detailed_biome_tex_b.png"
+    },
+    "source_index_pixel_m": 0.5,
+    "source_uv": {
+      "u": "(DagorX + 16384) / 2048",
+      "v": "-(DagorZ + 16384) / 2048",
+      "address": "wrap",
+      "native_biome_index_offset_m": 0.25,
+      "offset_note": "source landclass index half-texel; preserve source sampling contract"
+    },
+    "biome_pixel_histogram": {
+      "0": 2281175,
+      "1": 5364453,
+      "2": 2312838,
+      "4": 26781,
+      "5": 146305,
+      "6": 34599,
+      "7": 17724,
+      "8": 12688,
+      "9": 141747,
+      "10": 25792,
+      "11": 7288,
+      "12": 3761,
+      "13": 25334,
+      "14": 72261,
+      "15": 14076,
+      "16": 7374,
+      "17": 1517,
+      "18": 235066,
+      "19": 228620,
+      "20": 193465,
+      "21": 103681,
+      "22": 244200,
+      "23": 45238,
+      "24": 413108,
+      "25": 101936,
+      "26": 5489,
+      "27": 2551675,
+      "28": 1976,
+      "29": 538986,
+      "30": 5117,
+      "31": 229724,
+      "32": 54708,
+      "33": 114883,
+      "34": 554493,
+      "35": 659138
+    }
+  },
+  "grass_weight_source": {
+    "texture": {
+      "name": "america_detailed_grass_masks",
+      "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\avg_american_valley-hq.dxp.bin",
+      "offset": 756848,
+      "packed_bytes": 113568,
+      "size": [
+        2048,
+        2048
+      ],
+      "mode": "RGBA",
+      "sha256": "7b31dea31c637027465a0c6871b4db51659e99990e073d8828fe1c9c2bd9c07e",
+      "file": "textures/america_detailed_grass_masks.png",
+      "reused_from": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-02\\result.json",
+      "original_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\textures-01\\america_detailed_grass_masks.png"
+    },
+    "role": "original indexed-landclass grass-weight input; no invented multiplication into biome eligibility",
+    "interpretation": "source custom shader coverage combination requires independent validation"
+  },
+  "small_grass_source": {
+    "name": "small_grass",
+    "params": [
+      {
+        "name": "grass_grid_size",
+        "type": "real",
+        "value": 0.75
+      },
+      {
+        "name": "grass_distance",
+        "type": "real",
+        "value": 200.0
+      },
+      {
+        "name": "hor_size_mul",
+        "type": "real",
+        "value": 1.5
+      },
+      {
+        "name": "alphaSuffix",
+        "type": "string",
+        "value": "_a"
+      }
+    ],
+    "children": [
+      {
+        "name": "grass_types",
+        "params": [],
+        "children": [
+          {
+            "name": "generic_grass_tall_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_grass_tall_a_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_grass_tall_a_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_rnd_add",
+                "type": "real",
+                "value": 0.10000000149011612
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.0625
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  23,
+                  80,
+                  56,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  66,
+                  92,
+                  110,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  31,
+                  31,
+                  31,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  65,
+                  116,
+                  101,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  30,
+                  73,
+                  57,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  24,
+                  90,
+                  91,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.699999988079071
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "vertical_angle_add",
+                "type": "real",
+                "value": 0.10000000149011612
+              },
+              {
+                "name": "vertical_angle_mul",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.15000000596046448
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "generic_grass_tall_b",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_grass_tall_b_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_grass_tall_b_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_rnd_add",
+                "type": "real",
+                "value": 0.10000000149011612
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.0625
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  44,
+                  125,
+                  107,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  71,
+                  122,
+                  131,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  67,
+                  67,
+                  67,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  103,
+                  100,
+                  100,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  36,
+                  109,
+                  100,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  83,
+                  115,
+                  152,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.699999988079071
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "vertical_angle_add",
+                "type": "real",
+                "value": 0.10000000149011612
+              },
+              {
+                "name": "vertical_angle_mul",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.15000000596046448
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "generic_bush_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_bush_a_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_bush_a_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "stiffness",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  1,
+                  51,
+                  24,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  5,
+                  64,
+                  53,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  5,
+                  5,
+                  5,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  200,
+                  200,
+                  200,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  8,
+                  11,
+                  47,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  34,
+                  38,
+                  45,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.699999988079071
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              },
+              {
+                "name": "vertical_angle_add",
+                "type": "real",
+                "value": -0.20000000298023224
+              },
+              {
+                "name": "vertical_angle_mul",
+                "type": "real",
+                "value": 0.5
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "generic_bush_dead_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_bush_dead_a_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_bush_dead_a_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "stiffness",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  1,
+                  51,
+                  24,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  5,
+                  64,
+                  53,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  5,
+                  5,
+                  5,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  200,
+                  200,
+                  200,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  8,
+                  11,
+                  47,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  34,
+                  38,
+                  45,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.699999988079071
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              },
+              {
+                "name": "vertical_angle_add",
+                "type": "real",
+                "value": -0.20000000298023224
+              },
+              {
+                "name": "vertical_angle_mul",
+                "type": "real",
+                "value": 0.5
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "generic_grass_small_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_grass_small_a_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_grass_small_a_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "stiffness",
+                "type": "real",
+                "value": 0.20000000298023224
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  1,
+                  32,
+                  17,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  26,
+                  54,
+                  49,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  5,
+                  5,
+                  5,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  200,
+                  200,
+                  200,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  24,
+                  50,
+                  28,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  28,
+                  60,
+                  45,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.10000000149011612
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.8999999761581421
+              },
+              {
+                "name": "vertical_angle_add",
+                "type": "real",
+                "value": 0.6000000238418579
+              },
+              {
+                "name": "vertical_angle_mul",
+                "type": "real",
+                "value": 0.699999988079071
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "grass_typha_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_typha_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_typha_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.800000011920929
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  1,
+                  12,
+                  25,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  8,
+                  55,
+                  72,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  6,
+                  39,
+                  25,
+                  0
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  8,
+                  95,
+                  90,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  40,
+                  94,
+                  87,
+                  102
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  112,
+                  110,
+                  110,
+                  90
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.6000000238418579
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.15000000596046448
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "flowers_blue",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_matricaria_chamomilla_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_matricaria_chamomilla_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0499999523162842
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 0.5
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  0,
+                  187,
+                  195,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  8,
+                  55,
+                  72,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  255,
+                  255,
+                  255,
+                  0
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  255,
+                  255,
+                  255,
+                  0
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  148,
+                  65,
+                  71,
+                  102
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  229,
+                  161,
+                  35,
+                  102
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.6000000238418579
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.15000000596046448
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "wheat_a",
+            "params": [
+              {
+                "name": "diffuse",
+                "type": "string",
+                "value": "grass_generic_grass_small_a_tex_d"
+              },
+              {
+                "name": "normal",
+                "type": "string",
+                "value": "grass_generic_grass_small_a_tex_n"
+              },
+              {
+                "name": "size_lod_mul",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "size_lod_wide_mul",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "tile_tc_x",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "variations",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "height",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "ht_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "hor_size",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "hor_size_rnd_add",
+                "type": "real",
+                "value": 0.30000001192092896
+              },
+              {
+                "name": "color_mask_r_from",
+                "type": "color",
+                "value": [
+                  97,
+                  116,
+                  117,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_r_to",
+                "type": "color",
+                "value": [
+                  8,
+                  55,
+                  72,
+                  90
+                ]
+              },
+              {
+                "name": "color_mask_g_from",
+                "type": "color",
+                "value": [
+                  47,
+                  64,
+                  63,
+                  0
+                ]
+              },
+              {
+                "name": "color_mask_g_to",
+                "type": "color",
+                "value": [
+                  255,
+                  255,
+                  255,
+                  0
+                ]
+              },
+              {
+                "name": "color_mask_b_from",
+                "type": "color",
+                "value": [
+                  55,
+                  95,
+                  96,
+                  102
+                ]
+              },
+              {
+                "name": "color_mask_b_to",
+                "type": "color",
+                "value": [
+                  57,
+                  63,
+                  61,
+                  102
+                ]
+              },
+              {
+                "name": "height_from_weight_mul",
+                "type": "real",
+                "value": 0.4000000059604645
+              },
+              {
+                "name": "height_from_weight_add",
+                "type": "real",
+                "value": 0.6000000238418579
+              },
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 1.0
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "nograss",
+            "params": [
+              {
+                "name": "density_from_weight_mul",
+                "type": "real",
+                "value": 0.0
+              },
+              {
+                "name": "density_from_weight_add",
+                "type": "real",
+                "value": 0.0
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "decals",
+        "params": [],
+        "children": [
+          {
+            "name": "filling_grass",
+            "params": [
+              {
+                "name": "id",
+                "type": "int",
+                "value": 0
+              },
+              {
+                "name": "generic_grass_tall_a",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "generic_bush_a",
+                "type": "real",
+                "value": 1.5
+              },
+              {
+                "name": "generic_grass_tall_b",
+                "type": "real",
+                "value": 2.0
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "hills_grass",
+            "params": [
+              {
+                "name": "id",
+                "type": "int",
+                "value": 1
+              },
+              {
+                "name": "generic_grass_tall_a",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "generic_bush_dead_a",
+                "type": "real",
+                "value": 1.0
+              }
+            ],
+            "children": []
+          },
+          {
+            "name": "forest_grass",
+            "params": [
+              {
+                "name": "id",
+                "type": "int",
+                "value": 27
+              },
+              {
+                "name": "flowers_blue",
+                "type": "real",
+                "value": 2.0
+              },
+              {
+                "name": "generic_grass_tall_a",
+                "type": "real",
+                "value": 2.0
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "source_density": {
+    "global_density": 2.0,
+    "max_radius_m": 300.0,
+    "fade_delta_m": 100.0,
+    "min_lod_density": 0.4000000059604645,
+    "note": "preserve original parameters; UE streaming/population adapter must declare its density conversion"
+  },
+  "instance_placement": {
+    "status": "not_generated",
+    "source": "GPU-generated grass layers and masks",
+    "adaptation": "source-rule reconstruction with view-based streaming; original random instance positions are not stored"
+  }
+}

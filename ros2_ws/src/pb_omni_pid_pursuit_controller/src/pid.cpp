@@ -21,6 +21,11 @@ PID::PID(double dt, double max, double min, double kp, double kd, double ki)
 
 double PID::calculate(double set_point, double pv)
 {
+  return calculate(set_point, pv, (set_point - pv - pre_error_) / dt_);
+}
+
+double PID::calculate(double set_point, double pv, double error_rate)
+{
   // Calculate error
   double error = set_point - pv;
 
@@ -38,8 +43,7 @@ double PID::calculate(double set_point, double pv)
   }
 
   // Derivative term
-  double derivative = (error - pre_error_) / dt_;
-  double d_out = kd_ * derivative;
+  double d_out = kd_ * error_rate;
 
   // Calculate total output
   double output = p_out + i_out + d_out;

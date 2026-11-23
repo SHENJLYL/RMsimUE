@@ -1,5 +1,5 @@
 {
-  "schema": "rm_imu_runtime_v2",
+  "schema": "rm_imu_runtime_v3",
   "calibrated": false,
   "imus": [
     {
@@ -38,21 +38,27 @@
         0.0,
         0.0
       ],
-      "noise_seed": 2027
+      "noise_seed": 2027,
+      "measurement": {
+        "accel_range_mps2": 0.0,
+        "gyro_range_rad_s": 0.0,
+        "accel_quantization_mps2": 0.0,
+        "gyro_quantization_rad_s": 0.0
+      }
     },
     {
       "id": "mid360_imu",
       "parent_frame": "yaw_link",
       "origin": {
         "xyz": [
-          0.17470287269127363,
-          0.09704805880386702,
-          0.13158718221210575
+          0.18878153591894153,
+          0.06275928780227212,
+          0.12828568662788892
         ],
         "rpy": [
-          -5.917937960475683e-05,
-          0.7853989005088806,
-          -4.184617137070745e-05
+          -0.7853990793228149,
+          -3.5730013792090176e-07,
+          -1.570754885673523
         ]
       },
       "rate_hz": 200.0,
@@ -76,7 +82,13 @@
         0.0,
         0.0
       ],
-      "noise_seed": 2027
+      "noise_seed": 2027,
+      "measurement": {
+        "accel_range_mps2": 156.9064,
+        "gyro_range_rad_s": 34.90658503988659,
+        "accel_quantization_mps2": 0.0,
+        "gyro_quantization_rad_s": 0.0
+      }
     }
   ]
 }

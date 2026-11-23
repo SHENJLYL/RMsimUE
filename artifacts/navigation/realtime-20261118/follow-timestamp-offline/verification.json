@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "scope": "six offline tests only; native gimbal and IMU effects pending",
+  "timestamp_utc": "2026-11-18T01:57:35.937829+00:00",
+  "command": [
+    "C:/Users/SHEN/AppData/Local/Programs/Python/Python314/python.exe",
+    "D:/simulator/tests/control/test_navigation_follow_timestamps.py",
+    "-v"
+  ],
+  "observed_tests_run": 6,
+  "observed_exit_code": 0,
+  "observed_test_duration_s": 0.003,
+  "files": {
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_follow_adapter.py": "82f554db85d26fdb2802f9fb7c93b58a23131bc2734929fd0cbd2005c72443dd",
+    "tests/control/test_navigation_follow_timestamps.py": "f71f8b8f3d4b685b1bae59b80716737301adbe1d26e25103531805ab8525d322"
+  }
+}

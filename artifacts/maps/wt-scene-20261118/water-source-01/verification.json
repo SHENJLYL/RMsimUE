@@ -1,0 +1,181 @@
+{
+  "schema": "wt_water_source_audit_v1",
+  "status": "passed",
+  "scope": "source geometry, level shader globals, and fixed public shader references",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_level_bin_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "static_scene_sha256": "ffea6ea2d56a1f3c7e98d7d1dae82e194ed1951026aa343b3e00ccef0e60d730",
+  "decoded_level_file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+  "decoded_level_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+  "material_id": "WT_3baf052e10b5a3ecdbf7",
+  "shader": "water_aces",
+  "material_source": {
+    "name": "water_aces",
+    "shader": "water_aces",
+    "parameters": "",
+    "texture_slots": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "source_globals": {
+    "water_level": -5.0,
+    "water_aces_color_and_density": [
+      0.20000000298023224,
+      0.20000000298023224,
+      0.0,
+      15.0
+    ],
+    "water_aces_params": [
+      1.0,
+      0.30000001192092896,
+      5.0,
+      0.0
+    ]
+  },
+  "surfaces": [
+    {
+      "name": "[59] poly mesh water_transparent_848",
+      "npz_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0035.npz",
+      "npz_sha256": "b76c5a730c67c2c4dac5be0f4f18a23d70621dd4d3723110578ce7fff53b915a",
+      "triangles": 7,
+      "surface_area_m2": 4608.156898553544,
+      "dagor_xyz_bounds_m": {
+        "lo": [
+          688.0139770507812,
+          4.729680061340332,
+          776.3289794921875
+        ],
+        "hi": [
+          814.1500244140625,
+          4.75,
+          870.3569946289062
+        ]
+      },
+      "ros_xyz_bounds_m": {
+        "lo": [
+          688.0139770507812,
+          -870.3569946289062,
+          4.729680061340332
+        ],
+        "hi": [
+          814.1500244140625,
+          -776.3289794921875,
+          4.75
+        ]
+      },
+      "all_inside_2km_source_core": true
+    },
+    {
+      "name": "[60] poly mesh water_transparent_886",
+      "npz_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0036.npz",
+      "npz_sha256": "70e4d6abf6829ed97ba3703955f2b4b5f6c8c3bdbd0f9a949d8212944ab052da",
+      "triangles": 9,
+      "surface_area_m2": 14118.729291766882,
+      "dagor_xyz_bounds_m": {
+        "lo": [
+          779.6370239257812,
+          0.5,
+          552.4149780273438
+        ],
+        "hi": [
+          941.9630126953125,
+          0.5,
+          752.5850219726562
+        ]
+      },
+      "ros_xyz_bounds_m": {
+        "lo": [
+          779.6370239257812,
+          -752.5850219726562,
+          0.5
+        ],
+        "hi": [
+          941.9630126953125,
+          -552.4149780273438,
+          0.5
+        ]
+      },
+      "all_inside_2km_source_core": true
+    },
+    {
+      "name": "[61] poly mesh water_transparent_892",
+      "npz_file": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0037.npz",
+      "npz_sha256": "20a97be8f70131dc1372cff52c256c2d3c62877a075e14c1948d9fcca60b014c",
+      "triangles": 7,
+      "surface_area_m2": 5517.6168195362625,
+      "dagor_xyz_bounds_m": {
+        "lo": [
+          1102.3499755859375,
+          0.6669920086860657,
+          71.73979949951172
+        ],
+        "hi": [
+          1250.7099609375,
+          0.6671599745750427,
+          131.98699951171875
+        ]
+      },
+      "ros_xyz_bounds_m": {
+        "lo": [
+          1102.3499755859375,
+          -131.98699951171875,
+          0.6669920086860657
+        ],
+        "hi": [
+          1250.7099609375,
+          -71.73979949951172,
+          0.6671599745750427
+        ]
+      },
+      "all_inside_2km_source_core": true
+    }
+  ],
+  "total_triangles": 23,
+  "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "fixed_source_references": {
+    "prog/gameLibs/render/shaders/water_3d_color.dshl": {
+      "sha256": "e3cf92ea66c7bac17c21f4c488b0c9217fe8b5da0f8f1b7a8770fb4b656e942c",
+      "water_height_lines": [
+        424,
+        427
+      ]
+    },
+    "prog/daNetGame/shaders/water_3d_geometry.dshl": {
+      "sha256": "221fae8c8d4aaf44eaab858e782a487f9c0f134aaee8fad9bc82419facdb2089"
+    }
+  },
+  "public_shader_param_search": {
+    "exit_code": 1,
+    "paths": [
+      "prog/gameLibs/render/shaders",
+      "prog/gameLibs/fftWater/shaders",
+      "prog/daNetGame/shaders"
+    ],
+    "matches": []
+  },
+  "checks": {
+    "source_material_has_no_texture_slots": true,
+    "source_geometry_23_triangles": true,
+    "three_local_ponds_inside_core": true,
+    "source_water_aces_uses_vertex_height": true
+  },
+  "adaptation_status": "proposal_only",
+  "known_source_binding": "RGB is named in source water_aces_color_and_density; values are retained exactly",
+  "unresolved": [
+    "Exact consuming formula and units of density W=15",
+    "Semantic mapping of water_aces_params [1,0.3,5,0]",
+    "Original global wave, reflection and refraction resources"
+  ],
+  "native_assets_modified": false,
+  "native_render_verified": false
+}

@@ -1,0 +1,193 @@
+﻿{
+    "schema":  "wt_flanders_guide_command_check_v1",
+    "status":  "passed",
+    "file":  "docs/guides/war-thunder-flanders.md",
+    "sha256":  "7898a7c0c921f0d863beaa2a568006f476331c5a50b71de997c939e3df29e958",
+    "powershell_blocks":  22,
+    "block_checks":  [
+                         {
+                             "block":  1,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  2,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  3,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  4,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  5,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  6,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  7,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  8,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  9,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  10,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  11,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  12,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  13,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  14,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  15,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  16,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  17,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  18,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  19,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  20,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  21,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         },
+                         {
+                             "block":  22,
+                             "passed":  true,
+                             "errors":  [
+
+                                        ]
+                         }
+                     ],
+    "referenced_scripts":  [
+                               ".\\tools\\unreal\\Start-PreparedVehicle.ps1",
+                               ".\\tools\\maps\\extract_wt_leaf_payload.py",
+                               ".\\tools\\maps\\verify_wt_leaf_payload.py",
+                               ".\\tools\\maps\\prepare_wt_leaf_adapter.py",
+                               ".\\tools\\maps\\audit_wt_degenerate_faces.py",
+                               ".\\tools\\maps\\extract_wt_decal_opacity.py",
+                               ".\\tools\\maps\\prepare_wt_decal_opacity.py",
+                               ".\\tools\\maps\\extract_wt_landclass.py",
+                               ".\\tools\\maps\\prepare_wt_landclass.py",
+                               ".\\tools\\maps\\prepare_wt_overview.py",
+                               ".\\tools\\maps\\extract_wt_foliage.py",
+                               ".\\tools\\maps\\prepare_wt_foliage_meshes.py",
+                               ".\\tools\\maps\\prepare_wt_foliage.py",
+                               ".\\tools\\unreal\\Import-WTScene.ps1",
+                               ".\\tools\\unreal\\Author-WTGrass.ps1",
+                               ".\\tools\\maps\\prepare_wt_grass_audit_samples.py",
+                               ".\\tools\\unreal\\Test-ManualControls.ps1"
+                           ],
+    "missing_scripts":  [
+
+                        ],
+    "trailing_whitespace_offsets":  [
+
+                                    ],
+    "git_diff_check_exit":  0,
+    "git_diff_check_output":  [
+
+                              ],
+    "scope":  "PowerShell syntax, referenced script existence, whitespace and git diff; documented native commands were not executed."
+}

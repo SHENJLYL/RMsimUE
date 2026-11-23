@@ -1,0 +1,235 @@
+{
+  "schema": "wt_lc1_local_normal_summary_v1",
+  "status": "source_applied_offline_passed_native_pending",
+  "generated_utc": "2026-11-18T11:13:59.954105+00:00",
+  "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "source_files": {
+    "prog/daNetGame/shaders/make_clipmap.dshl": {
+      "sha256": "5287e03f13a9e4c96a4a72c2bdbe5fe033d7223356df12dd59a657066075543f",
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\daNetGame\\shaders\\make_clipmap.dshl"
+    },
+    "prog/gameLibs/landMesh/landMicroDetails.cpp": {
+      "sha256": "7c38e621ad7de4cb82e0d205e220019a180f1273b5ab20bd5e85070820c3fe8e",
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\gameLibs\\landMesh\\landMicroDetails.cpp"
+    },
+    "prog/gameLibs/landMesh/lmeshLandClasses.cpp": {
+      "sha256": "7586e6fa26af5e2a6963b82ec99cdf743d73a7df2f491cf2a2c888384bf2acd6",
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\gameLibs\\landMesh\\lmeshLandClasses.cpp"
+    },
+    "prog/daNetGame/shaders/land_hardcoded.dshl": {
+      "sha256": "798094b7a525a4f90a1cc23d8b5a54508560da562afc6518a08124bc4648b59c",
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\daNetGame\\shaders\\land_hardcoded.dshl"
+    }
+  },
+  "primary_source_findings": [
+    {
+      "file": "make_clipmap.dshl",
+      "lines": "658-661,833,959-966",
+      "finding": "Original clipmap samples separate normal textures, rotates their XY and blends with sharpened weights. Height is routed to displacement; normal composition does not differentiate categorical weights."
+    },
+    {
+      "file": "source-landclass.json",
+      "finding": "The actual shipped Flanders decoded definitions have albedo and reflectance fields with no normal binding; no texture is inferred from naming."
+    },
+    {
+      "file": "land_hardcoded.dshl and lmeshLandClasses.cpp",
+      "finding": "Public scheme bump_scale/bump_offset differs from the shipped height_scale/normal_scale fields. The adapter does not claim source height_scale represents metres."
+    }
+  ],
+  "diagnosed_mechanism": "Screen derivatives of the old mixed alpha height included derivatives of sqrt neighbour weights and categorical/rotation changes at 0.5m grid cells.",
+  "adapter": {
+    "schema": "wt_lc1_local_alpha_normal_v2",
+    "kind": "ue_fixed_slice_rotation_alpha_gradient",
+    "derivative_basis": "world_position_before_categorical_selection",
+    "sample_offsets": "same_slice_rotation_lod_plus_two_continuous_uv_offsets",
+    "normal_blending": "unit_normals_then_source_final_pow4_weights_both_levels",
+    "weight_derivatives": false,
+    "source_normal_binding": null,
+    "height_scale_domain": "ue_adapter_multiplier_not_source_metres",
+    "base_array_reads": 8,
+    "local_alpha_array_reads": 16,
+    "additional_samplers": 0
+  },
+  "preserved": [
+    "source package bytes",
+    "original 23 albedo-height images and 65 records",
+    "categorical IDs",
+    "original rotations and UVs",
+    "original tc screen derivatives and mip arithmetic",
+    "source color blend weights and output expression",
+    "grass source/material/definition",
+    "World and scene source"
+  ],
+  "rejected_candidate": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\lc1-normal-grid-diagnosis-01\\verification.json",
+    "sha256": "f85e9914feaf357ecb7f72fcc55e3be95c2e7d13e870c94e34442cfb8ca3a60a",
+    "reason": "Differentiating height after sharpened weights still creates blend derivatives and large near-station slopes; not applied."
+  },
+  "validation": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\lc1-normal-local-validation-01\\verification.json",
+    "sha256": "047208145edb2df87618709f3ff8d6edfe2bf6d119454537d9d8bf97ec31a044",
+    "check_count": 17,
+    "color_samples": 3003,
+    "color_bitwise_equal": true,
+    "scope": "Original top-mip alpha bilinear sampling; fixed 2mm local finite differences; original noise/indices/rotations/weights. No native BC, screen quad or GPU mip simulation.",
+    "checks": [
+      {
+        "name": "green_slope_original_color_bitwise_equal",
+        "passed": true,
+        "samples": 1001
+      },
+      {
+        "name": "green_slope_normals_finite_unit_positive_hemisphere",
+        "passed": true
+      },
+      {
+        "name": "green_slope_categorical_boundary_normal_continuity",
+        "passed": true,
+        "epsilon_m": 1e-07,
+        "maximum_normal_delta": 4.833056029718286e-06
+      },
+      {
+        "name": "near_station_grass_original_color_bitwise_equal",
+        "passed": true,
+        "samples": 1001
+      },
+      {
+        "name": "near_station_grass_normals_finite_unit_positive_hemisphere",
+        "passed": true
+      },
+      {
+        "name": "near_station_grass_categorical_boundary_normal_continuity",
+        "passed": true,
+        "epsilon_m": 1e-07,
+        "maximum_normal_delta": 1.0901394540852039e-05
+      },
+      {
+        "name": "green_neighbour_original_color_bitwise_equal",
+        "passed": true,
+        "samples": 1001
+      },
+      {
+        "name": "green_neighbour_normals_finite_unit_positive_hemisphere",
+        "passed": true
+      },
+      {
+        "name": "green_neighbour_categorical_boundary_normal_continuity",
+        "passed": true,
+        "epsilon_m": 1e-07,
+        "maximum_normal_delta": 2.8078372960038678e-11
+      },
+      {
+        "name": "36_real_categorical_seams_continuous",
+        "passed": true,
+        "maximum_normal_delta": 3.000326744079934e-05,
+        "epsilon_m": 1e-07
+      },
+      {
+        "name": "flat_local_heights_ignore_weight_derivatives",
+        "passed": true
+      },
+      {
+        "name": "local_gradient_basis_matches_plane",
+        "passed": true,
+        "max_error": 1.1102230246251565e-16
+      },
+      {
+        "name": "original_color_uv_lod_weight_statements_retained",
+        "passed": true,
+        "statements": 13
+      },
+      {
+        "name": "categorical_id_rotation_block_identical",
+        "passed": true
+      },
+      {
+        "name": "derivatives_before_category_lookup_and_no_mixed_height_derivatives",
+        "passed": true
+      },
+      {
+        "name": "local_alpha_samples_reuse_the_original_sampler",
+        "passed": true,
+        "total_array_reads": 24
+      },
+      {
+        "name": "source_package_has_no_normal_texture_binding",
+        "passed": true
+      }
+    ],
+    "source_pixel_results": {
+      "green_slope": {
+        "sample_count": 1001,
+        "old_border_tilt_p50_deg": 42.85270510567736,
+        "old_border_tilt_p95_deg": 77.91251088700281,
+        "local_border_tilt_p50_deg": 15.155286083006933,
+        "local_border_tilt_p95_deg": 40.608960888739055,
+        "seam_normal_delta": 4.833056029718286e-06
+      },
+      "near_station_grass": {
+        "sample_count": 1001,
+        "old_border_tilt_p50_deg": 35.09724405806784,
+        "old_border_tilt_p95_deg": 62.84517782741539,
+        "local_border_tilt_p50_deg": 18.830824082337994,
+        "local_border_tilt_p95_deg": 58.79885452426387,
+        "seam_normal_delta": 1.0901394540852039e-05
+      },
+      "green_neighbour": {
+        "sample_count": 1001,
+        "old_border_tilt_p50_deg": 16.354633935586207,
+        "old_border_tilt_p95_deg": 74.6454422693613,
+        "local_border_tilt_p50_deg": 11.608054594253204,
+        "local_border_tilt_p95_deg": 42.05752350093313,
+        "seam_normal_delta": 2.8078372960038678e-11
+      }
+    }
+  },
+  "preflight": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\ground-normal-preflight-02\\verification.json",
+    "sha256": "14d9734d86f3b77a83d09f9e80adda5db655017103cea82e9062c8f29d9ebb12",
+    "execution_path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\ground-normal-preflight-02\\execution.json",
+    "execution_sha256": "da302d0ef7f6225bb01a0a2d6622a4962b3e302f3ae6822caa9fc9330fc22967",
+    "check_count": 81,
+    "exit_code": 0,
+    "seconds": 1.9461789000051795,
+    "git_diff_check_exit": 0
+  },
+  "protected_bindings": {
+    "D:\\simulator\\assets\\maps\\wt_vlaanderen\\scene-source.json": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "D:\\simulator\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\World.umap": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+    "D:\\simulator\\assets\\maps\\wt_vlaanderen\\terrain-details\\definition.json": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+    "D:\\simulator\\assets\\maps\\wt_vlaanderen\\foliage-enhanced\\foliage.json": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+    "D:\\simulator\\tools\\unreal\\wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+  },
+  "frozen_files_sha256": {
+    "tools/unreal/wt_landdetail.py": "ebdc4b2c1c5fe6e99a5a78ea782d678aa6166b8e2a74a6cbecb3f22fa4656548",
+    "tools/unreal/wt_material_refine_verify.py": "4616a20aa6ab9847f35420e9dd5886c0c5c9feee5be638021f7e23860baee349",
+    "tools/unreal/wt_materials.py": "0317a5c10babbd17f7f7dec1f9c075de1737048ed3832482aedd35db975ead8b",
+    "tools/unreal/wt_height_decals.py": "b95021ec1216364c3276d3a38f587652107790a52eca57f1c0c71d37cd4e7e71",
+    "tools/unreal/wt_ground_material_verify.py": "e94372c7713595d53e1a1d345bab2efa05a374304121d13e317b5fa3303e4694",
+    "tools/maps/check_wt_ground_materials.py": "dde2a7453240731b3c2bfbef23575357ea53cd9aaa29564d4fe9381866292d23",
+    "tools/unreal/verify_wt_materials.py": "262ec5fa2f528526006455d2c24fbe9721b5927b7ac3f5f01883aa112f29f609",
+    "tools/unreal/update_wt_materials.py": "7f5837106b817b300a85ace5559aa67800575891b004e3fc2f980d7baeca6231"
+  },
+  "native_requirements": {
+    "ground_targets": 40,
+    "ground_parents": 4,
+    "ground_instances": 36,
+    "height_instances": 34,
+    "height_strength": 0.2,
+    "full_material_reload_targets": 307,
+    "grass_checks": 72,
+    "scene_checks": 21,
+    "shader_sampler_ceiling": 16,
+    "land_array_reads": 24,
+    "additional_samplers": 0,
+    "requires_actual_grass_generation_freshness": true,
+    "visual_comparison": [
+      "wall",
+      "near_station_grass",
+      "green_slope",
+      "movement"
+    ]
+  },
+  "native_status": "pending",
+  "native_visual_quality_verified": false
+}

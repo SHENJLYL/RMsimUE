@@ -10,7 +10,10 @@ param(
     [switch]$ObserveOnly,
     [switch]$StallProbe,
     [int]$CameraWidth=640,
-    [int]$CameraHeight=360
+    [int]$CameraHeight=360,
+    [ValidateSet('chaos','mujoco')][string]$PhysicsBackend='chaos',
+    [string]$MujocoModel='',
+    [switch]$AllowDiagnosticPlane
 )
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $ue=Get-UnrealTools -EngineRoot $EngineRoot
@@ -33,6 +36,18 @@ $arguments=@((Quote-UnrealArgument $ue.Project),'/Engine/Maps/Entry?game=/Script
     ('-MeshRigFile='+(Quote-UnrealArgument (Join-Path $root 'assets/vehicles/aim_sentry/ue_mesh_rig.json'))),
     ('-MapFile='+(Quote-UnrealArgument (Join-Path $root 'assets/maps/import_lab/map.json'))),
     ('-abslog='+(Quote-UnrealArgument (Join-Path $evidence 'runtime.log'))))
+if($PhysicsBackend -eq 'mujoco'){
+    if(-not $MujocoModel){throw 'MuJoCo bridge test requires a prepared manifest.'}
+    $modelPath=(Resolve-Path -LiteralPath $MujocoModel).Path
+    $manifest=Get-Content -LiteralPath $modelPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if($manifest.diagnostic_plane_only -and -not $AllowDiagnosticPlane){throw 'Diagnostic plane requires explicit AllowDiagnosticPlane.'}
+    $mujocoStep=if($LkMotorLoop -or $AimWithMotors){'-SimStepSeconds=0.001'}else{'-SimStepSeconds=0.005'}
+    $arguments+=@('-PhysicsBackend=mujoco',('-MujocoModel='+(Quote-UnrealArgument $modelPath)),$mujocoStep,'-SimRealTimePace')
+    if($AllowDiagnosticPlane){$arguments+='-MujocoAllowDiagnosticPlane'}
+    $provenance.physics_backend='mujoco'
+    $provenance.mujoco_manifest_sha256=(Get-FileHash -LiteralPath $modelPath -Algorithm SHA256).Hash
+    $provenance | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence 'runtime-provenance.json') -Encoding utf8
+}
 if($ObserveOnly){$arguments=@($arguments | Where-Object {$_ -ne '-RosControl'});$arguments+='-RosBridge'}
 if($AimProbe){
     if($RosTopics -or $LkMotorLoop -or $StallProbe){throw 'AimProbe is an independent gate.'}
@@ -73,6 +88,7 @@ try{
         & (Join-Path $root 'tools/environment/run-env.ps1') -Command $probeArgs
     }else{
         $probeArgs=@((Join-Path $root 'tools/integration/probe_native_bridge.py'),'--port',$Port,'--output',(Join-Path $evidence 'tcp'))
+        $probeArgs+=@('--physics-backend',$PhysicsBackend)
         if($ObserveOnly){$probeArgs+='--observe-only'}
         if($StallProbe){$probeArgs+='--stall-probe'}
         & python @probeArgs

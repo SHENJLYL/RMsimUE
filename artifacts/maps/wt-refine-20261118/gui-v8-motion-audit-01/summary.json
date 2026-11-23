@@ -1,0 +1,398 @@
+{
+  "schema": "wt_gui_motion_capture_audit_v1",
+  "status": "passed",
+  "started_utc": "2026-11-18T10:34:23.838920+00:00",
+  "helper_sha256": "eac5f0f62ffb4b630b771d5cbd3693ce48212dfe04b3314cf1844dbb947f67d6",
+  "scope": "Frame integrity, actual key-edge evidence, explicitly sampled image review and descriptive fixed-ROI statistics.",
+  "pid": 40796,
+  "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+  "map_fixture": "material-observation-01/map.json",
+  "map_fixture_sha256": "cc75b7b9010d5cec2e5f17aba64fc579c9f0958dc40e28aa34d23b382f85b587",
+  "spawn_id": "wall_baseline",
+  "frames_directory": "gui-v8-motion-01-frames",
+  "input_directory": "gui-v8-motion-01-drive",
+  "capture": {
+    "frames": 80,
+    "png_decode_passed": 80,
+    "unique_paths": 80,
+    "dimensions": [
+      1616,
+      1039
+    ],
+    "requested_interval_ms": 100,
+    "first_elapsed_ms": 166,
+    "last_elapsed_ms": 10719,
+    "interframe_ms": {
+      "min": 112,
+      "median": 134.0,
+      "max": 152
+    },
+    "recorded_utc": "2026-11-18T10:23:25.7586176Z",
+    "time_scope": "Recorder elapsed-time samples; recorded_utc belongs to series metadata. No per-frame absolute UTC was recorded.",
+    "hash_scope": "All PNG SHA256 values independently computed during this audit; original frames.json contains no PNG hashes."
+  },
+  "input": {
+    "api": "Win32 SendInput through the live focused UE viewport",
+    "key": "W",
+    "requested_hold_ms": 4500,
+    "actual_hold_ms": 4506,
+    "key_up_sent": true,
+    "focus_checked_every_ms": 40,
+    "started_utc": "2026-11-18T10:23:16.3720775Z",
+    "finished_utc": "2026-11-18T10:23:20.9417151Z",
+    "before_counts": {
+      "Space_press": 1,
+      "Space_release": 1
+    },
+    "after_counts": {
+      "Space_press": 1,
+      "Space_release": 1,
+      "W_press": 1,
+      "W_release": 1
+    },
+    "position_delta_ros_m_at_key_edges": [
+      10.598505908885727,
+      -0.21750383997766676,
+      0.851551766375999
+    ],
+    "before_pose": {
+      "sample_updated_utc": "2026-11-18T10:20:02.016Z",
+      "actor_ros_m": [
+        1075.2318635662182,
+        -1012.6562376935452,
+        -0.29953159565768755
+      ],
+      "actor_rotation_xyzw": [
+        -0.007950703794623324,
+        -0.035335575104246904,
+        0.0011801937631095926,
+        0.9993431795854236
+      ],
+      "camera": {
+        "position_cm": [
+          107034.11255625493,
+          101265.62376935453,
+          155.92187887251458
+        ],
+        "rotation_xyzw": [
+          0,
+          0.10452846326765348,
+          0,
+          0.9945218953682732
+        ]
+      },
+      "view_yaw_deg": 0,
+      "view_pitch_deg": -12,
+      "active_fov_deg": 55,
+      "speed_cm_per_second": 0,
+      "window_focused": true
+    },
+    "release_pose": {
+      "sample_updated_utc": "2026-11-18T10:23:20.961Z",
+      "actor_ros_m": [
+        1085.830369475104,
+        -1012.8737415335229,
+        0.5520201707183116
+      ],
+      "actor_rotation_xyzw": [
+        0.14936911677788522,
+        -0.0473745378657293,
+        -0.7177106554543747,
+        0.6784806078011775
+      ],
+      "camera": {
+        "position_cm": [
+          108093.9631471435,
+          101287.37415335228,
+          241.07705551011452
+        ],
+        "rotation_xyzw": [
+          0,
+          0.10452846326765348,
+          0,
+          0.9945218953682732
+        ]
+      },
+      "view_yaw_deg": 0,
+      "view_pitch_deg": -12,
+      "active_fov_deg": 55,
+      "speed_cm_per_second": 1.8687409027986406,
+      "window_focused": true
+    },
+    "frame_snapshot_groups": [
+      {
+        "first_frame": 0,
+        "last_frame": 9,
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1
+        },
+        "pose_at_input_edge": {
+          "sample_updated_utc": "2026-11-18T10:20:02.016Z",
+          "actor_ros_m": [
+            1075.2318635662182,
+            -1012.6562376935452,
+            -0.29953159565768755
+          ],
+          "actor_rotation_xyzw": [
+            -0.007950703794623324,
+            -0.035335575104246904,
+            0.0011801937631095926,
+            0.9993431795854236
+          ],
+          "camera": {
+            "position_cm": [
+              107034.11255625493,
+              101265.62376935453,
+              155.92187887251458
+            ],
+            "rotation_xyzw": [
+              0,
+              0.10452846326765348,
+              0,
+              0.9945218953682732
+            ]
+          },
+          "view_yaw_deg": 0,
+          "view_pitch_deg": -12,
+          "active_fov_deg": 55,
+          "speed_cm_per_second": 0,
+          "window_focused": true
+        }
+      },
+      {
+        "first_frame": 10,
+        "last_frame": 42,
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1,
+          "W_press": 1
+        },
+        "pose_at_input_edge": {
+          "sample_updated_utc": "2026-11-18T10:23:16.433Z",
+          "actor_ros_m": [
+            1075.2318635662182,
+            -1012.6562376935452,
+            -0.29953159565768755
+          ],
+          "actor_rotation_xyzw": [
+            -0.007950703794623324,
+            -0.035335575104246904,
+            0.0011801937631095926,
+            0.9993431795854236
+          ],
+          "camera": {
+            "position_cm": [
+              107034.11255625493,
+              101265.62376935453,
+              155.92187887251458
+            ],
+            "rotation_xyzw": [
+              0,
+              0.10452846326765348,
+              0,
+              0.9945218953682732
+            ]
+          },
+          "view_yaw_deg": 0,
+          "view_pitch_deg": -12,
+          "active_fov_deg": 55,
+          "speed_cm_per_second": 0,
+          "window_focused": true
+        }
+      },
+      {
+        "first_frame": 43,
+        "last_frame": 79,
+        "event_counts": {
+          "Space_press": 1,
+          "Space_release": 1,
+          "W_press": 1,
+          "W_release": 1
+        },
+        "pose_at_input_edge": {
+          "sample_updated_utc": "2026-11-18T10:23:20.961Z",
+          "actor_ros_m": [
+            1085.830369475104,
+            -1012.8737415335229,
+            0.5520201707183116
+          ],
+          "actor_rotation_xyzw": [
+            0.14936911677788522,
+            -0.0473745378657293,
+            -0.7177106554543747,
+            0.6784806078011775
+          ],
+          "camera": {
+            "position_cm": [
+              108093.9631471435,
+              101287.37415335228,
+              241.07705551011452
+            ],
+            "rotation_xyzw": [
+              0,
+              0.10452846326765348,
+              0,
+              0.9945218953682732
+            ]
+          },
+          "view_yaw_deg": 0,
+          "view_pitch_deg": -12,
+          "active_fov_deg": 55,
+          "speed_cm_per_second": 1.8687409027986406,
+          "window_focused": true
+        }
+      }
+    ],
+    "sample_scope": "State snapshots change at key edges only. Repeated snapshots after release are not per-frame pose measurements; the vehicle can continue settling."
+  },
+  "stills": [
+    {
+      "file": "gui-v8-wall-view-01\\entry.png",
+      "sha256": "0ed3de55f7b6bf1d6b38527595f4aa1144e0a751402f399076ca0207cf47f8d5",
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "context_sha256": "0c93851a35fd5cb107ab7c7c60be74ce1b665a5d7c23b394ab21bd94012de79f",
+      "reviewer": "/root",
+      "observation": "Root reviewed wall/ground appearance and minimap vehicle position, heading and spawn marker."
+    },
+    {
+      "file": "gui-v8-map-view-01\\entry.png",
+      "sha256": "139dae0feac54b81490f0c62de442bea88f03735e8bbfab9bd1a5f9deeb496df",
+      "dimensions": [
+        1616,
+        1039
+      ],
+      "context_sha256": "2a443ba13b4cc8549922b94b4e608cde5d146a0912cc12a76348ee9e84133644",
+      "reviewer": "/root",
+      "observation": "Root reviewed actual M-expanded map, vehicle position, heading and spawn marker."
+    }
+  ],
+  "visual_review": {
+    "root_frames": [
+      10,
+      35,
+      79
+    ],
+    "independent_audit_frames": [
+      25,
+      45,
+      65
+    ],
+    "distinct_reviewed_frames": 6,
+    "reviewed_frame_hashes": {
+      "10": "02ac265757aed0f8c9b03092dcfd91096fa110a5a727da5c942c609f821fdfa3",
+      "25": "a37c6c80a08d7a4951695fe8a789769b4667f31b1f8463d8148bb8d790a197f3",
+      "35": "d0b1f3cb80efd95ac47cac894288ef1fe96890784c32da80b6e8be28184486a8",
+      "45": "43ea3776177aa939d3978eebac16e8f2622e98e9d6160d7d97a77ec85bfbb983",
+      "65": "525b6650d56073a15b1a790a179ccd87e8e63fb5a985cc59d0eccb598a468b30",
+      "79": "7efb7b2d2ec97212cfb3328baab265785ab97c94b8be783190c2d5c6749ce969"
+    },
+    "independent_observation": "Frame25 shows brick/plaster and ground while moving. Frames45/65 retain the same wall and ground textures in a settled composition. No broad black/white material alternation is visible in these reviewed frames.",
+    "scope": "Six explicitly reviewed frames out of 80 captured. This is sampled visual review."
+  },
+  "roi_statistics": {
+    "frames_inclusive": [
+      45,
+      79
+    ],
+    "pair_count": 34,
+    "selection": "Fixed wall/ground regions outside the HUD, crosshair, map, vehicle and window bars, selected from actual reviewed frames45/65 and root frame79.",
+    "observations": {
+      "brick_wall": {
+        "rect_xyxy_pixels": [
+          640,
+          225,
+          990,
+          355
+        ],
+        "pair_count": 34,
+        "mean_abs_rgb_delta_0_255": {
+          "min": 0.1542930402930403,
+          "median": 0.2356959706959707,
+          "p95": 0.31018864468864465,
+          "max": 0.4624981684981685
+        },
+        "max_abs_channel_delta_0_255": 9,
+        "mean_rgb_0_255_range": [
+          34.468271062271064,
+          34.500080586080585
+        ]
+      },
+      "plaster_wall": {
+        "rect_xyxy_pixels": [
+          1360,
+          220,
+          1570,
+          460
+        ],
+        "pair_count": 34,
+        "mean_abs_rgb_delta_0_255": {
+          "min": 0.22755952380952382,
+          "median": 0.31145502645502643,
+          "p95": 0.3909890873015872,
+          "max": 0.569318783068783
+        },
+        "max_abs_channel_delta_0_255": 8,
+        "mean_rgb_0_255_range": [
+          53.7553373015873,
+          53.783458994708994
+        ]
+      },
+      "ground_left": {
+        "rect_xyxy_pixels": [
+          25,
+          300,
+          250,
+          550
+        ],
+        "pair_count": 34,
+        "mean_abs_rgb_delta_0_255": {
+          "min": 0.44436148148148147,
+          "median": 0.5413600000000001,
+          "p95": 0.6143955555555556,
+          "max": 0.6736948148148149
+        },
+        "max_abs_channel_delta_0_255": 45,
+        "mean_rgb_0_255_range": [
+          70.89739851851851,
+          70.94299851851852
+        ]
+      },
+      "ground_foreground": {
+        "rect_xyxy_pixels": [
+          930,
+          820,
+          1230,
+          960
+        ],
+        "pair_count": 34,
+        "mean_abs_rgb_delta_0_255": {
+          "min": 0.24924603174603174,
+          "median": 0.3398809523809524,
+          "p95": 0.4380222222222222,
+          "max": 0.6929444444444445
+        },
+        "max_abs_channel_delta_0_255": 10,
+        "mean_rgb_0_255_range": [
+          94.88588095238096,
+          94.94
+        ]
+      }
+    },
+    "interpretation": "Descriptive unregistered adjacent-frame RGB differences, without a pass/fail threshold. Small pose/lighting changes can contribute. No inference of all-frame visual correctness or continuous pose is made."
+  },
+  "source_files": {
+    "frames.json": "c68a8d808d9c3f88cfecba44389b4e56ca8f83e76ba2f7f94b327453f2b192fa",
+    "input_execution.json": "2a5c2189b144f78b111251a2083069fbd4fcadbc01ecabdd0b8ed189e3a1d0ed",
+    "before_live_input.json": "aea900855d9063407204789ef14df164b0ddd5c06ac04bf40d137d403abf3ea4",
+    "after_live_input.json": "2a5e9091e435796a3d8d360178f7839cd09db0e11373cbc0e2442c1d3211d600"
+  },
+  "frame_inventory_file": "frame-inventory.json",
+  "frame_inventory_sha256": "de0b4dd844d818aeac62781d93e3d1c0732b39ebdee57bedebd4a5483582b3cd",
+  "grass_views_status": "pending_separate_near_grass_and_green_slope_review",
+  "original_images_modified": false,
+  "finished_utc": "2026-11-18T10:34:27.013672+00:00"
+}

@@ -1,0 +1,321 @@
+{
+  "schema": "rmsim_school_entry_masonry_release_v1",
+  "status": "accepted_native_visual_and_interactive",
+  "utc": "2026-11-20T02:57:03.708105+00:00",
+  "scope": "CC0 ready-made entrance masonry walls, continuous distant ground and sky enclosure; retain source gym and accepted wave-platform glass anchors.",
+  "source": {
+    "name": "Brick Wall",
+    "author": "Grab3D",
+    "url": "https://grab3d.com/models/city/brick-wall/",
+    "license": "CC0-1.0",
+    "source_glb_sha256": "91565e4a4f70009254fb48c98cb7584d603341aedf4123809c3446adaf06809b",
+    "source_triangles": 10412,
+    "native_lod0_fallback_triangles": 10412,
+    "nanite_reported_triangles": 10412,
+    "nanite_cluster_geometry_per_face_audited": false
+  },
+  "placement": {
+    "wing_count": 4,
+    "modules_per_wing": 6,
+    "module_count": 24,
+    "wing_length_m": 15.3,
+    "visible_height_m": 1.75980005,
+    "thickness_m": 0.272,
+    "clear_entry_width_m": 19.2712915039,
+    "outer_stair_clearance_m": 4.2632,
+    "original_native_assets_retained": 23,
+    "original_instances_retained": 57,
+    "original_trees_retained": 26,
+    "new_seating_instances": 0
+  },
+  "active_files": {
+    "assets/maps/rmuc2027/arena-shell.json": "dc502ccacf48a29dd3a2d7f02df5e210bc0447dc0e09360115964093fd92847d",
+    "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json": "9ab039d8c570d63abb3369795b81fd63f46491a044db5e6ffba7bc1cc38675c4",
+    "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+    "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+    "unreal/RMSim/Source/RMSim/CampusGym.cpp": "844b2cdbac88c79febe667919c0dd96963bac8cb767db01194129369ebc3eed0",
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "27a87ddacd95d07938276d42cb610b1885175e86e69e906b6d037cf253b8ec2b",
+    "tools/unreal/import_school_entry_assets.py": "361850a47e6ac4efe13f8dafefc1e496460c43035c72dfecff5059c568fe0535",
+    "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.uasset": "e0a81d17c4392d6117f7b1880853ed7055efea6e72c4df60343ba30530245943"
+  },
+  "outdoor_background": {
+    "sky_diameter_m": 16000,
+    "ground_half_extent_m": 2000,
+    "ground_surface_z_m": -0.48440000057220456,
+    "ground_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolEntry/Materials/M_ExteriorDistantGround.M_ExteriorDistantGround",
+    "ground_inner_bounds_m": {
+      "lo": [
+        -80.0158752,
+        -62.8349085,
+        -0.48440000057220456
+      ],
+      "hi": [
+        79.9841248,
+        77.1650915,
+        -0.48440000057220456
+      ]
+    }
+  },
+  "runtime_boundary_sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+  "native_views": [
+    {
+      "view": "GroundSkySeam",
+      "probe": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/GroundSkySeam/boundary.json",
+        "bytes": 31187,
+        "sha256": "6dcc4ffe006e366ca374fb40173d2de8f89218719b7d9a94a4acabf6f32d8f69"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/GroundSkySeam/command.json",
+        "bytes": 1331,
+        "sha256": "8fc6a5c24323c0cc8070175e76015a094d4a8387d0efe40c90fb54ca4c6cad15"
+      },
+      "native_exit_code": 0,
+      "seconds": 47.38,
+      "sweep_passed": 96,
+      "sweep_samples": 96,
+      "native_assets": 24,
+      "native_instances": 81,
+      "background_contract_satisfied": true,
+      "long_glass_faces_match_target": true,
+      "all_glass_bases_meet_support_floor": true,
+      "gpu_and_overflow_signatures": {
+        "GPU timeout": 0,
+        "GPU Crashed": 0,
+        "TerminateOnGPUCrash": 0,
+        "Writing Aftermath dump": 0,
+        "Non-Nanite Marking Job Queue overflow": 0,
+        "Virtual Shadow Map Page Pool overflow": 0,
+        "DXGI_ERROR_DEVICE_REMOVED": 0,
+        "DXGI_ERROR_DEVICE_HUNG": 0
+      }
+    },
+    {
+      "view": "EntryBrickDetail",
+      "probe": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryBrickDetail/boundary.json",
+        "bytes": 31187,
+        "sha256": "6dcc4ffe006e366ca374fb40173d2de8f89218719b7d9a94a4acabf6f32d8f69"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryBrickDetail/command.json",
+        "bytes": 1337,
+        "sha256": "42a3f8981e43caf96e6da4647852231b93ae36fd836b75734b4b8f24ea3b0fa4"
+      },
+      "native_exit_code": 0,
+      "seconds": 52.01,
+      "sweep_passed": 96,
+      "sweep_samples": 96,
+      "native_assets": 24,
+      "native_instances": 81,
+      "background_contract_satisfied": true,
+      "long_glass_faces_match_target": true,
+      "all_glass_bases_meet_support_floor": true,
+      "gpu_and_overflow_signatures": {
+        "GPU timeout": 0,
+        "GPU Crashed": 0,
+        "TerminateOnGPUCrash": 0,
+        "Writing Aftermath dump": 0,
+        "Non-Nanite Marking Job Queue overflow": 0,
+        "Virtual Shadow Map Page Pool overflow": 0,
+        "DXGI_ERROR_DEVICE_REMOVED": 0,
+        "DXGI_ERROR_DEVICE_HUNG": 0
+      }
+    },
+    {
+      "view": "EntryWestUpperDetail",
+      "probe": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestUpperDetail/boundary.json",
+        "bytes": 31187,
+        "sha256": "6dcc4ffe006e366ca374fb40173d2de8f89218719b7d9a94a4acabf6f32d8f69"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestUpperDetail/command.json",
+        "bytes": 1347,
+        "sha256": "0ed9ed149a2a7b24064789de07e07fb8c50f2aba6ec4d38a08a71aa13275f786"
+      },
+      "native_exit_code": 0,
+      "seconds": 51.05,
+      "sweep_passed": 96,
+      "sweep_samples": 96,
+      "native_assets": 24,
+      "native_instances": 81,
+      "background_contract_satisfied": true,
+      "long_glass_faces_match_target": true,
+      "all_glass_bases_meet_support_floor": true,
+      "gpu_and_overflow_signatures": {
+        "GPU timeout": 0,
+        "GPU Crashed": 0,
+        "TerminateOnGPUCrash": 0,
+        "Writing Aftermath dump": 0,
+        "Non-Nanite Marking Job Queue overflow": 0,
+        "Virtual Shadow Map Page Pool overflow": 0,
+        "DXGI_ERROR_DEVICE_REMOVED": 0,
+        "DXGI_ERROR_DEVICE_HUNG": 0
+      }
+    },
+    {
+      "view": "EntryWestInside",
+      "probe": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestInside/boundary.json",
+        "bytes": 31187,
+        "sha256": "6dcc4ffe006e366ca374fb40173d2de8f89218719b7d9a94a4acabf6f32d8f69"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestInside/command.json",
+        "bytes": 1343,
+        "sha256": "98aa570c0ff209ab3b15c3d58fbac5a33d63a54445ba4644c4549b30d7b932da"
+      },
+      "native_exit_code": 0,
+      "seconds": 48.24,
+      "sweep_passed": 96,
+      "sweep_samples": 96,
+      "native_assets": 24,
+      "native_instances": 81,
+      "background_contract_satisfied": true,
+      "long_glass_faces_match_target": true,
+      "all_glass_bases_meet_support_floor": true,
+      "gpu_and_overflow_signatures": {
+        "GPU timeout": 0,
+        "GPU Crashed": 0,
+        "TerminateOnGPUCrash": 0,
+        "Writing Aftermath dump": 0,
+        "Non-Nanite Marking Job Queue overflow": 0,
+        "Virtual Shadow Map Page Pool overflow": 0,
+        "DXGI_ERROR_DEVICE_REMOVED": 0,
+        "DXGI_ERROR_DEVICE_HUNG": 0
+      }
+    },
+    {
+      "view": "DriverView",
+      "probe": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/DriverView/boundary.json",
+        "bytes": 31187,
+        "sha256": "6dcc4ffe006e366ca374fb40173d2de8f89218719b7d9a94a4acabf6f32d8f69"
+      },
+      "command": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/DriverView/command.json",
+        "bytes": 1312,
+        "sha256": "8e94104cbfed638e69562eb2bc6823b8072d70d7a5ce81e5106265a173a08c57"
+      },
+      "native_exit_code": 0,
+      "seconds": 47.14,
+      "sweep_passed": 96,
+      "sweep_samples": 96,
+      "native_assets": 24,
+      "native_instances": 81,
+      "background_contract_satisfied": true,
+      "long_glass_faces_match_target": true,
+      "all_glass_bases_meet_support_floor": true,
+      "gpu_and_overflow_signatures": {
+        "GPU timeout": 0,
+        "GPU Crashed": 0,
+        "TerminateOnGPUCrash": 0,
+        "Writing Aftermath dump": 0,
+        "Non-Nanite Marking Job Queue overflow": 0,
+        "Virtual Shadow Map Page Pool overflow": 0,
+        "DXGI_ERROR_DEVICE_REMOVED": 0,
+        "DXGI_ERROR_DEVICE_HUNG": 0
+      }
+    }
+  ],
+  "visible_runtime": {
+    "pid": 35380,
+    "seconds": 60.03,
+    "visible_sample_count": 7,
+    "client_size": [
+      1600,
+      1000
+    ],
+    "message_response_seconds": 8.779999916441739e-05,
+    "gpu_and_overflow_signatures": {
+      "GPU timeout": 0,
+      "GPU Crashed": 0,
+      "TerminateOnGPUCrash": 0,
+      "Writing Aftermath dump": 0,
+      "Non-Nanite Marking Job Queue overflow": 0,
+      "Virtual Shadow Map Page Pool overflow": 0
+    },
+    "left_running_at_observation": true
+  },
+  "evidence": {
+    "build-01/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/build-01/report.json",
+      "bytes": 592,
+      "sha256": "8ad944e4b785173385b59582e9782e17efec16a9999ab8130c3a14f860671649"
+    },
+    "source-asset-diagnostics.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/source-asset-diagnostics.json",
+      "bytes": 2639,
+      "sha256": "219af548789e4ed18c36068d5b82d06b4aacbee7c14f0ee9df2be9607dda668e"
+    },
+    "source-and-placement-summary.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/source-and-placement-summary.json",
+      "bytes": 17183,
+      "sha256": "89450188c6c6c401e15bd42d3febff44b8f354efbe7e2613c67c7c45b7fe9ee3"
+    },
+    "native-import-03/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-import-03/report.json",
+      "bytes": 7618,
+      "sha256": "ef4dddce8fbf3400647b40062c24c0f3bb372d266dde5af59bcdb7a9edc5549a"
+    },
+    "native-import-03/execution.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-import-03/execution.json",
+      "bytes": 1100,
+      "sha256": "199702fd44c088090a3a57dd63e32f9317c7a0988d4641f953638561dcc81711"
+    },
+    "static-placement-audit-01/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/static-placement-audit-01/report.json",
+      "bytes": 7495,
+      "sha256": "efca6f0fdd22b97ac35b7bd1c86dd44c33a618a3a23bb41c30f4bbb6ecb278e5"
+    },
+    "ground-phase-native-01/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/ground-phase-native-01/report.json",
+      "bytes": 5162,
+      "sha256": "708cf2c8e299cdd1779a2a4e196b12ecf347be9cf0318c96ef2da9e688c30801"
+    },
+    "ground-phase-native-01/execution.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/ground-phase-native-01/execution.json",
+      "bytes": 1052,
+      "sha256": "c9865063d4c656795ec1692e9e76c8118f357fee774f3d1b023d3f27b0b85de5"
+    },
+    "native-views-final-02/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/report.json",
+      "bytes": 5333,
+      "sha256": "6f7343d304a42e4ebb872ffa8229978cef28e47c1903db6eebfdea2a03a542e7"
+    },
+    "visual-review.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/visual-review.json",
+      "bytes": 3757,
+      "sha256": "0c95624f2ea85713e4a9115f6fbd4a372282c14b994b17e31d67ef34d5809002"
+    },
+    "navigation-preflight-01/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/navigation-preflight-01/report.json",
+      "bytes": 11007,
+      "sha256": "d59d627ef417bc0ff76fed037f4a9cb5c6ae2e6808ca2089b5efff78137fb854"
+    },
+    "interactive-observation-02/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/interactive-observation-02/report.json",
+      "bytes": 2269,
+      "sha256": "1985a52fb4412a1686670b148f7749705ee0f5a5288ad8f9e0a0a004697919bd"
+    },
+    "interactive-response-02/report.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/interactive-response-02/report.json",
+      "bytes": 2031,
+      "sha256": "56ed88f8787bb0f4de2038fed7f4b829bad86c21e6ab2b3951b06407d258646a"
+    },
+    "native-views-final-02/deliverables/images.json": {
+      "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/deliverables/images.json",
+      "bytes": 2123,
+      "sha256": "90d08bd9685dca7255443447d82226e691a46460d5e5a776ddc482084aab915e"
+    }
+  },
+  "verification_scope_notes": [
+    "Native final views and final visible observation use the same final module identity recorded in active_files; the earlier successful background build has its own preserved module hash.",
+    "Navigation is the installed-helper offline identity preflight; this entrance-only change did not add a new live ROS run.",
+    "Earlier import and lighting trials remain in their original evidence directories. Acceptance is based on final-02 images after the material-only phase update.",
+    "Original near-ground grass appearance and local texture joins are retained; no claim of total grass seam removal.",
+    "No vehicle source/control/suspension, competition map geometry or accepted glass target-boundary changes in this entrance task."
+  ],
+  "repository_storage": "Source/setup, license, active JSON and compact evidence are scoped local commits; raw source meshes/textures, UE Content, images and full logs remain local."
+}

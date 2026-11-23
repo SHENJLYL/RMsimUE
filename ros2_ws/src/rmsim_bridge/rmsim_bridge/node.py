@@ -48,6 +48,12 @@ class BridgeNode(Node):
         self.shooter_pub=self.create_publisher(String,prefix+'/training_state',control)
         self.training_eval_pub=self.create_publisher(String,'/rmsim/evaluation'+prefix+'/training',control)
         self.command_sub = self.create_subscription(TwistStamped, prefix + '/cmd_vel', self.on_command, control)
+        self.idle_spin_sub = self.create_subscription(
+            TwistStamped, prefix + '/navigation/cmd_vel_operator_idle',
+            lambda command: self.on_command(command, operator_idle=True), control)
+        self.navigation_world_sub = self.create_subscription(
+            TwistStamped, prefix + '/navigation/cmd_vel_world',
+            lambda command: self.on_command(command, navigation_frame=True), control)
         self.state = None
         self.received_at = 0.
         self.sequence = 0
@@ -76,7 +82,7 @@ class BridgeNode(Node):
         self.timer = self.create_timer(.001 if self.lk is not None else .01, self.poll, clock=self.wall_clock)
         self.get_logger().info('RMSim bridge listening to local simulator state; waiting for TCP 127.0.0.1:%d' % self.transport.port)
 
-    def on_command(self, message):
+    def on_command(self, message, *, operator_idle=False, navigation_frame=False):
         try:
             if self.lk is not None:raise ProtocolError('LK mode accepts original ChassisControl, not cmd_vel')
             if not self.transport.connected or self.state is None or time.monotonic()-self.received_at > .25:
@@ -85,7 +91,8 @@ class BridgeNode(Node):
             t = message.twist
             next_sequence = self.sequence + 1
             raw = command_packet(self.state, next_sequence, stamp_ns, message.header.frame_id,
-                                 [t.linear.x, t.linear.y, t.linear.z, t.angular.x, t.angular.y, t.angular.z], self.robot_id)
+                                 [t.linear.x, t.linear.y, t.linear.z, t.angular.x, t.angular.y, t.angular.z],
+                                 self.robot_id, operator_idle=operator_idle, navigation_frame=navigation_frame)
             if not self.transport.queue(raw):
                 raise ProtocolError('simulator disconnected or command queue stalled')
             self.sequence = next_sequence
@@ -206,9 +213,12 @@ class BridgeNode(Node):
             diagnostic.update(session=self.state['session'], epoch=self.state['epoch'], tick=self.state['tick'],
                               sim_time_ns=self.state['sim_time_ns'], command=self.state['command'])
             diagnostic.update(simulation_rate=self.state.get('simulation_rate'),fixed_step_s=self.state.get('fixed_step_s'))
+            for key in ('clock_source', 'physics_backend', 'dynamics_step_s', 'rendering', 'drive', 'game_tick_stalls', 'last_game_tick_gap_ms', 'mujoco_warning_count'):
+                if key in self.state:
+                    diagnostic[key] = self.state[key]
             if 'map' in self.state:diagnostic['map']=self.state['map']
             camera=self.state['camera']
-            diagnostic['camera_config']={key:camera.get(key) for key in ('width','height','hfov_rad','nominal_hz','observer_hfov_rad')}
+            diagnostic['camera_config']={key:camera.get(key) for key in ('width','height','hfov_rad','nominal_hz','observer_hfov_rad','capture_enabled')}
             if self.lk is not None:diagnostic['motors']=self.state.get('motors')
             if 'aim' in self.state:diagnostic['aim']=self.state['aim']
             if 'imu' in self.state:

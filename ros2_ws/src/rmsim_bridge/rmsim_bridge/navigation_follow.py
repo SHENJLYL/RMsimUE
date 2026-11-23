@@ -51,9 +51,11 @@ class NavigationYaw:
         self.command_stamp = -1
         self.moving = False
 
-    def step(self, *, dt, now_ns, stamp_ns, vx, vy, body_yaw, joint_yaw, joint_pitch):
+    def step(self, *, dt, now_ns, stamp_ns, vx, vy, body_yaw, joint_yaw, joint_pitch,
+             command_frame_yaw=None):
         c = self.config
-        if not all(math.isfinite(v) for v in (dt, vx, vy, body_yaw, joint_yaw, joint_pitch)):
+        frame_yaw = body_yaw if command_frame_yaw is None else command_frame_yaw
+        if not all(math.isfinite(v) for v in (dt, vx, vy, body_yaw, joint_yaw, joint_pitch, frame_yaw)):
             self.reset(); return None
         age = (now_ns-stamp_ns)*1e-9
         if not 0 < dt <= c.input_timeout_s or stamp_ns <= 0 or stamp_ns < self.command_stamp or not -.05 <= age < c.input_timeout_s:
@@ -66,13 +68,24 @@ class NavigationYaw:
             self.active = True
         if stamp_ns != self.command_stamp:
             self.moving = math.hypot(vx, vy) >= c.min_speed
-            # Equivalent to original imu_yaw + atan2(v_y_gimbal, v_x_gimbal).
-            # Our accepted velocity is already in standard ROS body coordinates.
-            self.destination = wrap(body_yaw + math.atan2(vy, vx))
+            # Project the accepted velocity from its frame at its own stamp.
+            # A stopped chassis has no translation heading to replace the target.
+            if self.moving:
+                self.destination = wrap(frame_yaw + math.atan2(vy, vx))
             self.command_stamp = stamp_ns
+        return self._advance(dt, body_yaw)
+
+    def hold(self, *, dt, body_yaw):
+        if not self.active or not 0 < dt <= self.config.input_timeout_s or not math.isfinite(body_yaw):
+            return None
+        self.moving = False
+        return self._advance(dt, body_yaw)
+
+    def _advance(self, dt, body_yaw):
+        c = self.config
         error = wrap(self.destination-self.target)
         desired_rate = 0.
-        if self.moving and abs(error) > c.yaw_tolerance:
+        if abs(error) > c.yaw_tolerance:
             braking_rate = math.sqrt(2*c.max_yaw_accel*(abs(error)-c.yaw_tolerance))
             desired_rate = math.copysign(clamp(braking_rate, c.min_yaw_rate, c.max_yaw_rate), error)
         limit = c.max_yaw_accel*dt

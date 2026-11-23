@@ -1,0 +1,123 @@
+{
+  "status": "passed",
+  "command": [
+    "powershell",
+    "-NoProfile",
+    "-Command",
+    "& 'D:/simulator/tools/environment/run-env.ps1' -Command @('powershell','-NoProfile','-File','D:/simulator/tools/environment/Build-RosBridge.ps1')"
+  ],
+  "exit_code": 0,
+  "elapsed_wall_s": 12.185148299999128,
+  "modules": {
+    "aim_adapter.py": {
+      "source": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26",
+      "installed": "e4174e5429f1992d8177c38541fb7ce8f872c200145408e8ec7fff2db1ea8f26",
+      "text_equal": true
+    },
+    "aim_demo.py": {
+      "source": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+      "installed": "362e7b1e72e9f3b8c3d6b067218002ceb6854c30919f048e6b1ee30000f188ea",
+      "text_equal": true
+    },
+    "control_dlls.py": {
+      "source": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+      "installed": "8b3e57a6420715fae21f63f8e332edc533a1459893ea6ed7245b2d9fbba3a004",
+      "text_equal": true
+    },
+    "drive_demo.py": {
+      "source": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+      "installed": "dc0b1e2e8c87db17154cab55fbec12f0d4b30c31cdbcf530ed5395d9e8f7ac22",
+      "text_equal": true
+    },
+    "imu.py": {
+      "source": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484",
+      "installed": "7cc9f380306bb6f5d7ce97a80e82d2b4a9ed554e67368b23e8c60acc84124484",
+      "text_equal": true
+    },
+    "lidar.py": {
+      "source": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa",
+      "installed": "77f0100fd35c1ca58f520bf1d57499174b58a8512e711cf2500af37545ce6ffa",
+      "text_equal": true
+    },
+    "lk_adapter.py": {
+      "source": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+      "installed": "a31ddc3fd4b99e7d66a9d04522f1d48fb9a464d08394144cc6f82f806ee336c6",
+      "text_equal": true
+    },
+    "native_transport.py": {
+      "source": "5a261878674a451e87082afa9c827e1f7d83a835ca658f14faf0ffef963d818f",
+      "installed": "5a261878674a451e87082afa9c827e1f7d83a835ca658f14faf0ffef963d818f",
+      "text_equal": true
+    },
+    "navigation_config.py": {
+      "source": "f30bcc35a9577707c8800d1516e9de7873fa2ae816c1ebfd21813b2daf17d3ff",
+      "installed": "f30bcc35a9577707c8800d1516e9de7873fa2ae816c1ebfd21813b2daf17d3ff",
+      "text_equal": true
+    },
+    "navigation_follow.py": {
+      "source": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3",
+      "installed": "7e8824bbe30f15495b00c2b0a92ac5841151f97b8ea984f4988eb6a67cda27b3",
+      "text_equal": true
+    },
+    "navigation_follow_adapter.py": {
+      "source": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13",
+      "installed": "01e5e1afbd2dd508c0c84bf0545e70e32c7a0920bf3b78b446a10c330708ba13",
+      "text_equal": true
+    },
+    "navigation_map_identity.py": {
+      "source": "cc3050215e3aa7cf4773816cd41cf8f4599d38711fd3f58afe65126bdc021fe0",
+      "installed": "cc3050215e3aa7cf4773816cd41cf8f4599d38711fd3f58afe65126bdc021fe0",
+      "text_equal": true
+    },
+    "navigation_runner.py": {
+      "source": "29fd506dd35b33d47932c384f8d91226725dc5e627a12249a76c1297f8ecd14f",
+      "installed": "29fd506dd35b33d47932c384f8d91226725dc5e627a12249a76c1297f8ecd14f",
+      "text_equal": true
+    },
+    "node.py": {
+      "source": "2aab14fbaf6fe2d8b143faafcdd88b26277734937ad6d06d02fa9c60360a154a",
+      "installed": "2aab14fbaf6fe2d8b143faafcdd88b26277734937ad6d06d02fa9c60360a154a",
+      "text_equal": true
+    },
+    "pointlio_units.py": {
+      "source": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1",
+      "installed": "ab96f88b1d07667f57c5335252a803c7a24b85e3f6c08dd8ffee76f049cd33c1",
+      "text_equal": true
+    },
+    "point_lio_runner.py": {
+      "source": "4c42f3d2f80703d3cb457e3578d9de16896b6dd11c05d0b18330036052da8973",
+      "installed": "4c42f3d2f80703d3cb457e3578d9de16896b6dd11c05d0b18330036052da8973",
+      "text_equal": true
+    },
+    "protocol.py": {
+      "source": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08",
+      "installed": "1c325c837280ae5d9c8d71c21122417d77f8e257954e33d96621044b0fbd6a08",
+      "text_equal": true
+    },
+    "sentry_navigation_source.py": {
+      "source": "1c804ae21c56119ac8995414019cb5b60652fc9f8105aa54209cac258212d795",
+      "installed": "1c804ae21c56119ac8995414019cb5b60652fc9f8105aa54209cac258212d795",
+      "text_equal": true
+    },
+    "sentry_pointlio_source.py": {
+      "source": "82873ca1a1593cf8e1f6fc0e27df89009b550878992f532e96264a02b1fed811",
+      "installed": "82873ca1a1593cf8e1f6fc0e27df89009b550878992f532e96264a02b1fed811",
+      "text_equal": true
+    },
+    "service_poll.py": {
+      "source": "cd30a551bdfc3dcf7da37a6a587251fe23f9b480f0dbc435d085153971734090",
+      "installed": "cd30a551bdfc3dcf7da37a6a587251fe23f9b480f0dbc435d085153971734090",
+      "text_equal": true
+    },
+    "transport.py": {
+      "source": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+      "installed": "c6eb18f8851624ad29b5eec970de125235bb0986927f9dcee56040a36901faa3",
+      "text_equal": true
+    },
+    "__init__.py": {
+      "source": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+      "installed": "77651bea4a6d54f8536fd5879de4cbce895870eb55e65051607bcd439745ad8b",
+      "text_equal": true
+    }
+  }
+}

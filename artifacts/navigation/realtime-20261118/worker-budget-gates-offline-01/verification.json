@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "created_utc": "2026-11-18T04:43:09.513230+00:00",
+  "scope": "Recorded result of focused tests already completed before rmuc-15; this write performs no tests or native launch",
+  "execution_evidence": {
+    "remote_terminal_process_id": 2948,
+    "command": [
+      "C:/Users/SHEN/AppData/Local/Programs/Python/Python314/python.exe",
+      "D:/simulator/tests/control/test_platform_cpu_policy.py"
+    ],
+    "observed_unittest_output": "Ran 13 tests in 0.098s\n\nOK\n",
+    "tests_run": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "name": "thirteen_focused_cpu_policy_and_evidence_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_source_parsed_before_test_run",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "tools/integration/summarize_navigation_realtime.py": "cc3537c080e907c7d5b6b0d1bc3826fa5d827585c15d53671e8b5cadd3840dee",
+    "tests/control/test_platform_cpu_policy.py": "a5d2baddd74873abcb4eabb8402995a1f2ab19e7800ec0414906434a9acc8d2c",
+    "tools/integration/platform_cpu_policy.py": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+    "tools/integration/navigation_console.py": "6b268153d8190b548b1e6994e36a8a61d7a3eae5834d8165f780f313d2ca2df1"
+  },
+  "native_budget_api_evidence": {
+    "path": "artifacts/navigation/realtime-20261118/worker-budget-native-01/verification.json",
+    "sha256": "bd1f821b254abbabd39a4772b9428622fe8b55c47aa90101bf63586f604291f8"
+  }
+}

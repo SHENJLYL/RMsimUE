@@ -1,0 +1,98 @@
+{
+  "schema": "wt_layered_object_saved_reload_summary_v1",
+  "status": "passed",
+  "independent_reload": true,
+  "scope": "Saved Surface parent plus all 192 original layered material instances",
+  "execution": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\object-native-reload-01\\execution.json",
+    "sha256": "255789bb09f99647f9c45ec5d8adc780a49c11f4b80ab3f573bb9346f839c4c4",
+    "pid": 51360,
+    "exit_code": 0,
+    "duration_seconds": 23.888695799999997,
+    "module_sha256": "4e38f728a0ca6c6872841ed3b86f723feea8b3e5759737b0749a3abd96b83e65",
+    "module_sha256_after": "4e38f728a0ca6c6872841ed3b86f723feea8b3e5759737b0749a3abd96b83e65",
+    "world_sha256_before": "14e80512158481a5d786be859e1c3d2402d376b844bcb3a730d077aca41976d3",
+    "world_sha256_after": "14e80512158481a5d786be859e1c3d2402d376b844bcb3a730d077aca41976d3",
+    "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "verification": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\object-native-reload-01\\audit\\verification.json",
+    "sha256": "aa24e4c4409c37b0e717b256050e1289a969242ff8abb611bcdbb873326bea7a"
+  },
+  "asset_counts": {
+    "parents": 1,
+    "layered_instances": 192,
+    "total": 193
+  },
+  "checks": {
+    "source_identity": true,
+    "original_texture_bindings": true,
+    "per_uv_source_frame": true,
+    "source_world_RNM": true,
+    "actual_normal_output_connection": true,
+    "correct_tangent_space_contract": true,
+    "original_instance_and_ground_assets_unchanged": true,
+    "completed_native_shader_statistics": true,
+    "original_world_and_manifest_unchanged": true
+  },
+  "actual_parent_statistics": {
+    "num_vertex_shader_instructions": 146,
+    "num_pixel_shader_instructions": 493,
+    "num_samplers": 10,
+    "num_vertex_texture_samples": 3,
+    "num_pixel_texture_samples": 0,
+    "num_virtual_texture_samples": 0,
+    "num_uv_scalars": 6,
+    "num_interpolator_scalars": 0
+  },
+  "parent_compile_errors": [],
+  "parent_sha256_before": "e59cd7771f02ae658026ff99b2c23c9208c00b699925e085e759d6d5e242fd08",
+  "parent_sha256_after": "e59cd7771f02ae658026ff99b2c23c9208c00b699925e085e759d6d5e242fd08",
+  "source_texture_inputs": 7,
+  "normal_connection": {
+    "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionReroute_1",
+    "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionCustom_1",
+    "output_pin": "NormalOut"
+  },
+  "protected_assets": {
+    "count": 1283,
+    "unchanged": true
+  },
+  "native_assets_written": [],
+  "source_normal_contract": {
+    "schema": "wt_layered_uv_normal_v1",
+    "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "source_shaders": [
+      "rendinst_layered",
+      "rendinst_layered_hmap_blend",
+      "rendinst_layered_hmap_vertex_blend"
+    ],
+    "parent": "WT_Parent_Surface",
+    "base_normal_uv": 0,
+    "detail_normal_uv": 2,
+    "frame": "per-sampled-UV scale-invariant cotangent frame from negative world derivatives",
+    "composition": "world-space RNM after the existing source detail weight",
+    "output": "TransformWorldVectorToTangent(Parameters.TangentToWorld, layeredWorld)",
+    "two_sided": "unflipped geometric frame; engine applies TwoSidedSign once",
+    "degenerate_uv": "geometric normal when max squared tangent length <= 1e-20",
+    "non_layered_branches": "original shader text unchanged",
+    "texture_uv_color_weights_alpha_roughness_metallic": "unchanged",
+    "code_sha256": "d2da8f6fc8ec93ebd147a41ed38be75c8d2202bfb272aac6cd615083f6a44cd3",
+    "source_references": [
+      "prog/gameLibs/render/shaders/psh_tangent.hlsl:108-134",
+      "prog/gameLibs/render/shaders/normaldetail.hlsl:73-105",
+      "prog/gameLibs/render/shaders/layered_inc.dshl:304-313"
+    ],
+    "ue_references": [
+      "Engine/Shaders/Private/Common.ush:1988-1999",
+      "Engine/Shaders/Private/MaterialTemplate.ush:4353-4380"
+    ]
+  },
+  "rendered_quality_verified": false,
+  "prior_author_summary": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\object-native-author-02\\summary.json",
+    "sha256": "a34d4da66fac0987cb1ca7c88cc36e74eeb89052854598a4caa3a0678611de1e"
+  },
+  "retained_failed_attempt": "object-native-author-01; original first-save identity and corrected sampler API contract preserved"
+}

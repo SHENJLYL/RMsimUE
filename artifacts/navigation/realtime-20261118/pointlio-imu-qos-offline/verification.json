@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "timestamp_utc": "2026-11-18T02:20:47.542097+00:00",
+  "scope": "offline source contract and actual runner parameter-file lifecycle; native receive-loss improvement pending",
+  "results": [
+    {
+      "test": "test_pointlio_imu_qos.py",
+      "command": [
+        "E:/simulator-cache/environments/rm-simulator-ros2-humble-9257817147700612234/envs/default/python.exe",
+        "D:\\simulator\\tests\\control\\test_pointlio_imu_qos.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.2858873000004678,
+      "test_sha256": "05a1042a87e8c6b4d7147b8bfa64809c6a1dcf8f3559b490372b653384da7ffa"
+    },
+    {
+      "test": "test_pointlio_source_snapshot.py",
+      "command": [
+        "E:/simulator-cache/environments/rm-simulator-ros2-humble-9257817147700612234/envs/default/python.exe",
+        "D:\\simulator\\tests\\control\\test_pointlio_source_snapshot.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.21429199999693083,
+      "test_sha256": "cfca9ef1ae500f91f66932efdf599b5f97da3c903cf52634268b225a5e6ff54c"
+    }
+  ]
+}

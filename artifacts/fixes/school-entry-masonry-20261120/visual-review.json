@@ -1,0 +1,82 @@
+{
+  "schema": "rmsim_school_entry_visual_review_v1",
+  "status": "passed_requested_entrance_and_sky_scope",
+  "utc": "2026-11-20T02:57:03.629430+00:00",
+  "review_method": "Root assistant and independent read-only visual reviewer inspected actual final-02 native rendered images; no generated imagery.",
+  "capture_report": {
+    "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/report.json",
+    "bytes": 5333,
+    "sha256": "6f7343d304a42e4ebb872ffa8229978cef28e47c1903db6eebfdea2a03a542e7"
+  },
+  "views": [
+    {
+      "view": "GroundSkySeam",
+      "status": "passed",
+      "image": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/GroundSkySeam/overview.png",
+        "bytes": 1977285,
+        "sha256": "005c838447cf5dd5820473ed3fd2f02e4395a7226748b75ac99fa749064a1be8"
+      },
+      "observations": [
+        "Distant phase seam is visibly smoother than final-01; ground reaches the distant tree line without exposed edge or sky-sphere cutoff.",
+        "Original near-ground large texture scale and a local phase boundary remain source-retained.",
+        "No new normal inversion, dark patch, hard shading band or overall exposure change was observed."
+      ]
+    },
+    {
+      "view": "EntryBrickDetail",
+      "status": "passed",
+      "image": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryBrickDetail/overview.png",
+        "bytes": 3177082,
+        "sha256": "099664f807e874c0cd15907ff38be16123922cce8b3e865b23e3ec8da6ff954d"
+      },
+      "observations": [
+        "Brick color variation, mortar joints and coping remain legible in tree shade.",
+        "Wall base meets ground; wall end clears paved path; no visible tree-trunk intersection."
+      ]
+    },
+    {
+      "view": "EntryWestUpperDetail",
+      "status": "passed",
+      "image": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestUpperDetail/overview.png",
+        "bytes": 3415952,
+        "sha256": "b4c00eab84b5ae4b53ae7ca8d1dc5ace4daeccce6efe1659dab11aaf5e8fd9c4"
+      },
+      "observations": [
+        "Long wall has continuous brick detail and a clear coping silhouette.",
+        "Wall base is grounded and entrance-side paved route remains open."
+      ]
+    },
+    {
+      "view": "EntryWestInside",
+      "status": "passed",
+      "image": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/EntryWestInside/overview.png",
+        "bytes": 2946753,
+        "sha256": "05629aa85e2921dc3b46c633842fef5f042f823e29ebbc354ede9240e34a705b"
+      },
+      "observations": [
+        "Open entrance and both wall ends remain visible; exterior tree trunks, leaves and sky are clear.",
+        "Source floor tiles, door frames and cream wall columns retain material detail across interior and exterior exposure."
+      ]
+    },
+    {
+      "view": "DriverView",
+      "status": "passed",
+      "image": {
+        "path": "artifacts/fixes/school-entry-masonry-20261120/native-views-final-02/DriverView/overview.png",
+        "bytes": 3040815,
+        "sha256": "4c687bc377f68823c38849289984fc9feb2d43e22af6e18baa7f7b2d6f51388c"
+      },
+      "observations": [
+        "Field markings, raised platform, trusses, stair and columns remain legible.",
+        "High-window foliage, sky and clouds are clear; no new interior material or exposure issue was observed."
+      ]
+    }
+  ],
+  "source_retained_observations": [
+    "Original grass has bright green coloring, large texture scale and locally visible near-ground joins. This acceptance does not claim removal of all source-ground joins."
+  ]
+}

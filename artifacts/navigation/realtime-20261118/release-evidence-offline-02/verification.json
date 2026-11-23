@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 0.03184289999626344,
+  "files": {
+    "tools/integration/summarize_navigation_realtime.py": "0fa3854f655f1317df8270d593bab1c963956a7add7689c7be51e2ee7e35db31",
+    "tests/control/test_navigation_release_evidence.py": "093392f2023df4b1f8dda92ef33d5d33a2e8a121b9efd98fee946f9d6e135a27"
+  },
+  "output": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.014s\n\nOK\n",
+  "current_package_manifest_sha256": "6dae430a21534581fec32c5f216f926bd3506367c080c1ccd1cc4324462f78a5",
+  "current_package_files": {
+    "metadata": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\metadata.json",
+      "sha256": "a2bb480d74048b06dec74823758b6ad676273b127e95932ed93b97964d017852"
+    },
+    "raster": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.pgm",
+      "sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8"
+    },
+    "surface_provenance": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\surface-provenance.npz",
+      "sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035"
+    },
+    "yaml": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.yaml",
+      "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+    }
+  },
+  "scope": "Six targeted pure tests and read-only current package identity; no runtime acceptance generated"
+}

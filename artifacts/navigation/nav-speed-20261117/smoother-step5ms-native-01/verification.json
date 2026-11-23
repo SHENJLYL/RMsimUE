@@ -1,0 +1,116 @@
+{
+  "status": "failed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "F9F7AAFA4C37B936E4F2F1872A3E19A9",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "error_m": 0.19236049404638686,
+      "position": [
+        9.329526578854603,
+        6.549962376839306,
+        0.023467578381876512
+      ]
+    },
+    {
+      "name": "original_planner_path",
+      "passed": true,
+      "points": 72
+    },
+    {
+      "name": "waypoint_sequence_accepted",
+      "passed": true
+    },
+    {
+      "name": "waypoint_sequence_actual_arrival",
+      "passed": false,
+      "status": 4,
+      "missed_waypoints": [
+        1
+      ],
+      "error_m": 0.9632327106123144
+    }
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "F9F7AAFA4C37B936E4F2F1872A3E19A9",
+      0
+    ],
+    "pids": {
+      "loam_interface": 28572,
+      "sensor_scan_generation": 24952,
+      "terrain_analysis": 14148,
+      "terrain_analysis_ext": 15592,
+      "pointcloud_to_laserscan": 29412,
+      "fake_vel_transform": 27900,
+      "map_server": 9732,
+      "amcl": 30392,
+      "lifecycle_manager_localization": 19196,
+      "controller_server": 5564,
+      "planner_server": 37540,
+      "smoother_server": 37032,
+      "behavior_server": 7324,
+      "bt_navigator": 36760,
+      "waypoint_follower": 20572,
+      "velocity_smoother": 35548,
+      "lifecycle_manager_navigation": 22212
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\sentry-manualcap3-smoother-step5ms-01\\navigation\\20261117T125705Z-612",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "4d2e3904a0ebda863dc7d07996d514458dbb09734332097d45a6b382137ff52f"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    8.72961505230979,
+    7.039423788996719,
+    0.03402839669649508
+  ],
+  "error": "AssertionError('waypoint_sequence_actual_arrival')"
+}

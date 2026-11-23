@@ -1,0 +1,446 @@
+{
+  "schema": "rmsim_native_scene_compact_summary_v2",
+  "status": "passed",
+  "scope": "loaded_saved_editor_world_native_components_and_collision",
+  "module_scope": "Current combined workspace including concurrent destruction development",
+  "evidence": {
+    "full_verification": {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/audit/verification.json",
+      "sha256": "ca36a9a7f346dc7bbfcdd210194ab2efb556fe2dd55eda962b4bc4c32b17b09f",
+      "bytes": 2033630
+    },
+    "execution": {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/execution.json",
+      "sha256": "b8702c01e426ae88c14331596da5d5733cb1c61982e8f5057657a4c3419296ff",
+      "bytes": 4572
+    },
+    "engine_log": {
+      "path": "artifacts/maps/wt-scene-20261118/native-scene-04-final/engine.log",
+      "sha256": "ac3f8938a46cefda7d9c8da723b5c20895881c51b7d26b95df6ff53ac042238b",
+      "bytes": 219029
+    },
+    "final_gate_chain": {
+      "path": "artifacts/maps/wt-scene-20261118/scene-contact-final-01/verification.json",
+      "sha256": "cd4b04cca5967a0af621740816eeb3c5f59871ce2a1dffdd5488e5dd82062fda",
+      "bytes": 4446
+    }
+  },
+  "execution": {
+    "pid": 19672,
+    "exit_code": 0,
+    "started_utc": "2026-11-18T05:49:09.5202228Z",
+    "finished_utc": "2026-11-18T05:49:23.5604205Z",
+    "duration_seconds": 14.042703699999999,
+    "timeout_seconds": 600
+  },
+  "module_sha256": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "map_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "script_hashes": {
+    "audit_script_sha256": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+    "geometry_accounting_script_sha256": "7f6f0c9718e30bfd500093924be8bb78fc590813167e6ccc287441e474f75832",
+    "vertex_opacity_validation_script_sha256": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "ground_decal_rvt_script_sha256": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6"
+  },
+  "execution_scripts_sha256": {
+    "verify_wt_grass.py": "a208afe7d6a53aae36fb274e85aa207e27397641520c823660186600ec9d9c39",
+    "wt_overview.py": "f73aa3955604a2d4acd557ff6efda9ce72d3690a07dc6a1dc58c463239c15899",
+    "check_wt_facing_leaves.py": "bcd5146600fa1bcd8770c2b60cc0d249ce817cd19888d4b37b1891757427a248",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "inspect_wt_visibility.py": "c0e728877deb51a611e483b749fa8e0fa8c7a3059b698864deda78343723db60",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "test_wt_mesh_preservation.py": "e359f32057ac735e7789fa26a699e2f9c4ce7ed55bef6a7ebf0e223363fcf8d6",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "verify_wt_scene.py": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+    "wt_materials.py": "6118aa0b5de326818f4a106445d28beff21bd46f20efadf89e0a786f03eab9fd",
+    "author_wt_grass.py": "d5f68a5189975eaae06db2f1b4cbaaacf0c9f7e2daaec4b04e031631fd1bc32d",
+    "wt_grass.py": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a",
+    "wt_mesh_geometry.py": "7f6f0c9718e30bfd500093924be8bb78fc590813167e6ccc287441e474f75832",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_landclass.py": "43414c4b78acef5e8f41ebc9baa33521640463befcc8a8717e11f2b6ffae7a7b",
+    "test_wt_materials.py": "1ed4c1bb608cc6ac95700ba7c213da7f758b34c975ab9f4fd2a2266a38b46fdb",
+    "test_wt_rvt_asset.py": "becea754aa7894f7f7dbf590072b863162174be9005cd1d4f7fd8df344fceebe",
+    "verify_wt_materials.py": "0503beb43c06963ba00199857f9046c0d5f810c9225b81169d0cfefbd7174457",
+    "test_wt_scene_api.py": "5270ade2b51da7a3666ae55d1879837d6ae7dab0ac6ffa68ed6c9f6778c560f2",
+    "test_wt_material_rebuild.py": "b4298745bcd642303a51b1b62870d1d242fcbc16b64791584058c43dc558b4fd",
+    "wt_material_slots.py": "c7669a92ab7bef73ebe02ed0e5ffe2f2343c021007ab83c97c267e28fa5d65cd",
+    "import_wt_scene.py": "b3699f21bb7227b3a70548cb028773d41173617fddfb2fe146c8973be453f094",
+    "update_wt_water.py": "354df975ef1fe483982f9549e18cc632527e927c4af28708c575d932650fafa1"
+  },
+  "checks": [
+    {
+      "name": "native_api_available",
+      "passed": true
+    },
+    {
+      "name": "import_provenance",
+      "passed": true
+    },
+    {
+      "name": "saved_map_hash",
+      "passed": true
+    },
+    {
+      "name": "source_vertex_opacity_proofs",
+      "passed": true
+    },
+    {
+      "name": "imported_ground_decal_rvt_contract",
+      "passed": true
+    },
+    {
+      "name": "source_degenerate_geometry_fixture",
+      "passed": true
+    },
+    {
+      "name": "saved_world_loaded",
+      "passed": true
+    },
+    {
+      "name": "native_ground_decal_rvt_configuration",
+      "passed": true
+    },
+    {
+      "name": "world_source_identity",
+      "passed": true
+    },
+    {
+      "name": "native_scene_inventory",
+      "passed": true
+    },
+    {
+      "name": "saved_native_geometry_coverage",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_exists",
+      "passed": true
+    },
+    {
+      "name": "original_height_bytes",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_components",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2040_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2024",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2072_2040",
+      "passed": true
+    },
+    {
+      "name": "native_original_object_collision",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_saved_map",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_proof_bound_files",
+      "passed": true
+    }
+  ],
+  "check_count": 21,
+  "saved_scene_inventory": {
+    "visual_groups": 726,
+    "expected_visual_groups": 726,
+    "collision_groups": 642,
+    "expected_collision_groups": 642,
+    "visual_placements": 35922,
+    "expected_visual_placements": 35922,
+    "collision_placements": 20033,
+    "expected_collision_placements": 20033,
+    "source_stored_instances": 45675,
+    "affine_baked_source_instances": 9850,
+    "loaded_hism_components": 1368,
+    "actor_count": 734
+  },
+  "native_geometry": {
+    "mesh_count": 1365,
+    "native_lod0_triangles": 13478779,
+    "source_triangles": 13478813,
+    "strict_source_coincident_triangles": 34,
+    "world_decal": {
+      "source_triangles": 87864,
+      "native_triangles": 87830,
+      "strict_source_coincident_triangles": 34,
+      "geometry_audit_sha256": "060636744b12d2fd439bc313de1c356f97942e5f92778798c627c27c73c37bc1",
+      "verified_material_count": 35,
+      "material_triangle_counts_equal": true,
+      "uv_channels": 2,
+      "full_precision_uvs": true,
+      "source_vertex_opacity_verified": true
+    },
+    "five_uv_full_precision_meshes": [
+      {
+        "mesh_id": "prop_kh_gol_euraspen_fall_03_rendinst",
+        "triangles": 104
+      },
+      {
+        "mesh_id": "prop_kh_gol_liveoak_03_rendinst",
+        "triangles": 84
+      },
+      {
+        "mesh_id": "prop_kh_gol_tree_simple_a",
+        "triangles": 64
+      }
+    ]
+  },
+  "landscape": {
+    "render_components": 1089,
+    "collision_components": 1089,
+    "expected_components": 1089,
+    "actual_scale": [
+      50.0,
+      50.0,
+      12.500190737773709
+    ],
+    "expected_scale": [
+      50.0,
+      50.0,
+      12.500190737773709
+    ]
+  },
+  "height_collision": {
+    "sample_count": 4,
+    "max_absolute_z_error_cm": 0.00603515446067604,
+    "samples": [
+      {
+        "grid_ij": [
+          2056,
+          2040
+        ],
+        "source_u16": 19066,
+        "expected_z_cm": -138.0575265125504,
+        "impact_point_cm": [
+          102800.0,
+          102000.0,
+          -138.05868138778692
+        ],
+        "absolute_z_error_cm": 0.001154875236522912,
+        "tolerance_cm": 0.1
+      },
+      {
+        "grid_ij": [
+          2040,
+          2040
+        ],
+        "source_u16": 19067,
+        "expected_z_cm": -137.95986877241154,
+        "impact_point_cm": [
+          102000.0,
+          102000.0,
+          -137.96100129522392
+        ],
+        "absolute_z_error_cm": 0.0011325228123837405,
+        "tolerance_cm": 0.1
+      },
+      {
+        "grid_ij": [
+          2056,
+          2024
+        ],
+        "source_u16": 19020,
+        "expected_z_cm": -142.5497825589378,
+        "impact_point_cm": [
+          102800.0,
+          101200.0,
+          -142.55581771339848
+        ],
+        "absolute_z_error_cm": 0.00603515446067604,
+        "tolerance_cm": 0.1
+      },
+      {
+        "grid_ij": [
+          2072,
+          2040
+        ],
+        "source_u16": 19041,
+        "expected_z_cm": -140.49897001602181,
+        "impact_point_cm": [
+          103600.0,
+          102000.0,
+          -140.50068370185636
+        ],
+        "absolute_z_error_cm": 0.001713685834545231,
+        "tolerance_cm": 0.1
+      }
+    ]
+  },
+  "original_object_collision": {
+    "blocking_hit": true,
+    "source_part": "prop_sicily_kiosk_a",
+    "source_instance": 2,
+    "static_mesh": "/Game/RMSim/Maps/wt_vlaanderen/Collision/col_prop_sicily_kiosk_a.col_prop_sicily_kiosk_a",
+    "impact_point_cm": [
+      102384.37493490057,
+      103215.64935818315,
+      297.68338990211487
+    ],
+    "scope": "native_original_HISM_collider_isolated_from_other_actors"
+  },
+  "ground_decal_rvt": {
+    "status": "configured",
+    "virtual_textures_enabled": 1,
+    "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_GroundDecalRVT.WT_GroundDecalRVT",
+    "writer": {
+      "mesh_id": "world_decal_000",
+      "source_fbx_sha256": "1f8cd0dd8c81d549047a7c4d7811747a9e16b4e9f907d897ce70a279a1d911fc",
+      "actor": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Actor_723",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Actor_723.HierarchicalInstancedStaticMeshComponent_0",
+      "instance_count": 1,
+      "world_transform": {
+        "translation_cm": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "main_pass": "<RuntimeVirtualTextureMainPassType.NEVER: 0>",
+      "visible": true,
+      "hidden_in_game": false
+    },
+    "volume": {
+      "actor": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.RuntimeVirtualTextureVolume_0",
+      "label": "RMSim_WT_GroundDecalRVT",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.RuntimeVirtualTextureVolume_0.VirtualTextureComponent",
+      "source_bounds_ros_m": {
+        "lo": [
+          -1109.783935546875,
+          -12701.6376953125,
+          -20.0
+        ],
+        "hi": [
+          7026.40185546875,
+          9125.9658203125,
+          76.86274719238281
+        ]
+      },
+      "padding_cm": 100.0,
+      "min_ue_cm": [
+        -111078.3935546875,
+        -912696.58203125,
+        -2100.0
+      ],
+      "max_ue_cm": [
+        702740.185546875,
+        1270263.76953125,
+        7786.274719238281
+      ],
+      "scale_ue_cm": [
+        813818.5791015625,
+        2182960.3515625,
+        9886.274719238281
+      ],
+      "nominal_virtual_size_xy": [
+        524288,
+        1048576
+      ],
+      "nominal_metres_per_texel_xy": [
+        0.015522357542067766,
+        0.020818332210183144
+      ]
+    },
+    "physical_pool_matched": {
+      "collection": "pools",
+      "index": 0,
+      "formats": [
+        "PF_DXT5",
+        "PF_BC5",
+        "PF_DXT5"
+      ],
+      "min_tile_size": 264,
+      "max_tile_size": 264,
+      "size_in_megabyte": 256,
+      "enable_residency_mip_map_bias": true,
+      "residency_mip_map_bias_group": 3,
+      "allow_size_scale": false,
+      "min_scaled_size_in_megabyte": 0,
+      "max_scaled_size_in_megabyte": 0,
+      "matches": true
+    }
+  },
+  "proof_bound_files": [
+    {
+      "role": "source_manifest",
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+      "sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+      "after_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_GroundDecalRVT.WT_GroundDecalRVT",
+      "role": "saved_ground_decal_rvt",
+      "path": "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\Materials\\WT_GroundDecalRVT.uasset",
+      "sha256": "742bce6a0857f213baa6d7be78238747600e0fd4330f05381c47a19682b4f8f5",
+      "after_sha256": "742bce6a0857f213baa6d7be78238747600e0fd4330f05381c47a19682b4f8f5"
+    },
+    {
+      "role": "project_rendering_config",
+      "path": "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Config\\DefaultEngine.ini",
+      "sha256": "b855505a79da553fd830ae63009f63935bea03293da78b9bad8e9998d6a90d12",
+      "after_sha256": "b855505a79da553fd830ae63009f63935bea03293da78b9bad8e9998d6a90d12"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Meshes/world_decal_000.world_decal_000",
+      "role": "geometry_proof",
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\geometry-audits\\world_decal_000.json",
+      "sha256": "060636744b12d2fd439bc313de1c356f97942e5f92778798c627c27c73c37bc1",
+      "after_sha256": "060636744b12d2fd439bc313de1c356f97942e5f92778798c627c27c73c37bc1"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Meshes/world_decal_000.world_decal_000",
+      "role": "vertex_opacity_proof",
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\geometry-audits\\world_decal_000-opacity.json",
+      "sha256": "a76a3c1f1bce25d974d229020ae2eac6895f5f3dec77917f5624bd63701ade2a",
+      "after_sha256": "a76a3c1f1bce25d974d229020ae2eac6895f5f3dec77917f5624bd63701ade2a"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Meshes/world_decal_000.world_decal_000",
+      "role": "audited_fbx",
+      "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\meshes\\world_decal_000.fbx",
+      "sha256": "1f8cd0dd8c81d549047a7c4d7811747a9e16b4e9f907d897ce70a279a1d911fc",
+      "after_sha256": "1f8cd0dd8c81d549047a7c4d7811747a9e16b4e9f907d897ce70a279a1d911fc"
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Meshes/world_decal_000.world_decal_000",
+      "role": "saved_native_mesh",
+      "path": "D:\\simulator-wt-vlaanderen\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\Meshes\\world_decal_000.uasset",
+      "sha256": "e0adb1163922fae76205abf56c8555a531167fd74c697ca5b9c3773e5947f4d9",
+      "after_sha256": "e0adb1163922fae76205abf56c8555a531167fd74c697ca5b9c3773e5947f4d9"
+    }
+  ],
+  "world_unchanged_during_audit": true,
+  "source_manifest_unchanged_during_audit": true,
+  "proof_bound_files_unchanged": true,
+  "full_report_ignored": true,
+  "vehicle_driving_verified": false,
+  "rendered_appearance_verified": false,
+  "created_utc": "2026-11-18T05:56:05.854569+00:00"
+}

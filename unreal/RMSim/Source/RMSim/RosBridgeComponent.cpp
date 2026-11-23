@@ -1,4 +1,5 @@
 #include "RosBridgeComponent.h"
+#include "RMSimViewportClient.h"
 #include "VehicleRig.h"
 #include "RosAimController.h"
 #include "RosImuComponent.h"
@@ -19,10 +20,13 @@
 #include "PBDRigidsSolver.h"
 #include "PhysicsEngine/PhysicsSettings.h"
 #include "RenderingThread.h"
+#include "RHIGPUReadback.h"
+#include "TextureResource.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "SocketSubsystem.h"
 #include "Sockets.h"
+#include <atomic>
 
 namespace
 {
@@ -65,10 +69,20 @@ void LittleEndian(TArray<uint8>& Bytes,uint32 Value)
 {for(int I=0;I<4;++I)Bytes.Add(uint8(Value>>(I*8)));}
 }
 
+struct URosBridgeComponent::FCameraReadback
+{
+    enum class EStatus { Waiting, Ready, Failed };
+    std::atomic<EStatus> Status{EStatus::Waiting};
+    std::atomic<bool> PollQueued{false};
+    TUniquePtr<FRHIGPUTextureReadback> Copy;
+    TArray<FColor> Pixels;
+    FTransform OpticalMount;
+    int64 Stamp=0,Connection=0;
+};
+
 double URosBridgeComponent::SolverTime() const
 {
-    auto* Scene=GetWorld()?GetWorld()->GetPhysicsScene():nullptr;
-    return Scene&&Scene->GetSolver()?double(Scene->GetSolver()->GetSolverTime()):0.;
+    return IsValid(Rig) ? Rig->GetSimulationTimeSeconds() : 0.;
 }
 
 bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,FString& Error)
@@ -76,7 +90,10 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     if(!Vehicle||!Vehicle->IsContactPhysics()||!Aim||UPhysicsSettings::Get()->bTickPhysicsAsync)
     {Error=TEXT("ROS bridge requires a physical rig and synchronous post-physics sampling");return false;}
     Rig=Vehicle;bControl=Control;RobotId=Rig->GetVehicleId();
+    bProfileSensorTiming=FParse::Param(FCommandLine::Get(),TEXT("ProfileSensorTiming"));
     bMotorControl=FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
+    bOperatorGyroAvailable=bControl&&!bMotorControl&&Rig->HasSteeringModules()&&
+        FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroControl"));
     if(bMotorControl)
     {
         double WheelNmPerAmp=.14,SteerNmPerAmp=.14;
@@ -94,7 +111,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraWidth="),Width);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHeight="),Height);
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraHz="),CameraHz);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHFov="),HFovDegrees);
     if(Port<1024||Port>65535||Width<16||Width>1920||Height<16||Height>1080||
-        !FMath::IsFinite(CameraHz)||CameraHz<1||CameraHz>60||!FMath::IsFinite(HFovDegrees)||HFovDegrees<5||HFovDegrees>150)
+        !FMath::IsFinite(CameraHz)||(CameraHz!=0&&(CameraHz<1||CameraHz>60))||!FMath::IsFinite(HFovDegrees)||HFovDegrees<5||HFovDegrees>150)
     {Error=TEXT("invalid ROS port or camera configuration");return false;}
     Sockets=ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     Listener=Sockets->CreateSocket(NAME_Stream,TEXT("RMSim loopback listener"),false);
@@ -107,6 +124,8 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
     Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
     Rig->AddInstanceComponent(Camera);Camera->RegisterComponent();
+    UE_LOG(LogRMSim,Display,TEXT("ROS_CAMERA_CAPTURE enabled=%d nominal_hz=%.3f width=%d height=%d"),
+        CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height);
     AimController=NewObject<URosAimController>(GetOwner());GetOwner()->AddInstanceComponent(AimController);AimController->RegisterComponent();
     if(!AimController->Initialize(Rig,Aim,Training,FParse::Param(FCommandLine::Get(),TEXT("RosAimControl")),Error))return false;
     if(FParse::Param(FCommandLine::Get(),TEXT("RosImu")))
@@ -136,7 +155,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     }
     EpochSolverTime=SolverTime();LastPollWall=FPlatformTime::Seconds();
     Rig->EnableExternalDriveLease(bControl);
-    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=127.0.0.1:%d control=%d camera=%dx%d %.1fHz physics_clock=Chaos"),Port,bControl,Width,Height,CameraHz);
+    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=127.0.0.1:%d control=%d camera=%dx%d %.1fHz physics_clock=%s"),Port,bControl,Width,Height,CameraHz,Rig->GetPhysicsBackendName());
     return true;
 }
 
@@ -148,6 +167,7 @@ void URosBridgeComponent::Disconnect(const FString& Reason)
     if(Client){LastDisconnect=Reason;if(Reason==TEXT("slow_reader"))++SlowReaderDisconnects;
         UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_DISCONNECT reason=%s"),*Reason);}
     SensorMountSamples.Reset();
+    ++CameraConnection;
     CloseSocket(Client);Inbound.Reset();Outbound.Reset();SendOffset=0;LastCommandWall=-1;CommandStatus=Reason;
     if(AimController)AimController->Stop(Reason);
     if(Imu)Imu->DiscardPending();
@@ -168,10 +188,16 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
     if(!FlatJson(Text,J)){Reject(TEXT("malformed_json"));return false;}
     double Version,CommandEpoch,Sequence,Stamp;FString Kind,Identity,Frame;
     if(!Number(J,TEXT("v"),Version,true)||Version!=1||!String(J,TEXT("kind"),Kind)||
-        !((Kind==TEXT("command")&&J->Values.Num()==10)||(Kind==TEXT("motor_current")&&J->Values.Num()==16)||(Kind==TEXT("aim")&&J->Values.Num()==19))||
+        !(((Kind==TEXT("command")||Kind==TEXT("operator_idle"))&&J->Values.Num()==10)||(Kind==TEXT("motor_current")&&J->Values.Num()==16)||(Kind==TEXT("aim")&&J->Values.Num()==19))||
         !String(J,TEXT("session"),Identity)||!Number(J,TEXT("epoch"),CommandEpoch,true)||!Number(J,TEXT("seq"),Sequence,true)||Sequence<1||
         !Number(J,TEXT("stamp_ns"),Stamp,true)||!String(J,TEXT("frame_id"),Frame))
     {Reject(TEXT("fields"));if(AimController)AimController->Reject(TEXT("fields"));return true;}
+    if(StallCommandFloor>=0. && Stamp*1.e-9<=StallCommandFloor)
+    {
+        Reject(TEXT("pre_stall_command"));
+        if(Kind==TEXT("aim")&&AimController)AimController->Reject(TEXT("pre_stall_command"));
+        return true;
+    }
     if(Kind==TEXT("aim"))
     {
         if(Identity!=Session||CommandEpoch!=Epoch){AimController->Reject(TEXT("session_epoch"));return true;}
@@ -181,7 +207,9 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
         AimController->Accept(J,int64(Sequence),SimTime);return true;
     }
     if(Identity!=Session||CommandEpoch!=Epoch){Reject(TEXT("session_epoch"));return true;}
-    if(Frame!=RobotId+TEXT("/base_link")){Reject(TEXT("frame"));return true;}
+    const bool NavigationFrame=bOperatorGyroAvailable&&!bMotorControl&&Kind==TEXT("command")&&
+        Frame==RobotId+TEXT("/odom");
+    if(Frame!=RobotId+TEXT("/base_link")&&!NavigationFrame){Reject(TEXT("frame"));return true;}
     if(Sequence<=AcceptedSeq){Reject(TEXT("sequence"));return true;}
     const double Age=SimTime-Stamp/1.e9;
     if(Age>.25||Age<-.05){Reject(TEXT("timestamp"));return true;}
@@ -209,9 +237,31 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
         double Vx,Vy,Wz;
         if(!Number(J,TEXT("vx"),Vx)||!Number(J,TEXT("vy"),Vy)||!Number(J,TEXT("wz"),Wz)){Reject(TEXT("fields"));return true;}
         const double MaxSpeed=Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));
-        if(FMath::Abs(Vx)>MaxSpeed||FMath::Abs(Vy)>MaxSpeed||FVector2D(Vx,Vy).Size()>MaxSpeed||FMath::Abs(Wz)>Rig->GetDriveParameter(TEXT("GyroMaxRadS")))
+        // Coordinate rotations can overshoot a saturated float velocity by a few ULPs.
+        constexpr double LimitTolerance=1.e-6;
+        if(FMath::Abs(Vx)>MaxSpeed+LimitTolerance||FMath::Abs(Vy)>MaxSpeed+LimitTolerance||FVector2D(Vx,Vy).Size()>MaxSpeed+LimitTolerance||FMath::Abs(Wz)>Rig->GetDriveParameter(TEXT("GyroMaxRadS"))+LimitTolerance)
         {Reject(TEXT("limits"));return true;}
-        if(!Rig->SetContactPlanarDrive(FVector2D(Vx,Vy),Wz,false,false)){Reject(TEXT("drive_backend"));return true;}
+        // Nav2 supplies the target; the shared vehicle profile shapes the wheel command.
+        // A deliberate zero and command expiry retain the physical safety brake.
+        const bool StopRequested=FMath::Abs(Vx)<1.e-4&&FMath::Abs(Vy)<1.e-4&&FMath::Abs(Wz)<1.e-4;
+        const bool OperatorIdle=Kind==TEXT("operator_idle");
+        if(OperatorIdle&&(!StopRequested||!bOperatorGyroAvailable))
+        {Reject(TEXT("operator_idle"));return true;}
+        const bool OperatorGyro=bOperatorGyroAvailable&&(!StopRequested||OperatorIdle)&&OperatorGyroRateRadS>0.0;
+        const double OrdinaryYawLimit=Rig->GetDriveParameter(TEXT("ManualYawRateRadS"));
+        const double YawTarget=OperatorGyro?OperatorGyroRateRadS:FMath::Clamp(Wz,-OrdinaryYawLimit,OrdinaryYawLimit);
+        const bool BrakeTarget=StopRequested&&!OperatorGyro;
+        FVector2D Translation(Vx,Vy);
+        if(NavigationFrame)
+        {
+            // The odometry origin is calibrated at the stationary start of this
+            // sensor session. Rotate its fixed velocity axes into the actuator frame.
+            const double Delta=NavigationFrameYawRad+FMath::DegreesToRadians(Rig->GetActorRotation().Yaw);
+            const double C=FMath::Cos(Delta),S=FMath::Sin(Delta);
+            Translation=FVector2D(C*Vx-S*Vy,S*Vx+C*Vy);
+        }
+        if(!Rig->SetExternalVelocityTarget(Translation,YawTarget,BrakeTarget,OperatorGyro||NavigationFrame))
+        {Reject(TEXT("drive_backend"));return true;}
     }
     AcceptedSeq=int64(Sequence);LastCommandWall=FPlatformTime::Seconds();CommandStatus=TEXT("active");
     Rig->RenewExternalDriveLease(.25);return true;
@@ -262,26 +312,110 @@ void URosBridgeComponent::SendPending()
     else if(FPlatformTime::Seconds()-LastSendProgressWall>1)Disconnect(TEXT("slow_reader"));
 }
 
-bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
+void URosBridgeComponent::AdvanceCamera(double SimTime)
+{
+    if(CameraHz<=0||!FApp::CanEverRender())return;
+    const FIntPoint Extent(Width,Height);
+    for(const auto& Readback:CameraReadbacks)
+    {
+        if(Readback->PollQueued.load()||Readback->Status.load()!=FCameraReadback::EStatus::Waiting)continue;
+        Readback->PollQueued.store(true);
+        ENQUEUE_RENDER_COMMAND(RMSimPollCamera)([Readback,Extent](FRHICommandListImmediate&)
+        {
+            auto Status=Readback->Status.load();
+            if(Status==FCameraReadback::EStatus::Waiting&&Readback->Copy->IsReady())
+            {
+                int32 Pitch=0,Rows=0;
+                const auto* Source=static_cast<const FColor*>(Readback->Copy->Lock(Pitch,&Rows));
+                Status=FCameraReadback::EStatus::Failed;
+                if(Source&&Pitch>=Extent.X&&Rows>=Extent.Y)
+                {
+                    Readback->Pixels.SetNumUninitialized(Extent.X*Extent.Y);
+                    for(int32 Y=0;Y<Extent.Y;++Y)
+                        FMemory::Memcpy(Readback->Pixels.GetData()+Y*Extent.X,Source+Y*Pitch,Extent.X*sizeof(FColor));
+                    Status=FCameraReadback::EStatus::Ready;
+                }
+                if(Source)Readback->Copy->Unlock();
+            }
+            Readback->Status.store(Status);
+            Readback->PollQueued.store(false);
+        });
+    }
+    while(!CameraReadbacks.IsEmpty())
+    {
+        const auto& First=CameraReadbacks[0];
+        if(First->PollQueued.load()||First->Status.load()==FCameraReadback::EStatus::Waiting)break;
+        if(First->Connection==CameraConnection&&First->Status.load()==FCameraReadback::EStatus::Ready)break;
+        if(First->Connection==CameraConnection)++CameraReadbackMisses;
+        FreeCameraReadbacks.Add(First);
+        CameraReadbacks.RemoveAt(0);
+    }
+    if(!Client||SimTime+1.e-8<NextImageSim)return;
+    const int64 Due=1+FMath::FloorToInt64(FMath::Max(0.,SimTime-NextImageSim)*CameraHz);
+    NextImageSim+=double(Due)/CameraHz;
+    CameraReadbackMisses+=Due-1;
+    constexpr int32 MaxInFlight=3;
+    if(CameraReadbacks.Num()>=MaxInFlight){++CameraReadbackMisses;return;}
+
+    const double Start=bProfileSensorTiming?FPlatformTime::Seconds():0.;
+    auto Readback=FreeCameraReadbacks.IsEmpty()?MakeShared<FCameraReadback,ESPMode::ThreadSafe>():FreeCameraReadbacks.Pop(EAllowShrinking::No);
+    Readback->Stamp=FMath::RoundToInt64(SimTime*1.e9);
+    Readback->Connection=CameraConnection;
+    Readback->OpticalMount=Camera->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform());
+    Readback->Status.store(FCameraReadback::EStatus::Waiting);
+    FTextureRenderTargetResource* Resource=Target->GameThread_GetRenderTargetResource();
+    Camera->CaptureScene();
+    // Observe the same render command order as the scene capture. The staging fence is polled in later frames.
+    ENQUEUE_RENDER_COMMAND(RMSimCopyCamera)([Readback,Resource](FRHICommandListImmediate& Commands)
+    {
+        FRHITexture* Texture=Resource->GetRenderTargetTexture().GetReference();
+        if(!Texture||Texture->GetFormat()!=PF_B8G8R8A8)
+        {
+            Readback->Status.store(FCameraReadback::EStatus::Failed);
+            return;
+        }
+        if(!Readback->Copy)Readback->Copy=MakeUnique<FRHIGPUTextureReadback>(TEXT("RMSimCameraRGB"));
+        Readback->Copy->EnqueueCopy(Commands,Texture);
+    });
+    CameraReadbacks.Add(MoveTemp(Readback));
+    if(bProfileSensorTiming)
+    {
+        ProfileCameraWall+=FPlatformTime::Seconds()-Start;++ProfileCameraCount;
+        if(SimTime-ProfileCameraStartSim>=5.0)
+        {
+            UE_LOG(LogRMSim,Display,TEXT("RMSIM_CAMERA_TIMING samples=%lld submit_wall_total_ms=%.3f submit_mean_ms=%.3f sim_elapsed=%.3f missed_total=%lld"),
+                ProfileCameraCount,ProfileCameraWall*1000,1000*ProfileCameraWall/FMath::Max(1.,double(ProfileCameraCount)),SimTime-ProfileCameraStartSim,CameraReadbackMisses);
+            ProfileCameraWall=0;ProfileCameraCount=0;ProfileCameraStartSim=SimTime;
+        }
+    }
+}
+
+bool URosBridgeComponent::QueueState(double SimTime)
 {
     const int64 Stamp=FMath::RoundToInt64(SimTime*1.e9);if(Stamp<0||Stamp>MaxInteger)return false;
     const auto Pose=RosPose(Rig->GetActorTransform());
-    const auto Local=RosPose(Camera->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform()),true);
-    if(Capture)
+    TSharedPtr<FCameraReadback,ESPMode::ThreadSafe> Frame;
+    if(!CameraReadbacks.IsEmpty())
     {
-        Camera->CaptureScene();FlushRenderingCommands();
-        FReadSurfaceDataFlags Flags(RCM_UNorm);Flags.SetLinearToGamma(false);
-        if(!Target->GameThread_GetRenderTargetResource()->ReadPixels(Pixels,Flags)||Pixels.Num()!=Width*Height)return false;
-        ++Images;
+        const auto& First=CameraReadbacks[0];
+        if(!First->PollQueued.load()&&First->Status.load()==FCameraReadback::EStatus::Ready&&First->Connection==CameraConnection)
+        {
+            Frame=First;
+            CameraReadbacks.RemoveAt(0);
+            ++Images;
+        }
     }
+    const auto Local=RosPose(Frame?Frame->OpticalMount:Camera->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform()),true);
     auto State=MakeShared<FJsonObject>();State->SetNumberField(TEXT("v"),Lidar?2:1);State->SetStringField(TEXT("kind"),TEXT("state"));
     State->SetStringField(TEXT("session"),Session);State->SetStringField(TEXT("robot_id"),RobotId);
     State->SetNumberField(TEXT("epoch"),Epoch);State->SetNumberField(TEXT("tick"),TickIndex);State->SetNumberField(TEXT("sim_time_ns"),double(Stamp));
     State->SetObjectField(TEXT("pose"),Pose);
     auto Map=MakeShared<FJsonObject>();Map->SetStringField(TEXT("id"),MapId);Map->SetStringField(TEXT("source_md5"),MapHash);Map->SetStringField(TEXT("kind"),MapKind);State->SetObjectField(TEXT("map"),Map);
     auto Sensor=MakeShared<FJsonObject>();Sensor->SetNumberField(TEXT("width"),Width);Sensor->SetNumberField(TEXT("height"),Height);
-    Sensor->SetNumberField(TEXT("hfov_rad"),FMath::DegreesToRadians(HFovDegrees));Sensor->SetNumberField(TEXT("stamp_ns"),double(Stamp));
+    Sensor->SetNumberField(TEXT("hfov_rad"),FMath::DegreesToRadians(HFovDegrees));Sensor->SetNumberField(TEXT("stamp_ns"),double(Frame?Frame->Stamp:Stamp));
+    Sensor->SetNumberField(TEXT("missed_captures"),CameraReadbackMisses);
     Sensor->SetNumberField(TEXT("nominal_hz"),CameraHz);
+    Sensor->SetBoolField(TEXT("capture_enabled"),CameraHz>0&&FApp::CanEverRender());
     if(const auto* Observer=Cast<USceneCaptureComponent2D>(Camera->GetAttachParent()))
         Sensor->SetNumberField(TEXT("observer_hfov_rad"),FMath::DegreesToRadians(double(Observer->FOVAngle)));
     Sensor->SetStringField(TEXT("frame_id"),RobotId+TEXT("/aim_camera_optical_frame"));Sensor->SetObjectField(TEXT("pose_in_base"),Local);State->SetObjectField(TEXT("camera"),Sensor);
@@ -289,6 +423,13 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
     Command->SetNumberField(TEXT("age_s"),LastCommandWall<0?-1:FPlatformTime::Seconds()-LastCommandWall);
     Command->SetNumberField(TEXT("rejected_count"),RejectedCommands);Command->SetStringField(TEXT("last_rejection"),LastRejection);
     State->SetObjectField(TEXT("command"),Command);State->SetNumberField(TEXT("captured_images"),Images);
+    auto Drive=Rig->GetVelocityCommandState();
+    Drive->SetBoolField(TEXT("operator_gyro_available"),bOperatorGyroAvailable);
+    Drive->SetNumberField(TEXT("operator_gyro_setpoint_rad_s"),OperatorGyroRateRadS);
+    Drive->SetNumberField(TEXT("measured_yaw_rad_s"),Rig->GetMeasuredYawRate());
+    State->SetObjectField(TEXT("drive"),Drive);
+    if(const auto* Viewport=Cast<URMSimViewportClient>(GetWorld()->GetGameViewport()))
+        State->SetObjectField(TEXT("rendering"),Viewport->RenderState());
     if(AimController)
     {
         State->SetObjectField(TEXT("aim"),AimController->State(Stamp));
@@ -297,20 +438,38 @@ bool URosBridgeComponent::QueueState(double SimTime,bool Capture)
     if(bMotorControl)State->SetObjectField(TEXT("motors"),Rig->GetMotorFeedback());
     if(!SensorMountSamples.IsEmpty()){State->SetArrayField(TEXT("sensor_mounts"),SensorMountSamples);State->SetNumberField(TEXT("dropped_sensor_mounts"),DroppedSensorMountSamples);SensorMountSamples.Reset();}
     if(Imu)State->SetObjectField(TEXT("imu"),Imu->TakeState());
-    TArray<uint8> LidarBytes;const int32 CameraBytes=Capture?Width*Height*3:0;
+    TArray<uint8> LidarBytes;const int32 CameraBytes=Frame?Width*Height*3:0;
     if(Lidar)
     {State->SetNumberField(TEXT("camera_bytes"),CameraBytes);State->SetObjectField(TEXT("lidar"),Lidar->TakeState(LidarBytes,CameraBytes));}
     if(CameraBytes+LidarBytes.Num()>16*1024*1024)return false;
+    State->SetNumberField(TEXT("game_tick_stalls"),double(GameTickStalls));
+    State->SetNumberField(TEXT("last_game_tick_gap_ms"),LastGameTickGapMs);
+    if(Rig->IsMujocoPhysics())State->SetNumberField(TEXT("mujoco_warning_count"),Rig->GetMujocoWarningCount());
     State->SetStringField(TEXT("last_disconnect"),LastDisconnect);State->SetNumberField(TEXT("slow_reader_disconnects"),SlowReaderDisconnects);
     State->SetBoolField(TEXT("development_stall_injected"),bStallInjected);
-    State->SetStringField(TEXT("clock_source"),TEXT("synchronous_Chaos_solver"));
+    const double DedicatedPeriod=Rig->GetDedicatedMujocoPeriod();
+    State->SetStringField(TEXT("clock_source"),DedicatedPeriod>0?TEXT("dedicated_MuJoCo_snapshot"):
+        Rig->IsMujocoPhysics()?TEXT("synchronous_MuJoCo_solver"):TEXT("synchronous_Chaos_solver"));
+    State->SetStringField(TEXT("physics_backend"),Rig->GetPhysicsBackendName());
+    State->SetNumberField(TEXT("dynamics_step_s"),Rig->GetDynamicsStepSeconds());
     State->SetNumberField(TEXT("simulation_rate"),RealTimeFactor);
-    State->SetNumberField(TEXT("fixed_step_s"),FApp::UseFixedTimeStep()?FApp::GetFixedDeltaTime():0);
+    const double EngineStep=FApp::UseFixedTimeStep()?FApp::GetFixedDeltaTime():0;
+    State->SetNumberField(TEXT("fixed_step_s"),DedicatedPeriod>0?DedicatedPeriod:EngineStep);
+    State->SetNumberField(TEXT("engine_fixed_step_s"),EngineStep);
     FString Json;FJsonSerializer::Serialize(State,TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Json));
     const FTCHARToUTF8 Utf8(*Json);if(Utf8.Length()>65536)return false;
     Outbound.Reset();SendOffset=0;LittleEndian(Outbound,Utf8.Length());LittleEndian(Outbound,CameraBytes+LidarBytes.Num());
     Outbound.Append(reinterpret_cast<const uint8*>(Utf8.Get()),Utf8.Length());
-    if(Capture)for(const auto& Pixel:Pixels){Outbound.Add(Pixel.R);Outbound.Add(Pixel.G);Outbound.Add(Pixel.B);}
+    if(Frame)
+    {
+        const int32 RGBOffset=Outbound.AddUninitialized(CameraBytes);
+        uint8* Destination=Outbound.GetData()+RGBOffset;
+        for(const FColor& Pixel:Frame->Pixels)
+        {
+            *Destination++=Pixel.R;*Destination++=Pixel.G;*Destination++=Pixel.B;
+        }
+        FreeCameraReadbacks.Add(MoveTemp(Frame));
+    }
     Outbound.Append(LidarBytes);
     LastSendProgressWall=FPlatformTime::Seconds();return true;
 }
@@ -319,24 +478,75 @@ void URosBridgeComponent::Advance()
 {
     if(!Listener||!IsValid(Rig))return;
     const double Now=FPlatformTime::Seconds();
-    const double WallDelta=Now-LastPollWall;
-    if(Client&&Now-LastPollWall>.25)Disconnect(TEXT("game_tick_stall"));
-    LastPollWall=Now;++TickIndex;
+
     const double SimTime=FMath::Max(0.,SolverTime()-EpochSolverTime);
-    if(WallDelta>1.e-6&&SimTime>=LastSimTime)RealTimeFactor=FMath::Lerp(RealTimeFactor,(SimTime-LastSimTime)/WallDelta,.02);
+    if(Client&&Now-LastPollWall>.25)
+    {
+        if(Rig->GetDedicatedMujocoPeriod()>0.)
+        {
+            ++GameTickStalls;
+            LastGameTickGapMs=(Now-LastPollWall)*1000.;
+            StallCommandFloor=SimTime;
+            LastCommandWall=-1.;CommandStatus=TEXT("game_tick_stall_brake");
+            if(bControl){Rig->RenewExternalDriveLease(0);Rig->SetContactDrive(0,0,true);}
+            if(AimController)AimController->Stop(CommandStatus);
+            UE_LOG(LogRMSim,Warning,TEXT("ROS_BRIDGE_STALL_BRAKE gap_ms=%.2f solver_delta_s=%.4f warnings=%d"),
+                LastGameTickGapMs,SimTime-LastSimTime,Rig->GetMujocoWarningCount());
+        }
+        else Disconnect(TEXT("game_tick_stall"));
+    }
+    LastPollWall=Now;++TickIndex;
+    if(RateWindowWall<=0||SimTime<RateWindowSim){RateWindowWall=Now;RateWindowSim=SimTime;}
+    else if(Now-RateWindowWall>=1.)
+    {
+        RealTimeFactor=(SimTime-RateWindowSim)/(Now-RateWindowWall);
+        RateWindowWall=Now;RateWindowSim=SimTime;
+    }
     const double SimDelta=FMath::Max(0.,SimTime-LastSimTime);LastSimTime=SimTime;
     // Apply only the previously accepted aim command over elapsed physics time.
     if(AimController)AimController->Advance(SimDelta);
-    if(Client&&((Imu&&Imu->UsesArticulatedMount())||(Lidar&&Lidar->UsesArticulatedMount())))
+    const bool Dedicated=Rig->GetDedicatedMujocoPeriod()>0;
+    if(Dedicated)
     {
-        if(SensorMountSamples.Num()>=64){SensorMountSamples.RemoveAt(0,1,EAllowShrinking::No);++DroppedSensorMountSamples;}
-        SensorMountSamples.Add(MakeShared<FJsonValueObject>(Rig->GetSensorJointState(FMath::RoundToInt64(SimTime*1.e9))));
+        // Act on incoming brake/velocity packets before the LiDAR batch and RGB
+        // readback can consume a render frame. The worker still checks the lease.
+        if(Client)Receive(SimTime);
+        if(bControl&&bOperatorBrake)
+        {
+            Rig->RenewExternalDriveLease(0);
+            Rig->SetContactDrive(0,0,true);
+        }
+        Rig->SubmitDedicatedMujocoInputs();
     }
-    if(Imu)Imu->Advance(SimTime,Client!=nullptr);
-    if(Lidar)Lidar->Advance(SimTime,Client!=nullptr);
+    const bool UsesMount=(Imu&&Imu->UsesArticulatedMount())||(Lidar&&Lidar->UsesArticulatedMount());
+    const auto CaptureMount=[&](double At)
+    {
+        if(!Client||!UsesMount)return;
+        if(SensorMountSamples.Num()>=64){SensorMountSamples.RemoveAt(0,1,EAllowShrinking::No);++DroppedSensorMountSamples;}
+        SensorMountSamples.Add(MakeShared<FJsonValueObject>(Rig->GetSensorJointState(FMath::RoundToInt64(At*1.e9))));
+    };
+    if(Lidar&&Dedicated)
+    {
+        Rig->ReplayDedicatedLidarFrames(Client!=nullptr,[&](double At)
+        {
+            if(At<EpochSolverTime)return;
+            const double Relative=At-EpochSolverTime;
+            CaptureMount(Relative);
+            if(Imu)Imu->Advance(Relative,Client!=nullptr,EpochSolverTime);
+            Lidar->Advance(Relative,Client!=nullptr,EpochSolverTime);
+        });
+    }
+    else
+    {
+        // Multiple visual updates can consume the same completed solver state.
+        // Dynamic TF samples must advance strictly within their epoch.
+        if(SimDelta>0)CaptureMount(SimTime);
+        if(Imu)Imu->Advance(SimTime,Client!=nullptr,EpochSolverTime);
+        if(Lidar)Lidar->Advance(SimTime,Client!=nullptr,EpochSolverTime);
+    }
     // Retire an EOF peer before deciding whether a newly queued connection is
     // a competing client; otherwise an immediate reconnect can lose one attempt.
-    if(Client)Receive(SimTime);
+    if(Client&&!Dedicated)Receive(SimTime);
     if(bStallProbe&&!bStallInjected&&bControl&&AcceptedSeq>=5&&LastCommandWall>=0)
     {
         bStallInjected=true;UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_TEST_STALL injected_400ms"));
@@ -352,7 +562,9 @@ void URosBridgeComponent::Advance()
             else
             {
                 Client=Incoming;Client->SetNonBlocking(true);Client->SetNoDelay(true);int32 Actual=0;Client->SetSendBufferSize(4*1024*1024,Actual);
+                StallCommandFloor=-1.;GameTickStalls=0;LastGameTickGapMs=0.;
                 Session=FGuid::NewGuid().ToString();AcceptedSeq=-1;LastCommandWall=-1;CommandStatus=bControl?TEXT("waiting"):TEXT("manual_mode");
+                NavigationFrameYawRad=-FMath::DegreesToRadians(Rig->GetActorRotation().Yaw);
                 LastStateWall=0;NextImageSim=SimTime;Inbound.Reset();Outbound.Reset();SendOffset=0;
                 if(AimController)AimController->Reset(false);
                 if(Imu)Imu->DiscardPending();
@@ -367,25 +579,33 @@ void URosBridgeComponent::Advance()
         else if(LastCommandWall>=0)CommandStatus=TEXT("expired");
     }
     if(Client)SendPending();
-    if(Client&&Outbound.IsEmpty()&&(bMotorControl||Now-LastStateWall>=FMath::Min(.02,1./CameraHz)))
+    AdvanceCamera(SimTime);
+    const double StateInterval=CameraHz>0?FMath::Min(.02,1./CameraHz):.02;
+    // A completed sensor frame is delivered on its own simulation cadence, including100Hz clouds.
+    // Existing camera/control heartbeat cadence remains available between cloud boundaries.
+    if(Client&&Outbound.IsEmpty()&&(bMotorControl||(Lidar&&Lidar->HasPendingScans())||Now-LastStateWall>=StateInterval))
     {
-        const bool Capture=SimTime>=NextImageSim;
-        if(!QueueState(SimTime,Capture)){Disconnect(TEXT("capture_failed"));return;}
-        if(Capture)NextImageSim=SimTime+1/CameraHz;
+        if(!QueueState(SimTime)){Disconnect(TEXT("state_encoding_failed"));return;}
         LastStateWall=Now;SendPending();
     }
 }
 
 void URosBridgeComponent::ResetEpoch()
 {
-    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=0;LastSimTime=0;RealTimeFactor=0;Disconnect(TEXT("reset"));
+    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=0;LastSimTime=0;RealTimeFactor=0;RateWindowWall=0;RateWindowSim=0;Disconnect(TEXT("reset"));
     if(AimController)AimController->Reset(true);
     if(Imu)Imu->Reset();
     if(Lidar)Lidar->Reset();
 }
 
-void URosBridgeComponent::SetMapIdentity(const FString& Id,const FString& Source,bool Mesh)
-{MapId=Id;MapHash=LexToString(FMD5Hash::HashFile(*Source));MapKind=Mesh?TEXT("rm_mesh_map"):TEXT("rm_flat_map");}
+void URosBridgeComponent::SetMapIdentity(const FString& Id,const FString& Source,bool Mesh,bool SavedScene)
+{MapId=Id;MapHash=LexToString(FMD5Hash::HashFile(*Source));MapKind=SavedScene?TEXT("rm_scene_map"):Mesh?TEXT("rm_mesh_map"):TEXT("rm_flat_map");}
+
+void URosBridgeComponent::SetOperatorGyro(double RateRadS)
+{
+    OperatorGyroRateRadS=bOperatorGyroAvailable&&FMath::IsFinite(RateRadS)?
+        FMath::Clamp(RateRadS,0.0,Rig->GetDriveParameter(TEXT("GyroMaxRadS"))):0.0;
+}
 
 void URosBridgeComponent::SetOperatorBrake(bool Brake)
 {

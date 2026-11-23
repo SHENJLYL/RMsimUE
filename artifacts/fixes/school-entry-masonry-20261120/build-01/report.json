@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "observed_process_exit_code": 0,
+  "command": [
+    "powershell",
+    "-NoProfile",
+    "-File",
+    "D:/simulator/tools/unreal/Build-ImportLab.ps1",
+    "-EngineRoot",
+    "E:/simulator-tools/UE_5.8"
+  ],
+  "log_sha256": "9b49a55622ad38b316beffe22cd8bf9c8a553fe8fa95cd4ebf374357d28e8fc4",
+  "files": {
+    "unreal/RMSim/Source/RMSim/CampusGym.cpp": "844b2cdbac88c79febe667919c0dd96963bac8cb767db01194129369ebc3eed0",
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "82d5a7017cacb27c0a41e186d9f48add5e4f19c9f309306b474eb62e32f2440c"
+  }
+}

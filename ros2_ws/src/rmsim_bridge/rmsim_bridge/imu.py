@@ -30,7 +30,7 @@ class ImuPublisher:
             transforms=[]
             for name,p in self.profiles.items():
                 if name not in self.publishers:
-                    self.publishers[name]=self.node.create_publisher(Imu,'/'+self.node.robot_id+'/'+name+'/data_raw',qos_profile_sensor_data)
+                    self.publishers[name]=self.node.create_publisher(Imu,'/'+self.node.robot_id+'/'+name+'/data_raw',QoSProfile(depth=128,reliability=ReliabilityPolicy.RELIABLE))
                 tf=TransformStamped();set_stamp(tf.header.stamp,state['sim_time_ns']);tf.header.frame_id=p['parent_frame_id'];tf.child_frame_id=p['frame_id']
                 local=mount_pose(p,self.node.robot_id)
                 t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,local['position_m'])

@@ -1,0 +1,65 @@
+{
+  "schema": "rmsim_wt_visual_review_v1",
+  "status": "reviewed_sampled_views",
+  "reviewed_utc": "2026-11-19T08:15:36.249Z",
+  "reviewer": "root",
+  "static_views": [
+    {
+      "file": "after-ground-default-taa100-01/view.png",
+      "observations": [
+        "道路灰色铺装边缘为不规则羽化过渡。",
+        "前景草屑、石块和泥土地表微纹理可见。"
+      ]
+    },
+    {
+      "file": "after-ground-slope-taa100-01/view.png",
+      "observations": [
+        "草坡与灰色小路过渡连续，未见新增黑白矩形底。",
+        "左下亮黄绿宽低草片保留为明确的局部照明适配审查项。"
+      ]
+    },
+    {
+      "file": "after-ground-annex-taa100-01/view.png",
+      "observations": [
+        "车辙与裂纹显示正常，所查区域未见原矩形接缝或明显贴图错位。"
+      ]
+    }
+  ],
+  "motion_review": {
+    "evidence": "motion-final-default-03",
+    "native_summary_sha256": "41c871257cd048d71845eda726109a363f174499581611415c7488e8d55ebc9b",
+    "contact_sheet": "motion-final-default-03/motion-contact-sheet.png",
+    "contact_sheet_sha256": "8b8d1f118fa8041af2335eb24251890d10785d038a64b3fc4b66af5a1f497462",
+    "image_index": "motion-final-default-03/motion-contact-sheet-index.json",
+    "image_index_sha256": "a65135053106d92aa6c9ddf80ca07bd949503d54d837680112b21614e53776dd",
+    "viewed_contact_sheet_frames": [
+      4,
+      5,
+      7,
+      8,
+      13,
+      15,
+      16,
+      18
+    ],
+    "viewed_full_resolution_frames": [
+      8,
+      16
+    ],
+    "observations": [
+      "已查看覆盖前进和倒退的八帧联系表，并分别查看前进0008、倒退0016的1600×1000原图。",
+      "所采样道路边缘和地表纹理随场景运动保持连续，未见大块覆盖跳变、明显纹理漂移或新增黑白底面。"
+    ],
+    "scope": "固定路线抽帧人工观察；连续高频闪烁与全地图逐像素覆盖未由本次抽帧测量。",
+    "performance_sample": false,
+    "native_module_sha256": "3b35f4862087c81220216d9e26d47ac29bdbd47bc8b49d888dfd05b1a9642f2d",
+    "world_sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0"
+  },
+  "remaining_local_observation": {
+    "candidate": "grass_fill_a / layer_12",
+    "exact_rendered_instance_identified": false,
+    "source_consumer_review": "foliage-audit-01/random-grass-consumer-review-01/verification.json",
+    "source_consumer_review_sha256": "8d5af8ddbe7f3f6f2bc1350dc735ff9d284f0bf9aa0fdda53bc11a58daca5867",
+    "decision": "保留原颜色、密度和当前显式UE法线/透光适配；源实例含landNormal，精确消费shader主体尚未取得，不根据顶点流缺字段推导替代公式。"
+  }
+}

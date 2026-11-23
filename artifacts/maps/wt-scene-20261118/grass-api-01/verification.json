@@ -1,0 +1,60 @@
+{
+  "LandscapeGrassTypeFactory": {
+    "available": true,
+    "doc": "Landscape Grass Type Factory\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: FoliageEdit\r\n- **File**: LandscapeGrassTypeFactory.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``asset_import_task`` (AssetImportTask):  [Read-Write] Task for importing file via script interfaces\r\n- ``automated_import_data`` (AutomatedAssetImportData):  [Read-Write] Data for how to import files via the automated command line importing interface\r\n- ``context_class`` (type(Class)):  [Read-Write] Class of the context object used to help create the object.\r\n- ``create_new`` (bool):  [Read-Write] The default value to return from CanCreateNew()\r\n- ``edit_after_new`` (bool):  [Read-Write] true if the associated editor should be opened after creating a new object.\r\n- ``editor_import`` (bool):  [Read-Write] true if the factory imports objects from files.\r\n- ``formats`` (Array[str]):  [Read-Write] List of formats supported by the factory. Each entry is of the form \"ext;Description\" where ext is the file extension.\r\n- ``supported_class`` (type(Class)):  [Read-Write] The class manufactured by this factory.\r\n- ``supported_workflows`` (uint8):  [Read-Write] Which workflows are supported.\r\n- ``text`` (bool):  [Read-Write] true if the factory imports objects from text."
+  },
+  "LandscapeGrassType": {
+    "available": true,
+    "doc": "Landscape Grass Type\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Landscape\r\n- **File**: LandscapeGrassType.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``enable_density_scaling`` (bool):  [Read-Write] Whether this grass type should be affected by the Engine Scalability system's Foliage grass.DensityScale setting.\r\n  This is enabled by default but can be disabled should this grass type be important for gameplay reasons.\r\n- ``grass_varieties`` (Array[GrassVariety]):  [Read-Write]"
+  },
+  "GrassVariety": {
+    "available": true,
+    "doc": "Grass Variety\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Landscape\r\n- **File**: LandscapeGrassType.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``affect_distance_field_lighting`` (bool):  [Read-Write] Controls whether the primitive should affect dynamic distance field lighting methods.\r\n- ``align_to_surface`` (bool):  [Read-Write] Whether the grass instances should be tilted to the normal of the landscape (true), or always vertical (false)\r\n- ``align_to_triangle_normals`` (bool):  [Read-Write] When aligning to the surface when using grid mode, whether we should align to triangle normal (true) or a smooth grid-based normal (false).  Halton always uses triangle normal.\r\n- ``allowed_density_range`` (FloatInterval):  [Read-Write] Specifies the density range where the grass variety is allowed to be spawned ([0,1] represents the entire range).\r\n- ``cast_contact_shadow`` (bool):  [Read-Write] Whether the grass should cast contact shadows. *\r\n- ``cast_dynamic_shadow`` (bool):  [Read-Write] Whether the grass should cast shadows when using non-precomputed shadowing. *\r\n- ``end_cull_distance`` (PerPlatformInt):  [Read-Write] The distance where instances will have completely faded out when using a PerInstanceFadeAmount material node. 0 disables.\r\n  When the entire cluster is beyond this distance, the cluster is completely culled and not rendered at all.\r\n- ``end_cull_distance_quality`` (PerQualityLevelInt):  [Read-Write]\r\n- ``grass_density`` (PerPlatformFloat):  [Read-Write] Instances per 10 square meters.\r\n- ``grass_density_quality`` (PerQualityLevelFloat):  [Read-Write]\r\n- ``grass_mesh`` (StaticMesh):  [Read-Write]\r\n- ``instance_world_position_offset_disable_distance`` (uint32):  [Read-Write] Distance at which to grass instances should disable WPO for performance reasons\r\n- ``keep_instance_buffer_cpu_copy`` (bool):  [Read-Write] Whether we should keep a cpu copy of the instance buffer. This should be set to true if you plan on using GetOverlappingXXXXCount functions of the component otherwise it won't return any data.*\r\n- ``lighting_channels`` (LightingChannels):  [Read-Write] Lighting channels that the grass will be assigned. Lights with matching channels will affect the grass.\r\n  These channels only apply to opaque materials, direct lighting, and dynamic lighting and shadowing.\r\n- ``max_scale_weight_attenuation`` (float):  [Read-Write] Modulate the scale of the instances based on weight (normalized density). The weight range (ScaleWeightAttenuation, 1.0) maps to (scaleMin, scaleMax), weight values less than ScaleWeightAttenuation are set to minScale\r\n- ``min_lod`` (int32):  [Read-Write] Specifies the smallest LOD that will be used for this component.\r\n  If -1 (default), the MinLOD of the static mesh asset will be used instead.\r\n- ``override_materials`` (Array[MaterialInterface]):  [Read-Write] Material Overrides.\r\n- ``placement_jitter`` (float):  [Read-Write]\r\n- ``random_rotation`` (bool):  [Read-Write] Whether the grass instances should be placed at random rotation (true) or all at the same rotation (false)\r\n- ``receives_decals`` (bool):  [Read-Write] Whether the grass instances should receive decals.\r\n- ``scale_x`` (FloatInterval):  [Read-Write] Specifies the range of scale, from minimum to maximum, to apply to a grass instance's X Scale property\r\n- ``scale_y`` (FloatInterval):  [Read-Write] Specifies the range of scale, from minimum to maximum, to apply to a grass instance's Y Scale property\r\n- ``scale_z`` (FloatInterval):  [Read-Write] Specifies the range of scale, from minimum to maximum, to apply to a grass instance's Z Scale property\r\n- ``scaling`` (GrassScaling):  [Read-Write] Specifies grass instance scaling type\r\n- ``shadow_cache_invalidation_behavior`` (ShadowCacheInvalidationBehavior):  [Read-Write] Control shadow invalidation behavior, in particular with respect to Virtual Shadow Maps and material effects like World Position Offset.\r\n- ``start_cull_distance`` (PerPlatformInt):  [Read-Write] The distance where instances will begin to fade out if using a PerInstanceFadeAmount material node. 0 disables.\r\n- ``start_cull_distance_quality`` (PerQualityLevelInt):  [Read-Write]\r\n- ``use_grid`` (bool):  [Read-Write] If true, use a jittered grid sequence for placement, otherwise use a halton sequence.\r\n- ``use_landscape_lightmap`` (bool):  [Read-Write] Whether to use the landscape's lightmap when rendering the grass.\r\n- ``weight_attenuates_max_scale`` (bool):  [Read-Write] If enabled the the scale of instances is reduced as the weight (density) decreases"
+  },
+  "GrassInput": {
+    "available": true,
+    "doc": "Grass Input\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Landscape\r\n- **File**: MaterialExpressionLandscapeGrassOutput.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``grass_type`` (LandscapeGrassType):  [Read-Write]\r\n- ``name`` (Name):  [Read-Write]"
+  },
+  "MaterialExpressionLandscapeGrassOutput": {
+    "available": true,
+    "doc": "Material Expression Landscape Grass Output\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Landscape\r\n- **File**: MaterialExpressionLandscapeGrassOutput.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``desc`` (str):  [Read-Write] A description that level designers can add (shows in the material editor UI).\r\n- ``grass_types`` (Array[GrassInput]):  [Read-Write]\r\n- ``material_expression_editor_x`` (int32):  [Read-Write]\r\n- ``material_expression_editor_y`` (int32):  [Read-Write]"
+  },
+  "PerPlatformFloat": {
+    "available": true,
+    "doc": "FPerPlatformFloat - float property with per-platform overrides\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: CoreUObject\r\n- **File**: PerPlatformProperties.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``default`` (float):  [Read-Write]\r\n- ``per_platform`` (Map[Name, float]):  [Read-Write]"
+  },
+  "PerQualityLevelFloat": {
+    "available": true,
+    "doc": "Per Quality Level Float\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Engine\r\n- **File**: PerQualityLevelProperties.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``default`` (float):  [Read-Write]\r\n- ``per_quality`` (Map[int32, float]):  [Read-Write]"
+  },
+  "FloatInterval": {
+    "available": true,
+    "doc": "An interval of floats, defined by inclusive min and max values\r\nnote: This is a mirror of TInterval<float>, defined in Engine/Source/Runtime/Core/Public/Math/Interval.h\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: CoreUObject\r\n- **File**: NoExportTypes.h\r\n\r\n**Editor Properties:** (see get_editor_property/set_editor_property)\r\n\r\n- ``max`` (float):  [Read-Write] Values must be <= Max\r\n- ``min`` (float):  [Read-Write] Values must be >= Min"
+  },
+  "GrassScaling": {
+    "available": true,
+    "doc": "EGrass Scaling\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: Landscape\r\n- **File**: LandscapeGrassType.h\r\n"
+  },
+  "MapVegetationLibrary": {
+    "available": true,
+    "doc": "Offline authoring and readback of native landscape grass; no vehicle/control input.\r\n\r\n**C++ Source:**\r\n\r\n- **Module**: RMSim\r\n- **File**: MapVegetationLibrary.h\r\n"
+  },
+  "variety_defaults": {
+    "grass_mesh": "None",
+    "grass_density": "<Struct 'PerPlatformFloat' (0x000002129CB21218) {default: 400.000000}>",
+    "grass_density_quality": "<Struct 'PerQualityLevelFloat' (0x000002129CB21270) {default: 400.000000}>",
+    "use_grid": "True",
+    "placement_jitter": "1.0",
+    "start_cull_distance": "<Struct 'PerPlatformInt' (0x000002129CB212F8) {default: 10000}>",
+    "end_cull_distance": "<Struct 'PerPlatformInt' (0x000002129CB213D0) {default: 10000}>",
+    "scaling": "<GrassScaling.UNIFORM: 0>",
+    "scale_x": "<Struct 'FloatInterval' (0x000002129CB214B8) {min: 1.000000, max: 1.000000}>",
+    "scale_y": "<Struct 'FloatInterval' (0x000002129CB214C0) {min: 1.000000, max: 1.000000}>",
+    "scale_z": "<Struct 'FloatInterval' (0x000002129CB214C8) {min: 1.000000, max: 1.000000}>",
+    "random_rotation": "True",
+    "align_to_surface": "True",
+    "cast_dynamic_shadow": "True",
+    "cast_contact_shadow": "True",
+    "keep_instance_buffer_cpu_copy": "False"
+  }
+}

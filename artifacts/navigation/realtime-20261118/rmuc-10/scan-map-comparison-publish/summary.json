@@ -1,0 +1,420 @@
+{
+  "schema_version": 1,
+  "status": "diagnostic_complete",
+  "scope": "Offline map-only comparison using fixed actual rmuc-10 sensor/pose records",
+  "native_candidate_accepted": false,
+  "created_utc": "2026-11-18T04:14:18.300396+00:00",
+  "session_identity": [
+    "29F5EAA548E63FD570A0689E738D952B",
+    0
+  ],
+  "raw_scans": 351,
+  "strict_same_stamp_pairs": 125,
+  "paired_original_beams": 2244,
+  "unscored_reasons": {
+    "No exact-stamp published AMCL pose": 225,
+    "No selected finite model beams": 1
+  },
+  "model": {
+    "name": "Nav2 1.1.20 likelihood_field",
+    "formula": "1 + sum((z_hit * exp(-d*d/(2*sigma_hit*sigma_hit)) + z_rand/range_max)^3)",
+    "parameters": {
+      "z_hit": 0.95,
+      "z_rand": 0.05,
+      "sigma_hit": 0.15,
+      "laser_likelihood_max_dist": 2.0,
+      "max_beams": 100,
+      "laser_min_range": 0.3,
+      "laser_max_range": 10.0
+    },
+    "beam_step": "max(1, floor((range_count-1)/(max_beams-1))); preserve original indices",
+    "native_library_sha256": "28cefe6101b0ce678e72ed37ed4fff5a7e4b9656888332ebd77718c7c5c5c2a1",
+    "primary_sources": {
+      "tag": "1.1.20",
+      "repository": "https://github.com/ros-navigation/navigation2",
+      "files": {
+        "nav2_amcl/src/sensors/laser/likelihood_field_model.cpp": "84a4542b6891cd665139fcc75dc6b71fa0d2175f167de5c11df463d2f6fe101d",
+        "nav2_amcl/src/map/map_cspace.cpp": "e77abdeb1f20750de8d0a09027fe71479dba164970570773249bea41292a48ee",
+        "nav2_amcl/include/nav2_amcl/map/map.hpp": "5aa7632d3705cd937e3a353c21a0aa4231ed44587affcdae88963ab2e37e709b",
+        "nav2_amcl/src/amcl_node.cpp": "29a6402bf643fc8ea0d2dcea29619d4cbdcaf7014c811332ed4e86e593d3f1af",
+        "nav2_map_server/src/map_io.cpp": "7f4e12d8c60891c64689bd0dab443a93800cdd280e9447e538d4458b1f68a57e"
+      }
+    }
+  },
+  "sampling": {
+    "raw_directions_per_scan": 720,
+    "original_selected_indices_per_scan": 103,
+    "all_received_mean_finite_ranges": 138.9059829059829,
+    "all_received_mean_used_beams": 19.695156695156694,
+    "strict_pair_mean_used_beams": 17.952,
+    "strict_pair_median_used_beams": 19,
+    "strict_pair_used_beam_min": 3,
+    "strict_pair_used_beam_max": 30
+  },
+  "comparison": {
+    "runtime_traversability": {
+      "phases": {
+        "cancel_settle": {
+          "scans": 2,
+          "evaluation_higher": 0,
+          "estimated_higher": 1,
+          "equal_score": 1,
+          "mean_estimate_minus_evaluation": 0.06652509895172543,
+          "mean_estimated_score": 19.22413640104827,
+          "mean_evaluation_score": 19.157611302096548,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 0
+        },
+        "cancel_test": {
+          "scans": 3,
+          "evaluation_higher": 1,
+          "estimated_higher": 1,
+          "equal_score": 1,
+          "mean_estimate_minus_evaluation": 0.2813704829215086,
+          "mean_estimated_score": 18.040649451397698,
+          "mean_evaluation_score": 17.759278968476192,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 1
+        },
+        "single_goal": {
+          "scans": 39,
+          "evaluation_higher": 3,
+          "estimated_higher": 35,
+          "equal_score": 1,
+          "mean_estimate_minus_evaluation": 0.8722666505966498,
+          "mean_estimated_score": 19.287138024479052,
+          "mean_evaluation_score": 18.4148713738824,
+          "estimated_all_beams_occupied_scans": 9,
+          "evaluation_all_beams_occupied_scans": 1
+        },
+        "waypoints": {
+          "scans": 81,
+          "evaluation_higher": 15,
+          "estimated_higher": 53,
+          "equal_score": 13,
+          "mean_estimate_minus_evaluation": 0.7283683647824665,
+          "mean_estimated_score": 14.170934260030512,
+          "mean_evaluation_score": 13.442565895248052,
+          "estimated_all_beams_occupied_scans": 24,
+          "evaluation_all_beams_occupied_scans": 14
+        }
+      },
+      "all_phases_evaluation_higher": 19,
+      "all_phases_estimated_higher": 90,
+      "all_phases_equal": 16,
+      "estimated_all_beams_occupied_scans": 33,
+      "summary": {
+        "path": "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-alignment/summary.json",
+        "sha256": "02d24b965f4f60111d2ee5b24aca1489aa42ebf85f4e345c252baaa9e0c8b87e"
+      }
+    },
+    "physical_steep75": {
+      "phases": {
+        "cancel_settle": {
+          "scans": 2,
+          "evaluation_higher": 2,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -2.307663625702485,
+          "mean_estimated_score": 17.576428663154655,
+          "mean_evaluation_score": 19.88409228885714,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 0
+        },
+        "cancel_test": {
+          "scans": 3,
+          "evaluation_higher": 3,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -1.1974517811310623,
+          "mean_estimated_score": 16.948490279504732,
+          "mean_evaluation_score": 18.145942060635793,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 0
+        },
+        "single_goal": {
+          "scans": 39,
+          "evaluation_higher": 39,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -1.2828933049759546,
+          "mean_estimated_score": 17.860874994534658,
+          "mean_evaluation_score": 19.14376829951062,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 6
+        },
+        "waypoints": {
+          "scans": 81,
+          "evaluation_higher": 52,
+          "estimated_higher": 27,
+          "equal_score": 2,
+          "mean_estimate_minus_evaluation": -0.2425752177865525,
+          "mean_estimated_score": 13.56568268492944,
+          "mean_evaluation_score": 13.808257902715994,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 20
+        }
+      },
+      "all_phases_evaluation_higher": 96,
+      "all_phases_estimated_higher": 27,
+      "all_phases_equal": 2,
+      "estimated_all_beams_occupied_scans": 0,
+      "summary": {
+        "path": "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-candidate-comparison-01/steep75/summary.json",
+        "sha256": "5939949ffd879c2e639963dbd96eeccfad50f39d3d4ae8f4c6113d927a0a4bd8"
+      }
+    },
+    "physical_vertical85": {
+      "phases": {
+        "cancel_settle": {
+          "scans": 2,
+          "evaluation_higher": 2,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -5.530344385249208,
+          "mean_estimated_score": 14.021122408849305,
+          "mean_evaluation_score": 19.551466794098513,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 0
+        },
+        "cancel_test": {
+          "scans": 3,
+          "evaluation_higher": 3,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -4.2114620048893086,
+          "mean_estimated_score": 13.757079791875219,
+          "mean_evaluation_score": 17.968541796764523,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 0
+        },
+        "single_goal": {
+          "scans": 39,
+          "evaluation_higher": 39,
+          "estimated_higher": 0,
+          "equal_score": 0,
+          "mean_estimate_minus_evaluation": -3.1969159375614513,
+          "mean_estimated_score": 15.517083849077165,
+          "mean_evaluation_score": 18.713999786638613,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 1
+        },
+        "waypoints": {
+          "scans": 81,
+          "evaluation_higher": 60,
+          "estimated_higher": 20,
+          "equal_score": 1,
+          "mean_estimate_minus_evaluation": -1.4731658441888191,
+          "mean_estimated_score": 11.97695850129587,
+          "mean_evaluation_score": 13.450124345484687,
+          "estimated_all_beams_occupied_scans": 0,
+          "evaluation_all_beams_occupied_scans": 7
+        }
+      },
+      "all_phases_evaluation_higher": 104,
+      "all_phases_estimated_higher": 20,
+      "all_phases_equal": 1,
+      "estimated_all_beams_occupied_scans": 0,
+      "summary": {
+        "path": "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-candidate-comparison-01/vertical85/summary.json",
+        "sha256": "b050427522f03c6bdcaeaf8c6d6edb4a1a84f9cabdd332368163f6ce47dbfbed"
+      }
+    }
+  },
+  "geometry_candidates": {
+    "steep75": {
+      "manifest_path": "artifacts/navigation/realtime-20261118/localization-map-candidates-01/steep75/metadata.json",
+      "manifest_sha256": "f3f56f631b4b319acf25eb1ae5ffd87b0a7b91353be7b0e4397db8d3467a3bfd",
+      "raster_sha256": "f1425f211b794516899db29b876eec3bcad4d1f8e917c503c7e7028e509fd001",
+      "map_yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "reference_navigation_raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+      "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "minimum_surface_inclination_degrees": 75
+    },
+    "vertical85": {
+      "manifest_path": "artifacts/navigation/realtime-20261118/localization-map-candidates-01/vertical85/metadata.json",
+      "manifest_sha256": "40b5f522105620d3f25b98a23ae365b7f9ce55494edb44dcef5a26ccf7118c1b",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "map_yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "reference_navigation_raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+      "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "minimum_surface_inclination_degrees": 85
+    }
+  },
+  "controlled_inputs": [
+    {
+      "name": "runtime_traversability_same_recorded_frames_poses_beams_and_model",
+      "passed": true
+    },
+    {
+      "name": "physical_steep75_same_recorded_frames_poses_beams_and_model",
+      "passed": true
+    },
+    {
+      "name": "physical_vertical85_same_recorded_frames_poses_beams_and_model",
+      "passed": true
+    }
+  ],
+  "runtime_map": {
+    "width": 560,
+    "height": 322,
+    "resolution_as_occupancy_grid_float32": 0.05000000074505806,
+    "origin_xy": [
+      -14.0,
+      -8.05
+    ],
+    "index_rule": "floor((world-origin_center)/scale+0.5)+size/2, exactly AMCL map.hpp"
+  },
+  "same_grid_origin_scale_preserved": true,
+  "truth_fitting_or_map_translation": false,
+  "observed_findings": [
+    "The actual traversability map assigned higher sensor scores to the displaced estimate in 90/125 paired scans; evaluation scored higher in 19/125, with 16 ties.",
+    "At the last single-goal scan, all 22 model beams at the estimated pose had zero occupied-cell distance and saturated the original likelihood score.",
+    "The 85-degree physical surface candidate favors evaluation in 104/125 pairs, including 39/39 single-goal and 60/81 waypoint pairs.",
+    "The 33 all-beam-occupied saturated estimate scans on the original map become 0 on both geometry candidates.",
+    "The map-only comparison preserves every paired timestamp, recorded pose, TF interpolation bracket, beam index/range/bearing/endpoint, and native model parameter."
+  ],
+  "last_single_goal_runtime_example": {
+    "stamp_s": 34.984999219,
+    "used_beam_count": 22,
+    "estimated_pose_xy_yaw": [
+      9.359752170614014,
+      6.406104629455284,
+      0.48007703698262605
+    ],
+    "evaluation_pose_xy_yaw": [
+      9.294589986122464,
+      6.51051999909002,
+      0.4695896812332586
+    ],
+    "estimated_score": 20.16164525,
+    "evaluation_score": 19.762494656289647,
+    "estimated_distances_m": {
+      "count": 22,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "evaluation_distances_m": {
+      "count": 22,
+      "mean": 0.006818181919780644,
+      "median": 0.0,
+      "p95": 0.05000000074505806,
+      "min": 0.0,
+      "max": 0.05000000074505806
+    }
+  },
+  "original_direction_contributions": [
+    {
+      "world_sector": "SE",
+      "beams": 714,
+      "scans": 91,
+      "sum_estimate_minus_evaluation": 17.40048593996017
+    },
+    {
+      "world_sector": "SW",
+      "beams": 229,
+      "scans": 41,
+      "sum_estimate_minus_evaluation": 34.60662085026111
+    },
+    {
+      "world_sector": "S",
+      "beams": 233,
+      "scans": 75,
+      "sum_estimate_minus_evaluation": 17.61935715589391
+    },
+    {
+      "world_sector": "W",
+      "beams": 117,
+      "scans": 42,
+      "sum_estimate_minus_evaluation": 7.5912193945713655
+    },
+    {
+      "world_sector": "NW",
+      "beams": 20,
+      "scans": 9,
+      "sum_estimate_minus_evaluation": 7.191497608149619
+    },
+    {
+      "world_sector": "E",
+      "beams": 804,
+      "scans": 111,
+      "sum_estimate_minus_evaluation": 6.095698434688612
+    },
+    {
+      "world_sector": "NE",
+      "beams": 125,
+      "scans": 46,
+      "sum_estimate_minus_evaluation": 3.440780600945817
+    },
+    {
+      "world_sector": "N",
+      "beams": 2,
+      "scans": 2,
+      "sum_estimate_minus_evaluation": 0.04773858284646104
+    }
+  ],
+  "original_main_occupied_tiles": [
+    "[8.0, 5.0]",
+    "[8.5, 5.0]",
+    "[5.0, 5.0]",
+    "[4.5, 5.0]",
+    "[9.5, 3.5]",
+    "[10.0, 3.5]",
+    "[7.5, 5.0]",
+    "[10.0, 7.0]"
+  ],
+  "planar_vs_full_transform_xy_max_m": {
+    "count": 125,
+    "mean": 0.0005198420790267408,
+    "median": 0.0002719173954701232,
+    "p95": 0.0019004411768178025,
+    "min": 3.0626212924365417e-05,
+    "max": 0.007152365582254656
+  },
+  "validation": {
+    "native_offline_tests_passed": 10,
+    "native_offline_tests_skipped": 0,
+    "test_record": "artifacts/navigation/realtime-20261118/scan-map-analysis-offline/candidate-native-01/verification.json",
+    "analyzer_sha256": "5284af23defb37b33918a18e7f6e72c9d5d126d1fbc0365e25f5a9338118a18c",
+    "existing_evidence_overwrite_rejected": true,
+    "candidate_reference_hash_mismatch_rejected": true
+  },
+  "recommended_native_trial": {
+    "candidate": "vertical85",
+    "change": "Separate AMCL localization map only",
+    "preserve": [
+      "Existing terrain_map_ext to obstacle_scan observation",
+      "Original navigation traversability map",
+      "Nav2 planning and avoidance",
+      "Physics and full-rate sensors"
+    ],
+    "status": "Native localization/navigation result pending at time of this offline analysis"
+  },
+  "scope_limits": [
+    "Published AMCL pose represents a posterior estimate; particle distribution and random resampling history are not reconstructed.",
+    "Current LaserScan has no original point height or object ID, so physical hit objects are not relabeled.",
+    "Candidate projections contain all-height steep surfaces including occluded/internal faces; native validation remains required."
+  ],
+  "evidence_sha256": {
+    "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-candidate-comparison-01/comparison-verification.json": "7f1bfb657aea3ae9faee68bd67d963da3fee551f65670981f7c244b4f8cf33f2",
+    "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-candidate-comparison-01/run-record.json": "64ba28750dcb98dcf95bb2d6c06e6732f6db61fedefaecb43191a336435fee39",
+    "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-alignment/findings.md": "63e08d8e662fe71d4cc085d96940b721387a83f2c9b6895ae938d93b13e044e7",
+    "artifacts/navigation/realtime-20261118/rmuc-10/scan-map-candidate-comparison-01/findings.md": "25996ca5da757ea68e4a309d53c3d580ff4e28c9f77bf2e556608a394abcb3c3",
+    "artifacts/navigation/realtime-20261118/scan-map-analysis-offline/candidate-native-01/verification.json": "a98232276e281a9834ede429d4de21e5a41805515e22f63f17b6544fdfdf6e3b",
+    "artifacts/navigation/realtime-20261118/scan-map-analysis-offline/upstream-1.1.20/source-manifest.json": "e321638e5457d1cba912f5dfe4c2f03faf2311ec626b38a23a3e52284d1a788b",
+    "tools/integration/analyze_scan_map_alignment.py": "5284af23defb37b33918a18e7f6e72c9d5d126d1fbc0365e25f5a9338118a18c"
+  },
+  "actual_input_sha256": {
+    "artifacts/navigation/realtime-20261118/rmuc-10/actions/trace.json": "ebba749ed13f4a77b956ff517b84dcfb2bcff145c2e9761b500813be54763d54",
+    "artifacts/navigation/realtime-20261118/rmuc-10/runtime-provenance.json": "ee8336d6768d95263c31dcfbc16f52612a69bad1484c496b109d06259c718ed1",
+    "artifacts/navigation/realtime-20261118/rmuc-10/navigation/20261118T034350Z-24596/parameters.yaml": "dfa5659e886f9980bef971e5d1261d2f228104e4bbecc5836e8d11dc5f0c52eb",
+    "artifacts/navigation/realtime-20261118/rmuc-10/scene/navigation/map.yaml": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+    "artifacts/navigation/realtime-20261118/rmuc-10/scene/navigation/map.pgm": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+    "tools/integration/analyze_scan_map_alignment.py": "56e4c8f374941b69032af4320b005dae52b60ccb71ce1c04508b58710144d86f"
+  }
+}

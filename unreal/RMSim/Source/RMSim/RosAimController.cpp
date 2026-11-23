@@ -137,8 +137,18 @@ void URosAimController::Drive(double Seconds)
         if((UnclampedP>PitchMax&&Pitch.Direction>0)||(UnclampedP<PitchMin&&Pitch.Direction<0))Pitch.Direction=-Pitch.Direction;
         Pitch.Target=CurrentWorld.Y;
     }
-    Rig->NudgeGimbal(FMath::Clamp(FMath::FindDeltaAngleRadians(BeforeY,DesiredY),-YawRateLimit*Seconds,YawRateLimit*Seconds),
-        FMath::Clamp(DesiredP-BeforeP,-PitchRateLimit*Seconds,PitchRateLimit*Seconds));
+    const double DeltaY=FMath::Clamp(FMath::FindDeltaAngleRadians(BeforeY,DesiredY),-YawRateLimit*Seconds,YawRateLimit*Seconds);
+    const double DeltaP=FMath::Clamp(DesiredP-BeforeP,-PitchRateLimit*Seconds,PitchRateLimit*Seconds);
+    if(bBodyFrame&&Rig->GetDedicatedMujocoPeriod()>0)
+    {
+        const auto BodyRate=[](const FAxis& Axis)
+        {
+            return Axis.Mode==1?Axis.Rate:0.;
+        };
+        if(Rig->SetDedicatedGimbalTrajectory(BeforeY+DeltaY,FMath::Clamp(BeforeP+DeltaP,PitchMin,PitchMax),
+            BodyRate(Yaw),BodyRate(Pitch),Deadline))return;
+    }
+    Rig->NudgeGimbal(DeltaY,DeltaP);
 }
 
 bool URosAimController::CanFire() const
@@ -162,7 +172,7 @@ void URosAimController::Advance(double Seconds)
         }
     }
     double Y,P;Rig->GetGimbalAngles(Y,P);
-    YawVelocity=bHaveSample&&Seconds>0?(Y-PreviousYaw)/Seconds:0;
+    YawVelocity=bHaveSample&&Seconds>0?FMath::FindDeltaAngleRadians(PreviousYaw,Y)/Seconds:0;
     PitchVelocity=bHaveSample&&Seconds>0?(P-PreviousPitch)/Seconds:0;
     PreviousYaw=Y;PreviousPitch=P;PreviousMuzzle=Aim->GetComponentTransform();bHaveSample=true;
 }
@@ -170,7 +180,9 @@ void URosAimController::Advance(double Seconds)
 TSharedRef<FJsonObject> URosAimController::State(int64 Stamp) const
 {
     auto J=MakeShared<FJsonObject>();J->SetBoolField(TEXT("enabled"),bEnabled);
-    J->SetStringField(TEXT("actuator_model"),TEXT("rate_limited_kinematic_gimbal; fixed_neutral_collision_proxy; uncalibrated"));
+    J->SetStringField(TEXT("actuator_model"),Rig->IsMujocoPhysics()?
+        TEXT("torque_limited_MuJoCo_joint_servo; articulated_dynamic_joint_collision; uncalibrated"):
+        TEXT("rate_limited_kinematic_gimbal; fixed_neutral_collision_proxy; uncalibrated"));
     J->SetStringField(TEXT("command_frame"),bBodyFrame?Rig->GetVehicleId()+TEXT("/base_link"):TEXT("rmsim_world"));
     J->SetStringField(TEXT("status"),Status);J->SetNumberField(TEXT("accepted_seq"),AcceptedSeq);
     J->SetNumberField(TEXT("rejected_count"),RejectedCount);J->SetStringField(TEXT("last_rejection"),LastRejection);
@@ -191,7 +203,8 @@ TSharedRef<FJsonObject> URosAimController::State(int64 Stamp) const
         for(const TCHAR* Key:{TEXT("status"),TEXT("epoch"),TEXT("time"),TEXT("ammo"),TEXT("heat"),TEXT("shots")})Shooter->SetField(Key,Full->Values[Key]);
         const auto Parameters=Full->GetObjectField(TEXT("demo_parameters"));
         for(const TCHAR* Key:{TEXT("max_heat"),TEXT("heat_per_shot"),TEXT("shot_interval"),TEXT("cooling_per_second"),TEXT("launch_cm_s")})Shooter->SetField(Key,Parameters->Values[Key]);
-        Shooter->SetStringField(TEXT("clock_source"),bEnabled?TEXT("Chaos_solver"):TEXT("manual_demo_timer"));
+        Shooter->SetStringField(TEXT("clock_source"),bEnabled?
+            (Rig->IsMujocoPhysics()?TEXT("MuJoCo_solver"):TEXT("Chaos_solver")):TEXT("manual_demo_timer"));
     }
     J->SetObjectField(TEXT("shooter"),Shooter);return J;
 }

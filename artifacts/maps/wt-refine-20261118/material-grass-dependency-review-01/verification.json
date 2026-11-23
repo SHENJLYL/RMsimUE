@@ -1,0 +1,61 @@
+{
+  "schema": "wt_material_grass_dependency_review_v1",
+  "status": "passed",
+  "scope": "three fresh CPython import-order checks with a deliberately minimal Unreal module; source review only, no native API executed",
+  "files": {
+    "wt_grass.py": "3dd7e10e2e91cdb51febd1f9f92e41b7edcd4dd1b85533a9b4ee5fc51306688e",
+    "wt_materials.py": "ab3cfd9d9021dc7e709c7abeb0eb16c21e846de4c374a93e94ec3ca902e88865",
+    "wt_landdetail.py": "db01f6435c833d466b50808f20d46d0586e39d205de6882474cb68bf4e901b8b",
+    "wt_landclass.py": "5247438e08c2e03432b653935ffcb23c0fcd8974356a50b67bb1520f73cd1d65",
+    "verify_wt_materials.py": "071a251322b5fa7e973734fd1db9c5f24fc9eae25806fc66678952d56b859598",
+    "update_wt_materials.py": "01701894d55ebbe202030ba69e63c153c637a199b219af3a668895a59ec4e602",
+    "wt_material_refine_verify.py": "57489b2c8192cc1b5934a63008416f87a7b7c481375b5c9cd99b27639af80c4e"
+  },
+  "import_checks": [
+    {
+      "order": [
+        "wt_grass",
+        "wt_materials",
+        "wt_landdetail",
+        "verify_wt_materials",
+        "update_wt_materials"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"imported\": [\"wt_grass\", \"wt_materials\", \"wt_landdetail\", \"verify_wt_materials\", \"update_wt_materials\"], \"api_calls\": 0}\n",
+      "stderr": ""
+    },
+    {
+      "order": [
+        "wt_landdetail",
+        "wt_materials",
+        "verify_wt_materials",
+        "wt_grass",
+        "update_wt_materials"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"imported\": [\"wt_landdetail\", \"wt_materials\", \"verify_wt_materials\", \"wt_grass\", \"update_wt_materials\"], \"api_calls\": 0}\n",
+      "stderr": ""
+    },
+    {
+      "order": [
+        "verify_wt_materials",
+        "update_wt_materials",
+        "wt_grass",
+        "wt_landdetail",
+        "wt_materials"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"imported\": [\"verify_wt_materials\", \"update_wt_materials\", \"wt_grass\", \"wt_landdetail\", \"wt_materials\"], \"api_calls\": 0}\n",
+      "stderr": ""
+    }
+  ],
+  "findings": [
+    "source_color_linear is a pure function; wt_grass imports wt_materials only inside install_grass",
+    "wt_landdetail does not import wt_grass; reverse wt_materials use is deferred inside author_surface",
+    "verify_wt_materials imports source_color_linear lazily inside _grass_vector",
+    "incremental update explicitly uses preserve_grass=True and compares the retained upstream node closure before/after",
+    "terrain detail assets use map/Textures; grass assets use map/Foliage, with distinct parameter names",
+    "foliage-enhanced and terrain-details use separate definitions; original landclass manifest stays bound"
+  ],
+  "native_validation_performed": false
+}

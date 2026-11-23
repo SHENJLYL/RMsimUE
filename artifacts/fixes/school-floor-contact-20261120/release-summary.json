@@ -1,0 +1,195 @@
+{
+  "status": "accepted",
+  "utc": "2026-11-19T16:26:58.036835+00:00",
+  "scope": "RMUC field underside rests on the original gym floor; glass is flush with the RMUC boundary and its lower frame reaches that floor. Prior exterior visibility remains.",
+  "vertical_contact": {
+    "gym_floor_top_before_m": -0.4365999984741211,
+    "field_underside_m": -0.3009999990463257,
+    "gym_floor_lift_m": 0.13559999942779544,
+    "gym_floor_top_after_m": -0.3009999990463257,
+    "nominal_vertical_gap_m": 0,
+    "instances_shifted": 57,
+    "lights_shifted": 12,
+    "original_venue_triangles_removed": 0
+  },
+  "glass": {
+    "horizontal_gap_before_m": 0.001,
+    "horizontal_gap_after_m": 0,
+    "base_z_m": -0.3009999990463257,
+    "glass_and_base_rails_extended_down_m": 0.0909999990463257,
+    "upper_ends_unchanged": true,
+    "collision_wall_inward_shift_m": 0.001,
+    "collision_still_outside_field": true,
+    "sweep_passed": 96,
+    "sweep_total": 96,
+    "numerical_bounds_tolerance_m": 1e-06
+  },
+  "native_assets": 23,
+  "native_instances": 57,
+  "trees": 26,
+  "added_seating": 0,
+  "identity": {
+    "arena": {
+      "file": "assets/maps/rmuc2027/arena-shell.json",
+      "bytes": 2255,
+      "sha256": "5c026a16b87267f374e3755a0fa8497b8e524b6f3ec74793eb20c9607ddbec02"
+    },
+    "layout": {
+      "file": "assets/maps/rmuc2027/arena/sketchupbox-school-gym/layout.json",
+      "bytes": 31378,
+      "sha256": "64bfb32766056f33a4b706c2656472f3d2d7f954187128cd2b9cc37a91710300"
+    },
+    "module": {
+      "file": "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll",
+      "bytes": 2777088,
+      "sha256": "ed5fd48edf3a5e6b5c3d8bf533c01c18170b0aa3d578d8a6707a7d67b7097459"
+    },
+    "protected_files": {
+      "assets\\maps\\rmuc2027\\map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+      "assets\\vehicles\\aim_sentry\\ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "assets\\vehicles\\aim_sentry\\drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+    }
+  },
+  "source_evidence": {
+    "gym_floor": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/source-floor-audit-01/report.json",
+      "bytes": 21297,
+      "sha256": "6bd5d414c1dad13041398e0ad76d8a5ed610c4c3ec5f307301c5979dfdd36819"
+    },
+    "rmuc_underside": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/field-floor-contact-01/rmuc-floor.json",
+      "bytes": 292856,
+      "sha256": "5e568dcc48674321e9fdcda176d1eb625bb16097eb113e23eb7907ba34b7c0ec"
+    },
+    "raised_gym_nonintrusion": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/field-floor-contact-01/support-lift-intersections.json",
+      "bytes": 10302,
+      "sha256": "30b2f71d53d423f4d5f475b328b3bc0a83b4e43ff2b5c61e77b7bea44a2bffa4"
+    },
+    "prior_source_materials_geometry": {
+      "file": "artifacts/fixes/school-view-fidelity-20261119/native-geometry-final/report.json",
+      "bytes": 27979,
+      "sha256": "aaa0840e10b8b6073a03dc57074bbc02ad85f02a76aeff20167d1a7a80a15f19"
+    }
+  },
+  "execution_evidence": {
+    "layout_apply": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/floor-support-apply-01/report.json",
+      "bytes": 19820,
+      "sha256": "0e5b064fa8a937871576b981506a4eb9efb9d2147c6ad83eee0271b8bc0d758a"
+    },
+    "perimeter_apply": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/perimeter-floor-01/report.json",
+      "bytes": 436,
+      "sha256": "ba11b51a2fa1818f1b39b70cc8bc698051087416b3753c3c10eccf0d11b9a249"
+    },
+    "build": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/build-01/report.json",
+      "bytes": 154,
+      "sha256": "9744fea42f57a30dc67164130354b62d590d3316355c7a3b54a20b8243125f9a"
+    },
+    "native_views": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/report.json",
+      "bytes": 3414,
+      "sha256": "7553823781a77cd2a6385821ff62572dd2f98b760d0431cfc64afe8619232aa7"
+    },
+    "visible_runtime": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/visible-current-01/report.json",
+      "bytes": 3951,
+      "sha256": "abffa2933a000a82736f6ba08e1ef1021fb55a7942cd7c404c9c14e535b2682c"
+    }
+  },
+  "visual_review": {
+    "status": "passed_assistant_visual_inspection",
+    "source": "Actual UE captures inspected directly, independently reviewed by a second agent.",
+    "findings": [
+      "South lower rail meets the original wood floor continuously without a visible floating gap.",
+      "Both corner sides meet the original red floor; frame and glass are aligned to the RMUC outer edge.",
+      "Field-level trees, sky, paths and distant landscape remain visible after the vertical lift."
+    ],
+    "views": [
+      {
+        "view": "FloorContactSouth",
+        "image": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactSouth/overview.png",
+          "bytes": 2940291,
+          "sha256": "537532fb7aafec35e6775c664d32d9744b6d74cb13d155c415fdbc4c10f1ed53"
+        },
+        "preview": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactSouth/overview-preview.jpg",
+          "bytes": 415489,
+          "sha256": "3f98f1895775d7bb73055c2fbdc48c1c203b8f659f4253043ef505be2b9eb3ca"
+        },
+        "probe": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactSouth/boundary.json",
+          "bytes": 18473,
+          "sha256": "d22549d3ac401bc83fa346300b58ddc477fecef4661171e07ef1e6b7cb64c327"
+        },
+        "minimum_horizontal_clearance_m": -1.7763568394002505e-15,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585
+      },
+      {
+        "view": "FloorContactCorner",
+        "image": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactCorner/overview.png",
+          "bytes": 2608063,
+          "sha256": "dc0f791e30d0351be5798e9f2bb6b653329371c72f7e3133964ab4fa3223c58f"
+        },
+        "preview": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactCorner/overview-preview.jpg",
+          "bytes": 309613,
+          "sha256": "f8d1d42af5467b6684720a446d833fd587b4ef69064d21ca2f4c474ce5dafdab"
+        },
+        "probe": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FloorContactCorner/boundary.json",
+          "bytes": 18473,
+          "sha256": "d22549d3ac401bc83fa346300b58ddc477fecef4661171e07ef1e6b7cb64c327"
+        },
+        "minimum_horizontal_clearance_m": -1.7763568394002505e-15,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585
+      },
+      {
+        "view": "FieldEndWindow",
+        "image": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FieldEndWindow/overview.png",
+          "bytes": 2911559,
+          "sha256": "4c53e8c119e715c62e6f133039321b598ab69817be31fca4dbd7775275d704bb"
+        },
+        "preview": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FieldEndWindow/overview-preview.jpg",
+          "bytes": 415188,
+          "sha256": "e2b5966a5ba82500852f8c8a9667415e17db9ec88eb570bcc88ba8c95afc227a"
+        },
+        "probe": {
+          "file": "artifacts/fixes/school-floor-contact-20261120/native-contact-01/FieldEndWindow/boundary.json",
+          "bytes": 18473,
+          "sha256": "d22549d3ac401bc83fa346300b58ddc477fecef4661171e07ef1e6b7cb64c327"
+        },
+        "minimum_horizontal_clearance_m": -1.7763568394002505e-15,
+        "glass_base_min_m": -0.30099999904632585,
+        "glass_base_max_m": -0.30099999904632585
+      }
+    ]
+  },
+  "interactive_runtime": {
+    "status": "passed_kept_open",
+    "pid": 52940,
+    "seconds": 150.02,
+    "left_running": true,
+    "warnings": {
+      "GPU timeout": 0,
+      "GPU Crashed": 0,
+      "TerminateOnGPUCrash": 0,
+      "Writing Aftermath dump": 0,
+      "Non-Nanite Marking Job Queue overflow": 0,
+      "Virtual Shadow Map Page Pool overflow": 0
+    },
+    "window_response": {
+      "file": "artifacts/fixes/school-floor-contact-20261120/visible-current-01/window-response.json",
+      "bytes": 179,
+      "sha256": "1d5892664aa2245e8ccc7a1a25e3b820ffdd966092b6f3fc2dde02d2370de916"
+    }
+  }
+}

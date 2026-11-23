@@ -1,0 +1,296 @@
+{
+  "schema": "rmsim_wt_scene_reload_summary_v1",
+  "status": "passed",
+  "scope": "loaded_saved_editor_world_native_components_and_collision",
+  "native_saved_scene_verified": true,
+  "vehicle_driving_verified": false,
+  "rendered_appearance_verified": false,
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "map_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+  "world_sha256": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+  "execution": {
+    "schema": "rmsim_wt_native_execution_v2",
+    "started_utc": "2026-11-18T08:48:27.0162151Z",
+    "finished_utc": "2026-11-18T08:48:42.7611374Z",
+    "pid": 47192,
+    "exit_code": 0,
+    "duration_seconds": 15.7469247,
+    "rendering": false,
+    "world_mutation_allowed": false,
+    "report_status": "passed",
+    "world_sha256_before": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+    "world_sha256_after": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+    "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "module_sha256_after": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "script": "D:\\simulator\\tools\\unreal\\verify_wt_scene.py"
+  },
+  "check_count": 21,
+  "checks": [
+    {
+      "name": "native_api_available",
+      "passed": true
+    },
+    {
+      "name": "import_provenance",
+      "passed": true
+    },
+    {
+      "name": "saved_map_hash",
+      "passed": true
+    },
+    {
+      "name": "source_vertex_opacity_proofs",
+      "passed": true
+    },
+    {
+      "name": "imported_ground_decal_rvt_contract",
+      "passed": true
+    },
+    {
+      "name": "source_degenerate_geometry_fixture",
+      "passed": true
+    },
+    {
+      "name": "saved_world_loaded",
+      "passed": true
+    },
+    {
+      "name": "native_ground_decal_rvt_configuration",
+      "passed": true
+    },
+    {
+      "name": "world_source_identity",
+      "passed": true
+    },
+    {
+      "name": "native_scene_inventory",
+      "passed": true
+    },
+    {
+      "name": "saved_native_geometry_coverage",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_exists",
+      "passed": true
+    },
+    {
+      "name": "original_height_bytes",
+      "passed": true
+    },
+    {
+      "name": "native_landscape_components",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2040_2040",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2056_2024",
+      "passed": true
+    },
+    {
+      "name": "native_source_height_2072_2040",
+      "passed": true
+    },
+    {
+      "name": "native_original_object_collision",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_saved_map",
+      "passed": true
+    },
+    {
+      "name": "audit_did_not_rewrite_proof_bound_files",
+      "passed": true
+    }
+  ],
+  "source_scene_inventory": {
+    "visual_groups": 726,
+    "expected_visual_groups": 726,
+    "collision_groups": 642,
+    "expected_collision_groups": 642,
+    "visual_placements": 35922,
+    "expected_visual_placements": 35922,
+    "collision_placements": 20033,
+    "expected_collision_placements": 20033,
+    "source_stored_instances": 45675,
+    "affine_baked_source_instances": 9850,
+    "loaded_hism_components": 1368,
+    "actor_count": 734
+  },
+  "geometry_totals": {
+    "referenced_meshes": 1365,
+    "source_triangles": 13478813,
+    "expected_native_triangles": 13478779,
+    "actual_native_triangles": 13478779,
+    "strictly_coincident_source_triangles": 34
+  },
+  "landscape": {
+    "render_components": 1089,
+    "collision_components": 1089,
+    "expected_components": 1089
+  },
+  "original_height_bytes": {
+    "byte_count": 33554432,
+    "sha256": "b6d82aa5bdb6473398f1fd07af0f67ef46da6b8705a31677b6f2f95ec4b9a1a6"
+  },
+  "height_samples": [
+    {
+      "grid_ij": [
+        2056,
+        2040
+      ],
+      "source_u16": 19066,
+      "query_xy_cm": [
+        102800.0,
+        102000.0
+      ],
+      "expected_z_cm": -138.0575265125504,
+      "impact_point_cm": [
+        102800.0,
+        102000.0,
+        -138.05868138778692
+      ],
+      "absolute_z_error_cm": 0.001154875236522912,
+      "tolerance_cm": 0.1,
+      "blocking_hit": true,
+      "actor_label": "RMSim_SourceHeightfield",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_544",
+      "scope": "native_landscape_collision_isolated_from_overlying_scene_objects"
+    },
+    {
+      "grid_ij": [
+        2040,
+        2040
+      ],
+      "source_u16": 19067,
+      "query_xy_cm": [
+        102000.0,
+        102000.0
+      ],
+      "expected_z_cm": -137.95986877241154,
+      "impact_point_cm": [
+        102000.0,
+        102000.0,
+        -137.96100129522392
+      ],
+      "absolute_z_error_cm": 0.0011325228123837405,
+      "tolerance_cm": 0.1,
+      "blocking_hit": true,
+      "actor_label": "RMSim_SourceHeightfield",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_544",
+      "scope": "native_landscape_collision_isolated_from_overlying_scene_objects"
+    },
+    {
+      "grid_ij": [
+        2056,
+        2024
+      ],
+      "source_u16": 19020,
+      "query_xy_cm": [
+        102800.0,
+        101200.0
+      ],
+      "expected_z_cm": -142.5497825589378,
+      "impact_point_cm": [
+        102800.0,
+        101200.0,
+        -142.55581771339848
+      ],
+      "absolute_z_error_cm": 0.00603515446067604,
+      "tolerance_cm": 0.1,
+      "blocking_hit": true,
+      "actor_label": "RMSim_SourceHeightfield",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_511",
+      "scope": "native_landscape_collision_isolated_from_overlying_scene_objects"
+    },
+    {
+      "grid_ij": [
+        2072,
+        2040
+      ],
+      "source_u16": 19041,
+      "query_xy_cm": [
+        103600.0,
+        102000.0
+      ],
+      "expected_z_cm": -140.49897001602181,
+      "impact_point_cm": [
+        103600.0,
+        102000.0,
+        -140.50068370185636
+      ],
+      "absolute_z_error_cm": 0.001713685834545231,
+      "tolerance_cm": 0.1,
+      "blocking_hit": true,
+      "actor_label": "RMSim_SourceHeightfield",
+      "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_544",
+      "scope": "native_landscape_collision_isolated_from_overlying_scene_objects"
+    }
+  ],
+  "maximum_height_error_cm": 0.00603515446067604,
+  "source_collider_query": {
+    "blocking_hit": true,
+    "initial_overlap": false,
+    "impact_point_cm": [
+      102384.37493490057,
+      103215.64935818315,
+      297.68338990211487
+    ],
+    "impact_normal": [
+      -5.4509377435907475e-05,
+      -0.0013458902234328347,
+      0.9999990928037057
+    ],
+    "distance_cm": 200.00003051757812,
+    "hit_item": 2,
+    "face_index": 114,
+    "actor_label": "prop_sicily_kiosk_a",
+    "component": "/Game/RMSim/Maps/wt_vlaanderen/World.World:PersistentLevel.Actor_533.HierarchicalInstancedStaticMeshComponent_1",
+    "static_mesh": "/Game/RMSim/Maps/wt_vlaanderen/Collision/col_prop_sicily_kiosk_a.col_prop_sicily_kiosk_a",
+    "source_part": "prop_sicily_kiosk_a",
+    "source_instance": 2,
+    "source_collision_asset": "/Game/RMSim/Maps/wt_vlaanderen/Collision/col_prop_sicily_kiosk_a.col_prop_sicily_kiosk_a",
+    "scope": "native_original_HISM_collider_isolated_from_other_actors"
+  },
+  "scope_notes": [
+    "Saved source-world geometry and original collision inventory are preserved separately from generated runtime collision.",
+    "This NullRHI reload verifies saved native components and source queries; appearance and OS input are covered by separately recorded runs."
+  ],
+  "evidence": {
+    "execution": {
+      "file": "artifacts/maps/wt-refine-20261118/scene-reload-01/execution.json",
+      "bytes": 5779,
+      "sha256": "f803ebe4481f21541bc95e60cf9ed4a4d9ca642b6575cb4b4364b67233116e35"
+    },
+    "raw_audit": {
+      "file": "artifacts/maps/wt-refine-20261118/scene-reload-01/audit/verification.json",
+      "bytes": 2033518,
+      "sha256": "41706cb2f8df2415d7d0f0bd219d058d62aba1dd8f5073736a8a9613fe5a1300"
+    },
+    "engine_log": {
+      "file": "artifacts/maps/wt-refine-20261118/scene-reload-01/engine.log",
+      "bytes": 218932,
+      "sha256": "9274748210f6446c607bf826a3d7520590ce438923ad738179bb02764619de8b"
+    }
+  },
+  "audit_script_sha256": "f730fa7ccefe24b9e8469c310f38ffbafb6d30efe7fd2991b8b6bfb26c6ee9f0",
+  "summary_source": {
+    "file": "artifacts/maps/wt-refine-20261118/write-native-summaries.py",
+    "bytes": 11079,
+    "sha256": "63b266b0f69a12834df40b0fed5cc2f9bb4af1ebc00e40f3752e23f437532650"
+  },
+  "summary_created_utc": "2026-11-18T09:09:18.667138+00:00"
+}

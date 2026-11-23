@@ -1,0 +1,84 @@
+{
+  "status": "passed",
+  "command": [
+    "powershell",
+    "-NoProfile",
+    "-File",
+    "D:\\simulator\\tools\\unreal\\Test-GyroControls.ps1",
+    "-EngineRoot",
+    "E:/simulator-tools/UE_5.8",
+    "-EvidenceDirectory",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\manual-substep-ab-01\\manual-waves",
+    "-WaveRoutes",
+    "-PrecisionKeys",
+    "-SpinRadS",
+    "4",
+    "-TimeoutSeconds",
+    "240"
+  ],
+  "max_substep_seconds": 0.004166667,
+  "baseline": {
+    "unreal/RMSim/Config/DefaultEngine.ini": "89a1282935d071c1ef1a0778df513c0f10cc8d76fd4e851c7308cbbbd4459c62",
+    "tools/integration/navigation_console.py": "715849d808a3aadc8f3e538f0b95002df1b035361d2e36fab3fbbdd2fadb6fa4"
+  },
+  "engine_config_sha256": "08995a699aaf9969402850b4ecc20e77f05634d1d91b6ef66f8df968823dbf02",
+  "module_sha256": "b94f7fceb9888a3683ea8b63007c445ae46946f112ee57324ce8149490c03778",
+  "exit_code": 0,
+  "elapsed_wall_s": 102.73276769999939,
+  "checks": {
+    "wave_red": [
+      {
+        "name": "gyro_supported_spawn",
+        "passed": true,
+        "detail": "phase 3.010s speed 0.000cm/s yaw -0.000rad/s upright 0.9959"
+      },
+      {
+        "name": "gyro_spin_up",
+        "passed": true,
+        "detail": "phase 2.501s speed 9.378cm/s yaw 3.972rad/s upright 0.9959"
+      },
+      {
+        "name": "gyro_forward_wave_route",
+        "passed": true,
+        "detail": "progress 340.240cm lateral 3.161cm body spin 34.940rad minimum upright 0.9566"
+      },
+      {
+        "name": "gyro_route_brake",
+        "passed": true,
+        "detail": "phase 2.010s speed 0.000cm/s yaw -0.000rad/s upright 0.9957"
+      },
+      {
+        "name": "gyro_reverse_wave_route",
+        "passed": true,
+        "detail": "progress 9.696cm lateral 1.099cm body spin 31.957rad minimum upright 0.9614"
+      }
+    ],
+    "wave_blue": [
+      {
+        "name": "gyro_supported_spawn",
+        "passed": true,
+        "detail": "phase 3.005s speed 0.000cm/s yaw -0.000rad/s upright 0.9961"
+      },
+      {
+        "name": "gyro_spin_up",
+        "passed": true,
+        "detail": "phase 2.507s speed 9.577cm/s yaw 3.959rad/s upright 0.9962"
+      },
+      {
+        "name": "gyro_forward_wave_route",
+        "passed": true,
+        "detail": "progress 340.138cm lateral 2.306cm body spin 35.616rad minimum upright 0.9539"
+      },
+      {
+        "name": "gyro_route_brake",
+        "passed": true,
+        "detail": "phase 2.007s speed 0.000cm/s yaw -0.000rad/s upright 0.9944"
+      },
+      {
+        "name": "gyro_reverse_wave_route",
+        "passed": true,
+        "detail": "progress 9.837cm lateral 1.981cm body spin 34.231rad minimum upright 0.9648"
+      }
+    ]
+  }
+}

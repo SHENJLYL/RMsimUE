@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "scope": "before CPU policy implementation",
+  "created_utc": "2026-11-18T04:07:16.825212+00:00",
+  "files": {
+    "tools/integration/navigation_console.py": {
+      "exists": true,
+      "sha256": "a6c5acfe307d732407ae0791ddfd61bbfc62e2465cbe9638147e9fd7d20c4160",
+      "bytes": 22401
+    },
+    "tools/integration/summarize_navigation_realtime.py": {
+      "exists": true,
+      "sha256": "e1981dd59ab4a262d5a2714671fa4da278c30d756d984f8ff012e85dcea3b6d5",
+      "bytes": 68621
+    },
+    "tools/integration/platform_cpu_policy.py": {
+      "exists": false
+    },
+    "tests/control/test_platform_cpu_policy.py": {
+      "exists": false
+    }
+  }
+}

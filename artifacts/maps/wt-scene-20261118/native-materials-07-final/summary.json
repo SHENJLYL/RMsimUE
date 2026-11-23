@@ -1,0 +1,99 @@
+{
+  "schema": "wt_native_material_failure_summary_v1",
+  "status": "failed",
+  "pid": 42244,
+  "exit_code": -1,
+  "duration_seconds": 21.673692,
+  "module_sha256": "1bf4126eb733b12880e170a5eb4830f50b5f792cdda55a6ca2fd1507ed26558a",
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "world_unchanged": true,
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_manifest_unchanged": true,
+  "error": "native source weight/cell texture size differs: [32, 32]",
+  "actual_final_asset_count": null,
+  "planned_asset_count": 104,
+  "completed_asset_counts_before_failure": {
+    "parents": 3,
+    "leaf_instances": 0,
+    "height_decal_instances": 0,
+    "land_instances": 0,
+    "ground_other_instances": 0,
+    "tree_instances": 0,
+    "water_instances": 0,
+    "grass_parents": 0,
+    "grass_instances": 0
+  },
+  "grass_status": "authored_pending_compile",
+  "failure_location": "verify_wt_materials.py landclass_texture_record before source/actual texture-size equality",
+  "source_dimensions": {
+    "WT_LandWeights": [
+      7616,
+      272
+    ],
+    "WT_LandCells0": [
+      32,
+      32
+    ],
+    "WT_LandCells1": [
+      32,
+      32
+    ]
+  },
+  "observed_dimensions": [
+    32,
+    32
+  ],
+  "engine_api_evidence": [
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\Texture2D.cpp",
+      "sha256": "251617cd29e1e03c81b205d85890a574cb07f47f1fc862a5a4fc9244e5b6cb71",
+      "lines": [
+        349,
+        377
+      ],
+      "finding": "GetSizeX/GetSizeY return default placeholder texture dimensions while IsDefaultTexture is true."
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\AsyncCompilationHelpers.cpp",
+      "sha256": "9b03ad0e92b7d73ad03f506fdef4542157f3f3fed1a7249747b3287af5bc2aac",
+      "lines": [
+        386,
+        389
+      ],
+      "finding": "Registers Editor.AsyncTextureCompilationFinishAll through the standard Texture CVars."
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\TextureCompiler.cpp",
+      "sha256": "d249f9d44e302adc8b8a92414d94473430da854fb107e39dd9eac16365f047e6",
+      "lines": [
+        26,
+        34
+      ],
+      "finding": "The command invokes FTextureCompilingManager::FinishAllCompilation."
+    },
+    {
+      "file": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Engine\\Private\\KismetSystemLibrary.cpp",
+      "sha256": "73bdebccdeff448e4f2330123f66ee516767b3af66050d6bdfeca9ed893eeab6",
+      "lines": [
+        571,
+        590
+      ],
+      "finding": "ExecuteConsoleCommand directly routes console manager commands with a nullable World context."
+    }
+  ],
+  "corrective_source_change": {
+    "file": "tools/unreal/verify_wt_materials.py",
+    "old_sha256": "0503beb43c06963ba00199857f9046c0d5f810c9225b81169d0cfefbd7174457",
+    "new_sha256": "ef30ca07eff1f92c40e1ebb154d52eed9d40cb373d0c2f213b67cd28972c6d9b",
+    "change": "Finish native texture compilation before Land/grass platform dimensions are read; preserve exact source size and hash requirements.",
+    "python_ast": "passed",
+    "git_diff_check": "passed",
+    "next_native_attempt": "native-materials-08-final",
+    "next_native_status": "pending"
+  },
+  "execution_file": "execution.json",
+  "execution_sha256": "21f7e2402fc0967e5010a28917cd18e599157ea623451bdc7d85c857b20ffd7d",
+  "verification_file": "audit/verification.json",
+  "verification_sha256": "40c5c6c45bcfed5c7e268ccd6bfc8d9482d261aa435c22fa1127ddc29c62430f",
+  "rendering_visual_quality_verified": false
+}

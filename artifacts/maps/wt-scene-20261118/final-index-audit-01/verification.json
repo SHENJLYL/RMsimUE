@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "scope": "actual staged blobs; common-secret patterns, not exhaustive secret discovery",
+  "files": 1298,
+  "total_bytes": 7760563,
+  "largest": [
+    {
+      "path": "tools/environment/pixi.lock",
+      "bytes": 326837,
+      "blob": "184fcf16b4f4ac674ac8aacff91af7c4a1273d35"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/landclass/landclass.json",
+      "bytes": 300588,
+      "blob": "55fe6a75ae165d13bd4ed5edb984cd68aa05dc52"
+    },
+    {
+      "path": "assets/vehicles/aim_sentry/asset_import.json",
+      "bytes": 215283,
+      "blob": "635caa6fce74b412a368627abdf28380eaedddb4"
+    },
+    {
+      "path": "ros2_ws/src/pb2025_nav_bringup/map/simulation/rmuc_2025.pgm",
+      "bytes": 188953,
+      "blob": "ba158679c2d00837109214e8f35c2e5169ebf0e3"
+    },
+    {
+      "path": "ros2_ws/src/pb2025_nav_bringup/map/simulation/rmuc_2024.pgm",
+      "bytes": 173692,
+      "blob": "f06c710ab92f7fb60a86ec19f715b26c9db00083"
+    },
+    {
+      "path": "assets/maps/wt_vlaanderen/foliage/foliage.json",
+      "bytes": 109480,
+      "blob": "c8622b906fad3e46664f7a771e1f8a41392ab806"
+    },
+    {
+      "path": "artifacts/maps/wt_existing/avg_vlaanderen/collision-verification-05/verification.json",
+      "bytes": 98353,
+      "blob": "349ffb0799b9146382c71fe78f40a223f30098fe"
+    },
+    {
+      "path": "artifacts/sensors/lidar/native-04-reset/ros/verification.json",
+      "bytes": 80177,
+      "blob": "baa8af21bcc33a2866cdd16b8f3e4d9cf9a0d781"
+    },
+    {
+      "path": "ros2_ws/src/point_lio/include/matplotlibcpp.h",
+      "bytes": 78974,
+      "blob": "8a43a5e84bfd228242dbf4a9f1fdaff536c854bb"
+    },
+    {
+      "path": "artifacts/sensors/lidar/native-02-pointlio/ros/verification.json",
+      "bytes": 78279,
+      "blob": "0a3488378fcdeed075709e018d1d40caf1c51f08"
+    }
+  ],
+  "findings": []
+}

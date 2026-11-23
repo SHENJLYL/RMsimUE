@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "scope": "native rmuc06 full-rate physics/scene-draw diagnostic summary; display scanout and additional physical regressions are separate",
+  "created_utc": "2026-11-18T03:07:03.087822+00:00",
+  "checks": [
+    {
+      "name": "early_physics_override_recorded",
+      "passed": true
+    },
+    {
+      "name": "bounded_serial_parallel_lidar_oracle_passed",
+      "passed": true
+    },
+    {
+      "name": "original_csv_preserved_exactly",
+      "passed": true
+    },
+    {
+      "name": "one_actual_chaos_step_per_post_warmup_frame",
+      "passed": true
+    },
+    {
+      "name": "collision_batch_size_one_runtime_confirmed",
+      "passed": true
+    },
+    {
+      "name": "full_ninety_second_clock_gate_passed",
+      "passed": false
+    },
+    {
+      "name": "all_rolling_ten_second_physics_windows",
+      "passed": false
+    },
+    {
+      "name": "all_rolling_ten_second_real_draw_windows",
+      "passed": true
+    },
+    {
+      "name": "action_interval_enclosed_by_clock_gate",
+      "passed": true
+    },
+    {
+      "name": "native_navigation_actions_passed",
+      "passed": true
+    },
+    {
+      "name": "native_pointlio_callback_receipts_passed",
+      "passed": true
+    }
+  ],
+  "module_sha256": "b94f7fceb9888a3683ea8b63007c445ae46946f112ee57324ce8149490c03778",
+  "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+  "physics_max_substep_seconds": 0.005,
+  "physics_config_override": "-ini:Engine:[/Script/Engine.PhysicsSettings]:MaxSubstepDeltaTime=0.005",
+  "lidar_query_oracle": {
+    "rays": 4096,
+    "scene_queries": 8010,
+    "maximum_impact_error_cm": 0.0
+  },
+  "rolling_failure_native_crosscheck": [
+    {
+      "clock_window": {
+        "start_seconds": 6.0,
+        "duration_seconds": 10.0,
+        "factor": 0.9721759042252074
+      },
+      "clock_wall_start": 42652.1352019,
+      "clock_wall_end": 42662.1352019,
+      "clock_sim_start": 29.644002214624926,
+      "clock_sim_end": 39.36576125687701,
+      "csv_row_start": 5933,
+      "csv_row_end": 7877,
+      "native_csv_wall_elapsed_s": 9.99007860000004,
+      "native_sim_per_wall": 0.9731413967305566
+    },
+    {
+      "clock_window": {
+        "start_seconds": 16.0,
+        "duration_seconds": 10.0,
+        "factor": 1.0280964459581525
+      },
+      "clock_wall_start": 42662.1352019,
+      "clock_wall_end": 42672.1352019,
+      "clock_sim_start": 39.36576125687701,
+      "clock_sim_end": 49.646725716458526,
+      "csv_row_start": 7877,
+      "csv_row_end": 9933,
+      "native_csv_wall_elapsed_s": 10.016649999999927,
+      "native_sim_per_wall": 1.026387510752756
+    }
+  ],
+  "failure_diagnosis": "Actual short workload deficit at37-39sim seconds followed by absolute-deadline catchup at40-41sim seconds; native CSV and two independent producer observers agree. Physics step and full sensor budget remain correct.",
+  "drive_profile_sha256": "d1db3392b972fe6bb70aea5c0fffa9fc998e0c687ec3a09b9ba6d6b5ce142057",
+  "source_control_config_sha256": "51577ad32454c72996773dcdde4ce254266c1a0d49d78228da07a1c75adc22f1",
+  "csv": {
+    "path": "cpu-profile\\Profile-20261118-105839.csv",
+    "original_path": "C:\\Users\\SHEN\\AppData\\Local\\UnrealEngine\\5.8\\Saved\\Profiling\\CSV\\Profile(20261118_105839).csv",
+    "sha256": "1dbfd6b09b090f0d0c16cab82055989e6582394a5a8b5d41b7c2e0a4ed45506f",
+    "csv_id": "963DDE224F1F773CE4F2B6A88477F849",
+    "frames": 16000,
+    "columns": 855,
+    "post_warmup_frames": 15000,
+    "post_warmup_substep_histogram": {
+      "1.0": 15000
+    }
+  },
+  "runtime_cvar": [
+    "[2026.11.18-02.58.40:446][  0]LogConfig: Set CVar [[p.Chaos.CollisionSmallBatchSize:1]]"
+  ],
+  "clock": {
+    "wall_seconds": 90.0,
+    "factor": 0.9998006798577956,
+    "scene_hz": 59.937923621005375,
+    "rolling_ten_second_windows": 81,
+    "rolling_factor_min": 0.9721759042252074,
+    "rolling_factor_max": 1.0280964459581525,
+    "rolling_scene_hz_min": 59.43986670256099,
+    "rolling_scene_hz_max": 60.12142009505387
+  },
+  "sensors": {
+    "imu": {
+      "imu": {
+        "measured_hz": 200.00000447048427,
+        "increments": {
+          "measured_samples": 18092,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        }
+      },
+      "mid360_imu": {
+        "measured_hz": 200.00000447048427,
+        "increments": {
+          "measured_samples": 18092,
+          "missed_periods": 0,
+          "dropped_samples": 0,
+          "history_resets": 0,
+          "invalid_samples": 0
+        }
+      }
+    },
+    "lidar": {
+      "rays_per_second": 200000.00447048427,
+      "scans_per_second": 10.004422067531964,
+      "increments": {
+        "traced_rays": 18092000,
+        "published_scans": 905,
+        "dropped_scans": 0,
+        "history_resets": 0
+      }
+    }
+  },
+  "clock_enclosing_observations_draw_counters": {
+    "first_monotonic_s": 42646.1352019,
+    "last_monotonic_s": 42736.6155023,
+    "first_sim_s": 23.649999471,
+    "last_sim_s": 114.109997449,
+    "wall_seconds": 90.48030040000594,
+    "sim_per_wall": 0.9997756150022028,
+    "actual_scene_hz": 59.93569844513517,
+    "first_counts": {
+      "scene_rendered_frames": 1388,
+      "scene_skipped_frames": 3346,
+      "scene_dropped_deadlines": 142,
+      "scene_catchup_draws": 55,
+      "scene_cadence_resyncs": 6
+    },
+    "last_counts": {
+      "scene_rendered_frames": 6811,
+      "scene_skipped_frames": 16015,
+      "scene_dropped_deadlines": 146,
+      "scene_catchup_draws": 240,
+      "scene_cadence_resyncs": 7
+    },
+    "increments": {
+      "scene_rendered_frames": 5423,
+      "scene_skipped_frames": 12669,
+      "scene_dropped_deadlines": 4,
+      "scene_catchup_draws": 185,
+      "scene_cadence_resyncs": 1
+    }
+  },
+  "action_trace_draw_counters": {
+    "first_monotonic_s": 42649.7151935,
+    "last_monotonic_s": 42681.0089411,
+    "first_sim_s": 27.209999392,
+    "last_sim_s": 58.519998692,
+    "wall_seconds": 31.293747600000643,
+    "sim_per_wall": 1.0005193273815296,
+    "actual_scene_hz": 60.04394309104613,
+    "first_counts": {
+      "scene_rendered_frames": 1601,
+      "scene_skipped_frames": 3845,
+      "scene_dropped_deadlines": 142,
+      "scene_catchup_draws": 65,
+      "scene_cadence_resyncs": 6
+    },
+    "last_counts": {
+      "scene_rendered_frames": 3480,
+      "scene_skipped_frames": 8228,
+      "scene_dropped_deadlines": 142,
+      "scene_catchup_draws": 119,
+      "scene_cadence_resyncs": 6
+    },
+    "increments": {
+      "scene_rendered_frames": 1879,
+      "scene_skipped_frames": 4383,
+      "scene_dropped_deadlines": 0,
+      "scene_catchup_draws": 54,
+      "scene_cadence_resyncs": 0
+    }
+  },
+  "cpu_window_means_ms": [
+    {
+      "label": "idle_before_navigation",
+      "sim_start_s": 5,
+      "sim_end_s": 9,
+      "frame": 4.998694875,
+      "gt_actors": 1.5791561250000001,
+      "gt_physics_wait": 0.10071925,
+      "gt_body_sync": 0.006499125,
+      "worker_solver": 0.091830125,
+      "worker_narrowphase": 0.0012301249999999999,
+      "speed_xy_mean_m_s": null
+    },
+    {
+      "label": "motion_initial",
+      "sim_start_s": 26,
+      "sim_end_s": 30,
+      "frame": 5.005230875,
+      "gt_actors": 1.664970375,
+      "gt_physics_wait": 0.517783375,
+      "gt_body_sync": 0.06458025,
+      "worker_solver": 0.4786705,
+      "worker_narrowphase": 0.25924725,
+      "speed_xy_mean_m_s": 0.3962549592036641
+    },
+    {
+      "label": "motion_middle",
+      "sim_start_s": 35,
+      "sim_end_s": 40,
+      "frame": 5.1810902,
+      "gt_actors": 1.735771,
+      "gt_physics_wait": 1.6482506000000001,
+      "gt_body_sync": 0.15263829999999998,
+      "worker_solver": 1.5699003,
+      "worker_narrowphase": 1.1415899,
+      "speed_xy_mean_m_s": 0.6281484196786945
+    },
+    {
+      "label": "motion_late",
+      "sim_start_s": 43,
+      "sim_end_s": 48,
+      "frame": 5.012444400000001,
+      "gt_actors": 1.6994499,
+      "gt_physics_wait": 1.2738107,
+      "gt_body_sync": 0.1234059,
+      "worker_solver": 1.2146218,
+      "worker_narrowphase": 0.8675902999999999,
+      "speed_xy_mean_m_s": 0.6546696020107043
+    },
+    {
+      "label": "clock_lag_accumulation",
+      "sim_start_s": 37,
+      "sim_end_s": 39,
+      "frame": 5.487130499999999,
+      "gt_actors": 1.7350332499999999,
+      "gt_physics_wait": 2.1609875,
+      "gt_body_sync": 0.15480375000000002,
+      "worker_solver": 2.08532725,
+      "worker_narrowphase": 1.63594125,
+      "speed_xy_mean_m_s": 0.6842349449762246
+    },
+    {
+      "label": "clock_catchup",
+      "sim_start_s": 40,
+      "sim_end_s": 41,
+      "frame": 4.117253,
+      "gt_actors": 1.6735325,
+      "gt_physics_wait": 0.6240975,
+      "gt_body_sync": 0.13011699999999998,
+      "worker_solver": 0.5585405,
+      "worker_narrowphase": 0.234694,
+      "speed_xy_mean_m_s": 0.13277751250633663
+    },
+    {
+      "label": "idle_after_navigation",
+      "sim_start_s": 65,
+      "sim_end_s": 75,
+      "frame": 5.00532935,
+      "gt_actors": 1.6189472,
+      "gt_physics_wait": 0.1130204,
+      "gt_body_sync": 0.0063877,
+      "worker_solver": 0.09961955,
+      "worker_narrowphase": 0.0013926000000000001,
+      "speed_xy_mean_m_s": null
+    }
+  ],
+  "source_reports_sha256": {
+    "runtime-provenance.json": "cf093484ef2bd052f228a4d50aeb45d20662115787458a9defdc1756c5408a5a",
+    "runtime.log": "dcaee07a5d3ca112deb6ab9d0a8b962583bed140483e968ee8eaa57a70c00fbe",
+    "clock/verification.json": "5233d58b71facc79c88fa13786b4df3ceb0107007f81cb220005504c1ec6bc9f",
+    "clock/observations.json": "7fc3f4419d671b54bedf7263ba6fa7c9b0b83a25540689421e743dfa432b0ebd",
+    "actions/verification.json": "6df9737c1ecfa9cd7a02cc0b782fe88b8f463083ac71a7106fa82a26505bd265",
+    "actions/trace.json": "a4e8b79ba815082855d927eb6697bb9001f39d50dff8f2c9426d4ebecb784a42",
+    "imu-receipts/verification.json": "aa2c9edde61872230db47f22c1a897f62ad05c3e5c57e2a9e38a1dfb6ccccdf5"
+  },
+  "boundaries": [
+    "Draw counters are completed Super::Draw calls, not display scanout.",
+    "The 142 render deadlines already lost before the measurement interval are startup history, not measurement loss.",
+    "The enclosing observed interval uses actual integer counter differences; the exact 90-second clock gate interpolates boundary observations.",
+    "Sensor rates use actual solver elapsed time, with a separate measured solver/wall factor.",
+    "PointLIO callback-drain and UDP transport changes were applied together; their independent effects were not isolated.",
+    "The actual one5ms physics step is retained; spring, all contact geometry and full native sensor budget are unchanged."
+  ],
+  "analysis_wall_seconds": 0.5788826000061817
+}

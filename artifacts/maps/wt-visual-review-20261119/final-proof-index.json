@@ -1,0 +1,539 @@
+{
+  "schema": "rmsim_wt_visual_final_proof_index_v1",
+  "status": "passed_with_documented_local_visual_followup",
+  "recorded_utc": "2026-11-19T08:28:18.941297+00:00",
+  "publication_target": "docs/changes/2026-11-19-flanders-visual.md",
+  "final_profile_identity": {
+    "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+    "world_sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "slope_comparison_equal_input_files": 1001,
+    "output_pixels": [
+      1600,
+      1000
+    ],
+    "taa_render_pixels": [
+      1600,
+      900
+    ],
+    "tsr_render_pixels": [
+      1336,
+      751
+    ]
+  },
+  "native_scope": {
+    "object_assets": 193,
+    "ground_targets": 40,
+    "grass_reload_checks": 82,
+    "grass_layers": 16,
+    "grass_models": 10,
+    "grass_source_mips": 100,
+    "grass_fresh_components": 1089,
+    "grass_generation_hash_mismatches": 0,
+    "grass_author_render_instances": 200098,
+    "full_material_assets": 307,
+    "full_material_parent_compile_errors": 0,
+    "scene_checks": 22,
+    "mission_visual_hism": 55,
+    "mission_collision_hism": 53,
+    "mission_visual_instances": 67,
+    "mission_collision_instances": 65,
+    "final_motion_checks": 4
+  },
+  "performance": {
+    "stable_capture_window": [
+      1206,
+      3600
+    ],
+    "stable_rows": 2395,
+    "retained_full_post600_window": [
+      601,
+      3600
+    ],
+    "stable_mean_fps": {
+      "default_taa100": 181.38521472540762,
+      "slope_taa100": 125.62586926085889,
+      "annex_taa100": 185.46069893423675,
+      "slope_tsr_auto": 129.9357653456648
+    },
+    "slope_taa_gpu_mean_cost_ms": 0.262767348643004,
+    "identity_rule": "Only the final same-module, same-World slope pair is used for the renderer comparison. No total material speed-up percentage is computed across external DLL or World changes."
+  },
+  "confirmed": [
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/object-native-author-02/summary.json",
+      "bytes": 5382,
+      "sha256": "a34d4da66fac0987cb1ca7c88cc36e74eeb89052854598a4caa3a0678611de1e",
+      "crlf_lines": 111,
+      "schema": "wt_layered_object_native_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/object-native-reload-01/summary.json",
+      "bytes": 4606,
+      "sha256": "29e94b99073f327e912ee151124676ff28aee243fd2c9f3c6fc10f9ee7899720",
+      "crlf_lines": 98,
+      "schema": "wt_layered_object_saved_reload_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/ground-native-author-01/summary.json",
+      "bytes": 83560,
+      "sha256": "9bf92aa1458849f4406894ae82698da8208ca7a5ab7f0f95ab12fc62d0af5f21",
+      "crlf_lines": 1754,
+      "schema": "wt_ground_height_lc_post_native_author_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/ground-native-reload-01/summary.json",
+      "bytes": 43167,
+      "sha256": "5a1329905e826693ce2f968ffc0ba782b00f6a13be2d3772b56575e13b5ec2dc",
+      "crlf_lines": 982,
+      "schema": "wt_ground_saved_reload_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/grass-alpha-native-01/summary.json",
+      "bytes": 6360,
+      "sha256": "8b6256767447fa6cd5a46cdb81566b0fd80011d6348613c8b7611665fe74190a",
+      "crlf_lines": 124,
+      "schema": "wt_grass_alpha_author_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/grass-alpha-reload-01/summary.json",
+      "bytes": 1802,
+      "sha256": "a6a233709df99e3ee561561af4483117ac0b2a8726d5192103c00e64af344ba8",
+      "crlf_lines": 37,
+      "schema": "wt_grass_alpha_reload_execution_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/full-material-reload-01/summary.json",
+      "bytes": 58212,
+      "sha256": "c8777879787910e4cb2999f325ed62ada44a3f12d64d0336de65ca12a4a9d968",
+      "crlf_lines": 1287,
+      "schema": "wt_full_saved_material_reload_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/scene-reload-03/summary.json",
+      "bytes": 12105,
+      "sha256": "62e6fe24355d53afe7f780995cbe9e86521ac64e750edd99aa6acc6e3aa6504c",
+      "crlf_lines": 310,
+      "schema": "wt_saved_scene_supplement_reload_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/final-renderer-same-identity-summary.json",
+      "bytes": 33363,
+      "sha256": "23169f9c0a64ee2825cdd2f38d6aab2e7f04d727910978f76b2ca07252767d9d",
+      "crlf_lines": 977,
+      "schema": "rmsim_wt_final_renderer_comparison_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/final-visual-profile-summary.json",
+      "bytes": 100106,
+      "sha256": "f3f11117262949131256a60a2f27bd6e8fc25d232a60bf7ac3a4134cf6d1597f",
+      "crlf_lines": 2965,
+      "schema": "rmsim_wt_final_visual_profiles_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/final-gpu-pass-diagnostics.json",
+      "bytes": 90275,
+      "sha256": "5e8fed751520229a441cfa6d232f948a559740a73e676e5369efed26edc4a20f",
+      "crlf_lines": 0,
+      "schema": "rmsim_wt_final_existing_csv_gpu_diagnostics_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/final-source-contract-candidates.json",
+      "bytes": 10403,
+      "sha256": "064b5988e2c557d577ad7c8caccd368cae2c2f7b5def7579fe2b6c6d5662cf03",
+      "crlf_lines": 139,
+      "schema": "rmsim_wt_visual_contract_metadata_candidates_v1",
+      "status": "prepared",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/material-audit-01/ground-swizzle-consumer-01.json",
+      "bytes": 13808,
+      "sha256": "f3fde1e24431dd191593fc737444ece16c02f776494da8e675646a61a3761c77",
+      "crlf_lines": 64,
+      "schema": "wt_ground_swizzle_source_review_v1",
+      "status": "source_verified",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/material-audit-01/height-polarity18-source-01/summary.json",
+      "bytes": 1670,
+      "sha256": "a56cc415cd29013dd22dd33557f3f3f776039cf15af1365cad574c68a85f792a",
+      "crlf_lines": 42,
+      "schema": "wt_height_18_source_polarity_update_v1",
+      "status": "source_updated_native_pending",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/lc-reflectance-implementation-01/summary.json",
+      "bytes": 1914,
+      "sha256": "5efb38ed4d99b41f7eab006476ffb6c5ab7d91e476ac10cbfb162a0912e88143",
+      "crlf_lines": 37,
+      "schema": "wt_lc_reflectance_implementation_summary_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/lc-reflectance-source-01/verification.json",
+      "bytes": 26690,
+      "sha256": "0b0010f01a24178a7627bfa176c7879cfebc43fc4b0cad78aff7b340db1cb8cc",
+      "crlf_lines": 805,
+      "schema": "wt_lc_reflectance_preparation_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/lc-reflectance-math-01/verification.json",
+      "bytes": 3094,
+      "sha256": "b74a6b6136a79203b1aec3c6fdd3fcb53b7ca094508a1b1778d53c86b8399874",
+      "crlf_lines": 102,
+      "schema": "wt_lc_reflectance_math_verification_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/microdetail-composition-01/summary.json",
+      "bytes": 5768,
+      "sha256": "9771126c4c6d83c265d21c0b2ef817c3ec70be95ec89236ef86876e1f7e9d2ee",
+      "crlf_lines": 151,
+      "schema": "wt_ground_microdetail_composition_implementation_v1",
+      "status": "source_preflight_passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/microdetail-composition-math-01/verification.json",
+      "bytes": 9913,
+      "sha256": "2a62c3b0ae89d4c125c1af42fb303d8ff7e066b76df1753ab085ad972500b822",
+      "crlf_lines": 377,
+      "schema": "wt_ground_microdetail_composition_audit_v1",
+      "status": "passed",
+      "git_attributes": {
+        "text": "unset",
+        "eol": "lf",
+        "whitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      },
+      "byte_filter_review": "preserved"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json",
+      "bytes": 8977,
+      "sha256": "d1a67d7d0b856e6ca97dd8c0d4e0ed552a41351556dc6957ac68bfb984860b2a",
+      "crlf_lines": 336,
+      "status": "reviewed",
+      "git_check_attr": [
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: text: unset",
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: eol: lf",
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      ]
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/motion-final-default-03/summary.json",
+      "bytes": 1390,
+      "sha256": "41c871257cd048d71845eda726109a363f174499581611415c7488e8d55ebc9b",
+      "crlf_lines": 28,
+      "schema": "rmsim_wt_motion_capture_summary_v1",
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/visual-review.json",
+      "bytes": 2720,
+      "sha256": "ab7ae6f1236397bcfb1ec954836f75b9685c6a64da3d14524300b276a2e45d65",
+      "crlf_lines": 0,
+      "schema": "rmsim_wt_visual_review_v1",
+      "status": "reviewed_sampled_views"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/random-grass-consumer-review-01/verification.json",
+      "bytes": 4205,
+      "sha256": "8d5af8ddbe7f3f6f2bc1350dc735ff9d284f0bf9aa0fdda53bc11a58daca5867",
+      "crlf_lines": 80,
+      "schema": "wt_random_grass_normal_consumer_review_v1",
+      "status": "reviewed"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/normal-entry-final-02/review.json",
+      "bytes": 1190,
+      "sha256": "f001117d38012e63c040c14db41426483efbbeed30a42c077d5311a091b7d9a1",
+      "crlf_lines": 21,
+      "schema": "rmsim_wt_normal_window_review_v1",
+      "status": "observed"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/normal-entry-final-02/launch.json",
+      "bytes": 1037,
+      "sha256": "a18a62561dc4580640a384db121296bbd0beda5d918f862958ce7b3f59251f5b",
+      "crlf_lines": 10,
+      "status": "launched"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/normal-entry-final-02/window-context.json",
+      "bytes": 1333,
+      "sha256": "ef5c7b65983e1ac003ee73ba04b0e2fc4303d4de1c69a0f9923cc2b2afb9c0f7",
+      "crlf_lines": 22
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/normal-entry-final-01/launch-without-window-observation.json",
+      "bytes": 1037,
+      "sha256": "f27a7d11311876b8d6af8844b0de53fbfd59972f0aec8c89db2fc74e06610974",
+      "crlf_lines": 10,
+      "status": "launched"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/visual-map-fixture.json",
+      "bytes": 1521,
+      "sha256": "7d6a26af5c2b1983fb34cdb7c292e852b87691ea5d3a7a2e29c83ea25a99eda6",
+      "crlf_lines": 0
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/fixture-cleanup.json",
+      "bytes": 498,
+      "sha256": "07b8338ea84a783998c45e152c3f287eb66777369e80ba1d356fcd5a6a8e0d2d",
+      "crlf_lines": 10,
+      "status": "archived"
+    },
+    {
+      "path": "artifacts/maps/wt-visual-review-20261119/release-summary.json",
+      "bytes": 8987,
+      "sha256": "a30e184cdb82a458d5c8d5832303a9ad83485894b4b19a6c82be428299ff4063",
+      "crlf_lines": 0,
+      "schema": "rmsim_wt_visual_review_release_v1",
+      "status": "passed_with_documented_local_visual_followup"
+    }
+  ],
+  "analysis_recipe": {
+    "path": "artifacts/maps/wt-visual-review-20261119/analyze_visual_profile.py",
+    "bytes": 13240,
+    "sha256": "6fbab79eb0db3cbae6a66738e36f331ec0bff5504e6e238ea544cd3704580be8",
+    "crlf_lines": 0
+  },
+  "normal_entry_contract": "Play-WarThunder prepared launch reads the saved World directly. Importer hash changes do not trigger automatic full map import on this path.",
+  "pending": [],
+  "excluded_historical_comparisons": [
+    "Early 1280x720 and 888x500 offscreen captures",
+    "Old 4e38/14e805 renderer pair for current 7269/ba531 gain claims",
+    "Failed console attempts where sent did not establish executed CVar or valid CSV",
+    "Failed queue attempt PS48108; final captures belong to actual queue PS47192"
+  ],
+  "hash_bound_source_contracts": {
+    "new_json_files": 11,
+    "new_json_bytes": 849376,
+    "manifest": {
+      "path": "artifacts/maps/wt-visual-review-20261119/final-source-contract-candidates.json",
+      "bytes": 10403,
+      "sha256": "064b5988e2c557d577ad7c8caccd368cae2c2f7b5def7579fe2b6c6d5662cf03",
+      "crlf_lines": 139,
+      "schema": "rmsim_wt_visual_contract_metadata_candidates_v1",
+      "status": "prepared"
+    },
+    "original_png_dds_fbx_native_assets": "local-only, excluded from source candidate"
+  },
+  "bright_grass_observation": {
+    "status": "unresolved_local_visual_issue",
+    "candidate": "grass_fill_a / layer12",
+    "rendered_hism_id_confirmed": false,
+    "source_review": {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json",
+      "bytes": 8977,
+      "sha256": "d1a67d7d0b856e6ca97dd8c0d4e0ed552a41351556dc6957ac68bfb984860b2a",
+      "crlf_lines": 336,
+      "status": "reviewed",
+      "git_check_attr": [
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: text: unset",
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: eol: lf",
+        "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/bright-fill-card-review-01/verification.json: whitespace: blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+      ]
+    },
+    "normal_color_scale_changed_in_this_round": false,
+    "normal_source_scope": "randomGrassInstance.hlsli contains packed landNormal. Full consumer is unavailable. Mesh normal and transmission are UE adaptations; no worldUp inference is made from CellVertex alone.",
+    "consumer_review": {
+      "path": "artifacts/maps/wt-visual-review-20261119/foliage-audit-01/random-grass-consumer-review-01/verification.json",
+      "bytes": 4205,
+      "sha256": "8d5af8ddbe7f3f6f2bc1350dc735ff9d284f0bf9aa0fdda53bc11a58daca5867",
+      "crlf_lines": 80,
+      "schema": "wt_random_grass_normal_consumer_review_v1",
+      "status": "reviewed"
+    }
+  },
+  "motion02_unaccepted_native_observation": {
+    "source": "root observed native result",
+    "pid": 49848,
+    "exit_code": 0,
+    "duration_seconds": 33.2299,
+    "checks_passed": 4,
+    "physics_samples": 51,
+    "physics_dt_seconds": 0.016666666666666666,
+    "main_viewport_pngs": 20,
+    "moving_pngs": 11,
+    "postprocessing_status": "No recovered execution or summary was written. Shared DLL was rebuilt after the original wrapper stopped. Raw UE exit and outputs remain preserved.",
+    "acceptance_status": "rejected_by_strict_sha_recovery_guard",
+    "root_visual_observation": "Root reviewed 8 frames from the preserved 7269 motion run: road and ground followed forward/reverse movement continuously with no obvious block jump.",
+    "counts_are": "raw report observations; not a passed final motion gate"
+  },
+  "known_followups": [
+    "Bright yellow-green horizontal grass card: strong grass_fill_a/layer12 candidate; exact rendered instance and source normal/transmission consumer remain unconfirmed."
+  ],
+  "motion03": {
+    "path": "artifacts/maps/wt-visual-review-20261119/motion-final-default-03/summary.json",
+    "bytes": 1390,
+    "sha256": "41c871257cd048d71845eda726109a363f174499581611415c7488e8d55ebc9b",
+    "crlf_lines": 28,
+    "schema": "rmsim_wt_motion_capture_summary_v1",
+    "status": "passed",
+    "visual_review": {
+      "path": "artifacts/maps/wt-visual-review-20261119/visual-review.json",
+      "bytes": 2720,
+      "sha256": "ab7ae6f1236397bcfb1ec954836f75b9685c6a64da3d14524300b276a2e45d65",
+      "crlf_lines": 0,
+      "schema": "rmsim_wt_visual_review_v1",
+      "status": "reviewed_sampled_views"
+    },
+    "module_sha256": "3b35f4862087c81220216d9e26d47ac29bdbd47bc8b49d888dfd05b1a9642f2d",
+    "world_sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "checks": 4,
+    "inputs_unchanged": true,
+    "scope": "19 main viewport PNGs, 11 motion-phase PNGs; visual review covers selected 8-frame sheet and original frames 0008/0016; not a performance sample"
+  },
+  "normal_entry": {
+    "review": {
+      "path": "artifacts/maps/wt-visual-review-20261119/normal-entry-final-02/review.json",
+      "bytes": 1190,
+      "sha256": "f001117d38012e63c040c14db41426483efbbeed30a42c077d5311a091b7d9a1",
+      "crlf_lines": 21,
+      "schema": "rmsim_wt_normal_window_review_v1",
+      "status": "observed"
+    },
+    "pid": 11144,
+    "module_sha256": "95f19c9fe62ad60c3a9042f9af93fe85ad8bec8e73fd43964ba18128e9216f75",
+    "world_sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "image_sha256": "c5a4e8a6027310e90c8bd3c277e2214fa0fe1105e664a2abd99afd7842e87efb",
+    "view": "SIGHT",
+    "window_left_open": true,
+    "os_keyboard_test": false,
+    "performance_sample": false
+  },
+  "fixture_cleanup": {
+    "path": "artifacts/maps/wt-visual-review-20261119/fixture-cleanup.json",
+    "bytes": 498,
+    "sha256": "07b8338ea84a783998c45e152c3f287eb66777369e80ba1d356fcd5a6a8e0d2d",
+    "crlf_lines": 10,
+    "status": "archived"
+  },
+  "publication_document": {
+    "path": "docs/changes/2026-11-19-flanders-visual.md",
+    "bytes": 11995,
+    "sha256": "2c3ef340c38b175d6f956e066b54b30211ae54cdfa47a01ad65d64cc8a8962ef",
+    "crlf_lines": 0
+  }
+}

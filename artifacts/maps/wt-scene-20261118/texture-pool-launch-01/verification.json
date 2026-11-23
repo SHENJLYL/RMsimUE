@@ -1,0 +1,70 @@
+{
+    "status":  "passed",
+    "scope":  "launch configuration validation only; no engine or driving execution",
+    "checks":  [
+                   {
+                       "name":  "preserves_rmuc_entry_world",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "missing_saved_level_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "selects_declared_scene_world",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "wt_process_texture_pool_budget_4096",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "other_saved_scene_keeps_default_runtime_budget",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "different_scene_level_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "url_options_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "path_traversal_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "unknown_spawn_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "duplicate_spawn_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "outside_spawn_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "invalid_source_hash_rejected",
+                       "passed":  true
+                   },
+                   {
+                       "name":  "unknown_fields_rejected",
+                       "passed":  true
+                   }
+               ],
+    "runtime_arguments":  {
+                              "rmuc2027":  [
+
+                                           ],
+                              "wt_vlaanderen":  [
+                                                    "-ForceDPCVars=r.Streaming.PoolSize=4096"
+                                                ],
+                              "other_scene":  [
+
+                                              ]
+                          },
+    "native_runtime_verified":  false
+}

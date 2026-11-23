@@ -1,0 +1,3728 @@
+diff --git a/ros2_ws/src/fake_vel_transform/include/fake_vel_transform/fake_vel_transform.hpp b/ros2_ws/src/fake_vel_transform/include/fake_vel_transform/fake_vel_transform.hpp
+index d3929e017679981639fad314b37be731cac96be3..c8d2f4585648659ce54417f197b558f96a3e77fe 100644
+--- a/ros2_ws/src/fake_vel_transform/include/fake_vel_transform/fake_vel_transform.hpp
++++ b/ros2_ws/src/fake_vel_transform/include/fake_vel_transform/fake_vel_transform.hpp
+@@ -62,6 +62,8 @@ private:
+   double translation_scale_;
+ 
+   double current_robot_base_angle_{0.0};
++  double current_robot_yaw_rate_{0.0};
++  bool project_heading_to_stamp_{false};
+   double max_odom_age_;
+   bool odom_ready_{false};
+   rclcpp::Time odom_stamp_{0, 0, RCL_ROS_TIME};
+diff --git a/ros2_ws/src/fake_vel_transform/src/fake_vel_transform.cpp b/ros2_ws/src/fake_vel_transform/src/fake_vel_transform.cpp
+index b2c60b598269b3e198a29854145e03e2da6f5c9e..ab7eb9172e31deeb2b151a57d09336cc11e7e697 100644
+--- a/ros2_ws/src/fake_vel_transform/src/fake_vel_transform.cpp
++++ b/ros2_ws/src/fake_vel_transform/src/fake_vel_transform.cpp
+@@ -14,6 +14,8 @@
+ 
+ #include "fake_vel_transform/fake_vel_transform.hpp"
+ 
++#include <algorithm>
++
+ #include <cmath>
+ #include <stdexcept>
+ #include <vector>
+@@ -40,6 +42,7 @@ FakeVelTransform::FakeVelTransform(const rclcpp::NodeOptions & options)
+   this->declare_parameter<float>("init_spin_speed", 0.0);
+   this->declare_parameter<double>("translation_scale", 1.0);
+   max_odom_age_ = this->declare_parameter<double>("max_odom_age", 0.5);
++  project_heading_to_stamp_ = this->declare_parameter<bool>("project_heading_to_stamp", false);
+ 
+   this->get_parameter("robot_base_frame", robot_base_frame_);
+   this->get_parameter("fake_robot_base_frame", fake_robot_base_frame_);
+@@ -103,6 +106,11 @@ void FakeVelTransform::odometryCallback(const nav_msgs::msg::Odometry::ConstShar
+   }
+   current_robot_base_angle_ = tf2::getYaw(q);
+   current_robot_orientation_ = q;
++  tf2::Quaternion attitude;
++  tf2::fromMsg(q, attitude);
++  const auto & w = msg->twist.twist.angular;
++  const auto yaw_rate = tf2::quatRotate(attitude, tf2::Vector3(w.x,w.y,w.z)).z();
++  current_robot_yaw_rate_ = std::isfinite(yaw_rate) ? std::clamp(yaw_rate, -5.5, 5.5) : 0.0;
+   odom_stamp_ = stamp;
+   odom_ready_ = true;
+   publishTransform();
+@@ -115,7 +123,9 @@ void FakeVelTransform::cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr
+     odom_ready_ && age >= -0.05 && age <= max_odom_age_ && std::isfinite(msg->linear.x) &&
+     std::isfinite(msg->linear.y) && std::isfinite(msg->angular.z)) {
+     // The fake frame follows the odometry axes; rotate each new command into the gimbal frame.
+-    cmd_vel_chassis_pub_->publish(transformVelocity(msg, current_robot_base_angle_));
++    const double yaw = current_robot_base_angle_ + (project_heading_to_stamp_ ?
++      current_robot_yaw_rate_ * std::clamp(age, 0.0, 0.15) : 0.0);
++    cmd_vel_chassis_pub_->publish(transformVelocity(msg, yaw));
+     return;
+   }
+   geometry_msgs::msg::TwistStamped stop;
+diff --git a/ros2_ws/src/loam_interface/src/loam_interface.cpp b/ros2_ws/src/loam_interface/src/loam_interface.cpp
+index 570f410d674d0535f470f7f4c86ccaa067517391..99b63d81fae630583aef233084bc657a7d8a7c56 100644
+--- a/ros2_ws/src/loam_interface/src/loam_interface.cpp
++++ b/ros2_ws/src/loam_interface/src/loam_interface.cpp
+@@ -114,6 +114,8 @@ void LoamInterfaceNode::odometryCallback(const nav_msgs::msg::Odometry::ConstSha
+   out.pose.pose.position.z = origin.z();
+   out.pose.pose.orientation = tf2::toMsg(tf_odom_to_lidar.getRotation());
+ 
++  // The global frame changed; the twist remains in the same physical child frame.
++  out.twist = msg->twist;
+   odom_pub_->publish(out);
+ }
+ 
+diff --git a/ros2_ws/src/pb_nav2_plugins/CMakeLists.txt b/ros2_ws/src/pb_nav2_plugins/CMakeLists.txt
+index 2f2b7ff5fdc7f20ef09e5ea02c8ffe106e9f00bc..ff1836dc17c1e88151febf921b05c23a37d63a98 100644
+--- a/ros2_ws/src/pb_nav2_plugins/CMakeLists.txt
++++ b/ros2_ws/src/pb_nav2_plugins/CMakeLists.txt
+@@ -26,6 +26,7 @@ ament_auto_add_library(pb_back_up_frees_space_behavior SHARED
+ 
+ ament_auto_add_library(layers SHARED
+   src/layers/intensity_voxel_layer.cpp
++  src/planning/clearance_planner.cpp
+ )
+ # Nav2 itself also ships layers.dll; keep this plugin's binary identity distinct.
+ set_target_properties(layers PROPERTIES OUTPUT_NAME pb_nav2_layers)
+@@ -38,6 +39,7 @@ if(BUILD_TESTING)
+ endif()
+ 
+ pluginlib_export_plugin_description_file(nav2_core behavior_plugin.xml)
++pluginlib_export_plugin_description_file(nav2_core clearance_planner_plugin.xml)
+ pluginlib_export_plugin_description_file(nav2_costmap_2d costmap_plugins.xml)
+ 
+ ament_auto_package(
+diff --git a/ros2_ws/src/pb_nav2_plugins/clearance_planner_plugin.xml b/ros2_ws/src/pb_nav2_plugins/clearance_planner_plugin.xml
+new file mode 100644
+index 0000000000000000000000000000000000000000..edab508ac308f294843d5779f1573cfcf891ffd6
+--- /dev/null
++++ b/ros2_ws/src/pb_nav2_plugins/clearance_planner_plugin.xml
+@@ -0,0 +1,5 @@
++<library path="pb_nav2_layers">
++  <class name="pb_nav2_plugins::ClearancePlanner" type="pb_nav2_plugins::ClearancePlanner" base_class_type="nav2_core::GlobalPlanner">
++    <description>Refines the Theta Star route using clearance and continuous curvature.</description>
++  </class>
++</library>
+diff --git a/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/confirmed_observation.hpp b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/confirmed_observation.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..1728b3d5ab311903059b8653e8940251f2e2d8f3
+--- /dev/null
++++ b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/confirmed_observation.hpp
+@@ -0,0 +1,65 @@
++#ifndef PB_NAV2_PLUGINS__LAYERS__CONFIRMED_OBSERVATION_HPP_
++#define PB_NAV2_PLUGINS__LAYERS__CONFIRMED_OBSERVATION_HPP_
++
++#include <algorithm>
++#include <cstdint>
++#include <vector>
++
++namespace pb_nav2_costmap_2d
++{
++// Maintains two distinct local observations for an optional planning overlay.
++// This state is separate from the original global and local obstacle layers.
++class ConfirmedObservation
++{
++public:
++  void clear()
++  {
++    stamp_ = 0;
++    previous_.clear();
++    confirmed_.clear();
++  }
++
++  std::int64_t stamp() const {return stamp_;}
++  const std::vector<unsigned int> & marks() const {return confirmed_;}
++
++  void update(
++    std::int64_t stamp, std::int64_t max_gap, int width, int height, int radius,
++    std::vector<unsigned int> & current)
++  {
++    if (stamp <= 0) {
++      clear();
++      return;
++    }
++    if (stamp == stamp_) {return;}
++    std::sort(current.begin(), current.end());
++    current.erase(std::unique(current.begin(), current.end()), current.end());
++    confirmed_.clear();
++    if (stamp > stamp_ && stamp - stamp_ <= max_gap) {
++      for (const auto index : current) {
++        const int x = static_cast<int>(index % width);
++        const int y = static_cast<int>(index / width);
++        bool hit = false;
++        for (int dy = -radius; dy <= radius && !hit; ++dy) {
++          if (y + dy < 0 || y + dy >= height) {continue;}
++          for (int dx = -radius; dx <= radius && !hit; ++dx) {
++            if (x + dx < 0 || x + dx >= width || dx * dx + dy * dy > radius * radius) {
++              continue;
++            }
++            const auto measurement = static_cast<unsigned int>((y + dy) * width + x + dx);
++            hit = std::binary_search(previous_.begin(), previous_.end(), measurement);
++          }
++        }
++        if (hit) {confirmed_.push_back(index);}
++      }
++    }
++    previous_.swap(current);
++    stamp_ = stamp;
++  }
++
++private:
++  std::int64_t stamp_{};
++  std::vector<unsigned int> previous_, confirmed_;
++};
++}  // namespace pb_nav2_costmap_2d
++
++#endif  // PB_NAV2_PLUGINS__LAYERS__CONFIRMED_OBSERVATION_HPP_
+diff --git a/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
+index 666f5774769444d849061e48dbb938712d8cad08..fd5bb767d37f81374c99a7a372a83e8016db4f6f 100644
+--- a/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
++++ b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
+@@ -15,6 +15,11 @@
+ #ifndef PB_NAV2_PLUGINS__LAYERS__INTENSITY_VOXEL_LAYER_HPP_
+ #define PB_NAV2_PLUGINS__LAYERS__INTENSITY_VOXEL_LAYER_HPP_
+ 
++#include <memory>
++#include <optional>
++#include <vector>
++
++#include "pb_nav2_plugins/layers/confirmed_observation.hpp"
+ #include "laser_geometry/laser_geometry.hpp"
+ #include "message_filters/subscriber.h"
+ #include "nav2_costmap_2d/layer.hpp"
+@@ -24,6 +29,7 @@
+ #include "nav2_msgs/msg/voxel_grid.hpp"
+ #include "nav2_voxel_grid/voxel_grid.hpp"
+ #include "nav_msgs/msg/occupancy_grid.hpp"
++#include "nav_msgs/msg/path.hpp"
+ #include "rclcpp/rclcpp.hpp"
+ #include "sensor_msgs/msg/laser_scan.hpp"
+ #include "sensor_msgs/msg/point_cloud.hpp"
+@@ -61,6 +67,12 @@ protected:
+     double * max_x, double * max_y);
+ 
+ private:
++  struct Bounds
++  {
++    double min_x, min_y, max_x, max_y;
++    bool valid() const {return min_x <= max_x && min_y <= max_y;}
++  };
++  Bounds previous_bounds_{1e30, 1e30, -1e30, -1e30};
+   bool publish_voxel_;
+   rclcpp::Publisher<nav2_msgs::msg::VoxelGrid>::SharedPtr voxel_pub_;
+   nav2_voxel_grid::VoxelGrid voxel_grid_;
+@@ -68,6 +80,20 @@ private:
+   double min_obstacle_intensity_, max_obstacle_intensity_;
+   unsigned int unknown_threshold_, mark_threshold_, size_z_;
+   rclcpp::Clock::SharedPtr clock_;
++  struct GroundSupport {
++    int width{}, height{};
++    double x{}, y{}, resolution{};
++    std::vector<float> values;
++    std::optional<double> heightAt(double world_x, double world_y, bool require_patch = false) const;
++  };
++  GroundSupport support_;
++  std::string support_frame_;
++  ConfirmedObservation confirmation_;
++  double confirmation_age_s_{0.0}, confirmation_radius_m_{0.10};
++  double confirmation_turn_hold_s_{0.0};
++  std::int64_t last_bend_ns_{0};
++  nav_msgs::msg::Path::ConstSharedPtr near_plan_;
++  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr near_plan_sub_;
+ 
+   inline bool worldToMap3DFloat(
+     double wx, double wy, double wz, double & mx, double & my, double & mz)
+diff --git a/ros2_ws/src/pb_nav2_plugins/package.xml b/ros2_ws/src/pb_nav2_plugins/package.xml
+index e455bb4061dfc517c923e82b1bdcaff8958f9065..eb49256a16c9f2499bd95d2740877e38104c1201 100644
+--- a/ros2_ws/src/pb_nav2_plugins/package.xml
++++ b/ros2_ws/src/pb_nav2_plugins/package.xml
+@@ -23,6 +23,7 @@
+   <depend>geometry_msgs</depend>
+   <depend>nav2_core</depend>
+   <depend>nav2_costmap_2d</depend>
++  <depend>nav2_theta_star_planner</depend>
+   <depend>nav2_behaviors</depend>
+   <depend>pluginlib</depend>
+ 
+diff --git a/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp b/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
+index 6421db53343e3c45d7a59e6adca155f6a94165be..9c3152c7fd5e098ff0d0c046c3d5b343fda61b3e 100644
+--- a/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
++++ b/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
+@@ -14,8 +14,15 @@
+ 
+ #include "pb_nav2_plugins/layers/intensity_voxel_layer.hpp"
+ 
++#include <algorithm>
++#include <cmath>
++#include <fstream>
++#include <stdexcept>
+ #include <vector>
+ 
++#include "tf2/LinearMath/Transform.h"
++#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
++
+ #include "sensor_msgs/point_cloud2_iterator.hpp"
+ 
+ #define VOXEL_BITS 16
+@@ -30,6 +37,76 @@ using nav2_costmap_2d::ObservationBuffer;
+ namespace pb_nav2_costmap_2d
+ {
+ 
++namespace
++{
++bool nearTurn(const nav_msgs::msg::Path & path, double x, double y)
++{
++  const auto & poses = path.poses;
++  if (poses.size() < 5) {return false;}
++  auto nearest = poses.begin();
++  double best_distance = 0.60 * 0.60;
++  for (auto it = poses.begin(); it != poses.end(); ++it) {
++    const auto & p = it->pose.position;
++    const double d = (p.x - x) * (p.x - x) + (p.y - y) * (p.y - y);
++    if (d < best_distance) {
++      nearest = it;
++      best_distance = d;
++    }
++  }
++  if (best_distance >= 0.60 * 0.60) {return false;}
++  const auto & a = nearest->pose.position;
++  auto middle = nearest, end = nearest;
++  double arc = 0.0;
++  for (auto it = nearest + 1; it != poses.end(); ++it) {
++    const auto & u = (it - 1)->pose.position;
++    const auto & v = it->pose.position;
++    arc += std::hypot(v.x - u.x, v.y - u.y);
++    if (middle == nearest && arc >= 0.65) {middle = it;}
++    if (arc >= 1.30) {
++      end = it;
++      break;
++    }
++  }
++  if (middle == nearest || end == nearest) {return false;}
++  const auto & b = middle->pose.position;
++  const auto & c = end->pose.position;
++  const double ux = b.x - a.x, uy = b.y - a.y;
++  const double vx = c.x - b.x, vy = c.y - b.y;
++  const double product = std::hypot(ux, uy) * std::hypot(vx, vy);
++  // A heading change of roughly 20 degrees over the two measured chords.
++  return product > 0.03 && ux * vx + uy * vy < 0.94 * product;
++}
++}  // namespace
++
++std::optional<double> IntensityVoxelLayer::GroundSupport::heightAt(
++  double wx, double wy, bool require_patch) const
++{
++  const double px = (wx - x) / resolution;
++  const double py = (wy - y) / resolution;
++  if (!std::isfinite(px) || !std::isfinite(py) || px < 1.0 || py < 1.0 ||
++    px >= width - 2 || py >= height - 2)
++  {
++    return std::nullopt;
++  }
++  const int col = static_cast<int>(std::floor(px)), row = static_cast<int>(std::floor(py));
++  const auto value = [&](int cx, int cy) {return static_cast<double>(values[cy * width + cx]);};
++  double lo = 1e10, hi = -1e10;
++  const int pad = require_patch ? 1 : 0;
++  for (int i = -pad; i <= 1 + pad; ++i) {
++    for (int j = -pad; j <= 1 + pad; ++j) {
++      const double sample = value(col + i, row + j);
++      if (!std::isfinite(sample)) {return std::nullopt;}
++      lo = std::min(lo, sample);
++      hi = std::max(hi, sample);
++    }
++  }
++  // A return near a solid edge lacks a continuous reference patch.
++  if (require_patch && hi - lo > 0.045) {return std::nullopt;}
++  const double u = px - col, v = py - row;
++  return (1.0-v) * ((1.0-u) * value(col, row) + u * value(col+1, row)) +
++         v * ((1.0-u) * value(col, row+1) + u * value(col+1, row+1));
++}
++
+ void IntensityVoxelLayer::onInitialize()
+ {
+   auto node = node_.lock();
+@@ -51,6 +128,52 @@ void IntensityVoxelLayer::onInitialize()
+   mark_threshold_ = node->declare_parameter(name_ + ".mark_threshold", 0);
+   publish_voxel_ = node->declare_parameter(name_ + ".publish_voxel_map", false);
+ 
++  confirmation_age_s_ = node->declare_parameter<double>(name_ + ".confirmation_age_s", 0.0);
++  confirmation_radius_m_ = node->declare_parameter<double>(name_ + ".confirmation_radius_m", 0.10);
++  if (!std::isfinite(confirmation_age_s_) || confirmation_age_s_ < 0.0 ||
++    confirmation_age_s_ > 0.8 || !std::isfinite(confirmation_radius_m_) ||
++    confirmation_radius_m_ < 0.025 || confirmation_radius_m_ > 0.25 ||
++    (confirmation_age_s_ > 0.0 && rolling_window_))
++  {
++    throw std::invalid_argument("Invalid confirmation settings for fixed planning overlay");
++  }
++
++  confirmation_turn_hold_s_ = node->declare_parameter<double>(name_ + ".confirmation_turn_hold_s", 0.0);
++  if (!std::isfinite(confirmation_turn_hold_s_) || confirmation_turn_hold_s_ < 0.0 ||
++    confirmation_turn_hold_s_ > 8.0)
++  {
++    throw std::invalid_argument("Invalid confirmation turn hold");
++  }
++  if (confirmation_age_s_ > 0.0 && confirmation_turn_hold_s_ > 0.0) {
++    near_plan_sub_ = node->create_subscription<nav_msgs::msg::Path>(
++      "/plan", rclcpp::SensorDataQoS(),
++      [this](nav_msgs::msg::Path::ConstSharedPtr p) {
++        std::atomic_store(&near_plan_, std::move(p));
++      });
++  }
++
++  const auto support_file = node->declare_parameter<std::string>(name_ + ".ground_support_file", "");
++  support_frame_ = node->declare_parameter<std::string>(name_ + ".ground_support_frame", "");
++  if (!support_file.empty()) {
++    std::ifstream stream(support_file, std::ios::binary);
++    std::string magic;
++    stream >> magic >> support_.width >> support_.height >> support_.x >> support_.y >> support_.resolution;
++    if (!stream || magic != "RMSIM_SUPPORT_V1" || support_.width < 5 || support_.width > 2048 ||
++      support_.height < 5 || support_.height > 2048 || support_frame_.empty() ||
++      !std::isfinite(support_.x) || !std::isfinite(support_.y) ||
++      !std::isfinite(support_.resolution) || support_.resolution < 0.02 || support_.resolution > 0.2 ||
++      stream.get() != '\n')
++    {
++      throw std::invalid_argument("Invalid ground support grid");
++    }
++    support_.values.resize(support_.width * support_.height);
++    if (!stream.read(reinterpret_cast<char *>(support_.values.data()),
++        support_.values.size() * sizeof(float)))
++    {
++      throw std::invalid_argument("Truncated ground support grid");
++    }
++  }
++
+   if (publish_voxel_) {
+     voxel_pub_ = node->create_publisher<nav2_msgs::msg::VoxelGrid>("voxel_grid", 1);
+   }
+@@ -82,12 +205,16 @@ void IntensityVoxelLayer::matchSize()
+ {
+   ObstacleLayer::matchSize();
+   voxel_grid_.resize(size_x_, size_y_, size_z_);
++  confirmation_.clear();
++  last_bend_ns_ = 0;
+ }
+ 
+ void IntensityVoxelLayer::reset()
+ {
+   ObstacleLayer::reset();
+   resetMaps();
++  confirmation_.clear();
++  last_bend_ns_ = 0;
+ }
+ 
+ void IntensityVoxelLayer::resetMaps()
+@@ -109,7 +236,15 @@ void IntensityVoxelLayer::updateBounds(
+   resetMaps();
+ 
+   // if not enabled, stop here
++  // resetMaps clears this layer, but the master only recomposes dirty cells.
++  // Include the previous marks, even when this scan finds nothing there.
++  if (previous_bounds_.valid()) {
++    touch(previous_bounds_.min_x, previous_bounds_.min_y, min_x, min_y, max_x, max_y);
++    touch(previous_bounds_.max_x, previous_bounds_.max_y, min_x, min_y, max_x, max_y);
++  }
++  Bounds current_bounds{1e30, 1e30, -1e30, -1e30};
+   if (!enabled_) {
++    previous_bounds_ = current_bounds;
+     return;
+   }
+ 
+@@ -123,12 +258,68 @@ void IntensityVoxelLayer::updateBounds(
+ 
+   // update the global current status
+   current_ = current;
+-
++  const bool confirm = confirmation_age_s_ > 0.0;
++  std::int64_t stamp = 0;
++  const auto max_gap = static_cast<std::int64_t>(confirmation_age_s_ * 1.e9);
++  if (confirm) {
++    if (observations.size() == 1 && observations.front().cloud_) {
++      const auto & header = observations.front().cloud_->header;
++      const auto now = clock_->now();
++      stamp = rclcpp::Time(header.stamp, now.get_clock_type()).nanoseconds();
++      const auto age = now.nanoseconds() - stamp;
++      if (age < -50000000 || age > max_gap) {stamp = 0;}
++    }
++    if (stamp <= 0) {confirmation_.clear();}
++    if (stamp <= 0 || stamp == confirmation_.stamp()) {observations.clear();}
++  }
++  std::vector<unsigned int> candidates;
++  std::optional<tf2::Transform> to_support;
++  if (!support_.values.empty()) {
++    try {
++      tf2::Transform transform;
++      transform.setIdentity();
++      if (support_frame_ != global_frame_) {
++        tf2::fromMsg(tf_->lookupTransform(support_frame_, global_frame_, tf2::TimePointZero).transform, transform);
++      }
++      to_support = transform;
++    } catch (const tf2::TransformException &) {
++      // Fall back to direct obstacle marking until the reference is available.
++    }
++  }
++  int ground_returns = 0;
+   // place the new obstacles into a priority queue... each with a priority of zero to begin with
+   for (const auto & obs : observations) {
+     double sq_obstacle_max_range = obs.obstacle_max_range_ * obs.obstacle_max_range_;
+     double sq_obstacle_min_range = obs.obstacle_min_range_ * obs.obstacle_min_range_;
+ 
++    std::optional<double> ground_offset;
++    if (to_support) {
++      std::vector<double> offsets;
++      sensor_msgs::PointCloud2ConstIterator<float> x(*obs.cloud_, "x"), y(*obs.cloud_, "y"),
++        z(*obs.cloud_, "z"), value(*obs.cloud_, "intensity");
++      int stride = 0;
++      for (; x != x.end(); ++x, ++y, ++z, ++value) {
++        if (*value >= 0.035f || ++stride % 7 != 0 ||
++          std::hypot(*x - obs.origin_.x, *y - obs.origin_.y) > 3.0)
++        {
++          continue;
++        }
++        const auto world = *to_support * tf2::Vector3(*x, *y, *z);
++        if (const auto height = support_.heightAt(world.x(), world.y(), true)) {
++          const double offset = world.z() - *height;
++          if (std::abs(offset) < 0.45) {offsets.push_back(offset);}
++        }
++      }
++      if (offsets.size() >= 25) {
++        const auto median = offsets.begin() + offsets.size() / 2;
++        std::nth_element(offsets.begin(), median, offsets.end());
++        const double estimate = *median;
++        const auto inliers = std::count_if(offsets.begin(), offsets.end(), [&](double value) {
++            return std::abs(value - estimate) < 0.032;
++          });
++        if (static_cast<size_t>(inliers) * 3 >= offsets.size() * 2) {ground_offset = estimate;}
++      }
++    }
+     sensor_msgs::PointCloud2ConstIterator<float> it_x(*obs.cloud_, "x");
+     sensor_msgs::PointCloud2ConstIterator<float> it_y(*obs.cloud_, "y");
+     sensor_msgs::PointCloud2ConstIterator<float> it_z(*obs.cloud_, "z");
+@@ -156,6 +347,16 @@ void IntensityVoxelLayer::updateBounds(
+         continue;
+       }
+ 
++      if (ground_offset) {
++        const auto world = *to_support * tf2::Vector3(px, py, pz);
++        if (const auto height = support_.heightAt(world.x(), world.y(), true);
++          height && std::abs(world.z() - *ground_offset - *height) <= 0.036)
++        {
++          ++ground_returns;
++          continue;
++        }
++      }
++
+       // now we need to compute the map coordinates for the observation
+       unsigned int mx, my, mz;
+       if (pz < origin_z_) {
+@@ -168,10 +369,52 @@ void IntensityVoxelLayer::updateBounds(
+ 
+       // mark the cell in the voxel grid and check if we should also mark it in the costmap
+       if (voxel_grid_.markVoxelInMap(mx, my, mz, mark_threshold_)) {
+-        unsigned int index = getIndex(mx, my);
++        const auto index = getIndex(mx, my);
++        if (confirm) {
++          candidates.push_back(index);
++          continue;
++        }
++        costmap_[index] = LETHAL_OBSTACLE;
++        double cell_x, cell_y;
++        mapToWorld(mx, my, cell_x, cell_y);
++        touch(cell_x, cell_y, &current_bounds.min_x, &current_bounds.min_y,
++          &current_bounds.max_x, &current_bounds.max_y);
++      }
++    }
++  }
+ 
++  bool use_near_marks = true;
++  if (confirm && confirmation_turn_hold_s_ > 0.0) {
++    const auto now = clock_->now();
++    const auto plan = std::atomic_load(&near_plan_);
++    if (last_bend_ns_ > now.nanoseconds()) {last_bend_ns_ = 0;}
++    if (plan && plan->header.frame_id == global_frame_) {
++      const auto plan_age = now - rclcpp::Time(plan->header.stamp, now.get_clock_type());
++      if (plan_age.seconds() >= -0.05 && plan_age.seconds() < 0.8 && nearTurn(*plan, robot_x, robot_y)) {
++        last_bend_ns_ = now.nanoseconds();
++      }
++    }
++    use_near_marks = last_bend_ns_ > 0 &&
++      now.nanoseconds() - last_bend_ns_ <= static_cast<std::int64_t>(confirmation_turn_hold_s_ * 1.e9);
++  }
++  if (confirm && stamp > 0) {
++    if (stamp != confirmation_.stamp()) {
++      const auto count = candidates.size();
++      const int radius = static_cast<int>(std::floor(confirmation_radius_m_ / resolution_ + 1.e-9));
++      confirmation_.update(stamp, max_gap, size_x_, size_y_, radius, candidates);
++      RCLCPP_INFO_THROTTLE(node_.lock()->get_logger(), *clock_, 1000,
++        "Planning overlay confirmed %zu marks from %zu candidates, active=%d",
++        confirmation_.marks().size(), count, int(use_near_marks));
++    }
++    if (use_near_marks) {
++      for (const auto index : confirmation_.marks()) {
+         costmap_[index] = LETHAL_OBSTACLE;
+-        touch(static_cast<double>(px), static_cast<double>(py), min_x, min_y, max_x, max_y);
++        unsigned int mx, my;
++        indexToCells(index, mx, my);
++        double x, y;
++        mapToWorld(mx, my, x, y);
++        touch(x, y, &current_bounds.min_x, &current_bounds.min_y,
++          &current_bounds.max_x, &current_bounds.max_y);
+       }
+     }
+   }
+@@ -197,7 +440,16 @@ void IntensityVoxelLayer::updateBounds(
+     voxel_pub_->publish(grid_msg);
+   }
+ 
+-  updateFootprint(robot_x, robot_y, robot_yaw, min_x, min_y, max_x, max_y);
++  updateFootprint(robot_x, robot_y, robot_yaw, &current_bounds.min_x, &current_bounds.min_y,
++    &current_bounds.max_x, &current_bounds.max_y);
++  if (current_bounds.valid()) {
++    touch(current_bounds.min_x, current_bounds.min_y, min_x, min_y, max_x, max_y);
++    touch(current_bounds.max_x, current_bounds.max_y, min_x, min_y, max_x, max_y);
++  }
++  previous_bounds_ = current_bounds;
++  if (ground_returns > 0) {
++    RCLCPP_INFO_THROTTLE(node_.lock()->get_logger(), *clock_, 1500, "Observed ground matched support grid: %d", ground_returns);
++  }
+ }
+ 
+ void IntensityVoxelLayer::updateOrigin(double new_origin_x, double new_origin_y)
+diff --git a/ros2_ws/src/pb_nav2_plugins/src/planning/clearance_planner.cpp b/ros2_ws/src/pb_nav2_plugins/src/planning/clearance_planner.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..7ef7d76fb5a31c1ff4e3f0c6fd1bb3d636fab030
+--- /dev/null
++++ b/ros2_ws/src/pb_nav2_plugins/src/planning/clearance_planner.cpp
+@@ -0,0 +1,433 @@
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <limits>
++#include <mutex>
++#include <utility>
++#include <vector>
++
++#include "geometry_msgs/msg/point.hpp"
++#include "nav2_core/global_planner.hpp"
++#include "nav2_core/exceptions.hpp"
++#include "nav2_theta_star_planner/theta_star.hpp"
++#include "nav2_costmap_2d/cost_values.hpp"
++#include "pluginlib/class_list_macros.hpp"
++#include "pluginlib/class_loader.hpp"
++
++namespace pb_nav2_plugins
++{
++namespace
++{
++struct Point
++{
++  double x{}, y{};
++  Point operator+(Point other) const {return {x + other.x, y + other.y};}
++  Point operator-(Point other) const {return {x - other.x, y - other.y};}
++  Point operator*(double scale) const {return {x * scale, y * scale};}
++  double length() const {return std::hypot(x, y);}
++};
++
++Point pointOf(const geometry_msgs::msg::PoseStamped & pose)
++{
++  return {pose.pose.position.x, pose.pose.position.y};
++}
++
++// Squared Euclidean distance to occupied cell centers via two separable passes.
++void distanceLine(
++  const std::vector<double> & input, int n, std::vector<double> & output,
++  std::vector<int> & sites, std::vector<double> & edges)
++{
++  int k = 0;
++  sites[0] = 0;
++  edges[0] = -std::numeric_limits<double>::infinity();
++  edges[1] = std::numeric_limits<double>::infinity();
++  for (int i = 1; i < n; ++i) {
++    const auto intersection = [&](int site) {
++        return (input[i] + double(i) * i - input[site] - double(site) * site) / (2.0 * (i - site));
++      };
++    double boundary = intersection(sites[k]);
++    while (boundary <= edges[k]) {boundary = intersection(sites[--k]);}
++    sites[++k] = i;
++    edges[k] = boundary;
++    edges[k + 1] = std::numeric_limits<double>::infinity();
++  }
++  k = 0;
++  for (int i = 0; i < n; ++i) {
++    while (edges[k + 1] < i) {++k;}
++    const double d = i - sites[k];
++    output[i] = d * d + input[sites[k]];
++  }
++}
++
++class ClearanceGrid
++{
++public:
++  explicit ClearanceGrid(nav2_costmap_2d::Costmap2D & grid)
++  {
++    {
++      std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*grid.getMutex());
++      width_ = static_cast<int>(grid.getSizeInCellsX());
++      height_ = static_cast<int>(grid.getSizeInCellsY());
++      origin_ = {grid.getOriginX(), grid.getOriginY()};
++      resolution_ = grid.getResolution();
++      distances_.resize(static_cast<size_t>(width_) * height_);
++      const auto * cost = grid.getCharMap();
++      costs_.assign(cost,cost+distances_.size());
++      for (size_t i = 0; i < distances_.size(); ++i) {
++        distances_[i] = cost[i] >= nav2_costmap_2d::LETHAL_OBSTACLE ? 0.0 : 1e10;
++      }
++    }
++    if (width_ < 2 || height_ < 2) {return;}
++    const int n = std::max(width_, height_);
++    std::vector<double> input(n), output(n), edges(n + 1);
++    std::vector<int> sites(n);
++    for (int y = 0; y < height_; ++y) {
++      const size_t offset = static_cast<size_t>(y) * width_;
++      std::copy_n(distances_.begin() + offset, width_, input.begin());
++      distanceLine(input, width_, output, sites, edges);
++      std::copy_n(output.begin(), width_, distances_.begin() + offset);
++    }
++    for (int x = 0; x < width_; ++x) {
++      for (int y = 0; y < height_; ++y) {input[y] = distances_[index(x, y)];}
++      distanceLine(input, height_, output, sites, edges);
++      for (int y = 0; y < height_; ++y) {distances_[index(x, y)] = std::sqrt(output[y]) * resolution_;}
++    }
++  }
++
++  double at(Point p) const
++  {
++    const Point cell = (p - origin_) * (1.0 / resolution_) - Point{0.5, 0.5};
++    if (!std::isfinite(cell.x) || !std::isfinite(cell.y) ||
++      cell.x < 0.0 || cell.y < 0.0 || cell.x >= width_ - 1 || cell.y >= height_ - 1)
++    {return 0.0;}
++    const int x = static_cast<int>(cell.x), y = static_cast<int>(cell.y);
++    const double u = cell.x - x, v = cell.y - y;
++    const auto d = [&](int i, int j) {return distances_[index(i, j)];};
++    const double value = (1.0-v)*((1.0-u)*d(x,y)+u*d(x+1,y)) +
++      v*((1.0-u)*d(x,y+1)+u*d(x+1,y+1));
++    const double boundary = resolution_ * std::min(
++      std::min(cell.x+0.5, cell.y+0.5), std::min(width_-cell.x-0.5, height_-cell.y-0.5));
++    return std::max(0.0, std::min(value - 0.72 * resolution_, boundary));
++  }
++
++  template<typename Iterator, typename Position>
++  bool clearRoute(Point start, Iterator first, Iterator last, Position position) const
++  {
++    constexpr double minimum = 0.49;
++    if (first == last || !(at(start) >= minimum)) {return false;}
++    for (; first != last; ++first) {
++      const Point end = position(*first);
++      const auto delta = end-start;
++      const double length = delta.length();
++      if (!std::isfinite(length)) {return false;}
++      const int steps = std::max(1, static_cast<int>(std::ceil(length/(resolution_*.5))));
++      for (int i=1; i<=steps; ++i) {
++        if (!(at(start+delta*(double(i)/steps)) >= minimum)) {return false;}
++      }
++      start = end;
++    }
++    return true;
++  }
++
++  nav_msgs::msg::Path clearanceSeed(
++    const geometry_msgs::msg::PoseStamped & start, const geometry_msgs::msg::PoseStamped & goal,
++    double desired, double minimum) const
++  {
++    // Repair an invalid raw route on a private snapshot. Costs here express
++    // the same preferred center clearance as the spline optimizer.
++    nav2_costmap_2d::Costmap2D seed(width_, height_, resolution_, origin_.x, origin_.y, 0);
++    auto * cells = seed.getCharMap();
++    for (int y = 0; y < height_; ++y) {
++      for (int x = 0; x < width_; ++x) {
++        const Point center = origin_ + Point{(x+.5)*resolution_, (y+.5)*resolution_};
++        const double clearance = at(center);
++        const size_t i = index(x, y);
++        if (clearance < minimum) {
++          cells[i] = nav2_costmap_2d::LETHAL_OBSTACLE;
++        } else {
++          const double shortfall = std::clamp((desired-clearance)/(desired-minimum), 0.0, 1.0);
++          cells[i] = std::max(costs_[i], static_cast<unsigned char>(200.0*shortfall));
++        }
++      }
++    }
++    unsigned int x,y;
++    nav_msgs::msg::Path result;
++    result.header = goal.header;
++    if (!seed.worldToMap(start.pose.position.x,start.pose.position.y,x,y) ||
++      !seed.worldToMap(goal.pose.position.x,goal.pose.position.y,x,y)) {return result;}
++    theta_star::ThetaStar search;
++    search.costmap_ = &seed;
++    search.how_many_corners_ = 8;
++    search.allow_unknown_ = false;
++    search.w_euc_cost_ = search.w_heuristic_cost_ = 1.0;
++    search.w_traversal_cost_ = 10.0;
++    search.setStartAndGoal(start, goal);
++    std::vector<coordsW> points;
++    if (search.isUnsafeToPlan() || !search.generatePath(points)) {return result;}
++    result.poses.push_back(start);
++    for (const auto & point : points) {
++      auto p = start;
++      p.pose.position.x = point.x;
++      p.pose.position.y = point.y;
++      if ((pointOf(p)-pointOf(result.poses.back())).length() > 1.e-6) {result.poses.push_back(p);}
++    }
++    if ((pointOf(goal)-pointOf(result.poses.back())).length() > 1.e-6) {result.poses.push_back(goal);}
++    else {result.poses.back() = goal;}
++    return result;
++  }
++
++  Point gradientAt(Point p) const
++  {
++    const double r = 0.5 * resolution_;
++    return Point{at(p + Point{r,0.0}) - at(p - Point{r,0.0}),
++      at(p + Point{0.0,r}) - at(p - Point{0.0,r})} * (0.5 / r);
++  }
++
++private:
++  size_t index(int x, int y) const {return static_cast<size_t>(y) * width_ + x;}
++  int width_{}, height_{};
++  Point origin_;
++  double resolution_{};
++  std::vector<double> distances_;
++  std::vector<unsigned char> costs_;
++};
++
++std::vector<Point> resample(const nav_msgs::msg::Path & path, double resolution)
++{
++  if (path.poses.size() < 2) {return {};}
++  std::vector<double> distances{0.0};
++  for (size_t i = 1; i < path.poses.size(); ++i) {
++    distances.push_back(distances.back() + (pointOf(path.poses[i]) - pointOf(path.poses[i-1])).length());
++  }
++  const double length = distances.back();
++  if (!std::isfinite(length) || length < 0.65 || length > 300.0) {return {};}
++  const size_t count = std::max<size_t>(2, static_cast<size_t>(std::ceil(length / resolution)));
++  std::vector<Point> points{pointOf(path.poses.front())};
++  for (size_t i = 1, j = 1; i < count; ++i) {
++    const double at = length * i / count;
++    while (j + 1 < distances.size() && distances[j] <= at) {++j;}
++    const double fraction = (at - distances[j - 1]) / (distances[j] - distances[j - 1]);
++    const auto a = pointOf(path.poses[j - 1]), b = pointOf(path.poses[j]);
++    points.push_back(a + (b-a)*fraction);
++  }
++  points.push_back(pointOf(path.poses.back()));
++  return points;
++}
++
++double routeCost(
++  const ClearanceGrid & grid, const std::vector<Point> & points, const std::vector<Point> & anchor,
++  double margin, double escape, std::vector<Point> & gradient)
++{
++  std::fill(gradient.begin(), gradient.end(), Point{});
++  constexpr double bend_weight = 5.0;
++  double total = 0.0;
++  for (size_t i = 1; i < points.size(); ++i) {
++    const Point a = points[i - 1], b = points[i], span = b-a;
++    const double length = span.length();
++    const auto along = span * (1.0 / std::max(length, 1e-6));
++    total += length;
++    gradient[i-1] = gradient[i-1] - along;
++    gradient[i] = gradient[i] + along;
++    for (double ratio : {0.2, 0.4, 0.6, 0.8, 1.0}) {
++      const Point at = a + span * ratio;
++      const double missing = margin - grid.at(at);
++      if (missing <= 0.0) {continue;}
++      total += 75.0 * missing * missing;
++      const Point fix = grid.gradientAt(at) * (-150.0 * missing);
++      gradient[i-1] = gradient[i-1] + fix * (1.0-ratio);
++      gradient[i] = gradient[i] + fix * ratio;
++    }
++    if (escape > 0 && i + 3 < points.size() && length > 1e-6) {
++      // Give the vehicle room to brake along the incoming tangent at a bend.
++      // The controller still checks every measured and requested swept stop.
++      for (double ahead : {0.5 * escape, escape}) {
++        const auto stop = b + along * ahead;
++        const double missing = std::min(margin, 0.70) - grid.at(stop);
++        if (missing <= 0.0) {continue;}
++        constexpr double weight = 36.0;
++        total += weight * missing * missing;
++        const auto fix = grid.gradientAt(stop) * (-2.0 * weight * missing);
++        const auto parallel = along * (along.x * fix.x + along.y * fix.y);
++        const auto rotation = (fix - parallel) * (ahead / length);
++        gradient[i-1] = gradient[i-1] - rotation;
++        gradient[i] = gradient[i] + fix + rotation;
++      }
++    }
++    if (i + 1 >= points.size()) {continue;}
++    const Point bend = a - b * 2.0 + points[i+1];
++    const Point restore = b - anchor[i];
++    total += bend_weight * bend.length() * bend.length() + 0.08 * restore.length() * restore.length();
++    gradient[i-1] = gradient[i-1] + bend * (2.0 * bend_weight);
++    gradient[i] = gradient[i] - bend * (4.0 * bend_weight) + restore * 0.16;
++    gradient[i+1] = gradient[i+1] + bend * (2.0 * bend_weight);
++  }
++  return total;
++}
++
++std::vector<Point> optimize(const ClearanceGrid & grid, const std::vector<Point> & anchor, double margin, double escape)
++{
++  auto points = anchor, trial = anchor;
++  std::vector<Point> gradient(points.size()), trial_gradient(points.size());
++  double cost = routeCost(grid, points, anchor, margin, escape, gradient);
++  double step = 0.027;
++  for (int pass = 0; pass < 130 && step >= 5e-5; ++pass) {
++    for (size_t i = 1; i + 1 < points.size(); ++i) {
++      const Point move = gradient[i] * (-std::min(step, 0.10 / std::max(gradient[i].length(), 1e-7)));
++      const Point offset = points[i] + move - anchor[i];
++      trial[i] = anchor[i] + offset * std::min(1.0, 1.45 / std::max(offset.length(), 1e-7));
++    }
++    const double candidate = routeCost(grid, trial, anchor, margin, escape, trial_gradient);
++    if (candidate < cost) {
++      points.swap(trial);
++      gradient.swap(trial_gradient);
++      if (cost - candidate < 1e-5) {break;}
++      cost = candidate;
++      step = std::min(0.05, 1.16 * step);
++    } else {
++      step *= 0.50;
++    }
++  }
++  return points;
++}
++
++std::vector<Point> interpolate(const std::vector<Point> & nodes)
++{
++  std::vector<Point> dense{nodes.front()};
++  for (size_t i = 1; i < nodes.size(); ++i) {
++    const auto a = nodes[i-1], b = nodes[i];
++    const auto tangent_a = (b - nodes[i < 2 ? i-1 : i-2]) * (i < 2 ? 1.0 : 0.5);
++    const auto tangent_b = (nodes[i+1 < nodes.size() ? i+1 : i] - a) *
++      (i+1 < nodes.size() ? 0.5 : 1.0);
++    const int count = std::max(1, static_cast<int>(std::ceil((b-a).length() / 0.042)));
++    for (int j = 1; j <= count; ++j) {
++      const double t = double(j) / count;
++      dense.push_back(a * (2*t*t*t - 3*t*t + 1) + tangent_a * (t*t*t - 2*t*t + t) +
++        b * (-2*t*t*t + 3*t*t) + tangent_b * (t*t*t - t*t));
++    }
++  }
++  return dense;
++}
++}  // namespace
++
++class ClearancePlanner : public nav2_core::GlobalPlanner
++{
++public:
++  void configure(
++    const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent, std::string name,
++    std::shared_ptr<tf2_ros::Buffer> tf, std::shared_ptr<nav2_costmap_2d::Costmap2DROS> map) override
++  {
++    const auto node = parent.lock();
++    logger_ = node->get_logger();
++    clock_ = node->get_clock();
++    costmap_ = map;
++    const auto backend = node->declare_parameter<std::string>(
++      name + ".route_backend", "nav2_theta_star_planner/ThetaStarPlanner");
++    margin_ = node->declare_parameter<double>(name + ".curve_clearance", 0.64);
++    escape_ = node->declare_parameter<double>(name + ".curve_stopping_tangent", 0.0);
++    if (!std::isfinite(escape_) || escape_ < 0.0 || escape_ > 1.5) {
++      throw std::invalid_argument("Invalid path stopping tangent");
++    }
++    if (!std::isfinite(margin_) || margin_ < 0.53 || margin_ > 1.5) {
++      throw std::invalid_argument("Invalid curve clearance");
++    }
++    delegate_ = loader_.createSharedInstance(backend);
++    delegate_->configure(parent, std::move(name), std::move(tf), std::move(map));
++  }
++
++  void activate() override {delegate_->activate();}
++  void deactivate() override {delegate_->deactivate(); cached_.poses.clear();}
++  void cleanup() override {delegate_->cleanup(); cached_.poses.clear(); delegate_.reset(); costmap_.reset();}
++
++  nav_msgs::msg::Path createPlan(
++    const geometry_msgs::msg::PoseStamped & start, const geometry_msgs::msg::PoseStamped & goal) override
++  {
++    ClearanceGrid grid(*costmap_->getCostmap());
++    if (!cached_.poses.empty() && cached_.header.frame_id == goal.header.frame_id &&
++      (cached_goal_ - pointOf(goal)).length() < 1e-5)
++    {
++      const auto limit = std::min(cached_.poses.size(), progress_ + 85);
++      auto candidate = progress_;
++      double distance = std::numeric_limits<double>::infinity();
++      for (size_t i = progress_; i < limit; ++i) {
++        const double current = (pointOf(cached_.poses[i]) - pointOf(start)).length();
++        if (current < distance) {distance = current; candidate = i;}
++      }
++      if (distance <= 0.34 && grid.clearRoute(pointOf(start),cached_.poses.begin()+candidate,
++          cached_.poses.end(),[](const auto & pose){return pointOf(pose);}))
++      {
++        progress_ = candidate;
++        nav_msgs::msg::Path path;
++        path.header = cached_.header;
++        path.header.stamp = start.header.stamp;
++        path.poses.assign(cached_.poses.begin() + candidate, cached_.poses.end());
++        path.poses.back().pose.orientation = goal.pose.orientation;
++        return path;
++      }
++    }
++    auto raw = delegate_->createPlan(start, goal);
++    cached_.poses.clear();
++    if (raw.poses.empty()) {throw nav2_core::PlannerException("No route returned by route planner");}
++    std::vector<Point> curve;
++    // Recompute the whole route at finer spacing if the first smoothed route
++    // is blocked. Short plans and the connection from the current pose use
++    // exactly the same segment clearance check as long plans.
++    const auto validated_curve = [&](const nav_msgs::msg::Path & seed,double spacing) {
++      std::vector<Point> empty;
++      if (seed.poses.empty()) {return empty;}
++      auto anchors=resample(seed,spacing);
++      if (anchors.empty()) {
++        for (const auto & pose : seed.poses) {
++          const auto p=pointOf(pose);
++          if (anchors.empty() || (p-anchors.back()).length()>1.e-8) {anchors.push_back(p);}
++        }
++      }
++      anchors.front()=pointOf(start);
++      anchors.back()=pointOf(goal);
++      auto smooth=anchors.size()==1 ? anchors : interpolate(optimize(grid,anchors,margin_,escape_));
++      return grid.clearRoute(pointOf(start),smooth.begin(),smooth.end(),[](Point p){return p;}) ? smooth : empty;
++    };
++    curve=validated_curve(raw,.60);
++    if (curve.empty() && grid.at(pointOf(start))>=.49 && grid.at(pointOf(goal))>=.49) {
++      // Replan globally on a private snapshot which excludes cells without
++      // physical clearance. Smooth and verify the entire result again.
++      const auto second=grid.clearanceSeed(start,goal,margin_,.49);
++      curve=validated_curve(second,.32);
++      if (!curve.empty()) {RCLCPP_INFO(logger_, "Validated complete replacement route");}
++    }
++    if (curve.empty()) {
++      RCLCPP_WARN_THROTTLE(logger_,*clock_,1000,"Rejected full route: start clearance %.3f, goal %.3f",
++        grid.at(pointOf(start)),grid.at(pointOf(goal)));
++      throw nav2_core::PlannerException("Replanned route does not satisfy clearance");
++    }
++    nav_msgs::msg::Path path;
++    path.header = raw.header;
++    path.poses.reserve(curve.size());
++    for (const auto & p : curve) {
++      auto pose = raw.poses.front();
++      pose.pose.position.x = p.x;
++      pose.pose.position.y = p.y;
++      path.poses.push_back(std::move(pose));
++    }
++    path.poses.back().pose.orientation = raw.poses.back().pose.orientation;
++    cached_ = path;
++    cached_goal_ = pointOf(goal);
++    progress_ = 0;
++    RCLCPP_INFO(logger_, "Validated a continuous clearance path with %zu samples", path.poses.size());
++    return path;
++  }
++
++private:
++  pluginlib::ClassLoader<nav2_core::GlobalPlanner> loader_{"nav2_core", "nav2_core::GlobalPlanner"};
++  std::shared_ptr<nav2_core::GlobalPlanner> delegate_;
++  std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_;
++  nav_msgs::msg::Path cached_;
++  Point cached_goal_;
++  size_t progress_{};
++  double margin_{};
++  double escape_{};
++  rclcpp::Clock::SharedPtr clock_;
++  rclcpp::Logger logger_{rclcpp::get_logger("clearance_planner")};
++};
++}  // namespace pb_nav2_plugins
++
++PLUGINLIB_EXPORT_CLASS(pb_nav2_plugins::ClearancePlanner, nav2_core::GlobalPlanner)
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+index 036ab433123bf0b0b698a344acc586c89d3b4bb9..bd042f69cbc7398c78bf45373917eaa2870513e8 100644
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+@@ -22,6 +22,13 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
+ )
+ 
+ if(BUILD_TESTING)
++  enable_testing()
++  add_executable(swept_footprint_test test/swept_footprint_test.cpp)
++  target_include_directories(swept_footprint_test PRIVATE include)
++  add_test(NAME swept_footprint COMMAND swept_footprint_test)
++  add_executable(pursuit_damping_test test/pursuit_damping_test.cpp src/pid.cpp)
++  target_include_directories(pursuit_damping_test PRIVATE include)
++  add_test(NAME pursuit_damping COMMAND pursuit_damping_test)
+   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+   set(ament_cmake_clang_tidy_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-tidy")
+   find_package(ament_lint_auto REQUIRED)
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+index 0d5563b49f586519bb23e6d02149dbe8d08241b5..9bc174622ff488ce609c2f557b546a0fac0670e3 100644
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+@@ -114,7 +114,7 @@ protected:
+    * @param pose pose to transform
+    * @return Path in new frame
+    */
+-  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose);
++  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose, bool & contains_goal);
+ 
+   /**
+    * @brief Transform a pose to another frame.
+@@ -189,12 +189,18 @@ protected:
+    */
+   void applyApproachVelocityScaling(const nav_msgs::msg::Path & path, double & linear_vel) const;
+ 
+-  /**
+-   * @brief Checks if collision is detected along the given path
+-   * @param path Local path to check for collisions
+-   * @return True if collision detected, false otherwise
+-   */
+-  bool isCollisionDetected(const nav_msgs::msg::Path & path);
++  // Physical chassis frame can differ from the navigation axes of the costmap.
++  std::string collision_body_frame_;
++  double collision_deceleration_, collision_reaction_time_;
++  double collision_observation_range_;
++  double tracking_deceleration_;
++  double path_lateral_acceleration_{0.0};
++  bool clearance_departure_{false};
++  bool swept_stop_only_{false};
++  bool track_planned_curve_{false};
++  bool path_stop_preview_{false};
++  double emergency_brake_jerk_{0.0}, emergency_brake_latency_{0.15};
++  double pathCruiseSpeed(const nav_msgs::msg::Path & path, bool contains_goal) const;
+ 
+ private:
+   /**
+@@ -265,7 +271,7 @@ private:
+   nav2_costmap_2d::Costmap2D * costmap_;
+   rclcpp::Logger logger_{rclcpp::get_logger("OmniPidPursuitController")};
+   rclcpp::Clock::SharedPtr clock_;
+-  double last_velocity_scaling_factor_;
++  double last_velocity_scaling_factor_{1.0};
+ 
+   std::shared_ptr<PID> move_pid_;
+   std::shared_ptr<PID> heading_pid_;
+@@ -273,6 +279,7 @@ private:
+   // Controller parameters
+   double translation_kp_, translation_ki_, translation_kd_;
+   bool enable_rotation_;
++  bool external_rotation_possible_{false};
+   double rotation_kp_, rotation_ki_, rotation_kd_;
+   double min_max_sum_error_;
+   double control_duration_;
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
+index 602c323c91b40ff0741e4b7437e4653ed456938d..e2d5642d11fe10eb09cea847858c53627a1f9c5b 100644
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
+@@ -28,6 +28,7 @@ public:
+ 
+   // Returns the manipulated variable given a set_point and current process value
+   double calculate(double set_point, double pv);
++  double calculate(double set_point, double pv, double error_rate);
+   void setSumError(double sum_error);
+   ~PID();
+ 
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..e9082d3e18f96b0a49a108360e09ab88ed28d91a
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+@@ -0,0 +1,188 @@
++#pragma once
++
++#include <algorithm>
++#include <cmath>
++#include <limits>
++#include <vector>
++
++namespace pb_omni_pid_pursuit_controller::sweep
++{
++struct Vector
++{
++  double x, y;
++  Vector operator*(double scale) const { return {x * scale, y * scale}; }
++  double dot(Vector other) const { return x * other.x + y * other.y; }
++  double length() const { return std::hypot(x, y); }
++};
++
++struct Block {
++  Vector center{};
++  int cost{-1};
++};
++
++struct ClearanceDeparture {
++  Vector origin;
++  double rotation_radius;
++};
++
++// Project the swept convex footprint and a square map cell on each separating axis.
++// The two displacements bound motion along the command and residual lateral coasting.
++template<class Grid>
++bool clear(const Grid & grid, const std::vector<Vector> & body, Vector travel, Vector drift,
++  unsigned char blocked_cost, double margin = 0.0, Block * first_block = nullptr,
++  const std::vector<Vector> * displacements = nullptr,
++  const ClearanceDeparture * departure = nullptr)
++{
++  if (!std::isfinite(margin) || margin < 0.0 || body.size() < 3 || !std::isfinite(travel.length()) || !std::isfinite(drift.length())) {
++    return false;
++  }
++  for (const auto & vertex : body) {
++    if (!std::isfinite(vertex.x) || !std::isfinite(vertex.y)) {return false;}
++  }
++  struct Interval {Vector axis; double low, high;};
++  const double half_cell = 0.5 * grid.getResolution();
++  auto bounds = [&](Vector axis) {
++    double lo = std::numeric_limits<double>::infinity();
++    double hi = -lo;
++    for (const auto & vertex : body) {
++      double projection = axis.dot(vertex);
++      lo = std::min(lo, projection);
++      hi = std::max(hi, projection);
++    }
++    if (displacements) {
++      double lower = 0.0;
++      double upper = 0.0;
++      for (const auto shift : *displacements) {
++        lower = std::min(lower, axis.dot(shift));
++        upper = std::max(upper, axis.dot(shift));
++      }
++      lo += lower;
++      hi += upper;
++    } else {
++      for (const auto shift : {travel, drift}) {
++        const double offset = axis.dot(shift);
++        lo += std::min(0.0, offset);
++        hi += std::max(0.0, offset);
++      }
++    }
++    // Minkowski sum with a metric disk; projections of non-unit axes scale by their length.
++    const double extra = margin * axis.length();
++    return Interval{axis, lo - extra, hi + extra};
++  };
++
++  const auto x = bounds({1, 0});
++  const auto y = bounds({0, 1});
++  unsigned int left, bottom, right, top;
++  if (!std::isfinite(x.low) || !std::isfinite(y.low) || !std::isfinite(x.high) || !std::isfinite(y.high) ||
++    !grid.worldToMap(x.low - 1e-9, y.low - 1e-9, left, bottom) ||
++    !grid.worldToMap(x.high + 1e-9, y.high + 1e-9, right, top)) {
++    return false;
++  }
++
++  std::vector<Interval> axes;
++  axes.reserve(body.size() + 2);
++  auto add_edge = [&](Vector edge) {
++    if (edge.x == 0 && edge.y == 0) {return;}
++    auto interval = bounds({-edge.y, edge.x});
++    const double cell_projection = half_cell * (std::abs(edge.x) + std::abs(edge.y));
++    interval.low -= cell_projection;
++    interval.high += cell_projection;
++    axes.push_back(interval);
++  };
++  for (size_t i = 0; i < body.size(); ++i) {
++    const auto & next = body[(i + 1) % body.size()];
++    add_edge({next.x - body[i].x, next.y - body[i].y});
++  }
++  if (displacements) {
++    for (size_t i = 0; i < displacements->size(); ++i) {
++      const auto & a = (*displacements)[i];
++      const auto & b = (*displacements)[(i + 1) % displacements->size()];
++      add_edge({b.x - a.x, b.y - a.y});
++    }
++  } else {
++    add_edge(travel);
++    add_edge(drift);
++  }
++  for (unsigned int my = bottom; my <= top; ++my) {
++    for (unsigned int mx = left; mx <= right; ++mx) {
++      const auto cost = grid.getCost(mx, my);
++      if (cost < blocked_cost) {continue;}
++      Vector cell;
++      grid.mapToWorld(mx, my, cell.x, cell.y);
++      const bool overlaps = std::all_of(axes.begin(), axes.end(), [&](const Interval & axis) {
++        const double p = axis.axis.dot(cell);
++        return p >= axis.low && p <= axis.high;
++      });
++      if (!overlaps) {continue;}
++      if (departure && !displacements && cost == blocked_cost && travel.length() > 1e-6) {
++        const Vector relative{cell.x - departure->origin.x, cell.y - departure->origin.y};
++        const double gap = std::hypot(
++          std::max(0.0, std::abs(relative.x) - half_cell),
++          std::max(0.0, std::abs(relative.y) - half_cell));
++        const auto non_approaching = [&](Vector shift) {
++          // Every point of the cell satisfies this projection bound. The
++          // distance to it cannot shrink anywhere in the swept parallelogram.
++          return relative.dot(shift) + half_cell*(std::abs(shift.x)+std::abs(shift.y)) <= 0.0;
++        };
++        if (gap > departure->rotation_radius &&
++          gap <= departure->rotation_radius + margin &&
++          non_approaching(travel) && non_approaching(drift))
++        {
++          continue;
++        }
++      }
++      if (first_block) {*first_block = {cell, cost};}
++      return false;
++    }
++  }
++  return true;
++}
++
++// Circumscribe the sector of attainable stop displacements. The existing and
++// requested headings share a single distance budget during their transition.
++inline std::vector<Vector> brakingSector(double actual, double target, double distance)
++{
++  constexpr double angular_margin = 0.07;
++  const double turn = std::remainder(target - actual, 2.0 * std::acos(-1.0));
++  const double start = actual + std::min(0.0, turn) - angular_margin;
++  const double span = std::abs(turn) + 2.0 * angular_margin;
++  const int count = std::max(1, static_cast<int>(std::ceil(span / 0.17)));
++  const double interval = span / count;
++  const double radius = distance / std::cos(0.5 * interval);
++  std::vector<Vector> polygon{{0.0, 0.0}};
++  polygon.reserve(static_cast<size_t>(count) + 2);
++  for (int i = 0; i <= count; ++i) {
++    const double heading = start + i * interval;
++    polygon.push_back({radius * std::cos(heading), radius * std::sin(heading)});
++  }
++  return polygon;
++}
++
++inline double stoppingDistance(double speed, double delay, double deceleration)
++{
++  return speed * delay + speed * speed / (2.0 * deceleration);
++}
++
++// Integrate the ramp from zero longitudinal acceleration. The hard brake
++// clears positive acceleration before its jerk-limited ramp starts.
++inline double jerkLimitedStoppingDistance(
++  double speed, double delay, double deceleration, double jerk)
++{
++  const double ramp = std::min(deceleration / jerk, std::sqrt(2.0 * speed / jerk));
++  const double remaining = std::max(0.0, speed - 0.5 * jerk * ramp * ramp);
++  return speed * (delay + ramp) - jerk * ramp * ramp * ramp / 6.0 +
++         remaining * remaining / (2.0 * deceleration);
++}
++
++inline Vector transverseDrift(Vector stopping_displacement, Vector heading)
++{
++  const double forward = std::max(0.0, stopping_displacement.dot(heading));
++  return {stopping_displacement.x - forward * heading.x, stopping_displacement.y - forward * heading.y};
++}
++
++inline double approachSpeed(double distance, double delay, double deceleration)
++{
++  const double delayed = deceleration * delay;
++  return std::sqrt(delayed * delayed + 2.0 * deceleration * std::max(0.0, distance)) - delayed;
++}
++}  // namespace pb_omni_pid_pursuit_controller::sweep
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+index dc5b3106b119323a3c2784c60fc6d9a14637e033..88979608e2c6c5d102e4c028d257061bcecb4f2e 100644
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+@@ -14,7 +14,10 @@
+ 
+ #include "pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp"
+ 
++#include <limits>
++
+ #include "nav2_core/exceptions.hpp"
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
+ #include "nav2_util/geometry_utils.hpp"
+ #include "nav2_util/node_utils.hpp"
+ 
+@@ -113,6 +116,27 @@ void OmniPidPursuitController::configure(
+   declare_parameter_if_not_declared(
+     node, plugin_name_ + ".max_velocity_scaling_factor_rate", rclcpp::ParameterValue(0.9));
+ 
++  external_rotation_possible_ = node->declare_parameter<bool>(
++    plugin_name_ + ".external_rotation_possible", false);
++  path_lateral_acceleration_ = node->declare_parameter<double>(
++    plugin_name_ + ".path_lateral_acceleration", 0.0);
++  clearance_departure_ = node->declare_parameter<bool>(
++    plugin_name_ + ".clearance_departure", false);
++  path_stop_preview_ = node->declare_parameter<bool>(
++    plugin_name_ + ".path_stop_preview", false);
++  emergency_brake_jerk_ = node->declare_parameter<double>(
++    plugin_name_ + ".emergency_brake_jerk", 0.0);
++  emergency_brake_latency_ = node->declare_parameter<double>(
++    plugin_name_ + ".emergency_brake_latency", 0.15);
++  if (!std::isfinite(emergency_brake_jerk_) || emergency_brake_jerk_ < 0.0 ||
++    !std::isfinite(emergency_brake_latency_) || emergency_brake_latency_ < 0.15)
++  {
++    throw nav2_core::PlannerException("Invalid hard brake model");
++  }
++  if (!std::isfinite(path_lateral_acceleration_) || path_lateral_acceleration_ < 0.0) {
++    throw nav2_core::PlannerException("Invalid path lateral acceleration");
++  }
++
+   node->get_parameter(plugin_name_ + ".translation_kp", translation_kp_);
+   node->get_parameter(plugin_name_ + ".translation_ki", translation_ki_);
+   node->get_parameter(plugin_name_ + ".translation_kd", translation_kd_);
+@@ -157,9 +181,33 @@ void OmniPidPursuitController::configure(
+     plugin_name_ + ".max_velocity_scaling_factor_rate", max_velocity_scaling_factor_rate_);
+ 
+   node->get_parameter("controller_frequency", control_frequency);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_body_frame",
++    rclcpp::ParameterValue(costmap_ros_->getBaseFrameID()));
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_deceleration",
++    rclcpp::ParameterValue(2.0));
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_reaction_time",
++    rclcpp::ParameterValue(0.2));
++  node->get_parameter(plugin_name_ + ".collision_body_frame", collision_body_frame_);
++  node->get_parameter(plugin_name_ + ".collision_deceleration", collision_deceleration_);
++  node->get_parameter(plugin_name_ + ".collision_reaction_time", collision_reaction_time_);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_observation_range",
++    rclcpp::ParameterValue(0.0));
++  node->get_parameter(plugin_name_ + ".collision_observation_range", collision_observation_range_);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".tracking_deceleration",
++    rclcpp::ParameterValue(collision_deceleration_));
++  node->get_parameter(plugin_name_ + ".tracking_deceleration", tracking_deceleration_);
++  if (collision_body_frame_.empty() || !std::isfinite(collision_deceleration_) ||
++    collision_deceleration_ <= 0 || !std::isfinite(collision_reaction_time_) ||
++    collision_reaction_time_ < 0 || !std::isfinite(collision_observation_range_) ||
++    collision_observation_range_ < 0 || !std::isfinite(tracking_deceleration_) ||
++    tracking_deceleration_ <= 0 || tracking_deceleration_ > collision_deceleration_) {
++    throw nav2_core::PlannerException("Invalid chassis collision envelope configuration");
++  }
+ 
+   transform_tolerance_ = tf2::durationFromSec(transform_tolerance);
+   control_duration_ = 1.0 / control_frequency;
++  track_planned_curve_ = node->declare_parameter<bool>(plugin_name_ + ".track_planned_curve", false);
++  swept_stop_only_ = node->declare_parameter<bool>(plugin_name_ + ".swept_stop_only", false);
+ 
+   local_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("local_plan", 1);
+   carrot_pub_ = node->create_publisher<geometry_msgs::msg::PointStamped>("lookahead_point", 1);
+@@ -226,16 +274,209 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
+   std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*(costmap->getMutex()));
+ 
+   // Transform path to robot base frame
+-  auto transformed_plan = transformGlobalPlan(pose);
+-
+-  // Find look ahead distance and point on path and publish
++  bool contains_goal = false;
++  auto transformed_plan = transformGlobalPlan(pose, contains_goal);
++
++  const bool profile_speed = path_lateral_acceleration_ > 0.0;
++  // The costmap's virtual tracking axes and the footprint's physical yaw are independent.
++  const auto & map_frame = costmap_ros_->getGlobalFrameID();
++  geometry_msgs::msg::PoseStamped nav_pose, body_pose, body_origin;
++  body_origin.header = pose.header;
++  body_origin.header.frame_id = collision_body_frame_;
++  body_origin.pose.orientation.w = 1.0;
++  if (!transformPose(map_frame, pose, nav_pose) || !transformPose(map_frame, body_origin, body_pose)) {
++    throw nav2_core::PlannerException("Missing transform for chassis collision prediction");
++  }
++  const double nav_yaw = tf2::getYaw(nav_pose.pose.orientation);
++  const double body_yaw = tf2::getYaw(body_pose.pose.orientation);
++  const auto & origin = body_pose.pose.position;
++  auto rotate = [](double x, double y, double yaw) -> sweep::Vector {
++    return {x * std::cos(yaw) - y * std::sin(yaw), x * std::sin(yaw) + y * std::cos(yaw)};
++  };
++  const auto measured = rotate(velocity.linear.x, velocity.linear.y, body_yaw);
++  const double speed = measured.length();
++  if (!std::isfinite(speed) || !std::isfinite(velocity.angular.z) || !std::isfinite(nav_yaw) ||
++    !std::isfinite(origin.x) || !std::isfinite(origin.y)) {
++    throw nav2_core::PlannerException("Invalid chassis motion for collision prediction");
++  }
++  double pose_age = 0.0;
++  if (profile_speed) {
++    const double age = (clock_->now() -
++      rclcpp::Time(pose.header.stamp, clock_->get_clock_type())).seconds();
++    if (age > 0.25) {
++      geometry_msgs::msg::TwistStamped stop;
++      stop.header = pose.header;
++      return stop;
++    }
++    // Anticipate the displacement already covered since the tracking pose.
++    // The swept-footprint guard below still uses the stamped pose and its full
++    // stopping horizon.
++    pose_age = std::max(0.0, age);
++    const auto offset = rotate(measured.x, measured.y, -nav_yaw) * std::min(pose_age, 0.20);
++    for (auto & point : transformed_plan.poses) {
++      point.pose.position.x -= offset.x;
++      point.pose.position.y -= offset.y;
++    }
++    const auto limit = nav2_util::geometry_utils::first_after_integrated_distance(
++      transformed_plan.poses.begin(), transformed_plan.poses.end(), offset.length() + 0.25);
++    auto nearest = std::min_element(transformed_plan.poses.begin(), limit, [](const auto & a, const auto & b) {
++        return std::hypot(a.pose.position.x, a.pose.position.y) <
++               std::hypot(b.pose.position.x, b.pose.position.y);
++      });
++    transformed_plan.poses.erase(transformed_plan.poses.begin(), nearest);
++  }
+   double lookahead_dist = getLookAheadDistance(velocity);
+-
+   auto carrot_pose = getLookAheadPoint(lookahead_dist, transformed_plan);
++  const auto footprint = costmap_ros_->getRobotFootprint();
++  if (footprint.size() < 3) {throw nav2_core::PlannerException("Missing chassis footprint");}
++  double footprint_radius = 0.0;
++  for (const auto & v : footprint) {
++    footprint_radius = std::max(footprint_radius, std::hypot(v.x, v.y));
++  }
++  std::vector<sweep::Vector> body, rotating_body;
++  for (const auto & vertex : footprint) {
++    const auto offset = rotate(vertex.x, vertex.y, body_yaw);
++    body.push_back({origin.x + offset.x, origin.y + offset.y});
++  }
++  constexpr int sides = 20;
++  const double radius = footprint_radius / std::cos(M_PI / sides);
++  for (int i = 0; i < sides; ++i) {
++    const double angle = 2.0 * M_PI * i / sides;
++    rotating_body.push_back({origin.x + radius * std::cos(angle), origin.y + radius * std::sin(angle)});
++  }
++  // In translation-only navigation, bound the excursion of every corner at the
++  // measured yaw rate over a full reaction and braking interval. A complete
++  // rotation remains the envelope for commands that can actively turn the base.
++  const double horizon = collision_reaction_time_ + std::max(speed, v_linear_max_) / collision_deceleration_;
++  const double yaw_excursion = std::min(M_PI, std::abs(velocity.angular.z) * horizon);
++  const double yaw_margin = 2.0 * footprint_radius * std::sin(0.5 * yaw_excursion);
++  const auto stop_distance = [&](double v, double advance = 0.0) {
++    if (profile_speed && emergency_brake_jerk_ > 0.0) {
++      return sweep::jerkLimitedStoppingDistance(
++        v, pose_age + emergency_brake_latency_ + advance,
++        collision_deceleration_, emergency_brake_jerk_);
++    }
++    return sweep::stoppingDistance(v, collision_reaction_time_ + advance, collision_deceleration_);
++  };
++  const auto coasting = measured * (speed > 1e-6 ? stop_distance(speed) / speed : 0.0);
++  sweep::Block last_block;
++  auto clear = [&](sweep::Vector travel, sweep::Vector drift, double margin = 0.0,
++      const std::vector<sweep::Vector> * sector = nullptr,
++      const sweep::ClearanceDeparture * departure = nullptr) {
++    last_block = {};
++    // The rectangular window can extend past the terrain marking radius at its corners.
++    // Reserve room for the AIM sensor offset inside the chassis and the swept footprint.
++    double range = travel.length() + drift.length();
++    if (sector) {
++      for (const auto & point : *sector) {range = std::max(range, point.length());}
++    }
++    if (collision_observation_range_ > 0.0 &&
++      range + 2.0 * footprint_radius + margin > collision_observation_range_) {
++      return false;
++    }
++    if (!enable_rotation_ && !external_rotation_possible_ && yaw_margin < footprint_radius &&
++      sweep::clear(*costmap, body, travel, drift, nav2_costmap_2d::LETHAL_OBSTACLE, yaw_margin + margin, nullptr, sector)) {
++      return true;
++    }
++    // This alternative circumscribes the chassis for all orientations.
++    return sweep::clear(*costmap, rotating_body, travel, drift,
++      nav2_costmap_2d::LETHAL_OBSTACLE, margin, &last_block, sector, departure);
++  };
++  if (!clear(coasting, {})) {
++    if (profile_speed) {
++      RCLCPP_INFO(logger_, "turntrace coast origin=%.3f,%.3f obstacle=%.3f,%.3f cost=%d measured=%.3f,%.3f age=%.3f yawm=%.3f",
++        origin.x, origin.y, last_block.center.x, last_block.center.y, last_block.cost,
++        measured.x, measured.y, pose_age, yaw_margin);
++    }
++    // Braking is a valid control action. Throwing on every brake cycle makes
++    // controller_server clear a populated costmap when failure_tolerance expires.
++    RCLCPP_WARN_THROTTLE(logger_, *clock_, 1000, "Braking for blocked or unobserved chassis stopping footprint");
++    geometry_msgs::msg::TwistStamped stop;
++    stop.header = pose.header;
++    return stop;
++  }
++  auto reachable = [&](const geometry_msgs::msg::PoseStamped & candidate) {
++    const auto & p = candidate.pose.position;
++    const double angle = std::atan2(p.y, p.x) + nav_yaw;
++    const sweep::Vector heading{std::cos(angle), std::sin(angle)};
++    const auto drift = sweep::transverseDrift(coasting, heading);
++    return clear(heading * std::hypot(p.x, p.y), drift);
++  };
++  double rejected_distance = lookahead_dist;
++  while (!reachable(carrot_pose)) {
++    if (lookahead_dist <= costmap->getResolution()) {
++      throw nav2_core::PlannerException("No clear chassis sweep to a local tracking point");
++    }
++    rejected_distance = lookahead_dist;
++    lookahead_dist = std::max(costmap->getResolution(), 0.5 * lookahead_dist);
++    carrot_pose = getLookAheadPoint(lookahead_dist, transformed_plan);
++  }
++  // Keep a tested clear target while refining the coarse half-distance bracket.
++  while (rejected_distance - lookahead_dist > costmap->getResolution()) {
++    const double trial = 0.5 * (lookahead_dist + rejected_distance);
++    const auto candidate = getLookAheadPoint(trial, transformed_plan);
++    if (reachable(candidate)) {
++      carrot_pose = candidate;
++      lookahead_dist = trial;
++    } else {
++      rejected_distance = trial;
++    }
++  }
+   carrot_pub_->publish(createCarrotMsg(carrot_pose));
+ 
+   double lin_dist = hypot(carrot_pose.pose.position.x, carrot_pose.pose.position.y);
+   double theta_dist = atan2(carrot_pose.pose.position.y, carrot_pose.pose.position.x);
++  if ((track_planned_curve_ || profile_speed) &&
++    (!contains_goal || std::hypot(
++      transformed_plan.poses.back().pose.position.x, transformed_plan.poses.back().pose.position.y) > 0.85))
++  {
++    const auto distances = calculateCumulativeDistances(transformed_plan);
++    // Select the tangent at the position the steering reference will reach.
++    const auto local_velocity = rotate(measured.x, measured.y, -nav_yaw);
++    const double response = 0.15;
++    double projected_arc = 0.0;
++    if (track_planned_curve_) {
++      const auto ahead = local_velocity * response;
++      double best_error = std::numeric_limits<double>::infinity();
++      for (size_t i=1;i<distances.size() && distances[i-1]<ahead.length()+0.80;++i) {
++        const auto & p = transformed_plan.poses[i-1].pose.position;
++        const auto & q = transformed_plan.poses[i].pose.position;
++        const sweep::Vector chord{q.x-p.x,q.y-p.y};
++        const double squared = chord.dot(chord);
++        if (squared < 1.e-10) {continue;}
++        const sweep::Vector offset{ahead.x-p.x,ahead.y-p.y};
++        const double u=std::clamp(offset.dot(chord)/squared,0.0,1.0);
++        const double error=std::hypot(offset.x-u*chord.x,offset.y-u*chord.y);
++        if (error<best_error) {
++          best_error=error;
++          projected_arc=distances[i-1]+u*(distances[i]-distances[i-1]);
++        }
++      }
++    }
++    const double preview = track_planned_curve_ ? projected_arc : 0.20 + 0.18 * speed;
++    const double tangent_span=track_planned_curve_ ? 0.15 : 0.20;
++    const auto a = findPoseAtDistance(transformed_plan, distances, std::max(0.0,preview-tangent_span)).pose.position;
++    const auto b = findPoseAtDistance(transformed_plan, distances, preview+tangent_span).pose.position;
++    const double length = std::hypot(b.x - a.x, b.y - a.y);
++    if (length > 1e-4) {
++      const sweep::Vector tangent{(b.x - a.x) / length, (b.y - a.y) / length};
++      auto point = transformed_plan.poses.front().pose.position;
++      if (track_planned_curve_) {
++        point=findPoseAtDistance(transformed_plan,distances,projected_arc).pose.position;
++        point.x-=local_velocity.x*response;
++        point.y-=local_velocity.y*response;
++      }
++      const double cross_track = tangent.x * point.y - tangent.y * point.x;
++      const double correction = std::clamp(2.2 * cross_track / std::max(0.9, speed), -0.60, 0.60);
++      const double steering = std::atan2(tangent.y, tangent.x) + std::atan(correction);
++      const sweep::Vector candidate{std::cos(steering + nav_yaw), std::sin(steering + nav_yaw)};
++      if (clear(candidate * 0.40, sweep::transverseDrift(coasting, candidate), 0.06)) {
++        theta_dist = steering;
++      }
++    }
++  }
++  const sweep::Vector heading{std::cos(theta_dist + nav_yaw), std::sin(theta_dist + nav_yaw)};
++  const auto drift = sweep::transverseDrift(coasting, heading);
+   double angle_to_goal = tf2::getYaw(carrot_pose.pose.orientation);
+ 
+   if (use_rotate_to_heading_) {
+@@ -245,39 +486,225 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
+     }
+   }
+ 
+-  auto lin_vel = move_pid_->calculate(lin_dist, 0);
++  // The carrot moves on every replan. Damping uses measured closing speed, so
++  // changing the reference cannot inject a one-cycle stop or acceleration kick.
++  auto lin_vel = profile_speed ? (lin_dist > 1e-4 ? pathCruiseSpeed(transformed_plan, contains_goal) : 0.0) :
++    move_pid_->calculate(lin_dist, 0, -measured.dot(heading));
+   auto angular_vel = enable_rotation_ ? heading_pid_->calculate(angle_to_goal, 0) : 0.0;
+ 
+-  applyCurvatureLimitation(transformed_plan, carrot_pose, lin_vel);
+-
+-  applyApproachVelocityScaling(transformed_plan, lin_vel);
+-
+-  // Transform local frame to global frame to use in collision checking
+-  nav_msgs::msg::Path costmap_frame_local_plan;
+-
+-  int sample_points = 10;
+-  int plan_size = transformed_plan.poses.size();
+-  for (int i = 0; i < sample_points; ++i) {
+-    int index = std::min((i * plan_size) / sample_points, plan_size - 1);
+-    geometry_msgs::msg::PoseStamped map_pose;
+-    transformPose(costmap_ros_->getGlobalFrameID(), transformed_plan.poses[index], map_pose);
+-    costmap_frame_local_plan.poses.push_back(map_pose);
++  const auto limit_body_speed = [&](double command, sweep::Vector direction) {
++    const auto travel_axis = rotate(direction.x, direction.y, -body_yaw);
++    const double longitudinal = travel_axis.x >= 0.0 ? v_linear_max_ : -v_linear_min_;
++    return std::min(command, longitudinal / std::max(1e-6, std::abs(travel_axis.x)));
++  };
++  if (!profile_speed) {applyCurvatureLimitation(transformed_plan, carrot_pose, lin_vel);}
++  if (contains_goal) {applyApproachVelocityScaling(transformed_plan, lin_vel);}
++  if (profile_speed) {
++    lin_vel = limit_body_speed(lin_vel, heading);
++  } else {
++    // lin_dist is a magnitude; theta_dist already carries reverse and strafe directions.
++    lin_vel = std::max(0.0, lin_vel);
++    // A bend consumes steering and braking distance. Find where the remaining
++    // route departs from the current tracking corridor. Do not stop solely
++    // because an otherwise straight path is cropped at the local map boundary.
++    const double hx = std::cos(theta_dist), hy = std::sin(theta_dist);
++    const double corridor = std::max(2.0 * costmap->getResolution(), 0.5 * footprint_radius);
++    double ahead = lin_dist;
++    bool beyond_carrot = false;
++    bool upcoming_turn = false;
++    double turn_speed = 0.0;
++    auto last = carrot_pose.pose.position;
++    for (const auto & waypoint : transformed_plan.poses) {
++      const auto & point = waypoint.pose.position;
++      beyond_carrot |= std::hypot(point.x, point.y) >= lin_dist - 1e-6;
++      if (!beyond_carrot) {continue;}
++      const double forward = point.x * hx + point.y * hy;
++      const double lateral = std::abs(point.x * hy - point.y * hx);
++      if (lateral > corridor || forward + costmap->getResolution() < ahead) {
++        upcoming_turn = true;
++        const double dx = point.x - last.x;
++        const double dy = point.y - last.y;
++        const double length = std::hypot(dx, dy);
++        if (length > 1e-6) {
++          // A shallow bend can be entered at a crawl without making a full stop.
++          constexpr double sharp_turn_cosine = 0.7071067811865476;
++          const double straightness = std::clamp((dx * hx + dy * hy) / length, -1.0, 1.0);
++          turn_speed = std::clamp((straightness - sharp_turn_cosine) /
++            (1.0 - sharp_turn_cosine), 0.0, 1.0);
++        }
++        break;
++      }
++      ahead = std::max(ahead, forward);
++      last = point;
++    }
++    if (upcoming_turn) {
++      const double delay = tracking_deceleration_ * collision_reaction_time_;
++      const double entry = std::sqrt(delay * delay + turn_speed * turn_speed +
++        2.0 * tracking_deceleration_ * ahead) - delay;
++      lin_vel = std::min(lin_vel, std::max(turn_speed, entry));
++    } else if (contains_goal) {
++      lin_vel = std::min(lin_vel,
++        sweep::approachSpeed(ahead, collision_reaction_time_, tracking_deceleration_));
++    }
++  }
++  // Allow for the larger registration displacement while the chassis spins.
++  const double position_margin = profile_speed ?
++    0.085 + (external_rotation_possible_ ?
++      std::min(0.12, 0.04*std::max(0.0,std::abs(velocity.angular.z)-2.0)) : 0.0) : 0.0;
++  const auto limit_upcoming_stop = [&](double lin_vel, sweep::Vector direction) {
++    if (!profile_speed || !path_stop_preview_ || lin_vel <= 1.25) {return lin_vel;}
++    const double before_preview = lin_vel;
++    const auto distances = calculateCumulativeDistances(transformed_plan);
++    const auto current_shift = measured * std::min(pose_age, 0.20);
++    for (double distance : {0.5, 0.95, 1.4}) {
++      if (distance + 0.20 >= distances.back()) {break;}
++      const auto before = findPoseAtDistance(transformed_plan, distances, distance - 0.20).pose.position;
++      const auto point = findPoseAtDistance(transformed_plan, distances, distance).pose.position;
++      const auto after = findPoseAtDistance(transformed_plan, distances, distance + 0.20).pose.position;
++      const auto tangent = rotate(after.x - before.x, after.y - before.y, nav_yaw);
++      const double length = tangent.length();
++      if (length < 1e-6 || tangent.dot(direction) >= 0.974 * length) {continue;}
++      const auto direction = tangent * (1.0 / length);
++      const auto next = rotate(point.x, point.y, nav_yaw);
++      const sweep::Vector shift{next.x + current_shift.x, next.y + current_shift.y};
++      auto footprint_at_point = rotating_body;
++      for (auto & vertex : footprint_at_point) {
++        vertex.x += shift.x;
++        vertex.y += shift.y;
++      }
++      const auto has_stopping_room = [&](double prospective_speed) {
++        const double length_to_stop = stop_distance(prospective_speed, 2.0 * control_duration_);
++        const double margin = position_margin + std::min(0.13, 0.045 * prospective_speed);
++        if (collision_observation_range_ > 0.0 &&
++          shift.length() + length_to_stop + 2.0 * footprint_radius + margin > collision_observation_range_)
++        {
++          return false;
++        }
++        return sweep::clear(*costmap, footprint_at_point, direction * length_to_stop, {},
++          nav2_costmap_2d::LETHAL_OBSTACLE, margin);
++      };
++      if (has_stopping_room(lin_vel)) {continue;}
++      double low = 0.0, high = lin_vel;
++      for (int i = 0; i < 7; ++i) {
++        const double mid = 0.5 * (low + high);
++        if (has_stopping_room(mid)) {low = mid;} else {high = mid;}
++      }
++      // Back-propagate the certified speed at the bend. The existing checks
++      // still certify the current measured and commanded stopping footprints.
++      const double braking_distance = std::max(0.0, distance - 0.18);
++      const double delay = tracking_deceleration_ * collision_reaction_time_;
++      const double approach = std::sqrt(delay*delay + low*low +
++        2.0 * tracking_deceleration_ * braking_distance) - delay;
++      lin_vel = std::min(lin_vel, std::max(low, approach));
++    }
++    if (before_preview - lin_vel > 0.15) {
++      RCLCPP_INFO_THROTTLE(logger_, *clock_, 800,
++        "Path stop preview limits approach from %.2f to %.2f m/s", before_preview, lin_vel);
++    }
++    return lin_vel;
++  };
++  lin_vel = limit_upcoming_stop(lin_vel, heading);
++  auto can_stop = [&](double requested_speed, sweep::Vector direction, double travel_yaw) {
++    const auto lateral_drift = sweep::transverseDrift(coasting, direction);
++    // Start easing off two controller cycles before the independent measured-speed stop.
++    // Reserve space for the estimated pose and the swerve transition near
++    // walls. The allowance vanishes at crawl speed so tight, clear routes
++    // remain possible. The independent measured-speed stop uses the real footprint.
++    const double transition_margin = std::min(0.24, 0.08 * requested_speed);
++    // The speed-dependent delay allowance extends the travel direction.
++    // Use a separate lateral allowance in tight corridors.
++    const double lateral_margin = profile_speed ? std::min(0.13, 0.045 * requested_speed) : transition_margin;
++    const double travel = stop_distance(requested_speed, 2.0 * control_duration_);
++    if (swept_stop_only_ && profile_speed) {
++      // The measured stop was clear. Check the requested stop with the
++      // rotating footprint, residual lateral motion and observed range.
++      return clear(direction * travel, lateral_drift);
++    }
++    const bool straight_safe = clear(direction * (travel + transition_margin - lateral_margin), lateral_drift,
++      lateral_margin + position_margin +
++      std::min(requested_speed, std::abs(measured.x * direction.y - measured.y * direction.x)) * control_duration_);
++    if (straight_safe) {return true;}
++    if (profile_speed && speed > 0.12 && measured.dot(direction) >= 0.0) {
++      const auto sector = sweep::brakingSector(
++        std::atan2(measured.y, measured.x), travel_yaw,
++        stop_distance(std::max(speed, requested_speed), 2.0 * control_duration_));
++      if (clear({}, {}, position_margin + 0.025 * requested_speed, &sector)) {return true;}
++    }
++    return false;
++  };
++  const double desired_speed = lin_vel;
++  if (!can_stop(lin_vel, heading, theta_dist + nav_yaw)) {
++    if (profile_speed && desired_speed > 1.0) {
++      RCLCPP_INFO(logger_, "turntrace cap origin=%.3f,%.3f obstacle=%.3f,%.3f cost=%d measured=%.3f,%.3f desired=%.3f",
++        origin.x, origin.y, last_block.center.x, last_block.center.y, last_block.cost, measured.x, measured.y, desired_speed);
++    }
++    double low = 0.0, high = lin_vel;
++    for (int i = 0; i < 12; ++i) {
++      const double trial = 0.5 * (low + high);
++      if (can_stop(trial, heading, theta_dist + nav_yaw)) {low = trial;} else {high = trial;}
++    }
++    lin_vel = low;
++  }
++  if (clearance_departure_ && profile_speed && external_rotation_possible_ &&
++    lin_vel < 0.10 && speed < 0.18 && desired_speed >= 0.35 &&
++    !clear({}, {}, position_margin))
++  {
++    const double crawl = std::min(0.55, desired_speed);
++    const double range = stop_distance(crawl, 2.0 * control_duration_) + 0.08 * crawl;
++    const auto travel = heading * range;
++    const sweep::ClearanceDeparture departure{{origin.x, origin.y}, radius};
++    if (clear(travel, drift) &&
++      clear(travel, drift, position_margin + 0.045*crawl, nullptr, &departure))
++    {
++      lin_vel = crawl;
++      RCLCPP_INFO_THROTTLE(logger_, *clock_, 750,
++        "Leaving an occupied positioning margin at %.2f m/s with a clear hard footprint", crawl);
++    }
+   }
+-
+   geometry_msgs::msg::TwistStamped cmd_vel;
+   cmd_vel.header = pose.header;
+-  if (!isCollisionDetected(costmap_frame_local_plan)) {
+-    cmd_vel.twist.linear.x = lin_vel * cos(theta_dist);
+-    cmd_vel.twist.linear.y = lin_vel * sin(theta_dist);
+-    cmd_vel.twist.angular.z = angular_vel;
+-  } else {
+-    throw nav2_core::PlannerException("Collision detected in the trajectory. Stopping the robot!");
+-  }
++  cmd_vel.twist.linear.x = lin_vel * std::cos(theta_dist);
++  cmd_vel.twist.linear.y = lin_vel * std::sin(theta_dist);
++  cmd_vel.twist.angular.z = angular_vel;
+ 
+   return cmd_vel;
+ }
+ 
+-void OmniPidPursuitController::setPlan(const nav_msgs::msg::Path & path) { global_plan_ = path; }
++double OmniPidPursuitController::pathCruiseSpeed(
++  const nav_msgs::msg::Path & path, bool contains_goal) const
++{
++  const auto distances = calculateCumulativeDistances(path);
++  const double length = distances.back();
++  // At each bend, project the admissible corner speed backward under braking.
++  // Steering uses its own lookahead to keep following the corridor at low speed.
++  constexpr double step = 0.68;
++  const double horizon = std::min(length, sweep::stoppingDistance(
++      v_linear_max_, collision_reaction_time_, tracking_deceleration_) + step);
++  const double delay = tracking_deceleration_ * collision_reaction_time_;
++  double limit = v_linear_max_;
++  for (double s = step; s + 0.1 < horizon; s += step) {
++    const auto before = findPoseAtDistance(path, distances, s - step).pose.position;
++    const auto middle = findPoseAtDistance(path, distances, s).pose.position;
++    const auto after = findPoseAtDistance(path, distances, s + step).pose.position;
++    const double radius = calculateCurvatureRadius(before, middle, after);
++    const double bend_speed = std::sqrt(path_lateral_acceleration_ * radius);
++    const double approach = std::max(0.0, s - step);
++    const double entry = std::sqrt(delay * delay + bend_speed * bend_speed +
++        2.0 * tracking_deceleration_ * approach) - delay;
++    limit = std::min(limit, std::max(bend_speed, entry));
++  }
++  if (contains_goal) {
++    const auto & goal = path.poses.back().pose.position;
++    limit = std::min(limit, sweep::approachSpeed(std::max(length, std::hypot(goal.x, goal.y)),
++        collision_reaction_time_, tracking_deceleration_));
++  }
++  return limit;
++}
++
++void OmniPidPursuitController::setPlan(const nav_msgs::msg::Path & path)
++{
++  global_plan_ = path;
++}
+ 
+ void OmniPidPursuitController::setSpeedLimit(
+   const double & /*speed_limit*/, const bool & /*percentage*/)
+@@ -286,7 +713,7 @@ void OmniPidPursuitController::setSpeedLimit(
+ }
+ 
+ nav_msgs::msg::Path OmniPidPursuitController::transformGlobalPlan(
+-  const geometry_msgs::msg::PoseStamped & pose)
++  const geometry_msgs::msg::PoseStamped & pose, bool & contains_goal)
+ {
+   if (global_plan_.poses.empty()) {
+     throw nav2_core::PlannerException("Received plan with zero length");
+@@ -318,13 +745,17 @@ nav_msgs::msg::Path OmniPidPursuitController::transformGlobalPlan(
+     transformation_begin, global_plan_.poses.end(),
+     [&](const auto & pose) { return euclidean_distance(pose, robot_pose) > max_costmap_extent; });
+ 
++  contains_goal = transformation_end == global_plan_.poses.end();
++
+   // Lambda to transform a PoseStamped from global frame to local
+   auto transform_global_pose_to_local = [&](const auto & global_plan_pose) {
+     geometry_msgs::msg::PoseStamped stamped_pose, transformed_pose;
+     stamped_pose.header.frame_id = global_plan_.header.frame_id;
+     stamped_pose.header.stamp = robot_pose.header.stamp;
+     stamped_pose.pose = global_plan_pose.pose;
+-    transformPose(costmap_ros_->getBaseFrameID(), stamped_pose, transformed_pose);
++    if (!transformPose(costmap_ros_->getBaseFrameID(), stamped_pose, transformed_pose)) {
++      throw nav2_core::PlannerException("Unable to transform a local tracking point");
++    }
+     transformed_pose.pose.position.z = 0.0;
+     return transformed_pose;
+   };
+@@ -385,6 +816,7 @@ geometry_msgs::msg::PoseStamped OmniPidPursuitController::getLookAheadPoint(
+     pose.header.frame_id = prev_pose_it->header.frame_id;
+     pose.header.stamp = goal_pose_it->header.stamp;
+     pose.pose.position = point;
++    pose.pose.orientation = goal_pose_it->pose.orientation;
+     return pose;
+   }
+ 
+@@ -448,27 +880,6 @@ bool OmniPidPursuitController::transformPose(
+   return false;
+ }
+ 
+-bool OmniPidPursuitController::isCollisionDetected(const nav_msgs::msg::Path & path)
+-{
+-  auto costmap = costmap_ros_->getCostmap();
+-  for (const auto & pose_stamped : path.poses) {
+-    const auto & pose = pose_stamped.pose;
+-    unsigned int mx, my;
+-    if (costmap->worldToMap(pose.position.x, pose.position.y, mx, my)) {
+-      if (costmap->getCost(mx, my) >= nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE) {
+-        return true;
+-      }
+-    } else {
+-      // RCLCPP_WARN(
+-      //   logger_,
+-      //   "The Local path is not in the costmap. Cannot check for collisions. "
+-      //   "Proceed at your own risk, slow the robot, or increase your costmap size.");
+-      return false;
+-    }
+-  }
+-  return false;
+-}
+-
+ double OmniPidPursuitController::getLookAheadDistance(const geometry_msgs::msg::Twist & speed)
+ {
+   // If using velocity-scaled look ahead distances, find and clamp the dist
+@@ -503,17 +914,12 @@ double OmniPidPursuitController::approachVelocityScalingFactor(
+ void OmniPidPursuitController::applyApproachVelocityScaling(
+   const nav_msgs::msg::Path & path, double & linear_vel) const
+ {
+-  double approach_vel = linear_vel;
+-  double velocity_scaling = approachVelocityScalingFactor(path);
+-  double unbounded_vel = approach_vel * velocity_scaling;
+-  if (unbounded_vel < min_approach_linear_velocity_) {
+-    approach_vel = min_approach_linear_velocity_;
+-  } else {
+-    approach_vel *= velocity_scaling;
+-  }
+-
+-  // Use the lowest velocity between approach and other constraints, if all overlapping
+-  linear_vel = std::min(linear_vel, approach_vel);
++  // Bound the requested speed by a distance-based cap. Multiplying the PID
++  // output by the same distance again produces quadratic creep near the goal.
++  const double factor = std::clamp(approachVelocityScalingFactor(path), 0.0, 1.0);
++  if (factor >= 1.0) {return;}
++  const double cap = std::max(min_approach_linear_velocity_, v_linear_max_ * factor);
++  linear_vel = std::min(linear_vel, cap);
+ }
+ 
+ void OmniPidPursuitController::applyCurvatureLimitation(
+@@ -523,27 +929,19 @@ void OmniPidPursuitController::applyCurvatureLimitation(
+   double curvature =
+     calculateCurvature(path, lookahead_pose, curvature_forward_dist_, curvature_backward_dist_);
+ 
+-  double scaled_linear_vel = linear_vel;
+-  if (curvature > curvature_min_) {
+-    double reduction_ratio = 1.0;
+-    if (curvature > curvature_max_) {
+-      reduction_ratio = reduction_ratio_at_high_curvature_;
+-    } else {
+-      reduction_ratio = 1.0 - (curvature - curvature_min_) / (curvature_max_ - curvature_min_) *
+-                                (1.0 - reduction_ratio_at_high_curvature_);
+-    }
+-
+-    double target_scaled_vel = linear_vel * reduction_ratio;
+-    scaled_linear_vel =
+-      last_velocity_scaling_factor_ + std::clamp(
+-                                        target_scaled_vel - last_velocity_scaling_factor_,
+-                                        -max_velocity_scaling_factor_rate_ * control_duration_,
+-                                        max_velocity_scaling_factor_rate_ * control_duration_);
++  double target_factor = 1.0;
++  if (curvature >= curvature_max_) {
++    target_factor = reduction_ratio_at_high_curvature_;
++  } else if (curvature > curvature_min_) {
++    const double blend = (curvature - curvature_min_) / (curvature_max_ - curvature_min_);
++    target_factor -= blend * (1.0 - reduction_ratio_at_high_curvature_);
+   }
+-  scaled_linear_vel = std::max(scaled_linear_vel, 2.0 * min_approach_linear_velocity_);
+-
+-  linear_vel = std::min(linear_vel, scaled_linear_vel);
+-  last_velocity_scaling_factor_ = linear_vel;
++  // Limit the dimensionless scaling factor on both entry and exit. Limiting
++  // absolute speed here re-starts the ramp after each short tracking point.
++  const double change = max_velocity_scaling_factor_rate_ * control_duration_;
++  last_velocity_scaling_factor_ +=
++    std::clamp(target_factor - last_velocity_scaling_factor_, -change, change);
++  linear_vel *= last_velocity_scaling_factor_;
+ }
+ 
+ double OmniPidPursuitController::calculateCurvature(
+@@ -553,11 +951,26 @@ double OmniPidPursuitController::calculateCurvature(
+   geometry_msgs::msg::PoseStamped backward_pose, forward_pose;
+   std::vector<double> cumulative_distances = calculateCumulativeDistances(path);
+ 
++  // Interpolated carrots live on the path. The straight-line distance to the
++  // robot picks the wrong curvature samples whenever the path bends.
++  const auto & carrot = lookahead_pose.pose.position;
+   double lookahead_pose_cumulative_distance = 0.0;
+-  geometry_msgs::msg::PoseStamped robot_base_frame_pose;
+-  robot_base_frame_pose.pose = geometry_msgs::msg::Pose();
+-  lookahead_pose_cumulative_distance =
+-    nav2_util::geometry_utils::euclidean_distance(robot_base_frame_pose, lookahead_pose);
++  double best_error = std::numeric_limits<double>::infinity();
++  for (size_t i = 1; i < path.poses.size(); ++i) {
++    const auto & a = path.poses[i - 1].pose.position;
++    const auto & b = path.poses[i].pose.position;
++    const double dx = b.x - a.x, dy = b.y - a.y;
++    const double length = cumulative_distances[i] - cumulative_distances[i - 1];
++    if (length <= 1e-9) {continue;}
++    const double fraction = std::clamp(
++      ((carrot.x - a.x) * dx + (carrot.y - a.y) * dy) / (length * length), 0.0, 1.0);
++    const double error = std::hypot(carrot.x - a.x - fraction * dx, carrot.y - a.y - fraction * dy);
++    if (error < best_error) {
++      best_error = error;
++      lookahead_pose_cumulative_distance = cumulative_distances[i - 1] + fraction * length;
++      if (error < 1e-8) {break;}
++    }
++  }
+ 
+   backward_pose = findPoseAtDistance(
+     path, cumulative_distances, lookahead_pose_cumulative_distance - backward_dist);
+@@ -580,17 +993,10 @@ double OmniPidPursuitController::calculateCurvatureRadius(
+   double x2 = current_point.x, y2 = current_point.y;
+   double x3 = far_point.x, y3 = far_point.y;
+ 
+-  double center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) +
+-                     (x3 * x3 + y3 * y3) * (y1 - y2)) /
+-                    (2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)));
+-  double center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) +
+-                     (x3 * x3 + y3 * y3) * (x2 - x1)) /
+-                    (2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)));
+-  double radius = std::hypot(x2 - center_x, y2 - center_y);
+-  if (std::isnan(radius) || std::isinf(radius) || radius < 1e-9) {
+-    return 1e9;
+-  }
+-  return radius;
++  const double twice_area = std::abs((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1));
++  if (twice_area < 1e-9) {return 1e9;}
++  return std::hypot(x2 - x1, y2 - y1) * std::hypot(x3 - x2, y3 - y2) *
++         std::hypot(x3 - x1, y3 - y1) / (2.0 * twice_area);
+ }
+ 
+ void OmniPidPursuitController::visualizeCurvaturePoints(
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
+index 951092907452c94ef40c9f8dfb17531de302650c..d69ceacb209db87bb2838d28a6ab3184ad4400d2 100644
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
+@@ -20,6 +20,11 @@ PID::PID(double dt, double max, double min, double kp, double kd, double ki)
+ }
+ 
+ double PID::calculate(double set_point, double pv)
++{
++  return calculate(set_point, pv, (set_point - pv - pre_error_) / dt_);
++}
++
++double PID::calculate(double set_point, double pv, double error_rate)
+ {
+   // Calculate error
+   double error = set_point - pv;
+@@ -38,8 +43,7 @@ double PID::calculate(double set_point, double pv)
+   }
+ 
+   // Derivative term
+-  double derivative = (error - pre_error_) / dt_;
+-  double d_out = kd_ * derivative;
++  double d_out = kd_ * error_rate;
+ 
+   // Calculate total output
+   double output = p_out + i_out + d_out;
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..b33831f5dcbad347e7695b090592fc587cd50d18
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp
+@@ -0,0 +1,43 @@
++#include "pb_omni_pid_pursuit_controller/pid.hpp"
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
++#include <cmath>
++#include <iostream>
++
++int main()
++{
++  PID speed(.05, 5., -2.5, 3., .3, 0.);
++  speed.calculate(2., 0., -1.6);
++  const double after_shorter_target = speed.calculate(.8, 0., -1.6);
++  const double after_longer_target = speed.calculate(1.1, 0., -1.6);
++  const double approaching_faster = speed.calculate(1.1, 0., -2.6);
++  PID classic(.05, 100., -100., 0., 1., 0.);
++  namespace sweep = pb_omni_pid_pursuit_controller::sweep;
++  for (double distance : {0.0, 0.05, 0.5, 2.0, 5.0}) {
++    const double planned = sweep::approachSpeed(distance, .45, 2.0);
++    if (std::abs(sweep::stoppingDistance(planned, .45, 2.0) - distance) > 1e-8) {return 1;}
++  }
++  if (std::abs(after_shorter_target - 1.92) > 1e-9 ||
++    std::abs(after_longer_target - 2.82) > 1e-9 ||
++    std::abs(approaching_faster - 2.52) > 1e-9 ||
++    std::abs(classic.calculate(1., 0.) - 20.) > 1e-9 ||
++    std::abs(classic.calculate(.8, 0.) + 4.) > 1e-9) {
++    return 1;
++  }
++  std::cout << "PASS shortened and lengthened tracking points, measured damping and original heading PID\n";
++  struct CellGrid {
++    double getResolution() const {return .05;}
++    bool worldToMap(double x, double y, unsigned int & mx, unsigned int & my) const {
++      if (x < -1 || y < -1 || x >= 1 || y >= 1) {return false;}
++      mx = static_cast<unsigned int>((x + 1)/.05); my = static_cast<unsigned int>((y + 1)/.05); return true;
++    }
++    unsigned char getCost(unsigned int x, unsigned int y) const {return x==27 && y==20 ? 254 : 0;}
++    void mapToWorld(unsigned int x,unsigned int y,double & wx,double & wy) const {
++      wx=-1+(x+.5)*.05; wy=-1+(y+.5)*.05;
++    }
++  } grid;
++  const std::vector<sweep::Vector> body{{-.27,-.27},{.27,-.27},{.27,.27},{-.27,.27}};
++  if (!sweep::clear(grid,body,{0,.2},{},254,.02) || sweep::clear(grid,body,{0,.2},{},254,.12)) {
++    return 1;
++  }
++  return 0;
++}
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..0e1121d2b0be748d81fc905e6a39a30777cace23
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp
+@@ -0,0 +1,62 @@
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
++
++#include <array>
++#include <cstdlib>
++#include <iostream>
++
++namespace sweep = pb_omni_pid_pursuit_controller::sweep;
++struct Grid {
++  std::array<unsigned char, 100 * 100> cells{};
++  double getResolution() const {return 0.05;}
++  bool worldToMap(double x, double y, unsigned int & mx, unsigned int & my) const {
++    if (x < -2.5 || y < -2.5 || x >= 2.5 || y >= 2.5) {return false;}
++    mx = static_cast<unsigned int>((x + 2.5) / getResolution());
++    my = static_cast<unsigned int>((y + 2.5) / getResolution());
++    return true;
++  }
++  void mapToWorld(unsigned int mx, unsigned int my, double & x, double & y) const {
++    x = -2.5 + (mx + 0.5) * getResolution();
++    y = -2.5 + (my + 0.5) * getResolution();
++  }
++  unsigned char getCost(unsigned int x, unsigned int y) const {return cells[100*y+x];}
++  void mark(double x, double y, unsigned char cost) {
++    unsigned int mx,my;
++    if (!worldToMap(x,y,mx,my)) {std::abort();}
++    cells[100*my+mx] = cost;
++  }
++};
++void require(bool condition, const char * name) {
++  if (!condition) {std::cerr << name << " failed\n"; std::exit(1);}
++  std::cout << "PASS " << name << '\n';
++}
++int main() {
++  Grid map;
++  std::vector<sweep::Vector> body{{-.27,-.27},{-.27,.27},{.27,.27},{.27,-.27}};
++  auto safe = [&](sweep::Vector travel, sweep::Vector drift = {}) {
++    return sweep::clear(map,body,travel,drift,254);
++  };
++  require(safe({1,std::sqrt(3.)}),"open shortcut");
++  map.mark(.475,.825,254);
++  require(!safe({1,std::sqrt(3.)}),"corner cutting blocked");
++  require(safe({1,0}),"shorter tracking point reachable");
++  require(!safe({1,0},{0,.8}),"lateral momentum swept");
++  require(!safe({2.3,0}),"footprint outside map rejected");
++  map = Grid{}; map.mark(.625,.225,255);
++  require(!safe({1,0}),"unknown under chassis corner");
++  map = Grid{}; map.mark(.025,.025,254);
++  require(!safe({0,0}),"obstacle inside stationary footprint");
++  map = Grid{}; map.mark(-.725,.025,254);
++  require(!safe({-1,0}),"reverse sweep blocked");
++  map = Grid{}; map.mark(.025,.325,254);
++  require(safe({1,0}),"aligned chassis clears narrow passage");
++  for (auto & v:body) {
++    const double scale = std::sqrt(0.5);
++    v = {(v.x-v.y)*scale,(v.x+v.y)*scale};
++  }
++  require(!safe({1,0}),"rotated corner hits same wall");
++  map = Grid{};
++  require(!safe({sweep::stoppingDistance(5,.45,4),0}),"full speed cannot stop inside map");
++  require(safe({sweep::stoppingDistance(1,.45,4),0}),"reduced speed can stop");
++  body.front().y = std::numeric_limits<double>::quiet_NaN();
++  require(!safe({0,0}),"invalid footprint cannot authorize motion");
++}
+diff --git a/ros2_ws/src/point_lio/src/laserMapping.cpp b/ros2_ws/src/point_lio/src/laserMapping.cpp
+index 1cbbe8ebb0323ea30b18cecb349f18dc58ce362f..76c4c328ece42e78137ae522b963dc16812f4568 100644
+--- a/ros2_ws/src/point_lio/src/laserMapping.cpp
++++ b/ros2_ws/src/point_lio/src/laserMapping.cpp
+@@ -276,6 +276,20 @@ void publish_odometry(
+   }
+   set_posestamp(odomAftMapped.pose.pose);
+ 
++  // ROS odometry twist is expressed in the child (IMU) frame.
++  const auto & q = odomAftMapped.pose.pose.orientation;
++  const Eigen::Quaterniond attitude(q.w, q.x, q.y, q.z);
++  const Eigen::Vector3d world_velocity = use_imu_as_input ?
++    Eigen::Vector3d(kf_input.x_.vel) : Eigen::Vector3d(kf_output.x_.vel);
++  const Eigen::Vector3d velocity = attitude.conjugate() * world_velocity;
++  const Eigen::Vector3d angular = use_imu_as_input ?
++    Eigen::Vector3d(angvel_avr - kf_input.x_.bg) : Eigen::Vector3d(kf_output.x_.omg);
++  odomAftMapped.twist.twist.linear.x = velocity.x();
++  odomAftMapped.twist.twist.linear.y = velocity.y();
++  odomAftMapped.twist.twist.linear.z = velocity.z();
++  odomAftMapped.twist.twist.angular.x = angular.x();
++  odomAftMapped.twist.twist.angular.y = angular.y();
++  odomAftMapped.twist.twist.angular.z = angular.z();
+   pubOdomAftMapped->publish(odomAftMapped);
+ 
+   if (tf_send_en) {
+@@ -374,18 +388,22 @@ int main(int argc, char ** argv)
+   /*** ROS subscribe initialization ***/
+   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_pcl_pc;
+   rclcpp::Subscription<livox_ros_driver2::msg::CustomMsg>::SharedPtr sub_pcl_livox;
++  const bool reliable_sensors = nh->declare_parameter<bool>("common.reliable_sensors", false);
++  auto lidar_qos = rclcpp::SensorDataQoS();
++  if (reliable_sensors) {lidar_qos.keep_last(32).reliable();}
+   if (p_pre->lidar_type == AVIA) {
+     sub_pcl_livox = nh->create_subscription<livox_ros_driver2::msg::CustomMsg>(
+-      lid_topic, rclcpp::SensorDataQoS(),
++      lid_topic, lidar_qos,
+       [](const livox_ros_driver2::msg::CustomMsg::SharedPtr msg) { livox_pcl_cbk(msg); });
+   } else {
+     sub_pcl_pc = nh->create_subscription<sensor_msgs::msg::PointCloud2>(
+-      lid_topic, rclcpp::SensorDataQoS(),
++      lid_topic, lidar_qos,
+       [](const sensor_msgs::msg::PointCloud2::SharedPtr msg) { standard_pcl_cbk(msg); });
+   }
+   auto imu_qos = rclcpp::SensorDataQoS();
++  if (reliable_sensors) {imu_qos.reliable();}
+   imu_qos.keep_last(static_cast<std::size_t>(imu_qos_depth));
+-  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=best_effort history=keep_last", imu_qos_depth);
++  RCLCPP_INFO(LOGGER, "POINTLIO_IMU_QOS depth=%d reliability=%s history=keep_last", imu_qos_depth, reliable_sensors ? "reliable" : "best_effort");
+   auto sub_imu =
+     nh->create_subscription<sensor_msgs::msg::Imu>(imu_topic, imu_qos, imu_cbk);
+   auto pub_laser_cloud_full_res =
+diff --git a/ros2_ws/src/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp b/ros2_ws/src/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp
+index c9b4c342bb165acd4917399e379d6bbe60917db5..6346f8f54a1a0b25b22e67247db5918224c516fd 100644
+--- a/ros2_ws/src/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp
++++ b/ros2_ws/src/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp
+@@ -139,6 +139,9 @@ void PointCloudToLaserScanNode::subscriptionListenerThreadLoop()
+ void PointCloudToLaserScanNode::cloudCallback(
+   sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg)
+ {
++  if (cloud_msg->data.empty()) {
++    return;
++  }
+   // build laserscan output
+   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
+   scan_msg->header = cloud_msg->header;
+@@ -182,7 +185,9 @@ void PointCloudToLaserScanNode::cloudCallback(
+     iter_y(*cloud_msg, "y"), iter_z(*cloud_msg, "z"), iter_i(*cloud_msg, "intensity");
+     iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z, ++iter_i)
+   {
+-    if (std::isnan(*iter_x) || std::isnan(*iter_y) || std::isnan(*iter_z)) {
++    if (!std::isfinite(*iter_x) || !std::isfinite(*iter_y) || !std::isfinite(*iter_z) ||
++      !std::isfinite(*iter_i))
++    {
+       RCLCPP_DEBUG(
+         this->get_logger(),
+         "rejected for nan in point(%f, %f, %f)\n",
+@@ -228,7 +233,10 @@ void PointCloudToLaserScanNode::cloudCallback(
+     }
+ 
+     // overwrite range at laserscan ray if new range is smaller
+-    int index = (angle - scan_msg->angle_min) / scan_msg->angle_increment;
++    const auto index = static_cast<size_t>((angle - scan_msg->angle_min) / scan_msg->angle_increment);
++    if (index >= scan_msg->ranges.size()) {
++      continue;
++    }
+     if (range < scan_msg->ranges[index]) {
+       scan_msg->ranges[index] = range;
+     }
+diff --git a/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp b/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
+index 974fd7e49b840b79e9136e495de6038411a992aa..5f68bc06d0b03d9bdbc44ed3f628bdea105a460a 100644
+--- a/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
++++ b/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
+@@ -15,7 +15,9 @@
+ #ifndef SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
+ #define SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
+ 
++#include <deque>
+ #include <memory>
++#include <optional>
+ #include <string>
+ 
+ #include "message_filters/subscriber.h"
+@@ -71,9 +73,16 @@ private:
+   std::unique_ptr<message_filters::Synchronizer<SyncPolicy>> sync_;
+ 
+   tf2::Transform tf_lidar_to_robot_base_;
+-  rclcpp::Time previous_odometry_stamp_{0, 0, RCL_ROS_TIME};
+-  tf2::Transform previous_transform_;
+-  bool previous_odometry_valid_{false};
++  struct PoseSample
++  {
++    rclcpp::Time stamp;
++    tf2::Transform transform;
++  };
++  std::deque<PoseSample> velocity_samples_;
++  std::optional<PoseSample> latest_mount_;
++  bool direct_control_odom_{false};
++  void publishDirectOdometry(const nav_msgs::msg::Odometry & input);
++  double velocity_window_s_{0.0};
+   rclcpp::TimerBase::SharedPtr diagnostic_timer_;
+   uint64_t received_odometry_{0}, received_clouds_{0}, paired_{0}, transformed_{0};
+   double latest_odom_stamp_{0.0}, latest_cloud_stamp_{0.0};
+diff --git a/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp b/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
+index e3217b56be0d9e41e17182ee403080577d572811..e0b6f4a665180d595d997f10d0b90fd3688160d2 100644
+--- a/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
++++ b/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
+@@ -15,6 +15,8 @@
+ #include "sensor_scan_generation/sensor_scan_generation.hpp"
+ 
+ #include <chrono>
++#include <cmath>
++#include <stdexcept>
+ #include "pcl_ros/transforms.hpp"
+ #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+ 
+@@ -27,10 +29,18 @@ SensorScanGenerationNode::SensorScanGenerationNode(const rclcpp::NodeOptions & o
+   this->declare_parameter<std::string>("lidar_frame", "");
+   this->declare_parameter<std::string>("base_frame", "");
+   this->declare_parameter<std::string>("robot_base_frame", "");
++  direct_control_odom_ = this->declare_parameter<bool>("direct_control_odom", false);
++  velocity_window_s_ = this->declare_parameter<double>("odometry_velocity_window_s", 0.0);
++  if (!std::isfinite(velocity_window_s_) || velocity_window_s_ < 0.0 || velocity_window_s_ > 0.25) {
++    throw std::invalid_argument("odometry_velocity_window_s must be in [0, 0.25]");
++  }
+ 
+   this->get_parameter("lidar_frame", lidar_frame_);
+   this->get_parameter("base_frame", base_frame_);
+   this->get_parameter("robot_base_frame", robot_base_frame_);
++  if (direct_control_odom_ && base_frame_ != robot_base_frame_) {
++    throw std::invalid_argument("Direct odometry requires the controller base frame");
++  }
+ 
+   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+   tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
+@@ -59,7 +69,9 @@ SensorScanGenerationNode::SensorScanGenerationNode(const rclcpp::NodeOptions & o
+     &SensorScanGenerationNode::laserCloudAndOdometryHandler, this, std::placeholders::_1,
+     std::placeholders::_2));
+   odometry_sub_.registerCallback([this](const nav_msgs::msg::Odometry::ConstSharedPtr & m) {
+-    ++received_odometry_; latest_odom_stamp_ = rclcpp::Time(m->header.stamp).seconds();
++    ++received_odometry_;
++    latest_odom_stamp_ = rclcpp::Time(m->header.stamp).seconds();
++    if (direct_control_odom_) {publishDirectOdometry(*m);}
+   });
+   laser_cloud_sub_.registerCallback([this](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m) {
+     ++received_clouds_; latest_cloud_stamp_ = rclcpp::Time(m->header.stamp).seconds();
+@@ -98,16 +110,67 @@ void SensorScanGenerationNode::laserCloudAndOdometryHandler(
+   tf_odom_to_chassis = tf_odom_to_lidar * tf_lidar_to_chassis;
+   tf_odom_to_robot_base = tf_odom_to_lidar * tf_lidar_to_robot_base_;
+ 
+-  publishTransform(
+-    tf_odom_to_chassis, odometry_msg->header.frame_id, base_frame_, pcd_msg->header.stamp);
+-  publishOdometry(
+-    tf_odom_to_robot_base, odometry_msg->header.frame_id, robot_base_frame_, pcd_msg->header.stamp);
++  if (!direct_control_odom_) {
++    publishTransform(
++      tf_odom_to_chassis, odometry_msg->header.frame_id, base_frame_, pcd_msg->header.stamp);
++    publishOdometry(
++      tf_odom_to_robot_base, odometry_msg->header.frame_id, robot_base_frame_, pcd_msg->header.stamp);
++  }
+ 
+   sensor_msgs::msg::PointCloud2 out;
+   pcl_ros::transformPointCloud(lidar_frame_, tf_odom_to_lidar.inverse(), *pcd_msg, out);
+   pub_laser_cloud_->publish(out);
+ }
+ 
++void SensorScanGenerationNode::publishDirectOdometry(const nav_msgs::msg::Odometry & input)
++{
++  const rclcpp::Time stamp(input.header.stamp, get_clock()->get_clock_type());
++  if (latest_mount_ && stamp <= latest_mount_->stamp) {return;}
++  const double dt = latest_mount_ ? (stamp - latest_mount_->stamp).seconds() : 0.;
++  if (latest_mount_ && dt < 0.02) {return;}
++  tf2::Transform mount;
++  try {
++    mount = getTransform(lidar_frame_, robot_base_frame_, stamp);
++  } catch (const tf2::TransformException &) {
++    return;  // The next stamped estimator update retries.
++  }
++  const auto previous = latest_mount_;
++  latest_mount_ = PoseSample{stamp, mount};
++  if (!previous || dt > 0.16) {return;}
++
++  const tf2::Vector3 v(input.twist.twist.linear.x, input.twist.twist.linear.y, input.twist.twist.linear.z);
++  const tf2::Vector3 w(input.twist.twist.angular.x, input.twist.twist.angular.y, input.twist.twist.angular.z);
++  const auto finite = [](const tf2::Vector3 & a) {
++      return std::isfinite(a.x()) && std::isfinite(a.y()) && std::isfinite(a.z());
++    };
++  if (!finite(v) || !finite(w)) {return;}
++  const auto relative_velocity = (mount.getOrigin() - previous->transform.getOrigin()) / dt;
++  auto relative_rotation = mount.getRotation() * previous->transform.getRotation().inverse();
++  relative_rotation.normalize();
++  if (relative_rotation.w() < 0.0) {
++    relative_rotation = tf2::Quaternion(-relative_rotation.x(), -relative_rotation.y(),
++      -relative_rotation.z(), -relative_rotation.w());
++  }
++  const auto relative_rate = relative_rotation.getAxis() * (relative_rotation.getAngle() / dt);
++  const auto inverse = mount.getRotation().inverse();
++  // Account for both lever-arm velocity and articulation of the sensor mount.
++  const auto base_v = tf2::quatRotate(inverse, v + w.cross(mount.getOrigin()) + relative_velocity);
++  const auto base_w = tf2::quatRotate(inverse, w + relative_rate);
++  if (!finite(base_v) || !finite(base_w)) {return;}
++
++  tf2::Transform lidar;
++  tf2::fromMsg(input.pose.pose, lidar);
++  const auto body = lidar * mount;
++  nav_msgs::msg::Odometry out;
++  out.header = input.header;
++  out.child_frame_id = robot_base_frame_;
++  tf2::toMsg(body, out.pose.pose);
++  out.twist.twist.linear = tf2::toMsg(base_v);
++  out.twist.twist.angular = tf2::toMsg(base_w);
++  publishTransform(body, input.header.frame_id, robot_base_frame_, stamp);
++  pub_chassis_odometry_->publish(out);
++}
++
+ tf2::Transform SensorScanGenerationNode::getTransform(
+   const std::string & target_frame, const std::string & source_frame, const rclcpp::Time & time)
+ {
+@@ -147,13 +210,25 @@ void SensorScanGenerationNode::publishOdometry(
+   out.pose.pose.position.z = origin.z();
+   out.pose.pose.orientation = tf2::toMsg(transform.getRotation());
+ 
+-  if (previous_odometry_valid_) {
+-    const double dt = (stamp - previous_odometry_stamp_).seconds();
++  if (!velocity_samples_.empty() && stamp <= velocity_samples_.back().stamp) {
++    velocity_samples_.clear();
++  }
++  // Pose and stamp are unchanged. Estimate twist over a short interval to
++  // prevent single LIO scan corrections from driving the stopping envelope.
++  while (velocity_samples_.size() > 1 &&
++    (stamp - velocity_samples_[1].stamp).seconds() >= velocity_window_s_)
++  {
++    velocity_samples_.pop_front();
++  }
++  if (!velocity_samples_.empty()) {
++    const auto & previous = velocity_samples_.front();
++    const auto & previous_transform = previous.transform;
++    const double dt = (stamp - previous.stamp).seconds();
+     if (dt > 0.0) {
+       const auto inverse_rotation = transform.getRotation().inverse();
+       const auto linear_velocity = tf2::quatRotate(
+-        inverse_rotation, (transform.getOrigin() - previous_transform_.getOrigin()) / dt);
+-      auto delta = transform.getRotation() * previous_transform_.getRotation().inverse();
++        inverse_rotation, (transform.getOrigin() - previous_transform.getOrigin()) / dt);
++      auto delta = transform.getRotation() * previous_transform.getRotation().inverse();
+       delta.normalize();
+       if (delta.w() < 0.0) {
+         delta = tf2::Quaternion(-delta.x(), -delta.y(), -delta.z(), -delta.w());
+@@ -168,9 +243,7 @@ void SensorScanGenerationNode::publishOdometry(
+       out.twist.twist.angular.z = angular_velocity.z();
+     }
+   }
+-  previous_transform_ = transform;
+-  previous_odometry_stamp_ = stamp;
+-  previous_odometry_valid_ = true;
++  velocity_samples_.push_back({stamp, transform});
+ 
+   pub_chassis_odometry_->publish(out);
+ }
+diff --git a/ros2_ws/src/terrain_analysis/CMakeLists.txt b/ros2_ws/src/terrain_analysis/CMakeLists.txt
+index ed9036c1c878b6f7c0cf9caa0b6aeaf6f51b46f0..f944256420619f08e8dab5eb1fcb5bf8858125a6 100644
+--- a/ros2_ws/src/terrain_analysis/CMakeLists.txt
++++ b/ros2_ws/src/terrain_analysis/CMakeLists.txt
+@@ -36,6 +36,7 @@ find_package(pcl_conversions REQUIRED)
+ find_package(pcl_ros REQUIRED)
+ 
+ add_executable(terrainAnalysis src/terrainAnalysis.cpp)
++target_include_directories(terrainAnalysis PRIVATE include)
+ ament_target_dependencies(
+   terrainAnalysis
+   rclcpp
+@@ -52,9 +53,19 @@ ament_target_dependencies(
+ 
+ install(TARGETS terrainAnalysis DESTINATION lib/${PROJECT_NAME})
+ 
++install(DIRECTORY include/ DESTINATION include)
++ament_export_include_directories(include)
++
+ install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
+ 
+ if(BUILD_TESTING)
++  enable_testing()
++  add_executable(slope_ground_test test/slope_ground_test.cpp)
++  target_include_directories(slope_ground_test PRIVATE include)
++  add_test(NAME slope_ground COMMAND slope_ground_test)
++  add_executable(surveyed_ground_test test/surveyed_ground_test.cpp)
++  target_include_directories(surveyed_ground_test PRIVATE include)
++  add_test(NAME surveyed_ground COMMAND surveyed_ground_test)
+   find_package(ament_lint_auto REQUIRED)
+   ament_lint_auto_find_test_dependencies()
+ endif()
+diff --git a/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp b/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..35a85e881e07ea538b8891c50f7e23fbd0596cd4
+--- /dev/null
++++ b/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp
+@@ -0,0 +1,206 @@
++#pragma once
++
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <optional>
++#include <vector>
++
++namespace terrain_analysis
++{
++// Use the actual XY of the lowest return in each cell. A low quantile over
++// three cells alone mixes different ground heights on an inclined surface.
++class SlopeGround
++{
++public:
++  explicit SlopeGround(int width)
++  : width_(width), low_(width * width), ramps_(width * width), platforms_(width * width) {}
++
++  void reset(double tangent)
++  {
++    max_gradient_ = tangent;
++    if (enabled()) {
++      std::fill(low_.begin(), low_.end(), Sample{});
++      std::fill(ramps_.begin(), ramps_.end(), Plane{});
++      std::fill(platforms_.begin(), platforms_.end(), Plane{});
++    }
++  }
++
++  void observe(int ix, int iy, double x, double y, double z)
++  {
++    if (!enabled() || !inside(ix, iy)) {return;}
++    auto & sample = low_[index(ix, iy)];
++    if (!sample.valid || z < sample.z) {sample = {x, y, z, true};}
++  }
++
++  void fit()
++  {
++    if (!enabled()) {return;}
++    for (int ix = 0; ix < width_; ++ix) {
++      for (int iy = 0; iy < width_; ++iy) {
++        if (!low_[index(ix, iy)].valid) {continue;}
++        std::array<Sample, 9> neighbors{};
++        for (int dx = -1; dx <= 1; ++dx) {
++          for (int dy = -1; dy <= 1; ++dy) {
++            if (inside(ix + dx, iy + dy)) {
++              neighbors[3 * (dx + 1) + dy + 1] = low_[index(ix + dx, iy + dy)];
++            }
++          }
++        }
++        const int cell = index(ix, iy);
++        auto & ramp = ramps_[cell];
++        auto & platform = platforms_[cell];
++        // Shrink only where the whole surface is curved or ends at a transition.
++        for (const auto & region : regions_) {
++          const bool corner = region[1] - region[0] == 1 && region[3] - region[2] == 1;
++          const auto plane = fitRegion(neighbors, region, corner);
++          if (!plane.valid) {continue;}
++          auto & surface = std::hypot(plane.gx, plane.gy) >= min_slope_ ? ramp : platform;
++          if (!surface.valid) {surface = plane;}
++          if (ramp.valid && platform.valid) {break;}
++        }
++      }
++    }
++    // Accept a level landing only where an already supported ramp approaches
++    // its height at this cell. An isolated flat top remains an obstacle.
++    for (int ix = 0; ix < width_; ++ix) {
++      for (int iy = 0; iy < width_; ++iy) {
++        const int cell = index(ix, iy);
++        auto & platform = platforms_[cell];
++        if (platform.valid && !connectedToRamp(ix, iy)) {platform.valid = false;}
++      }
++    }
++  }
++
++  std::optional<double> elevationAboveSupport(int ix, int iy, double x, double y, double z) const
++  {
++    if (!enabled() || !inside(ix, iy)) {return std::nullopt;}
++    const int cell = index(ix, iy);
++    const auto & ramp = ramps_[cell];
++    const auto & platform = platforms_[cell];
++    if (!ramp.valid && !platform.valid) {return std::nullopt;}
++    const auto matches = [&](const Plane & plane) {
++      return plane.valid && std::abs(z - plane.height(x, y)) <= residual_;
++    };
++    if (matches(ramp) || matches(platform)) {return 0.0;}
++    const double height = ramp.valid && platform.valid ?
++      std::min(ramp.height(x, y), platform.height(x, y)) :
++      (ramp.valid ? ramp : platform).height(x, y);
++    const double elevation = z - height;
++    // Retain the original drop/obstacle policy for points below the support.
++    if (elevation < -residual_) {return std::nullopt;}
++    return std::max(0.0, elevation);
++  }
++
++private:
++  struct Sample { double x{}, y{}, z{}; bool valid{}; };
++  struct Plane {
++    double x{}, y{}, z{}, gx{}, gy{};
++    bool valid{};
++    double height(double px, double py) const {return z + gx * (px - x) + gy * (py - y);}
++  };
++  static constexpr double residual_ = 0.035;
++  static constexpr double min_slope_ = 0.08;
++  // Inclusive crop in a 3x3 patch, always retaining the point's own cell.
++  static constexpr std::array<std::array<int, 4>, 9> regions_{{
++    {0, 2, 0, 2}, {0, 1, 0, 2}, {1, 2, 0, 2}, {0, 2, 0, 1}, {0, 2, 1, 2},
++    {0, 1, 0, 1}, {0, 1, 1, 2}, {1, 2, 0, 1}, {1, 2, 1, 2}}};
++
++  Plane fitRegion(
++    const std::array<Sample, 9> & points, const std::array<int, 4> & region, bool corner) const
++  {
++    Plane plane;
++    int count = 0;
++    const auto selected = [&](int i) {
++      return i / 3 >= region[0] && i / 3 <= region[1] &&
++             i % 3 >= region[2] && i % 3 <= region[3] && points[i].valid;
++    };
++    for (int i = 0; i < 9; ++i) {
++      if (!selected(i)) {continue;}
++      ++count;
++      plane.x += points[i].x;
++      plane.y += points[i].y;
++      plane.z += points[i].z;
++    }
++    if (count < (corner ? 4 : 5)) {return {};}
++    plane.x /= count;
++    plane.y /= count;
++    plane.z /= count;
++    double xx = 0.0, xy = 0.0, yy = 0.0, xz = 0.0, yz = 0.0;
++    for (int i = 0; i < 9; ++i) {
++      if (!selected(i)) {continue;}
++      const double x = points[i].x - plane.x;
++      const double y = points[i].y - plane.y;
++      const double z = points[i].z - plane.z;
++      xx += x * x; xy += x * y; yy += y * y; xz += x * z; yz += y * z;
++    }
++    const double det = xx * yy - xy * xy;
++    if (det <= 0.0002) {return {};}
++    plane.gx = (yy * xz - xy * yz) / det;
++    plane.gy = (xx * yz - xy * xz) / det;
++    const double gradient = std::hypot(plane.gx, plane.gy);
++    if (gradient > max_gradient_) {return {};}
++    int supporting_cells = 0;
++    for (int i = 0; i < 9; ++i) {
++      const auto & sample = points[i];
++      if (!sample.valid) {continue;}
++      const double dz = sample.z - plane.height(sample.x, sample.y);
++      if (std::abs(dz) <= residual_) {
++        ++supporting_cells;
++        continue;
++      }
++      if (selected(i)) {return {};}
++      if (dz >= 0.0) {continue;}
++      // Avoid extrapolating a plane down through the other side of a crest.
++      // A lower sample outside the fit must still have a physically gradual
++      // approach from at least one adjacent sample that supports the plane.
++      bool continuous = false;
++      for (int j = 0; j < 9; ++j) {
++        if (!selected(j) || std::abs(i / 3 - j / 3) + std::abs(i % 3 - j % 3) != 1) {
++          continue;
++        }
++        const auto & neighbor = points[j];
++        const double spacing = std::hypot(sample.x - neighbor.x, sample.y - neighbor.y);
++        continuous |= neighbor.z - sample.z <= max_gradient_ * spacing + 0.01;
++      }
++      if (!continuous) {return {};}
++      ++supporting_cells;
++    }
++    if (supporting_cells < 5) {return {};}
++    plane.valid = true;
++    return plane;
++  }
++
++  bool connectedToRamp(int ix, int iy) const
++  {
++    const auto & landing = low_[index(ix, iy)];
++    static constexpr std::array<std::array<int, 2>, 4> adjacent{{
++      {-1, 0}, {1, 0}, {0, -1}, {0, 1}}};
++    for (const auto & direction : adjacent) {
++      const int x = ix + direction[0], y = iy + direction[1];
++      if (!inside(x, y)) {continue;}
++      const int cell = index(x, y);
++      const auto & ramp = ramps_[cell];
++      if (!ramp.valid) {continue;}
++      const auto & neighbor = low_[cell];
++      const double height_change = std::abs(landing.z - neighbor.z);
++      const double spacing = std::hypot(landing.x - neighbor.x, landing.y - neighbor.y);
++      const double predicted = ramp.height(landing.x, landing.y);
++      if (height_change >= 0.015 && height_change <= max_gradient_ * spacing + 0.01 &&
++        std::abs(landing.z - predicted) <= residual_)
++      {
++        return true;
++      }
++    }
++    return false;
++  }
++
++  bool enabled() const {return max_gradient_ > 0.0;}
++  bool inside(int x, int y) const {return x >= 0 && y >= 0 && x < width_ && y < width_;}
++  int index(int x, int y) const {return x * width_ + y;}
++  int width_;
++  double max_gradient_{};
++  std::vector<Sample> low_;
++  std::vector<Plane> ramps_, platforms_;
++};
++}  // namespace terrain_analysis
+diff --git a/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground.hpp b/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..c412ce560bcb20f8832aca419cf028d5fd58f7b3
+--- /dev/null
++++ b/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground.hpp
+@@ -0,0 +1,415 @@
++#pragma once
++
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <fstream>
++#include <limits>
++#include <optional>
++#include <stdexcept>
++#include <string>
++#include <utility>
++#include <vector>
++
++namespace terrain_analysis
++{
++// Surveyed support heights are in the map frame. Masked cells cover static
++// obstacles and their edges. Height registration still requires current,
++// observed low returns in the LiDAR cloud.
++class SurveyedGround
++{
++public:
++  explicit SurveyedGround(const std::string & file, bool align_xy = false)
++  : align_xy_(align_xy)
++  {
++    std::ifstream in(file,std::ios::binary);
++    std::string version;
++    in >> version >> width_ >> height_ >> x0_ >> y0_ >> step_;
++    if (!in || version!="RMSIM_SURVEY_V2" || width_<5 || width_>2048 || height_<5 || height_>2048 ||
++      !std::isfinite(x0_) || !std::isfinite(y0_) || !std::isfinite(step_) ||
++      step_<.02 || step_>.20 || in.get()!='\n') {throw std::runtime_error("Invalid surveyed ground header");}
++    heights_.resize(static_cast<size_t>(width_)*height_);
++    if (!in.read(reinterpret_cast<char *>(heights_.data()),heights_.size()*sizeof(float))) {
++      throw std::runtime_error("Truncated surveyed ground heights");
++    }
++    interior_.resize(heights_.size());
++    if (!in.read(reinterpret_cast<char *>(interior_.data()),interior_.size())) {
++      throw std::runtime_error("Truncated surveyed ground boundary mask");
++    }
++    patches_.resize(heights_.size());
++    for (int y=1;y<height_-2;++y) {
++      for (int x=1;x<width_-2;++x) {
++        auto & patch=patches_[y*width_+x];
++        const auto full=measure(x-1,y-1,4);
++        patch.flat_span=full.second;
++        patch.flat_grade=full.first;
++        // A wall beside a ramp can invalidate one side of the reference.
++        // Every candidate still contains all four interpolation vertices
++        // and a continuous third row and column on the same support face.
++        for (int j=-1;j<=0;++j) for (int i=-1;i<=0;++i) {
++          patch.face_grade=std::min(patch.face_grade,measure(x+i,y+j,3).first);
++        }
++      }
++    }
++  }
++
++  template<class Points,class MapPosition,class Scan=Points>
++  size_t refine(Points & points,double sensor_x,double sensor_y,double max_grade,MapPosition to_map,
++    const Scan * same_stamp_scan=nullptr) const
++  {
++    if (!(max_grade>0)) {return 0;}
++    std::vector<std::pair<int,double>> samples;
++    for (const auto & p : points) {
++      if (!(p.intensity>=0 && p.intensity<.035) || std::hypot(p.x-sensor_x,p.y-sensor_y)>3.) {continue;}
++      const auto xyz=to_map(p);
++      const auto h=height(xyz[0],xyz[1],max_grade,true);
++      if (h && std::abs(xyz[2]-*h)<.45) {
++        const int col=static_cast<int>((xyz[0]-x0_)/step_);
++        const int row=static_cast<int>((xyz[1]-y0_)/step_);
++        samples.emplace_back(row*width_+col,xyz[2]-*h);
++      }
++    }
++    // A dense scan of a single patch must not set the height of the whole cloud.
++    std::sort(samples.begin(),samples.end());
++    std::vector<double> offsets;
++    std::vector<std::array<double,3>> anchors;
++    for (size_t i=0;i<samples.size();) {
++      size_t end=i+1;
++      while (end<samples.size() && samples[end].first==samples[i].first) {++end;}
++      const auto & sample=samples[i+(end-i)/2];
++      offsets.push_back(sample.second);
++      anchors.push_back({x0_+(sample.first%width_)*step_, y0_+(sample.first/width_)*step_, sample.second});
++      i=end;
++    }
++    if (offsets.size()<25) {return 0;}
++    const auto mid=offsets.begin()+offsets.size()/2;
++    std::nth_element(offsets.begin(),mid,offsets.end());
++    const double bias=*mid;
++    const auto inliers=std::count_if(offsets.begin(),offsets.end(),
++      [bias](double v){return std::abs(v-bias)<.032;});
++    if (static_cast<size_t>(inliers)*3<offsets.size()*2) {return 0;}
++    // Fit a bounded attitude residual to independent flat support cells.
++    // Use the median alone when the anchors occupy a line or the held-out
++    // cells do not confirm a better fit.
++    double mx=0,my=0,mz=0,weight=0;
++    for (size_t i=0;i<anchors.size();++i) {
++      const auto & a=anchors[i];
++      if (i%3==0 || std::abs(a[2]-bias)>.065) {continue;}
++      mx+=a[0];my+=a[1];mz+=a[2];++weight;
++    }
++    double gx=0,gy=0,intercept=bias;
++    if (weight>=24) {
++      mx/=weight;my/=weight;mz/=weight;
++      double xx=0,xy=0,yy=0,xz=0,yz=0;
++      for (size_t i=0;i<anchors.size();++i) {
++        const auto & a=anchors[i];
++        if (i%3==0 || std::abs(a[2]-bias)>.065) {continue;}
++        const double x=a[0]-mx,y=a[1]-my,z=a[2]-mz;
++        xx+=x*x;xy+=x*y;yy+=y*y;xz+=x*z;yz+=y*z;
++      }
++      const double det=xx*yy-xy*xy;
++      if (det>.015*weight*(xx+yy)) {
++        const double sx=(yy*xz-xy*yz)/det,sy=(xx*yz-xy*xz)/det;
++        double before=0,after=0;
++        for (size_t i=0;i<anchors.size();i+=3) {
++          const auto & a=anchors[i];
++          before+=std::min(.065,std::abs(a[2]-bias));
++          after+=std::min(.065,std::abs(a[2]-mz-sx*(a[0]-mx)-sy*(a[1]-my)));
++        }
++        if (std::hypot(sx,sy)<.08 && after<.8*before) {gx=sx;gy=sy;intercept=mz;}
++      }
++    }
++    const auto corrected_z=[=](const auto & xyz) {
++        return xyz[2]-bias-std::clamp(intercept-bias+gx*(xyz[0]-mx)+gy*(xyz[1]-my),-.045,.045);
++      };
++    std::array<double,2> shift{};
++    if (align_xy_) {shift=estimate_shift(points,sensor_x,sensor_y,max_grade,to_map,corrected_z);}
++    size_t count=0;
++    std::optional<std::vector<Observed>> observed;
++    for (auto & p : points) {
++      if (!(p.intensity>=.1f)) {continue;}
++      // The vertical reference is observed within three metres. A small
++      // attitude error can project a distant wall onto the floor outside
++      // that observed neighborhood, especially in a rolling scan.
++      if (std::hypot(p.x-sensor_x,p.y-sensor_y)>3.0) {continue;}
++      const auto xyz=to_map(p);
++      const auto h=height(xyz[0],xyz[1],max_grade,false);
++      if (!h) {continue;}
++      const double z=corrected_z(xyz);
++      const double residual=z-*h;
++      double dz=std::abs(residual);
++      // Require support both at the original hit and along the full shift.
++      // A point already well above the original face cannot be reclassified.
++      if ((shift[0]!=0 || shift[1]!=0) && residual<=.10) {
++        const auto aligned=shifted_height(xyz[0],xyz[1],*h,shift,max_grade);
++        if (aligned) {dz=std::abs(z-*aligned);}
++      }
++      // A bracketed same-frame plane can corroborate a missed mapped slope face.
++      if (same_stamp_scan && dz>.035 && residual>.035 && residual<=.106) {
++        const auto g=gradient(xyz[0],xyz[1]);
++        const double grade=std::hypot(g[0],g[1]);
++        if (grade>=.08 && grade<max_grade) {
++          if (!observed) {
++            observed=observations(*same_stamp_scan,sensor_x,sensor_y,max_grade,bias,to_map);
++          }
++          if (const auto verified=observedResidual(*observed,xyz,g,grade,max_grade)) {dz=*verified;}
++        }
++      }
++      if (dz<=.035) {p.intensity=static_cast<float>(dz); ++count;}
++    }
++    return count;
++  }
++private:
++  struct Observed {
++    double x,y,z,gx,gy;
++    int cell_x,cell_y;
++  };
++  struct PlaneAnchor {
++    double x,y,z,level;
++    bool held,train;
++  };
++  using Plane = std::array<double,3>;  // x and y gradients, height at the query
++  struct Patch {
++    float flat_grade{std::numeric_limits<float>::infinity()};
++    float flat_span{std::numeric_limits<float>::infinity()};
++    float face_grade{std::numeric_limits<float>::infinity()};
++  };
++  int width_{},height_{};
++  bool align_xy_{};
++  double x0_{},y0_{},step_{};
++  std::vector<float> heights_;
++  std::vector<unsigned char> interior_;
++  std::vector<Patch> patches_;
++  template<class Scan,class MapPosition>
++  std::vector<Observed> observations(const Scan & scan,double x,double y,double max_grade,double bias,
++    MapPosition to_map) const
++  {
++    std::vector<Observed> samples;
++    for (const auto & point : scan) {
++      if (!std::isfinite(point.z) || !(std::hypot(point.x-x,point.y-y)<=3.5)) {continue;}
++      const auto q=to_map(point);
++      const auto h=height(q[0],q[1],max_grade,false);
++      if (!h) {continue;}
++      const double error=q[2]-*h-bias;
++      if (!(error>=-.10 && error<=.13)) {continue;}
++      const auto g=gradient(q[0],q[1]);
++      if (!(std::hypot(g[0],g[1])>.06)) {continue;}
++      samples.push_back({q[0],q[1],q[2],g[0],g[1],
++        static_cast<int>(std::floor(q[0]/.07)),static_cast<int>(std::floor(q[1]/.07))});
++    }
++    std::stable_sort(samples.begin(),samples.end(),[](const auto & a,const auto & b) {
++      if (a.cell_x!=b.cell_x) {return a.cell_x<b.cell_x;}
++      if (a.cell_y!=b.cell_y) {return a.cell_y<b.cell_y;}
++      return a.z<b.z;
++    });
++    samples.erase(std::unique(samples.begin(),samples.end(),[](const auto & a,const auto & b) {
++      return a.cell_x==b.cell_x && a.cell_y==b.cell_y;
++    }),samples.end());
++    return samples;
++  }
++
++  static double quantile(const std::vector<double> & ordered,double fraction)
++  {
++    const double slot=(ordered.size()-1)*fraction;
++    const size_t i=static_cast<size_t>(slot);
++    return ordered[i]+(slot-i)*(ordered[std::min(i+1,ordered.size()-1)]-ordered[i]);
++  }
++
++  static std::optional<Plane> fitPlane(const std::vector<PlaneAnchor> & anchors)
++  {
++    double x=0,y=0,z=0,count=0;
++    for (const auto & a : anchors) {
++      if (!a.train) {continue;}
++      x+=a.x; y+=a.y; z+=a.z; ++count;
++    }
++    if (count<6) {return std::nullopt;}
++    x/=count; y/=count; z/=count;
++    double xx=0,xy=0,yy=0,xz=0,yz=0;
++    for (const auto & a : anchors) {
++      if (!a.train) {continue;}
++      const double dx=a.x-x,dy=a.y-y,dz=a.z-z;
++      xx+=dx*dx; xy+=dx*dy; yy+=dy*dy; xz+=dx*dz; yz+=dy*dz;
++    }
++    const double det=xx*yy-xy*xy;
++    if (det<=1e-10) {return std::nullopt;}
++    const double gx=(yy*xz-xy*yz)/det, gy=(xx*yz-xy*xz)/det;
++    return Plane{gx,gy,z-gx*x-gy*y};
++  }
++
++  static std::optional<double> observedResidual(const std::vector<Observed> & observed,
++    const std::array<double,3> & point,const std::array<double,2> & g,double grade,double max_grade)
++  {
++    const double nx=g[0]/grade,ny=g[1]/grade;
++    std::vector<PlaneAnchor> anchors;
++    std::vector<double> along,crossfall,training;
++    double closest=.55;
++    // The samples are ordered by x cell. Inspect only cells intersecting the query's x span.
++    const int first=static_cast<int>(std::floor((point[0]-.55)/.07));
++    const auto begin=std::lower_bound(observed.begin(),observed.end(),first,
++      [](const auto & sample,int cell){return sample.cell_x<cell;});
++    for (auto it=begin;it!=observed.end();++it) {
++      const auto & a=*it;
++      if (a.cell_x>std::floor((point[0]+.55)/.07)) {break;}
++      const double x=a.x-point[0],y=a.y-point[1],distance=std::hypot(x,y);
++      if (distance<.06 || distance>.55 || std::hypot(a.gx-g[0],a.gy-g[1])>.24) {continue;}
++      const bool held=(a.cell_x*7+a.cell_y*11)%3==0;
++      const double level=a.z-x*g[0]-y*g[1];
++      anchors.push_back({x,y,a.z,level,held,!held});
++      if (!held) {training.push_back(level);}
++      along.push_back(nx*x+ny*y);
++      crossfall.push_back(-ny*x+nx*y);
++      closest=std::min(closest,distance);
++    }
++    if (training.size()<6 || anchors.size()-training.size()<3 || closest>=.17) {return std::nullopt;}
++    std::sort(along.begin(),along.end());
++    std::sort(crossfall.begin(),crossfall.end());
++    if (quantile(along,.1)>-.036 || quantile(along,.9)<.036 ||
++      quantile(crossfall,.1)>-.036 || quantile(crossfall,.9)<.036) {return std::nullopt;}
++
++    std::sort(training.begin(),training.end());
++    const double level=quantile(training,.5);
++    for (auto & a : anchors) {a.train=a.train && std::abs(a.level-level)<=.045;}
++    auto plane=fitPlane(anchors);
++    if (!plane) {return std::nullopt;}
++    const auto error=[](const PlaneAnchor & a,const Plane & p) {
++      return std::abs(a.z-a.x*p[0]-a.y*p[1]-p[2]);
++    };
++    for (auto & a : anchors) {a.train=a.train && error(a,*plane)<=.024;}
++    plane=fitPlane(anchors);
++    if (!plane || std::hypot((*plane)[0]-g[0],(*plane)[1]-g[1])>.17 ||
++      std::hypot((*plane)[0],(*plane)[1])>max_grade) {return std::nullopt;}
++    std::vector<double> holdout;
++    size_t close=0;
++    for (const auto & a : anchors) {
++      if (!a.held) {continue;}
++      holdout.push_back(error(a,*plane));
++      close+=holdout.back()<=.025;
++    }
++    if (4*close<3*holdout.size()) {return std::nullopt;}
++    std::sort(holdout.begin(),holdout.end());
++    const double dz=std::abs(point[2]-(*plane)[2]);
++    if (quantile(holdout,.5)>.019 || dz>.019) {return std::nullopt;}
++    return dz;
++  }
++
++  // Call only after height() accepted the cell and its four finite vertices.
++  std::array<double,2> gradient(double x,double y) const
++  {
++    const double u=(x-x0_)/step_,v=(y-y0_)/step_;
++    const int i=static_cast<int>(u),j=static_cast<int>(v);
++    const double a=u-i,b=v-j;
++    const double z00=at(i,j),z10=at(i+1,j),z01=at(i,j+1),z11=at(i+1,j+1);
++    return {((1-b)*(z10-z00)+b*(z11-z01))/step_,
++      ((1-a)*(z01-z00)+a*(z11-z10))/step_};
++  }
++  float at(int x,int y) const {return heights_[y*width_+x];}
++  std::optional<double> shifted_height(double x,double y,double h,
++    const std::array<double,2> & shift,double max_grade) const
++  {
++    const int steps=static_cast<int>(std::ceil(2*std::hypot(shift[0],shift[1])/step_));
++    double estimate=h;
++    for (int i=1;i<=steps;++i) {
++      const double f=static_cast<double>(i)/steps;
++      const auto next=height(x+f*shift[0],y+f*shift[1],max_grade,false);
++      if (!next || std::abs(*next-h)>.075) {return std::nullopt;}
++      estimate=*next;
++    }
++    return estimate;
++  }
++
++  template<class Points,class MapPosition,class VerticalRegistration>
++  std::array<double,2> estimate_shift(const Points & points,double sensor_x,double sensor_y,
++    double max_grade,MapPosition to_map,VerticalRegistration corrected_z) const
++  {
++    struct Sample {
++      int cell;
++      double x,y,h,residual,gx,gy;
++    };
++    std::vector<Sample> samples;
++    const double d=step_*.25;
++    for (const auto & p : points) {
++      if (!(p.intensity>=0 && p.intensity<.035) || std::hypot(p.x-sensor_x,p.y-sensor_y)>3.) {continue;}
++      const auto xyz=to_map(p);
++      const double x=xyz[0],y=xyz[1];
++      const auto h=height(x,y,max_grade,false);
++      if (!h) {continue;}
++      const double residual=corrected_z(xyz)-*h;
++      if (!(std::abs(residual)<.15)) {continue;}
++      const auto east=height(x+d,y,max_grade,false),west=height(x-d,y,max_grade,false);
++      const auto north=height(x,y+d,max_grade,false),south=height(x,y-d,max_grade,false);
++      if (!east || !west || !north || !south) {continue;}
++      const double gx=(*east-*west)/(2*d),gy=(*north-*south)/(2*d);
++      if (std::hypot(gx,gy)<.08) {continue;}
++      const int col=static_cast<int>((x-x0_)/step_),row=static_cast<int>((y-y0_)/step_);
++      samples.push_back({row*width_+col,x,y,*h,residual,gx,gy});
++    }
++    std::sort(samples.begin(),samples.end(),[](const auto & a,const auto & b) {
++        return std::pair{a.cell,a.residual}<std::pair{b.cell,b.residual};
++      });
++    size_t cells=0;
++    for (size_t start=0;start<samples.size();) {
++      size_t end=start+1;
++      while (end<samples.size() && samples[end].cell==samples[start].cell) {++end;}
++      samples[cells++]=samples[start+(end-start)/2];
++      start=end;
++    }
++    if (cells<18) {return {};}
++    // Ridge regularization suppresses the unobserved component on single ramps.
++    double xx=0,xy=0,yy=0,xz=0,yz=0;
++    for (size_t i=0;i<cells;++i) {
++      if (i%3==0) {continue;}
++      const auto & s=samples[i];
++      xx+=s.gx*s.gx;xy+=s.gx*s.gy;yy+=s.gy*s.gy;
++      xz+=s.gx*s.residual;yz+=s.gy*s.residual;
++    }
++    const double ridge=.08*(xx+yy);
++    xx+=ridge;yy+=ridge;
++    const double det=xx*yy-xy*xy;
++    std::array<double,2> shift{(yy*xz-xy*yz)/det,(xx*yz-xy*xz)/det};
++    const double norm=std::hypot(shift[0],shift[1]);
++    if (!(norm>.01)) {return {};}
++    if (norm>.25) {shift[0]*=.25/norm;shift[1]*=.25/norm;}
++    double before=0,after=0;
++    size_t valid=0,held_out=0;
++    for (size_t i=0;i<cells;i+=3) {
++      const auto & s=samples[i];
++      const auto aligned=shifted_height(s.x,s.y,s.h,shift,max_grade);
++      const double base=std::abs(s.residual);
++      const double next=aligned ? std::abs(s.residual+s.h-*aligned) : base;
++      before+=std::min(base,.10);
++      after+=std::min(next,.10);
++      valid+=aligned.has_value();
++      ++held_out;
++    }
++    if (valid*3<held_out*2 || after>=.85*before || before-after<.002*held_out) {return {};}
++    return shift;
++  }
++
++  std::pair<float,float> measure(int x,int y,int n) const
++  {
++    const float inf=std::numeric_limits<float>::infinity();
++    float lo=inf,hi=-inf,dx=0,dy=0;
++    for (int j=0;j<n;++j) for (int i=0;i<n;++i) {
++      const float sample=at(x+i,y+j);
++      if (!std::isfinite(sample)) {return {inf,inf};}
++      lo=std::min(lo,sample); hi=std::max(hi,sample);
++      if (i+1<n) {dx=std::max(dx,std::abs(sample-at(x+i+1,y+j)));}
++      if (j+1<n) {dy=std::max(dy,std::abs(sample-at(x+i,y+j+1)));}
++    }
++    return {static_cast<float>(std::hypot(dx,dy)/step_),hi-lo};
++  }
++  std::optional<double> height(double x,double y,double grade,bool flat) const
++  {
++    const double u=(x-x0_)/step_,v=(y-y0_)/step_;
++    if (!(u>=1 && v>=1 && u<width_-2 && v<height_-2)) {return std::nullopt;}
++    const int i=static_cast<int>(u),j=static_cast<int>(v);
++    // The wall margin applies at the hit itself. Neighboring samples define
++    // the shape of the surface and do not add another margin around the hit.
++    if (!interior_[static_cast<int>(v+.5)*width_+static_cast<int>(u+.5)]) {return std::nullopt;}
++    const auto & patch=patches_[j*width_+i];
++    if (flat ? (patch.flat_grade>grade || patch.flat_span>.045) : patch.face_grade>grade) {return std::nullopt;}
++    const double fx=u-i,fy=v-j;
++    return (1-fy)*((1-fx)*at(i,j)+fx*at(i+1,j))+fy*((1-fx)*at(i,j+1)+fx*at(i+1,j+1));
++  }
++};
++}  // namespace terrain_analysis
+diff --git a/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground_ros.hpp b/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground_ros.hpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..1611da8a5f73629ea01b9be7cd73b943fa89fb81
+--- /dev/null
++++ b/ros2_ws/src/terrain_analysis/include/terrain_analysis/surveyed_ground_ros.hpp
+@@ -0,0 +1,52 @@
++#pragma once
++
++#include "terrain_analysis/surveyed_ground.hpp"
++#include "rclcpp/rclcpp.hpp"
++#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
++#include "tf2_ros/transform_listener.h"
++#include "tf2_ros/buffer.h"
++
++namespace terrain_analysis
++{
++class SurveyedGroundFilter
++{
++public:
++  explicit SurveyedGroundFilter(const rclcpp::Node::SharedPtr & node)
++  : node_(node)
++  {
++    const auto file=node->declare_parameter<std::string>("surveyed_ground_file","");
++    frame_=node->declare_parameter<std::string>("surveyed_ground_frame","");
++    const auto align_xy=node->declare_parameter<bool>("surveyed_ground_align_xy",false);
++    observed_plane_=node->declare_parameter<bool>("surveyed_ground_observed_plane",false);
++    if (file.empty()) {return;}
++    if (frame_.empty()) {throw std::invalid_argument("Missing surveyed ground frame");}
++    ground_.emplace(file,align_xy);
++    buffer_=std::make_shared<tf2_ros::Buffer>(node->get_clock());
++    listener_=std::make_shared<tf2_ros::TransformListener>(*buffer_);
++    RCLCPP_INFO(node_->get_logger(),"Loaded surveyed support in %s",frame_.c_str());
++  }
++  template<class Points,class Scan=Points>
++  void apply(Points & points,const std::string & odom,const builtin_interfaces::msg::Time & stamp,
++    double x,double y,double grade,const Scan * same_stamp_scan=nullptr)
++  {
++    if (!ground_) {return;}
++    tf2::Transform transform;
++    try {
++      tf2::fromMsg(buffer_->lookupTransform(frame_,odom,rclcpp::Time(stamp),rclcpp::Duration(0,0)).transform,transform);
++    } catch (const tf2::TransformException &) {return;}
++    const auto count=ground_->refine(points,x,y,grade,[&](const auto & p){
++      const auto q=transform*tf2::Vector3(p.x,p.y,p.z);
++      return std::array<double,3>{q.x(),q.y(),q.z()};
++    },observed_plane_ ? same_stamp_scan : nullptr);
++    if (count) {RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),1000,
++      "Reclassified %zu obstacle-height returns on surveyed ground",count);}
++  }
++private:
++  rclcpp::Node::SharedPtr node_;
++  std::optional<SurveyedGround> ground_;
++  bool observed_plane_{};
++  std::string frame_;
++  std::shared_ptr<tf2_ros::Buffer> buffer_;
++  std::shared_ptr<tf2_ros::TransformListener> listener_;
++};
++}  // namespace terrain_analysis
+diff --git a/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp b/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
+index f47bd7821ce826760ae2ab0e2eb85269ae7a2590..e6f17987ce9057eef20cb30a56ccc6bbd7ce1d6b 100644
+--- a/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
++++ b/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
+@@ -14,8 +14,15 @@
+ //
+ // Original work based on sensor_scan_generation package by Hongbiao Zhu.
+ 
++#include <algorithm>
+ #include <math.h>
++#include <stdexcept>
+ 
++#include "terrain_analysis/slope_ground.hpp"
++#include "terrain_analysis/surveyed_ground_ros.hpp"
++#include "message_filters/subscriber.h"
++#include "message_filters/sync_policies/exact_time.h"
++#include "message_filters/synchronizer.h"
+ #include "nav_msgs/msg/odometry.hpp"
+ #include "pcl/filters/voxel_grid.h"
+ #include "pcl/point_cloud.h"
+@@ -84,6 +91,7 @@ int planarVoxelEdge[kPlanarVoxelNum] = {0};
+ int planarVoxelDyObs[kPlanarVoxelNum] = {0};
+ std::vector<float> planarPointElev[kPlanarVoxelNum];
+ 
++builtin_interfaces::msg::Time laserCloudStamp;
+ double laserCloudTime = 0;
+ bool newlaserCloud = false;
+ 
+@@ -139,7 +147,8 @@ void odometryHandler(const nav_msgs::msg::Odometry::ConstSharedPtr odom)
+ // registered laser scan callback function
+ void laserCloudHandler(const sensor_msgs::msg::PointCloud2::ConstSharedPtr laserCloud2)
+ {
+-  laserCloudTime = rclcpp::Time(laserCloud2->header.stamp).seconds();
++  laserCloudStamp = laserCloud2->header.stamp;
++  laserCloudTime = rclcpp::Time(laserCloudStamp).seconds();
+   if (!systemInited) {
+     systemInitTime = laserCloudTime;
+     systemInited = true;
+@@ -197,7 +206,14 @@ int main(int argc, char ** argv)
+   rclcpp::init(argc, argv);
+   auto nh = rclcpp::Node::make_shared("terrainAnalysis");
+   const auto odom_frame = nh->declare_parameter<std::string>("odom_frame", "odom");
++  terrain_analysis::SurveyedGroundFilter surveyed_ground(nh);
+ 
++  const double max_slope_deg = nh->declare_parameter<double>("maxPassableSlopeDeg", 0.0);
++  if (!std::isfinite(max_slope_deg) || max_slope_deg < 0.0 || max_slope_deg > 45.0) {
++    throw std::invalid_argument("maxPassableSlopeDeg must be between 0 and 45");
++  }
++  const double max_gradient = std::tan(max_slope_deg * M_PI / 180.0);
++  terrain_analysis::SlopeGround slope_ground(planarVoxelWidth);
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+   nh->declare_parameter<double>("decayTime", decayTime);
+   nh->declare_parameter<double>("noDecayDis", noDecayDis);
+@@ -252,11 +268,19 @@ int main(int argc, char ** argv)
+   nh->get_parameter("maxRelZ", maxRelZ);
+   nh->get_parameter("disRatioZ", disRatioZ);
+ 
+-  auto subOdometry =
+-    nh->create_subscription<nav_msgs::msg::Odometry>("lidar_odometry", 5, odometryHandler);
+-
+-  auto subLaserCloud =
+-    nh->create_subscription<sensor_msgs::msg::PointCloud2>("registered_scan", 5, laserCloudHandler);
++  // Both messages describe the same Point-LIO scan. DDS can deliver either
++  // first. Using the previous pose changes the terrain crop and view angles
++  // during a turn even if all scans and odometry samples are received.
++  using TerrainInputs = message_filters::sync_policies::ExactTime<
++    nav_msgs::msg::Odometry, sensor_msgs::msg::PointCloud2>;
++  message_filters::Subscriber<nav_msgs::msg::Odometry> odometry(nh.get(), "lidar_odometry");
++  message_filters::Subscriber<sensor_msgs::msg::PointCloud2> cloud(nh.get(), "registered_scan");
++  message_filters::Synchronizer<TerrainInputs> inputs(TerrainInputs(8), odometry, cloud);
++  inputs.registerCallback(+[](const nav_msgs::msg::Odometry::ConstSharedPtr & pose,
++      const sensor_msgs::msg::PointCloud2::ConstSharedPtr & scan) {
++    odometryHandler(pose);
++    laserCloudHandler(scan);
++  });
+ 
+   auto subJoystick = nh->create_subscription<sensor_msgs::msg::Joy>("joy", 5, joystickHandler);
+ 
+@@ -365,7 +389,21 @@ int main(int argc, char ** argv)
+         }
+       }
+ 
++      const double oldest_return = laserCloudTime - systemInitTime - decayTime;
++      const double persistent_radius_sq = noDecayDis * noDecayDis;
+       for (int ind = 0; ind < kTerrainVoxelNum; ind++) {
++        // Apply the lifetime before downsampling or using the cache. Otherwise
++        // expired points affect the height fit until this voxel is refreshed,
++        // and the voxel filter can blend expired positions into fresh samples.
++        auto & voxel = *terrainVoxelCloud[ind];
++        const auto expired = [&](const pcl::PointXYZI & sample) {
++          if (sample.intensity > oldest_return) {return false;}
++          const double dx = sample.x - vehicleX;
++          const double dy = sample.y - vehicleY;
++          return noDecayDis <= 0.0 || dx * dx + dy * dy >= persistent_radius_sq;
++        };
++        const auto first_expired = std::remove_if(voxel.begin(), voxel.end(), expired);
++        voxel.erase(first_expired, voxel.end());
+         if (
+           terrainVoxelUpdateNum[ind] >= voxelPointUpdateThre ||
+           laserCloudTime - systemInitTime - terrainVoxelUpdateTime[ind] >= voxelTimeUpdateThre ||
+@@ -405,6 +443,7 @@ int main(int argc, char ** argv)
+       }
+ 
+       // estimate ground and compute elevation for each point
++      slope_ground.reset(max_gradient);
+       for (int i = 0; i < kPlanarVoxelNum; i++) {
+         planarVoxelElev[i] = 0;
+         planarVoxelEdge[i] = 0;
+@@ -425,6 +464,7 @@ int main(int argc, char ** argv)
+         if (point.y - vehicleY + planarVoxelSize / 2 < 0) indY--;
+ 
+         if (point.z - vehicleZ > minRelZ && point.z - vehicleZ < maxRelZ) {
++          slope_ground.observe(indX, indY, point.x, point.y, point.z);
+           for (int dX = -1; dX <= 1; dX++) {
+             for (int dY = -1; dY <= 1; dY++) {
+               if (
+@@ -542,6 +582,8 @@ int main(int argc, char ** argv)
+         }
+       }
+ 
++      slope_ground.fit();
++      int slope_obstacles_removed = 0;
+       terrainCloudElev->clear();
+       int terrainCloudElevSize = 0;
+       for (int i = 0; i < terrainCloudSize; i++) {
+@@ -562,6 +604,12 @@ int main(int argc, char ** argv)
+               planarVoxelDyObs[planarVoxelWidth * indX + indY] < minDyObsPointNum || !clearDyObs) {
+               float disZ = point.z - planarVoxelElev[planarVoxelWidth * indX + indY];
+               if (considerDrop) disZ = fabs(disZ);
++              if (const auto elevation = slope_ground.elevationAboveSupport(
++                  indX, indY, point.x, point.y, point.z)) {
++                const float relative = static_cast<float>(*elevation);
++                slope_obstacles_removed += disZ >= 0.10f && relative < 0.10f;
++                disZ = std::min(disZ, relative);
++              }
+               int planarPointElevSize = planarPointElev[planarVoxelWidth * indX + indY].size();
+               if (disZ >= 0 && disZ < vehicleHeight && planarPointElevSize >= minBlockPointNum) {
+                 terrainCloudElev->push_back(point);
+@@ -574,6 +622,9 @@ int main(int argc, char ** argv)
+         }
+       }
+ 
++      surveyed_ground.apply(terrainCloudElev->points, odom_frame, laserCloudStamp,
++        vehicleX, vehicleY, max_gradient, &laserCloud->points);
++
+       if (noDataObstacle && noDataInited == 2) {
+         for (int i = 0; i < kPlanarVoxelNum; i++) {
+           int planarPointElevSize = planarPointElev[i].size();
+@@ -637,9 +688,13 @@ int main(int argc, char ** argv)
+       clearingCloud = false;
+ 
+       // publish points with elevation
++      if (slope_obstacles_removed > 0) {
++        RCLCPP_INFO_THROTTLE(nh->get_logger(), *nh->get_clock(), 1000,
++          "Supported slope returns below obstacle threshold: %d", slope_obstacles_removed);
++      }
+       sensor_msgs::msg::PointCloud2 terrainCloud2;
+       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
+-      terrainCloud2.header.stamp = rclcpp::Time(static_cast<uint64_t>(laserCloudTime * 1e9));
++      terrainCloud2.header.stamp = laserCloudStamp;
+       terrainCloud2.header.frame_id = odom_frame;
+       pubLaserCloud->publish(terrainCloud2);
+     }
+diff --git a/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp b/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..dc402808b514e64d0b92178ebb71a35e506d95b0
+--- /dev/null
++++ b/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp
+@@ -0,0 +1,118 @@
++#include "terrain_analysis/slope_ground.hpp"
++#include <cmath>
++#include <iostream>
++
++int main()
++{
++  terrain_analysis::SlopeGround ground(5);
++  const auto surface = [&](int ix, int iy, double x, double y, double z) {
++    const auto elevation = ground.elevationAboveSupport(ix, iy, x, y, z);
++    return elevation && *elevation < 0.035;
++  };
++  const double max_gradient = std::tan(35.0 * std::acos(-1.0) / 180.0);
++  for (double gradient : {.65, -.65}) {
++    ground.reset(max_gradient);
++    for (int x = 0; x < 5; ++x) {
++      for (int y = 0; y < 5; ++y) {
++        double xx = .2*x-.075, yy = .2*y+.04;
++        double z = gradient*xx + .1*yy;
++        ground.observe(x,y,xx,yy,z+.16);
++        ground.observe(x,y,xx,yy,z);
++      }
++    }
++    ground.fit();
++    if (!surface(2,2,.46,.47,gradient*.46+.1*.47) ||
++         surface(2,2,.46,.47,gradient*.46+.1*.47+.15)) {return 1;}
++  }
++  std::cout << "PASS uphill downhill and obstacle over ramp\n";
++  for (int kind = 0; kind < 3; ++kind) {
++    ground.reset(max_gradient);
++    for (int x = 0; x < 5; ++x) {
++      for (int y = 0; y < 5; ++y) {
++        double xx = .2*x, yy = .2*y;
++        double z = kind==0 ? xx : kind==1 && x>=2 ? .16 : 0.;
++        if (kind != 2 || y==2) {ground.observe(x,y,xx,yy,z);}
++      }
++    }
++    ground.fit();
++    const double z = kind==0 ? .4 : kind==1 ? .16 : 0.;
++    if (surface(2,2,.4,.4,z)) {return 1;}
++  }
++  std::cout << "PASS steep face, step and collinear returns remain unclassified\n";
++
++  ground.reset(max_gradient);
++  for (int x = 0; x < 5; ++x) {
++    const double px = .2 * x;
++    const double z = px <= .4 ? .6 * px : .24 - .45 * (px - .4);
++    for (int y = 0; y < 5; ++y) {
++      const double py = .2 * y;
++      ground.observe(x, y, px, py, z);
++      ground.observe(x, y, px, py, z + .12);
++    }
++  }
++  ground.fit();
++  if (!surface(2, 2, .4, .4, .24) ||
++    surface(2, 2, .4, .4, .36))
++  {
++    return 1;
++  }
++  std::cout << "PASS traversable crest and obstacle above the crest\n";
++
++
++  for (double step : {0.0, 0.12}) {
++    ground.reset(max_gradient);
++    for (int x = 0; x < 5; ++x) {
++      const double px = .2 * x;
++      const double z = x < 2 ? .38 * px : .15 + step;
++      for (int y = 0; y < 5; ++y) {
++        ground.observe(x, y, px, .2 * y, z);
++      }
++    }
++    ground.fit();
++    if (surface(2, 2, .41, .41, .15 + step) != (step == 0.0) ||
++      surface(2, 2, .41, .41, .27 + step))
++    {
++      return 1;
++    }
++  }
++  std::cout << "PASS ramp landing, raised step and protruding obstacle\n";
++
++  for (double step : {0.0, 0.14}) {
++    ground.reset(max_gradient);
++    for (int x = 0; x < 5; ++x) {
++      const double px = .2 * x;
++      const double z = x <= 2 ? 0.0 : .6 * (px - .4) + step;
++      for (int y = 0; y < 5; ++y) {
++        ground.observe(x, y, px, .2 * y, z);
++      }
++    }
++    ground.fit();
++    const auto landing = ground.elevationAboveSupport(2, 2, .305, .4, 0.0);
++    const auto raised = ground.elevationAboveSupport(2, 2, .305, .4, .14);
++    if (step == 0.0 && (!landing || *landing != 0.0 || !raised || *raised <= .10)) {
++      std::cerr << "FAIL level ground below a connected ramp\n";
++      return 1;
++    }
++    if (step > 0.0 && surface(3, 2, .6, .4, .12 + step)) {
++      std::cerr << "FAIL discontinuous raised ramp was cleared\n";
++      return 1;
++    }
++  }
++  std::cout << "PASS lower ramp landing and discontinuous boundary\n";
++
++  ground.reset(max_gradient);
++  for (int x = 0; x < 5; ++x) {
++    for (int y = 0; y < 5; ++y) {
++      ground.observe(x, y, .2 * x, .2 * y, .6 * .2 * x);
++    }
++  }
++  ground.fit();
++  const auto near_surface = ground.elevationAboveSupport(2, 2, .4, .4, .29);
++  const auto obstacle = ground.elevationAboveSupport(2, 2, .4, .4, .36);
++  if (!near_surface || *near_surface >= .10 || !obstacle || *obstacle <= .10 ||
++    ground.elevationAboveSupport(2, 2, .4, .4, .14))
++  {
++    return 1;
++  }
++  std::cout << "PASS height above support, protrusion and drop fallback\n";
++}
+diff --git a/ros2_ws/src/terrain_analysis/test/surveyed_ground_test.cpp b/ros2_ws/src/terrain_analysis/test/surveyed_ground_test.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb3e64de73ab82ab314c14b183e7d52e291520b4
+--- /dev/null
++++ b/ros2_ws/src/terrain_analysis/test/surveyed_ground_test.cpp
+@@ -0,0 +1,54 @@
++#include "terrain_analysis/surveyed_ground.hpp"
++#include <filesystem>
++#include <iostream>
++#include <stdexcept>
++
++struct Hit {double x,y,z; float intensity;};
++
++int main()
++{
++  constexpr double step=.05;
++  const auto level=[step](int x,int y) {
++    const double u=x*step;
++    const double slope=.28*std::clamp(u-.65,0.,.45);
++    const double wave=u>1.25 ? .035*std::sin(8*(u-1.25)) : 0.;
++    return float(slope+wave+(y>=32?.21:0.));
++  };
++  const auto file=std::filesystem::temp_directory_path()/"rmsim-surveyed-ground-test.bin";
++  {
++    std::ofstream out(file,std::ios::binary);
++    out<<"RMSIM_SURVEY_V2 48 48 0 0 0.05\n";
++    for(int y=0;y<48;++y) for(int x=0;x<48;++x) {
++      const float h=x>=42?std::numeric_limits<float>::quiet_NaN():level(x,y);
++      out.write(reinterpret_cast<const char *>(&h),sizeof(h));
++    }
++    for(int y=0;y<48;++y) for(int x=0;x<48;++x) {out.put(x!=38);}
++  }
++  terrain_analysis::SurveyedGround model(file.string());
++  std::filesystem::remove(file);
++  const auto transform=[](Hit p){return std::array<double,3>{p.x,p.y,p.z};};
++  std::vector<Hit> cloud;
++  constexpr double bias=.08;
++  for(int y=4;y<13;++y) for(int x=3;x<12;++x) {
++    cloud.push_back({x*step,y*step,level(x,y)+bias,.01f});
++  }
++  const size_t first=cloud.size();
++  const auto add=[&](int x,int y,double above) {
++    cloud.push_back({x*step,y*step,level(x,y)+bias+above,.17f});
++  };
++  add(17,12,0); add(32,12,0);  // Ramp and undulation.
++  add(17,12,.12); add(32,12,.20); add(24,31,0); add(43,12,0); add(38,12,0);
++  const auto original=cloud;
++  const double grade=std::tan(35*std::acos(-1.)/180.);
++  if(model.refine(cloud,0,0,grade,transform)!=2) {throw std::runtime_error("wrong correction count");}
++  for(size_t i=0;i<cloud.size();++i) {
++    const auto a=original[i], b=cloud[i];
++    if(a.x!=b.x || a.y!=b.y || a.z!=b.z) {throw std::runtime_error("point moved");}
++    const bool expected=i==first || i==first+1;
++    if((a.intensity!=b.intensity)!=expected) {throw std::runtime_error("wrong ground or obstacle classification");}
++  }
++  std::vector<Hit> repeated(80,original[0]);
++  repeated.push_back(original[first]);
++  if(model.refine(repeated,0,0,grade,transform)!=0) {throw std::runtime_error("one area set the frame offset");}
++  std::cout<<"Ramp, wave, raised obstacles, riser, masked region, unchanged geometry and sparse registration passed\n";
++}
+diff --git a/ros2_ws/src/terrain_analysis_ext/CMakeLists.txt b/ros2_ws/src/terrain_analysis_ext/CMakeLists.txt
+index f696f15595b9d1d019903ffb9ded7b0ca2b60e50..6e7d8269482e883f6cd7103cee08c75f6d756ef7 100644
+--- a/ros2_ws/src/terrain_analysis_ext/CMakeLists.txt
++++ b/ros2_ws/src/terrain_analysis_ext/CMakeLists.txt
+@@ -24,6 +24,7 @@ endif()
+ 
+ find_package(ament_cmake REQUIRED)
+ find_package(rclcpp REQUIRED)
++find_package(terrain_analysis REQUIRED)
+ find_package(std_msgs REQUIRED)
+ find_package(nav_msgs REQUIRED)
+ find_package(geometry_msgs REQUIRED)
+@@ -38,6 +39,7 @@ find_package(pcl_ros REQUIRED)
+ add_executable(terrainAnalysisExt src/terrainAnalysisExt.cpp)
+ ament_target_dependencies(
+   terrainAnalysisExt
++  terrain_analysis
+   rclcpp
+   std_msgs
+   sensor_msgs
+diff --git a/ros2_ws/src/terrain_analysis_ext/package.xml b/ros2_ws/src/terrain_analysis_ext/package.xml
+index a76b3a0da97c0b0567b15bda5e78daafc0c57dd0..ea13fcdf3dc7ecccfc957adc86235b9cf9ebfc28 100644
+--- a/ros2_ws/src/terrain_analysis_ext/package.xml
++++ b/ros2_ws/src/terrain_analysis_ext/package.xml
+@@ -8,6 +8,7 @@
+   <buildtool_depend>ament_cmake</buildtool_depend>
+ 
+   <depend>rclcpp</depend>
++  <depend>terrain_analysis</depend>
+   <depend>std_msgs</depend>
+   <depend>sensor_msgs</depend>
+   <depend>message_filters</depend>
+diff --git a/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp b/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+index 560bba3566afc372741a67bbe055267ae1929d01..da2e5c42bb8c5beb8f1964866d4ea03bc113a605 100644
+--- a/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
++++ b/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+@@ -14,9 +14,16 @@
+ //
+ // Original work based on sensor_scan_generation package by Hongbiao Zhu.
+ 
++#include <algorithm>
+ #include <math.h>
++#include <stdexcept>
+ #include <queue>
+ 
++#include "terrain_analysis/slope_ground.hpp"
++#include "terrain_analysis/surveyed_ground_ros.hpp"
++#include "message_filters/subscriber.h"
++#include "message_filters/sync_policies/exact_time.h"
++#include "message_filters/synchronizer.h"
+ #include "nav_msgs/msg/odometry.hpp"
+ #include "pcl/filters/voxel_grid.h"
+ #include "pcl/kdtree/kdtree_flann.h"
+@@ -84,7 +91,9 @@ int planarVoxelConn[kPlanarVoxelNum] = {0};
+ std::vector<float> planarPointElev[kPlanarVoxelNum];
+ std::queue<int> planarVoxelQueue;
+ 
++builtin_interfaces::msg::Time laserCloudStamp;
+ double laserCloudTime = 0;
++double localTerrainTime = -1.0;
+ bool newlaserCloud = false;
+ 
+ double systemInitTime = 0;
+@@ -114,7 +123,8 @@ void odometryHandler(const nav_msgs::msg::Odometry::ConstSharedPtr odom) {
+ // registered laser scan callback function
+ void laserCloudHandler(
+     const sensor_msgs::msg::PointCloud2::ConstSharedPtr laserCloud2) {
+-  laserCloudTime = rclcpp::Time(laserCloud2->header.stamp).seconds();
++  laserCloudStamp = laserCloud2->header.stamp;
++  laserCloudTime = rclcpp::Time(laserCloudStamp).seconds();
+ 
+   if (!systemInited) {
+     systemInitTime = laserCloudTime;
+@@ -153,6 +163,7 @@ void laserCloudHandler(
+ // local terrain cloud callback function
+ void terrainCloudLocalHandler(
+     const sensor_msgs::msg::PointCloud2::ConstSharedPtr terrainCloudLocal2) {
++  localTerrainTime = rclcpp::Time(terrainCloudLocal2->header.stamp).seconds();
+   terrainCloudLocal->clear();
+   pcl::fromROSMsg(*terrainCloudLocal2, *terrainCloudLocal);
+ }
+@@ -174,7 +185,14 @@ int main(int argc, char **argv) {
+   rclcpp::init(argc, argv);
+   auto nh = rclcpp::Node::make_shared("terrainAnalysisExt");
+   const auto odom_frame = nh->declare_parameter<std::string>("odom_frame", "odom");
++  terrain_analysis::SurveyedGroundFilter surveyed_ground(nh);
+ 
++  const double max_slope_deg = nh->declare_parameter<double>("maxPassableSlopeDeg", 0.0);
++  if (!std::isfinite(max_slope_deg) || max_slope_deg < 0.0 || max_slope_deg > 45.0) {
++    throw std::invalid_argument("maxPassableSlopeDeg must be between 0 and 45");
++  }
++  const double max_gradient = std::tan(max_slope_deg * M_PI / 180.0);
++  terrain_analysis::SlopeGround slope_ground(planarVoxelWidth);
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+   nh->declare_parameter<double>("decayTime", decayTime);
+   nh->declare_parameter<double>("noDecayDis", noDecayDis);
+@@ -211,11 +229,19 @@ int main(int argc, char **argv) {
+   nh->get_parameter("ceilingFilteringThre", ceilingFilteringThre);
+   nh->get_parameter("localTerrainMapRadius", localTerrainMapRadius);
+ 
+-  auto subOdometry = nh->create_subscription<nav_msgs::msg::Odometry>(
+-      "lidar_odometry", 5, odometryHandler);
+-
+-  auto subLaserCloud = nh->create_subscription<sensor_msgs::msg::PointCloud2>(
+-      "registered_scan", 5, laserCloudHandler);
++  // Both messages describe the same Point-LIO scan. DDS can deliver either
++  // first. Using the previous pose changes the terrain crop and view angles
++  // during a turn even if all scans and odometry samples are received.
++  using TerrainInputs = message_filters::sync_policies::ExactTime<
++    nav_msgs::msg::Odometry, sensor_msgs::msg::PointCloud2>;
++  message_filters::Subscriber<nav_msgs::msg::Odometry> odometry(nh.get(), "lidar_odometry");
++  message_filters::Subscriber<sensor_msgs::msg::PointCloud2> cloud(nh.get(), "registered_scan");
++  message_filters::Synchronizer<TerrainInputs> inputs(TerrainInputs(8), odometry, cloud);
++  inputs.registerCallback(+[](const nav_msgs::msg::Odometry::ConstSharedPtr & pose,
++      const sensor_msgs::msg::PointCloud2::ConstSharedPtr & scan) {
++    odometryHandler(pose);
++    laserCloudHandler(scan);
++  });
+ 
+   auto subJoystick =
+       nh->create_subscription<sensor_msgs::msg::Joy>("joy", 5, joystickHandler);
+@@ -344,7 +370,21 @@ int main(int argc, char **argv) {
+         }
+       }
+ 
++      const double oldest_return = laserCloudTime - systemInitTime - decayTime;
++      const double persistent_radius_sq = noDecayDis * noDecayDis;
+       for (int ind = 0; ind < kTerrainVoxelNum; ind++) {
++        // Apply the lifetime before downsampling or using the cache. Otherwise
++        // expired points affect the height fit until this voxel is refreshed,
++        // and the voxel filter can blend expired positions into fresh samples.
++        auto & voxel = *terrainVoxelCloud[ind];
++        const auto expired = [&](const pcl::PointXYZI & sample) {
++          if (sample.intensity > oldest_return) {return false;}
++          const double dx = sample.x - vehicleX;
++          const double dy = sample.y - vehicleY;
++          return noDecayDis <= 0.0 || dx * dx + dy * dy >= persistent_radius_sq;
++        };
++        const auto first_expired = std::remove_if(voxel.begin(), voxel.end(), expired);
++        voxel.erase(first_expired, voxel.end());
+         if (terrainVoxelUpdateNum[ind] >= voxelPointUpdateThre ||
+             laserCloudTime - systemInitTime - terrainVoxelUpdateTime[ind] >=
+                 voxelTimeUpdateThre ||
+@@ -387,6 +427,7 @@ int main(int argc, char **argv) {
+       }
+ 
+       // estimate ground and compute elevation for each point
++      slope_ground.reset(max_gradient);
+       for (int i = 0; i < kPlanarVoxelNum; i++) {
+         planarVoxelElev[i] = 0;
+         planarVoxelConn[i] = 0;
+@@ -414,6 +455,7 @@ int main(int argc, char **argv) {
+           if (point.y - vehicleY + planarVoxelSize / 2 < 0)
+             indY--;
+ 
++          slope_ground.observe(indX, indY, point.x, point.y, point.z);
+           for (int dX = -1; dX <= 1; dX++) {
+             for (int dY = -1; dY <= 1; dY++) {
+               if (indX + dX >= 0 && indX + dX < planarVoxelWidth &&
+@@ -501,6 +543,8 @@ int main(int argc, char **argv) {
+       }
+ 
+       // compute terrain map beyond localTerrainMapRadius
++      slope_ground.fit();
++      int slope_obstacles_removed = 0;
+       terrainCloudElev->clear();
+       int terrainCloudElevSize = 0;
+       for (int i = 0; i < terrainCloudSize; i++) {
+@@ -528,6 +572,12 @@ int main(int argc, char **argv) {
+               indY < planarVoxelWidth) {
+             int ind = planarVoxelWidth * indX + indY;
+             float disZ = fabs(point.z - planarVoxelElev[ind]);
++            if (const auto elevation = slope_ground.elevationAboveSupport(
++                indX, indY, point.x, point.y, point.z)) {
++              const float relative = static_cast<float>(*elevation);
++              slope_obstacles_removed += disZ >= 0.10f && relative < 0.10f;
++              disZ = std::min(disZ, relative);
++            }
+             if (disZ < vehicleHeight &&
+                 (planarVoxelConn[ind] == 2 || !checkTerrainConn)) {
+               terrainCloudElev->push_back(point);
+@@ -543,7 +593,9 @@ int main(int argc, char **argv) {
+       }
+ 
+       // merge in local terrain map within localTerrainMapRadius
+-      int terrainCloudLocalSize = terrainCloudLocal->points.size();
++      const auto local_age = laserCloudTime - localTerrainTime;
++      const int terrainCloudLocalSize = local_age >= 0.0 && local_age <= 0.15 ?
++        static_cast<int>(terrainCloudLocal->points.size()) : 0;
+       for (int i = 0; i < terrainCloudLocalSize; i++) {
+         point = terrainCloudLocal->points[i];
+         float dis = sqrt((point.x - vehicleX) * (point.x - vehicleX) +
+@@ -555,11 +607,17 @@ int main(int argc, char **argv) {
+ 
+       clearingCloud = false;
+ 
++      surveyed_ground.apply(terrainCloudElev->points, odom_frame, laserCloudStamp,
++        vehicleX, vehicleY, max_gradient, &laserCloud->points);
++
+       // publish points with elevation
++      if (slope_obstacles_removed > 0) {
++        RCLCPP_INFO_THROTTLE(nh->get_logger(), *nh->get_clock(), 1000,
++          "Supported slope returns below obstacle threshold: %d", slope_obstacles_removed);
++      }
+       sensor_msgs::msg::PointCloud2 terrainCloud2;
+       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
+-      terrainCloud2.header.stamp =
+-          rclcpp::Time(static_cast<uint64_t>(laserCloudTime * 1e9));
++      terrainCloud2.header.stamp = laserCloudStamp;
+       terrainCloud2.header.frame_id = odom_frame;
+       pubTerrainCloud->publish(terrainCloud2);
+     }

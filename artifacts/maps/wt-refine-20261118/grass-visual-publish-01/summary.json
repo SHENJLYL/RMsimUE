@@ -1,0 +1,29 @@
+{
+  "schema": "wt_grass_visual_publication_v1",
+  "status": "passed_offline_pending_native",
+  "utc": "2026-11-18T09:55:10.677614+00:00",
+  "baseline_definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+  "fixture_sha256": "5c35a4dc70133a0ba3e5441131de0936a1a97c707bde92e21262bff332a3f659",
+  "source_scene_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "original_foliage_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "original_seven_models_unchanged": true,
+  "all_96_source_colour_vectors_unchanged": true,
+  "hard_exclusion_bytes_unchanged": true,
+  "model_count": 10,
+  "layer_count": 16,
+  "normal_texture_count": 3,
+  "source_file_count_before": 45,
+  "source_file_count_after": 48,
+  "code_sha256": {
+    "tools/unreal/wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917",
+    "tools/unreal/verify_wt_grass.py": "ed00421fde73b212f88767b97098422948c6224da8956ee25ba438850cf3a287",
+    "tools/unreal/author_wt_grass.py": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+    "tools/maps/extract_wt_small_grass.py": "0e8a5cdbee1e95a692df026ccdf73417838e6df71660604ea6716e241f97b063",
+    "tools/maps/prepare_wt_small_grass_meshes.py": "eb10b34e4c6c8684d7dbe94bff4a40879366adc077a5feb81299d6d841cd012d",
+    "tools/maps/prepare_wt_foliage_enhancement.py": "d2c5191768a045769be5b98b0766d1c774ff1af0b2e4be361aabeb0cda56c7bc",
+    "tools/maps/prepare_wt_grass_audit_samples.py": "fe67f12652e50bdcd413f2b49d2bc29166c268bab29dece37bbd3f973d385494"
+  },
+  "native_status": "pending parent author/reload/material/three-view acceptance"
+}

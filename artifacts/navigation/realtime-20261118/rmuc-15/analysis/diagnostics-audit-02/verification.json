@@ -1,0 +1,381 @@
+{
+  "status": "diagnostic_complete_historical",
+  "release_candidate": false,
+  "acceptance_scope": "capture-enabled diagnostic audit; final default acceptance requires raw capture off",
+  "created_utc": "2026-11-18T04:48:06.216676+00:00",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+  "checks": [
+    {
+      "name": "owned_session_stopped",
+      "passed": true
+    },
+    {
+      "name": "cpu_policy_immutable_session_binding",
+      "passed": true
+    },
+    {
+      "name": "cpu_policy_current_helper_and_request",
+      "passed": true
+    },
+    {
+      "name": "cpu_policy_actual_owned_process",
+      "passed": true
+    },
+    {
+      "name": "cpu_policy_dynamic_selection_and_native_readback",
+      "passed": true
+    },
+    {
+      "name": "cpu_policy_native_calls_and_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_source_hash_command_and_time_binding",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_parent_and_child_native_decisions_match",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_preflight_is_successful_and_read_only",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_exact_dynamic_core_counts_and_arguments",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_native_ue_startup_core_count_matches",
+      "passed": true
+    },
+    {
+      "name": "worker_budget_actual_owned_child_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "runtime_identity_matches_current_inputs_at_audit",
+      "passed": true,
+      "mismatches": []
+    },
+    {
+      "name": "engine_build06_passed_same_module_profile",
+      "passed": true
+    },
+    {
+      "name": "engine_build06_matches_current_source_manifest",
+      "passed": true,
+      "source_files": 43,
+      "total_build_inputs": 45,
+      "extended_inputs": [
+        "unreal/RMSim/RMSim.uproject",
+        "tools/unreal/Build-ImportLab.ps1"
+      ]
+    },
+    {
+      "name": "all_recorded_bridge_sources_and_installed_modules_match",
+      "passed": true,
+      "module_count": 22,
+      "mismatches": []
+    },
+    {
+      "name": "both_map_file_identities_match_runtime",
+      "passed": true
+    },
+    {
+      "name": "both_native_published_maps_verified",
+      "passed": true
+    },
+    {
+      "name": "original_fourteen_navigation_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "all_thirty_two_clock_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "full_clock_window_covers_action_trace",
+      "passed": true
+    },
+    {
+      "name": "raw_capture_explicitly_enabled",
+      "passed": true
+    },
+    {
+      "name": "cloud_manifest_bound_to_action_trace_provenance_and_helpers",
+      "passed": true
+    },
+    {
+      "name": "all_eight_raw_buffers_have_matching_layout_length_and_hash",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "name": "both_endpoint_topic_targets_have_exact_stamp_buffers",
+      "passed": true
+    },
+    {
+      "name": "capture_buffer_budget_and_quality_preserved",
+      "passed": true
+    }
+  ],
+  "script_sha256": "0f564345304236da32fc07f4fcb5cd492e1bb59c41d56e4581054c036814590a",
+  "evidence": {
+    "runtime_provenance": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime-provenance.json",
+      "sha256": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297"
+    },
+    "status": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\status.json",
+      "sha256": "65a67e42187b299e9d75dd0294c668d8534ef55c949c60a3f613c47b10f54147"
+    },
+    "process_policy": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\process-policy\\verification.json",
+      "sha256": "caa2cfe4a8858471903ecf65e7003b74841b3fca7db05ea862f3d67326df47d0"
+    },
+    "actions": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\verification.json",
+      "sha256": "f30a692c87c27fc1026360419fdfb19469418806a0c60b71f56abdb9302dc57c"
+    },
+    "precision": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\precision\\verification.json",
+      "sha256": "a8e90e29feb3ac025b880bd10c69974e7b26920f3c0618fc11c1949aff2086a0"
+    },
+    "clock": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\clock\\verification.json",
+      "sha256": "56d0f33a6a3c9ea376133f83b1f1fe39d5a9e8544e4b89e746a1ca92fc77b7a3"
+    },
+    "trace": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\trace.json",
+      "sha256": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0"
+    },
+    "cloud_manifest": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\localization-clouds\\verification.json",
+      "sha256": "850606b7a6ece9d67ea743617f9fa1e8951f32322f076c12c3e843ca68938048"
+    },
+    "runtime_log": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime.log",
+      "sha256": "3fc1b118285c9c56cba97dc24ca48a5db21840958ea2712d1709a247ec30cc8d"
+    },
+    "engine_build06": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\engine-build-06\\verification.json",
+      "sha256": "f0e372711136d1c7cf1e221401215bd53a6749fd8e0df733ccafbb79078bded0"
+    }
+  },
+  "runtime_identity": {
+    "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+    "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+    "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+    "source_control_config_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9",
+    "cpu_policy_source_sha256": "c1d0a90c55f48418e962fbcaad9880f6ad01e06d191ad7879254e53612af19e7",
+    "console_source_sha256": "6b268153d8190b548b1e6994e36a8a61d7a3eae5834d8165f780f313d2ca2df1",
+    "console_config_source_sha256": "4522d474eea0af81d08788ee015fc8efc537140fef156e5f9a55208a8d996ad4"
+  },
+  "worker_budget": {
+    "declared_corelimit": 8,
+    "native_observed_cores": [
+      8
+    ],
+    "expected_worker_threads": 7,
+    "selected_cpu_set_ids": [
+      256,
+      257,
+      266,
+      267,
+      268,
+      269,
+      278,
+      279
+    ],
+    "scope": "Native Cores marker observed; worker-thread count is computed from source, not directly measured"
+  },
+  "maps": {
+    "navigation": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "metadata_sha256": "3f3eb288c8aeee8e025eb3624b6d59f730638126ff6fbc3e41a9e8c0fb9b01f6",
+      "occupancy_sha256": "eced113f0c5facce2e5f6db507784ba89b633dba0c27a412a2f0615673de4f87"
+    },
+    "localization": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml",
+      "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "metadata_sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+      "occupancy_sha256": "1e48bb4f55a8aff4524613534011f2a0e493d8385030e7d1d2562e0110d1f1ae"
+    }
+  },
+  "navigation": {
+    "status": "passed",
+    "checks": 14
+  },
+  "precision": {
+    "status": "failed",
+    "checks": 4,
+    "passed": 3,
+    "endpoint_actual_errors_m": {
+      "single_goal": 0.1297606016608601,
+      "waypoints": 0.06680729426537449
+    },
+    "tolerance_m": 0.1,
+    "original_gate_tolerance_m": 0.25
+  },
+  "clock": {
+    "status": "passed",
+    "checks": 32,
+    "wall_seconds": 90.0,
+    "mean_factor": 1.0001303488587114,
+    "rolling_factor_range": [
+      0.9977023895365399,
+      1.002221814232597
+    ],
+    "native_scene_draw_hz": 59.815600050599215,
+    "rolling_scene_draw_hz_range": [
+      58.915907837525175,
+      60.16042991611262
+    ],
+    "scope": "Measured in this diagnostic session with optional cloud observer; concurrent external commandlet was reported, so this is not a unique CPU-policy causal comparison"
+  },
+  "cloud_capture": {
+    "manifest_sha256": "850606b7a6ece9d67ea743617f9fa1e8951f32322f076c12c3e843ca68938048",
+    "records": 8,
+    "saved_raw_bytes": 126368,
+    "stats": {
+      "enabled": true,
+      "max_samples_per_topic": 12,
+      "max_buffer_bytes": 33554432,
+      "retained_buffer_bytes": 753760,
+      "peak_buffer_bytes": 830464,
+      "retained_records": 32,
+      "pinned_records": 8,
+      "endpoint_snapshots": 2,
+      "counters": {
+        "/terrain_map_ext": {
+          "received": 353,
+          "retained": 353,
+          "invalid": 0,
+          "oversize": 0,
+          "evicted_ring": 341,
+          "evicted_budget": 0,
+          "dropped_pinned_budget": 0
+        },
+        "/registered_scan": {
+          "received": 354,
+          "retained": 354,
+          "invalid": 0,
+          "oversize": 0,
+          "evicted_ring": 342,
+          "evicted_budget": 0,
+          "dropped_pinned_budget": 0
+        }
+      },
+      "memory_scope": "Raw buffers in rings and pinned endpoint snapshots; middleware-owned message memory is external"
+    },
+    "exact_target_matches": [
+      {
+        "mode": "single_goal",
+        "topic": "/terrain_map_ext",
+        "target": "amcl",
+        "exact": true,
+        "stamp_ns": 35069999217,
+        "record_id": 178,
+        "received_age_s": 0.6298477000018465
+      },
+      {
+        "mode": "single_goal",
+        "topic": "/terrain_map_ext",
+        "target": "obstacle_scan",
+        "exact": true,
+        "stamp_ns": 35669999204,
+        "record_id": 190,
+        "received_age_s": 0.04962320000049658
+      },
+      {
+        "mode": "single_goal",
+        "topic": "/registered_scan",
+        "target": "amcl",
+        "exact": true,
+        "stamp_ns": 35069999217,
+        "record_id": 177,
+        "received_age_s": 0.6431069999962347
+      },
+      {
+        "mode": "single_goal",
+        "topic": "/registered_scan",
+        "target": "obstacle_scan",
+        "exact": true,
+        "stamp_ns": 35669999204,
+        "record_id": 189,
+        "received_age_s": 0.06279619999986608
+      },
+      {
+        "mode": "waypoints",
+        "topic": "/terrain_map_ext",
+        "target": "amcl",
+        "exact": true,
+        "stamp_ns": 54274998789,
+        "record_id": 562,
+        "received_age_s": 0.5617742000031285
+      },
+      {
+        "mode": "waypoints",
+        "topic": "/terrain_map_ext",
+        "target": "obstacle_scan",
+        "exact": true,
+        "stamp_ns": 54774998777,
+        "record_id": 572,
+        "received_age_s": 0.06068470000172965
+      },
+      {
+        "mode": "waypoints",
+        "topic": "/registered_scan",
+        "target": "amcl",
+        "exact": true,
+        "stamp_ns": 54274998789,
+        "record_id": 561,
+        "received_age_s": 0.5737924999993993
+      },
+      {
+        "mode": "waypoints",
+        "topic": "/registered_scan",
+        "target": "obstacle_scan",
+        "exact": true,
+        "stamp_ns": 54774998777,
+        "record_id": 571,
+        "received_age_s": 0.07296499999938533
+      }
+    ],
+    "data_frames": [
+      "aim_sentry/odom"
+    ],
+    "scope": "Observed best-effort receipts; ring eviction is intentional. Middleware losses are not inferred from ring counters."
+  },
+  "manual_source_alignment": {
+    "manual_forward_cap_mps": 5.0,
+    "runtime_navigation_cap_mps": 3.0,
+    "aligned": false,
+    "scope": "Controlled 3m/s diagnostic; user-authorized current manual profile is 5m/s, final source alignment remains pending"
+  },
+  "validation_status": "passed_for_recorded_session",
+  "current_input_checks": [
+    {
+      "name": "source_yaml_unchanged_at_audit",
+      "passed": false
+    }
+  ],
+  "current_identity_status": "historical_source_configuration",
+  "previous_audit": {
+    "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\analysis\\diagnostics-audit-01\\verification.json",
+    "sha256": "7adb7f2b4eda7d1f971bb2e2f7ab53a3e5b08e84a7af76372085f1d0876e49f6",
+    "clarification": "Original comparison omitted two declared build inputs; current-source mismatch remains explicit and the previous audit is preserved"
+  },
+  "source_history": {
+    "recorded_session_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9",
+    "current_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10",
+    "reason": "Authorized navigation source update from 3m/s to 5m/s after this diagnostic run; the recorded run remains 3m/s"
+  },
+  "amendment_script_sha256": "f8ceba28754ae93807408e929534a8dfaf8eed8749907d27d15b3036c597826f",
+  "updated_utc": "2026-11-18T04:52:49.920051+00:00",
+  "amendment_scope": "Build manifest comparison and historical classification only; all other measurements remain from the original timestamped audit"
+}

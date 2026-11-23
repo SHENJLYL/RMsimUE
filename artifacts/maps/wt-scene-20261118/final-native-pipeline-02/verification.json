@@ -1,0 +1,38 @@
+﻿{
+    "schema":  "rmsim_final_native_pipeline_v1",
+    "status":  "failed",
+    "started_utc":  "2026-11-18T05:34:02.9144851Z",
+    "module_sha256":  "c44d2c079aeaa597be3a5a5076787f89dce1f261ca77c29da26fba08cb263e18",
+    "steps":  [
+                  {
+                      "name":  "grass_reload",
+                      "started_utc":  "2026-11-18T05:34:03.1857209Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-grass-reload-01.ps1",
+                      "arguments":  [
+
+                                    ],
+                      "status":  "passed",
+                      "exit_code":  0,
+                      "finished_utc":  "2026-11-18T05:34:16.0249989Z"
+                  },
+                  {
+                      "name":  "source_water",
+                      "started_utc":  "2026-11-18T05:34:16.0280841Z",
+                      "script":  "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\run-final-native-gate.ps1",
+                      "arguments":  [
+                                        "-Kind",
+                                        "water",
+                                        "-EvidenceName",
+                                        "water-native-01",
+                                        "-TimeoutSeconds",
+                                        600
+                                    ],
+                      "status":  "failed",
+                      "exit_code":  3,
+                      "finished_utc":  "2026-11-18T05:34:30.9211428Z"
+                  }
+              ],
+    "grass_authoring_verification_sha256":  "831ed9a2fb0bfcd5bafe5a2a81647ac1893e507302bf4100ea224f6b82f1294a",
+    "error":  "Pipeline step failed: source_water",
+    "finished_utc":  "2026-11-18T05:34:30.9281427Z"
+}

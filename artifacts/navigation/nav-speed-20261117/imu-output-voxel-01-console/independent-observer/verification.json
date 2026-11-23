@@ -1,0 +1,137 @@
+{
+  "status": "failed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "6AA6B8F64A5DEFDCB08BFBB547D7D66E",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "error_m": 0.19949023455379314,
+      "position": [
+        9.26444516810575,
+        6.4732513347525105,
+        0.02563604393046564
+      ]
+    },
+    {
+      "name": "original_planner_path",
+      "passed": true,
+      "points": 72
+    },
+    {
+      "name": "waypoint_sequence_accepted",
+      "passed": true
+    },
+    {
+      "name": "waypoint_sequence_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "missed_waypoints": [],
+      "error_m": 0.2002098483467617
+    },
+    {
+      "name": "waypoints_observed_in_order",
+      "passed": true,
+      "indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "cancel_test_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "native_action_cancelled",
+      "passed": true,
+      "status": 5
+    },
+    {
+      "name": "cancelled_vehicle_stopped",
+      "passed": false,
+      "braking_m": 0.20661640930891276,
+      "drift_m": 0.0
+    }
+  ],
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "6AA6B8F64A5DEFDCB08BFBB547D7D66E",
+      0
+    ],
+    "pids": {
+      "loam_interface": 6572,
+      "sensor_scan_generation": 33108,
+      "terrain_analysis": 600,
+      "terrain_analysis_ext": 23992,
+      "pointcloud_to_laserscan": 16524,
+      "fake_vel_transform": 23772,
+      "map_server": 5900,
+      "amcl": 26916,
+      "lifecycle_manager_localization": 3224,
+      "controller_server": 33320,
+      "planner_server": 37164,
+      "smoother_server": 27044,
+      "behavior_server": 4764,
+      "bt_navigator": 15324,
+      "waypoint_follower": 4952,
+      "velocity_smoother": 37644,
+      "lifecycle_manager_navigation": 21264
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\imu-output-voxel-01-console\\navigation\\20261117T134218Z-32992",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\artifacts\\navigation\\nav-speed-20261117\\variants\\imu-output-voxel-01.yaml",
+      "source_sha256": "a5972f12f46b8f527cbee2a6b2a47a993b1fb3d0c8bcafc271ce148019b32a63"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 1,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    8.90864116165065,
+    6.472995644133024,
+    0.030965183324912396
+  ],
+  "error": "AssertionError('cancelled_vehicle_stopped')"
+}

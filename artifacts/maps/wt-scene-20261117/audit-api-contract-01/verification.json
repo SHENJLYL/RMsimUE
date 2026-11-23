@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "scope": "python_stub_contract_only",
+  "unreal_executed": false,
+  "cases": [
+    "bool_false_plus_out_returns_None",
+    "bool_true_plus_out_returns_HitResult_and_void_break_retains_18_outputs",
+    "reject_obsolete_bool_hit_tuple",
+    "reject_bool_without_out",
+    "reject_missing_break_output",
+    "reject_inconsistent_blocking_flag"
+  ],
+  "script_sha256": "0cae92e3175e7dc8544924ddd05813e5e57c33ac4ecee3f384b8cf45667d88a7",
+  "source_evidence": "UE 5.8 PyGenUtil.cpp PackReturnValues; GameplayStatics.h BreakHitResult; KismetSystemLibrary.h LineTraceSingle"
+}

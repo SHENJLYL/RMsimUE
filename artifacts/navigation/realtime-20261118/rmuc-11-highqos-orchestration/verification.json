@@ -1,0 +1,73 @@
+{
+  "status": "failed",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos",
+  "events": [
+    {
+      "name": "console",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\environment\\Start-NavigationConsole.ps1",
+        "-Scene",
+        "rmuc2027",
+        "-NoRviz",
+        "-Offscreen",
+        "-PaceRealTime",
+        "-ControlProfile",
+        "simulation",
+        "-VerifyLidarQueries",
+        "-ProfileSensorTiming",
+        "-ProfileFrames",
+        "0",
+        "-OutputDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos"
+      ],
+      "pid": 44024,
+      "started_monotonic_s": 45659.5468755
+    },
+    {
+      "name": "clock",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\measure_console_clock.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos",
+        "--output",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos\\clock",
+        "--seconds",
+        "90.0",
+        "--ready-timeout-seconds",
+        "240.0"
+      ],
+      "pid": 39212,
+      "started_monotonic_s": 45662.5666349
+    }
+  ],
+  "script_sha256": "5fb8928588dccf3b9173f66d87b449be664cb2c5a2465acbea95846167e5c21f",
+  "keep_session_requested": false,
+  "cleanup": [
+    {
+      "name": "clock",
+      "pid": 39212,
+      "status": "terminated",
+      "taskkill_exit_code": 0,
+      "taskkill_output": "SUCCESS: The process with PID 39212 (child process of PID 18240) has been terminated.\r\n",
+      "exit_code": 1
+    },
+    {
+      "name": "console",
+      "pid": 44024,
+      "status": "already_exited",
+      "exit_code": 0
+    }
+  ],
+  "cleanup_errors": [],
+  "error": "RuntimeError('Clock did not enter measurement before action')",
+  "kept_session": false,
+  "exit_codes": {
+    "console": 0,
+    "clock": 1
+  },
+  "finished_monotonic_s": 45667.8242665
+}

@@ -17,13 +17,20 @@ def loopback_environment(environment, profile):
     root=ET.fromstring(data)
     allowed={'dds','profiles','transport_descriptors','transport_descriptor','transport_id','type',
              'interfaceWhiteList','address','participant','rtps','userTransports','useBuiltinTransports'}
+    buffers={'sendBufferSize','receiveBufferSize'}
     for element in root.iter():
-        if not element.tag.startswith('{'+NAMESPACE+'}') or element.tag.split('}',1)[1] not in allowed:
+        if not element.tag.startswith('{'+NAMESPACE+'}') or element.tag.split('}',1)[1] not in allowed|buffers:
             raise ValueError('Unsupported DDS profile element')
         if element is not root and element.tag!='{'+NAMESPACE+'}participant' and element.attrib:
             raise ValueError('Unexpected DDS profile attributes')
     counts=Counter(element.tag.split('}',1)[1] for element in root.iter())
     expected={name:1 for name in allowed};expected['transport_id']=2
+    for name in buffers:
+        if counts[name]:
+            entry=root.find(f'{{{NAMESPACE}}}profiles/{{{NAMESPACE}}}transport_descriptors/{{{NAMESPACE}}}transport_descriptor/{{{NAMESPACE}}}{name}')
+            if entry is None or not 65536 <= int(entry.text) <= 16777216:
+                raise ValueError('Invalid UDP socket buffer')
+            expected[name]=1
     if counts!=expected:raise ValueError('Unexpected or duplicated DDS profile structure')
     if root.attrib:raise ValueError('Unexpected root attributes')
     ns={'d':NAMESPACE}

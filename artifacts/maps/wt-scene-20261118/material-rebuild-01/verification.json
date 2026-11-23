@@ -1,0 +1,276 @@
+{
+  "schema": "wt_native_material_rebuild_v1",
+  "status": "passed",
+  "complete": true,
+  "source_manifest_sha256": "f0cee3b0ba9debb62f614cf89e8792fd14a3869a1f4ae01cfc2c827a53b72996",
+  "original_source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "material_script_sha256": "a03725a35d839714408a5bf5b494b9392d6175cbbd002a248ccf37c1686cc6aa",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "parents": [
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal",
+      "before_count": 27,
+      "before_sha256": "983c90568047c1555589c8ad018726756ce936d7e2c44c292e177be1e0ed5400",
+      "after_count": 16,
+      "after_sha256": "092e307736c62376b2d61466e24bc3f8eaae7173fa0decbcbbd9162b761fffac",
+      "graph": {
+        "expression_count": 16,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionCustom_1",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionCustom_1",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_1",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_5",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_8",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_10",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_12",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_17",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureObjectParameter_18",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_2",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_3",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionTextureCoordinate_5",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_4",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_7",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionVectorParameter_8",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionScalarParameter_0",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Decal.WT_Parent_Decal:MaterialExpressionScalarParameter_2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass",
+      "before_count": 27,
+      "before_sha256": "0036eab12747cfe3592a7b18b36741c24c18185e114c620dd320ccdeb4db4391",
+      "after_count": 16,
+      "after_sha256": "b3006f2f58b34ecfcd4584fa3740ffa58c4cd53546e741c738d10fd38329e9ac",
+      "graph": {
+        "expression_count": 16,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionCustom_1",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionCustom_1",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_1",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_5",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_8",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_10",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_12",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_17",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureObjectParameter_18",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_2",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_3",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionTextureCoordinate_5",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_4",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_7",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionVectorParameter_8",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionScalarParameter_0",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Glass.WT_Parent_Glass:MaterialExpressionScalarParameter_2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves",
+      "before_count": 41,
+      "before_sha256": "abb758fc55ce28fa309f0a210e8f46fd5ba71e5171235129806adcc9545c25aa",
+      "after_count": 24,
+      "after_sha256": "1246283bfb0cf40ba169e484708fcb069b73c0a491e916a368c3c851ed3b24b5",
+      "graph": {
+        "expression_count": 24,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_3",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_3",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_1",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_5",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_8",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_10",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_12",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_17",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_18",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_2",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_4",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_5",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_4",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_7",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_8",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionScalarParameter_0",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionScalarParameter_2"
+            }
+          },
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_5",
+            "inputs": {
+              "DeltaXY": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_7",
+              "DeltaZWind": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_9"
+            }
+          },
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_7",
+            "inputs": {
+              "DesiredWorld": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_3",
+              "InstanceUnitX": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_8",
+              "ReferenceWorld": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_7"
+            }
+          }
+        ],
+        "wpo": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_7",
+        "wpo_uv_channels": [
+          3,
+          4
+        ],
+        "transform_sources": [
+          "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE: 6>",
+          "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE: 6>",
+          "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_CAMERA: 4>"
+        ],
+        "wpo_custom_code": [
+          "return DesiredWorld * length(InstanceUnitX) - ReferenceWorld;",
+          "\nReferenceLocalCm = float3(DeltaXY.x, -DeltaZWind.x, DeltaXY.y) * 100.0;\n// Dagor->UE (x,z,y) reflects handedness: UE camera-right = -C*source-right.\nreturn float3(-DeltaXY.x, DeltaXY.y, -DeltaZWind.x) * 100.0;\n"
+        ]
+      }
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface",
+      "before_count": 27,
+      "before_sha256": "720e041dd204ab8af9a95f9e1697ef22573e40f4d545b163fd3f51699a190074",
+      "after_count": 16,
+      "after_sha256": "1b14883779a5fc54a441cb9599abc87d1d02621db30165813e5056f20a433003",
+      "graph": {
+        "expression_count": 16,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionCustom_1",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionCustom_1",
+            "inputs": {
+              "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_1",
+              "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_5",
+              "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_8",
+              "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_10",
+              "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_12",
+              "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_17",
+              "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureObjectParameter_18",
+              "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureCoordinate_2",
+              "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureCoordinate_3",
+              "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionTextureCoordinate_5",
+              "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionVectorParameter_4",
+              "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionVectorParameter_7",
+              "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionVectorParameter_8",
+              "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionScalarParameter_0",
+              "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionScalarParameter_2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain",
+      "before_count": 23,
+      "before_sha256": "00c681c30d41ed7505b2c165d49793dc0a15eec41307fa6a1929c41dbf9fe469",
+      "after_count": 14,
+      "after_sha256": "ed7ce66d826225ccd3c82a3217d05de5cc8cf8aba4db87822240aabe14b4c0b0",
+      "graph": {
+        "expression_count": 14,
+        "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionCustom_1",
+        "custom_inputs": [
+          {
+            "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionCustom_1",
+            "inputs": {
+              "World": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionWorldPosition_1",
+              "Macro": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_0",
+              "Index": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_4",
+              "D0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_8",
+              "D1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_12",
+              "D2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_14",
+              "D3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_16",
+              "D4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_18",
+              "D5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_20",
+              "D6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_28",
+              "D7": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_29",
+              "D8": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Terrain.WT_Terrain:MaterialExpressionTextureObjectParameter_30"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "leaf_rebuild": {
+    "first_count": 24,
+    "second_count": 24,
+    "graph": {
+      "expression_count": 24,
+      "base_color": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_8",
+      "custom_inputs": [
+        {
+          "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_8",
+          "inputs": {
+            "T0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_19",
+            "T1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_20",
+            "T2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_21",
+            "T3": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_22",
+            "T4": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_23",
+            "T5": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_24",
+            "T6": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureObjectParameter_25",
+            "UV0": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_10",
+            "UV1": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_11",
+            "UV2": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_12",
+            "Tiles": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_9",
+            "Mask": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_10",
+            "LayerWeights": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionVectorParameter_11",
+            "Family": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionScalarParameter_3",
+            "AlphaEnabled": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionScalarParameter_4"
+          }
+        },
+        {
+          "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_9",
+          "inputs": {
+            "DeltaXY": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_13",
+            "DeltaZWind": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTextureCoordinate_14"
+          }
+        },
+        {
+          "expression": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_10",
+          "inputs": {
+            "DesiredWorld": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_9",
+            "InstanceUnitX": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_11",
+            "ReferenceWorld": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionTransform_10"
+          }
+        }
+      ],
+      "wpo": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Leaves.WT_Parent_Leaves:MaterialExpressionCustom_10",
+      "wpo_uv_channels": [
+        3,
+        4
+      ],
+      "transform_sources": [
+        "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE: 6>",
+        "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_INSTANCE: 6>",
+        "<MaterialVectorCoordTransformSource.TRANSFORMSOURCE_CAMERA: 4>"
+      ],
+      "wpo_custom_code": [
+        "return DesiredWorld * length(InstanceUnitX) - ReferenceWorld;",
+        "\nReferenceLocalCm = float3(DeltaXY.x, -DeltaZWind.x, DeltaXY.y) * 100.0;\n// Dagor->UE (x,z,y) reflects handedness: UE camera-right = -C*source-right.\nreturn float3(-DeltaXY.x, DeltaXY.y, -DeltaZWind.x) * 100.0;\n"
+      ]
+    },
+    "asset_sha256": "b27dcd52cbac43f0a68d1af880e04d8185e6d247ed2f71b185adfa19be6318be"
+  },
+  "scope": "native_full_graph_replacement_and_repeat_rebuild",
+  "leaf_instances": [
+    {
+      "id": "WT_f76820634fdef0928209",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_f76820634fdef0928209.WT_f76820634fdef0928209",
+      "asset_sha256": "ea283403e9c03fd82b619d4bda95564cbbc870547be6abfab85782334932e44d"
+    },
+    {
+      "id": "WT_f5797736a4b808606ed8",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_f5797736a4b808606ed8.WT_f5797736a4b808606ed8",
+      "asset_sha256": "0e61bd1cd0e01ff197f7a686fa0cdcc7b71636009d0ab4b652c37c5e301f29bb"
+    }
+  ],
+  "finished_utc": "2026-11-18T01:22:08.213946+00:00"
+}

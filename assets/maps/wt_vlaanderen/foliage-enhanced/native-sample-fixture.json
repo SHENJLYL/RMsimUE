@@ -1,0 +1,2170 @@
+{
+  "schema": "wt_grass_native_sample_fixture_v1",
+  "status": "passed",
+  "definition_sha256": "8946b65202815cae103d290e2a356f74fc1ee0e27ef206c7746e8da2a09ce0fc",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "heightfield_sha256": "9726bdc20626819425786d0cf707eef29cbebd491935f8be9ec2cecadd5f14eb",
+  "source_height_sha256": "b6d82aa5bdb6473398f1fd07af0f67ef46da6b8705a31677b6f2f95ec4b9a1a6",
+  "world_to_weight_uv": {
+    "u": [
+      4.8828125e-06,
+      0,
+      0
+    ],
+    "v": [
+      0,
+      -4.8828125e-06,
+      1
+    ]
+  },
+  "source_weights": {
+    "WT_GrassWeights0": {
+      "file": "weights/WT_GrassWeights0.png",
+      "sha256": "2afd17c3d3edcccf49d1dd60c645dfe2bbd1260c1c0bf9546168884fafc5044e"
+    },
+    "WT_GrassWeights1": {
+      "file": "weights/WT_GrassWeights1.png",
+      "sha256": "0bd9f2f0c7f1bcefb5ed41ba33b0bb9562c537a64838d98119f4f8245c25a524"
+    },
+    "WT_GrassWeights2": {
+      "file": "weights/WT_GrassWeights2.png",
+      "sha256": "41c7b83757788a1620850555ff8ea04efcb656519a65bc7eef557dd731010c81"
+    },
+    "WT_GrassWeights3": {
+      "file": "weights/WT_GrassWeights3.png",
+      "sha256": "41cb20f63d7dbfcdcea1d074aaefb0bd4fb4efdfa21768d3f7b56832473a542b"
+    }
+  },
+  "source_sampling": "uncompressed linear RGBA; normalized UV bilinear LOD0 with clamp; source height grid vertices",
+  "byte_tolerance": 1,
+  "points": [
+    {
+      "id": "previous_gui_station_grass",
+      "ros_xy_m": [
+        1075.232351,
+        -1012.656026
+      ],
+      "world_cm": [
+        107523.2351,
+        101265.6026,
+        -29.926308592354545
+      ],
+      "source_grid_xy": [
+        2150.464702,
+        2025.312052
+      ],
+      "fractions": [
+        0.4647020000002158,
+        0.3120519999999942
+      ],
+      "corner_world_xy_cm": [
+        [
+          107500,
+          101250
+        ],
+        [
+          107550,
+          101250
+        ],
+        [
+          107500,
+          101300
+        ],
+        [
+          107550,
+          101300
+        ]
+      ],
+      "expected_grass": "zero",
+      "independent_source_footprint_witnesses": [
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1619,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.18912463994429493,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1621,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.18912463994429493,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1622,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.5414863811105979,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14535,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.9886478853770492,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14536,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.26052600079611127,
+          "buffer_m": 1.0
+        }
+      ],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        }
+      ],
+      "nonzero_layer_count": 0
+    },
+    {
+      "id": "spawn",
+      "ros_xy_m": [
+        1028,
+        -1020
+      ],
+      "world_cm": [
+        102800,
+        102000,
+        -138.0575265125504
+      ],
+      "source_grid_xy": [
+        2056.0,
+        2040.0
+      ],
+      "fractions": [
+        0.0,
+        0.0
+      ],
+      "corner_world_xy_cm": [
+        [
+          102800,
+          102000
+        ],
+        [
+          102850,
+          102000
+        ],
+        [
+          102800,
+          102050
+        ],
+        [
+          102850,
+          102050
+        ]
+      ],
+      "expected_grass": "zero",
+      "independent_source_footprint_witnesses": [
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1058,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.9878180133567304,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1061,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.9409020366075954,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1062,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.8842308602372393,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 9494,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.10307555862099073,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14556,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.5250950479490956,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14557,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.2652379596974549,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14558,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.24682230323158766,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14559,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.24682230323158766,
+          "buffer_m": 1.0
+        }
+      ],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        }
+      ],
+      "nonzero_layer_count": 0
+    },
+    {
+      "id": "near_station_grass",
+      "ros_xy_m": [
+        1084.75,
+        -1029.75
+      ],
+      "world_cm": [
+        108475.0,
+        102975.0,
+        100.05645838101778
+      ],
+      "source_grid_xy": [
+        2169.5,
+        2059.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "corner_world_xy_cm": [
+        [
+          108450,
+          102950
+        ],
+        [
+          108500,
+          102950
+        ],
+        [
+          108450,
+          103000
+        ],
+        [
+          108500,
+          103000
+        ]
+      ],
+      "expected_grass": "positive",
+      "independent_source_footprint_witnesses": [],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            16.5,
+            16.5,
+            33.0,
+            33.0
+          ],
+          "expected_corners_byte": [
+            16,
+            16,
+            33,
+            33
+          ],
+          "expected_interpolated_byte": 24.5
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            203.0,
+            200.75,
+            202.0,
+            200.0
+          ],
+          "expected_corners_byte": [
+            203,
+            201,
+            202,
+            200
+          ],
+          "expected_interpolated_byte": 201.5
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            30.5,
+            30.5,
+            61.0,
+            61.0
+          ],
+          "expected_corners_byte": [
+            30,
+            30,
+            61,
+            61
+          ],
+          "expected_interpolated_byte": 45.5
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            22.5,
+            22.5,
+            44.75,
+            44.75
+          ],
+          "expected_corners_byte": [
+            22,
+            22,
+            45,
+            45
+          ],
+          "expected_interpolated_byte": 33.5
+        }
+      ],
+      "nonzero_layer_count": 4
+    },
+    {
+      "id": "green_slope",
+      "ros_xy_m": [
+        1146.25,
+        -942.25
+      ],
+      "world_cm": [
+        114625.0,
+        94225.0,
+        357.18928816662867
+      ],
+      "source_grid_xy": [
+        2292.5,
+        1884.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "corner_world_xy_cm": [
+        [
+          114600,
+          94200
+        ],
+        [
+          114650,
+          94200
+        ],
+        [
+          114600,
+          94250
+        ],
+        [
+          114650,
+          94250
+        ]
+      ],
+      "expected_grass": "positive",
+      "independent_source_footprint_witnesses": [],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            17.25,
+            19.0,
+            56.25
+          ],
+          "expected_corners_byte": [
+            0,
+            17,
+            19,
+            56
+          ],
+          "expected_interpolated_byte": 23.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            20.0,
+            19.75,
+            59.25
+          ],
+          "expected_corners_byte": [
+            0,
+            20,
+            20,
+            59
+          ],
+          "expected_interpolated_byte": 24.75
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            20.0,
+            19.75,
+            59.25
+          ],
+          "expected_corners_byte": [
+            0,
+            20,
+            20,
+            59
+          ],
+          "expected_interpolated_byte": 24.75
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            20.0,
+            19.75,
+            59.25
+          ],
+          "expected_corners_byte": [
+            0,
+            20,
+            20,
+            59
+          ],
+          "expected_interpolated_byte": 24.75
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            55.5,
+            111.5,
+            111.75,
+            224.25
+          ],
+          "expected_corners_byte": [
+            56,
+            112,
+            112,
+            224
+          ],
+          "expected_interpolated_byte": 126.0
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            38.5,
+            77.0,
+            75.75,
+            151.75
+          ],
+          "expected_corners_byte": [
+            38,
+            77,
+            76,
+            152
+          ],
+          "expected_interpolated_byte": 85.75
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            14.5,
+            29.0,
+            30.25,
+            60.5
+          ],
+          "expected_corners_byte": [
+            14,
+            29,
+            30,
+            60
+          ],
+          "expected_interpolated_byte": 33.25
+        }
+      ],
+      "nonzero_layer_count": 7
+    },
+    {
+      "id": "hard_road_edge",
+      "ros_xy_m": [
+        1075.25,
+        -1012.75
+      ],
+      "world_cm": [
+        107525.0,
+        101275.0,
+        -30.194552529182772
+      ],
+      "source_grid_xy": [
+        2150.5,
+        2025.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "corner_world_xy_cm": [
+        [
+          107500,
+          101250
+        ],
+        [
+          107550,
+          101250
+        ],
+        [
+          107500,
+          101300
+        ],
+        [
+          107550,
+          101300
+        ]
+      ],
+      "expected_grass": "zero",
+      "independent_source_footprint_witnesses": [
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1619,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.12261665318414991,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1621,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.12261665318414991,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 1622,
+          "exact_projected_inside": false,
+          "distance_to_edge_m": 0.6160802896270376,
+          "buffer_m": 1.0
+        },
+        {
+          "category": "road_rail",
+          "source_file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+          "triangle_index_in_selected_array": 14536,
+          "exact_projected_inside": true,
+          "distance_to_edge_m": 0.1651399810195443,
+          "buffer_m": 1.0
+        }
+      ],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        }
+      ],
+      "nonzero_layer_count": 0
+    },
+    {
+      "id": "open_meadow",
+      "ros_xy_m": [
+        1163.25,
+        -1192.25
+      ],
+      "world_cm": [
+        116325.0,
+        119225.0,
+        180.81940947585267
+      ],
+      "source_grid_xy": [
+        2326.5,
+        2384.5
+      ],
+      "fractions": [
+        0.5,
+        0.5
+      ],
+      "corner_world_xy_cm": [
+        [
+          116300,
+          119200
+        ],
+        [
+          116350,
+          119200
+        ],
+        [
+          116300,
+          119250
+        ],
+        [
+          116350,
+          119250
+        ]
+      ],
+      "expected_grass": "positive",
+      "independent_source_footprint_witnesses": [],
+      "layers": [
+        {
+          "name": "layer_00",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_01",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_02",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_03",
+          "weight_texture": "WT_GrassWeights0",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_04",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_05",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_06",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            55.0,
+            56.5,
+            55.0,
+            56.75
+          ],
+          "expected_corners_byte": [
+            55,
+            56,
+            55,
+            57
+          ],
+          "expected_interpolated_byte": 55.75
+        },
+        {
+          "name": "layer_07",
+          "weight_texture": "WT_GrassWeights1",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_08",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_09",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_10",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_11",
+          "weight_texture": "WT_GrassWeights2",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "layer_12",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 0,
+          "expected_corners_float": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_corners_byte": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "expected_interpolated_byte": 0.0
+        },
+        {
+          "name": "ue_short_grass_0",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 1,
+          "expected_corners_float": [
+            174.5,
+            173.25,
+            172.75,
+            171.0
+          ],
+          "expected_corners_byte": [
+            174,
+            173,
+            173,
+            171
+          ],
+          "expected_interpolated_byte": 172.75
+        },
+        {
+          "name": "ue_short_grass_1",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 2,
+          "expected_corners_float": [
+            74.0,
+            76.5,
+            73.75,
+            76.5
+          ],
+          "expected_corners_byte": [
+            74,
+            76,
+            74,
+            76
+          ],
+          "expected_interpolated_byte": 75.0
+        },
+        {
+          "name": "ue_short_grass_2",
+          "weight_texture": "WT_GrassWeights3",
+          "weight_channel": 3,
+          "expected_corners_float": [
+            86.0,
+            83.75,
+            85.75,
+            83.25
+          ],
+          "expected_corners_byte": [
+            86,
+            84,
+            86,
+            83
+          ],
+          "expected_interpolated_byte": 84.75
+        }
+      ],
+      "nonzero_layer_count": 4
+    }
+  ],
+  "generator_sha256": "fe67f12652e50bdcd413f2b49d2bc29166c268bab29dece37bbd3f973d385494",
+  "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+  "spatial_predicates": "direct original X/Z triangle point/edge distance tests; separate from prepared mask rasterization"
+}

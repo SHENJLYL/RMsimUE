@@ -1,0 +1,83 @@
+{
+  "schema": "wt_grass_bake_progress_fix_v1",
+  "status": "source_checks_passed_native_pending",
+  "failure_summary_file": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\grass-native-01\\summary.json",
+  "failure_summary_sha256": "7f501154aef1148f0defa61ea3382604638a5f4b806d5267996087f49e99ca85",
+  "author_sha256_before": "3a93342dbee1dd10d6506f4683a5f7f165ff6468e6e0e69a66a76f7497e27bab",
+  "author_sha256_after": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+  "wt_grass_sha256": "3dd7e10e2e91cdb51febd1f9f92e41b7edcd4dd1b85533a9b4ee5fc51306688e",
+  "engine_builder_sha256": "ac9b76abe8e074bf09b215b17cc290abc6cc0ba97a88621724890665e42518b0",
+  "engine_evidence": {
+    "termination": "BuildGrassMapsNowForComponents line1088 uses UpToDateCount + call-local FailedComponents",
+    "pending_transition": "NotReady can become Pending in UpdateTrackedComponents 406-415; FailedComponents removed only when populated1168-1172",
+    "lazy_grass_shader": "FLandscapeGrassWeightVS/PS compiled during real build08:27:36-38; trace does not log each FailedComponents insertion"
+  },
+  "retry_policy": {
+    "max_attempts": 3,
+    "retry_budget_seconds": 300,
+    "strict_outdated_progress": true,
+    "requires_final_outdated_zero": true,
+    "no_fixed_sleep": true
+  },
+  "control_flow_regression_cases": [
+    {
+      "name": "actual_first_partial_then_complete",
+      "native_calls": 2,
+      "expected_failure": false,
+      "result": "passed",
+      "error": null
+    },
+    {
+      "name": "stalled_count_rejected",
+      "native_calls": 2,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "grass maps stopped progressing: outdated=1053"
+    },
+    {
+      "name": "regressing_count_rejected",
+      "native_calls": 2,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "grass maps stopped progressing: outdated=1080"
+    },
+    {
+      "name": "all_pending_rejected",
+      "native_calls": 1,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "grass maps stopped progressing: outdated=1089"
+    },
+    {
+      "name": "three_incomplete_calls_rejected",
+      "native_calls": 3,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "grass maps did not complete within the bounded native build attempts"
+    },
+    {
+      "name": "collision_is_rejected",
+      "native_calls": 1,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "grass bake returned invalid counts or enabled collision"
+    },
+    {
+      "name": "built_with_invalid_component_data_rejected",
+      "native_calls": 1,
+      "expected_failure": true,
+      "result": "passed",
+      "error": "native grass built status conflicts with stale or invalid data"
+    }
+  ],
+  "pure_resume_contract": {
+    "status": "passed",
+    "models": 10,
+    "layers": 16,
+    "authored_report_sha256": "5fd8b0844f3bbd27fb8a3f698193f183c4e1841c54a0c464bbfa49885565039c",
+    "definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99",
+    "saved_asset_reflection_validation": "required by native ResumeAuthoredAssets before bake"
+  },
+  "world_unchanged": true,
+  "native_validation_performed": false
+}

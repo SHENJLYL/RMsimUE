@@ -1,0 +1,2070 @@
+{
+  "schema_version": 1,
+  "status": "diagnostic_complete",
+  "production_eligible": false,
+  "created_utc": "2026-11-18T04:48:05.020678+00:00",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+  "session_identity": [
+    "BF9133274D7F69C12010EB8E175AC233",
+    0
+  ],
+  "raw_scan_messages": 354,
+  "scored_scan_messages": 139,
+  "unscored_reasons": {
+    "No exact-stamp published AMCL pose": 215
+  },
+  "scored_beams": 2646,
+  "phases": {
+    "cancel_settle": {
+      "scans": 4,
+      "first_stamp_s": 55.574998759,
+      "last_stamp_s": 56.674998734000006,
+      "score_delta": {
+        "count": 4,
+        "mean": -2.522227477497597,
+        "median": -2.64955139273307,
+        "p95": -1.7865775608150303,
+        "min": -3.083059682451289,
+        "max": -1.7067474420729596
+      },
+      "estimate_higher_score_scans": 0,
+      "estimated_score": {
+        "count": 4,
+        "mean": 24.81401348187604,
+        "median": 25.836218226674312,
+        "p95": 29.10610748896697,
+        "min": 18.105524771124074,
+        "max": 29.478092703031454
+      },
+      "evaluation_score": {
+        "count": 4,
+        "mean": 27.336240959373633,
+        "median": 28.21966922360048,
+        "p95": 31.98272033536151,
+        "min": 20.344473004810837,
+        "max": 32.56115238548274
+      }
+    },
+    "cancel_test": {
+      "scans": 1,
+      "first_stamp_s": 55.374998763,
+      "last_stamp_s": 55.374998763,
+      "score_delta": {
+        "count": 1,
+        "mean": -1.5966023748414138,
+        "median": -1.5966023748414138,
+        "p95": -1.5966023748414138,
+        "min": -1.5966023748414138,
+        "max": -1.5966023748414138
+      },
+      "estimate_higher_score_scans": 0,
+      "estimated_score": {
+        "count": 1,
+        "mean": 16.290874333544778,
+        "median": 16.290874333544778,
+        "p95": 16.290874333544778,
+        "min": 16.290874333544778,
+        "max": 16.290874333544778
+      },
+      "evaluation_score": {
+        "count": 1,
+        "mean": 17.887476708386192,
+        "median": 17.887476708386192,
+        "p95": 17.887476708386192,
+        "min": 17.887476708386192,
+        "max": 17.887476708386192
+      }
+    },
+    "single_goal": {
+      "scans": 41,
+      "first_stamp_s": 27.469999387,
+      "last_stamp_s": 35.069999217,
+      "score_delta": {
+        "count": 41,
+        "mean": -1.947341459621102,
+        "median": -1.9543232933359427,
+        "p95": -1.1974517811310577,
+        "min": -3.018724876563553,
+        "max": -0.5322007915762583
+      },
+      "estimate_higher_score_scans": 0,
+      "estimated_score": {
+        "count": 41,
+        "mean": 16.602289062214346,
+        "median": 16.743769904730694,
+        "p95": 23.358300447359554,
+        "min": 8.961315244487203,
+        "max": 25.41217885451026
+      },
+      "evaluation_score": {
+        "count": 41,
+        "mean": 18.549630521835446,
+        "median": 18.891510781289647,
+        "p95": 25.235782619345574,
+        "min": 10.048621958386196,
+        "max": 27.91722748400393
+      }
+    },
+    "waypoints": {
+      "scans": 93,
+      "first_stamp_s": 36.369999188,
+      "last_stamp_s": 54.274998789,
+      "score_delta": {
+        "count": 93,
+        "mean": -0.8893073876491976,
+        "median": -0.6746541543994962,
+        "p95": 1.5027146339233808,
+        "min": -6.273201450244542,
+        "max": 2.567904042247168
+      },
+      "estimate_higher_score_scans": 22,
+      "estimated_score": {
+        "count": 93,
+        "mean": 13.751923789085001,
+        "median": 13.861937251890147,
+        "p95": 20.938395747327537,
+        "min": 4.350885302096549,
+        "max": 24.83558637837284
+      },
+      "evaluation_score": {
+        "count": 93,
+        "mean": 14.641231176734196,
+        "median": 14.742324291772388,
+        "p95": 23.65325054653765,
+        "min": 4.350885302096549,
+        "max": 26.94425528525689
+      }
+    }
+  },
+  "model": {
+    "name": "Nav2 1.1.20 likelihood_field",
+    "formula": "1 + sum((z_hit * exp(-d*d/(2*sigma_hit*sigma_hit)) + z_rand/range_max)^3)",
+    "parameters": {
+      "z_hit": 0.95,
+      "z_rand": 0.05,
+      "sigma_hit": 0.15,
+      "laser_likelihood_max_dist": 2.0,
+      "max_beams": 100,
+      "laser_min_range": 0.3,
+      "laser_max_range": 10.0
+    },
+    "beam_step": "max(1, floor((range_count-1)/(max_beams-1))); preserve original indices",
+    "native_distance_library": "D:\\simulator\\artifacts\\runtime\\navigation\\windows\\map_lib.dll",
+    "native_distance_library_sha256": "28cefe6101b0ce678e72ed37ed4fff5a7e4b9656888332ebd77718c7c5c5c2a1",
+    "distance_function": "map_update_cspace, called on private offline memory",
+    "primary_sources": {
+      "tag": "1.1.20",
+      "repository": "https://github.com/ros-navigation/navigation2",
+      "files": {
+        "nav2_amcl/src/sensors/laser/likelihood_field_model.cpp": "84a4542b6891cd665139fcc75dc6b71fa0d2175f167de5c11df463d2f6fe101d",
+        "nav2_amcl/src/map/map_cspace.cpp": "e77abdeb1f20750de8d0a09027fe71479dba164970570773249bea41292a48ee",
+        "nav2_amcl/include/nav2_amcl/map/map.hpp": "5aa7632d3705cd937e3a353c21a0aa4231ed44587affcdae88963ab2e37e709b",
+        "nav2_amcl/src/amcl_node.cpp": "29a6402bf643fc8ea0d2dcea29619d4cbdcaf7014c811332ed4e86e593d3f1af",
+        "nav2_map_server/src/map_io.cpp": "7f4e12d8c60891c64689bd0dab443a93800cdd280e9447e538d4458b1f68a57e"
+      }
+    }
+  },
+  "map": {
+    "role": "offline_geometry_candidate",
+    "yaml": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml",
+    "image": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm",
+    "width": 560,
+    "height": 322,
+    "resolution_as_occupancy_grid_float32": 0.05000000074505806,
+    "origin_xy": [
+      -14.0,
+      -8.05
+    ],
+    "occupied_cells": 24262,
+    "unknown_cells": 14291,
+    "index_rule": "floor((world-origin_center)/scale+0.5)+size/2, exactly AMCL map.hpp"
+  },
+  "runtime_map_identity": {
+    "yaml": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml",
+    "image": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.pgm",
+    "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+    "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+  },
+  "candidate_manifest": {
+    "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json",
+    "sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+    "contents": {
+      "role": "offline_geometry_candidate",
+      "status": "generated_not_native_validated",
+      "map_id": "rmuc2027",
+      "source_md5": "b0453f53370193c59ef594a56003872b",
+      "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+      "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "reference_navigation_raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "reference_navigation_yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "reference_navigation_manifest_sha256": "acda0cc5b256bf597c014397a28d8af03fbee4ddf2df3f7adb956de08f38cea6",
+      "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+      "map_yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "surface_provenance_sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035",
+      "exporter_sha256": "d4eaf7eb90a3fca3b9bd6050902bd55ee279d26a080ffe2421751fe07d7b138f",
+      "geometry_reader_sha256": "4fd91f07932fb0dfe9bba7f90cc561742e2a1daeecbb228458a9e5741b8bdd91",
+      "source_step_sha256": "a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0",
+      "source_to_sim_translation_m": [
+        -7.152952372635468e-06,
+        -1.6243433957331543,
+        1.6403436655816601
+      ],
+      "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+      "units": "m",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000000000071,
+      "resolution_float32": 0.05000000074505806,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "geometry_bounds_m": [
+        [
+          -13.999995709747502,
+          -8.00156545639038,
+          -0.3009999990463257
+        ],
+        [
+          13.99999581660583,
+          8.00156545639038,
+          3.4976830552570872
+        ]
+      ],
+      "algorithm": "Original CAD collision triangles; physical face normals; conservative actual XY triangle projection; existing free cells retained; other cells unknown.",
+      "normal_criterion": {
+        "minimum_surface_inclination_from_horizontal_deg": 85.0,
+        "maximum_abs_normal_z": 0.08715574274765814,
+        "justification": "Structural near-vertical surfaces; excludes the 42 degree traversable corrugation slope and horizontal support surfaces; fixed before scoring any scan."
+      },
+      "height_filter": {
+        "mode": "none",
+        "source_geometry_z_range_m": [
+          -0.3009999990463257,
+          3.4976830552570872
+        ],
+        "reason": "Recorded LaserScan has no original hit z; no unmeasured narrow slice is assumed. Actual per-cell contributing face z ranges are preserved."
+      },
+      "rasterization": {
+        "grid_cells": "[origin+i*resolution, origin+(i+1)*resolution] closed conservative intersections",
+        "numerical_boundary_epsilon_m": 1e-09,
+        "geometry_translation_adjustment_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "amcl_model_note": "Score with unchanged upstream MAP_GXWX; no half-cell shift or evaluation-pose registration."
+      },
+      "geometry_triangles_total": 1614431,
+      "geometry_degenerate_triangles": 29,
+      "selected_triangles": 523265,
+      "selected_triangles_by_group": {
+        "floor": 853,
+        "centre_platform": 307542,
+        "red_ramp_dart_station": 69700,
+        "blue_ramp_dart_station": 69679,
+        "red_road": 11151,
+        "blue_road": 11056,
+        "red_resource_zone": 7584,
+        "blue_resource_zone": 7566,
+        "red_fortress": 2,
+        "blue_fortress": 2,
+        "base_footing": 154,
+        "fan_frame": 40,
+        "fan": 9468,
+        "base": 28468
+      },
+      "groups": [
+        "floor",
+        "centre_platform",
+        "red_ramp_dart_station",
+        "blue_ramp_dart_station",
+        "red_road",
+        "blue_road",
+        "red_resource_zone",
+        "blue_resource_zone",
+        "red_fortress",
+        "blue_fortress",
+        "base_footing",
+        "fan_frame",
+        "fan",
+        "base"
+      ],
+      "occupied_cells": 24262,
+      "free_cells": 141767,
+      "unknown_cells": 14291,
+      "occupied_over_prior_free_cells": 13717,
+      "cell_group_records": 25744,
+      "wall_seconds": 4.471070999999938,
+      "evaluation_inputs_used": [],
+      "original_navigation_preserved": true,
+      "limits": [
+        "No native AMCL precision claim",
+        "Horizontal top surfaces and oblique ramps may still appear in the unchanged terrain-derived scan and are not represented by this candidate",
+        "Visibility/occlusion not encoded in 2D surface union",
+        "Per-cell z bounds are conservative contributing-triangle extrema",
+        "Comparison must preserve all exact recorded scan pairs and original AMCL likelihood semantics"
+      ]
+    }
+  },
+  "direction_contributions": [
+    {
+      "group": "E",
+      "beams": 934,
+      "scans": 122,
+      "score_delta_sum": -100.38906038278067,
+      "score_delta_absolute_sum": 123.61698603357969,
+      "estimated_distance_m": {
+        "count": 934,
+        "mean": 0.05364025775861689,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distance_m": {
+        "count": 934,
+        "mean": 0.019722388600223375,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "SE",
+      "beams": 848,
+      "scans": 102,
+      "score_delta_sum": -64.36449221352895,
+      "score_delta_absolute_sum": 98.76206057209495,
+      "estimated_distance_m": {
+        "count": 848,
+        "mean": 0.04612633436505083,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.5000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 848,
+        "mean": 0.020151459943614277,
+        "median": 0.0,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.38078866096738856
+      }
+    },
+    {
+      "group": "S",
+      "beams": 267,
+      "scans": 86,
+      "score_delta_sum": -10.035934248789259,
+      "score_delta_absolute_sum": 33.758766339035944,
+      "estimated_distance_m": {
+        "count": 267,
+        "mean": 0.07434129678560421,
+        "median": 0.05000000074505806,
+        "p95": 0.23863961386279614,
+        "min": 0.0,
+        "max": 1.2539936390844064
+      },
+      "evaluation_distance_m": {
+        "count": 267,
+        "mean": 0.0651721519530731,
+        "median": 0.0,
+        "p95": 0.1940832720240257,
+        "min": 0.0,
+        "max": 1.2529964272852683
+      }
+    },
+    {
+      "group": "NE",
+      "beams": 176,
+      "scans": 60,
+      "score_delta_sum": -16.805717129866377,
+      "score_delta_absolute_sum": 25.577876225168158,
+      "estimated_distance_m": {
+        "count": 176,
+        "mean": 0.05142045531167903,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.2500000037252903
+      },
+      "evaluation_distance_m": {
+        "count": 176,
+        "mean": 0.017848985244591678,
+        "median": 0.0,
+        "p95": 0.0780330097517735,
+        "min": 0.0,
+        "max": 0.2500000037252903
+      }
+    },
+    {
+      "group": "W",
+      "beams": 124,
+      "scans": 53,
+      "score_delta_sum": 16.693388248631315,
+      "score_delta_absolute_sum": 24.601408980816025,
+      "estimated_distance_m": {
+        "count": 124,
+        "mean": 0.02701612943482976,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.4000000059604645
+      },
+      "evaluation_distance_m": {
+        "count": 124,
+        "mean": 0.075970888303269,
+        "median": 0.05000000074505806,
+        "p95": 0.2500000037252903,
+        "min": 0.0,
+        "max": 2.0
+      }
+    },
+    {
+      "group": "SW",
+      "beams": 290,
+      "scans": 60,
+      "score_delta_sum": -1.1420217545448605,
+      "score_delta_absolute_sum": 24.592368578755917,
+      "estimated_distance_m": {
+        "count": 290,
+        "mean": 0.023103448620130276,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "evaluation_distance_m": {
+        "count": 290,
+        "mean": 0.020978727741457304,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.2828427166893039
+      }
+    },
+    {
+      "group": "NW",
+      "beams": 4,
+      "scans": 4,
+      "score_delta_sum": 1.678688102302947,
+      "score_delta_absolute_sum": 1.678688102302947,
+      "estimated_distance_m": {
+        "count": 4,
+        "mean": 0.02500000037252903,
+        "median": 0.0,
+        "p95": 0.08500000126659867,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 4,
+        "mean": 0.5750000011175871,
+        "median": 0.12500000186264515,
+        "p95": 1.7225000003352755,
+        "min": 0.05000000074505806,
+        "max": 2.0
+      }
+    },
+    {
+      "group": "N",
+      "beams": 3,
+      "scans": 2,
+      "score_delta_sum": 0.1330501979034513,
+      "score_delta_absolute_sum": 0.3991505937103539,
+      "estimated_distance_m": {
+        "count": 3,
+        "mean": 0.016666666915019352,
+        "median": 0.0,
+        "p95": 0.04500000067055225,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 3,
+        "mean": 0.033333333830038704,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    }
+  ],
+  "occupied_structure_tiles": [
+    {
+      "group": "[10.0, 7.0]",
+      "beams": 316,
+      "scans": 117,
+      "score_delta_sum": -37.995780766723364,
+      "score_delta_absolute_sum": 44.6112415728081,
+      "estimated_distance_m": {
+        "count": 316,
+        "mean": 0.05427215270745226,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 316,
+        "mean": 0.01724683570003585,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 6.5]",
+      "beams": 311,
+      "scans": 112,
+      "score_delta_sum": -33.99113307123586,
+      "score_delta_absolute_sum": 39.58800255543679,
+      "estimated_distance_m": {
+        "count": 311,
+        "mean": 0.053054663169997296,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 311,
+        "mean": 0.016881029190453686,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 5.5]",
+      "beams": 271,
+      "scans": 106,
+      "score_delta_sum": -29.600476540421962,
+      "score_delta_absolute_sum": 36.482037742313594,
+      "estimated_distance_m": {
+        "count": 271,
+        "mean": 0.05239852476603871,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 271,
+        "mean": 0.016974169994632256,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 6.0]",
+      "beams": 300,
+      "scans": 105,
+      "score_delta_sum": -32.74787102876098,
+      "score_delta_absolute_sum": 35.98688603978763,
+      "estimated_distance_m": {
+        "count": 300,
+        "mean": 0.05133333409825961,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 300,
+        "mean": 0.015000000223517418,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 5.0]",
+      "beams": 235,
+      "scans": 100,
+      "score_delta_sum": -22.789019449599408,
+      "score_delta_absolute_sum": 28.294268411112718,
+      "estimated_distance_m": {
+        "count": 235,
+        "mean": 0.04978723478444079,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distance_m": {
+        "count": 235,
+        "mean": 0.01808510665246781,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      }
+    },
+    {
+      "group": "[10.0, 4.5]",
+      "beams": 162,
+      "scans": 94,
+      "score_delta_sum": -10.845781422195275,
+      "score_delta_absolute_sum": 19.195275387152865,
+      "estimated_distance_m": {
+        "count": 162,
+        "mean": 0.04537037104644157,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 162,
+        "mean": 0.02129629661363584,
+        "median": 0.0,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 4.0]",
+      "beams": 108,
+      "scans": 79,
+      "score_delta_sum": -5.455058114041503,
+      "score_delta_absolute_sum": 12.785960757115294,
+      "estimated_distance_m": {
+        "count": 108,
+        "mean": 0.04305555619713333,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 108,
+        "mean": 0.024074074432805733,
+        "median": 0.0,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[10.0, 3.5]",
+      "beams": 73,
+      "scans": 59,
+      "score_delta_sum": -6.288735801730028,
+      "score_delta_absolute_sum": 10.683772918671911,
+      "estimated_distance_m": {
+        "count": 73,
+        "mean": 0.06986301473967016,
+        "median": 0.05000000074505806,
+        "p95": 0.2700000040233131,
+        "min": 0.0,
+        "max": 0.5000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 73,
+        "mean": 0.0404109595062798,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.3500000052154064
+      }
+    },
+    {
+      "group": "[10.0, 7.5]",
+      "beams": 33,
+      "scans": 32,
+      "score_delta_sum": -0.36158105029877363,
+      "score_delta_absolute_sum": 6.294592579643023,
+      "estimated_distance_m": {
+        "count": 33,
+        "mean": 0.054545455358245155,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distance_m": {
+        "count": 33,
+        "mean": 0.04885248661753344,
+        "median": 0.05000000074505806,
+        "p95": 0.20000000298023224,
+        "min": 0.0,
+        "max": 0.2500000037252903
+      }
+    },
+    {
+      "group": "[8.5, 5.0]",
+      "beams": 37,
+      "scans": 24,
+      "score_delta_sum": -1.9905555881480406,
+      "score_delta_absolute_sum": 6.00364529312278,
+      "estimated_distance_m": {
+        "count": 37,
+        "mean": 0.04324324388761778,
+        "median": 0.0,
+        "p95": 0.21000000312924363,
+        "min": 0.0,
+        "max": 0.2500000037252903
+      },
+      "evaluation_distance_m": {
+        "count": 37,
+        "mean": 0.029729730172737223,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      }
+    },
+    {
+      "group": "[5.0, 5.0]",
+      "beams": 57,
+      "scans": 24,
+      "score_delta_sum": -2.794054155972477,
+      "score_delta_absolute_sum": 4.9228573224276975,
+      "estimated_distance_m": {
+        "count": 57,
+        "mean": 0.026315789865820033,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 57,
+        "mean": 0.00789473695974601,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[4.5, 0.5]",
+      "beams": 6,
+      "scans": 6,
+      "score_delta_sum": -3.5036326809221476,
+      "score_delta_absolute_sum": 3.5036326809221476,
+      "estimated_distance_m": {
+        "count": 6,
+        "mean": 0.15345178197305218,
+        "median": 0.1750000026077032,
+        "p95": 0.20000000298023224,
+        "min": 0.07071067917232597,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distance_m": {
+        "count": 6,
+        "mean": 0.016666666915019352,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[9.0, 3.5]",
+      "beams": 25,
+      "scans": 22,
+      "score_delta_sum": -2.4056954461977234,
+      "score_delta_absolute_sum": 3.203996633618431,
+      "estimated_distance_m": {
+        "count": 25,
+        "mean": 0.04400000065565109,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distance_m": {
+        "count": 25,
+        "mean": 0.012000000178813934,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[9.5, 3.5]",
+      "beams": 25,
+      "scans": 22,
+      "score_delta_sum": -2.9378962378115285,
+      "score_delta_absolute_sum": 3.203996633618431,
+      "estimated_distance_m": {
+        "count": 25,
+        "mean": 0.05200000077486038,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distance_m": {
+        "count": 25,
+        "mean": 0.012000000178813934,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[8.0, 5.0]",
+      "beams": 30,
+      "scans": 20,
+      "score_delta_sum": -1.543255094061791,
+      "score_delta_absolute_sum": 3.1398574689032066,
+      "estimated_distance_m": {
+        "count": 30,
+        "mean": 0.03666666721304258,
+        "median": 0.02500000037252903,
+        "p95": 0.10500000156462164,
+        "min": 0.0,
+        "max": 0.30000000447034836
+      },
+      "evaluation_distance_m": {
+        "count": 30,
+        "mean": 0.02166666698952516,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[0.0, 7.5]",
+      "beams": 5,
+      "scans": 5,
+      "score_delta_sum": 2.9185899329161917,
+      "score_delta_absolute_sum": 2.9185899329161917,
+      "estimated_distance_m": {
+        "count": 5,
+        "mean": 0.020000000298023225,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 5,
+        "mean": 0.1600000023841858,
+        "median": 0.15000000223517418,
+        "p95": 0.24000000357627868,
+        "min": 0.10000000149011612,
+        "max": 0.2500000037252903
+      }
+    },
+    {
+      "group": "[7.5, 5.0]",
+      "beams": 33,
+      "scans": 18,
+      "score_delta_sum": -0.3991505937103539,
+      "score_delta_absolute_sum": 2.5279537601655746,
+      "estimated_distance_m": {
+        "count": 33,
+        "mean": 0.027272727679122578,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 33,
+        "mean": 0.022727273065935482,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    },
+    {
+      "group": "[0.5, 1.0]",
+      "beams": 10,
+      "scans": 10,
+      "score_delta_sum": 0.3703854837762268,
+      "score_delta_absolute_sum": 2.517994979995926,
+      "estimated_distance_m": {
+        "count": 10,
+        "mean": 0.03500000052154064,
+        "median": 0.02500000037252903,
+        "p95": 0.10500000156462182,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "evaluation_distance_m": {
+        "count": 10,
+        "mean": 0.03802775694397768,
+        "median": 0.0,
+        "p95": 0.1666526625585778,
+        "min": 0.0,
+        "max": 0.18027756645954449
+      }
+    },
+    {
+      "group": "[4.5, 5.0]",
+      "beams": 32,
+      "scans": 22,
+      "score_delta_sum": 0.2890055264788095,
+      "score_delta_absolute_sum": 2.41780869293403,
+      "estimated_distance_m": {
+        "count": 32,
+        "mean": 0.026562500395812094,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 32,
+        "mean": 0.02812500041909516,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      }
+    },
+    {
+      "group": "[4.5, 5.5]",
+      "beams": 8,
+      "scans": 8,
+      "score_delta_sum": 1.4514259571882806,
+      "score_delta_absolute_sum": 2.309246298230532,
+      "estimated_distance_m": {
+        "count": 8,
+        "mean": 0.0437500006519258,
+        "median": 0.0,
+        "p95": 0.15000000223517418,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "evaluation_distance_m": {
+        "count": 8,
+        "mean": 0.09186818085277967,
+        "median": 0.09125703985665796,
+        "p95": 0.1419052156762711,
+        "min": 0.05000000074505806,
+        "max": 0.15811388536449944
+      }
+    },
+    {
+      "group": "[4.0, 5.5]",
+      "beams": 11,
+      "scans": 7,
+      "score_delta_sum": 0.853514613646761,
+      "score_delta_absolute_sum": 2.184016592681274,
+      "estimated_distance_m": {
+        "count": 11,
+        "mean": 0.03181818229230968,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 11,
+        "mean": 0.04090909151868387,
+        "median": 0.0,
+        "p95": 0.12500000186264515,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      }
+    },
+    {
+      "group": "[11.0, -3.0]",
+      "beams": 18,
+      "scans": 18,
+      "score_delta_sum": 2.0549026761910882,
+      "score_delta_absolute_sum": 2.0549026761910882,
+      "estimated_distance_m": {
+        "count": 18,
+        "mean": 0.0,
+        "median": 0.0,
+        "p95": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "evaluation_distance_m": {
+        "count": 18,
+        "mean": 0.02908926697512935,
+        "median": 0.0,
+        "p95": 0.11753289079511754,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      }
+    },
+    {
+      "group": "[0.0, 5.5]",
+      "beams": 5,
+      "scans": 5,
+      "score_delta_sum": 1.4755274067404225,
+      "score_delta_absolute_sum": 2.0077281983542274,
+      "estimated_distance_m": {
+        "count": 5,
+        "mean": 0.020000000298023225,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 5,
+        "mean": 0.15000000223517418,
+        "median": 0.0,
+        "p95": 0.39000000581145283,
+        "min": 0.0,
+        "max": 0.4000000059604645
+      }
+    },
+    {
+      "group": "[4.0, 5.0]",
+      "beams": 31,
+      "scans": 23,
+      "score_delta_sum": -0.2661003958069026,
+      "score_delta_absolute_sum": 1.8627027706483181,
+      "estimated_distance_m": {
+        "count": 31,
+        "mean": 0.022580645497768156,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distance_m": {
+        "count": 31,
+        "mean": 0.01935483899808699,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      }
+    }
+  ],
+  "largest_per_scan_score_differences": [
+    {
+      "stamp_ns": 47874998931,
+      "stamp_s": 47.874998931,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 190,
+      "eligible_finite_count": 190,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 28,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.095214573883833,
+        6.229239939356605,
+        1.3568702831695083
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.143864846856438,
+        6.635235461785724,
+        1.3470275174913042
+      ],
+      "evaluation_scan_tilt_degrees": 0.5559663486676015,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          47869998930,
+          47894998929
+        ],
+        "fraction": 0.20000004800000193
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            47874998931
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 16.827039835981502,
+      "evaluation_score": 23.100241286226044,
+      "score_estimate_minus_evaluation": -6.273201450244542,
+      "estimated_distances_m": {
+        "count": 28,
+        "mean": 0.09464285855314561,
+        "median": 0.05000000074505806,
+        "p95": 0.26500000394880757,
+        "min": 0.0,
+        "max": 0.45000000670552254
+      },
+      "evaluation_distances_m": {
+        "count": 28,
+        "mean": 0.02573966745921717,
+        "median": 0.0,
+        "p95": 0.08974873867888952,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 28,
+        "mean": 0.02573966745921717,
+        "median": 0.0,
+        "p95": 0.08974873867888952,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "planar_vs_full_transform_xy_max_m": 0.0002823369330609982
+    },
+    {
+      "stamp_ns": 48774998912,
+      "stamp_s": 48.774998912,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 177,
+      "eligible_finite_count": 177,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 29,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.653945518933254,
+        6.4980996120703525,
+        1.374721138780486
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.729409261137702,
+        6.610917717039385,
+        1.3514735716277093
+      ],
+      "evaluation_scan_tilt_degrees": 0.433177001361662,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          48764998910,
+          48789998909
+        ],
+        "fraction": 0.40000009600000386
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            48774998912
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 20.640589627511773,
+      "evaluation_score": 24.372924473679774,
+      "score_estimate_minus_evaluation": -3.7323348461680013,
+      "estimated_distances_m": {
+        "count": 29,
+        "mean": 0.05588657594031468,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distances_m": {
+        "count": 29,
+        "mean": 0.02241379343743982,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 29,
+        "mean": 0.02241379343743982,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "planar_vs_full_transform_xy_max_m": 4.944692199806644e-05
+    },
+    {
+      "stamp_ns": 49074998905,
+      "stamp_s": 49.074998905,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 179,
+      "eligible_finite_count": 179,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 28,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.853699787860013,
+        6.462067451901902,
+        1.3887610172129443
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.947717546884396,
+        6.57494107325532,
+        1.3324959639246141
+      ],
+      "evaluation_scan_tilt_degrees": 0.5737113929104543,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          49069998903,
+          49109998902
+        ],
+        "fraction": 0.12500005312500131
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            49074998905
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 19.02878492483993,
+      "evaluation_score": 22.599354323289738,
+      "score_estimate_minus_evaluation": -3.570569398449809,
+      "estimated_distances_m": {
+        "count": 28,
+        "mean": 0.060714286618999073,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "evaluation_distances_m": {
+        "count": 28,
+        "mean": 0.03143848488894133,
+        "median": 0.02500000037252903,
+        "p95": 0.08250000122934573,
+        "min": 0.0,
+        "max": 0.18027756645954449
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 28,
+        "mean": 0.03143848488894133,
+        "median": 0.02500000037252903,
+        "p95": 0.08250000122934573,
+        "min": 0.0,
+        "max": 0.18027756645954449
+      },
+      "planar_vs_full_transform_xy_max_m": 0.0002480086690387952
+    },
+    {
+      "stamp_ns": 49174998903,
+      "stamp_s": 49.174998903,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 184,
+      "eligible_finite_count": 184,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 22,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.90946734278867,
+        6.470380159989516,
+        1.3533290666412918
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.997444163788803,
+        6.567230562674738,
+        1.3305942441675127
+      ],
+      "evaluation_scan_tilt_degrees": 0.10010504516414866,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          49169998901,
+          49194998900
+        ],
+        "fraction": 0.20000008800000352
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            49174998903
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 15.200710326836802,
+      "evaluation_score": 18.688689908179796,
+      "score_estimate_minus_evaluation": -3.4879795813429944,
+      "estimated_distances_m": {
+        "count": 22,
+        "mean": 0.0613636372780258,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.20000000298023224
+      },
+      "evaluation_distances_m": {
+        "count": 22,
+        "mean": 0.020454545759341934,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 22,
+        "mean": 0.020454545759341934,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "planar_vs_full_transform_xy_max_m": 3.643743438379055e-05
+    },
+    {
+      "stamp_ns": 49274998900,
+      "stamp_s": 49.2749989,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 181,
+      "eligible_finite_count": 181,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 28,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.990077822898717,
+        6.447218142740463,
+        1.3443499491235331
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.045337744352702,
+        6.558966883735923,
+        1.3305597722914442
+      ],
+      "evaluation_scan_tilt_degrees": 0.5614650920781626,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          49254998899,
+          49289998898
+        ],
+        "fraction": 0.5714286163265319
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            49274998900
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 20.324711674797484,
+      "evaluation_score": 23.432508355305295,
+      "score_estimate_minus_evaluation": -3.1077966805078105,
+      "estimated_distances_m": {
+        "count": 28,
+        "mean": 0.0525253821440697,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distances_m": {
+        "count": 28,
+        "mean": 0.02469362023358181,
+        "median": 0.0,
+        "p95": 0.06346194172278218,
+        "min": 0.0,
+        "max": 0.07071067917232597
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 28,
+        "mean": 0.02469362023358181,
+        "median": 0.0,
+        "p95": 0.06346194172278218,
+        "min": 0.0,
+        "max": 0.07071067917232597
+      },
+      "planar_vs_full_transform_xy_max_m": 9.440532596221463e-05
+    },
+    {
+      "stamp_ns": 56374998741,
+      "stamp_s": 56.374998741000006,
+      "probe_phase": "cancel_settle",
+      "goal_request_id": 3,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 221,
+      "eligible_finite_count": 221,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 37,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        9.145141736868268,
+        6.459933440616868,
+        1.3590839395938201
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.189503330238612,
+        6.484942102323416,
+        1.3489199003390322
+      ],
+      "evaluation_scan_tilt_degrees": 1.8312506929154868,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          56344998741,
+          56379998740
+        ],
+        "fraction": 0.8571428816326537
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            56374998741
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 29.478092703031454,
+      "evaluation_score": 32.56115238548274,
+      "score_estimate_minus_evaluation": -3.083059682451289,
+      "estimated_distances_m": {
+        "count": 37,
+        "mean": 0.036486487030177504,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distances_m": {
+        "count": 37,
+        "mean": 0.0067567568574402785,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 37,
+        "mean": 0.0067567568574402785,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "planar_vs_full_transform_xy_max_m": 0.004606554090454242
+    },
+    {
+      "stamp_ns": 48274998922,
+      "stamp_s": 48.274998922,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 176,
+      "eligible_finite_count": 176,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 19,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.301722194322833,
+        6.61882836141107,
+        1.4720317733867399
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.409956706844707,
+        6.6965981447877,
+        1.4227133217802133
+      ],
+      "evaluation_scan_tilt_degrees": 0.10836939533525454,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          48259998921,
+          48284998921
+        ],
+        "fraction": 0.60000004
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            48274998922
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 13.011203145272423,
+      "evaluation_score": 16.085141448062036,
+      "score_estimate_minus_evaluation": -3.073938302789612,
+      "estimated_distances_m": {
+        "count": 19,
+        "mean": 0.06578947466455008,
+        "median": 0.05000000074505806,
+        "p95": 0.10500000156462182,
+        "min": 0.0,
+        "max": 0.15000000223517418
+      },
+      "evaluation_distances_m": {
+        "count": 19,
+        "mean": 0.028947368852402035,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 19,
+        "mean": 0.028947368852402035,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "planar_vs_full_transform_xy_max_m": 0.00016472047604458023
+    },
+    {
+      "stamp_ns": 55774998754,
+      "stamp_s": 55.774998754,
+      "probe_phase": "cancel_settle",
+      "goal_request_id": 3,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 194,
+      "eligible_finite_count": 194,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 31,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        9.13796511387134,
+        6.405849757295795,
+        1.3624272932250963
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.191589762988624,
+        6.4850739771531,
+        1.3508486753034947
+      ],
+      "evaluation_scan_tilt_degrees": 0.5807522447262389,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          55759998754,
+          55789998753
+        ],
+        "fraction": 0.5000000166666673
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            55774998754
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 24.674245177413717,
+      "evaluation_score": 27.734399729193093,
+      "score_estimate_minus_evaluation": -3.0601545517793767,
+      "estimated_distances_m": {
+        "count": 31,
+        "mean": 0.040322581246014566,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "evaluation_distances_m": {
+        "count": 31,
+        "mean": 0.0032258064996811653,
+        "median": 0.0,
+        "p95": 0.02500000037252903,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 31,
+        "mean": 0.0032258064996811653,
+        "median": 0.0,
+        "p95": 0.02500000037252903,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "planar_vs_full_transform_xy_max_m": 0.0001582167702805026
+    },
+    {
+      "stamp_ns": 30169999327,
+      "stamp_s": 30.169999327000003,
+      "probe_phase": "single_goal",
+      "goal_request_id": 1,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 175,
+      "eligible_finite_count": 175,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 26,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        8.114777980713246,
+        6.485707677360984,
+        0.6751907697707167
+      ],
+      "evaluation_pose_xy_yaw": [
+        8.068526659496715,
+        6.598194272001034,
+        0.6702552840127818
+      ],
+      "evaluation_scan_tilt_degrees": 0.5907363744565295,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          30159999326,
+          30184999325
+        ],
+        "fraction": 0.4000000560000022
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            30169999327
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 19.562454290208834,
+      "evaluation_score": 22.581179166772387,
+      "score_estimate_minus_evaluation": -3.018724876563553,
+      "estimated_distances_m": {
+        "count": 26,
+        "mean": 0.05000000074505806,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distances_m": {
+        "count": 26,
+        "mean": 0.015384615613864018,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 26,
+        "mean": 0.015384615613864018,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "planar_vs_full_transform_xy_max_m": 0.00033518206355280755
+    },
+    {
+      "stamp_ns": 29269999347,
+      "stamp_s": 29.269999347000002,
+      "probe_phase": "single_goal",
+      "goal_request_id": 1,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 161,
+      "eligible_finite_count": 161,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 23,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        7.152044412529999,
+        6.400113563515267,
+        0.2705906104230529
+      ],
+      "evaluation_pose_xy_yaw": [
+        7.110283204561817,
+        6.529323623214781,
+        0.25942084683518846
+      ],
+      "evaluation_scan_tilt_degrees": 1.0470558394525804,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          29259999346,
+          29289999345
+        ],
+        "fraction": 0.33333337777777927
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            29269999347
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 16.743769904730694,
+      "evaluation_score": 19.762494781289682,
+      "score_estimate_minus_evaluation": -3.018724876558988,
+      "estimated_distances_m": {
+        "count": 23,
+        "mean": 0.08317973276476169,
+        "median": 0.05000000074505806,
+        "p95": 0.10000000149011612,
+        "min": 0.0,
+        "max": 0.8631338379432997
+      },
+      "evaluation_distances_m": {
+        "count": 23,
+        "mean": 0.04923235443881163,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.9823441498574933
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 23,
+        "mean": 0.04923235443881163,
+        "median": 0.0,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.9823441498574933
+      },
+      "planar_vs_full_transform_xy_max_m": 0.0007576405941091109
+    },
+    {
+      "stamp_ns": 27469999387,
+      "stamp_s": 27.469999387,
+      "probe_phase": "single_goal",
+      "goal_request_id": 1,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 99,
+      "eligible_finite_count": 99,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 17,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        5.904650290450433,
+        6.291358864046864,
+        0.007269507232870796
+      ],
+      "evaluation_pose_xy_yaw": [
+        5.857844469898441,
+        6.448954249428798,
+        -0.005178740951201277
+      ],
+      "evaluation_scan_tilt_degrees": 0.14583907216657474,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          27464999386,
+          27494999385
+        ],
+        "fraction": 0.16666670555555685
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            27469999387
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 11.160145736232582,
+      "evaluation_score": 14.137440937579292,
+      "score_estimate_minus_evaluation": -2.9772952013467098,
+      "estimated_distances_m": {
+        "count": 17,
+        "mean": 0.10890516743846033,
+        "median": 0.10000000149011612,
+        "p95": 0.2602775676516368,
+        "min": 0.0,
+        "max": 0.9013878322977225
+      },
+      "evaluation_distances_m": {
+        "count": 17,
+        "mean": 0.07884897778283782,
+        "median": 0.0,
+        "p95": 0.24808652416362467,
+        "min": 0.0,
+        "max": 1.0404326178378946
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 17,
+        "mean": 0.07884897778283782,
+        "median": 0.0,
+        "p95": 0.24808652416362467,
+        "min": 0.0,
+        "max": 1.0404326178378946
+      },
+      "planar_vs_full_transform_xy_max_m": 0.00012177860059357526
+    },
+    {
+      "stamp_ns": 36469999186,
+      "stamp_s": 36.469999186,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "frame_id": "aim_sentry/base_stabilized",
+      "range_count": 720,
+      "finite_range_count": 170,
+      "eligible_finite_count": 170,
+      "selection_step": 7,
+      "selected_index_count": 103,
+      "used_beam_count": 26,
+      "effective_range_min": 0.30000001192092896,
+      "effective_range_max": 10.0,
+      "effective_amcl_angle_min": -3.141592502593994,
+      "effective_amcl_angle_increment": 0.00872659683227539,
+      "status": "scored",
+      "estimated_pose_xy_yaw": [
+        9.225708173817717,
+        6.391980001017099,
+        0.6608253530816471
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.198315710988076,
+        6.519725131413413,
+        0.6547957771907662
+      ],
+      "evaluation_scan_tilt_degrees": 0.6054639225338883,
+      "truth_interpolation": {
+        "mode": "bracketed",
+        "stamps_ns": [
+          36449999185,
+          36474999185
+        ],
+        "fraction": 0.80000004
+      },
+      "body_to_scan_tf": [
+        {
+          "parent": "aim_sentry/base_link",
+          "child": "aim_sentry/base_stabilized",
+          "inverse": false,
+          "source_topic": "/tf",
+          "mode": "exact",
+          "stamps_ns": [
+            36469999186
+          ],
+          "fraction": 0.0
+        }
+      ],
+      "estimated_score": 20.429470869645257,
+      "evaluation_score": 23.379480354193092,
+      "score_estimate_minus_evaluation": -2.9500094845478344,
+      "estimated_distances_m": {
+        "count": 26,
+        "mean": 0.04423076988985905,
+        "median": 0.05000000074505806,
+        "p95": 0.05000000074505806,
+        "min": 0.0,
+        "max": 0.10000000149011612
+      },
+      "evaluation_distances_m": {
+        "count": 26,
+        "mean": 0.0038461539034660044,
+        "median": 0.0,
+        "p95": 0.037500000558793545,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "estimated_off_map_beams": 0,
+      "evaluation_off_map_beams": 0,
+      "evaluation_full_transform_xy_distances_m": {
+        "count": 26,
+        "mean": 0.0038461539034660044,
+        "median": 0.0,
+        "p95": 0.037500000558793545,
+        "min": 0.0,
+        "max": 0.05000000074505806
+      },
+      "planar_vs_full_transform_xy_max_m": 0.0003590157066146515
+    }
+  ],
+  "evaluation_scan_tilt_degrees": {
+    "count": 139,
+    "mean": 0.8178602366234379,
+    "median": 0.6923204437827566,
+    "p95": 1.6892929667334244,
+    "min": 0.0460383066577054,
+    "max": 2.1254587468620256
+  },
+  "planar_vs_full_transform_xy_max_m": {
+    "count": 139,
+    "mean": 0.0007967736401282016,
+    "median": 0.00041641861678625694,
+    "p95": 0.002424735559859167,
+    "min": 2.8905297489820733e-05,
+    "max": 0.004606554090454242
+  },
+  "coordinate_contract": {
+    "evaluation_world_frame": "rmsim_world",
+    "evaluation_body_frame": "aim_sentry/base_link",
+    "map_frame": "aim_sentry/map",
+    "evaluation_world_is_same_source_geometry_map": true,
+    "arbitrary_registration_or_offsets": false,
+    "max_interpolation_bracket_seconds": 0.25
+  },
+  "input_sha256": {
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\trace.json": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime-provenance.json": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\navigation\\20261118T044203Z-45808\\parameters.yaml": "488cbc0dc59fc53388a488c2859b853da544a39bd745055d0964f9467701c797",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.yaml": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scene\\navigation\\map.pgm": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py": "5284af23defb37b33918a18e7f6e72c9d5d126d1fbc0365e25f5a9338118a18c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f"
+  },
+  "detail_files": {
+    "frames": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scan-map-actual-vertical85-01\\scan-scores.json",
+      "sha256": "b79213f120112dfc8dfdc2f7f5d1bea66345fd4720dbceb93a6190d6d7cf5958"
+    },
+    "beams": {
+      "path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scan-map-actual-vertical85-01\\beam-residuals.json",
+      "sha256": "f59a2a0de1a2e4cde80034ab60e3e29bb1020e31c22b1b21de6c3ec3d02b5c4b"
+    }
+  },
+  "scope_boundaries": [
+    "Only exact-stamp published AMCL pose/scan pairs are scored; other received scans retain counts and explicit rejection reasons.",
+    "A published posterior pose is a representative estimate, not the entire particle set; scores do not reconstruct filter stochastic history.",
+    "Two recorded poses are compared. No pose optimization, map translation, control correction, or truth input to localization is performed.",
+    "An offline candidate scores the same recorded runtime AMCL/evaluation poses; it does not claim a new native localization result.",
+    "Truth is independently recorded evaluation data; no timestamp extrapolation or last-value holding is allowed.",
+    "Primary scoring is the same planar model at both poses; full-transform XY residuals and scan-plane tilt expose projection differences.",
+    "Structure tiles locate nearby occupied PGM cells; they do not identify CAD materials or prove a physical object label.",
+    "A score preference alone does not establish whether filtering noise, terrain projection, or map semantics caused localization error.",
+    "Coverage is restricted to recorded finite beams and the declared session, with no full-field accuracy claim."
+  ]
+}

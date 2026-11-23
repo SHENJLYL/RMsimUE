@@ -1,0 +1,300 @@
+{
+  "status": "passed",
+  "scope": "native original Nav2 actions, moving gimbal-mounted Mid-360 and actual joints; truth used only for evaluation",
+  "checks": [
+    {
+      "name": "native_stack_ready",
+      "passed": true,
+      "identity": [
+        "0D68253C4DC39E815A62C58A99C12E45",
+        0
+      ]
+    },
+    {
+      "name": "single_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "single_goal_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "error_m": 0.11616918857785492,
+      "position": [
+        9.388682225190916,
+        6.498668185689714,
+        0.017323963928334418
+      ]
+    },
+    {
+      "name": "original_planner_path",
+      "passed": true,
+      "points": 73
+    },
+    {
+      "name": "waypoint_sequence_accepted",
+      "passed": true
+    },
+    {
+      "name": "waypoint_sequence_actual_arrival",
+      "passed": true,
+      "status": 4,
+      "missed_waypoints": [],
+      "error_m": 0.10265649062957256
+    },
+    {
+      "name": "waypoints_observed_in_order",
+      "passed": true,
+      "indices": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "cancel_test_goal_accepted",
+      "passed": true
+    },
+    {
+      "name": "native_action_cancelled",
+      "passed": true,
+      "status": 5
+    },
+    {
+      "name": "cancelled_vehicle_stopped",
+      "passed": true,
+      "braking_m": 0.11142901253804378,
+      "drift_m": 0.0
+    },
+    {
+      "name": "gimbal_follows_original_shaped_target",
+      "passed": true,
+      "samples": 1294,
+      "median_error_rad": 0.010480914548613968,
+      "yaw_travel_rad": 17.92804003200054
+    },
+    {
+      "name": "original_gimbal_rate_limit",
+      "passed": true
+    },
+    {
+      "name": "mounted_lidar_and_imu_live",
+      "passed": true,
+      "clouds": 353,
+      "imu": 7004
+    },
+    {
+      "name": "session_and_no_fire_preserved",
+      "passed": true
+    }
+  ],
+  "script_sha256": "3e1922c6f768f83d29de2b6d4e4d960dcf60d2564a676e2287c7e2566685718d",
+  "command": [
+    "E:\\simulator-cache\\environments\\rm-simulator-ros2-humble-9257817147700612234\\envs\\default\\python.exe",
+    "D:\\simulator\\tools\\integration\\probe_high_speed_diagnostics.py",
+    "--output",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14\\actions"
+  ],
+  "trace_scope": "full bridge diagnostic and command receipt samples; derived velocities/accelerations are independent finite-difference observations",
+  "last_navigation": {
+    "phase": "running",
+    "starts": 1,
+    "identity": [
+      "0D68253C4DC39E815A62C58A99C12E45",
+      0
+    ],
+    "pids": {
+      "loam_interface": 40076,
+      "sensor_scan_generation": 44600,
+      "terrain_analysis": 43916,
+      "terrain_analysis_ext": 47096,
+      "pointcloud_to_laserscan": 26364,
+      "fake_vel_transform": 42736,
+      "map_server": 38700,
+      "localization_map_server": 21456,
+      "amcl": 44812,
+      "lifecycle_manager_localization": 43992,
+      "controller_server": 43852,
+      "planner_server": 46832,
+      "smoother_server": 46364,
+      "behavior_server": 46584,
+      "bt_navigator": 41008,
+      "waypoint_follower": 43696,
+      "velocity_smoother": 44064,
+      "lifecycle_manager_navigation": 45100
+    },
+    "output_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14\\navigation\\20261118T041626Z-45572",
+    "map_id": "rmuc2027",
+    "initial_pose_sent": true,
+    "localization_map": {
+      "schema": "rmsim_localization_map_identity_v1",
+      "map_id": "rmuc2027",
+      "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+      "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+      "descriptor_sha256": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "source_to_sim_translation_m": [
+        -7.152952372635468e-06,
+        -1.6243433957331543,
+        1.6403436655816601
+      ],
+      "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+      "units": "m",
+      "source_role": "offline_geometry_candidate",
+      "source_status": "generated_not_native_validated",
+      "navigation": {
+        "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14\\scene\\navigation\\map.yaml",
+        "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+        "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14\\scene\\navigation\\map.pgm",
+        "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+        "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-14\\scene\\navigation\\metadata.json",
+        "metadata_sha256": "3f3eb288c8aeee8e025eb3624b6d59f730638126ff6fbc3e41a9e8c0fb9b01f6",
+        "width": 560,
+        "height": 322,
+        "resolution": 0.05000000074505806,
+        "yaml_resolution": 0.05000000000000071,
+        "origin": [
+          -14.0,
+          -8.05,
+          0.0
+        ],
+        "occupancy_sha256": "eced113f0c5facce2e5f6db507784ba89b633dba0c27a412a2f0615673de4f87"
+      },
+      "localization": {
+        "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.yaml",
+        "yaml_sha256": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+        "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm",
+        "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+        "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json",
+        "metadata_sha256": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+        "width": 560,
+        "height": 322,
+        "resolution": 0.05000000074505806,
+        "yaml_resolution": 0.05000000000000071,
+        "origin": [
+          -14.0,
+          -8.05,
+          0.0
+        ],
+        "occupancy_sha256": "1e48bb4f55a8aff4524613534011f2a0e493d8385030e7d1d2562e0110d1f1ae"
+      }
+    },
+    "localization_map_verified": true,
+    "localization_map_topics": {
+      "source_topic": "map",
+      "target_topic": "localization_map"
+    },
+    "map_input_fault": "",
+    "control_profile": "simulation",
+    "control_source": {
+      "mode": "simulation",
+      "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+      "source_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9"
+    },
+    "navigation_velocity_limit_mps": 3.0,
+    "smoother_max_velocity": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "smoother_max_accel": [
+      0.8,
+      0.8,
+      3.0
+    ],
+    "smoother_max_decel": [
+      -3.0,
+      -3.0,
+      -5.0
+    ],
+    "localization_candidate": true,
+    "read_only_rpc_timeouts": 2,
+    "transport": {
+      "mode": "loopback_udp",
+      "allowed_interfaces": [
+        "127.0.0.1"
+      ],
+      "profile_sha256": "f59b60a9f7570ce9c0ce40dc6053e0748295f8ea33038d0f1007dea13aaa0af9",
+      "profile": "D:\\simulator\\ros2_ws\\install_bridge\\rmsim_bridge\\share\\rmsim_bridge\\config\\fastdds-loopback-udp.xml"
+    },
+    "scope": "original sentry/Nav2 nodes; no truth input; single robot"
+  },
+  "last_position": [
+    9.208206620509193,
+    6.5089359084553,
+    0.017309809332764506
+  ],
+  "cancel_request": {
+    "event": "request",
+    "monotonic_s": 47349.5600207,
+    "truth_stamp_s": 59.359998673,
+    "bridge_sim_time_ns": 59339998674,
+    "latest_clock_ns": 59359998673,
+    "position_m": [
+      9.318062711451816,
+      6.490280200252053,
+      0.017479129872008878
+    ],
+    "motion": {
+      "stamp": 59.319998674,
+      "received_monotonic_s": 47349.51549,
+      "frame_id": "rmsim_world",
+      "position_m": [
+        9.337764228231823,
+        6.485656686592774,
+        0.01757123208636015
+      ],
+      "orientation_xyzw": [
+        -0.019569727221001313,
+        0.014477664087861584,
+        0.32584796288486867,
+        0.945108738771807
+      ],
+      "velocity_m_s": [
+        -0.42050029386457505,
+        0.07847490033419004,
+        -0.005462570546288075
+      ],
+      "acceleration_m_s2": [
+        -0.6891658096239602,
+        1.8148334287986072,
+        -0.02495482790875109
+      ],
+      "speed_xy_m_s": 0.42776022152913545,
+      "probe_phase": "cancel_test"
+    },
+    "drive": {
+      "velocity_command_mode": "external_shaped_velocity",
+      "applied_velocity_command_mode": "external_shaped_velocity",
+      "requested_in_world_frame": false,
+      "requested_linear_m_s": [
+        -0.28974704096892967,
+        0.410168327210237,
+        0
+      ],
+      "filtered_linear_m_s": [
+        -0.2900728826951871,
+        0.40993795520980836,
+        0
+      ],
+      "applied_requested_world_linear_m_s": [
+        -0.48093652615494886,
+        0.1445387913561783,
+        0
+      ],
+      "filtered_world_linear_m_s": [
+        -0.48093652615494886,
+        0.1445387913561783,
+        0
+      ],
+      "applied_requested_yaw_rad_s": 0,
+      "filtered_yaw_rad_s": 0,
+      "physical_brake": false
+    },
+    "command": {
+      "accepted_seq": 1810,
+      "status": "active",
+      "age_s": 0.02143310010433197,
+      "rejected_count": 0,
+      "last_rejection": ""
+    }
+  },
+  "runtime_provenance_sha256": "ed301301b8f36c6f2dbfc34df31804fbf9415c5f53225dfd767d7b0694002802"
+}

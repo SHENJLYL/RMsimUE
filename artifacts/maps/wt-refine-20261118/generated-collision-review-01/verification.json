@@ -1,0 +1,36 @@
+{
+  "schema": "wt_generated_collision_source_review_v1",
+  "status": "passed",
+  "scope": "read-only source/serialized transform/bounds coverage; native physics execution remains separate",
+  "files": {
+    "WTGeneratedCollisionComponent.cpp": "2441329bab6cc9daff7fd4a0a1e6d8f37e1c836ff2d3f2273c915050f9d210b2",
+    "WTGeneratedCollisionComponent.h": "6d4bef1487e22fbfe3914033abb86f5e86cc6b795d2db03815bb155c1421f4b6",
+    "SceneMap.cpp": "b938b540e2cb13181fce661c85613766b7bdf93be24a8eff50255a38e5150400",
+    "ImportLabGameMode.cpp": "9ae18af705879ddc94e346c472fdcb858fa3d33723d72bcc4098f79259f843bf",
+    "RosBridgeComponent.cpp": "a7f797a65e8255102b3a910d7748d65d081234742bf43ca0fadd165b617f257c",
+    "RosLidarComponent.cpp": "1b1dd66169a93072acbc37c941a53cb712efb8bd82c68c2beebc7d6429212bb2"
+  },
+  "manifest_sha256": "28dd4b9d3afc2ab8f8b978482391a1c6358139770957b94ade07ab0d81a0a8dd",
+  "source_instances": 18454,
+  "rigid_source_instances": 15558,
+  "affine_source_instances": 2896,
+  "affine_physical_cells": 193,
+  "physical_slots": 15751,
+  "cells": 917,
+  "meshes": 203,
+  "exact_rigid_source_rows_and_indices": true,
+  "exact_affine_source_bindings": true,
+  "nonuniform_instances": 15408,
+  "max_quaternion_norm_error": 7.626679265904102e-08,
+  "max_world_bounds_error_m": 1.1102230246251565e-16,
+  "max_ros_to_ue_basis_error_cm": 5.820766091346741e-11,
+  "timing": "Initialize before contact physics; runtime Refresh from GameMode TG_PostPhysics prepares next frame; 32m load margin/8m travel trigger/32m retention hysteresis; permanent spawn anchor",
+  "range_source": "same RosLidar/LidarProfile/MeshRigFile fallback as RosBridge and same max_range_m<=200 bound; adds mount and visual extent",
+  "engine_evidence": {
+    "scaled_shared_bvh": "ChaosInterfaceUtils.cpp:302-328",
+    "shape_lock": "BodyInstance.cpp:485-492 GetAllShapes_AssumesLocked; outer ExecuteRead takes one actor read lock",
+    "async_mesh": "StaticMesh.h:GetBodySetup waits for async BodySetup; GetNumTriangles reads completed RenderData; BodySetup PostLoad creates physics data"
+  },
+  "native_validation_performed": false,
+  "production_mutations": false
+}

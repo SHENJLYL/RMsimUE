@@ -89,5 +89,82 @@
     }
   ],
   "provenance": "artifacts/navigation/reconnect-tf-20261117/release-summary.json",
-  "scope": "Existing geometry-derived RMUC raster and red-wave scene, copied without geometry edits; full-map route coverage remains pending."
+  "scope": "Existing geometry-derived RMUC raster and red-wave scene, copied without geometry edits; full-map route coverage remains pending.",
+  "localization_map": {
+    "schema": "rmsim_packaged_localization_map_v1",
+    "default": true,
+    "status": "generated_geometry_with_fixed_source_identity",
+    "files": {
+      "yaml": {
+        "path": "localization/vertical85/map.yaml",
+        "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+      },
+      "raster": {
+        "path": "localization/vertical85/map.pgm",
+        "sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8"
+      },
+      "metadata": {
+        "path": "localization/vertical85/metadata.json",
+        "sha256": "a2bb480d74048b06dec74823758b6ad676273b127e95932ed93b97964d017852"
+      },
+      "surface_provenance": {
+        "path": "localization/vertical85/surface-provenance.npz",
+        "sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035"
+      }
+    },
+    "export_recipe": {
+      "schema": "rmsim_localization_surface_export_recipe_v1",
+      "category": "vertical85",
+      "minimum_surface_inclination_from_horizontal_deg": 85.0,
+      "tool": {
+        "path": "tools/maps/export_localization_surface_map.py",
+        "sha256": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1"
+      },
+      "source_collision": {
+        "path": "artifacts/sources/rmuc2027/optimized/rmuc2027/full-map-collision.glb",
+        "sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911"
+      },
+      "descriptor": {
+        "path": "assets/maps/rmuc2027/mesh-source.json",
+        "sha256": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9"
+      },
+      "navigation_map_yaml": {
+        "path": "assets/maps/rmuc2027/navigation-console/map.yaml",
+        "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+      },
+      "navigation_raster": {
+        "path": "assets/maps/rmuc2027/navigation-console/map.pgm",
+        "sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883"
+      },
+      "geometry_reader": {
+        "path": "tools/maps/prepare_rmuc2027.py",
+        "sha256": "4fd91f07932fb0dfe9bba7f90cc561742e2a1daeecbb228458a9e5741b8bdd91"
+      },
+      "navigation_manifest_path": "assets/maps/rmuc2027/navigation-console/SOURCE.json",
+      "rebuild_command": "python tools/maps/export_localization_surface_map.py --restore-package assets/maps/rmuc2027/navigation-console/SOURCE.json",
+      "generated_files_policy": "Only missing PGM/NPZ are rebuilt; existing hash mismatches fail; approved YAML/metadata remain byte-identical."
+    },
+    "native_evidence": {
+      "scope": "The unchanged occupancy raster and surface-provenance bytes passed the original 14-action checks in rmuc-14 and rmuc-15; rmuc-15 also passed 32 clock checks using the historical 3m/s source snapshot. Later release acceptance is reported independently.",
+      "sessions": [
+        "artifacts/navigation/realtime-20261118/rmuc-14",
+        "artifacts/navigation/realtime-20261118/rmuc-15"
+      ],
+      "rmuc15_runtime_provenance_sha256": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+      "actual_arrival_errors_m": {
+        "rmuc14_single": 0.11616918857785492,
+        "rmuc14_waypoints": 0.10265649062957256,
+        "rmuc15_single": 0.1297606016608601,
+        "rmuc15_waypoints": 0.06680729426537449
+      },
+      "text_identity_scope": "Original rmuc-14, rmuc-15 and rmuc-16 text-input identities remain historical. The canonical LF descriptor, YAML and metadata form a separate text identity whose native validation is recorded in rmuc-17 or subsequent independent release evidence."
+    },
+    "known_limits": [
+      "The fixed 85-degree category excludes the measured 84.92-degree red-road side face.",
+      "The unchanged terrain-derived scan and 2D surface map retain weak transverse (map y) constraints and multiple likelihood maxima on the red road.",
+      "Ten-centimetre arrival precision is not established across both routes; original 25cm acceptance remains unchanged.",
+      "Raw 3D capture and fixed 75-degree comparison are retained as evidence for future surface-height and visibility-consistent localization."
+    ],
+    "acceptance_record_policy": "Current release acceptance is reported independently in CodeStable and release-summary evidence; this manifest remains the immutable geometry/export declaration."
+  }
 }

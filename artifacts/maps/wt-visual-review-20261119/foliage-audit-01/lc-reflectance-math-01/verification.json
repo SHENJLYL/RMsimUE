@@ -1,0 +1,102 @@
+{
+  "schema": "wt_lc_reflectance_math_verification_v1",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "continuous_gradients_and_shared_sampler",
+      "passed": true
+    },
+    {
+      "name": "cached_source_equivalence_source_uniform",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0,
+        "micro_id": 0.0
+      },
+      "direct_albedo_reads": 49152,
+      "cached_albedo_reads": 23634,
+      "direct_reflectance_reads": 16360,
+      "cached_reflectance_reads": 7857
+    },
+    {
+      "name": "cached_source_equivalence_different_strength_same_slice",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0,
+        "micro_id": 0.0
+      },
+      "direct_albedo_reads": 24,
+      "cached_albedo_reads": 9,
+      "direct_reflectance_reads": 8,
+      "cached_reflectance_reads": 3
+    },
+    {
+      "name": "cached_source_equivalence_all_four_rotation_components",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0,
+        "micro_id": 0.0
+      },
+      "direct_albedo_reads": 24,
+      "cached_albedo_reads": 24,
+      "direct_reflectance_reads": 8,
+      "cached_reflectance_reads": 8
+    },
+    {
+      "name": "independent_reflectance_identity_synthetic_guard",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0,
+        "micro_id": 0.0
+      },
+      "scope": "synthetic alternate reflection mapping proves albedo cache identity cannot substitute for reflection identity"
+    },
+    {
+      "name": "continuous_exact_classification_limit_0",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0
+      },
+      "points": 256,
+      "categorical_micro_id_changes": 0
+    },
+    {
+      "name": "continuous_exact_classification_limit_1",
+      "passed": true,
+      "errors": {
+        "color": 0.0,
+        "normal": 0.0,
+        "roughness": 0.0
+      },
+      "points": 256,
+      "categorical_micro_id_changes": 0
+    },
+    {
+      "name": "source_neighbor_ties_first_and_layer_ties_second",
+      "passed": true,
+      "neighbor_winners": [
+        0.1,
+        0.3
+      ],
+      "layer_winner": 0.9,
+      "source": "make_clipmap.dshl 665-667 and 828-831"
+    }
+  ],
+  "script_sha256": "601f924e05e0aefc52a73747725deedd2e3a383ceb61aa6fa0938b2c8241695a",
+  "candidate_sha256": "2b9c8ef90a7208ba6e6ffd96db6dc90d0880f84a5c41aa17f90bb26a73202ff7",
+  "helper_sha256": "a1ec83ff5e5e12fcd9ab2f6fb38b79cc528b73af8a935e99bd6e2891d5b23967",
+  "reflectance_definition_sha256": "0dc385832f8caac5cf5e8d87def40bc3f04d0d107f2c06462640727c00bca575",
+  "original_landdetail_sha256": "5596ab7b7b4a6c4dd60b1f5884d21719981bb227a824d8d5629d99fe964dfb86",
+  "native_run": false,
+  "scope": "exact CPU-double mip0 fixed-footprint source sampling; no GPU/anisotropic/compiler/performance claim"
+}

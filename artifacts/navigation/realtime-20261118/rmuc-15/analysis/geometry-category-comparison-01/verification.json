@@ -1,0 +1,341 @@
+{
+  "status": "offline_comparison_complete",
+  "same_scans_same_pose_same_parameters": true,
+  "max_beams": 100,
+  "fixed_categories": [
+    "vertical85",
+    "steep75"
+  ],
+  "phases": {
+    "vertical85": {
+      "single_goal": {
+        "count": 41,
+        "evaluation_higher": 41,
+        "estimated_higher": 0,
+        "ties": 0,
+        "mean_estimate_minus_evaluation": -1.947341459621102
+      },
+      "waypoints": {
+        "count": 93,
+        "evaluation_higher": 68,
+        "estimated_higher": 22,
+        "ties": 3,
+        "mean_estimate_minus_evaluation": -0.8893073876491976
+      }
+    },
+    "steep75": {
+      "single_goal": {
+        "count": 41,
+        "evaluation_higher": 30,
+        "estimated_higher": 11,
+        "ties": 0,
+        "mean_estimate_minus_evaluation": -0.4108574324653146
+      },
+      "waypoints": {
+        "count": 93,
+        "evaluation_higher": 68,
+        "estimated_higher": 18,
+        "ties": 7,
+        "mean_estimate_minus_evaluation": -0.8304064288858083
+      }
+    }
+  },
+  "endpoint_surfaces": [
+    {
+      "category": "vertical85",
+      "phase": "single_goal",
+      "stamp_ns": 35069999217,
+      "yaw_mode": "estimated_yaw",
+      "yaw_rad": 0.6724029995590677,
+      "used_beams": 24,
+      "estimated_pose_xy_yaw": [
+        9.370520256267824,
+        6.391632481571135,
+        0.6724029995590677
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.33376272323908,
+        6.494238274424985,
+        0.6739623368060579
+      ],
+      "exact_estimate_xy_score": 19.24260904193097,
+      "exact_evaluation_xy_score": 21.63751260419309,
+      "sampled_grid_maximum": 21.63751260419309,
+      "sampled_max_count": 8,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.120520256267824,
+          6.316632481571135
+        ],
+        [
+          9.520520256267824,
+          6.516632481571135
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.026016599416324598,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "vertical85",
+      "phase": "single_goal",
+      "stamp_ns": 35069999217,
+      "yaw_mode": "evaluation_yaw",
+      "yaw_rad": 0.6739623368060579,
+      "used_beams": 24,
+      "estimated_pose_xy_yaw": [
+        9.370520256267824,
+        6.391632481571135,
+        0.6724029995590677
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.33376272323908,
+        6.494238274424985,
+        0.6739623368060579
+      ],
+      "exact_estimate_xy_score": 19.24260904193097,
+      "exact_evaluation_xy_score": 21.63751260419309,
+      "sampled_grid_maximum": 21.63751260419309,
+      "sampled_max_count": 22,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.120520256267824,
+          6.316632481571135
+        ],
+        [
+          9.545520256267825,
+          6.591632481571136
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.025293083968284582,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "vertical85",
+      "phase": "waypoints",
+      "stamp_ns": 54274998789,
+      "yaw_mode": "estimated_yaw",
+      "yaw_rad": 1.3648930053716462,
+      "used_beams": 18,
+      "estimated_pose_xy_yaw": [
+        9.388563513151912,
+        6.420263606219102,
+        1.3648930053716462
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.435357925856641,
+        6.465183005698117,
+        1.343231889101018
+      ],
+      "exact_estimate_xy_score": 14.94805717725513,
+      "exact_evaluation_xy_score": 15.723453234003934,
+      "sampled_grid_maximum": 16.14550895838619,
+      "sampled_max_count": 1,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.213563513151911,
+          6.420263606219102
+        ],
+        [
+          9.213563513151911,
+          6.420263606219102
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.22629740156835973,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "vertical85",
+      "phase": "waypoints",
+      "stamp_ns": 54274998789,
+      "yaw_mode": "evaluation_yaw",
+      "yaw_rad": 1.343231889101018,
+      "used_beams": 18,
+      "estimated_pose_xy_yaw": [
+        9.388563513151912,
+        6.420263606219102,
+        1.3648930053716462
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.435357925856641,
+        6.465183005698117,
+        1.343231889101018
+      ],
+      "exact_estimate_xy_score": 14.415856385641327,
+      "exact_evaluation_xy_score": 15.856503431907385,
+      "sampled_grid_maximum": 16.411609354193097,
+      "sampled_max_count": 3,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.238563513151911,
+          6.3952636062191015
+        ],
+        [
+          9.638563513151912,
+          6.3952636062191015
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.06999284401575484,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "steep75",
+      "phase": "single_goal",
+      "stamp_ns": 35069999217,
+      "yaw_mode": "estimated_yaw",
+      "yaw_rad": 0.6724029995590677,
+      "used_beams": 24,
+      "estimated_pose_xy_yaw": [
+        9.370520256267824,
+        6.391632481571135,
+        0.6724029995590677
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.33376272323908,
+        6.494238274424985,
+        0.6739623368060579
+      ],
+      "exact_estimate_xy_score": 21.63751260419309,
+      "exact_evaluation_xy_score": 21.770562802096542,
+      "sampled_grid_maximum": 21.903612999999996,
+      "sampled_max_count": 5,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.345520256267823,
+          6.316632481571135
+        ],
+        [
+          9.345520256267823,
+          6.566632481571135
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.025293083968284582,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "steep75",
+      "phase": "single_goal",
+      "stamp_ns": 35069999217,
+      "yaw_mode": "evaluation_yaw",
+      "yaw_rad": 0.6739623368060579,
+      "used_beams": 24,
+      "estimated_pose_xy_yaw": [
+        9.370520256267824,
+        6.391632481571135,
+        0.6724029995590677
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.33376272323908,
+        6.494238274424985,
+        0.6739623368060579
+      ],
+      "exact_estimate_xy_score": 21.63751260419309,
+      "exact_evaluation_xy_score": 21.770562802096542,
+      "sampled_grid_maximum": 21.903612999999996,
+      "sampled_max_count": 5,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.345520256267823,
+          6.316632481571135
+        ],
+        [
+          9.345520256267823,
+          6.566632481571135
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.025293083968284582,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "steep75",
+      "phase": "waypoints",
+      "stamp_ns": 54274998789,
+      "yaw_mode": "estimated_yaw",
+      "yaw_rad": 1.3648930053716462,
+      "used_beams": 18,
+      "estimated_pose_xy_yaw": [
+        9.388563513151912,
+        6.420263606219102,
+        1.3648930053716462
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.435357925856641,
+        6.465183005698117,
+        1.343231889101018
+      ],
+      "exact_estimate_xy_score": 14.94805717725513,
+      "exact_evaluation_xy_score": 15.989553629810835,
+      "sampled_grid_maximum": 16.14550895838619,
+      "sampled_max_count": 2,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.213563513151911,
+          6.420263606219102
+        ],
+        [
+          9.438563513151912,
+          6.420263606219102
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.04503363453534447,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    },
+    {
+      "category": "steep75",
+      "phase": "waypoints",
+      "stamp_ns": 54274998789,
+      "yaw_mode": "evaluation_yaw",
+      "yaw_rad": 1.343231889101018,
+      "used_beams": 18,
+      "estimated_pose_xy_yaw": [
+        9.388563513151912,
+        6.420263606219102,
+        1.3648930053716462
+      ],
+      "evaluation_pose_xy_yaw": [
+        9.435357925856641,
+        6.465183005698117,
+        1.343231889101018
+      ],
+      "exact_estimate_xy_score": 14.415856385641327,
+      "exact_evaluation_xy_score": 15.989553629810835,
+      "sampled_grid_maximum": 16.544659552096547,
+      "sampled_max_count": 2,
+      "sampled_max_xy_bounds_m": [
+        [
+          9.438563513151912,
+          6.3952636062191015
+        ],
+        [
+          9.463563513151911,
+          6.3952636062191015
+        ]
+      ],
+      "nearest_sampled_maximum_to_evaluation_m": 0.06999284401575484,
+      "evaluation_exceeds_sampled_maximum": false,
+      "grid_scope": "Fixed 21x21 discrete samples at 25mm spacing, +-250mm around actual estimate; no continuous optimum claim or source tuning"
+    }
+  ],
+  "production_changes": [],
+  "inputs_sha256": {
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\trace.json": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime-provenance.json": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\navigation\\20261118T044203Z-45808\\parameters.yaml": "488cbc0dc59fc53388a488c2859b853da544a39bd745055d0964f9467701c797",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compare_rmuc15_geometry_maps.py": "f2075faeda7c08b344040a663fd8f185d08241729cf3e0176e0c01d473296086",
+    "D:\\simulator\\tools\\integration\\analyze_scan_map_alignment.py": "5284af23defb37b33918a18e7f6e72c9d5d126d1fbc0365e25f5a9338118a18c",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\analysis\\raw-xyz-01\\verification.json": "b544b94db1e57043cda9cf06d4b009fd021d505c2be9cbd65cb203b0299708c6",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\analysis\\raw-xyz-01\\beams.json": "f8fa1e06f6dd9e4bade30927e5ba237274a311ad31bdb3054a7c3bcfd16b990e",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scan-map-actual-vertical85-01\\scan-scores.json": "b79213f120112dfc8dfdc2f7f5d1bea66345fd4720dbceb93a6190d6d7cf5958",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\map.pgm": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\vertical85\\metadata.json": "087ffe55dbdd5be791dda3e835a5fe53040df2ea3fd66fb6598b94236dade37f",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\scan-map-steep75-01\\scan-scores.json": "83884d3b5fe4cf8a8a8e719f57a11ac32b5108ba45bc2c60f6323172eb183194",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\steep75\\map.pgm": "f1425f211b794516899db29b876eec3bcad4d1f8e917c503c7e7028e509fd001",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\localization-map-candidates-02\\steep75\\metadata.json": "fb6907afd6add7d02d8043583f94af1dd3d9615c5e9d0c73b614fa01f21a649d"
+  }
+}

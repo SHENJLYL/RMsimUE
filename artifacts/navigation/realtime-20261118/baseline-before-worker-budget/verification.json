@@ -1,0 +1,30 @@
+{
+  "created_utc": "2026-11-18T04:24:58.717614+00:00",
+  "status": "snapshot_complete",
+  "sources": {
+    "tools/integration/platform_cpu_policy.py": {
+      "sha256": "3f15ad643b476a50199aff81622c9165152fe71a38f4e2afdc53a016b8939302",
+      "snapshot": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-worker-budget\\tools\\integration\\platform_cpu_policy.py"
+    },
+    "tools/integration/navigation_console.py": {
+      "sha256": "6fb433dd81e233a55ff1abfa181a4d55463ff903dbf32dd6e07c935895b2024f",
+      "snapshot": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-worker-budget\\tools\\integration\\navigation_console.py"
+    },
+    "tests/control/test_platform_cpu_policy.py": {
+      "sha256": "20fb3f02ad4333490d038727afe4438cbc227ae9af81ced3741e36ceae3faf51",
+      "snapshot": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-worker-budget\\tests\\control\\test_platform_cpu_policy.py"
+    }
+  },
+  "engine_primary_sources": {
+    "GenericPlatformMisc.cpp": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Private\\GenericPlatform\\GenericPlatformMisc.cpp",
+      "sha256": "3e6c82cce692d2620631344232226223d1e6e9227f8ee9a9cfe3c41c49e58d5f"
+    },
+    "WindowsPlatformMisc.cpp": {
+      "path": "E:\\simulator-tools\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Private\\Windows\\WindowsPlatformMisc.cpp",
+      "sha256": "feb5e787196a9a7d9bc949215bad13635624326005df2cb0c6e6a690db4851bf"
+    }
+  },
+  "runtime_module_sha256": "7444fdcaa7e039c4c1ef6cd9403d5f5466d90ed184c0d8479ee77dec67760095",
+  "scope": "Before launcher/helper worker-budget change; no physics or sensor code changes"
+}

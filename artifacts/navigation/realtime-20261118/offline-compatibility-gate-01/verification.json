@@ -1,0 +1,219 @@
+{
+  "status": "passed",
+  "scope": "offline aggregation guard validation against the actual failed compatibility01; no native runtime or accepted release generated",
+  "created_utc": "2026-11-18T02:55:19.393391+00:00",
+  "checks": [
+    {
+      "name": "failed_compatibility_wrapper_rejected",
+      "passed": true
+    },
+    {
+      "name": "truncated_failed_red_wave_rejected",
+      "passed": true
+    },
+    {
+      "name": "complete_sentry_seventy_native_checks_counted",
+      "passed": true
+    },
+    {
+      "name": "both_manual_wave_routes_require_five_checks_each",
+      "passed": true
+    },
+    {
+      "name": "missing_suspension_does_not_pass",
+      "passed": true
+    },
+    {
+      "name": "original_failed_report_preserved",
+      "passed": true
+    },
+    {
+      "name": "git_diff_check_clean",
+      "passed": true,
+      "output": ""
+    }
+  ],
+  "native_compatibility_status": "failed",
+  "source_sha256": "e5ad4e5fed4b3e7169dadb479953555fefb068c704758bd91c8d8d2c4d0c990f",
+  "input_report_sha256": "3795eca834e32cdb4098aeb4c2d6107c04152e440d78bd2936333884b247229b",
+  "group_counts": {
+    "sentry": {
+      "expected_checks": 70,
+      "observed_checks": 70,
+      "passed_checks": 70
+    },
+    "manual-waves": {
+      "expected_checks": 10,
+      "observed_checks": 3,
+      "passed_checks": 2
+    },
+    "suspension": {
+      "expected_checks": 92,
+      "observed_checks": 0,
+      "passed_checks": 0
+    }
+  },
+  "native_failed_gates": [
+    {
+      "name": "compatibility_three_original_case_groups_passed",
+      "passed": false,
+      "observed_cases": [
+        {
+          "name": "sentry",
+          "exit_code": 0,
+          "inputs_unchanged": true
+        },
+        {
+          "name": "manual-waves",
+          "exit_code": 1,
+          "inputs_unchanged": true
+        }
+      ]
+    },
+    {
+      "name": "compatibility_manual-waves_route_selection_passed",
+      "passed": false
+    },
+    {
+      "name": "compatibility_suspension_controls_route_selection_passed",
+      "passed": false
+    },
+    {
+      "name": "compatibility_suspension_waves_route_selection_passed",
+      "passed": false
+    },
+    {
+      "name": "compatibility_suspension_eight_original_cases_passed",
+      "passed": false
+    },
+    {
+      "name": "compatibility_manual-waves_wave_red_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 5,
+      "observed_checks": 3,
+      "check_names": [
+        "gyro_forward_wave_route",
+        "gyro_spin_up",
+        "gyro_supported_spawn"
+      ]
+    },
+    {
+      "name": "compatibility_manual-waves_wave_blue_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 5,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_traction_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 10,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_controls_default_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 19,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_waves_wave_red_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 5,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_waves_wave_blue_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 5,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_integration_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 10,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_fast_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 5,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_suspension_spin_complete_native_control_passed",
+      "passed": false,
+      "expected_checks": 6,
+      "observed_checks": 0,
+      "check_names": []
+    },
+    {
+      "name": "compatibility_each_native_control_case_has_distinct_run_id",
+      "passed": false
+    },
+    {
+      "name": "compatibility_suspension_ros_ros_native_checks_passed",
+      "passed": false,
+      "expected_checks": 11,
+      "observed_checks": 0
+    },
+    {
+      "name": "compatibility_suspension_lk_lk_native_checks_passed",
+      "passed": false,
+      "expected_checks": 21,
+      "observed_checks": 0
+    },
+    {
+      "name": "compatibility_all_native_leaf_gates_complete",
+      "passed": false,
+      "group_check_totals": {
+        "sentry": {
+          "expected_checks": 70,
+          "observed_checks": 70,
+          "passed_checks": 70
+        },
+        "manual-waves": {
+          "expected_checks": 10,
+          "observed_checks": 3,
+          "passed_checks": 2
+        },
+        "suspension": {
+          "expected_checks": 92,
+          "observed_checks": 0,
+          "passed_checks": 0
+        }
+      }
+    }
+  ],
+  "missing_native_reports": [
+    "manual-waves\\verification.json",
+    "suspension\\controls\\verification.json",
+    "suspension\\waves\\verification.json",
+    "suspension\\verification.json",
+    "manual-waves\\wave_red\\verification.json",
+    "manual-waves\\wave_blue\\verification.json",
+    "manual-waves\\wave_blue\\control-result.json",
+    "suspension\\traction\\verification.json",
+    "suspension\\traction\\control-result.json",
+    "suspension\\controls\\default\\verification.json",
+    "suspension\\controls\\default\\control-result.json",
+    "suspension\\waves\\wave_red\\verification.json",
+    "suspension\\waves\\wave_red\\control-result.json",
+    "suspension\\waves\\wave_blue\\verification.json",
+    "suspension\\waves\\wave_blue\\control-result.json",
+    "suspension\\integration\\verification.json",
+    "suspension\\integration\\control-result.json",
+    "suspension\\fast\\verification.json",
+    "suspension\\fast\\control-result.json",
+    "suspension\\spin\\verification.json",
+    "suspension\\spin\\control-result.json",
+    "suspension\\ros\\ros\\verification.json",
+    "suspension\\lk\\lk\\verification.json"
+  ]
+}

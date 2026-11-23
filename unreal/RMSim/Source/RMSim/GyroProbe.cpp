@@ -10,9 +10,13 @@
 
 void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
 {
+    if(FParse::Param(FCommandLine::Get(),TEXT("MapUiProbe"))){TickMapUiProbe(DeltaSeconds);return;}
+    if(FParse::Param(FCommandLine::Get(),TEXT("CameraHeadingProbe"))){TickCameraHeadingProbe(DeltaSeconds);return;}
     if(!Rig||!Rig->IsContactPhysics()||!Rig->HasSteeringModules()){Abort(TEXT("gyro probe requires the physical swerve rig"));return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("SteeringResponse"))&&ControlProbePhase==0)
     {ControlProbePhase=14;ContactPhaseTime=0;ContactStageStart=Rig->GetActorTransform();}
+    if(FParse::Param(FCommandLine::Get(),TEXT("CameraDriveProbe"))&&ControlProbePhase==0)
+    {ControlProbePhase=20;ContactPhaseTime=0;ContactStageStart=Rig->GetActorTransform();}
     auto* PC=GetWorld()->GetFirstPlayerController();
     UpdatePlayerView(PC);
     if(!ControlPendingCapture.IsEmpty())
@@ -97,27 +101,109 @@ void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
     }
     else switch(ControlProbePhase)
     {
+    case 20:
+        Input.Brake=true;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<1)return;
+        Name=TEXT("camera_drive_ready");Passed=bHadInputFocus&&GetAimCapture()!=nullptr;
+        ControlPendingCapture=TEXT("gyro-start");break;
+    case 21:
+    {
+        Input.FreeLook=true;Input.Throttle=.2;
+        if(ContactPhaseTime<=DeltaSeconds)Input.MouseX=90./MouseSensitivity;
+        ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<.7)return;
+        const auto Cmd=Rig->GetVelocityCommandState();
+        const auto Values=Cmd->GetArrayField(TEXT("requested_linear_m_s"));
+        const FVector2D Requested(Values[0]->AsNumber(),Values[1]->AsNumber());
+        const FVector Gun=GetAimCapture()->GetForwardVector();
+        const FVector2D GunRos(Gun.X,-Gun.Y);
+        const double Match=FVector2D::DotProduct(Requested.GetSafeNormal(),GunRos.GetSafeNormal());
+        const double Difference=FMath::Abs(FMath::FindDeltaAngleDegrees(OrbitYaw,GetAimCapture()->GetComponentRotation().Yaw));
+        Name=TEXT("c_orbit_drives_turret_heading");
+        Detail=FString::Printf(TEXT("free-look yaw offset %.2fdeg; drive/turret dot %.6f"),Difference,Match);
+        Passed=bFreeLook&&!IsGunReticleVisible()&&Difference>60&&Requested.Size()>.2&&Match>.999;
+        ControlPendingCapture=TEXT("gyro-c-free-look");break;
+    }
+    case 22:
+    {
+        Input.Throttle=.2;Input.ToggleSight=ContactPhaseTime<=DeltaSeconds;
+        if(ContactPhaseTime>.15&&ContactPhaseTime<=.15+DeltaSeconds)Input.MouseX=100;
+        ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<.9)return;
+        const auto Cmd=Rig->GetVelocityCommandState();const auto Values=Cmd->GetArrayField(TEXT("requested_linear_m_s"));
+        const FVector2D Requested(Values[0]->AsNumber(),Values[1]->AsNumber());
+        const FVector Gun=GetAimCapture()->GetForwardVector();
+        const double Match=FVector2D::DotProduct(Requested.GetSafeNormal(),FVector2D(Gun.X,-Gun.Y).GetSafeNormal());
+        Name=TEXT("shift_scope_drives_turret_heading");
+        Detail=FString::Printf(TEXT("scope=%d free_look=%d drive/turret dot=%.6f"),bSightMode,bFreeLook,Match);
+        Passed=bSightMode&&!bFreeLook&&IsGunReticleVisible()&&Match>.999;
+        ControlPendingCapture=TEXT("gyro-scope");break;
+    }
+    case 23:
+    {
+        Input.Throttle=.2;Input.ToggleSight=ContactPhaseTime<=DeltaSeconds;
+        ApplyManualInput(Input,DeltaSeconds);
+        if(ContactPhaseTime<=DeltaSeconds)ControlReport->SetNumberField(TEXT("scope_exit_view_yaw_deg"),OrbitYaw);
+        if(ContactPhaseTime<1.0)return;
+        const auto Cmd=Rig->GetVelocityCommandState();const auto Values=Cmd->GetArrayField(TEXT("requested_linear_m_s"));
+        const FVector2D Requested(Values[0]->AsNumber(),Values[1]->AsNumber());
+        const FVector Gun=GetAimCapture()->GetForwardVector();
+        const double Match=FVector2D::DotProduct(Requested.GetSafeNormal(),FVector2D(Gun.X,-Gun.Y).GetSafeNormal());
+        const double ViewDrift=FMath::Abs(FMath::FindDeltaAngleDegrees(ControlReport->GetNumberField(TEXT("scope_exit_view_yaw_deg")),OrbitYaw));
+        Name=TEXT("shift_exit_clears_sticky_scope");
+        Detail=FString::Printf(TEXT("scope=%d direction_hold=%d reticle=%d view drift=%.5fdeg drive/turret dot=%.6f"),bSightMode,bHoldManualAimDirection,IsGunReticleVisible(),ViewDrift,Match);
+        Passed=!bSightMode&&bHoldManualAimDirection&&!IsGunReticleVisible()&&ViewDrift<.1&&Match>.999;
+        ControlPendingCapture=TEXT("gyro-chase");break;
+    }
+    case 24:
+    {
+        if(ContactPhaseTime<=DeltaSeconds)ResetContactVehicle(TEXT("five_mps_probe_setup"),false);
+        Input.Throttle=1;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<3)return;
+        const auto Command=Rig->GetVelocityCommandState();
+        const auto Requested=Command->GetArrayField(TEXT("requested_linear_m_s"));
+        const auto SpeedFiltered=Command->GetArrayField(TEXT("filtered_world_linear_m_s"));
+        const double RequestedSpeed=FVector2D(Requested[0]->AsNumber(),Requested[1]->AsNumber()).Size();
+        const double FilteredSpeed=FVector2D(SpeedFiltered[0]->AsNumber(),SpeedFiltered[1]->AsNumber()).Size();
+        const double MeasuredSpeed=Rig->GetCommandOriginVelocity().Size2D()/100.;
+        Name=TEXT("five_mps_speed_profile");
+        Detail=FString::Printf(TEXT("requested %.4f filtered %.4f actual %.4f m/s, x %.2fcm"),RequestedSpeed,FilteredSpeed,MeasuredSpeed,Rig->GetActorLocation().X);
+        Passed=FMath::Abs(RequestedSpeed-5.)<.01&&FilteredSpeed>4.95&&MeasuredSpeed>4.5&&Rig->GetActorLocation().X<950.;
+        ControlReport->SetNumberField(TEXT("five_mps_actual_speed_m_s"),MeasuredSpeed);break;
+    }
+    case 25:
+    {
+        Input.Brake=true;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<1.8)return;
+        const double MeasuredSpeed=Rig->GetCommandOriginVelocity().Size2D()/100.;
+        Name=TEXT("five_mps_brake_to_stop");
+        Detail=FString::Printf(TEXT("after brake %.4f m/s, final x %.2fcm"),MeasuredSpeed,Rig->GetActorLocation().X);
+        Passed=MeasuredSpeed<.15&&GyroMinimumUp>.7;break;
+    }
     case 0:
         Input.Brake=true;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<3)return;
         Name=TEXT("gyro_supported_spawn");Passed=Rig->GetVelocity().Size()<15&&GyroMinimumUp>.9;ControlPendingCapture=TEXT("gyro-start");break;
     case 1:
-        Input.Throttle=.3;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
+        Input.Throttle=.9/Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
         Name=TEXT("normal_camera_forward_smooth");
         Detail=FString::Printf(TEXT("forward %.3fcm lateral %.3fcm peak command acceleration %.4fm/s2"),Along,Across,GyroPeakCommandAcceleration);
-        Passed=Along>65&&FMath::Abs(Across)<15&&GyroPeakCommandAcceleration<.86;break;
+        Passed=Along>65&&FMath::Abs(Across)<15&&GyroPeakCommandAcceleration<Rig->GetDriveParameter(TEXT("LinearAccelerationMps2"))+.1;break;
     case 2:
         ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<1.2)return;
         Name=TEXT("released_keys_active_brake");Detail=FString::Printf(TEXT("coast distance %.3fcm, speed %.3fcm/s"),StageDelta.Size2D(),Rig->GetVelocity().Size());
         Passed=StageDelta.Size2D()<40&&Rig->GetVelocity().Size()<5;break;
     case 3:
-        Input.Strafe=.3;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
+        Input.Strafe=.6/Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
         Name=TEXT("normal_camera_left_strafe");Detail=FString::Printf(TEXT("left %.3fcm forward %.3fcm"),Across,Along);
         Passed=Across>50&&FMath::Abs(Along)<20;break;
     case 4:
         Input.Brake=true;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<1.5)return;
         Name=TEXT("normal_strafe_brake");Passed=Rig->GetVelocity().Size()<5;break;
     case 5:
-        Input.ToggleGyro=!bGyroMode;Input.Throttle=.2;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<6)return;
+        if(ContactPhaseTime<=DeltaSeconds)
+        {
+            // Start the continuous gyro measurement in a clear lane. With the
+            // faster acceleration the previous strafe end point leads straight
+            // into the fixed import_lab probe box before the yaw test completes.
+            ResetContactVehicle(TEXT("gyro_clear_lane_setup"),false);
+            ContactStageStart=Rig->GetActorTransform();
+        }
+        Input.ToggleGyro=!bGyroMode;Input.Throttle=.6/Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<6)return;
         Name=TEXT("gyro_camera_forward_direction");Detail=FString::Printf(TEXT("forward %.3fcm lateral %.3fcm body spin %.3frad"),Along,Across,GyroAccumulatedAngle);
         Passed=bGyroMode&&Along>200&&FMath::Abs(Across)<35&&GyroAccumulatedAngle>2*PI&&GyroMinimumUp>.85;
         ControlPendingCapture=TEXT("gyro-moving");break;
@@ -146,7 +232,7 @@ void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
         Input.ToggleGyro=bGyroMode;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
         Name=TEXT("gyro_toggle_off_brakes_spin");Passed=!bGyroMode&&FMath::Abs(Rig->GetMeasuredYawRate())<.1&&Rig->GetVelocity().Size()<5;break;
     case 11:
-        Input.MouseX=OrbitYaw<80?90/MouseSensitivity:0;Input.Throttle=.2;
+        Input.MouseX=OrbitYaw<80?90/MouseSensitivity:0;Input.Throttle=.6/Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));
         ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
         Name=TEXT("normal_forward_after_camera_turn");Detail=FString::Printf(TEXT("Camera yaw %.1f; original forward %.3fcm original left %.3fcm"),OrbitYaw,Along,Across);
         Passed=FMath::Abs(OrbitYaw-90)<.01&&Across< -50&&FMath::Abs(Along)<20;break;
@@ -154,7 +240,7 @@ void AImportLabGameMode::TickGyroProbe(double DeltaSeconds)
         ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<1.2)return;
         Name=TEXT("camera_turn_release_brake");Passed=Rig->GetVelocity().Size()<5;break;
     case 13:
-        Input.Strafe=-.3;ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
+        Input.Strafe=-.6/Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));ApplyManualInput(Input,DeltaSeconds);if(ContactPhaseTime<2)return;
         Name=TEXT("normal_right_after_camera_turn");Detail=FString::Printf(TEXT("Camera-relative right: original forward %.3fcm original left %.3fcm"),Along,Across);
         Passed=Along< -50&&FMath::Abs(Across)<20;ControlPendingCapture=TEXT("gyro-camera-relative");break;
     case 14:

@@ -1,0 +1,205 @@
+{
+  "schema": "wt_grass_native_bake_summary_v1",
+  "status": "passed",
+  "outcome": "native_bake_population_and_save_completed",
+  "started_utc": "2026-11-18T05:33:16.4648591Z",
+  "finished_utc": "2026-11-18T05:33:50.6889618Z",
+  "elapsed_seconds": 34.224102,
+  "pid": 46500,
+  "native_exit_code": 0,
+  "native_exit_code_recorded": true,
+  "resume_authored_assets": true,
+  "requested_shader_workers": 4,
+  "four_shader_workers_log_markers": [],
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "foliage_definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "module_sha256": "c44d2c079aeaa597be3a5a5076787f89dce1f261ca77c29da26fba08cb263e18",
+  "scripts_sha256": {
+    "author_wt_grass.py": "d5f68a5189975eaae06db2f1b4cbaaacf0c9f7e2daaec4b04e031631fd1bc32d",
+    "wt_grass.py": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a"
+  },
+  "world_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "world_sha256_before": "6e4b763968f7e71afadc5885d59b195c88b9e207491f8ff41da2fd87aa6218ef",
+  "world_sha256_after": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "scene_import_report_sha256_before": "33fe32e8ab458d38e22dd90a1dfcf6f538a92ebc5061e50a48f11f89df5d4348",
+  "scene_import_report_sha256_after": "172309af9a2c55a235b89c4bf4d1e7f20e50a5a7794af1350c3c1c7b57feb5b1",
+  "saved_world_after_bake": true,
+  "resume_validation_status": "saved_assets_verified",
+  "saved_foliage_and_terrain_files": 54,
+  "saved_foliage_and_terrain_unchanged_after_bake": true,
+  "native_weight_bake_completed": true,
+  "source_models": 7,
+  "source_model_triangles": 56,
+  "source_weight_textures": 4,
+  "landscape_components": 1089,
+  "components_with_valid_data": 1089,
+  "components_with_weights": 986,
+  "outdated_grass_maps_after_build": 0,
+  "native_layer_count": 13,
+  "all_native_layers_have_positive_weights": true,
+  "layer_weights": [
+    {
+      "name": "layer_10",
+      "weighted_components": 952,
+      "nonzero_weight_samples": 653274,
+      "weight_byte_sum": 92327282
+    },
+    {
+      "name": "layer_11",
+      "weighted_components": 968,
+      "nonzero_weight_samples": 884696,
+      "weight_byte_sum": 134865182
+    },
+    {
+      "name": "layer_12",
+      "weighted_components": 969,
+      "nonzero_weight_samples": 1075701,
+      "weight_byte_sum": 180033678
+    },
+    {
+      "name": "layer_00",
+      "weighted_components": 91,
+      "nonzero_weight_samples": 69602,
+      "weight_byte_sum": 11861034
+    },
+    {
+      "name": "layer_01",
+      "weighted_components": 5,
+      "nonzero_weight_samples": 680,
+      "weight_byte_sum": 95454
+    },
+    {
+      "name": "layer_02",
+      "weighted_components": 39,
+      "nonzero_weight_samples": 31669,
+      "weight_byte_sum": 5452043
+    },
+    {
+      "name": "layer_03",
+      "weighted_components": 14,
+      "nonzero_weight_samples": 7200,
+      "weight_byte_sum": 1210277
+    },
+    {
+      "name": "layer_04",
+      "weighted_components": 22,
+      "nonzero_weight_samples": 18254,
+      "weight_byte_sum": 3085141
+    },
+    {
+      "name": "layer_05",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_06",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_07",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_08",
+      "weighted_components": 897,
+      "nonzero_weight_samples": 321113,
+      "weight_byte_sum": 42531970
+    },
+    {
+      "name": "layer_09",
+      "weighted_components": 952,
+      "nonzero_weight_samples": 653274,
+      "weight_byte_sum": 92327282
+    }
+  ],
+  "generated_grass_components": 2237,
+  "generated_render_instances": 52984,
+  "instance_count_method": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+  "instances_by_mesh": {
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b": 2779,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a": 28464,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a": 3199,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a": 2548,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a": 13970,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a": 425,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a": 1599
+  },
+  "collision_enabled_grass_components": 0,
+  "preview_camera_count": 2,
+  "finish_assets_seconds": 0.7104083001613617,
+  "build_maps_seconds": 10.443234097212553,
+  "update_instances_seconds": 0.049698300659656525,
+  "synchronous_instance_update_returned": true,
+  "last_stage_markers": [
+    "[2026.11.18-05.33.29:041][  0]LogTemp: Display: WT_GRASS_PHASE finish_assets begin shader_jobs=0",
+    "[2026.11.18-05.33.29:751][  0]LogTemp: Display: WT_GRASS_PHASE finish_assets end elapsed_s=0.710",
+    "[2026.11.18-05.33.29:751][  0]LogTemp: Display: WT_GRASS_PHASE build_maps begin components=1089",
+    "[2026.11.18-05.33.40:195][  0]LogTemp: Display: WT_GRASS_PHASE build_maps end elapsed_s=10.443 outdated=0",
+    "[2026.11.18-05.33.40:195][  0]LogTemp: Display: WT_GRASS_PHASE update_instances begin",
+    "[2026.11.18-05.33.40:244][  0]LogTemp: Display: WT_GRASS_PHASE update_instances end elapsed_s=0.050"
+  ],
+  "source_geometry_changed": false,
+  "vehicle_physics_changed": false,
+  "synchronous_preview_population_verified": true,
+  "saved_grass_reload_verified": true,
+  "independent_reload": {
+    "status": "passed",
+    "pid": 33952,
+    "native_exit_code": 0,
+    "elapsed_seconds": 11.985092199999999,
+    "check_count": 27,
+    "unchanged_saved_files": 58,
+    "field_points": 4,
+    "source_station_nonzero_layers": 0,
+    "positive_grass_field_layers": [
+      4,
+      8,
+      4
+    ],
+    "max_corner_error_byte": 1,
+    "max_interpolation_error_byte": 0.25,
+    "evidence": {
+      "execution.json": {
+        "file": "artifacts/maps/wt-scene-20261118/grass-reload-01/execution.json",
+        "sha256": "87b70ff7612a58bae0ac632d00b398af9032ab21eb0f6c94f9c4f178f63e741c",
+        "bytes": 5190
+      },
+      "verification.json": {
+        "file": "artifacts/maps/wt-scene-20261118/grass-reload-01/verification.json",
+        "sha256": "718b8f5d58b90924d8a2e9f0b53258203736e15d9b3c71e70ebc11a861fed2b9",
+        "bytes": 103102
+      },
+      "summary.json": {
+        "file": "artifacts/maps/wt-scene-20261118/grass-reload-01/summary.json",
+        "sha256": "ccd13eccfbc94033f49b776d6ec68bfb77495627a1c3da4aa0de721385c52c05",
+        "bytes": 1181
+      }
+    }
+  },
+  "rendered_grass_verified": false,
+  "gameplay_gui_verified": false,
+  "evidence": {
+    "execution.json": {
+      "file": "execution.json",
+      "sha256": "a984ef5819a76319d789311e97fcb894bf8898a9071f2498aae447780242a9b3",
+      "bytes": 1896
+    },
+    "verification.json": {
+      "file": "verification.json",
+      "sha256": "831ed9a2fb0bfcd5bafe5a2a81647ac1893e507302bf4100ea224f6b82f1294a",
+      "bytes": 70946
+    },
+    "engine.log": {
+      "file": "engine.log",
+      "sha256": "70e8f8908c4bb333a8e38a8e344f23dc5153fa8e5667f4f89c25ff734d2e5b35",
+      "bytes": 230593
+    }
+  },
+  "scope": "Source-bound native GrassData and two-view transient grass population, saved World, and an independent read-only 27-check reload. Actual gameplay grass rendering and GUI are verified separately."
+}

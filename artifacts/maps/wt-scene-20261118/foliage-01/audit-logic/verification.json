@@ -1,0 +1,26 @@
+{
+  "schema": "wt_grass_audit_logic_verification_v1",
+  "status": "passed",
+  "scope": "pure contract and negative-case validation; no native Unreal execution",
+  "checks": [
+    "valid_source_fixture",
+    "valid_13_layer_fixture",
+    "valid_4_point_fixture",
+    "reject_zero_weighted_components",
+    "reject_zero_nonzero_weight_samples",
+    "reject_zero_weight_byte_sum",
+    "reject_changed_mesh",
+    "reject_changed_scale_x_min",
+    "reject_changed_scale_z_max",
+    "reject_changed_density_per_100m2",
+    "reject_changed_start_cull_cm",
+    "reject_two_byte_corner_error",
+    "reject_shifted_world_sample",
+    "reject_missing_native_layer",
+    "AST tools/maps/prepare_wt_grass_audit_samples.py",
+    "AST tools/unreal/verify_wt_grass.py",
+    "git_diff_check"
+  ],
+  "verifier_sha256": "a208afe7d6a53aae36fb274e85aa207e27397641520c823660186600ec9d9c39",
+  "fixture_sha256": "54d7218ba995d31b5bf3781eb7a5166c738088b1171dc5069fdbd4c03a2209c5"
+}

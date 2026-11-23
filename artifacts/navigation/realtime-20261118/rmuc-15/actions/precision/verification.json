@@ -1,0 +1,1084 @@
+{
+  "status": "failed",
+  "acceptance_scope": "independent endpoint precision diagnostic; original 14 checks and process exit are unchanged",
+  "actual_xy_tolerance_m": 0.1,
+  "original_xy_tolerance_m": 0.25,
+  "scope": "single-goal endpoint and final waypoint endpoint only; intermediate waypoint precision is not inferred",
+  "navigation_gate_status": "passed",
+  "session_identity": [
+    "BF9133274D7F69C12010EB8E175AC233",
+    0
+  ],
+  "runtime_provenance_sha256": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297",
+  "trace_sha256": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0",
+  "checks": [
+    {
+      "name": "single_goal_actual_error_at_most_0p10m",
+      "passed": false,
+      "actual_error_m": 0.1297606016608601,
+      "endpoint_samples": 1
+    },
+    {
+      "name": "waypoints_actual_error_at_most_0p10m",
+      "passed": true,
+      "actual_error_m": 0.06680729426537449,
+      "endpoint_samples": 1
+    },
+    {
+      "name": "precision_endpoints_have_same_native_session",
+      "passed": true
+    },
+    {
+      "name": "precision_diagnostic_bound_to_runtime_and_raw_trace",
+      "passed": true
+    }
+  ],
+  "endpoints": [
+    {
+      "received_monotonic_s": 48872.600056,
+      "latest_clock_ns": 35739999201,
+      "bridge_sim_time_ns": 35729999201,
+      "session": "BF9133274D7F69C12010EB8E175AC233",
+      "epoch": 0,
+      "probe_phase": "single_goal",
+      "goal_request_id": 1,
+      "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+      "mode": "single_goal",
+      "action_status": 4,
+      "missed_waypoints": [],
+      "actual_error_m": 0.1297606016608601,
+      "requested_goal": {
+        "request_id": 1,
+        "action": "navigate_to_pose",
+        "requested_poses": [
+          {
+            "frame_id": "aim_sentry/map",
+            "stamp_ns": 0,
+            "stamp_s": 0.0,
+            "position_m": [
+              9.45,
+              6.4,
+              0.0
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+        "latest_feedback_waypoint_index": null
+      },
+      "truth_pose": {
+        "received_monotonic_s": 48872.5994702,
+        "latest_clock_ns": 35739999201,
+        "bridge_sim_time_ns": 35729999201,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+        "frame_id": "rmsim_world",
+        "stamp_ns": 35739999201,
+        "stamp_s": 35.739999201,
+        "position_m": [
+          9.353376994782813,
+          6.4866129817417,
+          0.017939615754497266
+        ],
+        "orientation_xyzw": [
+          -0.03603762814658945,
+          0.006277376414102017,
+          0.32341722137665124,
+          0.9455491445820942
+        ],
+        "source_topic": "/rmsim/evaluation/aim_sentry/ground_truth"
+      },
+      "amcl_pose": {
+        "received_monotonic_s": 48871.9730649,
+        "latest_clock_ns": 35124999215,
+        "bridge_sim_time_ns": 35124999215,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+        "frame_id": "aim_sentry/map",
+        "stamp_ns": 35069999217,
+        "stamp_s": 35.069999217,
+        "position_m": [
+          9.370520256267824,
+          6.391632481571135,
+          0.0
+        ],
+        "orientation_xyzw": [
+          0.0,
+          0.0,
+          0.32990364107386394,
+          0.9440146119664712
+        ],
+        "covariance": [
+          0.021814541905726514,
+          -0.002197475656132042,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.002197475656132042,
+          0.014360128901266478,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.002859884949090245
+        ]
+      },
+      "odometry_pose": {
+        "received_monotonic_s": 48872.5384302,
+        "latest_clock_ns": 35684999202,
+        "bridge_sim_time_ns": 35684999202,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+        "frame_id": "aim_sentry/odom",
+        "stamp_ns": 35669999204,
+        "stamp_s": 35.669999204,
+        "position_m": [
+          3.5547423732220276,
+          0.059223477959055,
+          -0.001363149630684679
+        ],
+        "orientation_xyzw": [
+          -0.03695256637142429,
+          0.0014817733490620417,
+          0.32351369084079906,
+          0.9455005045079942
+        ],
+        "child_frame_id": "aim_sentry/base_link",
+        "pose_covariance": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "linear_velocity_m_s": [
+          -0.201707439096939,
+          -0.2781689461973092,
+          -0.010630193535925534
+        ],
+        "angular_velocity_rad_s": [
+          0.0939070847169753,
+          0.06698455806239612,
+          0.05240916506546456
+        ]
+      },
+      "latest_plan": {
+        "received_monotonic_s": 48872.093763,
+        "latest_clock_ns": 35219999213,
+        "bridge_sim_time_ns": 35219999213,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "single_goal",
+        "goal_request_id": 1,
+        "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+        "frame_id": "aim_sentry/map",
+        "stamp_ns": 35219999213,
+        "stamp_s": 35.219999213,
+        "pose_count": 2,
+        "first_pose": {
+          "frame_id": "",
+          "stamp_ns": 0,
+          "stamp_s": 0.0,
+          "position_m": [
+            9.375000348314643,
+            6.425000215694308,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "last_pose": {
+          "frame_id": "",
+          "stamp_ns": 0,
+          "stamp_s": 0.0,
+          "position_m": [
+            9.425000349059701,
+            6.3750002149492495,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "requested_goal": {
+          "request_id": 1,
+          "action": "navigate_to_pose",
+          "requested_poses": [
+            {
+              "frame_id": "aim_sentry/map",
+              "stamp_ns": 0,
+              "stamp_s": 0.0,
+              "position_m": [
+                9.45,
+                6.4,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "latest_feedback_waypoint_index": null
+        }
+      },
+      "latest_transforms": [
+        {
+          "received_monotonic_s": 48872.5509246,
+          "latest_clock_ns": 35704999202,
+          "bridge_sim_time_ns": 35704999202,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/map",
+          "stamp_ns": 35969999204,
+          "stamp_s": 35.969999204000004,
+          "child_frame_id": "aim_sentry/odom",
+          "translation_m": [
+            5.833989608068195,
+            6.307529403182082,
+            -0.008851896654628738
+          ],
+          "rotation_xyzw": [
+            -5.030781434102739e-18,
+            -4.008446157828617e-18,
+            -0.0012027183143345148,
+            0.9999992767340666
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48863.2419272,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/imu_link",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48863.241931,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/yaw_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/mid360_imu_link",
+          "translation_m": [
+            0.17470287269127363,
+            0.09704805880386702,
+            0.13158718221210575
+          ],
+          "rotation_xyzw": [
+            -1.9330379232482337e-05,
+            0.3826837731868331,
+            -8.006913533426475e-06,
+            0.923879391101303
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48872.5976656,
+          "latest_clock_ns": 35739999201,
+          "bridge_sim_time_ns": 35729999201,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 35739999201,
+          "stamp_s": 35.739999201,
+          "child_frame_id": "aim_sentry/yaw_link",
+          "translation_m": [
+            -3.569367024169878e-16,
+            3.297362383136715e-16,
+            0.19062995910644526
+          ],
+          "rotation_xyzw": [
+            0.0,
+            -5.204170427930421e-18,
+            -0.4451695870758625,
+            0.8954462790936749
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48863.2433747,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/yaw_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/lidar_link",
+          "translation_m": [
+            0.19812227804774685,
+            0.07375968980603695,
+            0.17056386526967365
+          ],
+          "rotation_xyzw": [
+            -1.9330379232482337e-05,
+            0.3826837731868331,
+            -8.006913533426475e-06,
+            0.923879391101303
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48872.6000311,
+          "latest_clock_ns": 35739999201,
+          "bridge_sim_time_ns": 35729999201,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 35739999201,
+          "stamp_s": 35.739999201,
+          "child_frame_id": "aim_sentry/aim_camera_optical_frame",
+          "translation_m": [
+            0.0683573476515108,
+            -0.16815413454758027,
+            0.31987103819847096
+          ],
+          "rotation_xyzw": [
+            -0.22513834600890606,
+            0.6703079330847683,
+            -0.6703079330847683,
+            0.22513834600890606
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48872.540054,
+          "latest_clock_ns": 35684999202,
+          "bridge_sim_time_ns": 35684999202,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/odom",
+          "stamp_ns": 35669999204,
+          "stamp_s": 35.669999204,
+          "child_frame_id": "aim_sentry/base_link",
+          "translation_m": [
+            3.5547423732220276,
+            0.059223477959055,
+            -0.001363149630684679
+          ],
+          "rotation_xyzw": [
+            -0.03695256637142429,
+            0.0014817733490620417,
+            0.32351369084079906,
+            0.9455005045079942
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48872.5404394,
+          "latest_clock_ns": 35704999202,
+          "bridge_sim_time_ns": 35684999202,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 35669999204,
+          "stamp_s": 35.669999204,
+          "child_frame_id": "aim_sentry/navigation_frame",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.03695256637142429,
+            -0.0014817733490620417,
+            -0.32351369084079906,
+            0.9455005045079942
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48872.5404447,
+          "latest_clock_ns": 35704999202,
+          "bridge_sim_time_ns": 35684999202,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": "9ff0d52e65fa44b5910679481959f2b3",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 35669999204,
+          "stamp_s": 35.669999204,
+          "child_frame_id": "aim_sentry/base_stabilized",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.03448904297509737,
+            -0.01334892236678283,
+            -0.00046070676541648536,
+            0.9993158159138601
+          ],
+          "source_topic": "/tf"
+        }
+      ],
+      "localization_cloud_snapshot_index": 0
+    },
+    {
+      "received_monotonic_s": 48891.7236806,
+      "latest_clock_ns": 54839998774,
+      "bridge_sim_time_ns": 54839998774,
+      "session": "BF9133274D7F69C12010EB8E175AC233",
+      "epoch": 0,
+      "probe_phase": "waypoints",
+      "goal_request_id": 2,
+      "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+      "mode": "waypoints",
+      "action_status": 4,
+      "missed_waypoints": [],
+      "actual_error_m": 0.06680729426537449,
+      "requested_goal": {
+        "request_id": 2,
+        "action": "follow_waypoints",
+        "requested_poses": [
+          {
+            "frame_id": "aim_sentry/map",
+            "stamp_ns": 0,
+            "stamp_s": 0.0,
+            "position_m": [
+              5.8,
+              6.4,
+              0.0
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "frame_id": "aim_sentry/map",
+            "stamp_ns": 0,
+            "stamp_s": 0.0,
+            "position_m": [
+              9.45,
+              6.4,
+              0.0
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+        "latest_feedback_waypoint_index": 1
+      },
+      "truth_pose": {
+        "received_monotonic_s": 48891.6962609,
+        "latest_clock_ns": 54839998774,
+        "bridge_sim_time_ns": 54814998775,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+        "frame_id": "rmsim_world",
+        "stamp_ns": 54839998774,
+        "stamp_s": 54.839998774,
+        "position_m": [
+          9.435357925856641,
+          6.465183005698117,
+          0.01830975330795878
+        ],
+        "orientation_xyzw": [
+          -0.026887975961115987,
+          0.002397046686517745,
+          0.6225344614623539,
+          0.7821266746555026
+        ],
+        "source_topic": "/rmsim/evaluation/aim_sentry/ground_truth"
+      },
+      "amcl_pose": {
+        "received_monotonic_s": 48891.166073,
+        "latest_clock_ns": 54294998786,
+        "bridge_sim_time_ns": 54294998786,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+        "frame_id": "aim_sentry/map",
+        "stamp_ns": 54274998789,
+        "stamp_s": 54.274998789,
+        "position_m": [
+          9.388563513151912,
+          6.420263606219102,
+          0.0
+        ],
+        "orientation_xyzw": [
+          0.0,
+          0.0,
+          0.6306934740854113,
+          0.7760320494322863
+        ],
+        "covariance": [
+          0.014727309475574657,
+          0.002415321942528692,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.002415321942528692,
+          0.021248178570537846,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0043840045205939164
+        ]
+      },
+      "odometry_pose": {
+        "received_monotonic_s": 48891.6511167,
+        "latest_clock_ns": 54794998775,
+        "bridge_sim_time_ns": 54794998775,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+        "frame_id": "aim_sentry/odom",
+        "stamp_ns": 54774998777,
+        "stamp_s": 54.774998777,
+        "position_m": [
+          3.634348508729933,
+          0.05833381910656206,
+          -0.006938476553349726
+        ],
+        "orientation_xyzw": [
+          -0.03154678564764128,
+          -0.00020402013258542627,
+          0.6233151235783945,
+          0.7813341253327785
+        ],
+        "child_frame_id": "aim_sentry/base_link",
+        "pose_covariance": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "linear_velocity_m_s": [
+          -0.06855500278784186,
+          0.01880450232715316,
+          -0.10433112314471701
+        ],
+        "angular_velocity_rad_s": [
+          -0.024486425429391827,
+          0.07381638337736085,
+          -0.01705361104544038
+        ]
+      },
+      "latest_plan": {
+        "received_monotonic_s": 48890.4456216,
+        "latest_clock_ns": 53589998802,
+        "bridge_sim_time_ns": 53589998802,
+        "session": "BF9133274D7F69C12010EB8E175AC233",
+        "epoch": 0,
+        "probe_phase": "waypoints",
+        "goal_request_id": 2,
+        "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+        "frame_id": "aim_sentry/map",
+        "stamp_ns": 53589998802,
+        "stamp_s": 53.589998802000004,
+        "pose_count": 3,
+        "first_pose": {
+          "frame_id": "",
+          "stamp_ns": 0,
+          "stamp_s": 0.0,
+          "position_m": [
+            9.375000348314643,
+            6.475000216439366,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "last_pose": {
+          "frame_id": "",
+          "stamp_ns": 0,
+          "stamp_s": 0.0,
+          "position_m": [
+            9.425000349059701,
+            6.3750002149492495,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "requested_goal": {
+          "request_id": 2,
+          "action": "follow_waypoints",
+          "requested_poses": [
+            {
+              "frame_id": "aim_sentry/map",
+              "stamp_ns": 0,
+              "stamp_s": 0.0,
+              "position_m": [
+                5.8,
+                6.4,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            {
+              "frame_id": "aim_sentry/map",
+              "stamp_ns": 0,
+              "stamp_s": 0.0,
+              "position_m": [
+                9.45,
+                6.4,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "latest_feedback_waypoint_index": 1
+        }
+      },
+      "latest_transforms": [
+        {
+          "received_monotonic_s": 48891.6634437,
+          "latest_clock_ns": 54814998775,
+          "bridge_sim_time_ns": 54814998775,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/map",
+          "stamp_ns": 55074998777,
+          "stamp_s": 55.074998777000005,
+          "child_frame_id": "aim_sentry/odom",
+          "translation_m": [
+            5.747992765147643,
+            6.2887363024672815,
+            -0.006704414261085295
+          ],
+          "rotation_xyzw": [
+            6.9105310996359e-18,
+            2.4989957193972545e-18,
+            0.007942372176435874,
+            0.9999684588646839
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48863.2419272,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/imu_link",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.15
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48863.241931,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/yaw_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/mid360_imu_link",
+          "translation_m": [
+            0.17470287269127363,
+            0.09704805880386702,
+            0.13158718221210575
+          ],
+          "rotation_xyzw": [
+            -1.9330379232482337e-05,
+            0.3826837731868331,
+            -8.006913533426475e-06,
+            0.923879391101303
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48891.6954289,
+          "latest_clock_ns": 54839998774,
+          "bridge_sim_time_ns": 54814998775,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 54839998774,
+          "stamp_s": 54.839998774,
+          "child_frame_id": "aim_sentry/yaw_link",
+          "translation_m": [
+            4.801714581503802e-17,
+            -1.6653345369377348e-16,
+            0.1906299591064453
+          ],
+          "rotation_xyzw": [
+            3.469446951953614e-18,
+            -1.734723475976807e-18,
+            -0.8304578327900378,
+            0.5570814913077573
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48863.2433747,
+          "latest_clock_ns": 26364999411,
+          "bridge_sim_time_ns": 26364999411,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "single_goal",
+          "goal_request_id": 1,
+          "action_goal_id": null,
+          "frame_id": "aim_sentry/yaw_link",
+          "stamp_ns": 1769999960,
+          "stamp_s": 1.76999996,
+          "child_frame_id": "aim_sentry/lidar_link",
+          "translation_m": [
+            0.19812227804774685,
+            0.07375968980603695,
+            0.17056386526967365
+          ],
+          "rotation_xyzw": [
+            -1.9330379232482337e-05,
+            0.3826837731868331,
+            -8.006913533426475e-06,
+            0.923879391101303
+          ],
+          "source_topic": "/tf_static"
+        },
+        {
+          "received_monotonic_s": 48891.6967924,
+          "latest_clock_ns": 54839998774,
+          "bridge_sim_time_ns": 54839998774,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 54839998774,
+          "stamp_s": 54.839998774,
+          "child_frame_id": "aim_sentry/aim_camera_optical_frame",
+          "translation_m": [
+            -0.10999912443772009,
+            -0.14439090195137186,
+            0.31987103819847107
+          ],
+          "rotation_xyzw": [
+            0.13668817074114017,
+            0.6937696620488971,
+            -0.6937696620488971,
+            -0.13668817074114017
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48891.6512087,
+          "latest_clock_ns": 54794998775,
+          "bridge_sim_time_ns": 54794998775,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/odom",
+          "stamp_ns": 54774998777,
+          "stamp_s": 54.774998777,
+          "child_frame_id": "aim_sentry/base_link",
+          "translation_m": [
+            3.634348508729933,
+            0.05833381910656206,
+            -0.006938476553349726
+          ],
+          "rotation_xyzw": [
+            -0.03154678564764128,
+            -0.00020402013258542627,
+            0.6233151235783945,
+            0.7813341253327785
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48891.6529526,
+          "latest_clock_ns": 54814998775,
+          "bridge_sim_time_ns": 54794998775,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 54774998777,
+          "stamp_s": 54.774998777,
+          "child_frame_id": "aim_sentry/navigation_frame",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.03154678564764129,
+            0.00020402013258542632,
+            -0.6233151235783946,
+            0.7813341253327787
+          ],
+          "source_topic": "/tf"
+        },
+        {
+          "received_monotonic_s": 48891.6529606,
+          "latest_clock_ns": 54814998775,
+          "bridge_sim_time_ns": 54794998775,
+          "session": "BF9133274D7F69C12010EB8E175AC233",
+          "epoch": 0,
+          "probe_phase": "waypoints",
+          "goal_request_id": 2,
+          "action_goal_id": "3493a98638d24f5ebe8eda51212f7ded",
+          "frame_id": "aim_sentry/base_link",
+          "stamp_ns": 54774998777,
+          "stamp_s": 54.774998777,
+          "child_frame_id": "aim_sentry/base_stabilized",
+          "translation_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.024797530532855896,
+            -0.019501891918088522,
+            -0.0004838396454855953,
+            0.9995021383620373
+          ],
+          "source_topic": "/tf"
+        }
+      ],
+      "localization_cloud_snapshot_index": 1
+    }
+  ],
+  "script_sha256": "893a748984bc679b38e33b83bac8065f45d8546ac73e043ed8013bf545e5f3ed",
+  "trace_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\actions\\trace.json",
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15\\runtime-provenance.json",
+  "source_control_config_sha256": "d8e12b1f0637ea3a4086362ea21a46d2c34a2551888a3a70d19dad53f08d26d9"
+}

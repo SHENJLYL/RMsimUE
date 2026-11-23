@@ -1,0 +1,17 @@
+{
+  "schema": "wt_generated_collision_native_audit_summary_v1",
+  "status": "failed",
+  "execution_sha256": "e630ec5627dedc2784f0d9ce280975d36c3c181bfe27a0aec29218aa9c58e2a8",
+  "verification_sha256": "99ad12bc28d844107307ac32d878bc830d51e3948203ceb02370acb22dc191d6",
+  "pid": 38924,
+  "exit_code": -1,
+  "duration_seconds": 13.905978099999999,
+  "module_sha256": "028c4791c5a637d66544c229e3336a11c63b4a92e5d36ce452f3d17b7000b3d7",
+  "original_verifier_sha256": "6fd3115937aa5d99b2840690b62ea644c45f234dc86a9abd258740657d0cbced",
+  "failure": "type object 'CollisionChannel' has no attribute 'GAME_TRACE_CHANNEL1'",
+  "saved_assets_checked": 203,
+  "completed_boundary_checks": 0,
+  "completed_source_ray_checks": 0,
+  "protected_files_unchanged": true,
+  "correction": "UE5.8 reflected custom channel ScriptName; use official EnumBase.cast numeric API with exact native RMSimLidar display-name validation"
+}

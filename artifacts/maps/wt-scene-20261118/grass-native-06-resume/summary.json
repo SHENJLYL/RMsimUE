@@ -1,0 +1,191 @@
+{
+  "schema": "wt_grass_native_bake_summary_v1",
+  "status": "failed",
+  "outcome": "native_validation_failed_using_cpu_instance_count",
+  "started_utc": "2026-11-18T05:19:49.0904779Z",
+  "finished_utc": "2026-11-18T05:28:25.1992040Z",
+  "elapsed_seconds": 516.108727,
+  "pid": 39768,
+  "native_exit_code": -1,
+  "native_exit_code_recorded": true,
+  "execution_error": "Native grass authoring failed: -1",
+  "python_report_status": "failed",
+  "python_error": "grass maps or initial source grass instances did not complete",
+  "resume_authored_assets": true,
+  "requested_shader_workers": 4,
+  "four_shader_workers_log_markers": [],
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "foliage_definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "module_sha256": "9fb005d8e200e35077be1f4f4d758f28c4c82d104abfe93160d4c1e2be4f98c5",
+  "scripts_sha256": {
+    "author_wt_grass.py": "d5f68a5189975eaae06db2f1b4cbaaacf0c9f7e2daaec4b04e031631fd1bc32d",
+    "wt_grass.py": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a"
+  },
+  "world_asset": "/Game/RMSim/Maps/wt_vlaanderen/World",
+  "world_sha256_before": "6e4b763968f7e71afadc5885d59b195c88b9e207491f8ff41da2fd87aa6218ef",
+  "world_sha256_after_recorded": false,
+  "saved_world_after_bake": false,
+  "resume_validation_status": "saved_assets_verified",
+  "saved_foliage_and_terrain_files": 54,
+  "saved_foliage_and_terrain_unchanged_after_bake": true,
+  "native_weight_bake_built_in_memory": true,
+  "landscape_components": 1089,
+  "components_with_valid_data": 1089,
+  "components_with_weights": 986,
+  "outdated_grass_maps_after_build": 0,
+  "native_layer_count": 13,
+  "all_native_layers_have_positive_weights": true,
+  "layer_weights": [
+    {
+      "name": "layer_10",
+      "weighted_components": 952,
+      "nonzero_weight_samples": 653274,
+      "weight_byte_sum": 92327282
+    },
+    {
+      "name": "layer_11",
+      "weighted_components": 968,
+      "nonzero_weight_samples": 884696,
+      "weight_byte_sum": 134865182
+    },
+    {
+      "name": "layer_12",
+      "weighted_components": 969,
+      "nonzero_weight_samples": 1075701,
+      "weight_byte_sum": 180033678
+    },
+    {
+      "name": "layer_00",
+      "weighted_components": 91,
+      "nonzero_weight_samples": 69602,
+      "weight_byte_sum": 11861034
+    },
+    {
+      "name": "layer_01",
+      "weighted_components": 5,
+      "nonzero_weight_samples": 680,
+      "weight_byte_sum": 95454
+    },
+    {
+      "name": "layer_02",
+      "weighted_components": 39,
+      "nonzero_weight_samples": 31669,
+      "weight_byte_sum": 5452043
+    },
+    {
+      "name": "layer_03",
+      "weighted_components": 14,
+      "nonzero_weight_samples": 7200,
+      "weight_byte_sum": 1210277
+    },
+    {
+      "name": "layer_04",
+      "weighted_components": 22,
+      "nonzero_weight_samples": 18254,
+      "weight_byte_sum": 3085141
+    },
+    {
+      "name": "layer_05",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_06",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_07",
+      "weighted_components": 444,
+      "nonzero_weight_samples": 331989,
+      "weight_byte_sum": 58177861
+    },
+    {
+      "name": "layer_08",
+      "weighted_components": 897,
+      "nonzero_weight_samples": 321113,
+      "weight_byte_sum": 42531970
+    },
+    {
+      "name": "layer_09",
+      "weighted_components": 952,
+      "nonzero_weight_samples": 653274,
+      "weight_byte_sum": 92327282
+    }
+  ],
+  "generated_grass_components": 2237,
+  "observed_cpu_instance_count": 0,
+  "observed_count_api": "UInstancedStaticMeshComponent::GetInstanceCount",
+  "native_render_instance_count": null,
+  "corrected_render_count_api": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+  "corrected_count_rerun": "pending",
+  "finish_assets_seconds": 488.2939302995801,
+  "build_maps_seconds": 10.475430902093649,
+  "update_instances_seconds": 0.05105219781398773,
+  "synchronous_instance_update_returned": true,
+  "last_stage_markers": [
+    "[2026.11.18-05.20.03:806][  0]LogTemp: Display: WT_GRASS_PHASE finish_assets begin shader_jobs=5199",
+    "[2026.11.18-05.28.12:101][  0]LogTemp: Display: WT_GRASS_PHASE finish_assets end elapsed_s=488.294",
+    "[2026.11.18-05.28.12:101][  0]LogTemp: Display: WT_GRASS_PHASE build_maps begin components=1089",
+    "[2026.11.18-05.28.22:576][  0]LogTemp: Display: WT_GRASS_PHASE build_maps end elapsed_s=10.475 outdated=0",
+    "[2026.11.18-05.28.22:576][  0]LogTemp: Display: WT_GRASS_PHASE update_instances begin",
+    "[2026.11.18-05.28.22:627][  0]LogTemp: Display: WT_GRASS_PHASE update_instances end elapsed_s=0.051"
+  ],
+  "independent_sync_review": {
+    "conclusion": "Keep UpdateGrass(PreviewCameras,true) followed by FlushRenderingCommands; this API finalizes its queued instance tasks before returning.",
+    "extra_tick_or_frame_wait_required_for_task_completion": false,
+    "source_references": [
+      {
+        "file": "Landscape/Classes/LandscapeProxy.h",
+        "lines": [
+          1167,
+          1174
+        ],
+        "conclusion": "UpdateGrass bForceSync is documented to block and finish population for the supplied cameras.",
+        "sha256": "09ff51b3b097c21d908e854ebd48a6fa242f61d24dc79c2712c4497c2b64d2a8"
+      },
+      {
+        "file": "Landscape/Private/LandscapeGrass.cpp",
+        "lines": [
+          3129,
+          3132
+        ],
+        "conclusion": "Per-frame creation and concurrent-task budgets apply only when bForceSync is false.",
+        "sha256": "0f4a88f363aaa88649e3deeced44f4f78ee8ad86458c8cbcbbef1cc5ed9460aa"
+      },
+      {
+        "file": "Landscape/Private/LandscapeGrass.cpp",
+        "lines": [
+          3357,
+          3427
+        ],
+        "conclusion": "The same UpdateGrass call ensures completion of every queued task, accepts prebuilt trees, and recreates render state; only nonwaiting mode breaks early.",
+        "sha256": "0f4a88f363aaa88649e3deeced44f4f78ee8ad86458c8cbcbbef1cc5ed9460aa"
+      }
+    ],
+    "counter_findings": "Independent counting review identified the grass render-buffer accessor; corrected native count awaits the next run."
+  },
+  "saved_grass_reload_verified": false,
+  "rendered_grass_verified": false,
+  "evidence": {
+    "execution.json": {
+      "file": "execution.json",
+      "sha256": "0d1ad507b0c4f955173a9b3283678c98df32ff270424745ac034c7f6ec50ee8b",
+      "bytes": 1852
+    },
+    "verification.json": {
+      "file": "verification.json",
+      "sha256": "6b4122caa7763ac462e45a02792e088cdc42af2d32c3de5ccaf5a51202e044f1",
+      "bytes": 60050
+    },
+    "engine.log": {
+      "file": "engine.log",
+      "sha256": "7c4c8233ba0123b4b2cd13c9adadd42935e1ff882532191015ce53cc76a957a8",
+      "bytes": 887552
+    }
+  },
+  "scope": "Preserved native06 failure, valid in-memory GrassData and completed synchronous update; World was not saved after the failing instance-count check."
+}

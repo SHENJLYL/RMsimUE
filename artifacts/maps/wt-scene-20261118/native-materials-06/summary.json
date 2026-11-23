@@ -1,0 +1,47 @@
+{
+  "schema": "wt_native_material_audit_summary_v1",
+  "status": "passed",
+  "verification_sha256": "c6ad051e2f7d677bb84dab13d1def6179f05afa13c646a4831e06e85b25a55d3",
+  "execution_sha256": "1ac63355b7ac451a13be16c5b9bff30d1c610dc2abb6a490d8d473a28c8268af",
+  "execution": {
+    "pid": 24896,
+    "exit_code": 0,
+    "duration_seconds": 270.7328554,
+    "started_utc": "2026-11-18T03:02:42.2963113Z",
+    "finished_utc": "2026-11-18T03:07:13.0472598Z"
+  },
+  "asset_counts": {
+    "parents": 7,
+    "leaf_instances": 2,
+    "height_decal_instances": 34,
+    "land_instances": 1,
+    "ground_other_instances": 1,
+    "tree_instances": 43
+  },
+  "total_shader_assets": 88,
+  "shader_instruction_ranges": {
+    "num_vertex_shader_instructions": [
+      136,
+      355
+    ],
+    "num_pixel_shader_instructions": [
+      302,
+      611
+    ],
+    "num_samplers": [
+      2,
+      14
+    ]
+  },
+  "tree_t1_mask_instances": 25,
+  "source_manifest_sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+  "world_sha256": "720931dad262197929863d553c2388c3de18131277498749ef31faa201f12253",
+  "world_and_source_unchanged": true,
+  "all_saved_material_files_unchanged": true,
+  "engine_error_lines": [],
+  "rhi_log_evidence": [
+    "[2026.11.18-03.02.44:165][  0]LogD3D11RHI: D3D11 adapters:",
+    "[2026.11.18-03.02.44:165][  0]LogD3D11RHI: Chosen D3D11 Adapter:"
+  ],
+  "rendering_visual_quality_verified": false
+}

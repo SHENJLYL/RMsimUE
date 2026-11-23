@@ -18,7 +18,10 @@ void AImportLabGameMode::ResetContactVehicle(const FString& Reason,bool ResetTra
     if(!IsValid(Rig)||!Rig->IsContactPhysics())return;
     Rig->ResetContactPose(ContactSpawn);++ContactRecoveryCount;
     if(RosBridge)RosBridge->ResetEpoch();
-    SpeedCmPerSecond=0;TurnDegreesPerSecond=0;bAimTargetValid=false;bHoldAimAfterFreeLook=false;
+    SpeedCmPerSecond=0;TurnDegreesPerSecond=0;bAimTargetValid=false;
+    bHoldManualAimDirection=false;bProbeAimWorldTargetOverride=false;
+    HeldManualAimDirection=GetAimCapture()?GetAimCapture()->GetForwardVector():Rig->GetActorForwardVector();
+    bSightMode=false;bSightZoom=false;
     bGyroMode=false;bPrecisionDrive=false;GyroSpeedRadS=Rig->GetDriveParameter(TEXT("GyroDefaultRadS"));
     bFreeLook=false;OrbitYaw=ContactSpawn.Rotator().Yaw;OrbitPitch=-12;
     if(ResetTraining&&Training)Training->ResetRound();
@@ -34,9 +37,15 @@ void AImportLabGameMode::RecoverContactVehicleIfOutsideMap()
 
 void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
 {
+    if(FParse::Param(FCommandLine::Get(),TEXT("MujocoProbe"))){TickMujocoProbe(DeltaSeconds);return;}
+    if(FParse::Param(FCommandLine::Get(),TEXT("ZeppelinContactProbe"))){TickZeppelinContactProbe(DeltaSeconds);return;}
+    if(FParse::Param(FCommandLine::Get(),TEXT("CampusGymBoundaryProbe"))){TickCampusGymBoundaryProbe(DeltaSeconds);return;}
+    if(FParse::Param(FCommandLine::Get(),TEXT("RailContactProbe"))){TickRailContactProbe(DeltaSeconds);return;}
     if(FParse::Param(FCommandLine::Get(),TEXT("SuspensionProbe"))){TickSuspensionProbe(DeltaSeconds);return;}
     if(!Rig||!Rig->IsContactPhysics()){Abort(TEXT("contact probe lacks native physics vehicle"));return;}
     const bool Integration=FParse::Param(FCommandLine::Get(),TEXT("ContactIntegration"));
+    const bool ResetAfterRoute=FParse::Param(FCommandLine::Get(),TEXT("ContactReset"));
+    if(Integration&&ResetAfterRoute){Abort(TEXT("ContactReset and ContactIntegration are exclusive"));return;}
     if(Integration&&!Training){Abort(TEXT("contact integration requires training mode"));return;}
     UpdatePlayerView(GetWorld()->GetFirstPlayerController());
     if(!ControlPendingCapture.IsEmpty())
@@ -78,7 +87,7 @@ void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
         UE_LOG(LogRMSim,Display,TEXT("CONTACT_PROBE_COMPLETE checks=%d actual_physics_samples=%d"),ControlChecks.Num(),ContactSamples.Num());
         bReady=false;FPlatformMisc::RequestExitWithStatus(false,0);
     };
-    if(ControlProbePhase>=4&&!Integration){Finish();return;}
+    if(!Integration&&ControlProbePhase>=(ResetAfterRoute?5:4)){Finish();return;}
     switch(ControlProbePhase)
     {
     case 0:
@@ -107,6 +116,19 @@ void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
         Passed=Progress<=10&&FMath::Abs(Drift)<50&&Rig->GetActorUpVector().Z>.5;
         ControlPendingCapture=TEXT("contact-return");break;
     case 4:
+        if(ResetAfterRoute&&!Integration)
+        {
+            FManualControlInput Input;Input.Brake=true;Input.RestartRound=ContactRecoveryCount==0;
+            ApplyManualInput(Input,DeltaSeconds);
+            if(ContactPhaseTime<3)return;
+            const double DistanceToSpawn=FVector::Dist2D(Rig->GetActorLocation(),ContactSpawn.GetLocation());
+            Name=TEXT("physical_shared_reset_without_training");
+            Detail=FString::Printf(TEXT("Shared R restores source-map spawn: resets=%d distance=%.4fcm speed=%.4fcm/s"),
+                ContactRecoveryCount,DistanceToSpawn,Rig->GetVelocity().Size());
+            Passed=ContactRecoveryCount==1&&DistanceToSpawn<5&&Rig->GetVelocity().Size()<10&&Rig->GetActorUpVector().Z>.9;
+            ControlPendingCapture=TEXT("contact-reset");break;
+        }
+        [[fallthrough]];
     case 5:
     {
         FManualControlInput Input;Input.Turn=ControlProbePhase==4?-1:1;Input.Steer=Input.Turn;
@@ -125,7 +147,7 @@ void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
         const double Discriminant=V*V*V*V-G*(G*Distance*Distance+2*Delta.Z*V*V);
         if(Discriminant<0){Abort(TEXT("training target outside ballistic range"));return;}
         AimWorldTarget=FVector(Target.X,Target.Y,Muzzle.Z+(V*V-FMath::Sqrt(Discriminant))/G);
-        bAimTargetValid=true;bHoldAimAfterFreeLook=true;
+        bAimTargetValid=true;bProbeAimWorldTargetOverride=true;
         FManualControlInput Input;Input.Brake=true;Input.Fire=ContactPhaseTime>1.&&Training->GetShots()==0;
         ApplyManualInput(Input,DeltaSeconds);
         if(ContactPhaseTime<2.)return;

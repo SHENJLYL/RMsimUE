@@ -1,0 +1,28 @@
+﻿{
+    "schema":  "rmsim_wt_motion_capture_summary_v1",
+    "status":  "passed",
+    "visual_review_status":  "pending",
+    "performance_sample":  false,
+    "pid":  38796,
+    "exit_code":  0,
+    "elapsed_seconds":  34.5587139,
+    "contact_checks":  4,
+    "fixed_timestep_seconds":  0.016666666666666666,
+    "native_fixed_timestep":  {
+                                  "passed":  true,
+                                  "maximum_seconds":  0.01666666753590107,
+                                  "samples":  51,
+                                  "minimum_seconds":  0.01666666753590107,
+                                  "maximum_abs_error_seconds":  8.6923440320574308E-10
+                              },
+    "viewport_png_count":  19,
+    "motion_phase_png_count":  11,
+    "forward_png_count":  5,
+    "reverse_png_count":  6,
+    "inputs_unchanged":  true,
+    "module_sha256":  "3b35f4862087c81220216d9e26d47ac29bdbd47bc8b49d888dfd05b1a9642f2d",
+    "world_sha256":  "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+    "contact_report_sha256":  "7030cbe04f210ed3be91bd3023128fedde75ba6f99b0aad7712b1721cb6e1071",
+    "execution_sha256":  "829fe2bf293983651a1f8cf6bfe20814c68cfcff9c67601a21bdc76ead29a0b7",
+    "screenshot_scope":  "main viewport with HUD; PNG hashes and schedule in execution.json; visual review is separate"
+}

@@ -1,0 +1,1997 @@
+{
+  "schema": "wt_foliage_enhancement_proof_v1",
+  "status": "passed",
+  "scope": "offline_source_bound_preparation",
+  "original_definition": {
+    "file": "assets/maps/wt_vlaanderen/foliage/foliage.json",
+    "sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e"
+  },
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_inputs": {
+    "assets/maps/wt_vlaanderen/foliage/foliage.json": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+    "artifacts/maps/wt-refine-20261118/source-baseline/foliage-source.json": "ddcc8b649a18a917adbbe69c3b294d08a5158d245b1470f997d51f9f9f86e8d9",
+    "artifacts/maps/wt-refine-20261118/small-grass-source-02-visual/small-grass-source.json": "2d45ac003403ade7c3e8a6fca42b23b03a33526755175893f5407e145426d82c",
+    "artifacts/maps/wt-refine-20261118/small-grass-meshes-02-visual/mesh-preparation.json": "cb1fb988f9598f626eab30a97e3a39838523a43499819d9b069a165d0dcf43cf",
+    "assets/maps/wt_vlaanderen/landclass/landclass.json": "7da04c12b1ef4f446b5fff63bc9f6ecdb9ea85bddcad0386dd3cbf42fad99e46",
+    "assets/maps/wt_vlaanderen/heightfield.json": "9726bdc20626819425786d0cf707eef29cbebd491935f8be9ec2cecadd5f14eb",
+    "artifacts/maps/wt_existing/avg_vlaanderen/textures-02/avg_vlaanderen_detailed_biome_tex_b.png": "f39107e812db6baa03189fde5eb40391601e0562880554ad4ace11e8987a6f05"
+  },
+  "source_geometry": [
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/landmesh.json",
+      "sha256": "a1db3a1108215a603993b7e3623fc9e168a3f99283538be31a277f7051bdf668"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0496_decal.npz",
+      "sha256": "9e61421b0e3703a50abc2d5ca7af7a9774900f1a9f1bc209c7f2ef573200208d",
+      "category": "road_rail",
+      "projected_triangles": 12
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0497_decal.npz",
+      "sha256": "03d0a835b6e8e33d2986fcfe2878f63a33e39f883c7a99c6aeb2f665c2a1a75c",
+      "category": "road_rail",
+      "projected_triangles": 19
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0527_decal.npz",
+      "sha256": "de79e9bdc5e2a641e6764fc58a589b042a8c2fb82ede2f6402480001e71c5280",
+      "category": "road_rail",
+      "projected_triangles": 32
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0528_decal.npz",
+      "sha256": "e44e20e52ebc31fa48adc0328ce67dc945891375c40ffbf4ebfb6aab3bf8db59",
+      "category": "road_rail",
+      "projected_triangles": 10827
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0529_decal.npz",
+      "sha256": "c29172b7a174cbd831bc8cacca8f4bd2b70a44a99d77b55fb99cb46d25e06b7f",
+      "category": "road_rail",
+      "projected_triangles": 16668
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0530_decal.npz",
+      "sha256": "680bf43050517b9d7c016ac68b8dedb47867439fda0f0af5d9da3549b15fa1e0",
+      "category": "road_rail",
+      "projected_triangles": 54
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0559_decal.npz",
+      "sha256": "17f01383ca5a36291f022448bd5b00aaf7f9d5bb60d144a469016be20cd8a282",
+      "category": "road_rail",
+      "projected_triangles": 9
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0560_decal.npz",
+      "sha256": "407fde760f8c884051fe5d65bffba2cdd8190a91bb7c0558f135be7e2a56706c",
+      "category": "road_rail",
+      "projected_triangles": 15770
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0561_decal.npz",
+      "sha256": "01e99e180dbe71b01c12ce4f37c417f7223cd9c89cbbcdd4673717a3e942076d",
+      "category": "road_rail",
+      "projected_triangles": 14262
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0562_decal.npz",
+      "sha256": "3c78fda030bf1bc1864cf6ece7ecfca0ca0aa3336e3258511ac70e4351c2906e",
+      "category": "road_rail",
+      "projected_triangles": 9
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0592_decal.npz",
+      "sha256": "0923b3bee6d93d7883d987a8dd5979c4711db7e01227a3334e4e465c144656fd",
+      "category": "road_rail",
+      "projected_triangles": 12
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/landmesh-01/cell_0593_decal.npz",
+      "sha256": "d5a12c68cf156571cb75550309cf023886fd58a6f9f56ceddf1c6b88de9ccd25",
+      "category": "road_rail",
+      "projected_triangles": 29
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/scene.json",
+      "sha256": "ffea6ea2d56a1f3c7e98d7d1dae82e194ed1951026aa343b3e00ccef0e60d730"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0019.npz",
+      "sha256": "8eb01630b1489f34968b2d64e5ac73194af03739edccf995ecfe048ffa268f26",
+      "category": "static_world",
+      "projected_triangles": 2068
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0020.npz",
+      "sha256": "026cfcd07d9a84ecb0394a88c6cb52512af61f8f31d0494121027dbf4d7bace5",
+      "category": "static_world",
+      "projected_triangles": 2068
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0021.npz",
+      "sha256": "2ee6a591d75c68d52dc2d69edf4b58571639ee5979a46868f70fae264d454c46",
+      "category": "static_world",
+      "projected_triangles": 1166
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0022.npz",
+      "sha256": "9fdb463d675a0b96cf91ad9a678abc9fac9c47c4b00912049119799a88ed2b1c",
+      "category": "static_world",
+      "projected_triangles": 1166
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0023.npz",
+      "sha256": "6a1a0624a661c48d70a23bc488c03ed65cf9e525db08d6b0b905858227725084",
+      "category": "static_world",
+      "projected_triangles": 2310
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0024.npz",
+      "sha256": "c74ce370d84cb9e8ebd17fef2e76cec1f4d1c4f8ceb8a49fa902d49f0ec69f3c",
+      "category": "static_world",
+      "projected_triangles": 2310
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0025.npz",
+      "sha256": "996b6ecb252e52f9b9fb6b099b998d8dc45a044698dfac951dfc72d391ca2f3b",
+      "category": "static_world",
+      "projected_triangles": 1320
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0026.npz",
+      "sha256": "0cc9c8689a274d2d80538f56c86f17aabae0c4d574320ac671a5d5ff1ec5521b",
+      "category": "static_world",
+      "projected_triangles": 1320
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0027.npz",
+      "sha256": "7255b46dc79f49e40443dc026ce0a592089772cbae6c6213b243581852be398d",
+      "category": "static_world",
+      "projected_triangles": 550
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0028.npz",
+      "sha256": "967cb969b72e6630f433c4c3d00f517f7b4b05c4c156be23afcc2d8e0036fcc9",
+      "category": "static_world",
+      "projected_triangles": 550
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0029.npz",
+      "sha256": "36666ff8187f972788ddd968217799f79c0b42da40e016a41e4e2bc5b13bdae1",
+      "category": "static_world",
+      "projected_triangles": 2002
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0030.npz",
+      "sha256": "7c37eb3c186b89980e1e689e139f2006e029129b84697fcc257e2d5dd2291c1e",
+      "category": "static_world",
+      "projected_triangles": 2002
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0031.npz",
+      "sha256": "6c8ae172c49dd2b39d4eec5f834c22ffeef494a7682ac89ab7338d847e27cb4a",
+      "category": "static_world",
+      "projected_triangles": 3982
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0032.npz",
+      "sha256": "ff1d2719830aad82ea3f84befc5a4791b877d3dfce8dc37c2ca586ca516e8cce",
+      "category": "static_world",
+      "projected_triangles": 3982
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0033.npz",
+      "sha256": "468fadfc16eba56f2633c13705844d7b3eb862b43f96b5a8986f052f80c73727",
+      "category": "static_world",
+      "projected_triangles": 1364
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0034.npz",
+      "sha256": "dd9b6bb16d4666bc4b3eb04eae0196c796b7073f6a34a2b12d74494f85b6ecbe",
+      "category": "static_world",
+      "projected_triangles": 1342
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0035.npz",
+      "sha256": "b76c5a730c67c2c4dac5be0f4f18a23d70621dd4d3723110578ce7fff53b915a",
+      "category": "static_world",
+      "projected_triangles": 7
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0036.npz",
+      "sha256": "70e4d6abf6829ed97ba3703955f2b4b5f6c8c3bdbd0f9a949d8212944ab052da",
+      "category": "static_world",
+      "projected_triangles": 9
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0037.npz",
+      "sha256": "20a97be8f70131dc1372cff52c256c2d3c62877a075e14c1948d9fcca60b014c",
+      "category": "static_world",
+      "projected_triangles": 7
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0038.npz",
+      "sha256": "fee3f0e14b3ec72895697fef21f24eb38f66569df602d6f840b26c6b8524931a",
+      "category": "static_world",
+      "projected_triangles": 5918
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0039.npz",
+      "sha256": "85741f2dbb66d634680f3182796965cccc2a3e95d42c97491d902fc9ad3f23d3",
+      "category": "static_world",
+      "projected_triangles": 5918
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0040.npz",
+      "sha256": "7545fec738b9fba030fe6fa41ca01c411cb8943d45b6ede5e770050916a509f7",
+      "category": "static_world",
+      "projected_triangles": 8558
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0041.npz",
+      "sha256": "10272dbb1c19d77a51f9c731b5b3565d7f99a9bca6c01da08c60ac6e8ea6af03",
+      "category": "static_world",
+      "projected_triangles": 8558
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0042.npz",
+      "sha256": "9298b03b0ba0d5f55de39262e867d3dc68be7e503201baa4fa3a0060b4d565dc",
+      "category": "static_world",
+      "projected_triangles": 6798
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0043.npz",
+      "sha256": "ae168f240d0accbc2d157251dce4976a5cf80de843df7c30279fd0744587a1f1",
+      "category": "static_world",
+      "projected_triangles": 6798
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0044.npz",
+      "sha256": "aca93f925287c04d61b3b2c6f856c80a3fddf6d907047a8d5b8d6cec0d3e7cdf",
+      "category": "static_world",
+      "projected_triangles": 1166
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0045.npz",
+      "sha256": "205ac403368284b6de8a103b2e7f96cc7b00f0e6108f040710b30d09b284286e",
+      "category": "static_world",
+      "projected_triangles": 1166
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0054.npz",
+      "sha256": "ce497417baf5fcfcdfb75842dc7423d79b03af60869832f374438f03d8769301",
+      "category": "static_world",
+      "projected_triangles": 1672
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/static-02/static_0055.npz",
+      "sha256": "2feaa005ee471cdb50cd9f0532a83952ef13c9d003490fbb8ab7533c18cf5d70",
+      "category": "static_world",
+      "projected_triangles": 1733
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json",
+      "sha256": "206d36a75f8db3355bbf95f4e7996bb72c850244431fde1326b253644a14c9c1"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/american_train_depot/collision.npz",
+      "sha256": "b07fa74dc7a01dfddf516257fb45fc73eb37a75f1dce909897ca00ad9715655c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "american_train_depot",
+      "projected_triangles": 4695,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/normandy_village_house_2_floor_c/collision.npz",
+      "sha256": "bb40e6afe91ce08e54dbe21fcc1fa6e55d218b7d1672a5f60b7114ca975ad226",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "normandy_village_house_2_floor_c",
+      "projected_triangles": 10011,
+      "core_instances": 8,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/trench_bridge_b/collision.npz",
+      "sha256": "419e35582fe3f2c9d866526d6304d57bcbb3590d8feb2e4274f346c6a6c3ff9b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "trench_bridge_b",
+      "projected_triangles": 560,
+      "core_instances": 14,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/trench_bridge_a/collision.npz",
+      "sha256": "c8ca7f6ad40d27870099239c517bf8bfbbbc58a0a5680c57270667cf9d86c835",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "trench_bridge_a",
+      "projected_triangles": 280,
+      "core_instances": 7,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/vietnam_bridge_a_dmg_b/collision.npz",
+      "sha256": "04ae15efb4f1d9d363f984c81934e3764dc9b8f4f440e9aa0e428cb3f5811ae4",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "vietnam_bridge_a_dmg_b",
+      "projected_triangles": 273,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/vietnam_bridge_a_dmg_a/collision.npz",
+      "sha256": "18a65c08995d2839bbabaa774bc63d7e56613e87569bb57c0bafaabc8ff9c214",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "vietnam_bridge_a_dmg_a",
+      "projected_triangles": 144,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/concrete_bunker_a/collision.npz",
+      "sha256": "3d330a3aa598f36dec8b9b5bf83a5ca2165c7465f15ba38220cb5234b6386bc6",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "concrete_bunker_a",
+      "projected_triangles": 5448,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_shed_c/collision.npz",
+      "sha256": "fd29a5d2e79ae825336e1d1472475375982db041d1fc35f3426c1431441f5664",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_shed_c",
+      "projected_triangles": 3840,
+      "core_instances": 30,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_shed_a/collision.npz",
+      "sha256": "d75374f905b648a9137703c4bcbb7ea6907d380af9894a9f304e92893222d40d",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_shed_a",
+      "projected_triangles": 1728,
+      "core_instances": 18,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_4_floors_a/collision.npz",
+      "sha256": "de61a2a9c106248bed9080f466a4786a0614152e27cd34bca4a7f00abe84e006",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_4_floors_a",
+      "projected_triangles": 5520,
+      "core_instances": 30,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_k/collision.npz",
+      "sha256": "f6f0a29c5026b80495f2a8333c42f761ce120015500f68be247303b2a28ce8a2",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_k",
+      "projected_triangles": 128,
+      "core_instances": 32,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_h/collision.npz",
+      "sha256": "afc74b6f6379f912d70c841a0f698c987256ec71b3125724823ccc3383dc5e7b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_h",
+      "projected_triangles": 304,
+      "core_instances": 19,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_g/collision.npz",
+      "sha256": "fabe43e58443e94697e2b943c6cb719fc6aee023f16804834fa6fefb2dfcade2",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_g",
+      "projected_triangles": 156,
+      "core_instances": 13,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_a/collision.npz",
+      "sha256": "fce5d124e90dff6309f3a1634a8fef1a01a55ec90a5eb0072fa5d7a7223034fd",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_a",
+      "projected_triangles": 64,
+      "core_instances": 16,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_m/collision.npz",
+      "sha256": "4d9855919930bede3b0fad4806ebb7f449425c836b50d875dd1c5229675d5d24",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_m",
+      "projected_triangles": 40,
+      "core_instances": 10,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_suburb_building_1_floors_a_abandoned/collision.npz",
+      "sha256": "14be58107b0bf343ff21af5e2c33735f43a5aa35783e02dbfc8738a721cbeb0b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_suburb_building_1_floors_a_abandoned",
+      "projected_triangles": 2268,
+      "core_instances": 7,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/concrete_bunker_a_damaged_a/collision.npz",
+      "sha256": "8a78c2649023e9468acb439cc87d46451d06af89706586815694aa7fda26554a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "concrete_bunker_a_damaged_a",
+      "projected_triangles": 6420,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/rail_bump/collision.npz",
+      "sha256": "2415f6b9e4363865cb1e880ab05cf5456cef8c903ce2e90f81d4c811b67f9eed",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "rail_bump",
+      "projected_triangles": 80,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/european_village_barn_b/collision.npz",
+      "sha256": "5f1f0ad642afa02ccc6e9f2c43a9ee9eb6dd79df143c8fe11bd53f573d279c47",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "european_village_barn_b",
+      "projected_triangles": 2480,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/european_village_barn_b_annex_a/collision.npz",
+      "sha256": "1821e105990484f9c4796194335296c73b986a6f8eb7f573f60aa361e5b72589",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "european_village_barn_b_annex_a",
+      "projected_triangles": 264,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/european_village_barn_b_annex_b/collision.npz",
+      "sha256": "46eab174397deb3e45c2e30878b65ccf747e0a8a21e219a451b886c6670b4916",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "european_village_barn_b_annex_b",
+      "projected_triangles": 235,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/trench_bridge_logs_a/collision.npz",
+      "sha256": "7ba43079085fe4f79a18b1ee69ccf13113d1b3802ee3a1d8c7e13730cf9804a9",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "trench_bridge_logs_a",
+      "projected_triangles": 512,
+      "core_instances": 84,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/warehouse_shelving_wood_b/collision.npz",
+      "sha256": "6cdce7c1adc6512a156d0d745cd4e130f8059ca3996f9eea7de2ff2d4a7ea7e9",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "warehouse_shelving_wood_b",
+      "projected_triangles": 367,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/coal_tower_shed/collision.npz",
+      "sha256": "c6657359940b7c2c818c0e513ecc580ee04d00cbdfe45809d08c719fe2359d79",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "coal_tower_shed",
+      "projected_triangles": 34,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/coal_tower_elevator/collision.npz",
+      "sha256": "f146d4f6d9d8ad851b4b4983dd6b73987ba78690bd3b3c9d8285840aded9742c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "coal_tower_elevator",
+      "projected_triangles": 218,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/af_factory_small_building_b/collision.npz",
+      "sha256": "3a6b46ea10b31a86de406c201de451cc9c2b57e6dfdccde17019be7e6005403a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "af_factory_small_building_b",
+      "projected_triangles": 348,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/fulda_barn_b_table/collision.npz",
+      "sha256": "850a997035edced991237adba7bea89e8ec6a041198045f9884f62c499507abf",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "fulda_barn_b_table",
+      "projected_triangles": 396,
+      "core_instances": 11,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_3_floors_a/collision.npz",
+      "sha256": "25c6a8895e777b6a803cf3c0bbae9ae10c1e9062c45cb6b2ae1774d3c9eddd94",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_3_floors_a",
+      "projected_triangles": 13428,
+      "core_instances": 12,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_3_floors_d/collision.npz",
+      "sha256": "8395f509fafd647ca95f4e217fccb76fb5820f5fbf9d34aec037311a608fd7f7",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_3_floors_d",
+      "projected_triangles": 9632,
+      "core_instances": 16,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_4_floors_b/collision.npz",
+      "sha256": "eead3cd504c85104b3c5694c700e22e2143d068bfb74a92e5e2555388858c440",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_4_floors_b",
+      "projected_triangles": 7168,
+      "core_instances": 8,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_5_floors_a/collision.npz",
+      "sha256": "239d4d859f6336b5a4329776fe09820e9551e80d2eb41ec5908aa4b37cd6ed00",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_5_floors_a",
+      "projected_triangles": 5610,
+      "core_instances": 11,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_5_floors_d_angle_center/collision.npz",
+      "sha256": "e4b7387686b481e93afd4bf146ee4ff4aeccb0b7e07bc2998188d64c4fa4d690",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_5_floors_d_angle_center",
+      "projected_triangles": 800,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_5_floors_d_angle_right/collision.npz",
+      "sha256": "9e20a370a8bd9a175315654d862db130b5a16c3952b42b9777a62330d0877314",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_5_floors_d_angle_right",
+      "projected_triangles": 24878,
+      "core_instances": 14,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_3_floors_c/collision.npz",
+      "sha256": "24e19aad15c93cd4a24c68d6468a62779241e40f2718911687c58e66dc2875f3",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_3_floors_c",
+      "projected_triangles": 16278,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_3_floors_b/collision.npz",
+      "sha256": "0b5f75e3324bcdd7f98b17b158844a149ab9c3dece5c0281232b0a7d633ea671",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_3_floors_b",
+      "projected_triangles": 15067,
+      "core_instances": 13,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_5_floors_d_angle_left/collision.npz",
+      "sha256": "e5b03b9ace44327399c0dc6a109d984f9f1d99cec08486aed1384d4a3e09517d",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_5_floors_d_angle_left",
+      "projected_triangles": 7488,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_2_floors_a/collision.npz",
+      "sha256": "f7b183177e689b78e7e3b951486a60d328f95176e42a618170e56cf5e302542a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_2_floors_a",
+      "projected_triangles": 5208,
+      "core_instances": 7,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_2_floors_a_debris/collision.npz",
+      "sha256": "edcce15179e5d4e26839620abcc801f07343a0de72fed2c9067a21bd6aaf24cd",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_2_floors_a_debris",
+      "projected_triangles": 5298,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/germ_town_building_5_floors_b/collision.npz",
+      "sha256": "df36670f68622d477d6df28b9b90eebd7ca07ef197455ff4df14a108203ddc6a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "germ_town_building_5_floors_b",
+      "projected_triangles": 17829,
+      "core_instances": 9,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/berlin_shed_a/collision.npz",
+      "sha256": "a2b6a71d71be68f64e645fe57d5fec33fd214eed85191b4b18e4eaa3e200bbd0",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "berlin_shed_a",
+      "projected_triangles": 469,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/berlin_shed_a_window_a/collision.npz",
+      "sha256": "4e4491af02017c761154d3f74423c9d68d0c2829de5e5d01df020bb579517079",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "berlin_shed_a_window_a",
+      "projected_triangles": 80,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/berlin_shed_a_window_b/collision.npz",
+      "sha256": "ab832e8bb388f117847389ee6f5ea3091943c4ffc0ddbbcaaab5a5ab0af8f0e2",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "berlin_shed_a_window_b",
+      "projected_triangles": 24,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/berlin_shed_a_roof/collision.npz",
+      "sha256": "d2d2de48ef95f20c3deaf3791a666e0df594eb6fd9e50612634c241f83120872",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "berlin_shed_a_roof",
+      "projected_triangles": 62,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/berlin_shed_a_door/collision.npz",
+      "sha256": "b32c4b3ee60f0a228c0b7e05d452b87f3eab59c2c68e408f531f6dc28c10396b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "berlin_shed_a_door",
+      "projected_triangles": 16,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/warehouse_shelving_wood_a/collision.npz",
+      "sha256": "acc52ec54c73f91920c03aac905484d46dab40f5c38ebc00e647135dbcc2616e",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "warehouse_shelving_wood_a",
+      "projected_triangles": 220,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_kiosk_a/collision.npz",
+      "sha256": "0dd0028d3d43f2c9921acb3b00e0562957a5a689f6a972693eee85d7dc43eca8",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_kiosk_a",
+      "projected_triangles": 810,
+      "core_instances": 9,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/normandy_village_house_2_floor_d/collision.npz",
+      "sha256": "5aad1cc41b1e90a36a895df395acfb061e287a41ea76d447963715b85ade7916",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "normandy_village_house_2_floor_d",
+      "projected_triangles": 4422,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/railway_tube_brick_a/collision.npz",
+      "sha256": "d55aa5c5ecd482edaf41fde142f9b57fbbad6cd32d70e2e2e225d8fe375efcc6",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "railway_tube_brick_a",
+      "projected_triangles": 296,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/railway_tube_brick_a_plates_a/collision.npz",
+      "sha256": "ec471b9f925d5f41d8aac862537ac05f427d8cdf0e727b60ed52c9e55d29d94e",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "railway_tube_brick_a_plates_a",
+      "projected_triangles": 24,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_foundation_gazebo_a/collision.npz",
+      "sha256": "213eac05e3a272d189480b4942a0c424d31ea4df8ccbba80dd10f9a35f9c0b21",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_foundation_gazebo_a",
+      "projected_triangles": 32,
+      "core_instances": 8,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_window_b/collision.npz",
+      "sha256": "8f8a4848e9cdaca85c9ce12838488a154fec407e96bf946f39c207a642eedd3e",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_window_b",
+      "projected_triangles": 560,
+      "core_instances": 35,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_window_a_frame/collision.npz",
+      "sha256": "d8d8566149f1edb882245b4cfa4e2c945dbf47b39429580c4871c7030fcafe3f",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_window_a_frame",
+      "projected_triangles": 1584,
+      "core_instances": 99,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_window_a_shutter_r/collision.npz",
+      "sha256": "5d36b30ea66fe8c402db6735604ea6e15e478d64ec2167a7b0d0e68b9608f29a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_window_a_shutter_r",
+      "projected_triangles": 396,
+      "core_instances": 99,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_window_a_shutter_l/collision.npz",
+      "sha256": "c62156850b60955e5dac4f28e4cc1cd0f8280192b553252a340d8f2a5094587e",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_window_a_shutter_l",
+      "projected_triangles": 396,
+      "core_instances": 99,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_door_a/collision.npz",
+      "sha256": "a0748077ca03b3c94a85dfce13ac90c5e32445d4fa9c432b724598030c8ae826",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_door_a",
+      "projected_triangles": 52,
+      "core_instances": 13,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_a_damaged/collision.npz",
+      "sha256": "c7e77839163da498ca719b94709503d76ab831d694a3124c92fdd1e5f796f33c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_a_damaged",
+      "projected_triangles": 1056,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/railway_tower_a/collision.npz",
+      "sha256": "55a98e663db230f72002ea334591629e9bb900585335dc413e532f7d24de8f20",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "railway_tower_a",
+      "projected_triangles": 150,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_suburb_building_1_floors_a/collision.npz",
+      "sha256": "3358cf5db4a8d3e1f7ba5eabea616702ad6b96b3939441c1e8885400e3256bca",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_suburb_building_1_floors_a",
+      "projected_triangles": 660,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_l/collision.npz",
+      "sha256": "597207e2ca745b31a7e66ab80c5657c93242de5ee83be78777555f2ac47fd014",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_l",
+      "projected_triangles": 36,
+      "core_instances": 9,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_window_b/collision.npz",
+      "sha256": "9ec8fecd94df5be675aedea7e60a0932a998f8f4d4e35a83fb162d9eec41997c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_window_b",
+      "projected_triangles": 12,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_shutter_r_g/collision.npz",
+      "sha256": "6ab61aecc923a9e5533530be072de35dbd5fad9ff049936aa019f12d684ee8e8",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_shutter_r_g",
+      "projected_triangles": 180,
+      "core_instances": 21,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_shutter_l_g/collision.npz",
+      "sha256": "c4ad3391de3c2bdc490ca7a04ea5d5b68d1b832563c5723e090617326a526583",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_shutter_l_g",
+      "projected_triangles": 108,
+      "core_instances": 15,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_window_g/collision.npz",
+      "sha256": "6c146aa1ebe4675071f4ddbc6bdcccf1aff62b83f0bbffec66a2a61559071138",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_window_g",
+      "projected_triangles": 36,
+      "core_instances": 9,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_window_a/collision.npz",
+      "sha256": "68431ff2be2e2c32620ab8046e5f3bab34f2fbee7ab467f901d3d2dda151e0fe",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_window_a",
+      "projected_triangles": 12,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_damaged_e/collision.npz",
+      "sha256": "7e3f4a41a6d29dd59a7f9d5b2aaa9b7afaf61634493b07fe160a540b64b87fd1",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_damaged_e",
+      "projected_triangles": 120,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_town_house_gutter_damaged_g/collision.npz",
+      "sha256": "e8efffd136f6c5ef66f7a5a4e3235d49c8f4fd41f1c1feb834acf2ff454a884d",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_town_house_gutter_damaged_g",
+      "projected_triangles": 216,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_suburb_building_1_floors_a_abandoned_rail/collision.npz",
+      "sha256": "f46bbe2e292767fffe5dcb20ff1aaaa4a5ee3f3473367afa5ab79c45c6544bba",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_suburb_building_1_floors_a_abandoned_rail",
+      "projected_triangles": 16,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/barrack_building_1_floor_b_damaged/collision.npz",
+      "sha256": "e32be61c0ad28c2e0825c6cb1247f6c393ff49a3f33bc474fb163abcf55ab6f7",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "barrack_building_1_floor_b_damaged",
+      "projected_triangles": 470,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/af_factory_small_building_e/collision.npz",
+      "sha256": "78669875f2f10b061564c27196a85541224229d7e7cec4e5110fa6cc38b6002f",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "af_factory_small_building_e",
+      "projected_triangles": 952,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_b_gates_right_a/collision.npz",
+      "sha256": "ad658dfb146992b144ce58b1a9d0f20d9ac8fa4b6c4abbfbac3f5d81bbad8c2b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_b_gates_right_a",
+      "projected_triangles": 72,
+      "core_instances": 12,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_b_door_top_a/collision.npz",
+      "sha256": "51c2c99109973d18a83327fbc6e6db686d967f37fe9478615c0420bc0c40484f",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_b_door_top_a",
+      "projected_triangles": 188,
+      "core_instances": 47,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_b_door_bot_a/collision.npz",
+      "sha256": "51c2c99109973d18a83327fbc6e6db686d967f37fe9478615c0420bc0c40484f",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_b_door_bot_a",
+      "projected_triangles": 148,
+      "core_instances": 37,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_b_gates_left_a/collision.npz",
+      "sha256": "2ed5a4199103ac37c2f147d50dcbbed7771865da462bdc22c3948cb4ec2bb2ae",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_b_gates_left_a",
+      "projected_triangles": 72,
+      "core_instances": 12,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_b/collision.npz",
+      "sha256": "e1518bf1c10b668b73b0f0201f8d3bdf29dcc412e3f88535f790949917a74551",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_b",
+      "projected_triangles": 3780,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hangar_field_toolbox_a/collision.npz",
+      "sha256": "033e9dfd5a75044ff38018d5de16ab0aa5582de5c38b1b4fd31435a9f6fddb89",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hangar_field_toolbox_a",
+      "projected_triangles": 898,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_2_floors_b/collision.npz",
+      "sha256": "de79154e13f3585d768b0da3072dfc059893bd2fedfae05dd7fc4360341430cf",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_2_floors_b",
+      "projected_triangles": 8208,
+      "core_instances": 16,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_2_floors_c/collision.npz",
+      "sha256": "13f01f05aaf54b0e2ff45aab3e06860aa1d5a15796a2e5853b0c314bdf9c0f52",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_2_floors_c",
+      "projected_triangles": 10235,
+      "core_instances": 23,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_3_floors_a/collision.npz",
+      "sha256": "46501b60a4f47c830d23c539bb3747d1f7956ed45d850d353a94f384dbb682a2",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_3_floors_a",
+      "projected_triangles": 3585,
+      "core_instances": 5,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_shop_a/collision.npz",
+      "sha256": "d1899e77b3843f0bec061e4f81251628e6caf23adf75cad942180d5d04d0b423",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_shop_a",
+      "projected_triangles": 4330,
+      "core_instances": 10,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_shop_b/collision.npz",
+      "sha256": "7e2a2c38e7bb77942f4435ba8f27256c6bc03684d4ace2c3c3bcb6710956d5e3",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_shop_b",
+      "projected_triangles": 5481,
+      "core_instances": 21,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_2_floors_a/collision.npz",
+      "sha256": "45e8806ce4837694f135fb3fd73086b1f9d0a54871b6d0ee307daadcb13eb8c6",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_2_floors_a",
+      "projected_triangles": 5408,
+      "core_instances": 13,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_building_2_floors_d/collision.npz",
+      "sha256": "4894b762b1a481ffd1aff56c11ebb767b37ce73bc875560d1b22b99b01ff0440",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_building_2_floors_d",
+      "projected_triangles": 13156,
+      "core_instances": 22,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_kiosk_e/collision.npz",
+      "sha256": "400fabdbdd2f9b16fe33af83e0b705280fffae61928cf5623eae69b881b45a8c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_kiosk_e",
+      "projected_triangles": 402,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_villa_railing_f/collision.npz",
+      "sha256": "e8df1adb04f81a5aabc28008f4b5d1201d149d1abc95402480d39b9d12c7e6b6",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_villa_railing_f",
+      "projected_triangles": 290,
+      "core_instances": 29,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_villa_railing_a/collision.npz",
+      "sha256": "6d2b7d7039ef1edbaa5f899e8ae2e482ff63296d736e6cb9785cc654ecdb4eeb",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_villa_railing_a",
+      "projected_triangles": 384,
+      "core_instances": 80,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_kiosk_g/collision.npz",
+      "sha256": "daad204b3935c64d765a4448eac736ff07a4c9b4b382384aa318b802e2d5eee8",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_kiosk_g",
+      "projected_triangles": 448,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_kiosk_c/collision.npz",
+      "sha256": "4c97d185c06f659f584fa7db60bd901d93eccb1290dc88f615faf789de9ce6d0",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_kiosk_c",
+      "projected_triangles": 2260,
+      "core_instances": 10,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/desert_water_tower_b/collision.npz",
+      "sha256": "69462a5c992cd79e450ac60e904234fd5ac52a6ebc55ea6f9ab976ef551ada22",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "desert_water_tower_b",
+      "projected_triangles": 640,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_church_a_main/collision.npz",
+      "sha256": "35f627b29df72418319ab76b483b2482f3991f5c338bd271399ca2cca4a609c5",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_church_a_main",
+      "projected_triangles": 462,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/poland_church_a_statue/collision.npz",
+      "sha256": "0421c36a27b1a851ca22f0c908ddf8e0b8e34f8051e2db58ce2e28fa25377eaa",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "poland_church_a_statue",
+      "projected_triangles": 62,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/france_town_shed_b/collision.npz",
+      "sha256": "cc084858fabb90e21247d58e8da2a95339c59b8fb4baebf3ca7c50a0125a8a6a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "france_town_shed_b",
+      "projected_triangles": 254,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/water_tower_a/collision.npz",
+      "sha256": "c87e30a7496c15d6bff5422c8616cf14ecc014ed328edad0077dd0c962e04b47",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "water_tower_a",
+      "projected_triangles": 536,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/water_tower_a_stairs/collision.npz",
+      "sha256": "03d7f6ff13610fdc4c25e94bda9ab2acadc26a8d1bda1ce336feea2755c7718b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "water_tower_a_stairs",
+      "projected_triangles": 84,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_kiosk_b/collision.npz",
+      "sha256": "c25d64fc62bb50d254a2b4c1570b94652335f443d34b1600b9fb3f87169cf20a",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_kiosk_b",
+      "projected_triangles": 378,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/water_tower_c/collision.npz",
+      "sha256": "3269f4bb301dbfca69f0c16d0f65cc7fea59d06b9c2c94456f2ecdc3474a8924",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "water_tower_c",
+      "projected_triangles": 275,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_corner_a_railings_a/collision.npz",
+      "sha256": "e97428054496cb7a4faab25595e3c2e1f7ee4e59daf2bdcd2a50c0d39e7ae527",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_corner_a_railings_a",
+      "projected_triangles": 80,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_corner_a_railings_b/collision.npz",
+      "sha256": "9fb0c0c791549990aa07d3aa6aff23916d17a026ef9b9783afef643c16217df8",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_corner_a_railings_b",
+      "projected_triangles": 2864,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_corner_a_railings_c/collision.npz",
+      "sha256": "b88106531b94ec7f60edafed285b92887ebdb52c63230db3da193395e77b410d",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_corner_a_railings_c",
+      "projected_triangles": 48,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_corner_a_railings_h/collision.npz",
+      "sha256": "8485256f63f5a879c4dd942525ae7670dd0943c3a1dca0f6f3b004b613592009",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_corner_a_railings_h",
+      "projected_triangles": 1704,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_stables_a/collision.npz",
+      "sha256": "4f86476ecf561d09a69900cee934de74814891a4eaeb876fe617b3efb1e964ee",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_stables_a",
+      "projected_triangles": 3620,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_villa_railing_c/collision.npz",
+      "sha256": "e81e4e746b0d9d461e8b545d3a0f53e49e0d5ef14ead577e17ced69f8e265535",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_villa_railing_c",
+      "projected_triangles": 15,
+      "core_instances": 3,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_villa_railing_e/collision.npz",
+      "sha256": "8a76fd0a40a348d8971c99c09601b10cd5a4dd28246865467a77585db701ee42",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_villa_railing_e",
+      "projected_triangles": 10,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_corner_a/collision.npz",
+      "sha256": "df1757190d39b58bd86b52a94970a76f69bb821cde2247b03639580fe18a5594",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_corner_a",
+      "projected_triangles": 2294,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tower_a/collision.npz",
+      "sha256": "72f1af9d2bcac83b1f56736e496dd251d90ae89cb74185b02c9a6d34b666e413",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tower_a",
+      "projected_triangles": 288,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tower_a_entrance_a/collision.npz",
+      "sha256": "bca3d300f64326e7bd1d6902bf647b0891a48aa5a39b07934a4a0c2a2dc0f9c0",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tower_a_entrance_a",
+      "projected_triangles": 172,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a/collision.npz",
+      "sha256": "f73c2eb5490b842f0b1ff960735daac27600ba32eec1de43b2b72639b663c4f9",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a",
+      "projected_triangles": 1612,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_a/collision.npz",
+      "sha256": "2d34f7eedce047c1dcdd88cbf13bd24fbca05d1691ef5b064b6bd86d7d2310b4",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_a",
+      "projected_triangles": 64,
+      "core_instances": 16,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_b/collision.npz",
+      "sha256": "9c0759660ba865c7d6b7a37ac261b63149be5df9763d7405ccbac2b563a1b875",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_b",
+      "projected_triangles": 24,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_c/collision.npz",
+      "sha256": "45281f8396312bcae4bbec2222be2537645fe601badd3eae2eb97c8bb24c870e",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_c",
+      "projected_triangles": 16,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_d/collision.npz",
+      "sha256": "5baeb9ca0248574cbcee12117abcdabf118dcf49228342edb564626fc9955600",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_d",
+      "projected_triangles": 8,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_e/collision.npz",
+      "sha256": "c17cddfa799348f96c4cb78a161786ab735e961310132c95f2b3fc9d787a543c",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_e",
+      "projected_triangles": 8,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_f/collision.npz",
+      "sha256": "1c4de6e3874e5ec660ac33a3933c413c9a64424db457ff1ceaf77ced7446438f",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_f",
+      "projected_triangles": 24,
+      "core_instances": 6,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_g/collision.npz",
+      "sha256": "dc7151a77f6ad9dab06988413be91a27c71e365100859e905a931171b628ace3",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_g",
+      "projected_triangles": 16,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_h/collision.npz",
+      "sha256": "c3317a02f7dbd49b54ad39beb9c12210d6ab585a5978b7e8c23c2758051588b0",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_h",
+      "projected_triangles": 1524,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_i/collision.npz",
+      "sha256": "2dbe95b673f0ada9adc888dd67409652a7b673006003763cea3122fc30b1554d",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_i",
+      "projected_triangles": 16,
+      "core_instances": 4,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_j/collision.npz",
+      "sha256": "dfce8fc250b868cf785e34b2982ce20d4da5086bf1528ea5550cc3b82a06c3e8",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_j",
+      "projected_triangles": 320,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_railings_k/collision.npz",
+      "sha256": "7f8148683e485f72d1df86c56b1f4b42c9104b3a5d0d2fa2c32a471c986535e9",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_railings_k",
+      "projected_triangles": 1812,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_foundation_gazebo_b/collision.npz",
+      "sha256": "39ce030b6eafe7fd9af76c8c3d3040027731be6cb83a1394ec5090ccf7febcf3",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_foundation_gazebo_b",
+      "projected_triangles": 344,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/sicily_villa_railing_g/collision.npz",
+      "sha256": "3563e521c347bffdcba0a52d1a505a35b98716305d19eb5987da4cc837536c06",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "sicily_villa_railing_g",
+      "projected_triangles": 312,
+      "core_instances": 13,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/hippodrome_tribune_a_wall_a/collision.npz",
+      "sha256": "1232797fd8e6c170b2ac8ba1f2af249f5eda3e7fc028004f7a0ba9afcb77836b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "hippodrome_tribune_a_wall_a",
+      "projected_triangles": 380,
+      "core_instances": 2,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/collision-all-04/wood_trailer_a/collision.npz",
+      "sha256": "cf82bc9f32e8b41669c64460bbf84dae58b56ae26d637b09ab4998d460f3e99b",
+      "category": "instanced_PHYS_COLLIDABLE",
+      "model": "wood_trailer_a",
+      "projected_triangles": 493,
+      "core_instances": 1,
+      "transform_source": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-0-instances.json"
+    },
+    {
+      "file": "artifacts/maps/wt_existing/avg_vlaanderen/layout-06/layer-1-instances.json",
+      "sha256": "90054e26d4e4145eb6c4267d2b546cec509c0db3f962f7a4ddda865370c8803d"
+    }
+  ],
+  "geometry_counts": {
+    "road_rail_triangles": 57703,
+    "water_static_triangles": 23,
+    "structures_static_triangles": 77787,
+    "intentionally_empty_physical_resources": 11,
+    "physical_instances": 1384,
+    "physical_triangles": 269068,
+    "road_rail_raw_pixels": 3041715,
+    "road_rail_buffered_pixels": 3534054,
+    "structures_raw_pixels": 254725,
+    "structures_buffered_pixels": 353285,
+    "water_raw_pixels": 97695,
+    "water_buffered_pixels": 100885
+  },
+  "hard_biomes": [
+    8,
+    35
+  ],
+  "hard_material_indices": [
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    18,
+    22,
+    23,
+    25,
+    26,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    41
+  ],
+  "hard_model_regex": "building|house|barn|barrack|hangar|depot|shed|stable|tribune|tower|factory|bunker|church|kiosk|foundation|bridge|rail|curb|pavement",
+  "raster": {
+    "resolution": [
+      4096,
+      4096
+    ],
+    "pixel_m": 0.5,
+    "png_top": "source Z=2048 / ROS Y=-2048",
+    "road_buffer_m": 1.0,
+    "structure_water_buffer_m": 0.5,
+    "flower_extra_buffer_m": 1.0
+  },
+  "source_meshes_unchanged": true,
+  "original_foliage_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+  "short_model_count": 3,
+  "total_models": 10,
+  "total_layers": 16,
+  "weight_texture_count": 4,
+  "short_height_ranges_m": [
+    [
+      0.11377266198396682,
+      0.22754532396793364
+    ],
+    [
+      0.20319527238607407,
+      0.3509736523032188
+    ],
+    [
+      0.1625562146306038,
+      0.2807789161801338
+    ]
+  ],
+  "hard_pixels": 3973608,
+  "short_nonzero_pixels": 10507244,
+  "short_grass_area_m2": 2626811.0,
+  "layers": [
+    {
+      "id": "layer_00",
+      "nonzero_pixels": 261511,
+      "weighted_area_m2": 5493.222549019608,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 439.45780392156865
+    },
+    {
+      "id": "layer_01",
+      "nonzero_pixels": 1089,
+      "weighted_area_m2": 13.227450980392156,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 1.0581960784313724
+    },
+    {
+      "id": "layer_02",
+      "nonzero_pixels": 122536,
+      "weighted_area_m2": 2494.970588235294,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 199.59764705882353
+    },
+    {
+      "id": "layer_03",
+      "nonzero_pixels": 32012,
+      "weighted_area_m2": 834.3921568627451,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 66.7513725490196
+    },
+    {
+      "id": "layer_04",
+      "nonzero_pixels": 74121,
+      "weighted_area_m2": 1905.679411764706,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 152.45435294117647
+    },
+    {
+      "id": "layer_05",
+      "nonzero_pixels": 1306430,
+      "weighted_area_m2": 29072.8568627451,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 1744.371411764706
+    },
+    {
+      "id": "layer_06",
+      "nonzero_pixels": 2305910,
+      "weighted_area_m2": 130091.8637254902,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 15611.023647058824
+    },
+    {
+      "id": "layer_07",
+      "nonzero_pixels": 1306430,
+      "weighted_area_m2": 29072.8568627451,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 1744.371411764706
+    },
+    {
+      "id": "layer_08",
+      "nonzero_pixels": 730204,
+      "weighted_area_m2": 15409.39705882353,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 924.5638235294117
+    },
+    {
+      "id": "layer_09",
+      "nonzero_pixels": 1788255,
+      "weighted_area_m2": 38429.29215686274,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 2305.7575294117646
+    },
+    {
+      "id": "layer_10",
+      "nonzero_pixels": 3292291,
+      "weighted_area_m2": 175063.7705882353,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 28010.203294117648
+    },
+    {
+      "id": "layer_11",
+      "nonzero_pixels": 4617541,
+      "weighted_area_m2": 246848.4980392157,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 39495.75968627451
+    },
+    {
+      "id": "layer_12",
+      "nonzero_pixels": 6271247,
+      "weighted_area_m2": 337906.27843137254,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 40548.75341176471
+    },
+    {
+      "id": "ue_short_grass_0",
+      "nonzero_pixels": 10507244,
+      "weighted_area_m2": 1748364.712745098,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 3496729.425490196
+    },
+    {
+      "id": "ue_short_grass_1",
+      "nonzero_pixels": 9971433,
+      "weighted_area_m2": 818408.9617647058,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 1227613.4426470587
+    },
+    {
+      "id": "ue_short_grass_2",
+      "nonzero_pixels": 9971248,
+      "weighted_area_m2": 817052.0705882353,
+      "hard_overlap_pixels": 0,
+      "expected_instances": 980462.4847058824
+    }
+  ],
+  "samples": [
+    {
+      "id": "previous_gui_station_grass",
+      "ros_xy_m": [
+        1075.232351,
+        -1012.656026
+      ],
+      "png_xy": [
+        2150,
+        2070
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -0.3082923889160156,
+      "slope": 0.07437539100646973,
+      "expected_surface": "station rail/road exclusion or outside edge",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "spawn",
+      "ros_xy_m": [
+        1028,
+        -1020
+      ],
+      "png_xy": [
+        2056,
+        2056
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -1.380575180053711,
+      "slope": 0.00981433130800724,
+      "expected_surface": "source-resolved surface",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "near_station_grass",
+      "ros_xy_m": [
+        1084.75,
+        -1029.75
+      ],
+      "png_xy": [
+        2169,
+        2036
+      ],
+      "biome_id": 2,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 0.9397735595703125,
+      "slope": 0.21380020678043365,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 66,
+        "ue_short_grass_0": 201,
+        "ue_short_grass_1": 122,
+        "ue_short_grass_2": 90
+      }
+    },
+    {
+      "id": "green_slope",
+      "ros_xy_m": [
+        1146.25,
+        -942.25
+      ],
+      "png_xy": [
+        2292,
+        2211
+      ],
+      "biome_id": 9,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 3.5589523315429688,
+      "slope": 0.15023145079612732,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 222,
+        "ue_short_grass_1": 154,
+        "ue_short_grass_2": 58
+      }
+    },
+    {
+      "id": "hard_road_edge",
+      "ros_xy_m": [
+        1075.25,
+        -1012.75
+      ],
+      "png_xy": [
+        2150,
+        2070
+      ],
+      "biome_id": 1,
+      "hard": true,
+      "hard_categories": [
+        "road_rail"
+      ],
+      "height_m": -0.3082923889160156,
+      "slope": 0.07437539100646973,
+      "expected_surface": "hard_clear",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 0,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 0,
+        "ue_short_grass_1": 0,
+        "ue_short_grass_2": 0
+      }
+    },
+    {
+      "id": "open_meadow",
+      "ros_xy_m": [
+        1163.25,
+        -1192.25
+      ],
+      "png_xy": [
+        2326,
+        1711
+      ],
+      "biome_id": 27,
+      "hard": false,
+      "hard_categories": [],
+      "height_m": 1.8274822235107422,
+      "slope": 0.05378357693552971,
+      "expected_surface": "grassland",
+      "weights": {
+        "layer_00": 0,
+        "layer_01": 0,
+        "layer_02": 0,
+        "layer_03": 0,
+        "layer_04": 0,
+        "layer_05": 0,
+        "layer_06": 56,
+        "layer_07": 0,
+        "layer_08": 0,
+        "layer_09": 0,
+        "layer_10": 0,
+        "layer_11": 0,
+        "layer_12": 0,
+        "ue_short_grass_0": 173,
+        "ue_short_grass_1": 75,
+        "ue_short_grass_2": 85
+      }
+    }
+  ],
+  "masks": {
+    "hard-exclusion.png": {
+      "file": "masks/hard-exclusion.png",
+      "sha256": "a829543fa36e38b855110964317fa9fdde306fe805c988494cc38b8be795c91f"
+    },
+    "road_rail.png": {
+      "file": "masks/road_rail.png",
+      "sha256": "aec84d6812dd1e481767b24f062d6b9a7a5cd33f358e911d8a9c27168399ac9a"
+    },
+    "short-grass-coverage.png": {
+      "file": "masks/short-grass-coverage.png",
+      "sha256": "5b23786ee0eabb6a5272eab717fa3a7e913f72c945fe8f8014ffc0db08ea405c"
+    },
+    "structures.png": {
+      "file": "masks/structures.png",
+      "sha256": "35c0700cd56b99137c7cb5161b97c9b1cc4706496f3c5bd9cd2b8994560beae0"
+    },
+    "water.png": {
+      "file": "masks/water.png",
+      "sha256": "60e11f26a7c029f7dc1607647ccfe4691fdd190a8ce85560ca8fa7708ded5aa4"
+    }
+  },
+  "weight_textures": [
+    {
+      "id": "WT_GrassWeights0",
+      "file": "weights/WT_GrassWeights0.png",
+      "sha256": "2afd17c3d3edcccf49d1dd60c645dfe2bbd1260c1c0bf9546168884fafc5044e",
+      "width": 4096,
+      "height": 4096,
+      "channels": 4,
+      "srgb": false,
+      "address": "clamp"
+    },
+    {
+      "id": "WT_GrassWeights1",
+      "file": "weights/WT_GrassWeights1.png",
+      "sha256": "0bd9f2f0c7f1bcefb5ed41ba33b0bb9562c537a64838d98119f4f8245c25a524",
+      "width": 4096,
+      "height": 4096,
+      "channels": 4,
+      "srgb": false,
+      "address": "clamp"
+    },
+    {
+      "id": "WT_GrassWeights2",
+      "file": "weights/WT_GrassWeights2.png",
+      "sha256": "41c7b83757788a1620850555ff8ea04efcb656519a65bc7eef557dd731010c81",
+      "width": 4096,
+      "height": 4096,
+      "channels": 4,
+      "srgb": false,
+      "address": "clamp"
+    },
+    {
+      "id": "WT_GrassWeights3",
+      "file": "weights/WT_GrassWeights3.png",
+      "sha256": "41cb20f63d7dbfcdcea1d074aaefb0bd4fb4efdfa21768d3f7b56832473a542b",
+      "width": 4096,
+      "height": 4096,
+      "channels": 4,
+      "srgb": false,
+      "address": "clamp"
+    }
+  ],
+  "preparer_sha256": "d2c5191768a045769be5b98b0766d1c774ff1af0b2e4be361aabeb0cda56c7bc",
+  "elapsed_seconds": 18.86816080000426,
+  "native_render_status": "pending; require station/green slope/hard edge views",
+  "visual_adapter": {
+    "schema": "wt_grass_visual_adapter_v2",
+    "source_normal_channels": {
+      "x": "A",
+      "y": "G",
+      "translucency": "B",
+      "smoothness": "R"
+    },
+    "source_normal_reference": "grass_generate.dshl:821-826",
+    "root_normals": "source ground-up, with tilted-tip normals from original vertical_angle parameters",
+    "source_tip_reference": "grass_generate_inc.dshl:254-257,525-529",
+    "ue_surface_adaptation": "world-space grass normals preserve the upper hemisphere for two-sided cards; source AG detail, B transmission and R gloss",
+    "minimum_normal_up_component": 0.2,
+    "ue_single_atlas_per_card": true,
+    "original_color_endpoints_unchanged": true,
+    "source_gamma_conversion_count": 1,
+    "density_per_100m2": [
+      200,
+      150,
+      120
+    ],
+    "hard_footprint_exclusions_unchanged": true,
+    "flower_scale_z": [
+      0.35,
+      0.65
+    ],
+    "baseline_definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99"
+  },
+  "baseline": {
+    "definition": {
+      "file": "artifacts/maps/wt-refine-20261118/grass-visual-baseline-01/foliage-enhanced/foliage.json",
+      "sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99"
+    },
+    "original_hard_exclusion_sha256": "a829543fa36e38b855110964317fa9fdde306fe805c988494cc38b8be795c91f",
+    "hard_exclusion_bytes_unchanged": true,
+    "prior_layer_statistics": [
+      {
+        "id": "layer_00",
+        "nonzero_pixels": 261511,
+        "weighted_area_m2": 5493.222549019608,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 439.45780392156865
+      },
+      {
+        "id": "layer_01",
+        "nonzero_pixels": 1089,
+        "weighted_area_m2": 13.227450980392156,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 1.0581960784313724
+      },
+      {
+        "id": "layer_02",
+        "nonzero_pixels": 122536,
+        "weighted_area_m2": 2494.970588235294,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 199.59764705882353
+      },
+      {
+        "id": "layer_03",
+        "nonzero_pixels": 32012,
+        "weighted_area_m2": 834.3921568627451,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 66.7513725490196
+      },
+      {
+        "id": "layer_04",
+        "nonzero_pixels": 74121,
+        "weighted_area_m2": 1905.679411764706,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 152.45435294117647
+      },
+      {
+        "id": "layer_05",
+        "nonzero_pixels": 1306430,
+        "weighted_area_m2": 29072.8568627451,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 1744.371411764706
+      },
+      {
+        "id": "layer_06",
+        "nonzero_pixels": 2305910,
+        "weighted_area_m2": 130091.8637254902,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 15611.023647058824
+      },
+      {
+        "id": "layer_07",
+        "nonzero_pixels": 1306430,
+        "weighted_area_m2": 29072.8568627451,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 1744.371411764706
+      },
+      {
+        "id": "layer_08",
+        "nonzero_pixels": 730204,
+        "weighted_area_m2": 15409.39705882353,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 924.5638235294117
+      },
+      {
+        "id": "layer_09",
+        "nonzero_pixels": 1788255,
+        "weighted_area_m2": 38429.29215686274,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 2305.7575294117646
+      },
+      {
+        "id": "layer_10",
+        "nonzero_pixels": 3292291,
+        "weighted_area_m2": 175063.7705882353,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 28010.203294117648
+      },
+      {
+        "id": "layer_11",
+        "nonzero_pixels": 4617541,
+        "weighted_area_m2": 246848.4980392157,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 39495.75968627451
+      },
+      {
+        "id": "layer_12",
+        "nonzero_pixels": 6271247,
+        "weighted_area_m2": 337906.27843137254,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 40548.75341176471
+      },
+      {
+        "id": "ue_short_grass_0",
+        "nonzero_pixels": 10508783,
+        "weighted_area_m2": 1934621.080392157,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 5416939.025098039
+      },
+      {
+        "id": "ue_short_grass_1",
+        "nonzero_pixels": 9971433,
+        "weighted_area_m2": 818408.9617647058,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 531965.8251470588
+      },
+      {
+        "id": "ue_short_grass_2",
+        "nonzero_pixels": 9971248,
+        "weighted_area_m2": 817052.0705882353,
+        "hard_overlap_pixels": 0,
+        "expected_instances": 367673.43176470586
+      }
+    ],
+    "fixed_spatial_witnesses": true
+  }
+}

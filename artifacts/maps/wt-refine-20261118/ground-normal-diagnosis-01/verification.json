@@ -1,0 +1,685 @@
+{
+  "schema": "wt_ground_height_normal_source_diagnosis_v1",
+  "status": "completed_readonly_source_analysis",
+  "generated_utc": "2026-11-18T10:35:52.485066+00:00",
+  "script_sha256": "96de62d7ec887a14f5efa4fa614e086abfcea2f4a36bfe6d50930f1e89d9ab46",
+  "source_files": [
+    {
+      "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\landmesh-01\\cell_0529_decal.npz",
+      "sha256": "c29172b7a174cbd831bc8cacca8f4bd2b70a44a99d77b55fb99cb46d25e06b7f"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\landmesh-01\\landmesh.json",
+      "sha256": "a1db3a1108215a603993b7e3623fc9e168a3f99283538be31a277f7051bdf668"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\heightfield.json",
+      "sha256": "9726bdc20626819425786d0cf707eef29cbebd491935f8be9ec2cecadd5f14eb"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\terrain\\height.u16",
+      "sha256": "b6d82aa5bdb6473398f1fd07af0f67ef46da6b8705a31677b6f2f95ec4b9a1a6"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\textures\\gravel_border_tex_d.png",
+      "sha256": "d89eda130698a6724cefff12897bd10f6390ac2a69b3a7f4a531d896994b3f8a"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\textures\\river_sand_gravel_coast_border_tex_r.png",
+      "sha256": "5521210dd3766243a961d1c8e2f45a0a907ef28533a2340bd121aa165672c563"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\contact-flanders-02\\control-result.json",
+      "sha256": "8f0864333bb5187b8bdf7ccf3417fc8196989b5740c2a89eefc03ee5cfd2693f"
+    },
+    {
+      "path": "D:\\simulator\\assets\\maps\\wt_vlaanderen\\ground-microdetails\\definition.json",
+      "sha256": "2312ee57fba11d5bca259cfe3dd5888f83524fef358e0181499023f19e037d54"
+    },
+    {
+      "path": "D:\\simulator\\artifacts\\archive\\wt-vlaanderen-before-unified-20261118\\artifacts\\maps\\wt-scene-20261118\\decal-opacity-01\\raw\\source-opacity.npz",
+      "sha256": "0f7b54fe70fff5433e3fd948c0c3c57f11297126cee663aa91d49038edb8bc6a"
+    },
+    {
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\daNetGame\\shaders\\make_clipmap.dshl",
+      "sha256": "5287e03f13a9e4c96a4a72c2bdbe5fe033d7223356df12dd59a657066075543f"
+    },
+    {
+      "path": "D:\\simulator\\third_party\\dagor_engine\\prog\\gameLibs\\render\\shaders\\psh_derivate.hlsl",
+      "sha256": "c6b25c7285a39c1e7a8bbe28a957bb6db3fd214d011eab2222f1d0fd6b367ad1"
+    },
+    {
+      "path": "D:\\simulator\\tools\\maps\\dagor_vertex.py",
+      "sha256": "4146375b29701cbbe9ac4ede0f8996a98c1321996f7bef6c846b0ef4dfeff05b"
+    },
+    {
+      "path": "D:\\simulator\\tools\\unreal\\wt_height_decals.py",
+      "sha256": "6f7291ff8614fad4e480999a2633c0c07107efa144e41f817177acd5329aa5bb"
+    },
+    {
+      "path": "D:\\simulator\\tools\\unreal\\wt_ground_microdetails.py",
+      "sha256": "e9b00373c90dec13c09de3a340182c940b5400f78c5e419a2c2566b0f0a6c303"
+    }
+  ],
+  "source_formula": {
+    "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "source_bump_scale": 0.08,
+    "height_difference": "(sample_alpha(uv+dUV)-sample_alpha(uv))*0.08",
+    "derivative_basis": "ddx/ddy(diffusetc), normalized UV units",
+    "helper": "psh_derivate.hlsl perturb_normal_height2d lines33-48",
+    "source_callsite": "make_clipmap.dshl lines1412-1417",
+    "metre_interpretation": false
+  },
+  "projection": {
+    "image_size": [
+      1600,
+      1000
+    ],
+    "horizontal_fov_degrees": 55,
+    "eye_ue_m": [
+      1030.2,
+      1017.4,
+      0.6891450237344598
+    ],
+    "focus_ue_m": [
+      1028.0,
+      1020.0,
+      -0.91085497626554
+    ],
+    "camera_source": "ImportLabGameMode.cpp UpdateOverview, actor+(220,-260,205) cm",
+    "source_uv_convention": "NPZ stores bottom-left UV via dagor_vertex.py:39; shader/source top-left restored by 1-V, matching FBX/UE convention",
+    "height_sampling": "bilinear normalized u16 heightfield metadata; projected ROI is an offline approximation, no native GBuffer readback"
+  },
+  "sampling": {
+    "nominal_native_top_rvt_texel_m": [
+      0.015522357542067766,
+      0.020818332210183144
+    ],
+    "native_requested_mip": 0,
+    "height_texture_mips": "numerical box-average top-mip chain and trilinear footprint estimate",
+    "micro_texture_mips": "source top-mip bilinear, conservative local normal comparison",
+    "native_bc_compression_reproduced": false,
+    "rvt_payload_compression_reproduced": false
+  },
+  "source_faces": {
+    "19950": {
+      "source_material": "gravel_border",
+      "world_to_uv_rows": [
+        [
+          -0.02430402832290527,
+          -0.010859279555356061
+        ],
+        [
+          0.005760500152176118,
+          -0.049137678569164046
+        ]
+      ],
+      "source_normal_model_lod": 0.10557500118005288,
+      "source_opacity_w_corners": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metres_per_uv_axis_lengths": [
+        40.04087549926982,
+        19.873809986095488
+      ]
+    },
+    "19951": {
+      "source_material": "gravel_border",
+      "world_to_uv_rows": [
+        [
+          -0.024451077838685067,
+          -0.010867145635321944
+        ],
+        [
+          0.005095108695652174,
+          -0.04917327217433763
+        ]
+      ],
+      "source_normal_model_lod": 0.09834774873017793,
+      "source_opacity_w_corners": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metres_per_uv_axis_lengths": [
+        40.04087549926983,
+        19.85856796753541
+      ]
+    },
+    "19952": {
+      "source_material": "gravel_border",
+      "world_to_uv_rows": [
+        [
+          -0.024324412129479556,
+          -0.010923047759801269
+        ],
+        [
+          0.005734841870153266,
+          -0.049455609389191
+        ]
+      ],
+      "source_normal_model_lod": 0.11406745474782225,
+      "source_opacity_w_corners": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metres_per_uv_axis_lengths": [
+        40.01792556995837,
+        19.74628706768245
+      ]
+    },
+    "19953": {
+      "source_material": "gravel_border",
+      "world_to_uv_rows": [
+        [
+          -0.02434656900893391,
+          -0.01062873251207973
+        ],
+        [
+          0.005667818509615385,
+          -0.04856532170222356
+        ]
+      ],
+      "source_normal_model_lod": 0.0883346922259677,
+      "source_opacity_w_corners": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metres_per_uv_axis_lengths": [
+        40.00737421583964,
+        20.116508341195495
+      ]
+    },
+    "19954": {
+      "source_material": "gravel_border",
+      "world_to_uv_rows": [
+        [
+          -0.024327500857663036,
+          -0.010775647450452196
+        ],
+        [
+          0.005740143531976744,
+          -0.04912256640057231
+        ]
+      ],
+      "source_normal_model_lod": 0.10488897022918442,
+      "source_opacity_w_corners": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metres_per_uv_axis_lengths": [
+        40.012129383763934,
+        19.88691845998152
+      ]
+    }
+  },
+  "rois": {
+    "left_diagonal_patch": {
+      "pixel_box_xyxy": [
+        240,
+        740,
+        760,
+        988
+      ],
+      "sample_count": 8253,
+      "source_faces": [
+        19950,
+        19951,
+        19952,
+        19953
+      ],
+      "world_min_m": [
+        1028.2928029754787,
+        1019.1605912912061,
+        -1.3876163725390531
+      ],
+      "world_max_m": [
+        1029.5614325763108,
+        1020.6028075343123,
+        -1.3817190442008636
+      ],
+      "source_alpha": {
+        "0": 0.14134871879142819,
+        "25": 0.19535305648236842,
+        "50": 0.21908475998927768,
+        "75": 0.2583835041419574,
+        "90": 0.30640791426383757,
+        "95": 0.3314394904797134,
+        "99": 0.3763430355152253,
+        "100": 0.41548319546819035
+      },
+      "source_vertex_opacity": {
+        "0": 0.9999999999999999,
+        "25": 1.0,
+        "50": 1.0,
+        "75": 1.0,
+        "90": 1.0,
+        "95": 1.0,
+        "99": 1.0,
+        "100": 1.0
+      },
+      "source_surface_opacity": {
+        "0": 1.0,
+        "25": 1.0,
+        "50": 1.0,
+        "75": 1.0,
+        "90": 1.0,
+        "95": 1.0,
+        "99": 1.0,
+        "100": 1.0
+      },
+      "height_tilt_degrees": {
+        "0": 0.15159698909858624,
+        "25": 37.48004762845927,
+        "50": 54.544802742093125,
+        "75": 68.52055837791961,
+        "90": 75.75842170180448,
+        "95": 78.656394461303,
+        "99": 81.99352437247732,
+        "100": 84.75169089002712
+      },
+      "micro_tilt_degrees": {
+        "0": 0.050848979662349865,
+        "25": 2.0849479517440996,
+        "50": 3.3158572907077053,
+        "75": 6.690427357929426,
+        "90": 12.013539429495452,
+        "95": 15.815393051097663,
+        "99": 24.849736066093485,
+        "100": 49.975428899288616
+      },
+      "combined_tilt_degrees": {
+        "0": 0.46520273132637174,
+        "25": 37.49161000461054,
+        "50": 54.56863164946131,
+        "75": 68.38557096763138,
+        "90": 76.36465500121241,
+        "95": 79.54272030156727,
+        "99": 84.77120485146534,
+        "100": 99.31483934852297
+      },
+      "candidate_0_2_height_tilt_degrees": {
+        "0": 0.030319465751262938,
+        "25": 8.718657133135409,
+        "50": 15.687606491276396,
+        "75": 26.94260599999584,
+        "90": 38.2376725631199,
+        "95": 44.912584799050904,
+        "99": 54.88209669692902,
+        "100": 65.33131253554824
+      },
+      "candidate_0_2_combined_tilt_degrees": {
+        "0": 0.16900713949031865,
+        "25": 9.968762343201913,
+        "50": 17.300500408426842,
+        "75": 27.896473259114085,
+        "90": 39.04589582714037,
+        "95": 45.65120729836063,
+        "99": 56.39674573384315,
+        "100": 73.28988831687371
+      },
+      "height_fraction_over60": 0.4070035138737429,
+      "combined_fraction_over90": 0.002059857021689083,
+      "candidate_combined_fraction_over90": 0.0,
+      "micro_color_factor": {
+        "0": 0.017824716374251714,
+        "25": 0.9581567020025701,
+        "50": 1.0055814672902883,
+        "75": 1.068879334125861,
+        "90": 1.1690046840667467,
+        "95": 1.2494064931542173,
+        "99": 1.4684643751180164,
+        "100": 3.284049715903957
+      },
+      "micro_index": {
+        "0": 6.112576336833699,
+        "25": 9.00480597586078,
+        "50": 9.633782644536508,
+        "75": 10.106149414256018,
+        "90": 10.442285328063898,
+        "95": 10.601487661576753,
+        "99": 10.875426690292237,
+        "100": 11.0
+      }
+    },
+    "right_ground_comparison": {
+      "pixel_box_xyxy": [
+        1050,
+        450,
+        1400,
+        750
+      ],
+      "sample_count": 6688,
+      "source_faces": [
+        19952,
+        19953,
+        19954
+      ],
+      "world_min_m": [
+        1025.5470039411175,
+        1018.8060963963053,
+        -1.3946093955192678
+      ],
+      "world_max_m": [
+        1027.7949865506912,
+        1020.5078092018393,
+        -1.3746835637097872
+      ],
+      "source_alpha": {
+        "0": 0.09394112888244777,
+        "25": 0.1522834857481789,
+        "50": 0.20734777710688085,
+        "75": 0.2662495116709123,
+        "90": 0.31469635608085883,
+        "95": 0.33009892445704936,
+        "99": 0.36153715405952236,
+        "100": 0.4038877542262568
+      },
+      "source_vertex_opacity": {
+        "0": 1.0,
+        "25": 1.0,
+        "50": 1.0,
+        "75": 1.0,
+        "90": 1.0,
+        "95": 1.0,
+        "99": 1.0,
+        "100": 1.0
+      },
+      "source_surface_opacity": {
+        "0": 1.0,
+        "25": 1.0,
+        "50": 1.0,
+        "75": 1.0,
+        "90": 1.0,
+        "95": 1.0,
+        "99": 1.0,
+        "100": 1.0
+      },
+      "height_tilt_degrees": {
+        "0": 0.32553171408327997,
+        "25": 33.38120108479961,
+        "50": 50.36903802485725,
+        "75": 64.27124788921961,
+        "90": 72.53211709843852,
+        "95": 75.77168253786802,
+        "99": 80.5213261900046,
+        "100": 84.11270097573794
+      },
+      "micro_tilt_degrees": {
+        "0": 0.04277174353237772,
+        "25": 2.1456811975005645,
+        "50": 3.5117814059450017,
+        "75": 7.217704398153287,
+        "90": 12.966573395809116,
+        "95": 17.09682443831243,
+        "99": 26.049701988609613,
+        "100": 47.073056310418025
+      },
+      "combined_tilt_degrees": {
+        "0": 0.6259239869463114,
+        "25": 33.35628672790374,
+        "50": 50.46967641393667,
+        "75": 64.64033147526348,
+        "90": 73.1102039982022,
+        "95": 76.85350322939202,
+        "99": 82.69658500342967,
+        "100": 111.96340410301626
+      },
+      "candidate_0_2_height_tilt_degrees": {
+        "0": 0.06510701536210116,
+        "25": 7.507269590368174,
+        "50": 13.576570735297416,
+        "75": 22.540220524129623,
+        "90": 32.4384480537304,
+        "95": 38.264750966875994,
+        "99": 50.14487445656411,
+        "100": 62.725293499967144
+      },
+      "candidate_0_2_combined_tilt_degrees": {
+        "0": 0.05990196071353393,
+        "25": 8.913390564271378,
+        "50": 15.425712357141293,
+        "75": 24.437307467687333,
+        "90": 33.72023896324112,
+        "95": 39.54893541728552,
+        "99": 51.19527506004283,
+        "100": 82.86828372249963
+      },
+      "height_fraction_over60": 0.3341806220095694,
+      "combined_fraction_over90": 0.0026913875598086126,
+      "candidate_combined_fraction_over90": 0.0,
+      "micro_color_factor": {
+        "0": 0.21416083326317437,
+        "25": 0.9517019380729288,
+        "50": 0.9979529289237561,
+        "75": 1.0537300537605554,
+        "90": 1.1618552072121051,
+        "95": 1.2473810890034016,
+        "99": 1.4504246741641262,
+        "100": 1.8783578621512897
+      },
+      "micro_index": {
+        "0": 7.253647128994823,
+        "25": 9.331792928960573,
+        "50": 9.833326679863731,
+        "75": 10.238509920433243,
+        "90": 10.512773716584787,
+        "95": 10.658944233247583,
+        "99": 10.822838311906573,
+        "100": 11.0
+      }
+    }
+  },
+  "samples": [
+    {
+      "pixel_xy": [
+        450,
+        850
+      ],
+      "world_ue_m": [
+        1029.0566467907233,
+        1019.906691340706,
+        -1.3837262772323162
+      ],
+      "source_face": 19952,
+      "source_uv": [
+        60.606040542003015,
+        0.21959282288820506
+      ],
+      "source_alpha": 0.19992313739731016,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        4.931525499793688,
+        130.7476255678667,
+        230.90583404178912,
+        113.20542489574017
+      ],
+      "micro_index": 10.039384501782578,
+      "micro_color_factor": 0.9963583422581346,
+      "height_normal_tilt_degrees": 61.14712778013246,
+      "micro_normal_tilt_degrees": 2.9855245407288034,
+      "combined_normal_tilt_degrees": 62.708044105312496,
+      "candidate_height_normal_tilt_degrees": 19.951138498820708,
+      "candidate_combined_normal_tilt_degrees": 21.62763482624325
+    },
+    {
+      "pixel_xy": [
+        600,
+        800
+      ],
+      "world_ue_m": [
+        1028.7140432461356,
+        1019.8476760962624,
+        -1.3829464795224629
+      ],
+      "source_face": 19952,
+      "source_uv": [
+        60.61403572872378,
+        0.22625373264562312
+      ],
+      "source_alpha": 0.3040700472525344,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        8.000000473111868,
+        128.92280488537034,
+        237.36020461087497,
+        115.00000074505806
+      ],
+      "micro_index": 10.32000932067873,
+      "micro_color_factor": 1.0674475098014635,
+      "height_normal_tilt_degrees": 57.10201055031914,
+      "micro_normal_tilt_degrees": 1.4774096460030302,
+      "combined_normal_tilt_degrees": 55.86807830315108,
+      "candidate_height_normal_tilt_degrees": 17.180391295312614,
+      "candidate_combined_normal_tilt_degrees": 15.962476104878842
+    },
+    {
+      "pixel_xy": [
+        700,
+        900
+      ],
+      "world_ue_m": [
+        1028.7460549191503,
+        1019.4326261907377,
+        -1.3839322200124575
+      ],
+      "source_face": 19953,
+      "source_uv": [
+        60.610880891691664,
+        0.24637650204029182
+      ],
+      "source_alpha": 0.19474993085881231,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        4.364195507993461,
+        91.62337369104206,
+        204.08961945855907,
+        115.00000074505806
+      ],
+      "micro_index": 8.873462080633908,
+      "micro_color_factor": 1.044395222578164,
+      "height_normal_tilt_degrees": 33.484358559182475,
+      "micro_normal_tilt_degrees": 3.03037224066886,
+      "combined_normal_tilt_degrees": 36.343261313809684,
+      "candidate_height_normal_tilt_degrees": 7.5363856561745,
+      "candidate_combined_normal_tilt_degrees": 10.433934057588111
+    },
+    {
+      "pixel_xy": [
+        1000,
+        850
+      ],
+      "world_ue_m": [
+        1028.1562459516626,
+        1019.1512581096385,
+        -1.3875713728035917
+      ],
+      "source_face": 19953,
+      "source_uv": [
+        60.62364597320262,
+        0.26631015516426015
+      ],
+      "source_alpha": 0.30087689395727113,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        8.000000473111868,
+        132.0000073313713,
+        203.5272083064161,
+        117.00000062584877
+      ],
+      "micro_index": 8.849009420839128,
+      "micro_color_factor": 1.033651016521876,
+      "height_normal_tilt_degrees": 68.83304858121599,
+      "micro_normal_tilt_degrees": 2.8291956242140737,
+      "combined_normal_tilt_degrees": 71.64207989551156,
+      "candidate_height_normal_tilt_degrees": 27.31699807896569,
+      "candidate_combined_normal_tilt_degrees": 30.127433844428687
+    },
+    {
+      "pixel_xy": [
+        600,
+        650
+      ],
+      "world_ue_m": [
+        1028.3513481433592,
+        1020.3948229100688,
+        -1.3819477397525153
+      ],
+      "source_face": 19951,
+      "source_uv": [
+        60.62587176483127,
+        0.20321076345390676
+      ],
+      "source_alpha": 0.19782345278044142,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        4.56379863311393,
+        132.91218550020074,
+        236.57358386310906,
+        109.07222386148024
+      ],
+      "micro_index": 10.285808417194964,
+      "micro_color_factor": 1.092798482776737,
+      "height_normal_tilt_degrees": 31.302535847462902,
+      "micro_normal_tilt_degrees": 5.140168897108397,
+      "combined_normal_tilt_degrees": 26.27090059572465,
+      "candidate_height_normal_tilt_degrees": 6.933920297390549,
+      "candidate_combined_normal_tilt_degrees": 2.1200105021941003
+    },
+    {
+      "pixel_xy": [
+        1300,
+        300
+      ],
+      "world_ue_m": [
+        1024.3862240324127,
+        1020.8973549115733,
+        -1.3696106916423678
+      ],
+      "source_face": 19953,
+      "source_uv": [
+        60.725329631798424,
+        0.22158095679946055
+      ],
+      "source_alpha": 0.38343300483789045,
+      "source_vertex_opacity": 1.0,
+      "source_reflection_rgba255": [
+        12.000000234693289,
+        134.00000721216202,
+        244.04741722145292,
+        35.140125810347236
+      ],
+      "micro_index": 10.610757707012752,
+      "micro_color_factor": 0.9025039600192463,
+      "height_normal_tilt_degrees": 60.50621480256203,
+      "micro_normal_tilt_degrees": 7.274357915823312,
+      "combined_normal_tilt_degrees": 67.75366177490802,
+      "candidate_height_normal_tilt_degrees": 19.47299783390599,
+      "candidate_combined_normal_tilt_degrees": 26.726149562329603
+    }
+  ],
+  "candidate": {
+    "name": "HeightNormalStrength",
+    "value": 0.2,
+    "scope": "Explicit UE gradient scale for the no-authored-normal HeightDecal source-alpha fallback; source 0.08 remains separately recorded",
+    "operation": "normalize(abs(det)*up - source_gradient*HeightNormalStrength)",
+    "no_extra_clamp": true,
+    "preserve": [
+      "source diffuse pixels",
+      "reflection/microdetail IDs",
+      "post-RVT microdetail AG and color math",
+      "real normal-map branches",
+      "geometry",
+      "grass graph"
+    ],
+    "production_applied": false,
+    "native_verified": false,
+    "visual_verified": false
+  },
+  "conclusion": "Original alpha-height finite differences dominate these gravel ROI normal angles. The independent microdetail AG normals and color factors are substantially smaller at the six mapped witnesses. Candidate strength 0.2 reduces the alpha-height slope while retaining its pattern; GUI and moving validation remain required."
+}

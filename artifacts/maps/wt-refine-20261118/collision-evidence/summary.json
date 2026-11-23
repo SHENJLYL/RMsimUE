@@ -1,0 +1,236 @@
+{
+  "schema": "wt_generated_collision_evidence_index_v1",
+  "status": "native_assets_queries_default_contact_and_owned_gui_stream_reset_passed",
+  "source_instances": {
+    "railway_sleepers": 14349,
+    "rail_crosstie": 37,
+    "curbs": 4068,
+    "total": 18454
+  },
+  "representation": {
+    "shared_master_meshes": 10,
+    "shared_master_triangles": 872,
+    "affine_cells": 193,
+    "mesh_assets": 203,
+    "spatial_records": 917,
+    "full_dataset_physical_slots": 15751
+  },
+  "source_map_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "generated_manifest_sha256": "28dd4b9d3afc2ab8f8b978482391a1c6358139770957b94ade07ab0d81a0a8dd",
+  "canonical_recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+  "recipe": {
+    "path": "assets/maps/wt_vlaanderen/generated-collision/recipe.json",
+    "file_sha256": "94bf45d508224d07d46274a7d2e7a36bccedf34d2b53c0b38beae0e00f65f007",
+    "bytes": 1227,
+    "contains_crlf": true
+  },
+  "passed_evidence": [
+    {
+      "path": "artifacts/maps/wt-refine-20261118/prepared-collision-01/summary.json",
+      "sha256": "92c19c1296976c4815fb4619d7781cc7c4aa310d723d075d109598d96ce0e230",
+      "bytes": 1746,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/generated-collision-review-01/verification.json",
+      "sha256": "a116607b7fc0ed7baad835ac1433cc7f3d66371e6a38790e5bd48dc2f52f7896",
+      "bytes": 2184,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-probes-02/summary.json",
+      "sha256": "132e9d77e5c2878cc193fc8aede5b90185f10b007468961402473bb13dfbce38",
+      "bytes": 4658,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-native-01/summary.json",
+      "sha256": "53e2cc88386badf217d372a6e4d348d98c0cdc146f0e28f8cb94a26a21c71203",
+      "bytes": 2708,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-reload-03/summary.json",
+      "sha256": "47fb577080f43c647fdb6bf2d1e7c3acc27a5e2ff3d5f0eb1196a245af610fb4",
+      "bytes": 15073,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/contact-flanders-01/collision-runtime/summary.json",
+      "sha256": "4e619d994138e0673c19dec2183073f4c2f6b5b56bf673d8189d27f80052f374",
+      "bytes": 4246,
+      "status": "passed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/gui-collision/summary.json",
+      "bytes": 46061,
+      "sha256": "2262d5b0d82483cd4157f4cbe2f6b67a02deb468cfd89f96f64f6c362b1668ab",
+      "status": "passed"
+    }
+  ],
+  "retained_attempts": [
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-reload-01/summary.json",
+      "sha256": "fcdad75c57759e8abef64f2af746271a2650584f815efed575e269377ab474de",
+      "bytes": 927,
+      "status": "failed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-reload-02/summary.json",
+      "sha256": "32ff2b4755fa99b9440c4d5c51d6d162310dd6b1bb31d05403f8efd7f0d7992a",
+      "bytes": 844,
+      "status": "failed"
+    },
+    {
+      "path": "artifacts/maps/wt-refine-20261118/collision-enums-01/audit/verification.json",
+      "sha256": "9efa17ee11c1aaff27182cc32a95bc3f63e88bf225d19165e85d4a6fa0395b06",
+      "bytes": 11530,
+      "status": "passed_inventory"
+    }
+  ],
+  "module_scope": {
+    "native_asset_author": "2aee857b4c0feac27d034a3fd022a979e44be576086d3aa6b6f2e8ef4c38c49f",
+    "native_reload": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "default_contact": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "gui_collision": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c"
+  },
+  "native_query_result": {
+    "checks": 128,
+    "verified_void_queries": 8,
+    "maximum_error_cm": 0.001987410103339471,
+    "saved_files_unchanged": 206
+  },
+  "actual_gameplay_runtime": {
+    "WT_GENERATED_COLLISION_READY": {
+      "schema": "rmsim_generated_collision_runtime_v1",
+      "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+      "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+      "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+      "source_instances": 18454,
+      "mesh_assets": 203,
+      "total_cells": 917,
+      "active_cells": 18,
+      "active_native_bodies": 327,
+      "active_shapes": 327,
+      "active_source_instances": 486,
+      "peak_native_bodies": 327,
+      "query_range_with_mount_m": 0,
+      "load_radius_m": 48,
+      "retain_radius_m": 80,
+      "activation_passes": 1,
+      "cells_created": 18,
+      "cells_released": 0,
+      "initial_asset_load_seconds": 0.7879953980445862,
+      "max_refresh_seconds": 0.0036838017404079437,
+      "spawn_footprint_pinned": true,
+      "physics_ready": true
+    },
+    "WT_GENERATED_COLLISION_FINAL": {
+      "schema": "rmsim_generated_collision_runtime_v1",
+      "manifest_sha1": "74f3675ee5e6e4b298634d56f5a02a9ae965636a",
+      "recipe_sha256": "3b39c35a1eead7481744e423d0950b14b99b700e6c1d57a647ca90d0be7e8e07",
+      "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+      "source_instances": 18454,
+      "mesh_assets": 203,
+      "total_cells": 917,
+      "active_cells": 18,
+      "active_native_bodies": 327,
+      "active_shapes": 327,
+      "active_source_instances": 486,
+      "peak_native_bodies": 327,
+      "query_range_with_mount_m": 0,
+      "load_radius_m": 48,
+      "retain_radius_m": 80,
+      "activation_passes": 1,
+      "cells_created": 18,
+      "cells_released": 0,
+      "initial_asset_load_seconds": 0.7879953980445862,
+      "max_refresh_seconds": 0.0036838017404079437,
+      "spawn_footprint_pinned": true,
+      "physics_ready": true
+    }
+  },
+  "implementation_files": [
+    {
+      "path": "tools/maps/prepare_wt_collision.py",
+      "sha256": "91f898019971e308b1498e729b6ada2d9f964f9bcd640820e2ed5dfe2bb5dc09"
+    },
+    {
+      "path": "tools/maps/prepare_wt_collision_probes.py",
+      "sha256": "6f635d8c1f9a5bf230879ed617e2ace54caefc2cbd543121e7cfcd9025a2228a"
+    },
+    {
+      "path": "tools/unreal/wt_collision.py",
+      "sha256": "230dbe6c68415d88dd06ed60c3a3a540d93a2817635e46a6b6f0d15957541821"
+    },
+    {
+      "path": "tools/unreal/author_wt_collision.py",
+      "sha256": "756557dd235069abbd7d16999464f6fc760a3166e0de57596f86652ea3482ee6"
+    },
+    {
+      "path": "tools/unreal/verify_wt_collision.py",
+      "sha256": "b8d74c4f7253f92fafc510c010acbfd3cf55cb7dcf6ac71fbd387349ab804f32"
+    },
+    {
+      "path": "tools/unreal/inspect_wt_collision_enums.py",
+      "sha256": "103ae9c7146d707e1110133eb67b18d2aabeacb27699bb2f4170da9bb795c99b"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/WTGeneratedCollisionComponent.h",
+      "sha256": "6d4bef1487e22fbfe3914033abb86f5e86cc6b795d2db03815bb155c1421f4b6"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/WTGeneratedCollisionComponent.cpp",
+      "sha256": "2441329bab6cc9daff7fd4a0a1e6d8f37e1c836ff2d3f2273c915050f9d210b2"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapImportLibrary.h",
+      "sha256": "f327338352bc55cf4bd28b09795b97b27b448cae7560e386449a96b58463428b"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapImportLibrary.cpp",
+      "sha256": "9dc7252472115a4ce1fb717f214ffd34f2c10f5ab773dd3748201ae835ccb535"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/SceneMap.cpp",
+      "sha256": "b938b540e2cb13181fce661c85613766b7bdf93be24a8eff50255a38e5150400"
+    }
+  ],
+  "guide": "docs/guides/war-thunder-generated-collision.md",
+  "pending": [],
+  "separate_project_gate": "Full navigation route, stable 1x realtime, and main merge follow their existing acceptance gates.",
+  "local_only_payloads": [
+    "generated-collision/manifest.json",
+    "generated-collision/meshes/*.fbx",
+    "generated-collision/instances/*.rmi",
+    "generated-collision/source-bindings/*",
+    "Unreal cooked assets",
+    "full per-asset reports",
+    "logs",
+    "PNG captures"
+  ],
+  "actual_gui_collision": {
+    "summary": {
+      "path": "artifacts/maps/wt-refine-20261118/gui-collision/summary.json",
+      "bytes": 46061,
+      "sha256": "2262d5b0d82483cd4157f4cbe2f6b67a02deb468cfd89f96f64f6c362b1668ab",
+      "status": "passed"
+    },
+    "process_id": 47912,
+    "selected_spawn": "wall_baseline",
+    "module_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "owned_W_horizontal_displacement_m": 10.579605208907294,
+    "owned_W_recovery_delta": 0,
+    "owned_R_recovery_delta": 1,
+    "owned_R_spawn_error_cm": 0.42853103209597676,
+    "whole_session_peak_native_bodies": 555,
+    "whole_session_final_bodies_shapes": 512,
+    "whole_session_activation_passes": 39,
+    "whole_session_cells_created": 36,
+    "whole_session_cells_released": 14,
+    "whole_session_max_refresh_ms": 2.291496843099594,
+    "final_physics_ready": true,
+    "counter_scope": "Entire session includes earlier external driving; only W and R executions are assigned to the two owned operations.",
+    "full_visual_acceptance": "separate"
+  }
+}

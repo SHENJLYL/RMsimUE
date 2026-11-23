@@ -1,0 +1,336 @@
+{
+  "schema": "wt_bright_fill_card_source_review_v1",
+  "status": "reviewed",
+  "production_changed": false,
+  "native_run": false,
+  "image_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\after-ground-slope-taa100-01\\view.png",
+  "image_sha256": "2cd4018a0dc6e102fea492855603c0c0ae33ae80fe9c8a4e743eb843313b270c",
+  "image_size": [
+    1600,
+    1000
+  ],
+  "image_review": "original frame viewed; bright yellow-green elongated card/leaf cluster in lower-left foreground",
+  "run_identity": [
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Binaries\\Win64\\UnrealEditor-RMSim.dll",
+      "sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+      "bytes": 2757120
+    },
+    {
+      "path": "D:\\simulator\\unreal\\RMSim\\Content\\RMSim\\Maps\\wt_vlaanderen\\World.umap",
+      "sha256": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+      "bytes": 292666521
+    }
+  ],
+  "candidate_model": "grass_fill_a",
+  "candidate_material": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_12",
+  "alternative_same_mesh_material": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Materials/layer_06",
+  "identification_scope": "strong image/geometry/source-tint match; exact rendered HISM instance was not read back",
+  "source_geometry": {
+    "vertices": 15,
+    "triangles": 8,
+    "ros_bounds_m": {
+      "lo": [
+        -1.2544469833374023,
+        -0.3046117126941681,
+        -0.44391685724258423
+      ],
+      "hi": [
+        1.2544469833374023,
+        0.3046118915081024,
+        0.6979182958602905
+      ]
+    },
+    "source_npz_sha256": "77f0819875da1a4809b581a952757bd2ab71f721a81406bb599702fe8f409941",
+    "fbx_sha256": "4e0c212e41011ba92660fe1891214d414907e460c7268655d3eb9df9772fd781",
+    "world_width_m_range": [
+      0.9533797073364257,
+      1.7562257766723632
+    ],
+    "world_height_m_range": [
+      0.31971384286880494,
+      0.5937542796134949
+    ]
+  },
+  "source_material": {
+    "shader": "random_grass",
+    "texture": "textures/grass_fill_a_tex_m.png",
+    "texture_sha256": "ba515e12b9f22273da64563077b7574e8dcc92298f250fb71338497891a6d415",
+    "texture_semantics": "linear R/B tint masks and G brightness/color interpolation",
+    "alpha_texture": "textures/grass_fill_a_tex_m_a.png",
+    "alpha_texture_sha256": "c10b5c8324177e5cf81da54cf828b6d85ded2a9fa062e3665e69782ff39dd4ce",
+    "alpha_semantics": "separate original managed texture named T0 + _a; linear R",
+    "alpha_statistics": {
+      "min": 0,
+      "max": 183,
+      "mean": 88.96138000488281
+    }
+  },
+  "layer12_source_rgba": {
+    "color_mask_r_from": {
+      "source_bgra": [
+        28,
+        173,
+        67,
+        255
+      ],
+      "rgba": [
+        67,
+        173,
+        28,
+        255
+      ]
+    },
+    "color_mask_r_to": {
+      "source_bgra": [
+        40,
+        148,
+        89,
+        255
+      ],
+      "rgba": [
+        89,
+        148,
+        40,
+        255
+      ]
+    },
+    "color_mask_g_from": {
+      "source_bgra": [
+        27,
+        30,
+        43,
+        255
+      ],
+      "rgba": [
+        43,
+        30,
+        27,
+        255
+      ]
+    },
+    "color_mask_g_to": {
+      "source_bgra": [
+        186,
+        242,
+        247,
+        255
+      ],
+      "rgba": [
+        247,
+        242,
+        186,
+        255
+      ]
+    },
+    "color_mask_b_from": {
+      "source_bgra": [
+        47,
+        85,
+        44,
+        255
+      ],
+      "rgba": [
+        44,
+        85,
+        47,
+        255
+      ]
+    },
+    "color_mask_b_to": {
+      "source_bgra": [
+        87,
+        200,
+        141,
+        255
+      ],
+      "rgba": [
+        141,
+        200,
+        87,
+        255
+      ]
+    }
+  },
+  "layer06_source_rgba": {
+    "color_mask_r_from": {
+      "source_bgra": [
+        49,
+        80,
+        152,
+        127
+      ],
+      "rgba": [
+        152,
+        80,
+        49,
+        127
+      ]
+    },
+    "color_mask_r_to": {
+      "source_bgra": [
+        94,
+        109,
+        127,
+        127
+      ],
+      "rgba": [
+        127,
+        109,
+        94,
+        127
+      ]
+    },
+    "color_mask_g_from": {
+      "source_bgra": [
+        25,
+        15,
+        7,
+        255
+      ],
+      "rgba": [
+        7,
+        15,
+        25,
+        255
+      ]
+    },
+    "color_mask_g_to": {
+      "source_bgra": [
+        127,
+        202,
+        209,
+        255
+      ],
+      "rgba": [
+        209,
+        202,
+        127,
+        255
+      ]
+    },
+    "color_mask_b_from": {
+      "source_bgra": [
+        19,
+        32,
+        35,
+        127
+      ],
+      "rgba": [
+        35,
+        32,
+        19,
+        127
+      ]
+    },
+    "color_mask_b_to": {
+      "source_bgra": [
+        78,
+        194,
+        238,
+        127
+      ],
+      "rgba": [
+        238,
+        194,
+        78,
+        127
+      ]
+    }
+  },
+  "current_layer_settings": [
+    {
+      "id": "layer_06",
+      "density_per_100m2": 12.0,
+      "scale_x": [
+        0.38,
+        0.7
+      ],
+      "scale_y": [
+        0.38,
+        0.7
+      ],
+      "scale_z": [
+        0.28,
+        0.52
+      ],
+      "collision": false
+    },
+    {
+      "id": "layer_12",
+      "density_per_100m2": 12.0,
+      "scale_x": [
+        0.38,
+        0.7
+      ],
+      "scale_y": [
+        0.38,
+        0.7
+      ],
+      "scale_z": [
+        0.28,
+        0.52
+      ],
+      "collision": false
+    }
+  ],
+  "mask_at_native_clip": {
+    "clip": 0.5,
+    "visible_fraction_mip0": 0.2789764404296875,
+    "visible_rgb_mask_mean": [
+      0.17260972102013689,
+      0.23782791900323358,
+      0.1294076893460327
+    ],
+    "r_dominant_fraction": 0.9989607832412624
+  },
+  "normal_adaptation_difference": {
+    "source_normals_y_range": [
+      -1.0,
+      -0.30211079120635986
+    ],
+    "original_gpu_vertex_stream_copies_normals": false,
+    "current_ue_old_mesh_path": "Tangent (0,0,1) -> original mesh world normal -> multiply TwoSidedSign; UseSourceNormal=0",
+    "current_transmission": 0.35,
+    "current_subsurface": "computed BaseColor * Transmission",
+    "normal_minimum_up_adapter_applies_to_old_meshes": false,
+    "source_reference": "randomGrass.cpp MeshVertex vs CellVertex and packing: 106-135,589-604,1296-1304",
+    "interpretation": "using discarded source normals for UE foliage lighting is a concrete adapter mismatch; image brightness attribution requires a targeted native comparison"
+  },
+  "alpha_native_readback": {
+    "passed": true,
+    "mips": 10,
+    "source_dds_sha256": "cbb4ea2030f8f739848210643ab19c0f774629e9ba9f71b5b4d3741e7c059182",
+    "scope": "UTexture.Source full-chain pixels and native build settings; no platform/GPU byte readback"
+  },
+  "gamma_status": "source color endpoints pow2.2 exactly once; current 96 native vector comparisons passed; no demonstrated duplicate gamma",
+  "source_uv_difference": {
+    "range": {
+      "lo": [
+        0.0010440908372402191,
+        0.005285859107971191
+      ],
+      "hi": [
+        1.003311038017273,
+        0.9947142004966736
+      ]
+    },
+    "dagor_gpu": "saturate per vertex before packing",
+    "ue": "original UV preserved, wrap addressing",
+    "excess_max_u": 0.0033110380172729492
+  },
+  "findings": [
+    "A real broad low-detail 15-vertex/8-triangle source mesh remains after correct alpha mips; current secondary-grass scale makes it roughly 0.95-1.76m wide and 0.32-0.59m high.",
+    "Layer12 source red-mask tint endpoints are green [67,173,28] to [89,148,40], unlike the brown layer06 endpoints; this is the stronger candidate for the visible green leaf.",
+    "The source runtime discards the stored downward normals; the current UE old-mesh path uses them and the generic 0.35 foliage transmission.",
+    "Source alpha chain is now genuinely preserved and clip0.5 checked. Remaining card orientation/lighting should be evaluated per model rather than changing shared gamma."
+  ],
+  "next_narrow_candidate": [
+    "temporary grass_fill_a/layer12-only terrain-up or hemisphere-safe UE normal adaptation, with identical alpha/color/mesh placement",
+    "restore the demonstrated source per-vertex UV saturation if a source-matched geometry preparation update is later approved"
+  ],
+  "source_proof_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\fill-geometry-review-01\\verification.json",
+  "source_proof_sha256": "4acea7a7d86c9cbafdcd89a34c200f90c651e55eac20438478ef1a6ebf8aac86",
+  "native_grass_verification_sha256": "71ee1a60a0b9f995b0caf75d4b4be13332b893473d76a5a0a108b9624f3bdd4a",
+  "wt_grass_sha256": "5b72931be857bc55802012ac7d3cd3c0eb38ca57a042103bbe97e0b4c67cb20e"
+}

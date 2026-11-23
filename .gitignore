@@ -120,6 +120,75 @@ Thumbs.db
 /assets/maps/wt_vlaanderen/terrain/
 /assets/maps/wt_vlaanderen/instances/
 
+# Disposable nested repositories used to verify upstream patches.
+/artifacts/**/patch-check/
+
+# Full scene import journals reference local generated assets; compact acceptance lives in artifacts.
+/assets/maps/wt_vlaanderen/ue-mesh-import-cache.json
+/assets/maps/wt_vlaanderen/ue-scene-import-report.json
+/assets/maps/wt_vlaanderen/material-import-report.json
+
+# Generated source-face audits contain original geometry evidence and stay local.
+/assets/maps/wt_vlaanderen/geometry-audits/
+
+# Dense per-mesh scene audit stays local; the adjacent summary binds its SHA256.
+/artifacts/maps/wt-scene-*/native-scene-*/verification.json
+
+# Full raw draw declarations remain local; the adaptation summary binds this report.
+/artifacts/maps/wt-scene-*/decal-opacity-*/raw/verification.json
+
+# Grass import journals and full nested scene audits remain local.
+/assets/maps/wt_vlaanderen/ue-grass-import-report.json
+/artifacts/maps/wt-scene-*/native-scene-*/**/verification.json
+
+# Local integration rollback snapshots and copied legacy workspace.
+/artifacts/integration/unified-20261118/*
+!/artifacts/integration/unified-20261118/final-documents-01/
+/artifacts/integration/unified-20261118/final-documents-01/*
+!/artifacts/integration/unified-20261118/final-documents-01/summary.json
+/artifacts/archive/
+
+# Generated collision geometry, dense spatial manifests and local authoring journals.
+/assets/maps/wt_vlaanderen/generated-collision/*
+!/assets/maps/wt_vlaanderen/generated-collision/recipe.json
+
+# Detailed native asset readbacks are bound by compact summaries alongside each run.
+/artifacts/maps/wt-refine-*/**/audit/verification.json
+/artifacts/maps/wt-refine-*/grass-native-*/verification.json
+/artifacts/maps/wt-refine-*/grass-reload-*/verification.json
+
+# Fresh collision stages and rollback copies retain generated source geometry locally.
+/assets/maps/wt_vlaanderen/generated-collision-stage-*/
+/assets/maps/wt_vlaanderen/generated-collision-before-*/
+# Dense rail/source/native journals stay local; publish the compact accepted record.
+/artifacts/maps/wt-rails-spawn-20261119/**
+!/artifacts/maps/wt-rails-spawn-20261119/release-summary.json
+
+# Camera/control rollback snapshots and dense native traces stay local.
+/artifacts/control/camera-heading-20261119/**
+!/artifacts/control/camera-heading-20261119/release-summary.json
+
+# Source-restricted school gym and regenerated fidelity payloads remain local.
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/source/*.skp
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/converted/
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/ue-import-*/
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/**/*.bmp
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-fidelity/*.hdr
+/assets/maps/rmuc2027/arena/campus-exterior/prepared-tree-fidelity-*/
+/assets/maps/rmuc2027/arena/sketchupbox-school-gym/environment-full-fidelity/*.hdr
+
+# Official MuJoCo SDK and source-derived physics caches (reproducible locally).
+/third_party/mujoco-sdk/
+/assets/vehicles/aim_sentry/mujoco/generated/
+/assets/vehicles/aim_sentry/mujoco/rmuc2027/
+
+# MuJoCo notices and compact integration evidence.
+!/third_party/notices/
+/third_party/notices/*
+!/third_party/notices/mujoco-4.0.1/
+/artifacts/integration/mujoco-ue-20261120/**
+!/artifacts/integration/mujoco-ue-20261120/release-summary.json
+
 # Pinned CC0 campus gym sources; generated UE assets remain local.
 !/assets/maps/rmuc2027/arena/campus-gym/LICENSE.txt
 !/assets/maps/rmuc2027/arena/campus-gym/environments/quadrangle_cloudy_1k.hdr

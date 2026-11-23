@@ -1,0 +1,198 @@
+{
+  "status": "passed_offline_frozen_pending_native",
+  "files": {
+    "tools/integration/navigation_console_config.py": {
+      "sha256": "674b05f8ede2b29fce487ecf79a94446b9a1b24515e192039c28e2f791b24d66",
+      "bytes": 14064
+    },
+    "tools/integration/navigation_console.py": {
+      "sha256": "0dcee87b6b0b3b3de2e1e6dfc135464195b72fa369cb1fa34691bae382640d24",
+      "bytes": 26242
+    },
+    "tests/control/test_navigation_console.py": {
+      "sha256": "53703a660c0a30ed5b2aa5ec1c29de9aeb6bdc6643e80ee25e774fb8275be641",
+      "bytes": 4660
+    },
+    "tests/control/test_packaged_localization_map.py": {
+      "sha256": "a70bba9fc181396e86d978e8ff4e2e9fc19a6de3fdc12d9211382d367c9420d7",
+      "bytes": 9023
+    },
+    "tests/control/test_navigation_spawn_prior.py": {
+      "sha256": "e266bc8b2c670cc40317165849371a072be870b2f6c7e9acf92b9e783e52949e",
+      "bytes": 7444
+    }
+  },
+  "tests": {
+    "command": "Python314 unittest test_navigation_spawn_prior,test_navigation_console,test_packaged_localization_map,test_navigation_localization_map",
+    "status": "passed",
+    "tests_run": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "wall_seconds": 1.169546100005391,
+    "log_sha256": "dd89d4e51f25719d8d0b6bfdc4bcd3677b53de801a582a18ceaba1ed388367e4"
+  },
+  "unchanged_inputs": {
+    "assets/maps/rmuc2027/navigation-console/SOURCE.json": true,
+    "assets/maps/rmuc2027/navigation-console/scene.json": true,
+    "assets/maps/import_lab/map.json": true,
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_runner.py": true,
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": true,
+    "tools/maps/export_localization_surface_map.py": true,
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_map_identity.py": true
+  },
+  "amcl_covariance_unchanged": {
+    "0": 0.25,
+    "7": 0.25,
+    "35": 0.09
+  },
+  "default_and_explicit_prior_examples": {
+    "rmuc2027": {
+      "default": {
+        "schema": "rmsim_scene_spawn_prior_v1",
+        "mode": "scene_spawn",
+        "spawn_id": "default",
+        "scene_units": "m",
+        "scene_coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "spawn_position_m": [
+          5.8,
+          6.4,
+          0.03147864
+        ],
+        "spawn_yaw_rad": 0.0,
+        "requested_offset": null,
+        "applied_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_pose": [
+          5.8,
+          6.4,
+          0.0
+        ],
+        "frame_semantics": {
+          "world_frame": "map",
+          "reference_origin": "base_link_and_base_stabilized_common_origin",
+          "translation_offset_axes": "map",
+          "yaw_unit": "rad",
+          "yaw_range": "[-pi, pi)",
+          "ground_z_use": "provenance_only_planar_prior",
+          "source": "declared_scene_spawn_once"
+        }
+      },
+      "explicit_old_recovery_offset": {
+        "schema": "rmsim_scene_spawn_prior_v1",
+        "mode": "scene_spawn_with_explicit_offset",
+        "spawn_id": "default",
+        "scene_units": "m",
+        "scene_coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "spawn_position_m": [
+          5.8,
+          6.4,
+          0.03147864
+        ],
+        "spawn_yaw_rad": 0.0,
+        "requested_offset": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "applied_offset": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "initial_pose": [
+          6.3999999999999995,
+          6.0,
+          0.15
+        ],
+        "frame_semantics": {
+          "world_frame": "map",
+          "reference_origin": "base_link_and_base_stabilized_common_origin",
+          "translation_offset_axes": "map",
+          "yaw_unit": "rad",
+          "yaw_range": "[-pi, pi)",
+          "ground_z_use": "provenance_only_planar_prior",
+          "source": "declared_scene_spawn_once"
+        }
+      }
+    },
+    "import_lab": {
+      "default": {
+        "schema": "rmsim_scene_spawn_prior_v1",
+        "mode": "scene_spawn",
+        "spawn_id": "default",
+        "scene_units": "m",
+        "scene_coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "spawn_position_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "spawn_yaw_rad": 0.0,
+        "requested_offset": null,
+        "applied_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_pose": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "frame_semantics": {
+          "world_frame": "map",
+          "reference_origin": "base_link_and_base_stabilized_common_origin",
+          "translation_offset_axes": "map",
+          "yaw_unit": "rad",
+          "yaw_range": "[-pi, pi)",
+          "ground_z_use": "provenance_only_planar_prior",
+          "source": "declared_scene_spawn_once"
+        }
+      },
+      "explicit_old_recovery_offset": {
+        "schema": "rmsim_scene_spawn_prior_v1",
+        "mode": "scene_spawn_with_explicit_offset",
+        "spawn_id": "default",
+        "scene_units": "m",
+        "scene_coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+        "spawn_position_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "spawn_yaw_rad": 0.0,
+        "requested_offset": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "applied_offset": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "initial_pose": [
+          0.6,
+          -0.4,
+          0.15
+        ],
+        "frame_semantics": {
+          "world_frame": "map",
+          "reference_origin": "base_link_and_base_stabilized_common_origin",
+          "translation_offset_axes": "map",
+          "yaw_unit": "rad",
+          "yaw_range": "[-pi, pi)",
+          "ground_z_use": "provenance_only_planar_prior",
+          "source": "declared_scene_spawn_once"
+        }
+      }
+    }
+  },
+  "bridge_reinstall_required": false,
+  "runtime_scope": "Only startup mean comes once from declared scene default spawn; native precision and realtime regression pending",
+  "patch_sha256": "8c489f9819c513804b37261045730f4df8e658e43f28ed829ced4ab032043040"
+}

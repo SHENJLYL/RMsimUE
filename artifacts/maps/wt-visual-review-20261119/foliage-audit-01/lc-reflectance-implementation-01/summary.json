@@ -1,0 +1,37 @@
+{
+  "schema": "wt_lc_reflectance_implementation_summary_v1",
+  "status": "passed",
+  "native_validation": "pending",
+  "applied_utc": "2026-11-19T06:30:48.643697+00:00",
+  "original_source_sha256": "cb01bf7180b2813dfc47c24c81db44b962bcc6cf52031a62657af9d39115f4d1",
+  "source_sha256": "2b9c8ef90a7208ba6e6ffd96db6dc90d0880f84a5c41aa17f90bb26a73202ff7",
+  "helper_sha256": "a1ec83ff5e5e12fcd9ab2f6fb38b79cc528b73af8a935e99bd6e2891d5b23967",
+  "preparer_sha256": "c47fe116114146425eb2f300efc88422c3ea5bae37e1295f8262fd2b4e260971",
+  "verifier_sha256": "601f924e05e0aefc52a73747725deedd2e3a383ceb61aa6fa0938b2c8241695a",
+  "definition_sha256": "0dc385832f8caac5cf5e8d87def40bc3f04d0d107f2c06462640727c00bca575",
+  "math_verification_sha256": "b74a6b6136a79203b1aec3c6fdd3fcb53b7ca094508a1b1778d53c86b8399874",
+  "pure_check_count": 8,
+  "original_landdetail_definition_unchanged": true,
+  "original_microdetails_definition_unchanged": true,
+  "native_assets_written": false,
+  "grass_source_sha256": "5b72931be857bc55802012ac7d3cd3c0eb38ca57a042103bbe97e0b4c67cb20e",
+  "grass_definition_sha256": "8946b65202815cae103d290e2a356f74fc1ee0e27ef206c7746e8da2a09ce0fc",
+  "texture_count": 23,
+  "biome_count": 65,
+  "sampler_states_added_expected": 0,
+  "max_combined_lc_reads": 32,
+  "min_combined_lc_reads": 8,
+  "uniform_source_pixel_sample_count": 2048,
+  "mean_combined_reads_cpu": 15.37646484375,
+  "array_complete_bgra8_mip_bytes": 128625292,
+  "micro_id_selection": "source maximum-weight neighbor, then maximum-weight layer; no weighted average of distinct IDs",
+  "unconnected_channels": [
+    "G reflectance",
+    "B ambient occlusion"
+  ],
+  "shared_interface_pending": [
+    "wt_materials.py Land/Terrain microdetail ID/valid inputs",
+    "wt_landclass.py LC1 roughness/ID forwarding",
+    "wt_ground_microdetails.py base LC and RVT microtexture result composition"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "wt_water_preflight_v1",
+  "status": "passed",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "source_audit_sha256": "83b8e07465427ec32048b667ccec72081eb52779ec170acbdffd0c64c2f56323",
+  "decoded_level_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+  "supporting_scripts_sha256": {
+    "tools/unreal/wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "tools/unreal/wt_materials.py": "a2f6c906f872d0f153d66098c4c943baa352b97483d8042869825dae07efa784",
+    "tools/unreal/verify_wt_materials.py": "d7e4e319e4d4bfa649f3bbf67368626daa308b19c589cfc4778841c2b1c07cd2",
+    "tools/unreal/update_wt_water.py": "354df975ef1fe483982f9549e18cc632527e927c4af28708c575d932650fafa1",
+    "tests/map_tools/test_wt_water.py": "d77a4a7f9f2a12c5c24d152d35342064f7ca7b110d558598fd93abd4f657e131"
+  },
+  "checks": {
+    "python_ast": true,
+    "original_source_rgb": true,
+    "original_static_fbx_hash": true,
+    "source_map_and_material_identity": true
+  },
+  "unit_tests": {
+    "passed": 6,
+    "command": "python -B -m unittest discover -s tests/map_tools -p test_wt_water.py -v"
+  },
+  "native_asset_update_verified": false,
+  "native_render_verified": false
+}

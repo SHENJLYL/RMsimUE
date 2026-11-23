@@ -1,0 +1,199 @@
+{
+  "schema": "rmsim_unified_source_scope_review_v1",
+  "status": "reviewed_no_repository_mutation",
+  "captured_utc": "2026-11-18T08:57:31.583115+00:00",
+  "branch": "feat/navigation-speed-20261117",
+  "head": "13f196199ad03d8a4048d77f30bec0b6a1b45b27",
+  "release_refs": [
+    "e5d2942cdb58e5c2f7ed55a226fb0c18f5caf3c0 refs/heads/main",
+    "e5d2942cdb58e5c2f7ed55a226fb0c18f5caf3c0 refs/remotes/origin/main"
+  ],
+  "index_empty": true,
+  "index_sha256_unchanged": "130d8fd9ab490c3fcfd336ec7779e1e7e1e8fed38abfc4df85bea40d676cc086",
+  "merge_plan_sha256": "bb06a575c3c7a6aae3213c10d49541c9073b39a8c38ac69b32ec2205547432ab",
+  "snapshot_main_patch_sha256": "391c34867bbddad4e98d51589d60c5b2348df1722afc5f3b80f65655bbeb57c3",
+  "snapshot_map_patch_sha256": "817630c2719a59f4945fdc254b526533f93501af3ad67a518b6f6e2ad08e569c",
+  "snapshots": {
+    "main": {
+      "head": "13f196199ad03d8a4048d77f30bec0b6a1b45b27",
+      "files": 410,
+      "non_artifact_paths": 87,
+      "all_snapshot_hashes_verified": true
+    },
+    "map": {
+      "head": "d38d15e3acaad1341ee1d2e47dbcfee156a351d6",
+      "files": 29,
+      "all_snapshot_hashes_verified": true
+    },
+    "applied_map_paths": 194
+  },
+  "counts": {
+    "task_root_shared_docs": 6,
+    "map_task_import_or_refinement": 228,
+    "external_arena": 50,
+    "preexisting_main_wip": 393,
+    "map_task_refinement_docs": 4,
+    "map_task_refinement": 18,
+    "mixed_main_map_refinement_and_external_arena": 1
+  },
+  "preexisting_main_unchanged_paths": 398,
+  "external_arena_after_snapshot": [
+    {
+      "path": ".codestable/features/2026-11-18-rmuc-arena-shell/acceptance.md",
+      "main_snapshot_sha256": null,
+      "current_sha256": "b6fb6fbdbda46db629990210a01fd64d6824c63f04f76506c39ddba9d05739fe"
+    },
+    {
+      "path": "assets/maps/rmuc2027/arena-shell.json",
+      "main_snapshot_sha256": "82c633fd450e33a9e1367dd854f36a55c15fb60184f33adecd029f7659a42c2e",
+      "current_sha256": "1d7e63faa3d01d7574aae3abc34a588667add4f692532e46178697c38a610370"
+    },
+    {
+      "path": "docs/guides/arena-shell.md",
+      "main_snapshot_sha256": null,
+      "current_sha256": "a094f21c150677dcf38bfbf329dafb058edf96d2f95ecc8cabe8b39188e68905"
+    },
+    {
+      "path": "tests/control/test_rmuc_arena_shell.py",
+      "main_snapshot_sha256": null,
+      "current_sha256": "a6b635efc1772b3a9d3379f5d765e567946f898653a9a1ea2259e007bfdb6a0e"
+    },
+    {
+      "path": "tools/unreal/import_arena_shell_assets.py",
+      "main_snapshot_sha256": "bd42f12f36879fd55cba9c00fb4329975fc16e946507a9bab45e037efcede115",
+      "current_sha256": "225f9510475a0981be21694c7164bf20cc295a88695ad995e59b7a302eea623b"
+    },
+    {
+      "path": "tools/unreal/import_arena_shell_materials.py",
+      "main_snapshot_sha256": null,
+      "current_sha256": "d317090f90089d09c786e25796d75f5b2abb973de96382fbb512401852cefff2"
+    },
+    {
+      "path": "tools/unreal/test_arena_shell.py",
+      "main_snapshot_sha256": null,
+      "current_sha256": "940001d055bd7ee10fa32b87b1cf1a7b7c86c3ed8716df8127cb37fdc4fbad46"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ArenaShell.cpp",
+      "main_snapshot_sha256": null,
+      "current_sha256": "b7dedf839f527333ea1abeade4f4f6298ea1bb7adf6b4bc46fe72e0b57acba47"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ArenaShell.h",
+      "main_snapshot_sha256": null,
+      "current_sha256": "9c3a5aa6df939e5abf1f1618deffd620ba0b43ae075981a425e12525a29eb963"
+    }
+  ],
+  "shared_source_hashes": [
+    {
+      "path": "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp",
+      "current_sha256": "9ae18af705879ddc94e346c472fdcb858fa3d33723d72bcc4098f79259f843bf",
+      "main_snapshot_sha256": "ba4d04f2adbce485724104239f3a5ab79157d9b4b247a1caa103b04dd1f9d6e8",
+      "applied_merge_sha256": "875bb2482a63a3f98b8138771d26011915ff5aa1be51f61b59626f6e358bbc79"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ImportLabGameMode.h",
+      "current_sha256": "9d910510d9c52f480d9e2d13deab2a50bac868035968a0de81ed54fb80fc4e77",
+      "main_snapshot_sha256": "3d6cafcc5449ea35eea716fd5c10afd189cc0b2496303454d8e35e5625ca4b95",
+      "applied_merge_sha256": "6f70cff119a3cb88c7db4385796f8f475fe8a32d7e57213aac18cfc58b698c6f"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapImportLibrary.cpp",
+      "current_sha256": "9dc7252472115a4ce1fb717f214ffd34f2c10f5ab773dd3748201ae835ccb535",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": "1ed58187d93789a251bf14f9d83f68edd13e8bfaa4a32a90debc0edd3b5f918a"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/MapImportLibrary.h",
+      "current_sha256": "f327338352bc55cf4bd28b09795b97b27b448cae7560e386449a96b58463428b",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": "1a9af3086993c243205562766699964f8b22df6c4ad807dbcb9290d20bafe4a8"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/SceneMap.cpp",
+      "current_sha256": "b938b540e2cb13181fce661c85613766b7bdf93be24a8eff50255a38e5150400",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": "2f3f079eeaf86fe72af21b7a85734e29c8d545baf323c0d632ffb43ea7f523a3"
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ArenaShell.cpp",
+      "current_sha256": "b7dedf839f527333ea1abeade4f4f6298ea1bb7adf6b4bc46fe72e0b57acba47",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": null
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/ArenaShell.h",
+      "current_sha256": "9c3a5aa6df939e5abf1f1618deffd620ba0b43ae075981a425e12525a29eb963",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": null
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/WTGeneratedCollisionComponent.cpp",
+      "current_sha256": "2441329bab6cc9daff7fd4a0a1e6d8f37e1c836ff2d3f2273c915050f9d210b2",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": null
+    },
+    {
+      "path": "unreal/RMSim/Source/RMSim/WTGeneratedCollisionComponent.h",
+      "current_sha256": "6d4bef1487e22fbfe3914033abb86f5e86cc6b795d2db03815bb155c1421f4b6",
+      "main_snapshot_sha256": null,
+      "applied_merge_sha256": null
+    }
+  ],
+  "arena_gamemode_hunks": [
+    "#include ArenaShell.h",
+    "SetupStage: if StageMap.bMeshTerrain then FArenaShell::Spawn"
+  ],
+  "map_gamemode_hunks": [
+    "WTGeneratedCollisionComponent include",
+    "Initialize after source spawn XY placement",
+    "Advance at start of TG_PostPhysics Tick"
+  ],
+  "combined_module": {
+    "before_sha256": "028c4791c5a637d66544c229e3336a11c63b4a92e5d36ce452f3d17b7000b3d7",
+    "after_sha256": "cd1c286269fc5d411084d6e23d0b861d142082adbd593680edda7294dfcec90c",
+    "external_arena_source_sha256": "b7dedf839f527333ea1abeade4f4f6298ea1bb7adf6b4bc46fe72e0b57acba47",
+    "build_exit_code": 0,
+    "build_record_file": "D:\\simulator\\artifacts\\maps\\rmuc-arena-20261118\\canonical-build-02\\verification.json",
+    "build_record_sha256": "d67bc49a7c205852dba95767343227da0cbfdb9a3a1173d0b395328b9aecca45",
+    "build_log_sha256": "14ff41276e36bdafa7c511f4feb37a5b7c96d95c7aa5b71711bed57e697cccdc",
+    "compiled_action": "ArenaShell.cpp then relink RMSim; current native map evidence belongs to combined cd1c module"
+  },
+  "status_paths_byte_identical_to_head": [
+    "assets/maps/rmuc2027/mesh-source.json",
+    "assets/maps/rmuc2027/navigation-console/map.yaml",
+    "assets/maps/wt_vlaanderen/collision-coverage.json",
+    "assets/maps/wt_vlaanderen/heightfield.json",
+    "assets/maps/wt_vlaanderen/preparation-verification.json",
+    "assets/maps/wt_vlaanderen/spawn-candidates.json"
+  ],
+  "untracked_over_1mib": [],
+  "untracked_binary_assets": [],
+  "inventory_file": "scope-inventory.json",
+  "inventory_sha256": "6eea8ef402d03b489eb486953a03b717109b108797262dc8e637815f138ed5aa",
+  "commit_groups_file": "commit-groups.json",
+  "commit_groups_sha256": "b33d13a38ab1915a77bd6751d15d9e807487316859f6931b8ece98b1654687aa",
+  "gamemode_diff_file": "gamemode-after-merge.diff",
+  "gamemode_diff_sha256": "93fd9623ec033f3cb1db97085a659d0a1cd14423814edfe648e7d171e8ee7f25",
+  "release_gate": "AGENTS: preserve main; preexisting navigation speed/realtime WIP requires full UE/ROS release gates, separate from this Flanders validation",
+  "root_docs_in_progress": [
+    ".codestable/architecture/ARCHITECTURE.md",
+    ".codestable/attention.md",
+    ".codestable/goal.md",
+    "README.md",
+    "docs/changes/2026-11-18-unified-flanders.md",
+    "docs/guides/war-thunder-flanders.md",
+    "docs/progress/current.md"
+  ],
+  "next_steps": [
+    "Agree a brief shared-source freeze with Arena owner and capture current hashes before staging.",
+    "Use a new feature branch or isolated staging checkout from 13f1961; preserve/import snapshot-main WIP as separately attributed baseline.",
+    "Apply map merge and refinements from explicit reviewed path groups; keep external Arena and old map destruction provenance separate.",
+    "Inspect git diff --cached --check, --stat and --name-only; compare current shared-file hashes before commit.",
+    "Push only the feature branch with git push -u origin <feature>; leave main/release refs unchanged."
+  ],
+  "index_modified": false,
+  "head_modified": false,
+  "branch_modified": false,
+  "ue_started": false
+}

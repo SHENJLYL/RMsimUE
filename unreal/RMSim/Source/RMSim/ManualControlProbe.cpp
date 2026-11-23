@@ -121,42 +121,51 @@ void AImportLabGameMode::TickControlProbe()
     }
     case 6:
     {
-        const FVector Target = AimWorldTarget;
+        const FVector Direction = GetAimCapture()->GetForwardVector().GetSafeNormal();
         const double ViewYaw = OrbitYaw;
         Input.FreeLook = true; Input.MouseX = 200; Step(Input);
-        Name = TEXT("free_look_preserves_target"); Detail = TEXT("C+200 raw counts changes view by the configured sensitivity without replacing world aim");
-        Passed = bFreeLook && FMath::IsNearlyEqual(FMath::Abs(FMath::FindDeltaAngleDegrees(ViewYaw, OrbitYaw)),
-            MouseSensitivity * 200.0, 1.e-6) && Target.Equals(AimWorldTarget, 1.e-6);
+        Name = TEXT("free_look_preserves_target"); Detail = TEXT("C+200 raw counts changes only the observation view; held and actual gun directions stay within 0.1deg");
+        Passed = bFreeLook && bHoldManualAimDirection &&
+            FMath::IsNearlyEqual(FMath::Abs(FMath::FindDeltaAngleDegrees(ViewYaw, OrbitYaw)),
+                MouseSensitivity * 200.0, 1.e-6) && HeldManualAimDirection.Equals(Direction, 1.e-6) &&
+            FVector::DotProduct(Direction, GetAimCapture()->GetForwardVector()) > FMath::Cos(FMath::DegreesToRadians(0.1));
         ControlPendingCapture = TEXT("free-look");
         break;
     }
     case 7:
     {
-        const FVector Target = AimWorldTarget;
-        const double SavedYaw = SavedOrbitYaw;
+        const FVector Direction = GetAimCapture()->GetForwardVector().GetSafeNormal();
+        const FVector HeldDirection = HeldManualAimDirection;
         Step(Input);
-        Name = TEXT("free_look_release"); Detail = TEXT("Releasing C returns the saved view and keeps the same target");
-        Passed = !bFreeLook && FMath::IsNearlyEqual(OrbitYaw, SavedYaw, 1.e-6) && Target.Equals(AimWorldTarget, 1.e-6);
+        Name = TEXT("free_look_release"); Detail = TEXT("Releasing C returns to chase and preserves held and actual world gun directions within 0.1deg");
+        Passed = !bFreeLook && bHoldManualAimDirection && PC->GetViewTarget() == ChaseCamera &&
+            HeldManualAimDirection.Equals(HeldDirection, 1.e-6) &&
+            FVector::DotProduct(Direction, GetAimCapture()->GetForwardVector()) > FMath::Cos(FMath::DegreesToRadians(0.1));
         break;
     }
     case 8:
     {
-        const FVector Target = AimWorldTarget;
+        const FVector Direction = GetAimCapture()->GetForwardVector().GetSafeNormal();
         Input.ToggleSight = true; Step(Input);
-        Name = TEXT("shift_scope"); Detail = TEXT("Shift chooses actual muzzle camera at 30deg without changing target");
-        Passed = bSightMode && PC->GetViewTarget() == SightCamera && Target.Equals(AimWorldTarget, 1.e-6) &&
+        const double MinimumAlignment = FMath::Cos(FMath::DegreesToRadians(0.1));
+        Name = TEXT("shift_scope"); Detail = TEXT("Shift chooses the actual muzzle camera at 30deg with live angular intent and at most 0.1deg gun discontinuity");
+        Passed = bSightMode && !bHoldManualAimDirection && PC->GetViewTarget() == SightCamera &&
+            FVector::DotProduct(Direction, GetAimCapture()->GetForwardVector()) > MinimumAlignment &&
+            FVector::DotProduct(Direction, FRotator(OrbitPitch, OrbitYaw, 0).Vector()) > MinimumAlignment &&
             FMath::IsNearlyEqual(SightCamera->GetCameraComponent()->FieldOfView, 30.0f);
         ControlPendingCapture = TEXT("scope");
         break;
     }
     case 9:
     {
-        const FVector Target = AimWorldTarget;
-        const double Distance = ChaseDistanceCm;
+        const FVector Direction = GetAimCapture()->GetForwardVector().GetSafeNormal();
+        const double Distance = ChaseDistanceCm, ViewYaw = OrbitYaw, ViewPitch = OrbitPitch;
         Input.WheelSteps = 2; Step(Input);
-        Name = TEXT("scope_wheel_zoom"); Detail = TEXT("Wheel reduces scope FOV to 24deg, without changing chase distance or target");
+        Name = TEXT("scope_wheel_zoom"); Detail = TEXT("Wheel reduces scope FOV to 24deg while preserving angular intent, gun direction and chase distance");
         Passed = FMath::IsNearlyEqual(ScopeBaseFov, 24.0) && FMath::IsNearlyEqual(ChaseDistanceCm, Distance) &&
-            Target.Equals(AimWorldTarget, 1.e-6) && FMath::IsNearlyEqual(SightCamera->GetCameraComponent()->FieldOfView, 24.0f);
+            FMath::IsNearlyEqual(OrbitYaw, ViewYaw, 1.e-6) && FMath::IsNearlyEqual(OrbitPitch, ViewPitch, 1.e-6) &&
+            FVector::DotProduct(Direction, GetAimCapture()->GetForwardVector()) > FMath::Cos(FMath::DegreesToRadians(0.1)) &&
+            FMath::IsNearlyEqual(SightCamera->GetCameraComponent()->FieldOfView, 24.0f);
         break;
     }
     case 10:
@@ -181,14 +190,17 @@ void AImportLabGameMode::TickControlProbe()
     }
     case 13:
     {
-        const FVector Target = AimWorldTarget;
+        const FVector Direction = GetAimCapture()->GetForwardVector().GetSafeNormal();
+        const FVector Target = TraceViewPoint(GetAimCapture()->GetComponentLocation(), Direction);
         Input.ToggleSight = true; Step(Input);
         const double Alignment = FVector::DotProduct((Target - ChaseCamera->GetActorLocation()).GetSafeNormal(),
             ChaseCamera->GetActorForwardVector());
         Name = TEXT("return_to_chase");
-        Detail = FString::Printf(TEXT("Shift preserves aim and reprojects it to the chase centre; angular error %.6f deg"),
+        Detail = FString::Printf(TEXT("Shift exits scope, preserves actual angular aim and aligns the chase centre once; angular error %.6f deg"),
             FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(Alignment, -1.0, 1.0))));
-        Passed = !bSightMode && PC->GetViewTarget() == ChaseCamera && Target.Equals(AimWorldTarget, 1.e-6) &&
+        Passed = !bSightMode && bHoldManualAimDirection && PC->GetViewTarget() == ChaseCamera &&
+            HeldManualAimDirection.Equals(Direction, 1.e-6) &&
+            FVector::DotProduct(Direction, GetAimCapture()->GetForwardVector()) > FMath::Cos(FMath::DegreesToRadians(0.1)) &&
             Alignment > FMath::Cos(FMath::DegreesToRadians(0.1));
         break;
     }

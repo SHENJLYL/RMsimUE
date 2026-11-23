@@ -1,0 +1,61 @@
+{
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16",
+  "identity_scope": "historical rmuc-16 package before LF text canonicalization; no current-map release acceptance",
+  "release_candidate": false,
+  "runtime_provenance_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\runtime-provenance.json",
+  "runtime_provenance_sha256": "2d9deaa4f091ec4f030c557838f44c93b95b6717c39fe04d53c5b09262bf8cd6",
+  "recorded_package_manifest_sha256": "6684af7ab92c428ef71d5eea8d31d227453d2c411c3b20af070736265a3327b6",
+  "current_package_manifest_sha256": "f5536d0d2d61d42e8710f8eb0dd30d4601863ee3e781a65e1e590ada7f98e240",
+  "historical_map_evidence_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\historical-map-inputs\\verification.json",
+  "historical_map_evidence_sha256": "55f686e0b4df42c8c3f535457e8e2aa9e4b0f0d4287ff269136159a4fd485cd5",
+  "historical_map_snapshot_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf",
+  "source_control_config_sha256": "c1b905dae4e3cbf03cd0a529631e654891442c1aa9266d41be9a0fc7e01d1a10",
+  "status": "passed",
+  "scope": "startup oracle: first 4096 native rays compared against serial scene queries in the recorded rmuc-16 scene",
+  "created_utc": "2026-11-18T05:12:58.250896+00:00",
+  "checks": [
+    {
+      "name": "completed_owned_session_log_is_final",
+      "passed": true
+    },
+    {
+      "name": "runtime_enabled_native_lidar_query_oracle",
+      "passed": true
+    },
+    {
+      "name": "first_4096_native_rays_pass_serial_reference_comparison",
+      "passed": true
+    },
+    {
+      "name": "no_native_oracle_failure_recorded",
+      "passed": true
+    },
+    {
+      "name": "runtime_module_matches_final_native_module",
+      "passed": true
+    },
+    {
+      "name": "runtime_engine_configuration_matches_current",
+      "passed": true
+    }
+  ],
+  "results": [
+    {
+      "line": 1593,
+      "rays": 4096,
+      "scene_queries": 8010,
+      "max_impact_error_cm": 0.0,
+      "raw_line": "[2026.11.18-04.58.44:609][332]LogRMSim: Display: LIDAR_QUERY_VERIFICATION result=passed rays=4096 scene_queries=8010 max_impact_error_cm=0.000000000"
+    }
+  ],
+  "runtime_log_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-16\\runtime.log",
+  "runtime_log_sha256": "8d5668f65841bc68b77201ba3477b110d4e2c6a7c64f82fb8c07e6e03461ff12",
+  "module_sha256": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+  "engine_config_sha256": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+  "session_identity": [
+    "A842FF3C41C49A107E15208547B37CA8",
+    0
+  ],
+  "evidence_extraction": "Literal finalized native log markers; no new simulation or raycasts",
+  "evidence_wrapper_sha256": "bc978b6ade825e0f67676c806bb536732e047f4a274fdc75d77f03180b607094"
+}

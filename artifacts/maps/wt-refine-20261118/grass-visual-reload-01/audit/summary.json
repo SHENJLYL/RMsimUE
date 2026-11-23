@@ -1,0 +1,33 @@
+{
+  "schema": "wt_grass_native_reload_summary_v1",
+  "status": "passed",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "world_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+  "native_layers": 16,
+  "native_meshes": 10,
+  "field_points": 6,
+  "native_source_normal_textures": 3,
+  "visual_adapter": "wt_grass_visual_adapter_v2",
+  "source_station_nonzero_layers": 0,
+  "positive_grass_field_layers": [
+    4,
+    7,
+    4
+  ],
+  "clear_hard_surface_fields": [
+    "previous_gui_station_grass",
+    "spawn",
+    "hard_road_edge"
+  ],
+  "max_corner_error_byte": 1,
+  "max_interpolation_error_byte": 0.25,
+  "components_with_valid_data": 1089,
+  "components_with_weights": 1015,
+  "check_count": 71,
+  "unchanged_saved_files": 76,
+  "verification_file": "D:\\simulator\\artifacts\\maps\\wt-refine-20261118\\grass-visual-reload-01\\audit\\verification.json",
+  "verification_sha256": "37ceb857003382d2d62f071e121754561e2a499f94488ffb9b28a34e4cd2f15c",
+  "scope": "saved native grass weights/types/geometry/linear colours and source-bound sampled surfaces; runtime population and appearance checked separately"
+}

@@ -11,6 +11,8 @@ param(
     [string]$InputEvidence = '',
     [string]$MapFile = '',
     [string]$SpawnId = 'default',
+    [ValidateSet('Default','D3D11','D3D12')][string]$GraphicsRhi = 'Default',
+    [switch]$SingleShaderWorker,
     [string]$MapReport = '',
     [switch]$MapOverview,
     [switch]$TrainingMode,
@@ -23,11 +25,16 @@ param(
     [string]$ImuProfile='',
     [switch]$RosLidar,
     [string]$LidarProfile='',
+    [ValidateSet('chaos','mujoco')][string]$PhysicsBackend='chaos',
+    [string]$MujocoModel='',
+    [switch]$SimRealTimePace,
+    [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz=0,
     [double]$SimStepSeconds=0,
     [int]$RosPort=9451,
     [int]$TimeoutSeconds = 90
 )
 . (Join-Path $PSScriptRoot 'Common.ps1')
+. (Join-Path $PSScriptRoot 'SceneMap.ps1')
 try {
     $ue = Get-UnrealTools -EngineRoot $EngineRoot
     # Canonical primitive preview has no imported wheel supports yet; retain its flat lab.
@@ -48,16 +55,32 @@ try {
             throw 'Use a fresh evidence directory; an existing probe-result.json must not be overwritten or reused.'
         }
     }
+    if (-not $MapFile) { $MapFile = Join-Path $PSScriptRoot '../../assets/maps/rmuc2027/map.json' }
+    $mapLaunch=Get-RMSimMapLaunch -MapFile $MapFile -Project $ue.Project -SpawnId $SpawnId
+    $MapFile=$mapLaunch.MapFile
+    # Only the manifest beside this resolved map opts its process into the gym profile.
+    $renderProfile = ''
+    $arenaManifestPath = Join-Path (Split-Path -Parent $MapFile) 'arena-shell.json'
+    if (Test-Path -LiteralPath $arenaManifestPath -PathType Leaf) {
+        $arenaManifest = Get-Content -LiteralPath $arenaManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -ErrorAction Stop
+        $profileProperty = $arenaManifest.PSObject.Properties['render_profile']
+        if ($profileProperty -and ($profileProperty.Value -is [string]) -and ($profileProperty.Value -ceq 'RMSimGymLumen')) {
+            $renderProfile = 'RMSimGymLumen'
+            $profileConfig = Join-Path (Split-Path -Parent $ue.Project) 'Config/Custom/RMSimGymLumen/DefaultEngine.ini'
+            if (-not (Test-Path -LiteralPath $profileConfig -PathType Leaf)) { throw 'RMSimGymLumen profile config is missing.' }
+        }
+    }
     $flag = if ($InputType -eq 'MeshRig') { '-MeshRigFile=' } else { '-VehicleFile=' }
     $culture = [Globalization.CultureInfo]::InvariantCulture
     $arguments = @(
         (Quote-UnrealArgument $ue.Project),
-        '/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode',
+        $mapLaunch.WorldUrl,
         '-game', '-ResX=1600', '-ResY=1000', '-NoSplash',
         ($flag + (Quote-UnrealArgument $inputPath)),
         ('-GimbalYaw=' + $GimbalYaw.ToString($culture)),
         ('-GimbalPitch=' + $GimbalPitch.ToString($culture))
     )
+    $arguments += @($mapLaunch.RuntimeArguments)
     if ($ManualProbe) {
         $arguments += @('-RenderOffScreen', '-unattended', '-ManualProbe=basic',
             ('-EvidenceDir=' + (Quote-UnrealArgument $probeDirectory)))
@@ -74,6 +97,17 @@ try {
     $arguments += '-SpawnId=' + (Quote-UnrealArgument $SpawnId)
     if ($MapReport) { $arguments += '-MapReport=' + (Quote-UnrealArgument ([IO.Path]::GetFullPath($MapReport))) }
     if ($MapOverview) { $arguments += '-MapOverview' }
+    if ($renderProfile -eq 'RMSimGymLumen') {
+        $arguments = @($arguments | Where-Object {
+            ($_ -notin @('-d3d11','-dx11','-d3d12','-dx12','-sm5','-sm6')) -and ($_ -notlike '-CustomConfig=*')
+        })
+        $arguments += @('-CustomConfig=RMSimGymLumen','-d3d12','-sm6')
+        Write-Output 'Selected RMSimGymLumen for this map: D3D12 / SM6; renderer acceptance is checked separately.'
+    } else {
+        if ($GraphicsRhi -eq 'D3D11') { $arguments += '-d3d11' }
+        elseif ($GraphicsRhi -eq 'D3D12') { $arguments += '-d3d12' }
+    }
+    if ($SingleShaderWorker) { $arguments += '-NoShaderWorker' }
     if ($TrainingMode) { $arguments += '-TrainingMode' }
     if ($RosBridge -or $RosControl -or $RosMotorControl -or $RosAimControl -or $RosImu -or $ImuProfile -or $RosLidar -or $LidarProfile) { $arguments += @('-RosBridge',('-RosPort='+$RosPort)) }
     if ($RosControl) { $arguments += '-RosControl' }
@@ -84,7 +118,15 @@ try {
     if ($RosLidar -or $LidarProfile) { $arguments += '-RosLidar' }
     if ($LidarProfile) { $arguments += '-LidarProfile='+(Quote-UnrealArgument (Resolve-Path -LiteralPath $LidarProfile).Path) }
     if ($SimStepSeconds -ne 0) { $arguments += '-SimStepSeconds='+$SimStepSeconds.ToString($culture) }
-    if ($ContactPhysics) { $arguments += '-ContactPhysics' }
+    if ($PhysicsBackend -eq 'mujoco') {
+        if (-not $MujocoModel) { throw 'MuJoCo requires a prepared model manifest.' }
+        $arguments += @('-PhysicsBackend=mujoco',('-MujocoModel='+(Quote-UnrealArgument (Resolve-Path -LiteralPath $MujocoModel).Path)))
+        if ($SimStepSeconds -eq 0) { $arguments += $(if($RosMotorControl){'-SimStepSeconds=0.001'}else{'-SimStepSeconds=0.005'}) }
+    }
+    if ($SimRealTimePace) { $arguments += '-SimRealTimePace' }
+    if ($PhysicsBackend -eq 'mujoco' -and $ViewportHz -eq 0) { $ViewportHz=60 }
+    if ($ViewportHz -gt 0) { $arguments += '-RMSimViewportHz='+$ViewportHz.ToString($culture) }
+    if ($ContactPhysics -or $PhysicsBackend -eq 'mujoco') { $arguments += '-ContactPhysics' }
     $runStartedUtc = [DateTime]::UtcNow
     if ($ManualProbe) {
         $process = Start-Process -FilePath $ue.Editor -ArgumentList $arguments -WindowStyle Hidden -PassThru

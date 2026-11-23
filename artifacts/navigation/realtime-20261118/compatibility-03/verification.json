@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "frozen_inputs": {
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+    "unreal/RMSim/Config/DefaultEngine.ini": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+    "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+    "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+    "ros2_ws/install_lio/point_lio/lib/point_lio/pointlio_mapping.exe": "35ac93059f6efc96b3392d71eb8de0bfbc94a068780542ff7b0a2ababe44ce40"
+  },
+  "cases": [
+    {
+      "name": "sentry",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\unreal\\Test-SentryConsoleRegression.ps1",
+        "-EngineRoot",
+        "E:/simulator-tools/UE_5.8",
+        "-EvidenceDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\sentry"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_s": 184.39610270000412,
+      "inputs_unchanged": true
+    },
+    {
+      "name": "manual-waves",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\unreal\\Test-GyroControls.ps1",
+        "-EngineRoot",
+        "E:/simulator-tools/UE_5.8",
+        "-EvidenceDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\manual-waves",
+        "-WaveRoutes",
+        "-PrecisionKeys",
+        "-SpinRadS",
+        "4",
+        "-TimeoutSeconds",
+        "240"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_s": 94.27200000000448,
+      "inputs_unchanged": true
+    },
+    {
+      "name": "suspension",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\unreal\\Test-Suspension.ps1",
+        "-EngineRoot",
+        "E:/simulator-tools/UE_5.8",
+        "-EvidenceDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\compatibility-03\\suspension",
+        "-StepSeconds",
+        ".005",
+        "-TimeoutSeconds",
+        "180"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_s": 29.725143900002877,
+      "inputs_unchanged": true
+    }
+  ],
+  "scope": "native existing manual, ROS, aim, dynamic Mid360, LK/LIO, manual wave and suspension compatibility on the navigation candidate",
+  "final_inputs": {
+    "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "31a5e8deef6f902de71ac566271d5ab945cfb54cda43c0c4a49aa26553ced07c",
+    "unreal/RMSim/Config/DefaultEngine.ini": "2a7dbd97bc45d7c193b410c4f31aba68748e9ebe863bd82baf3bb220912525d9",
+    "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+    "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+    "ros2_ws/install_lio/point_lio/lib/point_lio/pointlio_mapping.exe": "35ac93059f6efc96b3392d71eb8de0bfbc94a068780542ff7b0a2ababe44ce40"
+  }
+}

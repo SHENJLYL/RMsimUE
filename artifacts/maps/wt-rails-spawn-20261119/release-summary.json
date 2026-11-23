@@ -1,0 +1,224 @@
+{
+  "schema": "rmsim_flanders_steel_rails_and_mission_spawn_release_v1",
+  "status": "passed",
+  "completed_utc": "2026-11-19T03:31:43.460678+00:00",
+  "platform": "Windows UE 5.8.4 / D3D11 native",
+  "repository": "D:/simulator",
+  "module_sha256": "d19c15bcf6a4eddfe77af506dfb15bc8eed72b4bb8fdea6199fc5a2750d70e52",
+  "world_sha256": "3311399568469e48d8580f1b41897ad5899321b51617638dd2c541e875ef1066",
+  "map_sha256": "1d702ef98ac60e764e32a809d4e594a04b320fdcf3419689a38c558a55ccc3c4",
+  "drive_profile_sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+  "source_geometry": {
+    "objects": 34,
+    "triangles": 160336,
+    "material": "railroad_rails_tile_a",
+    "original_source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+    "source_instances": 18488,
+    "mesh_assets": 237,
+    "spatial_cells": 951,
+    "manifest_sha256": "00a017c8f7847eb568a11c7ef8963e34f3add23da6b498003fcef97e1b03c0f4",
+    "recipe_sha256": "46ef01f433e22f1b33631606019620f1b6df7c72ca77996d5649f24c241dec03",
+    "original_203_mesh_geometry_preserved": true,
+    "static_rail_axis_policy": "exact cardinal FBX node rotation; all other FBX elements and original visual preserved"
+  },
+  "native_queries": {
+    "ray_checks": 280,
+    "source_gap_queries": 12,
+    "max_source_ray_error_cm": 0.001987410103339471,
+    "streaming_stage_checks": 5,
+    "profile_range_checks": 2,
+    "protected_files_unchanged": true
+  },
+  "max_native_bounds_error_cm": 0.00390625,
+  "rail_contact": {
+    "checks": [
+      {
+        "name": "physical_settle",
+        "passed": true,
+        "detail": "Actual settled body speed 0.0000cm/s, upZ 0.99920"
+      },
+      {
+        "name": "source_rail_surface_alignment",
+        "passed": true,
+        "detail": "Exact source rail top error 0.00000cm, instance 0, blocking 1, normalZ 0.99984"
+      },
+      {
+        "name": "actual_rail_contact",
+        "passed": true,
+        "detail": "Native solver reports 2 positive contacts on gc_static_rail_0029/0 after 263.024cm travel; peak 6.462913Ns"
+      },
+      {
+        "name": "rail_blocks_low_speed_drive",
+        "passed": true,
+        "detail": "Continued 0.350m/s wheel command: -0.001cm advance, 0.032cm/s speed, 609 positive / 609 forward-blocking contacts over 2.268s"
+      },
+      {
+        "name": "physical_brake_after_rail",
+        "passed": true,
+        "detail": "Physical wheel brake settles body to 0.0000cm/s"
+      },
+      {
+        "name": "physical_reverse_from_rail",
+        "passed": true,
+        "detail": "Motor/contact-driven backoff 70.481cm with route drift -2.884cm"
+      },
+      {
+        "name": "physical_stop_after_reverse",
+        "passed": true,
+        "detail": "Final physical body speed 0.0000cm/s"
+      },
+      {
+        "name": "source_rail_survives_drive",
+        "passed": true,
+        "detail": "The same source rail instance, transform and blocking top remain after contact and reverse"
+      }
+    ],
+    "positive_contacts": 908,
+    "blocking_contacts": 908,
+    "peak_impulse_ns": 6.462913194080218,
+    "contacting_bodies": [
+      "Contact_body"
+    ],
+    "held_drive_advance_cm": -0.0008232984313722826,
+    "reverse_clearance_cm": 70.48140291694403,
+    "pose_overrides_used": false,
+    "captures": 8
+  },
+  "spawn": {
+    "source_area": "t1_tankSpawn02_zone01",
+    "mission": "vlaanderen_dom",
+    "source_team": "A",
+    "runtime_spawn": {
+      "id": "default",
+      "team": "blue",
+      "position_m": [
+        439.0,
+        -148.3000030517578,
+        -3.467716648308154
+      ],
+      "yaw_rad": -2.0472659359862844
+    },
+    "raw_dagor_center_m": [
+      439.0,
+      1.0499999523162842,
+      148.3000030517578
+    ],
+    "horizontal_source_shift_m": [
+      0,
+      0
+    ],
+    "ground_height_source": "original HM2 heightfield",
+    "heading": "derived from original area first basis vector",
+    "checks": [
+      {
+        "name": "physical_settle",
+        "passed": true,
+        "detail": "Native bodies settle under gravity: speed 0.000cm/s upZ 0.99087"
+      },
+      {
+        "name": "physical_forward_route",
+        "passed": true,
+        "detail": "Motor/contact driven route progress 340.792/340.000cm, drift -0.397cm, time 4.067s"
+      },
+      {
+        "name": "physical_brake",
+        "passed": true,
+        "detail": "Brake acts on physical wheels, measured speed 0.0000cm/s"
+      },
+      {
+        "name": "physical_reverse_route",
+        "passed": true,
+        "detail": "Reverse crosses same source route: remaining 9.798cm, drift -0.143cm"
+      },
+      {
+        "name": "physical_shared_reset_without_training",
+        "passed": true,
+        "detail": "Shared R restores source-map spawn: resets=1 distance=0.1214cm speed=0.0000cm/s"
+      }
+    ],
+    "captures": 8
+  },
+  "source_provenance": {
+    "file": "assets/maps/wt_vlaanderen/spawn-source.json",
+    "native_test_snapshot_sha256": "7076b187e653efe9a71bfc7f49dc2d41ecaa4002e7a88776702ac3b81901ab89",
+    "annotated_release_sha256": "c765cf3a15db23877ead4e1a46308d36d6f1fb8145f624a91fae9b2fcded6527",
+    "annotation_only": "support.native_validation; all source coordinates, source identities and runtime map bytes preserved"
+  },
+  "final_identity_checks": 6842,
+  "native_windows": true,
+  "native_ubuntu": false,
+  "os_keyboard_test_performed_by_agent": false,
+  "formal_entry": {
+    "status": "passed",
+    "pid": 8180,
+    "process_left_running": false,
+    "ready_markers": [
+      "WT_GENERATED_COLLISION_READY",
+      "CONTACT_PHYSICS_READY",
+      "MAP_STAGE_READY wt_vlaanderen spawn=default"
+    ],
+    "visual_scope": "native rail-blocked, rail-reverse and contact-reset captures reviewed; foreground application preserved",
+    "process_left_running_at_review": true,
+    "final_process_state": {
+      "status": "normal_viewport_close",
+      "requested_exit_code": 0,
+      "exit_log_lines": [
+        "[2026.11.19-03.32.46:935][484]LogEngine: All Windows Closed",
+        "[2026.11.19-03.32.46:935][484]LogWindows: FPlatformMisc::RequestExitWithStatus(0, 0, UGameEngine::Tick.ViewportClosed)"
+      ],
+      "log_sha256": "5beb77b5a1cfe335f94b103e8295b3e2ddf864af81dd7c70ef33c383fb0c323c",
+      "checked_utc": "2026-11-19T03:38:56.365936+00:00"
+    }
+  },
+  "reports": {
+    "build": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/build-02/verification.json",
+      "sha256": "a12fcda3f7ef77e657d8a1902182ef35e7ba85914d945c5ae488692affb5e0ac"
+    },
+    "author": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/rail-author-02/execution.json",
+      "sha256": "2fc145d20c511fef884ba35f1cb49ae26945bcd8ea647e66927c562e9f8d34b7"
+    },
+    "native": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/rail-native-audit-03-final/execution.json",
+      "sha256": "72d02f798022c41eb84ec57e23f64ab130d91418072d959c604cbed6319315bb"
+    },
+    "rail": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/native-rail-contact-02/verification.json",
+      "sha256": "8325f764fa9f5c02fd29634144756b4d0884a02920d544be26433a3a0c8c83f1"
+    },
+    "spawn": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/native-spawn-01/verification.json",
+      "sha256": "038d064c2a1dd9e6588aee0d4723a36a51dba157f094d0f18487739e9ace4179"
+    },
+    "spawn_execution": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/native-spawn-01-execution.json",
+      "sha256": "b47b578b423d8f6aca3e8790f67d45ea69e3382e447ee084de7147c6caf775f7"
+    },
+    "formal": {
+      "file": "artifacts/maps/wt-rails-spawn-20261119/formal-entry/verification.json",
+      "sha256": "862b1b3be64a3af3f95d865bf862541496408651670284fb7ba01f477b80e7f6"
+    }
+  },
+  "failed_evidence_retained": [
+    {
+      "path": "rail-preparation.log",
+      "reason": "original visual duplicate draw faces require original vertex splitting proof"
+    },
+    {
+      "path": "rail-author-01",
+      "exit_code": -1,
+      "reason": "long rail FBX cardinal-angle residue exceeded unchanged 0.01 cm bound gate; corrected exact axis export"
+    },
+    {
+      "path": "rail-native-audit-01",
+      "exit_code": -1,
+      "reason": "first batch proceeded after incomplete author; final resumed batch checks each child execution record"
+    },
+    {
+      "path": "native-rail-contact-01",
+      "exit_code": 2,
+      "reason": "component-only trace uses overlap-all filter; validation changed to exact-instance world blocking trace"
+    }
+  ]
+}

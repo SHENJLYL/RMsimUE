@@ -20,6 +20,59 @@
 *.umap binary
 *.fbx binary
 *.png binary
+
+# These source contracts bind one another by SHA256; preserve exact prepared bytes.
+assets/maps/wt_vlaanderen/map.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/overview/calibration.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/landclass/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the original bytes of this map integration's hash-bound evidence.
+artifacts/maps/wt-scene-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261117-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt_existing/*-20261118-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the exact prepared bytes of the unified Flanders source contracts and evidence.
+assets/maps/wt_vlaanderen/foliage-enhanced/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/generated-collision/recipe.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-reflectance/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-reflectance/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/maps/wt-refine-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve raw bytes of every mutually hash-bound compact evidence record.
+artifacts/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Unified diff empty-context markers are a required single space; preserve the original patch.
+third_party/patches/point-lio-native.patch whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/enhancement-proof.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/native-sample-fixture.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/source/foliage-source.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/foliage-enhanced/source/small-grass-source.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/definition.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/proof.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/source/level.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/ground-microdetails/source/provenance.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/definition.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/source-landclass.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/maps/wt_vlaanderen/terrain-details/verification.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+assets/vehicles/aim_sentry/drive-profile.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve exact prepared scene bytes bound by the platform navigation recipe.
+assets/maps/rmuc2027/navigation-console/scene.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/navigation-console-platform/scene.json -text whitespace=cr-at-eol
+
+assets/maps/rmuc2027/arena/school-entry-brickwall/SOURCE.json -text whitespace=cr-at-eol
+assets/maps/rmuc2027/arena/school-entry-brickwall/NOTICE.txt -text whitespace=cr-at-eol
+assets/maps/rmuc2027/arena/school-entry-brickwall/source/LICENSE.txt -text whitespace=cr-at-eol
+assets/maps/rmuc2027/arena/school-entry-brickwall/source/manifest.json -text whitespace=cr-at-eol
+
 assets/maps/rmuc2027/arena/kenney-mini-arena/LICENSE.txt -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab,cr-at-eol
 
 # Preserve exact bytes of checksum-pinned CC0 sources.
@@ -43,3 +96,13 @@ assets/maps/rmuc2027/arena/campus-gym/textures/Wood049_1K-JPG_Roughness.jpg -tex
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Color.jpg -text
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_NormalDX.jpg -text
 assets/maps/rmuc2027/arena/campus-gym/textures/WoodFloor051_1K-JPG_Roughness.jpg -text
+
+assets/maps/rmuc2027/navigation-console-platform-support-v2/scene.json -text whitespace=cr-at-eol
+
+assets/maps/rmuc2027/navigation-console-support-v2/scene.json -text whitespace=cr-at-eol
+
+# Canonical prepared backend bytes are a native launch checksum input.
+assets/vehicles/aim_sentry/mujoco/backend.json -text whitespace=cr-at-eol
+# Unified diff context retains its mandatory single-space prefix on blank lines.
+third_party/patches/mujoco/mujoco_viewer_static_flex_vbo_4.0.1-rmsim1.patch whitespace=-blank-at-eol
+third_party/patches/rmuc-navigation-default.patch whitespace=-blank-at-eol

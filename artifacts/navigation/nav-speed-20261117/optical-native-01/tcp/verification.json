@@ -1,0 +1,93 @@
+{
+  "status": "passed",
+  "scope": "real UE articulated geometry, raycasts, encoder TF and sampled IMU; TCP observer only",
+  "checks": [
+    {
+      "name": "measured_yaw_parent_mount",
+      "passed": true,
+      "pose_in_parent": {
+        "position_m": [
+          0.19812227804774685,
+          0.07375968980603695,
+          0.17056386526967365
+        ],
+        "rotation_xyzw": [
+          -1.9330379232482337e-05,
+          0.3826837731868331,
+          -8.006913533426475e-06,
+          0.923879391101303
+        ]
+      },
+      "position_in_base_m": [
+        0.19812227804774685,
+        0.07375968980603695,
+        0.3611938243761189
+      ]
+    },
+    {
+      "name": "real_scene_returns_through_optical_window",
+      "passed": true,
+      "maximum_points_per_scan": 8919,
+      "optical_window_passes": 381884,
+      "self_occluded_rays": 28796
+    },
+    {
+      "name": "rigidly_comounted_lidar_imu",
+      "passed": true,
+      "imu_mount": {
+        "position_m": [
+          0.17470287269127363,
+          0.09704805880386702,
+          0.13158718221210575
+        ],
+        "rotation_xyzw": [
+          -1.9330379232482337e-05,
+          0.3826837731868331,
+          -8.006913533426475e-06,
+          0.923879391101303
+        ]
+      }
+    },
+    {
+      "name": "actual_gimbal_rotated",
+      "passed": true,
+      "actual_yaw_rad": 1
+    },
+    {
+      "name": "optical_origin_follows_real_joint",
+      "passed": true,
+      "before_m": [
+        0.19812227804774685,
+        0.07375968980603695,
+        0.3611938243761189
+      ],
+      "after_m": [
+        0.044979284852835366,
+        0.20656667890354202,
+        0.3611938243761189
+      ]
+    },
+    {
+      "name": "mounted_imu_measures_joint_rotation",
+      "passed": true,
+      "samples": 291,
+      "median_yaw_rate_rad_s": 0.500000000000931
+    },
+    {
+      "name": "mounted_specific_force_has_physical_gravity",
+      "passed": true,
+      "median_specific_force_m_s2": 9.802039413265454
+    },
+    {
+      "name": "opaque_self_geometry_retained",
+      "passed": true,
+      "self_occluded_rays": 63400
+    },
+    {
+      "name": "navigation_test_never_fires",
+      "passed": true
+    }
+  ],
+  "maximum_points_per_scan": 9085,
+  "source_profile_md5": "ca2e428f7aed61cfe490f59884d72819"
+}

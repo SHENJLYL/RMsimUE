@@ -1,0 +1,85 @@
+{
+  "schema": "wt_native_material_summary_v2",
+  "status": "passed",
+  "complete": true,
+  "scope": "saved_parent_graphs_leaf_tree_ground_water_and_grass_native_shader_compilation",
+  "pid": 27520,
+  "exit_code": 0,
+  "duration_seconds": 54.526664999999994,
+  "started_utc": "2026-11-18T05:53:48.0316327Z",
+  "finished_utc": "2026-11-18T05:54:42.5557767Z",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "module_sha256": "d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "world_sha256": "20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25",
+  "world_unchanged": true,
+  "source_manifest_unchanged": true,
+  "actual_asset_counts": {
+    "parents": 8,
+    "leaf_instances": 2,
+    "height_decal_instances": 34,
+    "land_instances": 1,
+    "ground_other_instances": 1,
+    "tree_instances": 43,
+    "water_instances": 1,
+    "grass_parents": 1,
+    "grass_instances": 13,
+    "total": 104
+  },
+  "all_104_unique_target_shader_statistics_completed": true,
+  "recompile_error_count": 0,
+  "shader_statistics_ranges": {
+    "num_vertex_shader_instructions": {
+      "minimum": 136,
+      "maximum": 355
+    },
+    "num_pixel_shader_instructions": {
+      "minimum": 260,
+      "maximum": 559
+    },
+    "num_samplers": {
+      "minimum": 2,
+      "maximum": 14
+    }
+  },
+  "saved_material_assets_unchanged": true,
+  "landclass_texture_count": 8,
+  "landclass_source_size_comparisons_completed": true,
+  "texture_completion_api": "UE 5.8 Texture2D.cpp:349-377 returns placeholders while compiling; Editor.AsyncTextureCompilationFinishAll invokes native FinishAllCompilation before size readback",
+  "grass_materials": {
+    "status": "passed",
+    "parent_count": 1,
+    "instance_count": 13,
+    "native_compilation_verified": true,
+    "definition_sha256": "8fa36662c1ecf48028284b735ad86336fd0e235c22e7ddeb3ccf16872a8f733e",
+    "unique_source_texture_bindings": 15,
+    "source_texture_saved_files_unchanged": true,
+    "scope": "Masks/Alpha/Land source hashes, native dimensions, two-sided masked foliage, source colors and shader statistics"
+  },
+  "water_source_rgb": [
+    0.20000000298023224,
+    0.20000000298023224,
+    0.0
+  ],
+  "audit_script_sha256": "ef30ca07eff1f92c40e1ebb154d52eed9d40cb373d0c2f213b67cd28972c6d9b",
+  "supporting_scripts_sha256": {
+    "wt_materials.py": "6118aa0b5de326818f4a106445d28beff21bd46f20efadf89e0a786f03eab9fd",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6",
+    "wt_landclass.py": "43414c4b78acef5e8f41ebc9baa33521640463befcc8a8717e11f2b6ffae7a7b",
+    "wt_water.py": "a0f9d7d3001062f1e7f495f792114a8dbbbe55843c5f9c87ddd08107f5e8f952",
+    "wt_grass.py": "2130570a098c3fe804e1b13697465083185d72dd443f57792db01375a354c82a"
+  },
+  "execution_file": "execution.json",
+  "execution_sha256": "b0b0a309561b3c3f4f82c512f72386e02b06276b81cc59504a95386732b9beeb",
+  "verification_file": "audit/verification.json",
+  "verification_sha256": "d81f63dce0f79da1a7580442cb083ddba6aeb4391e7a6e1bf97123bee0c759e3",
+  "previous_failed_attempt": "../native-materials-07-final/summary.json",
+  "previous_failed_summary_sha256": "ea872757e83895302f7e8109671f68f4db1178b792998bac20da572be9876589",
+  "rendering_visual_quality_verified": false,
+  "limitations": [
+    "Compilation target is the active RHI shader platform; platform coverage is recorded in the accompanying Unreal log.",
+    "This gate does not assess rendered appearance or wind animation."
+  ]
+}

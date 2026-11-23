@@ -1,6 +1,43 @@
 # Attention
 
+默认 RMUC 模式对应从 RViz 就绪起的 37.82 秒实测。保留 0.84 米期望净空和 0.45 米膨胀半径，按当前地图包恢复支持数据。
+
 本文件是 CodeStable 技能启动必读的项目注意事项入口。
+
+
+## 2026-11-20：MuJoCo 后端约定
+
+- 最新驾驶数值口径：手动与导航以同一 drive-profile.json 为准，前进/倒车/横移 5/2.5/4 m/s，加速/减速/制动 2/4/7 m/s²，jerk 6/20 m/s³，普通 yaw 上限 π/2 rad/s，角加减速 3/5 rad/s²。导航使用生成的同源限值和共同车辆整形器，连续消息保留整形状态。原 fake_vel_transform 先将 navigation_frame 目标转为 base_link，再通过原 Nav2 velocity_smoother；上游 sentry YAML 保存来源，标准仿真显式传入车辆 drive_profile。实际节点参数、源 SHA 与车辆端控制值需在运行验收中一致。
+- 标准 Play-ManualVehicle.cmd / Play-Navigation.cmd 已按用户最新要求直接采用 MuJoCo，Play-Training.cmd 复用标准手动入口；独立的 Play-MuJoCo.cmd / Play-MuJoCo-Navigation.cmd 已移除。正式模型为当前 RMUC2027 全场，启动执行严格源文件、模型和地图身份检查。弗兰德斯专用场景的动态实体尚需单独迁移。
+- 完整场地需要 4.0.1+rmsim.static-world-flex.3；仅官方 4.0.1 DLL 无法替代该已验证运行库。检查 staged DLL 与 SDK build manifest 的 SHA256，头文件使用 c-api/include 防止 Filament 与 UE Math 路径重名。
+- 模型保持 249 个源车辆凸壳、14 组原三角面，禁止用整场凸包、包围盒、平面或轮胎简化来替代正式接触。2000 N/m、140 N·s/m 悬挂及真实尺度保持；惯量/摩擦仍以 calibrated=false 标识。
+- 运行时由 mj_step 单独驱动；UE 车辆代理只提供查询。普通运动只能经执行器。初始化和 R 明确复位允许设定位姿，并清理传感器历史与 ROS epoch。
+- 云台初始角必须同时设置初始关节状态和伺服目标。接触 normal 从 MuJoCo geom0→geom1 的 frame 按车辆 Side 取向；禁止用整个 body 质心猜测组合凸壳的接触方向。
+- 主交互保持 1 ms MuJoCo / 5 ms UE 世界 / 60 Hz 视口。Mid-360 v3 每 5 μs 发射一个槽，基于真实 1 ms native 位姿节点做平移线性插值与四元数 slerp；环境和自体遮挡网格使用当前 UE 世界快照。200 Hz IMU 使用实际测点速度的 t±1 ms 中心差分，integration_dt_s=0.002，采样时间戳仍为 t；需要后支撑可用后才交付。扫描光机轨迹、NIR 材料响应与噪声模型保留未标定声明。
+- 正式启动对模型和实际 MapFile 做预检；导航运行场景旁须放置同身份 arena-shell.json。模型的源码/配置绑定发生变化时通过 Prepare-MujocoModel.ps1 重建，旧包归档。静态缓存的直接几何修改须显式失效。
+- Windows 原生证据、原版/缓存等价证据与 Ubuntu 验收分别记录。弗兰德斯动态破坏和碎屑尚需建立对应原生实体映射。精简证据为 artifacts/integration/mujoco-ue-20261120/release-summary.json。
+
+## 2026-11-20：入口外景边界
+
+活动入口采用 `school-entry-brickwall` 的 Grab3D CC0 完整源模块，24 个装饰实例形成四段 15.3 m 砖墙，保留 19.2713 m 开口和约 4.2632 m 台阶净距。原馆及外景 23 mesh / 57 实例保持。`outdoor_background` 以半径 8 km 天空和四块无碰撞、无导航、无阴影/DF影响的地面环带围住原 160×140 m 地块；草地真实顶面 Z=-0.48440000057220454 m。新远地面材质在源边缘保留原相位，外侧最大 16 m 半宽混合四象限采样；原地块与源贴图保持，原近景纹理及局部接线按源保留。
+
+活动 sky_intensity=512，比赛场地/玻璃/车辆与 `navigation-console-platform` 的 f416f652…126e 物理身份保持。最终五视图每幅 96/96 扫掠和背景/玻璃合同、92/92 源布置检查、60.03 s 可见窗口观察通过；最终运行 DLL 27a87dda…8ec2b，六类 GPU/资源警告 0。具体身份及前次证据在 `artifacts/fixes/school-entry-masonry-20261120/release-summary.json`。共享工程的其他任务进程和 WIP 分别保留。
+
+## 2026-11-20 最新：波浪平台长玻璃墙
+
+- 用户指定长墙紧挨波浪通道所在高平台。活动 `outside_platform_bounds_v1` 以实际 native `visual/collision_blue_road` 的 Y=-7.522840576171875 m、`visual/collision_red_road` 的 Y=7.522841186523437 m 为边线；原 CAD `bounds_m` 保持，独立 `target_bounds_m` 供围墙和导航共用。
+- 两侧各内移约 47.87 cm，短墙长度和角部同步，玻璃与碰撞体内面均对齐。原底板低边带保留在墙外；勿再次用整体 floor Y=±8.001565933 m 覆盖平台定位。源外侧面外倾 1.5°，竖墙贴高端头外轮廓，低顶边约 23.56 mm 间隔。
+- 源到 UE 导入有 1.70/1.83 μm 坐标差；应读取实际 native 资产位置。原 1 μm 核验门限保持，首次失败已存。运行时同时校验源身份、目标边界和实际平台 visual/collision bounds；source/target 的 outside 报告保持各自意义。
+- 玻璃底端及馆地板接触 Z=-0.3009999990463257 m 保持；原材质、场馆、外景、23 mesh / 57 实例 / 26 树和额外 0 座位保持。新导航包 `navigation-console-platform` 已同步栅格及生产预检，两种 outside 合同都须有 runtime_boundary 声明。
+- 当前证据：三视角各 96/96 扫掠、314 构件；真实车辆接触六项；离线14项；可见窗口60.02 s，六类GPU警告0。物理底盘/车轮对target平面最小AABB余量 -0.962728 cm，使用既有 -1 cm 数值门限；原CAD边界严格非负检查为46.9098 cm，二者分别报告。
+- 记录见 `docs/changes/2026-11-20-wave-platform-glass.md` 和 `artifacts/fixes/school-wave-platform-walls-20261120/release-summary.json`；后文旧 source-envelope 合同为前一版历史身份。完整 Nav2 路线、Ubuntu 与实车标定保留各自验收。
+
+## 2026-11-19 弗兰德斯地表材质验收
+
+- Ground40、Grass82、全量307材质和Scene22已完成保存资产的原生重载；草的完整author更新World为`ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0`。Object193独立重载记录单列。原地图、几何与碰撞清单保持；Scene检查按已绑定的55可视/53碰撞任务分组核对飞艇，未知附加组件仍失败。
+- `terrain-reflectance`与`source-alpha-mips`来源合同按原字节SHA关联，勿自动转换JSON换行。地表_r通道为R smoothness/G reflectance/B AO/A microdetail ID；18项height polarity适配有source ID与PNG哈希白名单。GrassV4保留100个原BC4 mip的解码像素和16层分布；完整Terrain更新后必须重新author/bake草，再独立verify。
+- 默认渲染使用有效的`r.AntiAliasingMethod=2`、`r.ScreenPercentage=100`、`r.ScreenPercentage.Default.Desktop.Mode=0`。最终7269/ba531静态同身份测试的草坡为TAA100 125.626FPS、原TSR83.4 129.936FPS，GPU差0.26277ms；旧4e模块的+5.95%只属历史比较。性能采样使用单主视口，ContactProbe移动截图单独验收。
+- 本轮固定画面已人工观察，完整来源、失败历史、实际身份与后续局部草叶照明/源LOD事项见`docs/changes/2026-11-19-flanders-visual.md`及`artifacts/maps/wt-visual-review-20261119/`。共享工程有并行更新时，以每份execution实际DLL/World身份为准，禁止跨模块计算材质总提速。
 
 ## 项目碎片知识
 
@@ -152,6 +189,55 @@
 - Qt的TogglePattern曾只改勾选而未激活Nav2 Goal；测试采用QAction InvokePattern和实际OS地图鼠标，保持前台/PID/像素归属校验。读取实时相机投影，默认65px/m近车视图；GUI短路线与完整波浪action分别记录，不放宽25cm门限。
 - 导航偏航整形参考原95c66c2，最大目标转速1rad/s、加速度2rad/s²、输入200ms过期。扫描/获准自瞄优先，导航不开火。完整硬件云台电流环/Hub/视觉继续独立跟踪。
 - 新Mid360组合的实际R/断线恢复、Nav Through Poses按钮专项、更多出生点/全场、多车和原生Ubuntu保持后续验收。关闭RViz停止该会话；不得并行多个同项目UE做性能结论。大资源/截图/稠密轨迹保留本地。
+
+
+## 2026-11-18 弗兰德斯地图当前检查点
+
+- 用户明确要求继续 RMsimUE5 战雷原图接入；使用独立工作树 `D:/simulator-wt-vlaanderen` 与 `feat/wt-vlaanderen-20261117`，原 `D:/simulator` 导航工作树及其进程独立保留。feature 发布后，完整导航路线和稳定 1× 门槛仍决定 main 合并。
+- 原图 source SHA `427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f`；历史 import-06 World SHA `720931dad262197929863d553c2388c3de18131277498749ef31faa201f12253`，manifest SHA `ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9`。完整 import-06 原生 exit 0；独立 native-scene-03 21 项、native-materials-06 88 个真实资产通过，日志 Error 0。
+- 原生 1,365 网格/13,478,779 三角的差值由源 world_decal 34 个共点面逐材质证明；不能按宽泛容差接受未知丢面。保留 35,922 视觉 placements、20,033 碰撞 placements 和 1,089 Landscape 碰撞分量。完整坐标报告只留本地，以 summary SHA 绑定。
+- 地表贴花恢复源 short4n.position.w 到 UV1.x，全精度 2UV；world_decal 保留几何，仅绘入 RVT，由 Landscape/背景 landmesh 合成。源 height 公式和原生保存图连接均严格检查。RVT 物理池专配 DXT5/BC5/DXT5、264px物理页、256 MiB；与普通纹理 streaming pool 分开。
+- 普通树的 25 个 T1.r 分离遮罩实例按 7 对原 PNG 哈希限定；43 个实例包括 18 个保持原绑定的负例已真实核对。旧 facing-leaves 保留 5UV/half4、91 cards/182叶三角/2,369实例；源坐标与摄像机空间变换已独立证明。
+- 历史基础模块 `eceebaa1634a2df9c6314556efcc0190f5c5b4b926ef13299669ca461d68de76` 下，flanders-contact-03-rvt 与 rmuc-regression-02-final 各 5 项、8 PNG、exit 0。弗兰德斯前进 340.284 cm/横漂 0.070 cm，共用复位距离 0.0133 cm；复位调用共享路径，OS键盘观察独立记录。该历史检查点使用当时的 AIM 2000/140 悬挂与车辆包参数；后续组合模块的车辆与碰撞行为按各次实际报告绑定。
+- SceneRenderReadiness 以实际 asset/shader/streaming 计数等待；UE5.8 wanting-resource ID 真实可保持 0，freshness 来自 StreamAllResources 强制更新。RVT 88 为原生 allocation 请求矩形覆盖数量；同步调用完成后又等 2 个完成渲染帧。不得写成读到了 GPU 生产页计数。
+- 原始浮地块/黑树卡和首帧未完成材质的截图均保留。最新静止、行驶后、复位图已看见完整车体和树冠透明间隙。原 Land 五类颜色/权重、水色和七网格/13 层草已接入并完成实测；microdetail、grass-decal、small_grass billboard、风动与原随机位置继续按 SOURCE 与材质报告跟踪；原碰撞缺失/非实体资源保持清单。
+- 最新保存 World SHA `20195170a5615e3df69a62574ec7e25f8e5239fa0dc40eb930e8b0d382b58e25`，manifest SHA `91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27`。grass-native-07-resume 在 c44d2c… 模块烘焙七网格/13 层，两视点 52,984 个真实 render instances；grass-reload-02-final 与 water-native-02 在 1bf4126e… 模块分别 27 项通过和 exit 0 / 14.17 s。
+- 后续 d79cf620925921fb55fc47a87b7ce9ee3e412ce1d787e567f1393ab0ba052404 模块已通过 native-materials-08-final 的 104 资源、native-scene-04-final 的 21 项，以及 flanders-contact-04-final / rmuc-regression-03-final 各 5 项 / 8 PNG。GUI PID 43760 已实测绿褐地表、草与粉白花、小地图车辆标记和 M 大图；12 次真实 OS 动作、16 个驾驶输入边沿、4 次 M 切换、8 图绑定 `artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json`。最终车位 ROS `(1075.232351,-1012.656026)`，旋转后两图箭头同步，出生标记独立。
+- 大资源/UE Content/日志/稠密报告与截图留本地。compact 证据在 `artifacts/maps/wt-scene-20261118`；本轮代码、复现步骤、架构和当前进度随 feature 发布。此前“完整场景尚未导入”的历史条目以本检查点及 current.md 为准。
+
+## 2026-11-18 统一工程接续
+
+当前活动工程统一为 D:/simulator；原 D:/simulator-wt-vlaanderen 已移动到 artifacts/archive/wt-vlaanderen-before-unified-20261118。运行入口与新命令从共同 uproject/车辆包/设置派生，历史报告中的旧绝对路径作为来源记录保留。回滚快照和三方合并逐文件哈希在 artifacts/integration/unified-20261118。
+
+源碰撞覆盖与新生成补充分列：14,349 个主枕木、37 个横枕、4,068 个路肩；生成组件按活动范围加载，并保留出生点锚点。当前已通过203保存资产、128条原生查询，以及默认真实驾驶/复位与跨8m的实际W/R。几何查询与实际轮地接触各自表述。
+
+草地当前为10模型16层，硬面排除权重与原色端点按来源验证。最终真实rebake后72项草重载通过，1089个组件的保存/当前generation hash全部匹配。最终307材质、21场景及共用控制6项/两图接触各5项通过。坡面LC格线与Height碎石强斜黑纹已在最终原图确认消除；源像素和UE alpha-normal适配分别留证，保留所有历史失败及旧通过记录。
+
+最终显示与grass freshness模块37daaf0e…包含并行Arena/破坏工作；World为33113995…。最终GUI实际完成默认入口、坡面/碎石、80帧W、M开关、R回默认出生点，窗口保留试驾。源码提交按主工程WIP、地图合并、此次功能与外部工作归属生成候选，保留工作字节及main门禁。共享Markdown中的外部章节同样保留并独立归属。
+
+
+## 2026-11-19 手动相机方向更新
+
+C 环视保持实际云台单位世界方向，Shift scope 持续读取角方向；普通手动路径不得保留有限世界点形成追踪。C/Shift 返回第三人称可做一次投影，后续保持角方向直到新鼠标输入。WASD 和大小地图箭头在当帧云台更新后共用 GetGimbalPlanarForwardRos。固定弹道目标只属于显式控制 probe。当前 77 项原生和 12 项地图校准绑定 camera-heading-20261119/release-summary.json；旧测试只检查驾驶与云台一起同向，不能单独证明环视期间方向稳定。
+
+## 2026-11-20 学校体育馆与实际场地接触
+
+- `rmsim_campus_gym_v1` 是 RMUC2027 地图美术扩展；活动入口 `assets/maps/rmuc2027/arena-shell.json`。当前源馆采用 `SchoolGymFidelity` 流程，`setup_campus_gym.py` 对应历史 CC0 校园馆。
+- 用户要求保留源看台、阶梯、窗户和源材质，额外新增座椅为 0。源馆按原篮球运动区中心对齐；两套篮球架之外的源几何完整保留。旧新增座椅、阶梯模块及按面心删除源面均为历史流程，后续准备不得重新引入。
+- 当前 **23 mesh / 57 实例 / 26 棵树**。source→保存 LOD0/fallback 核验通过，6 面 UV 代表合并有逐 corner 源证明，基础 2 ULP 规则保持；Nanite cluster 编码结构独立列为未审范围。
+- 地板实际接触使用 `visual_floor_z_m=-0.3009999990463257`；源馆及全部外景、灯位统一上移 `0.13559999942779544 m`。馆地板覆盖完整比赛 footprint，原 RMUC 实际底面落在其上。原 CAD、车辆及导航数据保持，源地板与看台不另裁面。后续核验须分别读取真实上下表面和水平边界，避免只凭包围盒或截图判断。
+- 当前合同为 `physics_contract=outside_source_bounds_v1`、`visual_alignment=source_bounds_outer_face`、`outside_clearance_m=0`：玻璃内面直接接原场地外沿，框架向场外展开。相对前一版，四面连续碰撞墙向内移动 1 mm；厚度 0.48 m、碰撞 Z=-1.25～4.80 m、玻璃上端与永久关闭装饰门保持。玻璃和底轨延伸到地板，立柱下埋 1 cm。不得新增开门交互或车辆出场通道。
+- 历史 `preserve_validated_arena_shell_v1` 内缩 0.25 m 以及前一源馆版本的 1 mm 场外净距保留各自 fixture/证据身份。当前 0 m 接触使用现有 1 μm 几何数值容差，禁止更改验收门限掩盖实际侵入。
+- 外景采用完整三维树木/2K 贴图、独立 8K pure-sky 照明与完整 8K 景观背景。2026-11-19 三幅原生外景图已查看、152.88 s 可见 GPU 运行通过；2026-11-20 地面接触版本的三张实际图像复核及 150.02 s 可见运行通过，六类 GPU/溢出警告为 0，WM_NULL 可响应且窗口保持给用户；记录在 `docs/changes/2026-11-20-school-floor-contact.md`。原灰色屋架材质保留，原篮球记分牌三维文字镜像独立记录。
+- SketchupBox 原 SKP、派生几何/源纹理及 UE Content 保持本机，随附来源署名与禁止重新分发边界保持；Poly Haven、ambientCG 和官方商标按各自来源记录。源码、配置、来源/许可与 compact 验证入库。
+- 导航、车辆物理与跨平台验收保留各自模块/运行身份。旧校园馆历史证据在 `artifacts/maps/campus-gym-20261119/release-summary.json`；源保真阶段在 `artifacts/fixes/school-view-fidelity-20261119/`；最新接触阶段在 `artifacts/fixes/school-floor-contact-20261120/`。
+
+### 2026-11-19：飞艇任务对象与地图原资源
+
+- 弗兰德斯飞艇源于原任务 object groups；完整基础导入须先验证任务补充，再在保存及最后一次旧 UObject 读取后恢复，保持源 67 实例 / 65 碰撞和固定地标策略。
+- HUD DrawLine 默认 Canvas 项忽略 alpha；原网格用真实 translucent 路径。sRGB 字节必须显式转换，避免 UI 变亮。
+- tiny_text_hud 为 PT Sans reduced-height、1080p18px、forceAutoHint=no；fontFx64 转换为2.0。当前 MapFontRenderer 复用原字体字节，实现源 glow／coverage gamma 缓存。
+- FontFace 导入需要完整 Editor／Slate；NullRHI commandlet 路径不适用。Texture 须等待 Editor.AsyncAssetCompilationFinishAll 后再验尺寸和保存；失败证据保留，重试使用新目录。
 
 ## 2026-11-19 校园体育馆基线
 

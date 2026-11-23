@@ -1,26 +1,90 @@
 feature: 2026-11-15-wt-existing-map
 steps:
   - id: inspect
-    status: in-progress
+    status: done
     action: Locate the actual requested maps and their DBLD/resource format.
+    evidence:
+      - assets/maps/wt_vlaanderen/SOURCE.md
   - id: decode
-    status: pending
+    status: done
     action: Recover terrain, object transforms and resource references from real map data.
+    evidence:
+      - assets/maps/wt_vlaanderen/preparation-verification.json
   - id: assets
-    status: pending
+    status: done
     action: Resolve geometry/material/texture assets with an explicit coverage inventory.
+    evidence:
+      - assets/maps/wt_vlaanderen/SOURCE.md
+      - assets/maps/wt_vlaanderen/collision-coverage.json
+      - docs/research/wt-material-adapters.md
+      - artifacts/maps/wt_existing/leaf-adaptation-20261117-01/verification.json
   - id: runtime
-    status: pending
+    status: done
     action: Import the sourced scene and verify it in Windows UE.
+    evidence:
+      - docs/guides/war-thunder-flanders.md
+      - artifacts/maps/wt_existing/scene-launch-20261117-01/verification.json
+      - artifacts/maps/wt-scene-20261118/release-summary.json
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+    scope: Windows saved scene, source Land and grass, minimap, M full-map, contact and GUI accepted.
+    merge_gate: Full navigation route and stable 1x remain independently required before main merge.
+    completed_baseline:
+      - artifacts/maps/wt-scene-20261118/native-scene-03/summary.json
+      - artifacts/maps/wt-scene-20261118/native-materials-06/verification.json
+      - artifacts/maps/wt-scene-20261118/flanders-contact-03-rvt/summary.json
+      - artifacts/maps/wt-scene-20261118/rmuc-regression-02-final/verification.json
   - id: record
-    status: pending
+    status: done
     action: Preserve source versions, commands, evidence and exact remaining gaps.
+    evidence:
+      - artifacts/maps/wt-scene-20261118/release-summary.json
 checks:
   - id: original_map_identity
-    status: pending
+    status: done
   - id: actual_terrain_and_instances
-    status: pending
+    status: done
   - id: resource_coverage
-    status: pending
+    status: done
+    note: Source-resolved resources and missing/nonphysical collision entries are inventoried explicitly.
+  - id: source_facing_leaf_adapter
+    status: done
+    evidence:
+      - artifacts/maps/wt_existing/leaf-adaptation-20261117-01/verification.json
+    note: Raw half4 and original positions were independently verified; 91 cards, 182 leaf triangles and 2369 source instances are retained. Three FBX roundtrips passed; native rendering is tracked separately.
   - id: native_scene_and_drive
-    status: pending
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/native-scene-04-final/summary.json
+      - artifacts/maps/wt-scene-20261118/flanders-contact-04-final/summary.json
+      - artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/summary.json
+  - id: source_distant_land_surface
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/distant-land-02/preflight/verification.json
+      - artifacts/maps/wt-scene-20261118/import-07-land-ui/execution.json
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+  - id: source_grass_streaming
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/foliage-01/prepared-01/verification.json
+      - artifacts/maps/wt-scene-20261118/grass-native-07-resume/summary.json
+      - artifacts/maps/wt-scene-20261118/grass-reload-02-final/summary.json
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+  - id: calibrated_minimap_and_vehicle_marker
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/map-overview-01/georef-02/verification.json
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+  - id: m_key_full_map
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+  - id: final_same_module_regression
+    status: done
+    evidence:
+      - artifacts/maps/wt-scene-20261118/native-materials-08-final/summary.json
+      - artifacts/maps/wt-scene-20261118/native-scene-04-final/summary.json
+      - artifacts/maps/wt-scene-20261118/flanders-contact-04-final/summary.json
+      - artifacts/maps/wt-scene-20261118/rmuc-regression-03-final/summary.json
+      - artifacts/maps/wt-scene-20261118/gui-final-acceptance/verification.json
+    note: D79 module binds materials08, scene04, both contact regressions and GUI; grass author07 uses c44 and grass reload02/water02 use 1bf, as recorded separately.

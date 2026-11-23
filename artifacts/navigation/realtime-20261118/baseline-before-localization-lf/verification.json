@@ -1,0 +1,152 @@
+{
+  "status": "passed",
+  "scope": "LF canonical pinned data and metadata regeneration; unchanged physical geometry and public runtime source",
+  "native_after_canonicalization": "pending_rmuc17",
+  "map_identity": {
+    "schema": "rmsim_localization_map_identity_v1",
+    "map_id": "rmuc2027",
+    "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+    "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+    "descriptor_sha256": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9",
+    "source_to_sim_translation_m": [
+      -7.152952372635468e-06,
+      -1.6243433957331543,
+      1.6403436655816601
+    ],
+    "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+    "units": "m",
+    "source_role": "offline_geometry_candidate",
+    "source_status": "generated_not_native_validated",
+    "navigation": {
+      "yaml_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf\\prepared-default-LF\\navigation\\map.yaml",
+      "yaml_sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772",
+      "raster_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf\\prepared-default-LF\\navigation\\map.pgm",
+      "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+      "metadata_path": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf\\prepared-default-LF\\navigation\\metadata.json",
+      "metadata_sha256": "686343b73ad332dcbb46b1ec8cb215dd5baadc28f721c8da3e4a51d1b165a3fe",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "eced113f0c5facce2e5f6db507784ba89b633dba0c27a412a2f0615673de4f87"
+    },
+    "localization": {
+      "yaml_path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.yaml",
+      "yaml_sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772",
+      "raster_path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.pgm",
+      "raster_sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8",
+      "metadata_path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\metadata.json",
+      "metadata_sha256": "a2bb480d74048b06dec74823758b6ad676273b127e95932ed93b97964d017852",
+      "width": 560,
+      "height": 322,
+      "resolution": 0.05000000074505806,
+      "yaml_resolution": 0.05000000000000071,
+      "origin": [
+        -14.0,
+        -8.05,
+        0.0
+      ],
+      "occupancy_sha256": "1e48bb4f55a8aff4524613534011f2a0e493d8385030e7d1d2562e0110d1f1ae"
+    }
+  },
+  "scene": {
+    "scene": "rmuc2027",
+    "scene_file": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf\\prepared-default-LF\\scene.json",
+    "map_yaml": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\baseline-before-localization-lf\\prepared-default-LF\\navigation\\map.yaml",
+    "initial_pose": [
+      6.4,
+      6.0,
+      0.15
+    ],
+    "view": {
+      "x": 7.5,
+      "y": 6.4,
+      "scale": 65.0
+    },
+    "scene_sha256": "264de7b1b2e629580fa1dd54efc48b2f1b14cefbeacaab917349ed80e61d5f75",
+    "raster_sha256": "9ae98c930b11f76f680fda2f83d806e688c58cbae5d4ef2eb4444efb79d21883",
+    "localization_map_yaml": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.yaml",
+    "localization_map_selection": "package_default",
+    "localization_map_package": {
+      "manifest_path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\SOURCE.json",
+      "manifest_sha256": "6dae430a21534581fec32c5f216f926bd3506367c080c1ccd1cc4324462f78a5"
+    }
+  },
+  "all_non_provenance_metadata_fields_equal": true,
+  "geometry_metadata_checks": {
+    "cell_group_records": true,
+    "occupied_over_prior_free_cells": true,
+    "original_navigation_preserved": true,
+    "free_cells": true,
+    "evaluation_inputs_used": true,
+    "surface_provenance_sha256": true,
+    "selected_triangles": true,
+    "status": true,
+    "origin": true,
+    "resolution_float32": true,
+    "selected_triangles_by_group": true,
+    "raster_sha256": true,
+    "height": true,
+    "occupied_cells": true,
+    "resolution": true,
+    "coordinate_system": true,
+    "height_filter": true,
+    "scene_geometry_sha256": true,
+    "role": true,
+    "normal_criterion": true,
+    "groups": true,
+    "map_id": true,
+    "geometry_reader_sha256": true,
+    "source_collision_sha256": true,
+    "geometry_triangles_total": true,
+    "algorithm": true,
+    "rasterization": true,
+    "reference_navigation_raster_sha256": true,
+    "source_to_sim_translation_m": true,
+    "width": true,
+    "source_md5": true,
+    "geometry_bounds_m": true,
+    "source_step_sha256": true,
+    "limits": true,
+    "geometry_degenerate_triangles": true,
+    "units": true,
+    "unknown_cells": true
+  },
+  "public_source_unchanged": {
+    "tools/integration/navigation_console.py": true,
+    "tools/integration/navigation_console_config.py": true,
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_map_identity.py": true
+  },
+  "allowed_metadata_provenance_differences": {
+    "descriptor_sha256": {
+      "before": "a2498f7002f4b8c03cf3eb7d28f6d1da5005aa386a840e4498c64b18e65783f6",
+      "after": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9"
+    },
+    "exporter_sha256": {
+      "before": "d4eaf7eb90a3fca3b9bd6050902bd55ee279d26a080ffe2421751fe07d7b138f",
+      "after": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1"
+    },
+    "map_yaml_sha256": {
+      "before": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "after": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+    },
+    "reference_navigation_manifest_sha256": {
+      "before": "acda0cc5b256bf597c014397a28d8af03fbee4ddf2df3f7adb956de08f38cea6",
+      "after": "6684af7ab92c428ef71d5eea8d31d227453d2c411c3b20af070736265a3327b6"
+    },
+    "reference_navigation_yaml_sha256": {
+      "before": "7dd20dab84e1a3fa1055797aa1ee9994f0d94c243e8a6eb2106ce146acd9023b",
+      "after": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+    },
+    "wall_seconds": {
+      "before": 4.471070999999938,
+      "after": 4.724551500003145
+    }
+  },
+  "exporter_sha256": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1"
+}

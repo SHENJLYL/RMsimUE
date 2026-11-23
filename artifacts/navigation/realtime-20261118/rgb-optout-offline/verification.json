@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "created_utc": "2026-11-18T03:15:20.814370+00:00",
+  "scope": "offline camera option/packet boundary/PowerShell parameter verification; native performance awaits engine05/bridge06",
+  "baseline_module_sha256": "b94f7fceb9888a3683ea8b63007c445ae46946f112ee57324ce8149490c03778",
+  "source_after_sha256": {
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp": "3167b9948e4b54465c5c338a4155d3a73b93e3989ed53e926408f341fe956536",
+    "unreal/RMSim/Source/RMSim/RosBridgeComponent.h": "ae49137945341d6a34b77a4b4ff6b7d36d9a218f5c5feff02ec9add8d1ecd106",
+    "tools/integration/navigation_console.py": "a6c5acfe307d732407ae0791ddfd61bbfc62e2465cbe9638147e9fd7d20c4160",
+    "tools/environment/Start-NavigationConsole.ps1": "9657a80f69317aaa4a1c409e345d1729b9a69ff1e67790eb4a1e008881e8ba05",
+    "tools/integration/Run-NavigationConsole.ps1": "bf3da026552d7bfebf8f3fddca7b07c17d89f60d62eb3d2cdf353b9a1c8303a2",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py": "2aab14fbaf6fe2d8b143faafcdd88b26277734937ad6d06d02fa9c60360a154a"
+  },
+  "test_file_sha256": "acf35d7d74a2dd6ee590e404772b4cb4ee8f11838094644cb1768f3783a6bcec",
+  "checks": [
+    {
+      "name": "unittest",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "D:\\simulator\\tests\\control",
+        "-p",
+        "test_camera_capture_option.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "name": "powershell_wrappers",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rgb-optout-offline\\check_wrappers.ps1"
+      ],
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "-C",
+        "D:\\simulator",
+        "diff",
+        "--check",
+        "--",
+        "unreal/RMSim/Source/RMSim/RosBridgeComponent.cpp",
+        "unreal/RMSim/Source/RMSim/RosBridgeComponent.h",
+        "tools/integration/navigation_console.py",
+        "tools/environment/Start-NavigationConsole.ps1",
+        "tools/integration/Run-NavigationConsole.ps1",
+        "ros2_ws/src/rmsim_bridge/rmsim_bridge/node.py"
+      ],
+      "exit_code": 0,
+      "passed": true
+    }
+  ],
+  "python_tests": 7,
+  "powershell_parameter_checks": 26,
+  "camera_capture_enabled_semantics": "CameraHz=0 disables RGB CaptureScene/FlushRenderingCommands/ReadPixels while TF and calibration continue; generic ROS default10Hz, navigation default0Hz",
+  "prior_rmuc07_camera_cost": {
+    "runtime_log_sha256": "dcaee07a5d3ca112deb6ab9d0a8b962583bed140483e968ee8eaa57a70c00fbe",
+    "samples": 958,
+    "total_profile_sim_seconds": 111.26,
+    "capture_readback_wall_ms": 6001.767,
+    "weighted_mean_ms_per_capture": 6.26489248434238,
+    "mean_cost_ms_per_200hz_frame": 0.26971809275570735,
+    "containing_slow_37_to_39_sim_seconds": [
+      {
+        "approximate_sim_start_s": 35.339999999999996,
+        "approximate_sim_end_s": 40.38999999999999,
+        "samples": 45,
+        "capture_readback_wall_ms": 320.226,
+        "mean_ms": 7.116,
+        "mean_cost_ms_per_200hz_frame": 0.31705544554455445,
+        "log": "[2026.11.18-02.59.32:152][ 81]LogRMSim: Display: RMSIM_CAMERA_TIMING samples=45 wall_total_ms=320.226 mean_ms=7.116 sim_elapsed=5.050"
+      }
+    ],
+    "interpretation": "The timer encloses synchronous capture, flush and readback, including waits for prior render work; it is blocking section cost, not a guaranteed isolated speedup. RGB serialization/publication costs are outside this timer."
+  }
+}

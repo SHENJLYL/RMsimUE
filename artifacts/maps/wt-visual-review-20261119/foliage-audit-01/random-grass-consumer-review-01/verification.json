@@ -1,0 +1,80 @@
+{
+  "schema": "wt_random_grass_normal_consumer_review_v1",
+  "status": "reviewed",
+  "utc": "2026-11-19T08:06:33.651717+00:00",
+  "production_changed": false,
+  "native_run": false,
+  "fixed_dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "bright_card_source_review": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\bright-fill-card-review-01\\verification.json",
+    "sha256": "d1a67d7d0b856e6ca97dd8c0d4e0ed552a41351556dc6957ac68bfb984860b2a",
+    "candidate": "grass_fill_a/layer_12",
+    "exact_rendered_instance_identified": false
+  },
+  "source_read": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\random-grass-consumer-review-01\\source-read.json",
+    "sha256": "a68180b4d4946723217d57c5d3ae237cc8d28d4b07898b09cb26c97eb969b7dd"
+  },
+  "original_runtime": {
+    "file": "D:\\simulator\\third_party\\dagor_engine\\prog\\gameLibs\\render\\randomGrass.cpp",
+    "sha256": "816f19bf1487ee5bfcf1b790dc66499a8a0c9d526ce81ce20409c4e50277bdc5",
+    "consumer_shader": "random_grass_gpu",
+    "consumer_selected_at_line": 207,
+    "source_mesh_normal_field_lines": [
+      130,
+      135
+    ],
+    "packed_vertex_lines": [
+      106,
+      116
+    ],
+    "vertex_packing_lines": [
+      596,
+      603
+    ],
+    "instance_buffer_binding_line": 1299,
+    "draw_lines": [
+      1296,
+      1318
+    ],
+    "position_and_saturated_uv_only": true
+  },
+  "instance_normal_input": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\random-grass-consumer-review-01\\randomGrassInstance.hlsli",
+    "sha256": "5d63e26e642ca5a1451aca28c0833c79b51d1907fe5cf3ccd9da2ab9a2f5d503",
+    "original_url": "https://raw.githubusercontent.com/GaijinEntertainment/DagorEngine/9639942de5a8e5b01d91977f60ed82cda22d5f41/prog/gameLibs/publicInclude/render/randomGrassInstance.hlsli",
+    "packed_field": "RandomGrassInstance.landNormal: uint",
+    "unpacked_field": "RandomGrassInstanceUncompressed.landNormal: float2",
+    "implication": "The instance stream carries a separate normal input; CellVertex alone does not establish the consumer normal formula."
+  },
+  "layer_parameter_header": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\foliage-audit-01\\random-grass-consumer-review-01\\randomGrassParams.hlsli",
+    "sha256": "41cbb4b146a3653771257fab7d1e83053fc3a7c3937a573d756043b9b19b18e3"
+  },
+  "search_scope": {
+    "locally_present_shader_files": 802,
+    "matched_consumer_definitions": 0,
+    "checkout_is_sparse": true,
+    "exact_consumer_shader_body_obtained": false,
+    "missing_public_source_claim": false
+  },
+  "current_ue": {
+    "script": "D:\\simulator\\tools\\unreal\\wt_grass.py",
+    "sha256": "5b72931be857bc55802012ac7d3cd3c0eb38ca57a042103bbe97e0b4c67cb20e",
+    "legacy_mesh_path": "source mesh normal transformed to world, multiplied by TwoSidedSign",
+    "legacy_transmission": 0.35,
+    "subsurface": "computed BaseColor * Transmission",
+    "source_normal_formula_verified": false,
+    "source_transmission_formula_verified": false,
+    "classification": "explicit UE foliage lighting adaptation"
+  },
+  "conclusions": [
+    "Original MeshVertex normals are not packed into CellVertex. A separate per-instance landNormal field is explicitly present.",
+    "The exact random_grass_gpu normal evaluation and transmission formula were not obtained. World-up, terrain-normal replacement, and a specific transmission correction cannot be claimed as source-exact.",
+    "The lower-left bright horizontal card remains a strong grass_fill_a/layer_12 candidate. Input-path differences alone do not establish its pixel lighting cause.",
+    "Keep current normal/transmission as explicit UE adaptation; retain original color, gamma, density, alpha chain and saved assets for this acceptance state.",
+    "Source per-vertex UV saturation is directly demonstrated, but it is a separate boundary fix and is not evidence of the bright-card lighting cause."
+  ],
+  "source_exact_local_normal_repair_available": false,
+  "new_native_probe_requested": false
+}

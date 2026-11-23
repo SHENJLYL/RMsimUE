@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 0.02560809999704361,
+  "files": {
+    "tools/integration/summarize_navigation_realtime.py": "a24409f1d9906a5bc2584579f5e4dfd07847c0254d8174dac510c845a42c3399",
+    "tests/control/test_navigation_release_evidence.py": "093392f2023df4b1f8dda92ef33d5d33a2e8a121b9efd98fee946f9d6e135a27"
+  },
+  "output": "test_claimed_tracking_pass_cannot_hide_raw_second_shaper (release_evidence_tests.NavigationReleaseEvidenceTests.test_claimed_tracking_pass_cannot_hide_raw_second_shaper) ... ok\ntest_delayed_preformal_headers_excluded_even_with_formal_receive_phase (release_evidence_tests.NavigationReleaseEvidenceTests.test_delayed_preformal_headers_excluded_even_with_formal_receive_phase) ... ok\ntest_explicit_map_skips_unused_default_and_single_map_rejects_active_default (release_evidence_tests.NavigationReleaseEvidenceTests.test_explicit_map_skips_unused_default_and_single_map_rejects_active_default) ... ok\ntest_formal_raw_positions_and_targets_reproduce_pass (release_evidence_tests.NavigationReleaseEvidenceTests.test_formal_raw_positions_and_targets_reproduce_pass) ... ok\ntest_packaged_default_requires_current_manifest_binding (release_evidence_tests.NavigationReleaseEvidenceTests.test_packaged_default_requires_current_manifest_binding) ... ok\ntest_staging_peak_cannot_be_used_as_formal_peak (release_evidence_tests.NavigationReleaseEvidenceTests.test_staging_peak_cannot_be_used_as_formal_peak) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.025s\n\nOK\n",
+  "scope": "Six targeted pure evidence validation tests; no UE/ROS launch"
+}

@@ -1,0 +1,20 @@
+{
+  "status": "failed",
+  "scope": "owned-process-only experiment; production sources unchanged",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos",
+  "script_sha256": "43dfea3919e0a49332e32cfc3b22e3431ab5640f8a7698df4a566860f17f321d",
+  "process_policy": "explicit HighQoS and honor existing timer-resolution requests",
+  "no_affinity_priority_or_machine_power_plan_changes": true,
+  "command": [
+    "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "D:\\simulator\\tools\\integration\\run_navigation_realtime_acceptance.py",
+    "--session",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-11-highqos",
+    "--seconds",
+    "90"
+  ],
+  "coordinator_pid": 18240,
+  "started_utc": "2026-11-18T03:49:28.618148+00:00",
+  "error": "RuntimeError('Owned UE command mismatch: d:\\\\simulator\\\\artifacts\\\\navigation\\\\realtime-20261118\\\\rmuc-11-highqos\\\\runtime.log')",
+  "finished_utc": "2026-11-18T03:49:37.033647+00:00"
+}

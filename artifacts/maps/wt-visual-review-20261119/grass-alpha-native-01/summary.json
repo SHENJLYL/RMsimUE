@@ -1,0 +1,124 @@
+{
+  "schema": "wt_grass_alpha_author_summary_v1",
+  "status": "passed",
+  "pid": 46120,
+  "exit_code": 0,
+  "execution_record_wall_seconds": 174.243414,
+  "resume_authored_assets": false,
+  "module_sha256": "7269f29792d714ac6fe089ef5ccfa544b951093b998ae2ace2e40b188d45ca45",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "foliage_definition_sha256": "8946b65202815cae103d290e2a356f74fc1ee0e27ef206c7746e8da2a09ce0fc",
+  "alpha_mip_definition_sha256": "48afe1706b9415cf71c7bdcee37642a801878002b62419748f99d676ce9edfbe",
+  "scripts_sha256": {
+    "author_wt_grass.py": "e9a88ff88ffe9df7c3e0a73834035721f35aabfc4b4882bd1db3236874f5cdb6",
+    "wt_grass.py": "5b72931be857bc55802012ac7d3cd3c0eb38ca57a042103bbe97e0b4c67cb20e",
+    "wt_grass_alpha_mips.py": "f9dbaa0b917a5e281e66621cb2865bf39163155431701abff2ee1aa19ac76ad8"
+  },
+  "world_sha256_before": "14e80512158481a5d786be859e1c3d2402d376b844bcb3a730d077aca41976d3",
+  "world_sha256_after": "ba531c13f4a40c662d7bb361ba5aa669832ad9240aaddb42a7fe282f66814be0",
+  "native_models": 10,
+  "native_layers": 16,
+  "native_alpha_textures": 10,
+  "native_alpha_mips": 100,
+  "native_source_alpha_pixels": 5242880,
+  "alpha_clip_value": 0.5,
+  "mip_scope": "actual UTexture.Source DDS export pixels per mip plus native build settings; platform/GPU bytes not read",
+  "alpha_models": [
+    {
+      "id": "grass_blueberry_a",
+      "mips": 10,
+      "source_dds_sha256": "68add9d45a412cb4f55d52af2da8b8ccc708f58e1fee1e6cfa961e5a02d6e72f",
+      "exported_dds_sha256": "3fd41a53e18321f0eb043f7965ccfaa8d85db54b4ca62b44b133fe2b053bff5d"
+    },
+    {
+      "id": "grass_daisies_a",
+      "mips": 10,
+      "source_dds_sha256": "348b0f9a8e701f60087d51cd06874bcba62440358fbcf439b9a5a93590276bf5",
+      "exported_dds_sha256": "c860cd02510b88040b9d5842af035e4530737ee7f74a2eb11736d381ae64d81c"
+    },
+    {
+      "id": "grass_fill_a",
+      "mips": 10,
+      "source_dds_sha256": "cbb4ea2030f8f739848210643ab19c0f774629e9ba9f71b5b4d3741e7c059182",
+      "exported_dds_sha256": "2973d67b437a3064d0662376f87936d4c31c2f4c2187e893bc200c5a1c6d2c2c"
+    },
+    {
+      "id": "grass_heather_a",
+      "mips": 11,
+      "source_dds_sha256": "2a78ba5dd30871be35848347c90c06d7a7514a63f696f87e85d1256364709f42",
+      "exported_dds_sha256": "0640171a61c4684516c20d682a0908e34bd0a8960d70f9ab46b30d9c36cd83c3"
+    },
+    {
+      "id": "grass_paigle_a",
+      "mips": 10,
+      "source_dds_sha256": "8bf9b2c09062accd4b94e9c76b5b2a14d1fd49761ae788be31be9782c4aafb9c",
+      "exported_dds_sha256": "a7d05a570d9378507930d43ab8dc614ef2a3ebcd7b228cca74be3e9a5729df3c"
+    },
+    {
+      "id": "grass_simple_a",
+      "mips": 11,
+      "source_dds_sha256": "2ccfe38e7d74399d21ce59c0365f6529c6112929ede874dcd34f11d5887727c8",
+      "exported_dds_sha256": "e1c6aaff844f5d4fc0caa102891875227d11bb166016b1eb72ba047df90906ce"
+    },
+    {
+      "id": "grass_tulip_b",
+      "mips": 11,
+      "source_dds_sha256": "64240470196f31a08802fda97e992d65de76e00ac5b1807104a794581d872a2f",
+      "exported_dds_sha256": "d4a507a728b13015366419ea434c84e4d1303a0496e365973e9d5c11c213bb31"
+    },
+    {
+      "id": "ue_generic_grass_small_a",
+      "mips": 9,
+      "source_dds_sha256": "e71e945a71a6f33c553cded23af649d150d3c2c0850675b56f2b666044b3eff0",
+      "exported_dds_sha256": "71ccdf897a0cb546d5266b25085788529c6d085db648db495d2dd53b2cb70c0d"
+    },
+    {
+      "id": "ue_generic_grass_tall_a",
+      "mips": 9,
+      "source_dds_sha256": "3b96f46d57b85adf6895545ebf0cdf4b0e0907d8e4207fc53d6acb1b63ca0e95",
+      "exported_dds_sha256": "532b7b7554923274f7a84ca2e915efd434032323f8df16ff7d1a98fcb2fb2f17"
+    },
+    {
+      "id": "ue_generic_grass_tall_b",
+      "mips": 9,
+      "source_dds_sha256": "e59f28ba4b5876071996fc7228a01e417a2aaa130237b25bea3fd0bd9dd2c98c",
+      "exported_dds_sha256": "f1a768858f2f913cc3810f5e0e2d629f784402e6250bb5fc98b216b83c245477"
+    }
+  ],
+  "landscape_components": 1089,
+  "valid_grass_components": 1089,
+  "fresh_grass_components": 1089,
+  "generation_mismatches": 0,
+  "outdated_after_bake": 0,
+  "bake_attempt_count": 2,
+  "generated_hism_components": 969,
+  "generated_instances": 200098,
+  "instances_by_mesh": {
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b": 0,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a": 69,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a": 2656,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a": 67,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a": 76,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a": 146,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a": 3458,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a": 121002,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_a.ue_generic_grass_tall_a": 40429,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_b.ue_generic_grass_tall_b": 32195
+  },
+  "instance_count_method": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+  "instance_scope": "2 preview cameras at this run; view-dependent native HISM population",
+  "grass_collision_components": 0,
+  "source_geometry_changed": false,
+  "vehicle_physics_changed": false,
+  "execution_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\grass-alpha-native-01\\execution.json",
+  "execution_sha256": "e9ffd7ce2c2e500b96a9f43f990cb16b0b86dc0d3a265e880b5cc7f6f19209d4",
+  "verification_file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\grass-alpha-native-01\\verification.json",
+  "verification_sha256": "0f66f0c403ab482fcb4f9f9fe7736c50cd6e0bb68aae1be8b7e8a05fc86bb7a4",
+  "independent_reload": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\grass-alpha-reload-01\\audit\\summary.json",
+    "sha256": "732c27aeac35dd79ae2c26b8d12f14ab639da1d76b0e6eb22eecef34b55b98aa",
+    "checks": 82,
+    "status": "passed"
+  }
+}

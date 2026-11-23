@@ -1,0 +1,428 @@
+{
+  "status": "offline_endpoint_diagnosis_complete",
+  "analysis_completed": true,
+  "scope": "Offline diagnosis; original action, precision and realtime results remain unchanged",
+  "created_utc": "2026-11-18T05:03:01.696543+00:00",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-15",
+  "script_sha256": "e23b761fb51a43e242e42968e8106dd5715a98e40f9db69ca263193e115f3b76",
+  "inputs": {
+    "actions\\trace.json": "dc4a5b86b3c4b53120d2d5ae1cec2f1c8be372fbe09ac9babf14ee86c49297f0",
+    "actions\\verification.json": "f30a692c87c27fc1026360419fdfb19469418806a0c60b71f56abdb9302dc57c",
+    "actions\\precision\\verification.json": "a8e90e29feb3ac025b880bd10c69974e7b26920f3c0618fc11c1949aff2086a0",
+    "runtime-provenance.json": "78f60391d366729362d0436c6b0f9fc71a620b1d0366c43448ff1460febdf297"
+  },
+  "checks": [
+    {
+      "name": "trace_bound_to_runtime_provenance",
+      "passed": true
+    },
+    {
+      "name": "original_fourteen_navigation_checks_passed",
+      "passed": true
+    },
+    {
+      "name": "independent_precision_checks_passed",
+      "passed": false
+    }
+  ],
+  "endpoints": [
+    {
+      "mode": "single_goal",
+      "actual_endpoint_m": [
+        9.353376994782813,
+        6.4866129817417,
+        0.017939615754497266
+      ],
+      "requested_goal_m": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "actual_error_m": 0.1297606016608601,
+      "plan_endpoint_m": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_minus_requested_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_request_offset_m": 0.03535494024490077,
+      "amcl_at_own_stamp": {
+        "pose_m": [
+          9.370520256267824,
+          6.391632481571135,
+          0.0
+        ],
+        "truth_interpolation": {
+          "stamp_s": 35.069999217,
+          "position_m": [
+            9.33376272323908,
+            6.494238274424985,
+            0.017481970866592787
+          ],
+          "bracket_s": [
+            35.069999216,
+            35.099999215000004
+          ],
+          "gap_s": 0.029999999000004607,
+          "fraction": 3.333345562624506e-08,
+          "orientation_xyzw": [
+            -0.03499129148009185,
+            0.006604645632608772,
+            0.33094603815061835,
+            0.9429775755600089
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          0.036757533028744405,
+          -0.10260579285384974
+        ],
+        "norm_m": 0.10899112331527902
+      },
+      "endpoint_snapshot_monotonic_s": 48872.600056,
+      "scope": "TF reconstruction uses only transforms already received at this endpoint; truth is interpolated offline",
+      "tf_navigation_origin": {
+        "stamp_s": 35.669999204,
+        "position_m": [
+          9.388864155417824,
+          6.358202008478308,
+          -0.01021504628531339
+        ],
+        "edge_samples": [
+          {
+            "stamp_s": 35.669999204,
+            "position_m": [
+              5.833989608068195,
+              6.307529403182082,
+              -0.008851896654628738
+            ],
+            "bracket_s": [
+              35.569999214,
+              35.669999211000004
+            ],
+            "gap_s": 0.09999999700000473,
+            "fraction": 0.9999999299999566,
+            "orientation_xyzw": [
+              -5.030781434102739e-18,
+              -4.008446157828617e-18,
+              -0.0012027183143345148,
+              0.9999992767340666
+            ]
+          },
+          {
+            "stamp_s": 35.669999204,
+            "position_m": [
+              3.5547423732220276,
+              0.059223477959055,
+              -0.001363149630684679
+            ],
+            "bracket_s": [
+              35.669999204,
+              35.669999204
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              -0.03695256637142429,
+              0.0014817733490620417,
+              0.32351369084079906,
+              0.9455005045079942
+            ]
+          },
+          {
+            "stamp_s": 35.669999204,
+            "position_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "bracket_s": [
+              35.669999204,
+              35.669999204
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              0.03695256637142429,
+              -0.0014817733490620417,
+              -0.32351369084079906,
+              0.9455005045079942
+            ]
+          }
+        ],
+        "truth_interpolation": {
+          "stamp_s": 35.669999204,
+          "position_m": [
+            9.353493190050216,
+            6.486594603072593,
+            0.017872735967974472
+          ],
+          "bracket_s": [
+            35.654999203,
+            35.684999202
+          ],
+          "gap_s": 0.0299999989999975,
+          "fraction": 0.5000000499999466,
+          "orientation_xyzw": [
+            -0.03497318914613888,
+            0.0054074106742142925,
+            0.32337234825477723,
+            0.9456098351513376
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          0.03537096536760842,
+          -0.12839259459428476
+        ],
+        "norm_m": 0.13317568673631427,
+        "plan_minus_estimated_xy_m": [
+          0.0361361936418767,
+          0.016798206470941324
+        ],
+        "plan_remaining_m": 0.0398497707843293,
+        "requested_remaining_m": 0.07405851462204269,
+        "observed_common_stamp_age_to_latest_clock_s": 0.06999999700000359
+      },
+      "last_command_zero_before_recorded_arrival": {
+        "controller": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 48872.3740925,
+          "zero_sim_stamp_s": 35.514999206,
+          "position_at_zero_m": [
+            9.3510337489465,
+            6.487790059468412,
+            0.017932104934547725
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.0026222724923466267,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "smoothed": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 48872.3840381,
+          "zero_sim_stamp_s": 35.514999206,
+          "position_at_zero_m": [
+            9.3510337489465,
+            6.487790059468412,
+            0.017932104934547725
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.0026222724923466267,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "vehicle": {
+          "stamp_basis": "message_header",
+          "zero_received_monotonic_s": 48872.3839243,
+          "zero_sim_stamp_s": 35.514999206,
+          "position_at_zero_m": [
+            9.3510337489465,
+            6.487790059468412,
+            0.017932104934547725
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.0026222724923466267,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        }
+      }
+    },
+    {
+      "mode": "waypoints",
+      "actual_endpoint_m": [
+        9.435357925856641,
+        6.465183005698117,
+        0.01830975330795878
+      ],
+      "requested_goal_m": [
+        9.45,
+        6.4,
+        0.0
+      ],
+      "actual_error_m": 0.06680729426537449,
+      "plan_endpoint_m": [
+        9.425000349059701,
+        6.3750002149492495,
+        0.0
+      ],
+      "plan_minus_requested_xy_m": [
+        -0.024999650940298324,
+        -0.024999785050750845
+      ],
+      "plan_request_offset_m": 0.03535494024490077,
+      "amcl_at_own_stamp": {
+        "pose_m": [
+          9.388563513151912,
+          6.420263606219102,
+          0.0
+        ],
+        "truth_interpolation": {
+          "stamp_s": 54.274998789,
+          "position_m": [
+            9.435357925856641,
+            6.465183005698117,
+            0.01830975330795878
+          ],
+          "bracket_s": [
+            54.249998787,
+            54.279998787000004
+          ],
+          "gap_s": 0.030000000000001137,
+          "fraction": 0.8333333999999266,
+          "orientation_xyzw": [
+            -0.026887975961115987,
+            0.0023970466865177453,
+            0.6225344614623539,
+            0.7821266746555026
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.04679441270472928,
+          -0.044919399479015354
+        ],
+        "norm_m": 0.0648650099046928
+      },
+      "endpoint_snapshot_monotonic_s": 48891.7236806,
+      "scope": "TF reconstruction uses only transforms already received at this endpoint; truth is interpolated offline",
+      "tf_navigation_origin": {
+        "stamp_s": 54.774998777,
+        "position_m": [
+          9.380956166619335,
+          6.4047916380890735,
+          -0.013642890814435038
+        ],
+        "edge_samples": [
+          {
+            "stamp_s": 54.774998777,
+            "position_m": [
+              5.747992765147643,
+              6.2887363024672815,
+              -0.006704414261085295
+            ],
+            "bracket_s": [
+              54.674998786,
+              54.774998784000005
+            ],
+            "gap_s": 0.09999999800000126,
+            "fraction": 0.9999999299999572,
+            "orientation_xyzw": [
+              6.9105310996359e-18,
+              2.4989957193972545e-18,
+              0.007942372176435874,
+              0.9999684588646839
+            ]
+          },
+          {
+            "stamp_s": 54.774998777,
+            "position_m": [
+              3.634348508729933,
+              0.05833381910656206,
+              -0.006938476553349726
+            ],
+            "bracket_s": [
+              54.774998777,
+              54.774998777
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              -0.03154678564764129,
+              -0.0002040201325854263,
+              0.6233151235783946,
+              0.7813341253327786
+            ]
+          },
+          {
+            "stamp_s": 54.774998777,
+            "position_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "bracket_s": [
+              54.774998777,
+              54.774998777
+            ],
+            "gap_s": 0.0,
+            "fraction": 0.0,
+            "orientation_xyzw": [
+              0.03154678564764129,
+              0.0002040201325854263,
+              -0.6233151235783946,
+              0.7813341253327786
+            ]
+          }
+        ],
+        "truth_interpolation": {
+          "stamp_s": 54.774998777,
+          "position_m": [
+            9.435357925856641,
+            6.465183005698117,
+            0.01830975330795878
+          ],
+          "bracket_s": [
+            54.769998776,
+            54.794998775
+          ],
+          "gap_s": 0.02499999900000205,
+          "fraction": 0.20000004799994905,
+          "orientation_xyzw": [
+            -0.026887975961115987,
+            0.002397046686517745,
+            0.6225344614623539,
+            0.7821266746555026
+          ]
+        },
+        "estimated_minus_truth_xy_m": [
+          -0.05440175923730628,
+          -0.06039136760904373
+        ],
+        "norm_m": 0.08128141663261348,
+        "plan_minus_estimated_xy_m": [
+          0.04404418244036634,
+          -0.02979142313982397
+        ],
+        "plan_remaining_m": 0.053173479287482346,
+        "requested_remaining_m": 0.06920990336269543,
+        "observed_common_stamp_age_to_latest_clock_s": 0.06499999700000103
+      },
+      "last_command_zero_before_recorded_arrival": {
+        "controller": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 48890.5701077,
+          "zero_sim_stamp_s": 53.6799988,
+          "position_at_zero_m": [
+            9.430612529113738,
+            6.467056779343846,
+            0.0184536256805778
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.0051019425636695806,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "smoothed": {
+          "stamp_basis": "latest_received_clock_unstamped_topic",
+          "zero_received_monotonic_s": 48890.5821829,
+          "zero_sim_stamp_s": 53.719998799,
+          "position_at_zero_m": [
+            9.432314115680091,
+            6.466162065472371,
+            0.01855269420219102
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.00319739557021496,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        },
+        "vehicle": {
+          "stamp_basis": "message_header",
+          "zero_received_monotonic_s": 48890.5823977,
+          "zero_sim_stamp_s": 53.719998799,
+          "position_at_zero_m": [
+            9.432314115680091,
+            6.466162065472371,
+            0.01855269420219102
+          ],
+          "displacement_to_recorded_arrival_xy_m": 0.00319739557021496,
+          "note": "Arrival is recorded after the original 0.2s pump, before the next action; this is not an independent settled-stop test"
+        }
+      }
+    }
+  ],
+  "clock_and_native_process_status_evaluated": false,
+  "template_script_sha256": "c97c480874de2c7e655a17d38538a84d19931505acccc4e0dae9a20529b154de"
+}

@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "scope": "Final historical evidence wording before rmuc17; declared map/recipe hashes unchanged",
+  "before_source_sha256": "6dae430a21534581fec32c5f216f926bd3506367c080c1ccd1cc4324462f78a5",
+  "after_source_sha256": "f5536d0d2d61d42e8710f8eb0dd30d4601863ee3e781a65e1e590ada7f98e240",
+  "files": {
+    "metadata": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\metadata.json",
+      "sha256": "a2bb480d74048b06dec74823758b6ad676273b127e95932ed93b97964d017852"
+    },
+    "raster": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.pgm",
+      "sha256": "2c84fcad9f2b1a1adad0ee1add788aad051eb6b7d0aa3c638bb16feda1096df8"
+    },
+    "surface_provenance": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\surface-provenance.npz",
+      "sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035"
+    },
+    "yaml": {
+      "path": "D:\\simulator\\assets\\maps\\rmuc2027\\navigation-console\\localization\\vertical85\\map.yaml",
+      "sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772"
+    }
+  },
+  "changed_keys": [
+    "localization_map.native_evidence.scope",
+    "localization_map.native_evidence.text_identity_scope"
+  ]
+}

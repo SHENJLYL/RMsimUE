@@ -36,6 +36,7 @@ find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
 
 add_executable(terrainAnalysis src/terrainAnalysis.cpp)
+target_include_directories(terrainAnalysis PRIVATE include)
 ament_target_dependencies(
   terrainAnalysis
   rclcpp
@@ -52,9 +53,19 @@ ament_target_dependencies(
 
 install(TARGETS terrainAnalysis DESTINATION lib/${PROJECT_NAME})
 
+install(DIRECTORY include/ DESTINATION include)
+ament_export_include_directories(include)
+
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
+  enable_testing()
+  add_executable(slope_ground_test test/slope_ground_test.cpp)
+  target_include_directories(slope_ground_test PRIVATE include)
+  add_test(NAME slope_ground COMMAND slope_ground_test)
+  add_executable(surveyed_ground_test test/surveyed_ground_test.cpp)
+  target_include_directories(surveyed_ground_test PRIVATE include)
+  add_test(NAME surveyed_ground COMMAND surveyed_ground_test)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()

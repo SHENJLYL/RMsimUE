@@ -1,0 +1,110 @@
+{
+  "status": "passed",
+  "scope": "Offline evidence/schema guards only; no new native run and no release acceptance generated.",
+  "correction": "Previous offline-compatibility-gate-01 expected suspension92 from a different script. The actual wrapper calls Test-Suspension.ps1 with four native checks; total84=70+10+4. Prior failed native evidence retained.",
+  "created_utc": "2026-11-18T03:01:13.744829+00:00",
+  "checks": [
+    {
+      "name": "historical_real_four_check_fixture_and_unmodified_analysis_accepted",
+      "passed": true,
+      "check_results": [
+        {
+          "name": "compatibility_suspension_four_native_checks_passed",
+          "passed": true,
+          "expected_checks": 4,
+          "observed_checks": 4,
+          "check_names": [
+            "suspension_baseline_settled",
+            "suspension_impulse_recovered",
+            "suspension_loaded_equilibrium",
+            "suspension_release_recovered"
+          ]
+        },
+        {
+          "name": "compatibility_suspension_inputs_and_fixture_match",
+          "passed": true
+        },
+        {
+          "name": "compatibility_suspension_analysis_and_capture_counts_passed",
+          "passed": true
+        },
+        {
+          "name": "compatibility_suspension_original_trace_analysis_reproduced",
+          "passed": true,
+          "analyzer_sha256": "42c5646389ca293d0f5fb37ff2fb3b1c20ebe40f1a29c0d9e8e5bb815b32fb67"
+        }
+      ],
+      "expected_checks": 4
+    },
+    {
+      "name": "wrong_native_check_name_rejected",
+      "passed": true
+    },
+    {
+      "name": "altered_physical_analysis_rejected",
+      "passed": true
+    },
+    {
+      "name": "actual_recorded_sentry_and_manual_commands_match",
+      "passed": true
+    },
+    {
+      "name": "actual_wrapper_suspension_command_matches",
+      "passed": true
+    },
+    {
+      "name": "other_suspension_script_rejected",
+      "passed": true
+    },
+    {
+      "name": "unrelated_evidence_directory_rejected",
+      "passed": true
+    },
+    {
+      "name": "actual_failed_manual_waves_remain_failed",
+      "passed": true
+    },
+    {
+      "name": "actual_case_expected_counts_are_70_10_4",
+      "passed": true,
+      "groups": {
+        "sentry": {
+          "expected_checks": 70,
+          "observed_checks": 70,
+          "passed_checks": 70
+        },
+        "manual-waves": {
+          "expected_checks": 10,
+          "observed_checks": 3,
+          "passed_checks": 2
+        },
+        "suspension": {
+          "expected_checks": 4,
+          "observed_checks": 0,
+          "passed_checks": 0
+        }
+      }
+    },
+    {
+      "name": "retained_sentry_seventy_native_checks_pass",
+      "passed": true
+    }
+  ],
+  "summarizer_sha256": "fb350185f390a72c748571d0ee92abde7675ae21d09342c42f6e1124c848bcfb",
+  "historical_fixture_path": "D:\\simulator\\artifacts\\control\\suspension-round2-20261117\\firmer-2000-140-response-03",
+  "historical_fixture_sha256": "fdfb824cf248540632d17ef63e6ba388522100cd744ea91396a751fe0dbfcaf6",
+  "actual_failed_wrapper_sha256": "3795eca834e32cdb4098aeb4c2d6107c04152e440d78bd2936333884b247229b",
+  "actual_compatibility_failed_gate_names": [
+    "compatibility_three_original_case_groups_passed",
+    "compatibility_suspension_original_command_matches",
+    "compatibility_manual-waves_route_selection_passed",
+    "compatibility_manual-waves_wave_red_complete_native_control_passed",
+    "compatibility_manual-waves_wave_blue_complete_native_control_passed",
+    "compatibility_suspension_four_native_checks_passed",
+    "compatibility_suspension_inputs_and_fixture_match",
+    "compatibility_suspension_analysis_and_capture_counts_passed",
+    "compatibility_suspension_original_trace_analysis_reproduced",
+    "compatibility_each_native_control_case_has_distinct_run_id",
+    "compatibility_all_native_leaf_gates_complete"
+  ]
+}

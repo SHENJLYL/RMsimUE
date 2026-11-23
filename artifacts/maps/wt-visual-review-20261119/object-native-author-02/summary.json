@@ -1,0 +1,111 @@
+{
+  "schema": "wt_layered_object_native_summary_v1",
+  "status": "passed",
+  "scope": "Native author and graph/compile verification for one Surface parent and 192 source layered instances",
+  "execution": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\object-native-author-02\\execution.json",
+    "sha256": "f0ef49446b7b20f938a887194fbdb0b90a858b2623d5736e934ac03cfe0bad83",
+    "pid": 17528,
+    "exit_code": 0,
+    "duration_seconds": 26.386889099999998,
+    "module_sha256": "f178cc7a0a2ae098fbd02b209eeaece77bd2529d90ff37980615ea8bd6828145",
+    "module_sha256_after": "f178cc7a0a2ae098fbd02b209eeaece77bd2529d90ff37980615ea8bd6828145",
+    "world_sha256_before": "14e80512158481a5d786be859e1c3d2402d376b844bcb3a730d077aca41976d3",
+    "world_sha256_after": "14e80512158481a5d786be859e1c3d2402d376b844bcb3a730d077aca41976d3",
+    "source_sha256_before": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+    "source_sha256_after": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27"
+  },
+  "verification": {
+    "file": "D:\\simulator\\artifacts\\maps\\wt-visual-review-20261119\\object-native-author-02\\audit\\verification.json",
+    "sha256": "e5c2085c7105ac4c353b7bb50a879f3ad16323ea781332a0dadae94558515d7a"
+  },
+  "asset_counts": {
+    "parents": 1,
+    "layered_instances": 192,
+    "total": 193
+  },
+  "checks": {
+    "source_identity": true,
+    "original_texture_bindings": true,
+    "per_uv_source_frame": true,
+    "source_world_RNM": true,
+    "actual_normal_output_connection": true,
+    "correct_tangent_space_contract": true,
+    "original_instance_and_ground_assets_unchanged": true,
+    "completed_native_shader_statistics": true,
+    "original_world_and_manifest_unchanged": true
+  },
+  "actual_parent_statistics": {
+    "num_vertex_shader_instructions": 146,
+    "num_pixel_shader_instructions": 493,
+    "num_samplers": 10,
+    "num_vertex_texture_samples": 3,
+    "num_pixel_texture_samples": 0,
+    "num_virtual_texture_samples": 0,
+    "num_uv_scalars": 6,
+    "num_interpolator_scalars": 0
+  },
+  "source_texture_inputs": 7,
+  "actual_instance_sampler_range": [
+    10,
+    10
+  ],
+  "sampler_budget": {
+    "report": "artifacts/maps/wt-refine-20261118/materials-reload-04/audit/verification.json",
+    "report_sha256": "a7e63cc44b231842f5443d74ccca1b61940820f0cae223183fe5029fee288097",
+    "surface_sha256": "1eb9b130aec6cb523afdfa27586397c3d062c6ad9336abbbd3a8bfe393a77a34",
+    "completed_native_num_samplers": 10,
+    "source_texture_inputs": 7,
+    "api": "MaterialEditingLibrary.cpp:2144 Resource->GetSamplerUsage()",
+    "limit": 10
+  },
+  "parent_compile_errors": [],
+  "actual_normal_connection": {
+    "node": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionReroute_1",
+    "source": "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface:MaterialExpressionCustom_1",
+    "output_pin": "NormalOut"
+  },
+  "source_normal_contract": {
+    "schema": "wt_layered_uv_normal_v1",
+    "dagor_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+    "source_shaders": [
+      "rendinst_layered",
+      "rendinst_layered_hmap_blend",
+      "rendinst_layered_hmap_vertex_blend"
+    ],
+    "parent": "WT_Parent_Surface",
+    "base_normal_uv": 0,
+    "detail_normal_uv": 2,
+    "frame": "per-sampled-UV scale-invariant cotangent frame from negative world derivatives",
+    "composition": "world-space RNM after the existing source detail weight",
+    "output": "TransformWorldVectorToTangent(Parameters.TangentToWorld, layeredWorld)",
+    "two_sided": "unflipped geometric frame; engine applies TwoSidedSign once",
+    "degenerate_uv": "geometric normal when max squared tangent length <= 1e-20",
+    "non_layered_branches": "original shader text unchanged",
+    "texture_uv_color_weights_alpha_roughness_metallic": "unchanged",
+    "code_sha256": "d2da8f6fc8ec93ebd147a41ed38be75c8d2202bfb272aac6cd615083f6a44cd3",
+    "source_references": [
+      "prog/gameLibs/render/shaders/psh_tangent.hlsl:108-134",
+      "prog/gameLibs/render/shaders/normaldetail.hlsl:73-105",
+      "prog/gameLibs/render/shaders/layered_inc.dshl:304-313"
+    ],
+    "ue_references": [
+      "Engine/Shaders/Private/Common.ush:1988-1999",
+      "Engine/Shaders/Private/MaterialTemplate.ush:4353-4380"
+    ]
+  },
+  "parent_sha256_before": "43eefea218e3504488aad7cc79ad6804f9f2702625ca90e82584b9a46d59e505",
+  "parent_sha256_after": "e59cd7771f02ae658026ff99b2c23c9208c00b699925e085e759d6d5e242fd08",
+  "original_parent_sha256": "1eb9b130aec6cb523afdfa27586397c3d062c6ad9336abbbd3a8bfe393a77a34",
+  "retained_failed_attempt": {
+    "directory": "object-native-author-01",
+    "parent_saved_before_failed_old_gate": "43eefea218e3504488aad7cc79ad6804f9f2702625ca90e82584b9a46d59e505",
+    "issue": "Seven source texture inputs were incorrectly used as a compiled sampler cap; original completed native Resource->GetSamplerUsage was ten.",
+    "source_fix": "Original native budget10 enforced after recording actual stats, before saving any parent"
+  },
+  "native_assets_written": [
+    "/Game/RMSim/Maps/wt_vlaanderen/Materials/WT_Parent_Surface.WT_Parent_Surface"
+  ],
+  "independent_reload": false,
+  "rendered_quality_verified": false
+}

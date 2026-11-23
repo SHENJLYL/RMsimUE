@@ -1,0 +1,18 @@
+{
+  "status": "captured",
+  "scope": "Exact pre-edit config and clock gate; new game-engine files absent",
+  "files": [
+    {
+      "path": "unreal/RMSim/Config/DefaultEngine.ini",
+      "sha256": "ba7781d6421d061c4fc6fb4254823e7cb830978527488d6486bb039d706a54ae"
+    },
+    {
+      "path": "tools/integration/measure_console_clock.py",
+      "sha256": "21d959a7d2236306956843c7b4d4faea307e8b881d38f48cf3cb3a07ce65ed37"
+    },
+    {
+      "path": "tests/control/test_console_clock.py",
+      "sha256": "90458e099f25325a39e5abb9ae7f21a596e3f6ba97751693fa4b8d18b4ee9c99"
+    }
+  ]
+}

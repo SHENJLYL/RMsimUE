@@ -34,14 +34,18 @@ class LidarPublisher:
         local=mount_pose(data,self.node.robot_id)
         config={k:data[k] for k in ('id','profile_md5','model','frame_id','parent_frame_id','rays_per_second','frame_hz','min_range_m','max_range_m','elevation_min_rad','elevation_max_rad')}
         config['fixed_mount']=local
+        # Measurement-model identity stays fixed for an epoch just like rate and extrinsics.
+        for name in ('profile_schema','physical_model'):
+            if name in data:config[name]=data[name]
         fingerprint=json.dumps(config,sort_keys=True)
         if key==self.identity and fingerprint!=self.fingerprint:raise ProtocolError('LiDAR configuration changed within a session')
         if key!=self.identity:
             self.identity=key;self.sequence=0;self.fingerprint=fingerprint
             if self.raw_pub:self.node.destroy_publisher(self.raw_pub);self.node.destroy_publisher(self.cloud_pub)
             prefix='/'+self.node.robot_id+'/'+data['id']
-            self.raw_pub=self.node.create_publisher(CustomMsg,prefix+'/livox',qos_profile_sensor_data)
-            self.cloud_pub=self.node.create_publisher(PointCloud2,prefix+'/points',qos_profile_sensor_data)
+            sensor_qos=QoSProfile(depth=32,reliability=ReliabilityPolicy.RELIABLE)
+            self.raw_pub=self.node.create_publisher(CustomMsg,prefix+'/livox',sensor_qos)
+            self.cloud_pub=self.node.create_publisher(PointCloud2,prefix+'/points',sensor_qos)
             tf=TransformStamped();set_stamp(tf.header.stamp,state['sim_time_ns']);tf.header.frame_id=data['parent_frame_id'];tf.child_frame_id=data['frame_id']
             t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,local['position_m'])
             t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,local['rotation_xyzw']);self.static_pub.publish(TFMessage(transforms=[tf]))

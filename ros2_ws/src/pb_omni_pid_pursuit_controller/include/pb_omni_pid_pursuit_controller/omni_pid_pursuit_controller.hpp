@@ -114,7 +114,7 @@ protected:
    * @param pose pose to transform
    * @return Path in new frame
    */
-  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose);
+  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose, bool & contains_goal);
 
   /**
    * @brief Transform a pose to another frame.
@@ -189,12 +189,18 @@ protected:
    */
   void applyApproachVelocityScaling(const nav_msgs::msg::Path & path, double & linear_vel) const;
 
-  /**
-   * @brief Checks if collision is detected along the given path
-   * @param path Local path to check for collisions
-   * @return True if collision detected, false otherwise
-   */
-  bool isCollisionDetected(const nav_msgs::msg::Path & path);
+  // Physical chassis frame can differ from the navigation axes of the costmap.
+  std::string collision_body_frame_;
+  double collision_deceleration_, collision_reaction_time_;
+  double collision_observation_range_;
+  double tracking_deceleration_;
+  double path_lateral_acceleration_{0.0};
+  bool clearance_departure_{false};
+  bool swept_stop_only_{false};
+  bool track_planned_curve_{false};
+  bool path_stop_preview_{false};
+  double emergency_brake_jerk_{0.0}, emergency_brake_latency_{0.15};
+  double pathCruiseSpeed(const nav_msgs::msg::Path & path, bool contains_goal) const;
 
 private:
   /**
@@ -265,7 +271,7 @@ private:
   nav2_costmap_2d::Costmap2D * costmap_;
   rclcpp::Logger logger_{rclcpp::get_logger("OmniPidPursuitController")};
   rclcpp::Clock::SharedPtr clock_;
-  double last_velocity_scaling_factor_;
+  double last_velocity_scaling_factor_{1.0};
 
   std::shared_ptr<PID> move_pid_;
   std::shared_ptr<PID> heading_pid_;
@@ -273,6 +279,7 @@ private:
   // Controller parameters
   double translation_kp_, translation_ki_, translation_kd_;
   bool enable_rotation_;
+  bool external_rotation_possible_{false};
   double rotation_kp_, rotation_ki_, rotation_kd_;
   double min_max_sum_error_;
   double control_duration_;

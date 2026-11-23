@@ -1,0 +1,130 @@
+{
+  "schema": "wt_grass_native_reload_execution_summary_v1",
+  "status": "passed",
+  "pid": 18184,
+  "exit_code": 0,
+  "duration_seconds": 47.968830999999994,
+  "started_utc": "2026-11-18T10:08:00.8130269Z",
+  "finished_utc": "2026-11-18T10:08:48.7808574Z",
+  "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+  "module_scope": "Current combined RMSim module; independent saved grass audit only.",
+  "verifier_sha256": "ed00421fde73b212f88767b97098422948c6224da8956ee25ba438850cf3a287",
+  "grass_author_sha256": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+  "fixture_sha256": "5c35a4dc70133a0ba3e5441131de0936a1a97c707bde92e21262bff332a3f659",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "scene_source_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "world_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "checks_passed": 71,
+  "native_layers": 16,
+  "native_meshes": 10,
+  "components_with_valid_data": 1089,
+  "components_with_weights": 1015,
+  "source_color_vectors": 96,
+  "max_source_color_error": 2.6246771644977684e-08,
+  "source_normal_textures": 3,
+  "normal_graph_customs": {
+    "surface": 1,
+    "world_normal": 1
+  },
+  "use_source_normal_layers": {
+    "enabled": 3,
+    "disabled": 13
+  },
+  "normal_sources": [
+    {
+      "model": "ue_generic_grass_small_a",
+      "source_sha256": "6a7a8ca3b0c92a661efd9b3ea4781fef9af844821eb93a42df4e280d7b1fd927",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "model": "ue_generic_grass_tall_a",
+      "source_sha256": "fdcf7b85c6d2d6b16692f3a6a8e590cf5821da611d80d15c423f9942219c9e7f",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "model": "ue_generic_grass_tall_b",
+      "source_sha256": "feb888688e2cc181aeb41e9b70bca6f420d222a7a1c7f269701af2472b5e22d0",
+      "dimensions": [
+        512,
+        512
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "id": "previous_gui_station_grass",
+      "ros_xy_m": [
+        1075.232351,
+        -1012.656026
+      ],
+      "expected": "zero",
+      "nonzero_layers": 0
+    },
+    {
+      "id": "spawn",
+      "ros_xy_m": [
+        1028.0,
+        -1020.0
+      ],
+      "expected": "zero",
+      "nonzero_layers": 0
+    },
+    {
+      "id": "near_station_grass",
+      "ros_xy_m": [
+        1084.75,
+        -1029.75
+      ],
+      "expected": "positive",
+      "nonzero_layers": 4
+    },
+    {
+      "id": "green_slope",
+      "ros_xy_m": [
+        1146.25,
+        -942.25
+      ],
+      "expected": "positive",
+      "nonzero_layers": 7
+    },
+    {
+      "id": "hard_road_edge",
+      "ros_xy_m": [
+        1075.25,
+        -1012.75
+      ],
+      "expected": "zero",
+      "nonzero_layers": 0
+    },
+    {
+      "id": "open_meadow",
+      "ros_xy_m": [
+        1163.25,
+        -1192.25
+      ],
+      "expected": "positive",
+      "nonzero_layers": 4
+    }
+  ],
+  "max_corner_error_byte": 1,
+  "max_interpolation_error_byte": 0.25,
+  "saved_files_unchanged": 76,
+  "current_file_rehash_unchanged": true,
+  "execution_file": "execution.json",
+  "execution_sha256": "1a50fb38518c324d501af72ef88f9ec045c7fee27f12e882d06565539dfdc16e",
+  "verification_file": "audit/verification.json",
+  "verification_sha256": "37ceb857003382d2d62f071e121754561e2a499f94488ffb9b28a34e4cd2f15c",
+  "native_summary_file": "audit/summary.json",
+  "native_summary_sha256": "02bf67925acda8a9b4564c3d91624a21632644a5a4b3ff2714757c7987fe8f8b",
+  "engine_log_sha256": "6bca66e5925da8b5b1c7a6231ef1d2d9517a39741bffcd53a0662f893dcc6adc",
+  "scope": "Read-only saved native GrassData, meshes, source colours, normal graph/texture bindings and six source-bound physical-surface sample locations. No runtime population regenerated.",
+  "v3_rendered_appearance_status": "pending_separate_gui_review"
+}

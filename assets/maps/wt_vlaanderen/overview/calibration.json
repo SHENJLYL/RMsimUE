@@ -1,0 +1,888 @@
+{
+  "status": "passed",
+  "started_utc": "2026-11-18T03:54:40.265945+00:00",
+  "script": {
+    "path": "D:\\simulator-wt-vlaanderen\\tools\\maps\\verify_wt_map_georeference.py",
+    "bytes": 19965,
+    "sha256": "6473c66b33b867052633e773f6c59995ac510d614aedbecb875f54a70013fdea"
+  },
+  "command": [
+    "D:\\simulator-wt-vlaanderen\\tools\\maps\\verify_wt_map_georeference.py",
+    "--package",
+    "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen",
+    "--overview-source",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01",
+    "--level-evidence",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02",
+    "--output",
+    "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\georef-02"
+  ],
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.0",
+  "schema": "wt_map_georeference_v1",
+  "map_id": "wt_vlaanderen",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "map_descriptor": {
+    "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\map.json",
+    "bytes": 710,
+    "sha256": "28005025cc771449ab53054236e27c3a1e25b36df12ec8c579cfecff94a7a431"
+  },
+  "source_manifest_snapshot": {
+    "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\scene-source.json",
+    "bytes": 1676875,
+    "sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9"
+  },
+  "original_static_scene": {
+    "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\scene.json",
+    "bytes": 30245,
+    "sha256": "ffea6ea2d56a1f3c7e98d7d1dae82e194ed1951026aa343b3e00ccef0e60d730"
+  },
+  "source_to_ros_matrix": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "source_translation_m": [
+    0,
+    0,
+    0
+  ],
+  "image_sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851",
+  "image_width": 1024,
+  "image_height": 1024,
+  "image": {
+    "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\avg_vlaanderen_tankmap.png",
+    "bytes": 973658,
+    "sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851"
+  },
+  "image_source_inventory": {
+    "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\source-inventory.json",
+    "bytes": 4942,
+    "sha256": "e6d4bece807487969375b385daea0fdfdb07a57cf8ee3fb6b52517bf13403189"
+  },
+  "image_source_pack": {
+    "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\locations_maps.dxp.bin",
+    "sha256": "3c59c32fc52ee94f6a538830ac71d398a28805c25b8e07f394f5fed77f58ab97",
+    "count": 465
+  },
+  "image_source_entry": {
+    "name": "avg_vlaanderen_tankmap",
+    "source": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\content\\base\\res\\locations_maps.dxp.bin",
+    "offset": 79843872,
+    "packed_bytes": 278624,
+    "file": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\avg_vlaanderen_tankmap.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "sha256": "f4375346e0b6f267e0b16ddb48fb1fad4e9864000530ac2a0a267babbeb5c851"
+  },
+  "level_coordinates": {
+    "archive": {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\aces.vromfs.bin",
+      "sha256": "9878eb608d48e6f732d667aa7aee060ad66c9b7e16dcbd8e8c990b006e589fe6",
+      "magic": "VRFx",
+      "target": 1129316352,
+      "header_size": 24,
+      "extension_flags": 0,
+      "version": 37552145,
+      "packed_size": 19892327,
+      "decoded_size": 27649792,
+      "body_sha256": "d337a4e5904179cef9654c110f55d0db9e8286ac83503cac8ffb52ed265f3f27",
+      "file_count": 26022
+    },
+    "entry": {
+      "name": "levels/avg_vlaanderen.blk",
+      "source_sha256": "2de8930e9f443ab6218567378514ff76b8ce86fd7cf2f06428c94e878fa23b9c",
+      "output": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\levels\\avg_vlaanderen.blk.json",
+      "output_sha256": "e5a7d781e3a98e899c5e9665a1671eb88a5e12b31acf42344fa66fc73dcc5869",
+      "format_label": 5,
+      "decoded_bytes": 4563,
+      "local_names": 0,
+      "shared_names": 220116,
+      "blocks": 48,
+      "parameters": 514,
+      "complex_bytes": 216
+    },
+    "shared_context": {
+      "shared_names": 220116,
+      "dictionary_entry": "02910f04273ea69a2042040e7e31b89f8ed8ef4403ec97efda8698810bb0942c.dict"
+    },
+    "shared_namemap_sha256": "bb3391c7fc730885158dcde66120f1abddf090446bde1548423352453a3f8407",
+    "dictionary_sha256": "399c1e4ce943134b5b134ada4cb8251ff6266ea1e78b67e55cc592229b51766f",
+    "fresh_decode": {
+      "format_label": 5,
+      "decoded_bytes": 4563,
+      "local_names": 0,
+      "shared_names": 220116,
+      "blocks": 48,
+      "parameters": 514,
+      "complex_bytes": 216
+    },
+    "independently_read_raw_parameters": {
+      "decoded_bytes": 4563,
+      "blocks": 48,
+      "parameters": 514,
+      "complex_bytes": 216,
+      "complex_stream_offset": 6,
+      "fields": {
+        "mapCoord0": {
+          "parameter_index": 6,
+          "shared_name_id": 49520,
+          "type_code": 4,
+          "type_name": "point2",
+          "record_hex": "70c1000400000000",
+          "complex_offset": 0,
+          "complex_value_hex": "000080c6000080c6",
+          "value": [
+            -16384.0,
+            -16384.0
+          ]
+        },
+        "mapCoord1": {
+          "parameter_index": 7,
+          "shared_name_id": 49521,
+          "type_code": 4,
+          "type_name": "point2",
+          "record_hex": "71c1000408000000",
+          "complex_offset": 8,
+          "complex_value_hex": "0000804600008046",
+          "value": [
+            16384.0,
+            16384.0
+          ]
+        },
+        "tankMapCoord0": {
+          "parameter_index": 14,
+          "shared_name_id": 49928,
+          "type_code": 4,
+          "type_name": "point2",
+          "record_hex": "08c3000430000000",
+          "complex_offset": 48,
+          "complex_value_hex": "0000000000000000",
+          "value": [
+            0.0,
+            0.0
+          ]
+        },
+        "tankMapCoord1": {
+          "parameter_index": 15,
+          "shared_name_id": 49929,
+          "type_code": 4,
+          "type_name": "point2",
+          "record_hex": "09c3000428000000",
+          "complex_offset": 40,
+          "complex_value_hex": "0000004500000045",
+          "value": [
+            2048.0,
+            2048.0
+          ]
+        }
+      }
+    },
+    "decoding_report": {
+      "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\level-config-02\\decoded\\verification.json",
+      "bytes": 34132,
+      "sha256": "76e6a345fec4defa6610fbd076b0567063daccf4c547696abfebbf9a38ce6133"
+    }
+  },
+  "orientation_test": {
+    "scope": "projected source-water triangles against visible blue map pixels",
+    "image_water_thresholds": [
+      {
+        "blue_minus_red_min": 12,
+        "blue_minus_green_min": 6,
+        "blue_min": 35
+      },
+      {
+        "blue_minus_red_min": 8,
+        "blue_minus_green_min": 3,
+        "blue_min": 30
+      },
+      {
+        "blue_minus_red_min": 16,
+        "blue_minus_green_min": 9,
+        "blue_min": 40
+      }
+    ],
+    "candidates": [
+      {
+        "transpose": false,
+        "flip_u": false,
+        "flip_v": false,
+        "projected_pixels": 6241,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1208,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3595,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1438,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "transpose": false,
+        "flip_u": false,
+        "flip_v": true,
+        "projected_pixels": 6241,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1208,
+            "visible_blue_pixels": 310,
+            "visible_blue_fraction": 0.25662251655629137,
+            "observed_blue_centroid_px": [
+              375.9709677419355,
+              616.741935483871
+            ]
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3595,
+            "visible_blue_pixels": 1820,
+            "visible_blue_fraction": 0.5062586926286509,
+            "observed_blue_centroid_px": [
+              432.86043956043954,
+              712.3131868131868
+            ]
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1438,
+            "visible_blue_pixels": 772,
+            "visible_blue_fraction": 0.5368567454798331,
+            "observed_blue_centroid_px": [
+              589.0518134715026,
+              970.8134715025907
+            ]
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.46498958500240345,
+          0.47876942797628586,
+          0.4553757410671367
+        ]
+      },
+      {
+        "transpose": false,
+        "flip_u": true,
+        "flip_v": false,
+        "projected_pixels": 6241,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1208,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3595,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1438,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "transpose": false,
+        "flip_u": true,
+        "flip_v": true,
+        "projected_pixels": 6241,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1208,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3595,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1438,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "transpose": true,
+        "flip_u": false,
+        "flip_v": false,
+        "projected_pixels": 6301,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1225,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3597,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1479,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "transpose": true,
+        "flip_u": false,
+        "flip_v": true,
+        "projected_pixels": 6301,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1225,
+            "visible_blue_pixels": 116,
+            "visible_blue_fraction": 0.0946938775510204,
+            "observed_blue_centroid_px": [
+              397.7931034482759,
+              633.9310344827586
+            ]
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3597,
+            "visible_blue_pixels": 23,
+            "visible_blue_fraction": 0.006394217403391716,
+            "observed_blue_centroid_px": [
+              356.5217391304348,
+              611.2173913043479
+            ]
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1479,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.022059990477701952,
+          0.023488335184891285,
+          0.021266465640374543
+        ]
+      },
+      {
+        "transpose": true,
+        "flip_u": true,
+        "flip_v": false,
+        "projected_pixels": 6301,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1225,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3597,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1479,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "transpose": true,
+        "flip_u": true,
+        "flip_v": true,
+        "projected_pixels": 6301,
+        "water": [
+          {
+            "source_file": "static_0035.npz",
+            "projected_pixels": 1225,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0036.npz",
+            "projected_pixels": 3597,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          },
+          {
+            "source_file": "static_0037.npz",
+            "projected_pixels": 1479,
+            "visible_blue_pixels": 0,
+            "visible_blue_fraction": 0.0,
+            "observed_blue_centroid_px": null
+          }
+        ],
+        "threshold_blue_fractions": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "selected": {
+      "transpose": false,
+      "flip_u": false,
+      "flip_v": true
+    },
+    "primary_winner_fraction": 0.46498958500240345,
+    "primary_runner_up_fraction": 0.022059990477701952,
+    "all_three_ponds_match": true,
+    "threshold_sweep_same_winner": true,
+    "interpretation": "water polygons include shoreline; colour fraction establishes image orientation, not a shoreline geometry error"
+  },
+  "image_ros_corners_m": {
+    "top_left": [
+      0.0,
+      -2048.0
+    ],
+    "top_right": [
+      2048.0,
+      -2048.0
+    ],
+    "bottom_left": [
+      0.0,
+      -0.0
+    ]
+  },
+  "corner_semantics": "continuous texture edges UV(0,0), UV(1,0), UV(0,1); not texel centers",
+  "metres_per_pixel": [
+    2.0,
+    2.0
+  ],
+  "water_landmarks": [
+    {
+      "name": "[59] poly mesh water_transparent_848",
+      "source": {
+        "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0035.npz",
+        "bytes": 946,
+        "sha256": "b76c5a730c67c2c4dac5be0f4f18a23d70621dd4d3723110578ce7fff53b915a"
+      },
+      "triangles": 7,
+      "bounds_dagor_xz_m": {
+        "lo": [
+          688.0139770507812,
+          776.3289794921875
+        ],
+        "hi": [
+          814.1500244140625,
+          870.3569946289062
+        ]
+      },
+      "projected_area_m2": 4608.156691683456,
+      "centroid_dagor_xz_m": [
+        742.7924921038061,
+        819.4292543325912
+      ],
+      "projected_centroid_px": [
+        371.39624605190306,
+        614.2853728337044
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          344.0069885253906,
+          588.8215026855469
+        ],
+        "hi": [
+          407.07501220703125,
+          635.8355102539062
+        ]
+      },
+      "image_measurement": {
+        "source_file": "static_0035.npz",
+        "projected_pixels": 1208,
+        "visible_blue_pixels": 310,
+        "visible_blue_fraction": 0.25662251655629137,
+        "observed_blue_centroid_px": [
+          375.9709677419355,
+          616.741935483871
+        ]
+      }
+    },
+    {
+      "name": "[60] poly mesh water_transparent_886",
+      "source": {
+        "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0036.npz",
+        "bytes": 946,
+        "sha256": "70e4d6abf6829ed97ba3703955f2b4b5f6c8c3bdbd0f9a949d8212944ab052da"
+      },
+      "triangles": 9,
+      "bounds_dagor_xz_m": {
+        "lo": [
+          779.6370239257812,
+          552.4149780273438
+        ],
+        "hi": [
+          941.9630126953125,
+          752.5850219726562
+        ]
+      },
+      "projected_area_m2": 14118.729291766882,
+      "centroid_dagor_xz_m": [
+        856.0590602644783,
+        637.3011409821421
+      ],
+      "projected_centroid_px": [
+        428.02953013223913,
+        705.349429508929
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          389.8185119628906,
+          647.7074890136719
+        ],
+        "hi": [
+          470.98150634765625,
+          747.7925109863281
+        ]
+      },
+      "image_measurement": {
+        "source_file": "static_0036.npz",
+        "projected_pixels": 3595,
+        "visible_blue_pixels": 1820,
+        "visible_blue_fraction": 0.5062586926286509,
+        "observed_blue_centroid_px": [
+          432.86043956043954,
+          712.3131868131868
+        ]
+      }
+    },
+    {
+      "name": "[61] poly mesh water_transparent_892",
+      "source": {
+        "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\static-02\\static_0037.npz",
+        "bytes": 934,
+        "sha256": "20a97be8f70131dc1372cff52c256c2d3c62877a075e14c1948d9fcca60b014c"
+      },
+      "triangles": 7,
+      "bounds_dagor_xz_m": {
+        "lo": [
+          1102.3499755859375,
+          71.73979949951172
+        ],
+        "hi": [
+          1250.7099609375,
+          131.98699951171875
+        ]
+      },
+      "projected_area_m2": 5517.616819488816,
+      "centroid_dagor_xz_m": [
+        1183.351169567911,
+        104.75907353900733
+      ],
+      "projected_centroid_px": [
+        591.6755847839555,
+        971.6204632304963
+      ],
+      "projected_bounds_px": {
+        "lo": [
+          551.1749877929688,
+          958.0065002441406
+        ],
+        "hi": [
+          625.35498046875,
+          988.1301002502441
+        ]
+      },
+      "image_measurement": {
+        "source_file": "static_0037.npz",
+        "projected_pixels": 1438,
+        "visible_blue_pixels": 772,
+        "visible_blue_fraction": 0.5368567454798331,
+        "observed_blue_centroid_px": [
+          589.0518134715026,
+          970.8134715025907
+        ]
+      }
+    }
+  ],
+  "building_landmarks": [
+    {
+      "source_model": "hippodrome_tribune_a",
+      "source_layout": {
+        "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\layout-06\\layer-0-instances.json",
+        "bytes": 4625326,
+        "sha256": "206d36a75f8db3355bbf95f4e7996bb72c850244431fde1326b253644a14c9c1"
+      },
+      "prepared_instances": {
+        "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\instances\\prop_hippodrome_tribune_a.rmi",
+        "bytes": 88,
+        "sha256": "bcd68a9a79d8d7c73883a7ce636571623ed15c7a7ebad32e5254745df0356b0b"
+      },
+      "image_observation": {
+        "method": "visual inspection of the unmodified original 1024px map",
+        "feature": "grandstands along the upper side of the oval racetrack",
+        "roi_pixels": [
+          737.0,
+          437.0,
+          848.0,
+          480.0
+        ]
+      },
+      "positions": [
+        {
+          "original_position_dagor_m": [
+            1560.9851374858852,
+            0.12662129581590875,
+            1138.4722434156315
+          ],
+          "position_ros_m": [
+            1560.9851374858852,
+            -1138.4722434156315,
+            0.12662129581590875
+          ],
+          "image_pixel": [
+            780.4925687429426,
+            454.76387829218424
+          ],
+          "prepared_rmi_position_ros_m": [
+            1560.985107421875,
+            -1138.4722900390625,
+            0.1266212910413742
+          ],
+          "inside_observed_roi": true
+        },
+        {
+          "original_position_dagor_m": [
+            1658.76937162389,
+            0.22037415692617657,
+            1138.4097415082247
+          ],
+          "position_ros_m": [
+            1658.76937162389,
+            -1138.4097415082247,
+            0.22037415692617657
+          ],
+          "image_pixel": [
+            829.384685811945,
+            454.79512924588767
+          ],
+          "prepared_rmi_position_ros_m": [
+            1658.7694091796875,
+            -1138.4097900390625,
+            0.22037415206432343
+          ],
+          "inside_observed_roi": true
+        }
+      ]
+    },
+    {
+      "source_model": "hippodrome_stables_a",
+      "source_layout": {
+        "path": "D:\\simulator\\artifacts\\maps\\wt_existing\\avg_vlaanderen\\layout-06\\layer-0-instances.json",
+        "bytes": 4625326,
+        "sha256": "206d36a75f8db3355bbf95f4e7996bb72c850244431fde1326b253644a14c9c1"
+      },
+      "prepared_instances": {
+        "path": "D:\\simulator-wt-vlaanderen\\assets\\maps\\wt_vlaanderen\\instances\\prop_hippodrome_stables_a.rmi",
+        "bytes": 48,
+        "sha256": "6d4ba9afd8cc33b4e63298f1b93bb556e4ac97dcb9a8e0f0bfee3dd57e373cd2"
+      },
+      "image_observation": {
+        "method": "visual inspection of the unmodified original 1024px map",
+        "feature": "stables inside the left half of the oval racetrack",
+        "roi_pixels": [
+          711.0,
+          490.0,
+          783.0,
+          532.0
+        ]
+      },
+      "positions": [
+        {
+          "original_position_dagor_m": [
+            1511.8898892178106,
+            -1.6390575884273844,
+            1025.343791009247
+          ],
+          "position_ros_m": [
+            1511.8898892178106,
+            -1025.343791009247,
+            -1.6390575884273844
+          ],
+          "image_pixel": [
+            755.9449446089053,
+            511.32810449537646
+          ],
+          "prepared_rmi_position_ros_m": [
+            1511.889892578125,
+            -1025.34375,
+            -1.6390576362609863
+          ],
+          "inside_observed_roi": true
+        }
+      ]
+    }
+  ],
+  "landmark_count": 5,
+  "spawn": {
+    "id": "default",
+    "position_ros_m": [
+      1028.0,
+      -1020.0,
+      -1.3805752992630005
+    ],
+    "yaw_rad": 0,
+    "image_uv": [
+      0.501953125,
+      0.501953125
+    ],
+    "image_pixel": [
+      514.0,
+      514.0
+    ]
+  },
+  "image_axis_directions_per_ros_m": {
+    "positive_x_px": [
+      0.5,
+      0.0
+    ],
+    "positive_y_px": [
+      0.0,
+      0.5
+    ]
+  },
+  "decoder_review": {
+    "scope": "observed label-5 level; key coordinate parameter records independently decoded",
+    "reviewed_rules": [
+      "24-bit parameter name ID plus 8-bit type in little-endian record",
+      "point2 uses two little-endian float32 values at the complex-data byte offset",
+      "shared namemap is reused; this level has zero local names",
+      "block names use name ID + 1; parameter names use zero-based IDs",
+      "consecutive child ranges and exact stream coverage are checked",
+      "colour parameters remain the original four little-endian bytes"
+    ],
+    "references": [
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\blk_serialize-reference.cpp",
+        "bytes": 45862,
+        "sha256": "6147ada9de59407d2af7bebbf7efbf39dbf5bbae5259277c555fa606ac2912c5"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\blk_shared-reference.h",
+        "bytes": 10096,
+        "sha256": "03d9bd345a7d296421606d97f642f503d52c72fd488cade4298aa2799db18968"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\blk_zstd-reference.cpp",
+        "bytes": 11065,
+        "sha256": "6e2419250c47e2f8452a6605754f2c4ad8d1555deed21ff032de31236299da87"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\dag_vromfs-reference.h",
+        "bytes": 16049,
+        "sha256": "31da3841b0f1965346bc9d2a489c19bd160274fc8eb561a00ccb674276c2d90c"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\vromfsLoad-reference.cpp",
+        "bytes": 65451,
+        "sha256": "04cfb015b26f5afe2c01d0e9dff548ca66ebdde391b1ac658311596e050010e2"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\artifacts\\maps\\wt-scene-20261118\\map-overview-01\\dag_zstdObfuscate-reference.h",
+        "bytes": 2261,
+        "sha256": "4c0303f94d955324f53f02476491e94b8536b58e156420c7e69f5f7616dd15b3"
+      }
+    ],
+    "implementation": [
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\tools\\maps\\wt_blk.py",
+        "bytes": 5945,
+        "sha256": "400887d4dc43c06da146378844f050c3a1f677963403025ed6378a0d28fe7367"
+      },
+      {
+        "path": "D:\\simulator-wt-vlaanderen\\tools\\maps\\wt_vromfs.py",
+        "bytes": 3558,
+        "sha256": "86d7baa446c185a5a2a5982f0a9b8efe0760976dacb6b61b064a3e610e40d4c0"
+      }
+    ]
+  },
+  "finished_utc": "2026-11-18T03:54:41.080405+00:00"
+}

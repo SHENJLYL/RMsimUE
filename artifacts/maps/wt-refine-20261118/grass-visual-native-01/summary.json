@@ -1,0 +1,73 @@
+{
+  "schema": "wt_grass_visual_native_summary_v1",
+  "status": "passed",
+  "pid": 8820,
+  "exit_code": 0,
+  "elapsed_seconds_from_execution": 99.222058,
+  "requested_shader_workers": 4,
+  "resume_authored_assets": false,
+  "module_sha256": "7a4edd9792accc9f50151e2bfe38e70785c679db2ce684046ecdf78e1083f987",
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "world_before_sha256": "1cb484b861b8ee2cc8f2463a294abe7165af680718077cebc3de37390ef1400c",
+  "world_after_sha256": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "scripts_sha256": {
+    "author_wt_grass.py": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+    "wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+  },
+  "verification_sha256": "8f4b87e639a831ed862824cd17a0d4ebe442158130b8f34cdaca8a5d1b58e18c",
+  "execution_sha256": "9c1a9dae40844af617752933d20fb1063f111554a914adee78e6814eb9a77df6",
+  "landscape_components": 1089,
+  "valid_grass_components": 1089,
+  "weighted_grass_components": 1015,
+  "outdated_after_build": 0,
+  "source_models": 10,
+  "grass_layers": 16,
+  "hism_components": 536,
+  "render_instances": 115911,
+  "collision_enabled_grass_components": 0,
+  "instance_count_method": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+  "population_scope": "native two-preview-camera render buffers, not the whole-map expected population",
+  "preview_cameras": 2,
+  "instances_by_mesh": {
+    "grass_tulip_b": 0,
+    "grass_paigle_a": 48,
+    "grass_fill_a": 1539,
+    "grass_blueberry_a": 38,
+    "grass_daisies_a": 30,
+    "grass_heather_a": 74,
+    "grass_simple_a": 1877,
+    "ue_generic_grass_small_a": 73015,
+    "ue_generic_grass_tall_a": 21869,
+    "ue_generic_grass_tall_b": 17421
+  },
+  "three_new_grass_instance_shares": {
+    "ue_generic_grass_small_a": 0.6501491474110681,
+    "ue_generic_grass_tall_a": 0.19472864075508658,
+    "ue_generic_grass_tall_b": 0.15512221183384534
+  },
+  "authored_packed_normal_textures": {
+    "ue_generic_grass_small_a": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_small_a_PackedNormal.ue_generic_grass_small_a_PackedNormal",
+    "ue_generic_grass_tall_a": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_a_PackedNormal.ue_generic_grass_tall_a_PackedNormal",
+    "ue_generic_grass_tall_b": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Textures/ue_generic_grass_tall_b_PackedNormal.ue_generic_grass_tall_b_PackedNormal"
+  },
+  "three_ue_card_max_bound_error_cm": 2.3245811462402344e-06,
+  "bake_attempts": [
+    {
+      "attempt": 1,
+      "status": "incomplete",
+      "outdated": 1054,
+      "elapsed_seconds": 0.7810000000026776
+    },
+    {
+      "attempt": 2,
+      "status": "built",
+      "outdated": 0,
+      "elapsed_seconds": 10.73399999999674
+    }
+  ],
+  "independent_reload_material_and_visual_status": "separate pending gates; original grass baseline evidence retained",
+  "original_scene_geometry_changed": false,
+  "vehicle_physics_changed": false
+}

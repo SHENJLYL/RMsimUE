@@ -1,0 +1,57 @@
+{
+  "schema": "wt_material_source_preflight_v1",
+  "status": "passed",
+  "source_manifest_sha256": "ac0afa8a40d90feee51bc53d02b41aa1b33c10b9f3d2a574b0e7d7be1f18c7d9",
+  "scripts_sha256": {
+    "wt_materials.py": "7695b7aa121c339ee80fccc221a3ba1d7d337db6a8eb67831adcb152dc06d5e1",
+    "import_wt_scene.py": "43cffd2db89b5212494745334f8d6ef8ee48c65ed296dc7c7a3771e3ddd9fdcf",
+    "verify_wt_materials.py": "b6837b1d4b23e3279f952888ba16546d2d6b4e3e40fdf36990884acf7a10fb95",
+    "wt_vertex_opacity.py": "a939d42d7416423b12eac998ee1e1e4a9d2a385dd120f3aac3d0b3e79e27db29",
+    "wt_tree_alpha.py": "92da3239a5dd8cb84da5931ef5422294b1554f744d16a3a280b9cca6bd660d4f",
+    "wt_runtime_virtual_texture.py": "8e1e882cd31bdada15dda099e238518f30e9952eab19fdfb18a4dba5eb1eb7d6"
+  },
+  "source_vertex_opacity": {
+    "world_decal_000": {
+      "contract": {
+        "schema": "wt_landmesh_vertex_opacity_v1",
+        "shader": "land_mesh_height_decal",
+        "uv_channel": 1,
+        "component": "x",
+        "source": "short4n_position_w",
+        "full_precision": true,
+        "raw_verification_file": "geometry-audits/world_decal_000-opacity.json",
+        "raw_verification_sha256": "a76a3c1f1bce25d974d229020ae2eac6895f5f3dec77917f5624bd63701ade2a"
+      },
+      "proof_sha256": "a76a3c1f1bce25d974d229020ae2eac6895f5f3dec77917f5624bd63701ade2a",
+      "source_loop_count": 263592,
+      "expected_uv_channels": 2,
+      "max_abs_error": 0.0
+    }
+  },
+  "ordinary_tree_count": 43,
+  "split_alpha_count": 25,
+  "split_alpha_audit_sha256": "67f35df9251d377a92641d61481b697b0167c21b9d19b0b05bb268aa6b41f18f",
+  "height_decal_count": 34,
+  "height_parameters": [
+    [
+      0.25,
+      1,
+      0,
+      0
+    ]
+  ],
+  "parent_flavors": [
+    "Decal",
+    "Glass",
+    "HeightDecal",
+    "Land",
+    "Leaves",
+    "Surface",
+    "Terrain"
+  ],
+  "expected_native_assets": 88,
+  "native_shader_compile_verified": false,
+  "rendered_appearance_verified": false,
+  "rvt_normal_decode": "de-premultiply XY; reconstruct unit Z magnitude with the sampled native sign bit",
+  "source_bytes_reverified_after_normal_fix": true
+}

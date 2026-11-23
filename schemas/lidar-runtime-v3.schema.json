@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MID-360 public specification and explicitly uncalibrated measurement model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "calibrated",
+    "id",
+    "parent_frame",
+    "origin",
+    "pattern",
+    "rays_per_second",
+    "frame_hz",
+    "elevation_min_rad",
+    "elevation_max_rad",
+    "min_range_m",
+    "max_range_m",
+    "range_noise_std_m",
+    "reflectivity",
+    "noise_seed",
+    "mid360"
+  ],
+  "properties": {
+    "schema": {
+      "const": "rm_lidar_runtime_v3"
+    },
+    "calibrated": {
+      "const": false
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+      "not": {
+        "const": "base"
+      }
+    },
+    "parent_frame": {
+      "enum": [
+        "base_link",
+        "yaw_link"
+      ]
+    },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xyz",
+        "rpy"
+      ],
+      "properties": {
+        "xyz": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "number",
+            "minimum": -5,
+            "maximum": 5
+          }
+        },
+        "rpy": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "number",
+            "minimum": -6.283185307179586,
+            "maximum": 6.283185307179586
+          }
+        }
+      }
+    },
+    "pattern": {
+      "const": "spherical_fibonacci"
+    },
+    "rays_per_second": {
+      "const": 200000
+    },
+    "frame_hz": {
+      "enum": [
+        5,
+        10,
+        20,
+        50,
+        100
+      ]
+    },
+    "elevation_min_rad": {
+      "const": -0.12217304763960307
+    },
+    "elevation_max_rad": {
+      "const": 0.9075712110370514
+    },
+    "min_range_m": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 10
+    },
+    "max_range_m": {
+      "type": "number",
+      "minimum": 0.11,
+      "maximum": 70
+    },
+    "range_noise_std_m": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reflectivity": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255
+    },
+    "noise_seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "mid360": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "angular_noise_std_rad",
+        "near_range_noise_std_m",
+        "noise_near_distance_m",
+        "noise_reference_distance_m",
+        "nir_default_reflectance",
+        "nir_material_reflectance",
+        "range_reference_low_reflectance",
+        "range_reference_low_m",
+        "range_reference_high_reflectance",
+        "range_reference_high_m",
+        "incidence_cosine",
+        "pending_scan_limit",
+        "direction_sequence_file",
+        "provenance"
+      ],
+      "properties": {
+        "angular_noise_std_rad": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.1
+        },
+        "near_range_noise_std_m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "noise_near_distance_m": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 10
+        },
+        "noise_reference_distance_m": {
+          "type": "number",
+          "minimum": 0.02,
+          "maximum": 100
+        },
+        "nir_default_reflectance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "nir_material_reflectance": {
+          "type": "object",
+          "maxProperties": 128,
+          "propertyNames": {
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "range_reference_low_reflectance": {
+          "const": 0.1
+        },
+        "range_reference_low_m": {
+          "const": 40
+        },
+        "range_reference_high_reflectance": {
+          "const": 0.8
+        },
+        "range_reference_high_m": {
+          "const": 70
+        },
+        "incidence_cosine": {
+          "type": "boolean"
+        },
+        "pending_scan_limit": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8
+        },
+        "direction_sequence_file": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "provenance": {
+          "type": "object",
+          "maxProperties": 16,
+          "required": [
+            "measurement_calibrated"
+          ],
+          "properties": {
+            "measurement_calibrated": {
+              "const": false
+            }
+          },
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string",
+                "maxLength": 512
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$comment": "Runtime additionally requires max_range_m >= min_range_m + 0.01 and noise_reference_distance_m >= noise_near_distance_m + 0.01. 200000 emitted slots/s, 5000 ns per slot, line=index%4, all first-return slots retained. The physical_model state and provenance expose approximate geometry/material/noise models. direction_sequence_file optionally replaces angular pattern with captured direction CSV; its time/line/FOV constraints are validated by the loader."
+}

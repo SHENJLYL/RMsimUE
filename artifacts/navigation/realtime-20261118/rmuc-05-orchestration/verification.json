@@ -1,0 +1,67 @@
+{
+  "status": "failed",
+  "session_directory": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05",
+  "events": [
+    {
+      "name": "console",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "D:\\simulator\\tools\\environment\\Start-NavigationConsole.ps1",
+        "-Scene",
+        "rmuc2027",
+        "-NoRviz",
+        "-Offscreen",
+        "-PaceRealTime",
+        "-ControlProfile",
+        "simulation",
+        "-VerifyLidarQueries",
+        "-ProfileSensorTiming",
+        "-ProfileFrames",
+        "16000",
+        "-OutputDirectory",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05"
+      ],
+      "pid": 37120,
+      "started_monotonic_s": 40682.7768833
+    },
+    {
+      "name": "clock",
+      "command": [
+        "C:\\Users\\SHEN\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "D:\\simulator\\tools\\integration\\measure_console_clock.py",
+        "--session",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05",
+        "--output",
+        "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\rmuc-05\\clock",
+        "--seconds",
+        "90.0",
+        "--ready-timeout-seconds",
+        "240.0"
+      ],
+      "pid": 18112,
+      "started_monotonic_s": 40684.7886819
+    }
+  ],
+  "script_sha256": "f0debc7b08943564cbaf60c2da1d497ced7f0a15833eb1db8855649e1878ac5f",
+  "keep_session_requested": true,
+  "cleanup": [
+    {
+      "name": "clock",
+      "pid": 18112,
+      "status": "terminated",
+      "taskkill_exit_code": 0,
+      "taskkill_output": "SUCCESS: The process with PID 18112 (child process of PID 8824) has been terminated.\r\n",
+      "exit_code": 1
+    }
+  ],
+  "cleanup_errors": [],
+  "error": "RuntimeError('Clock did not enter measurement before action')",
+  "kept_session": false,
+  "exit_codes": {
+    "console": 3,
+    "clock": 1
+  },
+  "finished_monotonic_s": 40867.5496529
+}

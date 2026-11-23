@@ -1,0 +1,23 @@
+{
+  "schema": "wt_native_material_audit_v1",
+  "status": "running",
+  "complete": false,
+  "started_utc": "2026-11-17T15:08:02.146658+00:00",
+  "engine": "5.8.4-58902052+++UE5+Release-5.8",
+  "source_manifest_sha256": "f0cee3b0ba9debb62f614cf89e8792fd14a3869a1f4ae01cfc2c827a53b72996",
+  "audit_script_sha256": "d1d678707700f8e3586b9640ab3037d2b754da9e23e68ea25c42ddd58bded95a",
+  "scope": "saved_parent_graphs_and_leaf_instance_native_shader_compilation",
+  "rendering_visual_quality_verified": false,
+  "in_memory_recompile": true,
+  "saved_assets_modified": false,
+  "parents": [],
+  "leaf_instances": [],
+  "api_evidence": {
+    "recompile_material": "UE 5.8 MaterialEditingLibrary.cpp:1035-1059; TArray<FString> compiler errors",
+    "get_statistics": "UE 5.8 MaterialEditingLibrary.cpp:2116-2159; target resource FinishCompilation and actual shader statistics"
+  },
+  "limitations": [
+    "Compilation target is the active RHI shader platform; platform coverage is recorded in the accompanying Unreal log.",
+    "This gate does not assess rendered appearance or wind animation."
+  ]
+}

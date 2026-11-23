@@ -1,4 +1,7 @@
 #include "VehicleRig.h"
+#include "MujocoVehicleDynamics.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "RosCoordinates.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -13,6 +16,7 @@
 #include "PhysicsEngine/BodyInstance.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
+#include "PhysicsPublic.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -40,6 +44,14 @@ bool ContactAxis(const FContactObject& J,const TCHAR* Field,FVector& V)
 
 bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Error)
 {
+    FString Backend=TEXT("chaos");FParse::Value(FCommandLine::Get(),TEXT("PhysicsBackend="),Backend);
+    if(Backend.Equals(TEXT("mujoco"),ESearchCase::IgnoreCase))
+    {
+        FString Model;
+        if(!FParse::Value(FCommandLine::Get(),TEXT("MujocoModel="),Model)||Model.IsEmpty()){Error=TEXT("MuJoCo requires a model manifest/XML");return false;}
+        return InitializeMujocoPhysics(Filename,Model,Error);
+    }
+    if(!Backend.Equals(TEXT("chaos"),ESearchCase::IgnoreCase)){Error=TEXT("unsupported physics backend: ")+Backend;return false;}
     auto Fail=[&Error](const FString& Why){Error=Why;return false;};
     if(bContactPhysics||!ContactBodies.IsEmpty()||!GetWorld()||Links.IsEmpty())return Fail(TEXT("contact rig already active or visual rig unavailable"));
     FString Text;FContactObject Spec;
@@ -161,6 +173,9 @@ bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Erro
         B->SetMobility(EComponentMobility::Movable);B->SetStaticMesh(Shapes[Part]);B->SetWorldTransform(InitialWorld[Part]);
         B->SetCollisionProfileName(TEXT("PhysicsActor"));B->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         B->SetCollisionResponseToAllChannels(ECR_Block);B->SetCanEverAffectNavigation(false);
+        // Contact observations use OnComponentHit; no overlap-volume events are consumed.
+        // Skip redundant scene overlap queries when Chaos synchronizes each moving body.
+        B->SetGenerateOverlapEvents(false);
         B->SetNotifyRigidBodyCollision(true);B->OnComponentHit.AddDynamic(this,&AVehicleRig::ObserveContact);
         B->SetHiddenInGame(true);B->SetVisibility(false);B->SetCastShadow(false);
         B->SetPhysMaterialOverride(Material);B->SetMassOverrideInKg(NAME_None,Mass);
@@ -260,6 +275,7 @@ bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Erro
 
 void AVehicleRig::ResetContactPose(const FTransform& Pose)
 {
+    if(MujocoDynamics){ResetMujocoPose(Pose);return;}
     if(!bContactPhysics||Pose.ContainsNaN())return;
     ++MotionGeneration;
     // Explicit respawn only, never used by wheel driving or terrain traversal.
@@ -271,6 +287,8 @@ void AVehicleRig::ResetContactPose(const FTransform& Pose)
         Entry.Key->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
         Entry.Key->WakeAllRigidBodies();
     }
+    ObstacleContacts.Reset();ObstacleContactWriteIndex=0;
+    // Keep the sequence monotonic so a reader's pre-reset cursor cannot suppress new contacts.
     ContactObservations.Reset();bFreeRollingDiagnostic=false;DriveAcceleration=FVector2D::ZeroVector;DriveFilteredWorld=FVector2D::ZeroVector;DriveFilteredYaw=0;DriveSpeedAcceleration=0;DriveDirectionRate=0;
     for(auto& W:ContactWheels){W.SteeringTargetRad=0;W.SteeringMeasuredRad=0;W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;}
     SetContactDrive(0,0,true);
@@ -278,6 +296,7 @@ void AVehicleRig::ResetContactPose(const FTransform& Pose)
 
 TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
 {
+    if(MujocoDynamics)return GetMujocoContactState();
     auto State=MakeShared<FJsonObject>();State->SetBoolField(TEXT("enabled"),bContactPhysics);
     State->SetStringField(TEXT("scope"),TEXT("native_Chaos_contact_and_constraints; demo masses/friction/springs; fixed_neutral_gimbal_collision"));
     auto Params=MakeShared<FJsonObject>();for(const auto& Item:ContactParameters)Params->SetNumberField(Item.Key,Item.Value);
@@ -295,6 +314,7 @@ TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
     const FVector2D FilteredInFrame=bDriveWorldFrame?DriveFilteredWorld:FVector2D(FVector2D::DotProduct(DriveFilteredWorld,Forward),FVector2D::DotProduct(DriveFilteredWorld,Left));
     State->SetArrayField(TEXT("filtered_linear_m_s"),ContactVector(FVector(FilteredInFrame.X,FilteredInFrame.Y,0)));
     State->SetNumberField(TEXT("speed_acceleration_m_s2"),DriveSpeedAcceleration);
+    State->SetStringField(TEXT("velocity_command_mode"),bExternalVelocityTracking?TEXT("external_shaped_velocity"):TEXT("manual_input_shaper"));
     State->SetNumberField(TEXT("direction_rate_rad_s"),DriveDirectionRate);
     State->SetArrayField(TEXT("filtered_world_linear_m_s"),ContactVector(FVector(DriveFilteredWorld.X,DriveFilteredWorld.Y,0)));
     State->SetNumberField(TEXT("filtered_yaw_rad_s"),DriveFilteredYaw);State->SetNumberField(TEXT("measured_yaw_rad_s"),GetMeasuredYawRate());
@@ -364,23 +384,155 @@ TSharedRef<FJsonObject> AVehicleRig::GetContactState() const
     State->SetArrayField(TEXT("wheels"),Wheels);return State;
 }
 
+void AVehicleRig::DispatchPhysicsCollisionHit(const FRigidBodyCollisionInfo& MyInfo,
+    const FRigidBodyCollisionInfo& OtherInfo,const FCollisionImpactData& CollisionData)
+{
+    // OnComponentHit omits the solver velocity delta and exposes only its first contact.
+    // Capture the pair before preserving the original delegates/telemetry via Super.
+    UPrimitiveComponent* MyComponent=MyInfo.Component.Get();
+    UPrimitiveComponent* OtherComponent=OtherInfo.Component.Get();
+    if(bContactPhysics && GetWorld() && MyComponent && OtherComponent &&
+       MyComponent->GetOwner()==this && OtherComponent->GetOwner()!=this && OtherInfo.BodyIndex>=0)
+    {
+        const FRigidBodyContactInfo* Contact=nullptr;
+        for(const FRigidBodyContactInfo& Candidate:CollisionData.ContactInfos)
+            if(!Candidate.bContactProbe){Contact=&Candidate;break;}
+        if(Contact)
+        {
+            const auto Finite=[](const FVector& V)
+            {return FMath::IsFinite(V.X)&&FMath::IsFinite(V.Y)&&FMath::IsFinite(V.Z);};
+            const FVector SourceCenter=MyComponent->GetCenterOfMass(MyInfo.BoneName);
+            const FVector PreImpact=MyComponent->GetPhysicsLinearVelocity(MyInfo.BoneName)-MyInfo.DeltaVelocity;
+            const double Now=GetWorld()->GetTimeSeconds();
+            if(Finite(Contact->ContactPosition) && Finite(Contact->ContactNormal) &&
+               Finite(SourceCenter) && Finite(PreImpact) && Finite(CollisionData.TotalNormalImpulse) &&
+               FMath::IsFinite(Now) && Contact->ContactNormal.SizeSquared()>UE_SMALL_NUMBER)
+            {
+                FVector Outward=Contact->ContactNormal.GetSafeNormal();
+                if(FVector::DotProduct(Outward,SourceCenter-Contact->ContactPosition)<0)Outward=-Outward;
+                // The solver's accumulated impulse vector need not be swapped with recipient order.
+                // Its projected magnitude is safe; oriented contact normal supplies obstacle direction.
+                const double Impulse=FMath::Abs(FVector::DotProduct(CollisionData.TotalNormalImpulse,Outward))/100.;
+                if(FMath::IsFinite(Impulse))
+                {
+                    FVehicleObstacleContact Snapshot;
+                    Snapshot.OtherComponent=OtherComponent;Snapshot.InstanceIndex=OtherInfo.BodyIndex;
+                    Snapshot.PointCm=Contact->ContactPosition;Snapshot.IntoObstacleNormal=-Outward;
+                    Snapshot.ImpulseNs=Impulse;Snapshot.PreImpactVelocityCmS=PreImpact;
+                    Snapshot.TimeSeconds=Now;Snapshot.Sequence=++ObstacleContactSequence;
+                    Snapshot.MotionGeneration=MotionGeneration;
+                    if(ObstacleContacts.Num()<ObstacleContactCapacity)
+                    {
+                        ObstacleContacts.Reserve(ObstacleContactCapacity);
+                        ObstacleContacts.Add(MoveTemp(Snapshot));
+                    }
+                    else ObstacleContacts[ObstacleContactWriteIndex]=MoveTemp(Snapshot);
+                    ObstacleContactWriteIndex=(ObstacleContactWriteIndex+1)%ObstacleContactCapacity;
+                }
+            }
+        }
+    }
+    Super::DispatchPhysicsCollisionHit(MyInfo,OtherInfo,CollisionData);
+}
+
+void AVehicleRig::GetObstacleContactsSince(uint64& Cursor,TArray<FVehicleObstacleContact>& Out) const
+{
+    Out.Reset();
+    const uint64 PreviousCursor=Cursor;
+    Cursor=ObstacleContactSequence;
+    if(!bContactPhysics || !GetWorld())return;
+    const double Now=GetWorld()->GetTimeSeconds();
+    if(!FMath::IsFinite(Now))return;
+    const int32 Count=ObstacleContacts.Num();
+    const int32 First=Count==ObstacleContactCapacity?ObstacleContactWriteIndex:0;
+    for(int32 Offset=0;Offset<Count;++Offset)
+    {
+        const FVehicleObstacleContact& Contact=ObstacleContacts[(First+Offset)%Count];
+        const double Age=Now-Contact.TimeSeconds;
+        if(Contact.Sequence<=PreviousCursor || Contact.MotionGeneration!=MotionGeneration ||
+           !Contact.OtherComponent.IsValid() || Contact.InstanceIndex<0 || Age<0 || Age>.15)continue;
+        Out.Add(Contact);
+    }
+}
+
+FBox AVehicleRig::GetFoliageContactBounds() const
+{
+    FBox Box(ForceInit);
+    if(ContactChassis)Box+=ContactChassis->Bounds.GetBox();
+    for(const FContactWheel& Wheel:ContactWheels)if(Wheel.Wheel)Box+=Wheel.Wheel->Bounds.GetBox();
+    return Box;
+}
+
+bool AVehicleRig::GetChassisWheelCollisionEnvelope(FBox& OutWorldBounds,int32& OutVertexCount) const
+{
+    OutWorldBounds=FBox(ForceInit);OutVertexCount=0;
+    if(!ContactChassis||ContactWheels.Num()!=4)return false;
+    FBox Bounds(ForceInit);int32 VertexCount=0;
+    auto Add=[&](UStaticMeshComponent* Part)
+    {
+        if(!Part)return false;
+        const UBodySetup* Setup=Part->GetBodySetup();
+        if(!Setup||Setup->AggGeom.ConvexElems.IsEmpty()||
+            Setup->AggGeom.GetElementCount()!=Setup->AggGeom.ConvexElems.Num())return false;
+        const FTransform ComponentToWorld=Part->GetComponentTransform();
+        if(!ComponentToWorld.IsValid())return false;
+        for(const FKConvexElem& Hull:Setup->AggGeom.ConvexElems)
+        {
+            const FTransform HullToComponent=Hull.GetTransform();
+            if(!HullToComponent.IsValid()||Hull.VertexData.Num()<4)return false;
+            for(const FVector& Vertex:Hull.VertexData)
+            {
+                // Apply hull-local transform first, then component scale/pose.
+                // Transforming the local AABB would add corners absent from the hull.
+                const FVector WorldVertex=ComponentToWorld.TransformPosition(HullToComponent.TransformPosition(Vertex));
+                if(WorldVertex.ContainsNaN())return false;
+                Bounds+=WorldVertex;++VertexCount;
+            }
+        }
+        return true;
+    };
+    if(!Add(ContactChassis))return false;
+    for(const FContactWheel& Wheel:ContactWheels)if(!Add(Wheel.Wheel))return false;
+    if(!Bounds.IsValid||VertexCount==0)return false;
+    OutWorldBounds=Bounds;OutVertexCount=VertexCount;
+    return true;
+}
+
+bool AVehicleRig::GetRecentHitAgainst(const UPrimitiveComponent* Other,const FVector& NearPointCm,
+    double RadiusCm,double MaxAgeSeconds,double& ImpulseNs) const
+{
+    ImpulseNs=0;
+    if(!Other||!GetWorld())return false;
+    bool Found=false;
+    for(const auto& Entry:ContactObservations)
+    {
+        const FContactObservation& Contact=Entry.Value;
+        if(Contact.OtherComponent.Get()!=Other || GetWorld()->GetTimeSeconds()-Contact.Time>MaxAgeSeconds ||
+            FVector::DistSquared(Contact.Point,NearPointCm)>FMath::Square(RadiusCm))continue;
+        ImpulseNs=FMath::Max(ImpulseNs,Contact.Impulse.Size()/100.0); // kg*cm/s to N*s.
+        Found=true;
+    }
+    return Found;
+}
+
 void AVehicleRig::ObserveContact(UPrimitiveComponent* Component,AActor* OtherActor,
     UPrimitiveComponent* OtherComponent,FVector NormalImpulse,const FHitResult& Hit)
 {
     if(!Component||!OtherActor||OtherActor==this)return;
     ContactObservations.Add(Component->GetName(),{Hit.ImpactPoint,Hit.ImpactNormal,NormalImpulse,
-        GetWorld()->GetTimeSeconds(),OtherComponent?OtherComponent->GetName():OtherActor->GetName()});
+        GetWorld()->GetTimeSeconds(),OtherComponent?OtherComponent->GetName():OtherActor->GetName(),OtherComponent});
 }
 
 void AVehicleRig::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    if(GetWorld()&&!ContactBodies.IsEmpty())
+    if(!MujocoDynamics&&GetWorld()&&!ContactBodies.IsEmpty())
     {
         TArray<FPhysicsActorHandle> Handles;
         for(auto* B:ContactBodies)if(IsValid(B))if(auto* BI=B->GetBodyInstance())
             if(const FPhysicsActorHandle Handle=BI->GetPhysicsActor())Handles.AddUnique(Handle);
         FPhysicsCommand::ExecuteWrite(GetWorld()->GetPhysicsScene(),[&](){FChaosEngineInterface::RemoveDisabledCollisionsFor_AssumesLocked(Handles);});
     }
+    MujocoDynamics.Reset();
     bContactPhysics=false;
     Super::EndPlay(EndPlayReason); // Actor-owned constraints and components follow normal UE teardown.
 }

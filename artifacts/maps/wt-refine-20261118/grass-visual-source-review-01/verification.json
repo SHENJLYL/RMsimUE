@@ -1,0 +1,161 @@
+{
+  "schema": "wt_grass_visual_source_review_v1",
+  "status": "passed_offline_native_pending",
+  "observed_before_image": "artifacts/maps/wt-refine-20261118/gui-near-grass-02/entry.png",
+  "observed_before_image_sha256": "c8cb53eb11a64df49e6b12a552dcc1694679703e1cd94c22659caf5e67977e40",
+  "image_observations": [
+    "grass stays on green ground; visible railway clear",
+    "dominant dark upright repeated tuft shape",
+    "uniform clump edges/heights; sparse taller pink/yellow contrast"
+  ],
+  "baseline_definition_sha256": "0b21c155b007f2c28c571827757d0e0ec7c20a2b0ae5069efed809fe9ae59c99",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "enhancement_proof_sha256": "aadc978ef185b630a9699287d8d84f7f911a8c99ddc1dbfe59590fdab099a7e5",
+  "native_fixture_sha256": "5c35a4dc70133a0ba3e5441131de0936a1a97c707bde92e21262bff332a3f659",
+  "original_source_commit": "9639942de5a8e5b01d91977f60ed82cda22d5f41",
+  "references": [
+    {
+      "file": "prog/gameLibs/render/gpuGrass.cpp",
+      "git_blob_sha256": "8f6d066bd9e77a08ae2e0324d4cade1a664545eeb8992490f886e82b37d9604f",
+      "lines": "217-239,318-347,365-374",
+      "purpose": "original normal names, clamped samplers and one CPU pow2.2 endpoint conversion"
+    },
+    {
+      "file": "prog/daNetGame/shaders/grass_generate_inc.dshl",
+      "git_blob_sha256": "f86d4d36f2c6092115c2b5c045df7fa8531a4b094e974671f5708068d0c105d9",
+      "lines": "254-257,417-455,525-529",
+      "purpose": "original tilt ranges and terrain-up roots"
+    },
+    {
+      "file": "prog/daNetGame/shaders/grass_generate.dshl",
+      "git_blob_sha256": "03db04e2a7b0ddae673478e2858d7045623b03e787da250c13cfc4d203b244c5",
+      "lines": "634-650,815-840",
+      "purpose": "same random red/blue palette interpolation; AG normals/B translucency/R smoothness"
+    },
+    {
+      "file": "prog/engine/sharedInclude/3d/ddsxTex.h",
+      "git_blob_sha256": "387bde83235bbfc36c9bf3bbf787861b8b4894c2056f7164956102d5fb74b6f7",
+      "lines": "28-44",
+      "purpose": "DDSx GAMMA_EQ_1 flag 0x8000"
+    }
+  ],
+  "gamma": {
+    "source_endpoint_rgb_pow2_2_count": 1,
+    "texture_flags_all_gamma_equal_one": true,
+    "six_previous_mask_alpha_pngs_unchanged": true,
+    "original_96_color_vectors_unchanged": true
+  },
+  "geometry": {
+    "baseline": "three upright coplanar-height crossed cards with geometric face normals",
+    "source_normal_textures": 3,
+    "version_2_fbxs": [
+      {
+        "id": "ue_generic_grass_small_a",
+        "triangles": 6,
+        "uv_channels": 1,
+        "max_bound_error_m": 2.9802322387695312e-08,
+        "root_normal_min_dot_up": 1.0,
+        "custom_normals": true
+      },
+      {
+        "id": "ue_generic_grass_tall_a",
+        "triangles": 6,
+        "uv_channels": 1,
+        "max_bound_error_m": 1.4901161193847656e-08,
+        "root_normal_min_dot_up": 1.0,
+        "custom_normals": true
+      },
+      {
+        "id": "ue_generic_grass_tall_b",
+        "triangles": 6,
+        "uv_channels": 1,
+        "max_bound_error_m": 1.4901161193847656e-08,
+        "root_normal_min_dot_up": 1.0,
+        "custom_normals": true
+      }
+    ],
+    "source_angle_ranges_rad": [
+      [
+        0.6000000238418579,
+        1.300000011920929
+      ],
+      [
+        0.10000000149011612,
+        0.6000000014901161
+      ],
+      [
+        0.10000000149011612,
+        0.6000000014901161
+      ]
+    ],
+    "ue_adaptations": [
+      "one complete original texture per card; source tile2 retained as provenance",
+      "three deterministic unequal height/azimuth/tilt samples, native random scale/yaw",
+      "terrain-up root vertex normals and source packed AG detail",
+      "world-space normals preserve upward hemisphere with minimum cosine .20 for source-lit cards",
+      "source B controls UE TwoSidedFoliage subsurface color; source 1-R maps UE roughness"
+    ]
+  },
+  "distribution": {
+    "model_count": 10,
+    "layer_count": 16,
+    "global_expected_instances_before": 6316578.282009804,
+    "global_expected_instances_after": 5704805.352843137,
+    "metric_scope": "weight integral times per-100m2 density over complete core; not a live rendered population",
+    "layers": [
+      {
+        "id": "ue_short_grass_0",
+        "density_before": 280.0,
+        "density_after": 200.0,
+        "global_expected_share_before": 0.8575749057881511,
+        "global_expected_share_after": 0.612944563261481,
+        "local_height_m": [
+          0.11377266198396682,
+          0.22754532396793364
+        ]
+      },
+      {
+        "id": "ue_short_grass_1",
+        "density_before": 65.0,
+        "density_after": 150.0,
+        "global_expected_share_before": 0.08421740401162231,
+        "global_expected_share_after": 0.21518936523140897,
+        "local_height_m": [
+          0.20319527238607407,
+          0.3509736523032188
+        ]
+      },
+      {
+        "id": "ue_short_grass_2",
+        "density_before": 45.0,
+        "density_after": 120.0,
+        "global_expected_share_before": 0.05820769020022654,
+        "global_expected_share_after": 0.17186607150710997,
+        "local_height_m": [
+          0.1625562146306038,
+          0.2807789161801338
+        ]
+      }
+    ],
+    "changed_weight_channels": [
+      "WT_GrassWeights3.g"
+    ],
+    "other_15_weight_channels_pixel_identical": true,
+    "hard_exclusion_sha256": "a829543fa36e38b855110964317fa9fdde306fe805c988494cc38b8be795c91f",
+    "hard_exclusion_bytes_unchanged": true,
+    "source_flower_scale_z_before": [
+      0.6,
+      0.95
+    ],
+    "ue_flower_scale_z_after": [
+      0.35,
+      0.65
+    ],
+    "instance_collision": false
+  },
+  "native_status": "root grass-visual-native-01 is running; author/reload/material/three fixed real-view gates required",
+  "active_author_script_sha256": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917",
+  "reload_verifier_sha256": "ed00421fde73b212f88767b97098422948c6224da8956ee25ba438850cf3a287",
+  "no_ue_or_build_started_by_this_agent": true,
+  "utc": "2026-11-18T09:57:55.629320+00:00"
+}

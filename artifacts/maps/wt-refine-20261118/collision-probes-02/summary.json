@@ -1,0 +1,162 @@
+{
+  "schema": "wt_generated_collision_source_probe_summary_v1",
+  "status": "passed",
+  "fixtures_sha256": "1da4242447415c9d9068ebb900278fbba2c616d35a6b287b5c97f370a649004c",
+  "script_sha256": "6f635d8c1f9a5bf230879ed617e2ace54caefc2cbd543121e7cfcd9025a2228a",
+  "source_instances": 18454,
+  "fixture_count": 16,
+  "represented_models": 14,
+  "verified_original_gaps": 2,
+  "query_range_m": 40.0,
+  "boundary_stages": 5,
+  "boundary_rays": 15,
+  "corridor_centerline_ros_m": [
+    [
+      1028.0,
+      -1020.0
+    ],
+    [
+      1031.4,
+      -1020.0
+    ]
+  ],
+  "corridor_nearest": [
+    {
+      "model": "russia_rails_sleeper_a",
+      "source_instance": {
+        "kind": "rigid",
+        "row": 2237,
+        "rmi": "instances/prop_russia_rails_sleeper_a.rmi"
+      },
+      "source_npz_sha256": "94d49cfecc339215d5557fbd30dd87194ca00bca80aeb322dcac550de1c5ef17",
+      "position_ros_m": [
+        1031.593994140625,
+        -1021.2811889648438,
+        -1.3344523906707764
+      ],
+      "projected_distance_to_340cm_centerline_m": 0.27162871718655707,
+      "source_bounds_ros_m": {
+        "lo": [
+          1031.2141932786935,
+          -1022.2914774184668,
+          -1.44547395981499
+        ],
+        "hi": [
+          1031.9737954495915,
+          -1020.2708996506785,
+          -1.202714323240798
+        ]
+      }
+    },
+    {
+      "model": "russia_rails_sleeper_a",
+      "source_instance": {
+        "kind": "rigid",
+        "row": 2236,
+        "rmi": "instances/prop_russia_rails_sleeper_a.rmi"
+      },
+      "source_npz_sha256": "94d49cfecc339215d5557fbd30dd87194ca00bca80aeb322dcac550de1c5ef17",
+      "position_ros_m": [
+        1030.625244140625,
+        -1021.5624389648438,
+        -1.3344523906707764
+      ],
+      "projected_distance_to_340cm_centerline_m": 0.5521496506785297,
+      "source_bounds_ros_m": {
+        "lo": [
+          1030.2454432786935,
+          -1022.5727274184668,
+          -1.4468675359967165
+        ],
+        "hi": [
+          1031.0050454495915,
+          -1020.5521496506785,
+          -1.201060707331635
+        ]
+      }
+    },
+    {
+      "model": "russia_rails_sleeper_a",
+      "source_instance": {
+        "kind": "rigid",
+        "row": 2238,
+        "rmi": "instances/prop_russia_rails_sleeper_a.rmi"
+      },
+      "source_npz_sha256": "94d49cfecc339215d5557fbd30dd87194ca00bca80aeb322dcac550de1c5ef17",
+      "position_ros_m": [
+        1032.531494140625,
+        -1021.0311889648438,
+        -1.3344523906707764
+      ],
+      "projected_distance_to_340cm_centerline_m": 0.7601992385254893,
+      "source_bounds_ros_m": {
+        "lo": [
+          1032.1559369637716,
+          -1022.0410090008688,
+          -1.445009434421081
+        ],
+        "hi": [
+          1032.9070517575283,
+          -1020.0213680682766,
+          -1.2032655285438523
+        ]
+      }
+    },
+    {
+      "model": "russia_rails_sleeper_a",
+      "source_instance": {
+        "kind": "rigid",
+        "row": 2235,
+        "rmi": "instances/prop_russia_rails_sleeper_a.rmi"
+      },
+      "source_npz_sha256": "94d49cfecc339215d5557fbd30dd87194ca00bca80aeb322dcac550de1c5ef17",
+      "position_ros_m": [
+        1029.6563720703125,
+        -1021.8436889648438,
+        -1.3266396522521973
+      ],
+      "projected_distance_to_340cm_centerline_m": 0.830561066937662,
+      "source_bounds_ros_m": {
+        "lo": [
+          1029.2888342363972,
+          -1022.8568159984825,
+          -1.437196696002502
+        ],
+        "hi": [
+          1030.0239103303077,
+          -1020.8305610669377,
+          -1.1954527901252732
+        ]
+      }
+    },
+    {
+      "model": "russia_rails_sleeper_a",
+      "source_instance": {
+        "kind": "rigid",
+        "row": 2234,
+        "rmi": "instances/prop_russia_rails_sleeper_a.rmi"
+      },
+      "source_npz_sha256": "94d49cfecc339215d5557fbd30dd87194ca00bca80aeb322dcac550de1c5ef17",
+      "position_ros_m": [
+        1028.6876220703125,
+        -1022.0936889648438,
+        -1.3266396522521973
+      ],
+      "projected_distance_to_340cm_centerline_m": 1.0824629073306369,
+      "source_bounds_ros_m": {
+        "lo": [
+          1028.2993336566096,
+          -1023.1049141618148,
+          -1.4376612213964108
+        ],
+        "hi": [
+          1029.07591094502,
+          -1021.0824629073306,
+          -1.1949015848222189
+        ]
+      }
+    }
+  ],
+  "collision_geometry_classification": "derived from original visual geometry, source double-sided surfaces",
+  "native_queries_pending": true
+}

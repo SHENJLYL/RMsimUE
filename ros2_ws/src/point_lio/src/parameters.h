@@ -51,6 +51,7 @@ extern double filter_size_surf_min, filter_size_map_min, fov_deg;
 // extern double cube_len;
 extern float DET_RANGE;
 extern bool imu_en;
+extern int imu_qos_depth;
 extern double imu_time_inte;
 extern double laser_point_cov, acc_norm;
 extern double acc_cov_input, gyr_cov_input, vel_cov;

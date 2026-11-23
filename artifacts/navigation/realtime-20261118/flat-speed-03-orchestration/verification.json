@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "session": "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-03",
+  "console_command": [
+    "powershell",
+    "-NoProfile",
+    "-File",
+    "D:\\simulator\\tools\\environment\\Start-NavigationConsole.ps1",
+    "-Scene",
+    "import_lab",
+    "-NoRviz",
+    "-Offscreen",
+    "-PaceRealTime",
+    "-ControlProfile",
+    "simulation",
+    "-OutputDirectory",
+    "D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-03"
+  ],
+  "console_pid": 3468,
+  "action_command": [
+    "powershell",
+    "-NoProfile",
+    "-Command",
+    "& 'D:\\simulator\\tools\\environment\\run-env.ps1' -Command @('powershell','-NoProfile','-File','D:\\simulator\\tools\\integration\\Run-NavigationTopSpeed.ps1','-SessionDirectory','D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-03','-OutputDirectory','D:\\simulator\\artifacts\\navigation\\realtime-20261118\\flat-speed-03\\top-speed')"
+  ],
+  "action_exit_code": 0,
+  "action_elapsed_wall_s": 13.510888500000874,
+  "action_status": "passed",
+  "console_exit_code": 0
+}

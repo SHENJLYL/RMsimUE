@@ -1,0 +1,133 @@
+{
+  "status": "passed",
+  "pid": 23208,
+  "exit_code": 0,
+  "started_utc": "2026-11-18T11:16:02.7585067Z",
+  "finished_utc": "2026-11-18T11:17:25.7224557Z",
+  "duration_seconds": 82.963949,
+  "module_sha256": "37daaf0efd01868a11c094b7b91481b222141400a679595dfd199575a3c14b0e",
+  "verification": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/verification.json",
+    "bytes": 472502,
+    "sha256": "4f1e701c34eeb19638ed16be5a74fe221ba73e45869b9cb5b00114214b1f3637"
+  },
+  "schema": "wt_grass_final_rebake_summary_v1",
+  "scope": "True native rebake after Terrain surface update; original V3 authoring assets retained",
+  "resume_authored_assets": true,
+  "source_level_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "source_manifest_sha256": "91f9efdcea0658f7d3c06bd2b64a4c1bb6ef7d928c23733b27b2626c7ae41e27",
+  "definition_sha256": "e6eb9cb72bc88d7fa4d4887f3d530fe79731fe51ef172fb4eb307531fec6b0bc",
+  "scripts_sha256": {
+    "author_wt_grass.py": "968f3391c9f4db67758f553d89c801ef2a68df5daaf9e88e96a52cc8dfe183bd",
+    "wt_grass.py": "8a0a7ffe70dbd629a1d0eb25eeb508a5e340d6e082bd16ab17a8b7f2224f7917"
+  },
+  "world_sha256_before": "0a57103fcb58de77467bc9f75fcbd0019b6a2d62e687d0a6080e43e763597419",
+  "world_sha256_after": "3311399568469e48d8580f1b41897ad5899321b51617638dd2c541e875ef1066",
+  "scene_import_report_sha256_before": "3c3bbe0975c69043fb0a21774a184999c071cece3b95f087629fb9448e652478",
+  "scene_import_report_sha256_after": "269c50df9026b7ad18841ced6455595fd062aed957fb274d54037518fda64919",
+  "generation_freshness": {
+    "method": "ULandscapeComponent::ComputeGrassMapGenerationHash",
+    "checked_components": 1089,
+    "valid_components": 1089,
+    "fresh_components": 1089,
+    "mismatch_components": 0,
+    "evidence": "Every saved/current uint32 pair and reported boolean was compared from the native report"
+  },
+  "components_with_weights": 1015,
+  "native_layers": 16,
+  "native_meshes": 10,
+  "generated_hism_components": 536,
+  "generated_render_instances": 109108,
+  "instance_count_method": "UGrassInstancedStaticMeshComponent::GetNumRenderInstances",
+  "preview_camera_count": 2,
+  "instance_scope": "The actual native two-view preview population; not a whole-map population count",
+  "instances_by_mesh": {
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_tulip_b.grass_tulip_b": 0,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_paigle_a.grass_paigle_a": 48,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_fill_a.grass_fill_a": 1539,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_blueberry_a.grass_blueberry_a": 38,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_daisies_a.grass_daisies_a": 30,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_heather_a.grass_heather_a": 74,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/grass_simple_a.grass_simple_a": 1877,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a": 66212,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_a.ue_generic_grass_tall_a": 21869,
+    "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_tall_b.ue_generic_grass_tall_b": 17421
+  },
+  "collision_enabled_grass_components": 0,
+  "native_bake_attempt_count": 1,
+  "native_bake_attempts": [
+    {
+      "status": "built",
+      "landscape_components": 1089,
+      "components_with_valid_data": 1089,
+      "components_with_weights": 1015,
+      "outdated_grass_maps_after_build": 0,
+      "generated_hism_components": 536,
+      "generated_instances": 109108,
+      "collision_enabled_grass_components": 0,
+      "finish_assets_seconds": 47.32728119939566,
+      "build_maps_seconds": 9.615507297217846,
+      "update_instances_seconds": 0.016855202615261078,
+      "attempt": 1,
+      "elapsed_seconds": 57.09399999999732
+    }
+  ],
+  "reused_authoring_asset_files": 72,
+  "saved_authoring_assets_unchanged": true,
+  "reused_authored_report_sha256": "a739fd276aca7b8db5d365b62a40e18c1eb95c1f9bc97f8e4ddf95e7a438061c",
+  "source_geometry_changed": false,
+  "vehicle_physics_changed": false,
+  "population_comparison": {
+    "baseline_verification": {
+      "path": "artifacts/maps/wt-refine-20261118/grass-visual-native-01/verification.json",
+      "bytes": 37857,
+      "sha256": "8f4b87e639a831ed862824cd17a0d4ebe442158130b8f34cdaca8a5d1b58e18c"
+    },
+    "same_definition_and_author_code": true,
+    "all_16_native_density_scale_cull_settings_equal": true,
+    "all_16_native_weight_aggregates_equal": true,
+    "preview_camera_count_before_after": [
+      2,
+      2
+    ],
+    "preview_camera_selection": "Same frozen author code and unchanged source map use the same two camera definitions",
+    "generated_hism_components_before_after": [
+      536,
+      536
+    ],
+    "generated_render_instances_before_after": [
+      115911,
+      109108
+    ],
+    "real_bake_update_calls_before_after": [
+      2,
+      1
+    ],
+    "changed_render_instance_counts": [
+      {
+        "mesh": "/Game/RMSim/Maps/wt_vlaanderen/Foliage/Meshes/ue_generic_grass_small_a.ue_generic_grass_small_a",
+        "before": 73015,
+        "after": 66212,
+        "delta": -6803
+      }
+    ],
+    "interpretation": "Actual render-buffer population snapshots differ under full-author/two-call versus resumed/one-call conditions; density, camera definitions and layer weight aggregates are unchanged. Per-HISM cache history was not captured, so the individual missing instances are not attributed to a specific cache transition."
+  },
+  "independent_reload": "pending_separate_native_72_check_run",
+  "execution": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/execution.json",
+    "bytes": 1798,
+    "sha256": "712f691e431d19f0384261d06b44614f85438880922dd7ce04c5ff515449ff54"
+  },
+  "summary_generator": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-evidence-tools-01/summarize_wt_grass_final.py",
+    "bytes": 17853,
+    "sha256": "d08483fcc549bcd20573a8577faa77d17ab1c34c22b86bb11a1f5c6a6bb9c481"
+  },
+  "summarized_utc": "2026-11-18T11:21:31.152873+00:00",
+  "engine_log": {
+    "path": "artifacts/maps/wt-refine-20261118/grass-final-rebake-01/engine.log",
+    "bytes": 246696,
+    "sha256": "0f7ca4cf28477953081d689a3d6673f057bd6de3fbe24eee62c1e9db98e0b0b9"
+  }
+}

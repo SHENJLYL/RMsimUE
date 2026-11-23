@@ -1,0 +1,1298 @@
+{
+  "schema": "rmsim_wt_map_ui_sources_v1",
+  "map_id": "wt_vlaanderen",
+  "source_sha256": "427c9b06b62af0635fa08f2d6238211b9850caf7717a0773f186e1835be63b8f",
+  "original_archives": [
+    {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\ui\\fonts.vromfs.bin",
+      "sha256": "44e6244d0f479f8abe4e198fc9f734ecbcbd4247895f31ab1e5662b7a38dda37",
+      "magic": "VRFs",
+      "target": 1129316352,
+      "header_size": 16,
+      "extension_flags": 0,
+      "version": 0,
+      "packed_size": 0,
+      "decoded_size": 19859536,
+      "body_sha256": "96b03dff07b9ad7da4d3c992d127ca8aff191ef33c00617d3446d6241132fe5c",
+      "file_count": 24
+    },
+    {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\ui\\atlases.vromfs.bin",
+      "sha256": "3be2e95c96730124cf18c3dedb06b475ae577acafec853b44586093530a6c89a",
+      "magic": "VRFs",
+      "target": 1129316352,
+      "header_size": 16,
+      "extension_flags": 0,
+      "version": 0,
+      "packed_size": 0,
+      "decoded_size": 51657568,
+      "body_sha256": "e19b7350a6a97a4765e2c9dfd0846226b6407fbf90757fe2dba240ca9a14ad14",
+      "file_count": 11989
+    },
+    {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\gui.vromfs.bin",
+      "sha256": "4a6b0845573b2622c95fcbdd6951d424f747681b38d4615810ea38ca871874e3",
+      "magic": "VRFx",
+      "target": 1129316352,
+      "header_size": 24,
+      "extension_flags": 0,
+      "version": 37552145,
+      "packed_size": 4193655,
+      "decoded_size": 19831456,
+      "body_sha256": "c76499281c664b1f47c4f78893ab1d6d117888d4ceb7ca6616d7420d0228692e",
+      "file_count": 3175
+    }
+  ],
+  "native_hud_entry": "aces.vromfs.bin/config/hud.blk",
+  "native_hud_entry_sha256": "43da8c8236b00e9037141d62eed79a380e12a070975ddd22f38b0219435787b9",
+  "native_tactical_map_config": {
+    "name": "tacticalMap",
+    "params": [
+      {
+        "name": "alignAnchor",
+        "type": "string",
+        "value": "rb"
+      },
+      {
+        "name": "position",
+        "type": "point2",
+        "value": [
+          1264.0,
+          704.0
+        ]
+      },
+      {
+        "name": "size",
+        "type": "point2",
+        "value": [
+          300.0,
+          300.0
+        ]
+      },
+      {
+        "name": "fovColor",
+        "type": "color",
+        "value": [
+          0,
+          0,
+          10,
+          190
+        ]
+      },
+      {
+        "name": "line",
+        "type": "string",
+        "value": "thin_line"
+      },
+      {
+        "name": "arrow",
+        "type": "string",
+        "value": "map_arrow"
+      },
+      {
+        "name": "outOfMapArrow",
+        "type": "string",
+        "value": "arrow_mark.svg:15:18:K"
+      },
+      {
+        "name": "outOfMapArrowBorder",
+        "type": "real",
+        "value": 5.0
+      },
+      {
+        "name": "pattern",
+        "type": "string",
+        "value": "ui/map_pattern_a"
+      },
+      {
+        "name": "playerIconTexUpscale",
+        "type": "real",
+        "value": 2.0
+      },
+      {
+        "name": "tankHull",
+        "type": "string",
+        "value": "map_player_tank_hull.svg:17:17:K"
+      },
+      {
+        "name": "mapCamera",
+        "type": "string",
+        "value": "map_camera"
+      },
+      {
+        "name": "deadUnitIcon",
+        "type": "string",
+        "value": "objective_kill"
+      },
+      {
+        "name": "enableMoveMapInBattle",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "enableTorpedoDrawing",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "maxTorpedoTrailLength",
+        "type": "real",
+        "value": -1.0
+      },
+      {
+        "name": "maxTorpedoTrailFraction",
+        "type": "real",
+        "value": 0.33000001311302185
+      },
+      {
+        "name": "enableRocketDrawing",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "enableBombDrawing",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "enableMineDrawing",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "enableProjectileClickSelect",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "showTurretDirInArbiter",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "showVelVectorInArbiter",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "projectileClickWidth",
+        "type": "real",
+        "value": 0.5
+      },
+      {
+        "name": "launchedTorpedo",
+        "type": "string",
+        "value": "ui/gameuiskin#torpedo_icon.svg:20:20:K"
+      },
+      {
+        "name": "launchedRocket",
+        "type": "string",
+        "value": "ui/gameuiskin#tws_filter_ammunition.svg:20:20:K"
+      },
+      {
+        "name": "launchedBomb",
+        "type": "string",
+        "value": "ui/gameuiskin#tws_filter_ammunition.svg:20:20:K"
+      },
+      {
+        "name": "launchedMine",
+        "type": "string",
+        "value": "ui/gameuiskin#naval_mine_mark.svg:10:10:K"
+      },
+      {
+        "name": "selectedProjectile",
+        "type": "string",
+        "value": "selected_projectile.svg:10:10:K"
+      },
+      {
+        "name": "deadUnitIconScale",
+        "type": "real",
+        "value": 0.5
+      },
+      {
+        "name": "maxZoomFactor",
+        "type": "real",
+        "value": 10.0
+      },
+      {
+        "name": "maxZoomFactorAirplane",
+        "type": "real",
+        "value": 150.0
+      },
+      {
+        "name": "captureZoneAlpha",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "captureZoneSectorsShowRadius",
+        "type": "real",
+        "value": 200.0
+      },
+      {
+        "name": "textOffset",
+        "type": "point2",
+        "value": [
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "name": "gridColor",
+        "type": "color",
+        "value": [
+          0,
+          0,
+          0,
+          80
+        ]
+      },
+      {
+        "name": "fontColor",
+        "type": "color",
+        "value": [
+          0,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "fontFxType",
+        "type": "int",
+        "value": 2
+      },
+      {
+        "name": "fontFxOffset",
+        "type": "int",
+        "value": 0
+      },
+      {
+        "name": "fontFxColor",
+        "type": "color",
+        "value": [
+          128,
+          128,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "fontFxScale",
+        "type": "int",
+        "value": 64
+      },
+      {
+        "name": "font",
+        "type": "string",
+        "value": "tiny_text_hud"
+      },
+      {
+        "name": "fontForZones",
+        "type": "string",
+        "value": "small_text_hud"
+      },
+      {
+        "name": "playerColor",
+        "type": "color",
+        "value": [
+          102,
+          255,
+          0,
+          118
+        ]
+      },
+      {
+        "name": "allyColor",
+        "type": "color",
+        "value": [
+          255,
+          151,
+          40,
+          158
+        ]
+      },
+      {
+        "name": "enemyColor",
+        "type": "color",
+        "value": [
+          40,
+          76,
+          255,
+          158
+        ]
+      },
+      {
+        "name": "colorCaptureZoneNeutral",
+        "type": "color",
+        "value": [
+          255,
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "colorCaptureZoneFriend",
+        "type": "color",
+        "value": [
+          232,
+          91,
+          35,
+          255
+        ]
+      },
+      {
+        "name": "colorCaptureZoneEnemy",
+        "type": "color",
+        "value": [
+          35,
+          62,
+          232,
+          255
+        ]
+      },
+      {
+        "name": "fillAlphaCaptureZone",
+        "type": "int",
+        "value": 32
+      },
+      {
+        "name": "unitIconAlpha",
+        "type": "int",
+        "value": 255
+      },
+      {
+        "name": "iconScale",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "briefingIconScale",
+        "type": "real",
+        "value": 0.75
+      },
+      {
+        "name": "exitZoneMinScale",
+        "type": "real",
+        "value": 0.8999999761581421
+      },
+      {
+        "name": "exitZoneMaxScale",
+        "type": "real",
+        "value": 0.8999999761581421
+      },
+      {
+        "name": "rearmZoneMinScale",
+        "type": "real",
+        "value": 0.38999998569488525
+      },
+      {
+        "name": "rearmZoneMaxScale",
+        "type": "real",
+        "value": 0.6000000238418579
+      },
+      {
+        "name": "iconMaxOverlapping",
+        "type": "real",
+        "value": 0.5
+      },
+      {
+        "name": "carrier",
+        "type": "string",
+        "value": "objective_carrier"
+      },
+      {
+        "name": "destroyer",
+        "type": "string",
+        "value": "objective_destroyer.svg:50:36:K"
+      },
+      {
+        "name": "destroyer_outline",
+        "type": "string",
+        "value": "objective_destroyer_outline.svg:50:36:K"
+      },
+      {
+        "name": "ship",
+        "type": "string",
+        "value": "objective_ship.svg:36:36:K"
+      },
+      {
+        "name": "ship_outline",
+        "type": "string",
+        "value": "objective_ship_outline.svg:36:36:K"
+      },
+      {
+        "name": "transport",
+        "type": "string",
+        "value": "objective_cargo"
+      },
+      {
+        "name": "artillery",
+        "type": "string",
+        "value": "objective_aa"
+      },
+      {
+        "name": "sam_launcher",
+        "type": "string",
+        "value": "objective_sam"
+      },
+      {
+        "name": "tank",
+        "type": "string",
+        "value": "objective_tank.svg:36:36:K"
+      },
+      {
+        "name": "tank_outline",
+        "type": "string",
+        "value": "objective_tank_outline.svg:36:36:K"
+      },
+      {
+        "name": "infantry",
+        "type": "string",
+        "value": "objective_troops"
+      },
+      {
+        "name": "building",
+        "type": "string",
+        "value": "objective_building"
+      },
+      {
+        "name": "bridge",
+        "type": "string",
+        "value": "objective_bridge"
+      },
+      {
+        "name": "balloon",
+        "type": "string",
+        "value": "objective_balloon"
+      },
+      {
+        "name": "airfield",
+        "type": "string",
+        "value": "objective_airfield.svg:45:25:K"
+      },
+      {
+        "name": "fighter",
+        "type": "string",
+        "value": "objective_fighter.svg:36:36:K"
+      },
+      {
+        "name": "fighter_outline",
+        "type": "string",
+        "value": "objective_fighter_outline.svg:36:36:K"
+      },
+      {
+        "name": "bomber",
+        "type": "string",
+        "value": "objective_bomber.svg:36:36:K"
+      },
+      {
+        "name": "bomber_outline",
+        "type": "string",
+        "value": "objective_bomber_outline.svg:36:36:K"
+      },
+      {
+        "name": "ucav",
+        "type": "string",
+        "value": "objective_ucav.svg:36:36:K"
+      },
+      {
+        "name": "ucav_outline",
+        "type": "string",
+        "value": "objective_ucav_outline.svg:36:36:K"
+      },
+      {
+        "name": "helicopter",
+        "type": "string",
+        "value": "objective_helicopter.svg:36:36:K"
+      },
+      {
+        "name": "helicopter_outline",
+        "type": "string",
+        "value": "objective_helicopter_outline.svg:36:36:K"
+      },
+      {
+        "name": "exoskeleton",
+        "type": "string",
+        "value": "objective_mobile_infantry.svg:36:36:K"
+      },
+      {
+        "name": "exoskeleton_outline",
+        "type": "string",
+        "value": "objective_mobile_infantry_outline.svg:36:36:K"
+      },
+      {
+        "name": "human",
+        "type": "string",
+        "value": "objective_human.svg:36:36:K"
+      },
+      {
+        "name": "human_outline",
+        "type": "string",
+        "value": "objective_human_outline.svg:36:36:K"
+      },
+      {
+        "name": "truck",
+        "type": "string",
+        "value": "objective_truck"
+      },
+      {
+        "name": "mark",
+        "type": "string",
+        "value": "objective_mark.svg:21:21:K"
+      },
+      {
+        "name": "sunk_carrier",
+        "type": "string",
+        "value": "objective_sunk_carrier"
+      },
+      {
+        "name": "bomb_zone",
+        "type": "string",
+        "value": "bombingzone_small_side_axis.svg:21:27:K"
+      },
+      {
+        "name": "protect_zone",
+        "type": "string",
+        "value": "bombingzone_small_side_allies.svg:21:27:K"
+      },
+      {
+        "name": "base",
+        "type": "string",
+        "value": "objective_base.svg:28:28:K"
+      },
+      {
+        "name": "base_back",
+        "type": "string",
+        "value": "objective_base_back.svg:28:28:K"
+      },
+      {
+        "name": "basezone",
+        "type": "string",
+        "value": "objective_captureZone.svg:21:21:K"
+      },
+      {
+        "name": "basezone_A",
+        "type": "string",
+        "value": "basezone_small_mark_a.svg:21:21:K"
+      },
+      {
+        "name": "basezone_B",
+        "type": "string",
+        "value": "basezone_small_mark_b.svg:21:21:K"
+      },
+      {
+        "name": "basezone_C",
+        "type": "string",
+        "value": "basezone_small_mark_c.svg:21:21:K"
+      },
+      {
+        "name": "basezone_D",
+        "type": "string",
+        "value": "basezone_small_mark_d.svg:21:21:K"
+      },
+      {
+        "name": "basezone_E",
+        "type": "string",
+        "value": "basezone_small_mark_e.svg:21:21:K"
+      },
+      {
+        "name": "basezone_F",
+        "type": "string",
+        "value": "basezone_small_mark_f.svg:21:21:K"
+      },
+      {
+        "name": "capturezone",
+        "type": "string",
+        "value": "capturezone_small.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_A",
+        "type": "string",
+        "value": "capturezone_small_mark_a.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_B",
+        "type": "string",
+        "value": "capturezone_small_mark_b.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_C",
+        "type": "string",
+        "value": "capturezone_small_mark_c.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_D",
+        "type": "string",
+        "value": "capturezone_small_mark_d.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_E",
+        "type": "string",
+        "value": "capturezone_small_mark_e.svg:21:27:K"
+      },
+      {
+        "name": "capturezone_F",
+        "type": "string",
+        "value": "capturezone_small_mark_f.svg:21:27:K"
+      },
+      {
+        "name": "icon_sos",
+        "type": "string",
+        "value": "chat_icon_sos"
+      },
+      {
+        "name": "icon_attack",
+        "type": "string",
+        "value": "chat_icon_attack"
+      },
+      {
+        "name": "icon_attacking",
+        "type": "string",
+        "value": "chat_icon_attacking"
+      },
+      {
+        "name": "icon_shield",
+        "type": "string",
+        "value": "chat_icon_need_protect"
+      },
+      {
+        "name": "icon_attention",
+        "type": "string",
+        "value": "chat_icon_attention"
+      },
+      {
+        "name": "icon_attention_to_point",
+        "type": "string",
+        "value": "chat_icon_attention"
+      },
+      {
+        "name": "icon_enemy_marker",
+        "type": "string",
+        "value": "chat_icon_attention"
+      },
+      {
+        "name": "icon_attack_enemy_marker",
+        "type": "string",
+        "value": "chat_icon_attention"
+      },
+      {
+        "name": "icon_artillery_attack",
+        "type": "string",
+        "value": "chat_icon_artillery_attack"
+      },
+      {
+        "name": "icon_marker_from_uav",
+        "type": "string",
+        "value": "chat_icon_attention"
+      },
+      {
+        "name": "respawnbase_select",
+        "type": "string",
+        "value": "respawnbase_select.svg:44:54:K"
+      },
+      {
+        "name": "unit_respawn_select",
+        "type": "string",
+        "value": "respawnbase_select.svg:32:39:K"
+      },
+      {
+        "name": "unit_respawn_highlight",
+        "type": "string",
+        "value": "respawnbase_highlight.svg:32:39:K"
+      },
+      {
+        "name": "respawn_base_timer_icon_available",
+        "type": "string",
+        "value": "respawnbase_ready_map.svg:26:26:K"
+      },
+      {
+        "name": "respawn_base_timer_icon_locked",
+        "type": "string",
+        "value": "respawnbase_timer_map.svg:26:29:K"
+      },
+      {
+        "name": "icon_marker_point_of_interest",
+        "type": "string",
+        "value": "poi.svg:30:30:K"
+      },
+      {
+        "name": "colorRespawnBaseTimerAvailable",
+        "type": "color",
+        "value": [
+          32,
+          240,
+          32,
+          255
+        ]
+      },
+      {
+        "name": "colorRespawnBaseTimerLocked",
+        "type": "color",
+        "value": [
+          32,
+          32,
+          240,
+          255
+        ]
+      },
+      {
+        "name": "respawnBaseTimerIconScale",
+        "type": "real",
+        "value": 1.0
+      },
+      {
+        "name": "respawnBaseTimerDialOffset",
+        "type": "point2",
+        "value": [
+          0.0,
+          1.5
+        ]
+      },
+      {
+        "name": "respawnBaseTimerDialRadius",
+        "type": "real",
+        "value": 12.0
+      },
+      {
+        "name": "iconArtilleryAttackBlinkTime",
+        "type": "real",
+        "value": 20.0
+      },
+      {
+        "name": "iconArtilleryAttackDist",
+        "type": "real",
+        "value": 150.0
+      },
+      {
+        "name": "curveMaxLinesPerSegment",
+        "type": "int",
+        "value": 25
+      },
+      {
+        "name": "curveMinLineLen",
+        "type": "real",
+        "value": 10.0
+      },
+      {
+        "name": "minDistBetweenZonesOnRespawnBases",
+        "type": "real",
+        "value": 200.0
+      },
+      {
+        "name": "minDistBetweenZonesOnBoatsRespawnBases",
+        "type": "real",
+        "value": 500.0
+      },
+      {
+        "name": "minDistBetweenZonesOnDestroyerRespawnBases",
+        "type": "real",
+        "value": 2000.0
+      },
+      {
+        "name": "minDistBetweenZonesOnAircraftRespawnBases",
+        "type": "real",
+        "value": 2000.0
+      },
+      {
+        "name": "minDistBetweenZonesOnHumanRespawnBases",
+        "type": "real",
+        "value": 20.0
+      },
+      {
+        "name": "icon_superartallery_target",
+        "type": "string",
+        "value": "chat_icon_attack"
+      },
+      {
+        "name": "icon_superartillery_zone",
+        "type": "string",
+        "value": "artillery_region"
+      },
+      {
+        "name": "icon_superartillery_skull",
+        "type": "string",
+        "value": "objective_kill"
+      },
+      {
+        "name": "colorSuperArtillery",
+        "type": "color",
+        "value": [
+          81,
+          183,
+          255,
+          125
+        ]
+      },
+      {
+        "name": "superArtilleryShrinkRatio",
+        "type": "real",
+        "value": 0.25
+      },
+      {
+        "name": "sonarIcon",
+        "type": "string",
+        "value": "circle_gradient_white"
+      },
+      {
+        "name": "sonarIconColor",
+        "type": "color",
+        "value": [
+          0,
+          0,
+          220,
+          255
+        ]
+      },
+      {
+        "name": "sonarIconScale",
+        "type": "real",
+        "value": 0.5
+      },
+      {
+        "name": "sonarExtendPhase",
+        "type": "real",
+        "value": 0.4000000059604645
+      },
+      {
+        "name": "showPassiveSonarDetectionRadius",
+        "type": "bool",
+        "value": true
+      },
+      {
+        "name": "showActiveSonarDetectionRadius",
+        "type": "bool",
+        "value": false
+      },
+      {
+        "name": "iconScrapLoot",
+        "type": "string",
+        "value": "loot_scrap_metal.svg:24:24:K"
+      },
+      {
+        "name": "iconPartsLoot",
+        "type": "string",
+        "value": "loot_vehicle_parts.svg:24:24:K"
+      },
+      {
+        "name": "iconArmorLoot",
+        "type": "string",
+        "value": "loot_armor.svg:24:24:K"
+      },
+      {
+        "name": "iconElectronicsLoot",
+        "type": "string",
+        "value": "loot_electronics.svg:24:24:K"
+      },
+      {
+        "name": "iconUnknownLoot",
+        "type": "string",
+        "value": "loot_common.svg:24:24:K"
+      },
+      {
+        "name": "iconRageLoot",
+        "type": "string",
+        "value": "norm_skull.svg:20:20:K"
+      },
+      {
+        "name": "iconRageColor",
+        "type": "color",
+        "value": [
+          30,
+          30,
+          230,
+          255
+        ]
+      }
+    ],
+    "children": [
+      {
+        "name": "sizeScale",
+        "params": [
+          {
+            "name": "scale",
+            "type": "real",
+            "value": 0.75
+          },
+          {
+            "name": "scale",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "scale",
+            "type": "real",
+            "value": 1.25
+          },
+          {
+            "name": "scale",
+            "type": "real",
+            "value": 1.5
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "satelliteMapTypes",
+        "params": [
+          {
+            "name": "type",
+            "type": "string",
+            "value": "infantry"
+          }
+        ],
+        "children": []
+      },
+      {
+        "name": "iconTooltip",
+        "params": [
+          {
+            "name": "tooltipMouseOffset",
+            "type": "point2",
+            "value": [
+              15.0,
+              20.0
+            ]
+          },
+          {
+            "name": "tooltipPadding",
+            "type": "point2",
+            "value": [
+              10.0,
+              10.0
+            ]
+          },
+          {
+            "name": "tooltipBorderWidth",
+            "type": "real",
+            "value": 1.0
+          },
+          {
+            "name": "tooltipLineGap",
+            "type": "real",
+            "value": 10.0
+          },
+          {
+            "name": "tooltipBorderColor",
+            "type": "color",
+            "value": [
+              94,
+              86,
+              71,
+              200
+            ]
+          },
+          {
+            "name": "tooltipBgColor",
+            "type": "color",
+            "value": [
+              63,
+              56,
+              45,
+              255
+            ]
+          },
+          {
+            "name": "tooltipNameTextColor",
+            "type": "color",
+            "value": [
+              220,
+              218,
+              216,
+              255
+            ]
+          },
+          {
+            "name": "tooltipDescriptionTextColor",
+            "type": "color",
+            "value": [
+              167,
+              165,
+              162,
+              255
+            ]
+          }
+        ],
+        "children": []
+      }
+    ]
+  },
+  "assets": [
+    {
+      "role": "player_arrow_asset",
+      "kind": "texture",
+      "file": "overview/ui/map_player.png",
+      "sha256": "fce20eabb240e73c072a87b18139e8c5e4dff04dcd219fe297e941b29a327fb3",
+      "source_entry": "gameuiskin/map_player.svg",
+      "source_sha256": "b463f55ec14fffb25b207ed44c6539b0788d4f05e61ce4ed94d6f59289f9f17e",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapPlayerArrow",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapPlayerArrow.WT_MapPlayerArrow",
+      "native_display_size_1080": [
+        19,
+        32
+      ],
+      "decoded_size": [
+        38,
+        64
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "hull_arrow_asset",
+      "kind": "texture",
+      "file": "overview/ui/map_player_tank_hull.png",
+      "sha256": "54989e4e5a914552e4b13d528bb9c0188b386dc3044229e161a3b5b441536b73",
+      "source_entry": "gameuiskin/map_player_tank_hull.svg",
+      "source_sha256": "10d6f97d752a665fcc88a64761561ca383b9c5458dcab14ec9cea443e194054f",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapTankHull",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapTankHull.WT_MapTankHull",
+      "native_display_size_1080": [
+        17,
+        17
+      ],
+      "decoded_size": [
+        34,
+        34
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "capture_A",
+      "kind": "texture",
+      "file": "overview/ui/basezone_small_mark_a.png",
+      "sha256": "bb145c73d0ab7572982dea0108eba505e41e948b63b0a4d9bdcc37a11e025434",
+      "source_entry": "gameuiskin/basezone_small_mark_a.svg",
+      "source_sha256": "8c7a9428d11e06ec00a9977d223e8f86f35a1319e986da5c352815126f81e672",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapCaptureA",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapCaptureA.WT_MapCaptureA",
+      "native_display_size_1080": [
+        21,
+        21
+      ],
+      "decoded_size": [
+        42,
+        42
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "capture_B",
+      "kind": "texture",
+      "file": "overview/ui/basezone_small_mark_b.png",
+      "sha256": "437e4eb86d98bc230e58f2cdbd2866d56687df10de9f0b33b73f357fb91425c1",
+      "source_entry": "gameuiskin/basezone_small_mark_b.svg",
+      "source_sha256": "524ece8e380a61ce5a91d5461d7856ba736f38495a081446a20d6431ec0a66a4",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapCaptureB",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapCaptureB.WT_MapCaptureB",
+      "native_display_size_1080": [
+        21,
+        21
+      ],
+      "decoded_size": [
+        42,
+        42
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "capture_C",
+      "kind": "texture",
+      "file": "overview/ui/basezone_small_mark_c.png",
+      "sha256": "a5581df3fb0ba96a33f79eb27d554377468d70ca2166ce11a2d18fefe7a4b492",
+      "source_entry": "gameuiskin/basezone_small_mark_c.svg",
+      "source_sha256": "f005fbbd8a645df8900a0ed70886d358eb2d60707748c075b6a159681ceadef0",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapCaptureC",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapCaptureC.WT_MapCaptureC",
+      "native_display_size_1080": [
+        21,
+        21
+      ],
+      "decoded_size": [
+        42,
+        42
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "poi",
+      "kind": "texture",
+      "file": "overview/ui/poi.png",
+      "sha256": "5879921b4e0d8e0a8ecfec09289e68f4105629e792a3c99b332cf18f3ab3c09b",
+      "source_entry": "gameuiskin/poi.svg",
+      "source_sha256": "52f8c7dd0df34667800fa12053e4059f25b3652fd268be3fdb2d4920c8226e65",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapPOI",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapPOI.WT_MapPOI",
+      "native_display_size_1080": [
+        30,
+        30
+      ],
+      "decoded_size": [
+        132,
+        132
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "spawn",
+      "kind": "texture",
+      "file": "overview/ui/objective_tank.png",
+      "sha256": "fc95ac674c3ece212c7477a92808e4f45f09a2ec30c806ca92081e80904874f3",
+      "source_entry": "gameuiskin/objective_tank.svg",
+      "source_sha256": "5e2d78433eb63bb9492587fc150799492da171209cbc3b16417512e2b3c66f14",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapSpawn",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapSpawn.WT_MapSpawn",
+      "native_display_size_1080": [
+        36,
+        36
+      ],
+      "decoded_size": [
+        72,
+        72
+      ],
+      "rasterization": "Inkscape SVG renderer; original paths, colors and alpha; 2x intrinsic size"
+    },
+    {
+      "role": "ping",
+      "kind": "texture",
+      "file": "overview/ui/chat_icon_attention.png",
+      "sha256": "dad773d14f51b682c8b50d61309394b171cb03b93e9fff1f09133feb6fe3b5c8",
+      "source_entry": "gameuiskin/chat_icon_attention.avif",
+      "source_sha256": "6414af8d6d216494ba0dd1c91bd385ed706431759bfc338f11c5874643cdd117",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapPing",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapPing.WT_MapPing",
+      "native_display_size_1080": [
+        28,
+        28
+      ],
+      "decoded_size": [
+        28,
+        28
+      ],
+      "rasterization": "Pillow AVIF decode; original RGBA, no resampling"
+    },
+    {
+      "role": "font_asset",
+      "kind": "font",
+      "file": "overview/ui/pt_sans-web-regular-reducedheight.ttf",
+      "sha256": "13ddbdf4486b02c9867124e95c9b83e853f9103a7bf2c1dd4d6f87f77a7128a9",
+      "source_entry": "ttfs/pt_sans-web-regular-reducedheight.ttf",
+      "source_sha256": "13ddbdf4486b02c9867124e95c9b83e853f9103a7bf2c1dd4d6f87f77a7128a9",
+      "source_archive": "ui/fonts.vromfs.bin",
+      "asset_name": "WT_MapFontFace",
+      "face_asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapFontFace.WT_MapFontFace",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapFontFace_Font.WT_MapFontFace_Font"
+    },
+    {
+      "role": "zone_font_asset",
+      "kind": "font",
+      "file": "overview/ui/firasanscondensed-light.ttf",
+      "sha256": "8665f6bd3465b35bfb5c78998201687c77fe6fb13c20ba8f03cd0cd09a0f22ae",
+      "source_entry": "ttfs/firasanscondensed-light.ttf",
+      "source_sha256": "8665f6bd3465b35bfb5c78998201687c77fe6fb13c20ba8f03cd0cd09a0f22ae",
+      "source_archive": "ui/fonts.vromfs.bin",
+      "asset_name": "WT_MapZoneFontFace",
+      "face_asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapZoneFontFace.WT_MapZoneFontFace",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapZoneFontFace_Font.WT_MapZoneFontFace_Font"
+    },
+    {
+      "role": "full_map_background_asset",
+      "kind": "texture",
+      "file": "overview/ui/option_select_odd.png",
+      "sha256": "5abd07b2f542aa467d92b557565d612a9762133c69341e8ca6f1ae0d9e3c8b6b",
+      "source_entry": "gameuiskin/option_select_odd.avif",
+      "source_sha256": "5703a844c71e5eb4199cda55ff614b10c0e26956d389bb763d637b4cfe899872",
+      "source_archive": "ui/atlases.vromfs.bin",
+      "asset_name": "WT_MapPanelBackground",
+      "asset": "/Game/RMSim/Maps/wt_vlaanderen/UI/WT_MapPanelBackground.WT_MapPanelBackground",
+      "decoded_size": [
+        128,
+        16
+      ],
+      "source_pixel_size": [
+        128,
+        16
+      ],
+      "native_nine_slice_background_position": [
+        1,
+        5
+      ],
+      "rasterization": "Pillow AVIF decode; original RGBA including alpha gradient; no resampling"
+    }
+  ],
+  "reference_screenshots": [
+    {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\Screenshots\\shot 2026.11.07 23.09.00.jpg",
+      "resolution": [
+        2560,
+        1440
+      ],
+      "observed_minimap_rect": [
+        2114,
+        994,
+        432,
+        432
+      ]
+    },
+    {
+      "path": "D:\\steamlaptop\\steamapps\\common\\War Thunder\\Screenshots\\shot 2025.08.02 10.32.04.jpg",
+      "resolution": [
+        2560,
+        1600
+      ],
+      "observations": "black lower-right scale bar, black distance text, 7 labeled rows and columns, white diamond A/B/C"
+    }
+  ],
+  "style": {
+    "grid_rgba": [
+      0,
+      0,
+      0,
+      80
+    ],
+    "grid_font_rgba": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "font_outline_rgba": [
+      128,
+      128,
+      128,
+      255
+    ],
+    "border_rgba": [
+      96,
+      96,
+      96,
+      204
+    ],
+    "minimap_height_fraction": 0.3,
+    "grid_font_height_at_1080": 18,
+    "grid_font_height_at_1440": 24,
+    "default_max_zoom": 10
+  },
+  "verification_boundary": "Source config and assets match installed originals. Renderer screenshot parity requires runtime comparison; full M screenshot not available; native respawn tactical map used as secondary reference.",
+  "native_panel_style": {
+    "source_archive": "gui.vromfs.bin",
+    "source_entry": "gui/optionlist.css",
+    "source_sha256": "1137f8632bc7e4f4c1600a3b4eef9c7ecd1ac2b1a23fa64fa525f84c7a3a76da",
+    "re_type": "9rect",
+    "background_color": "@white",
+    "background_position": [
+      1,
+      5
+    ],
+    "background_repeat": "expand",
+    "source_css": "ingame_menu{\r\n  input-transparent: yes;\r\n  re-type:9rect;\r\n}\r\n\r\noptionlist_container, optionlist_container_default {\r\n  input-transparent: yes;\r\n  re-type:9rect;\r\n  background-color:@white;\r\n  background-position:1,5;\r\n  background-repeat:expand;\r\n  background-image:#ui/gameuiskin#option_select_odd;\r\n  selected-border:none;\r\n  border:none;\r\n}"
+  }
+}
