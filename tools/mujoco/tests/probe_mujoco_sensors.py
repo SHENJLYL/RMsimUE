@@ -109,6 +109,7 @@ class SensorPeer:
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("--port",type=int,required=True);p.add_argument("--output",type=Path,required=True)
+    p.add_argument("--expect-dedicated", action="store_true")
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     report={"schema":"rmsim_mujoco_sensor_tcp_v1","status":"running","checks":[],
         "scope":"Real UE full RMUC scene, MuJoCo dynamics and genuine sensor samples; TCP observer; truth only for independent measurement",
@@ -124,7 +125,7 @@ def main():
         peer.connect();initial=dict(peer.state);peer.pump(2.5,"rest",lambda _:peer.drive())
         state=peer.state
         check("native_mujoco_clock_and_full_map",state.get("physics_backend")=="mujoco" and
-            state.get("clock_source")=="synchronous_MuJoCo_solver" and abs(state["dynamics_step_s"]-.001)<1e-12
+            state.get("clock_source")==("dedicated_MuJoCo_snapshot" if args.expect_dedicated else "synchronous_MuJoCo_solver") and abs(state["dynamics_step_s"]-.001)<1e-12
             and abs(state["fixed_step_s"]-.005)<1e-12 and state["map"]["id"]=="rmuc2027",
             physics_backend=state.get("physics_backend"),clock_source=state.get("clock_source"),
             dynamics_step_s=state.get("dynamics_step_s"),sensor_step_s=state.get("fixed_step_s"),map=state["map"])
@@ -213,6 +214,11 @@ def main():
             i["stamp_ns"]<=i["packet_stamp_ns"] and abs(i["hfov_rad"]-math.pi/3)<1e-5 for i in images),
             frames=len(images),distinct_images=len({i["sha256"] for i in images}),dimensions=[640,360])
         check("camera_changes_with_real_gimbal",peer.frames["rest"][1]!=peer.frames["rotate"][1])
+        camera_latency_ns=[i['packet_stamp_ns']-i['stamp_ns'] for i in images]
+        check('camera_readback_preserves_capture_order_and_time',
+            all(a['stamp_ns']<b['stamp_ns'] for a,b in zip(images,images[1:])) and
+            any(age>0 for age in camera_latency_ns),
+            minimum_age_ns=min(camera_latency_ns),maximum_age_ns=max(camera_latency_ns))
         packet_times=[p["stamp_ns"] for p in peer.packets]
         check("clock_and_sensor_stamps_share_epoch",all(t%5_000_000==0 for t in packet_times) and
             all(s["stamp_ns"]%5_000_000==0 for s in peer.samples) and len({p["epoch"] for p in peer.packets})==1)
@@ -222,8 +228,10 @@ def main():
         original_session=state["session"];last_stamp=state["sim_time_ns"]
         peer.close();peer.phase="reconnect";peer.connect(20);peer.pump(.3,"reconnect",lambda _:peer.drive())
         fresh=[s for s in peer.samples if s["phase"]=="reconnect"]
+        fresh_images=[i for i in peer.images if i['phase']=='reconnect']
         check("reconnect_discards_old_sensor_backlog",peer.state["session"]!=original_session and
             fresh and min(s["stamp_ns"] for s in fresh)>last_stamp and
+            fresh_images and all(i['stamp_ns']>=last_stamp for i in fresh_images) and
             all(s["start_ns"]>=last_stamp for s in peer.scans if s["phase"]=="reconnect"),
             previous_session=original_session,new_session=peer.state["session"],first_fresh_imu_ns=min(s["stamp_ns"] for s in fresh))
         reconnected_lidar=peer.state["lidar"]

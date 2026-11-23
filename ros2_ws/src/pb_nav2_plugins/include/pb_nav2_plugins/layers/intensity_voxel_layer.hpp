@@ -15,6 +15,11 @@
 #ifndef PB_NAV2_PLUGINS__LAYERS__INTENSITY_VOXEL_LAYER_HPP_
 #define PB_NAV2_PLUGINS__LAYERS__INTENSITY_VOXEL_LAYER_HPP_
 
+#include <memory>
+#include <optional>
+#include <vector>
+
+#include "pb_nav2_plugins/layers/confirmed_observation.hpp"
 #include "laser_geometry/laser_geometry.hpp"
 #include "message_filters/subscriber.h"
 #include "nav2_costmap_2d/layer.hpp"
@@ -24,6 +29,7 @@
 #include "nav2_msgs/msg/voxel_grid.hpp"
 #include "nav2_voxel_grid/voxel_grid.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
+#include "nav_msgs/msg/path.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/point_cloud.hpp"
@@ -61,6 +67,12 @@ protected:
     double * max_x, double * max_y);
 
 private:
+  struct Bounds
+  {
+    double min_x, min_y, max_x, max_y;
+    bool valid() const {return min_x <= max_x && min_y <= max_y;}
+  };
+  Bounds previous_bounds_{1e30, 1e30, -1e30, -1e30};
   bool publish_voxel_;
   rclcpp::Publisher<nav2_msgs::msg::VoxelGrid>::SharedPtr voxel_pub_;
   nav2_voxel_grid::VoxelGrid voxel_grid_;
@@ -68,6 +80,20 @@ private:
   double min_obstacle_intensity_, max_obstacle_intensity_;
   unsigned int unknown_threshold_, mark_threshold_, size_z_;
   rclcpp::Clock::SharedPtr clock_;
+  struct GroundSupport {
+    int width{}, height{};
+    double x{}, y{}, resolution{};
+    std::vector<float> values;
+    std::optional<double> heightAt(double world_x, double world_y, bool require_patch = false) const;
+  };
+  GroundSupport support_;
+  std::string support_frame_;
+  ConfirmedObservation confirmation_;
+  double confirmation_age_s_{0.0}, confirmation_radius_m_{0.10};
+  double confirmation_turn_hold_s_{0.0};
+  std::int64_t last_bend_ns_{0};
+  nav_msgs::msg::Path::ConstSharedPtr near_plan_;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr near_plan_sub_;
 
   inline bool worldToMap3DFloat(
     double wx, double wy, double wz, double & mx, double & my, double & mz)

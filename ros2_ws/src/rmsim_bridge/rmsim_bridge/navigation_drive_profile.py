@@ -84,13 +84,46 @@ def apply_drive_profile(config, filename, robot):
     if controller.get('plugin') != 'pb_omni_pid_pursuit_controller::OmniPidPursuitController':
         raise ValueError('Shared vehicle motion profile requires the selected OmniPid controller')
     controller.update(copy.deepcopy(identity['controller_limits']))
-    config['velocity_smoother']['ros__parameters'].update(copy.deepcopy(identity['smoother_limits']))
+    # The contact-drive shaper is the vector speed/heading limiter. The optional
+    # path tracker avoids clipping laterally valid changes as longitudinal ones
+    # in the upstream axis-wise smoother.
+    if controller.pop('allow_heading_rate_shaping', False):
+        control = identity['vehicle_control']
+        lateral = control['LateralAccelerationMps2']
+        limits = identity['smoother_limits']
+        limits['max_accel'][:2] = [math.hypot(control['LinearAccelerationMps2'], lateral)] * 2
+        limits['max_decel'][:2] = [-math.hypot(control['LinearDecelerationMps2'], lateral)] * 2
+        identity['translation_profile'] = 'vehicle_vector_shaper'
     topics, remaps = velocity_routes(robot)
+    in_navigation_frame = controller.pop('smooth_in_navigation_frame', False)
+    direct_odometry_commands = controller.pop('odometry_frame_commands', False)
+    if direct_odometry_commands and not in_navigation_frame:
+        raise ValueError('Odometry velocity needs navigation-frame smoothing')
+    rotation_input = topics['navigation_raw']
+    if in_navigation_frame:
+        rotation_input = '/' + robot + '/navigation/cmd_vel_navigation_smoothed'
+        topics['navigation_smoothed'] = rotation_input
+        limits = identity['smoother_limits']
+        speed = identity['vehicle_control']['MaxForwardSpeedMps']
+        limits['max_velocity'][:2] = [speed, speed]
+        limits['min_velocity'][:2] = [-speed, -speed]
+        limits['scale_velocities'] = True
+        identity['smoother_frame'] = 'navigation'
+        if direct_odometry_commands:
+            identity['actuator_command_frame'] = 'odometry'
+            topics['public_odometry'] = '/' + robot + '/navigation/cmd_vel_world'
+        remaps['velocity_smoother'] = [('cmd_vel', topics['navigation_raw']),
+                                      ('cmd_vel_smoothed', rotation_input)]
+    config['velocity_smoother']['ros__parameters'].update(copy.deepcopy(identity['smoother_limits']))
     config['fake_vel_transform']['ros__parameters'].update(
-        input_cmd_vel_topic=topics['navigation_raw'], output_cmd_vel_topic=topics['body_stamped'])
+        input_cmd_vel_topic=rotation_input, output_cmd_vel_topic=topics['body_stamped'])
     identity.update(topics=topics, topic_remaps=remaps,
                     command_chain=['controller_or_behavior_navigation_frame',
                                    'fake_vel_transform_to_base_link', 'runner_unstamp',
                                    'original_velocity_smoother', 'runner_sim_clock_stamp',
                                    'public_body_cmd_vel', 'shared_vehicle_shaper'])
+    if in_navigation_frame:
+        identity['command_chain'] = ['controller_or_behavior_navigation_frame',
+                                     'original_velocity_smoother', 'fake_vel_transform_to_base_link',
+                                     'runner_raw_stop_gate', 'public_body_cmd_vel', 'shared_vehicle_shaper']
     return identity

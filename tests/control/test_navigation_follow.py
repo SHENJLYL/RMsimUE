@@ -38,6 +38,28 @@ class FollowTests(unittest.TestCase):
         f=NavigationYaw()
         for i in range(300):out=self.sample(f,i,vx=0,vy=0,joint_yaw=.8)
         self.assertAlmostEqual(out['yaw'],.8);self.assertEqual(out['yaw_rate'],0)
+
+    def test_zero_velocity_keeps_turning_to_last_travel_heading(self):
+        follower = NavigationYaw()
+        self.sample(follower, 0)
+        for i in range(1, 400):
+            yaw = wrap(5.0 * i * .01)
+            out = self.sample(follower, i, body_yaw=yaw, vx=0., vy=0.)
+        self.assertFalse(out['moving'])
+        self.assertLess(abs(wrap(out['yaw'] + yaw - math.pi / 2)), .03)
+
+    def test_velocity_gap_holds_travel_heading_until_valid_update(self):
+        follower = NavigationYaw()
+        self.assertIsNone(follower.hold(dt=.01, body_yaw=0.))
+        self.sample(follower, 0)
+        for i in range(1, 400):
+            yaw = wrap(5.0 * i * .01)
+            out = follower.hold(dt=.01, body_yaw=yaw)
+        self.assertFalse(out['moving'])
+        self.assertLess(abs(wrap(out['yaw'] + yaw - math.pi / 2)), .03)
+        out = self.sample(follower, 400, vx=1., vy=0., command_frame_yaw=0.)
+        self.assertTrue(out['moving'])
+        self.assertEqual(out['destination_in_odom'], 0.)
     def test_pitch_is_preserved(self):
         f=NavigationYaw();self.sample(f,0,joint_pitch=.2)
         self.assertEqual(self.sample(f,1,joint_pitch=-.3)['pitch'],.2)
@@ -45,6 +67,22 @@ class FollowTests(unittest.TestCase):
         a=self.sample(NavigationYaw(),0,body_yaw=.7,joint_yaw=.2)
         b=self.sample(NavigationYaw(),0,body_yaw=0,joint_yaw=.2)
         self.assertAlmostEqual(a['yaw'],b['yaw']);self.assertAlmostEqual(wrap(a['target_in_odom']-b['target_in_odom']),.7)
+    def test_direction_survives_rotation_of_the_chassis(self):
+        destination = 0.65
+        for frame in ('odom', 'body'):
+            with self.subTest(frame=frame):
+                follower = NavigationYaw()
+                for i in range(450):
+                    yaw = wrap(5.0 * i * .01)
+                    command_yaw = 0.0 if frame == 'odom' else wrap(yaw - .25)
+                    angle = destination - command_yaw
+                    out = self.sample(follower, i, body_yaw=yaw, command_frame_yaw=command_yaw,
+                                      vx=math.cos(angle), vy=math.sin(angle))
+                    self.assertAlmostEqual(out['destination_in_odom'], destination)
+                self.assertLess(abs(wrap(out['yaw'] + yaw - destination)), .03)
+                stopped = self.sample(follower, 451, body_yaw=wrap(yaw + .1), vx=0., vy=0.)
+                self.assertAlmostEqual(stopped['destination_in_odom'], destination)
+
     def test_stale_future_and_bad_dt_reset(self):
         for update in [dict(stamp_ns=700_000_000),dict(stamp_ns=1_100_000_000),dict(dt=0),dict(dt=.21),dict(vx=float('nan'))]:
             f=NavigationYaw();self.assertIsNone(self.sample(f,0,**update));self.assertFalse(f.active)

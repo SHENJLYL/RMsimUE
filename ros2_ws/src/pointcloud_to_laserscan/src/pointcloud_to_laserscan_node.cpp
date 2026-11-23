@@ -139,6 +139,9 @@ void PointCloudToLaserScanNode::subscriptionListenerThreadLoop()
 void PointCloudToLaserScanNode::cloudCallback(
   sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg)
 {
+  if (cloud_msg->data.empty()) {
+    return;
+  }
   // build laserscan output
   auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
   scan_msg->header = cloud_msg->header;
@@ -182,7 +185,9 @@ void PointCloudToLaserScanNode::cloudCallback(
     iter_y(*cloud_msg, "y"), iter_z(*cloud_msg, "z"), iter_i(*cloud_msg, "intensity");
     iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z, ++iter_i)
   {
-    if (std::isnan(*iter_x) || std::isnan(*iter_y) || std::isnan(*iter_z)) {
+    if (!std::isfinite(*iter_x) || !std::isfinite(*iter_y) || !std::isfinite(*iter_z) ||
+      !std::isfinite(*iter_i))
+    {
       RCLCPP_DEBUG(
         this->get_logger(),
         "rejected for nan in point(%f, %f, %f)\n",
@@ -228,7 +233,10 @@ void PointCloudToLaserScanNode::cloudCallback(
     }
 
     // overwrite range at laserscan ray if new range is smaller
-    int index = (angle - scan_msg->angle_min) / scan_msg->angle_increment;
+    const auto index = static_cast<size_t>((angle - scan_msg->angle_min) / scan_msg->angle_increment);
+    if (index >= scan_msg->ranges.size()) {
+      continue;
+    }
     if (range < scan_msg->ranges[index]) {
       scan_msg->ranges[index] = range;
     }

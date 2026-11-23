@@ -1,0 +1,293 @@
+{
+  "schema": "rmsim_boundary_localization_regression_audit_v1",
+  "status": "diagnosis_supported_by_restored_geometry_retests",
+  "scope": "Read-only comparison of the original single-goal action in the last accepted legacy arena and the first campus-gym navigation run, with subsequent restored-geometry native results recorded separately.",
+  "sources": {
+    "legacy_session": "D:/simulator/artifacts/maps/rmuc-arena-20261118/realtime-matte-02",
+    "campus_session": "D:/simulator/artifacts/maps/campus-gym-20261119/realtime-01",
+    "files_read_in_each_session": [
+      "actions/trace.json",
+      "actions/verification.json",
+      "runtime-provenance.json"
+    ],
+    "source_control_config_sha256": "be50ccce20d0d3d799079f76be5ff3cd620f1b6a4a19451750364c8cb4dfe778",
+    "acceptance_coordinator_sha256": "7b9f75f49f3f1e625a7449281d96ae746d5897c5b70a5dc19c16fddd3bb5396c",
+    "action_probe_sha256": "893a748984bc679b38e33b83bac8065f45d8546ac73e043ed8013bf545e5f3ed"
+  },
+  "method": {
+    "phase": "single_goal",
+    "goal_request_id": 1,
+    "requested_goal_xy_m": [
+      9.45,
+      6.4
+    ],
+    "declared_spawn_xy_m": [
+      5.8,
+      6.4
+    ],
+    "pairing": "Sort truth_poses by stamp_s. For every amcl_poses entry with goal_request_id=1, linearly interpolate position_m between the two truth poses bracketing the AMCL stamp_s. Omit samples outside the recorded truth interval; do not extrapolate. Compute truth minus AMCL in x/y at that same simulation time.",
+    "endpoint": "Use precision_endpoints[0], preserving its original truth, AMCL and odometry timestamps. Separately interpolate truth at the endpoint AMCL timestamp and odometry timestamp.",
+    "median": "Unweighted median over the paired AMCL observations in each session.",
+    "odometry_cross_check": "Compare endpoint odometry y with same-time truth y minus the declared spawn y=6.4 m. This is a planar displacement consistency check, not a full transformed odometry accuracy claim.",
+    "input_comparison": "Compare decoded runtime-provenance fields for exact Python value equality. Recursively compare scene and localization-map identity, retaining all differences.",
+    "units": {
+      "position": "m",
+      "simulation_timestamp": "s"
+    }
+  },
+  "metrics": {
+    "legacy": {
+      "action_status": 4,
+      "actual_goal_error_m": 0.1541270866917167,
+      "paired_observations": 31,
+      "median_truth_minus_amcl_xy_m": [
+        -0.06881396558649655,
+        0.10370336687362425
+      ],
+      "first_paired_truth_minus_amcl_xy_m": [
+        -0.05508673208427872,
+        0.10732758347304738
+      ],
+      "last_paired_truth_minus_amcl_xy_m": [
+        -0.06668658271184391,
+        0.10422172033122834
+      ],
+      "endpoint_truth": {
+        "stamp_s": 36.309999188,
+        "position_m": [
+          9.322406056334911,
+          6.486457760739371,
+          0.017936633328237053
+        ]
+      },
+      "endpoint_amcl": {
+        "stamp_s": 35.499999209,
+        "position_m": [
+          9.356903893303935,
+          6.387298742306429,
+          0.0
+        ],
+        "truth_interpolated_at_amcl_stamp_m": [
+          9.29021731059209,
+          6.4915204626376575,
+          0.017552192958946743
+        ]
+      },
+      "endpoint_odometry": {
+        "stamp_s": 36.29999919,
+        "position_m": [
+          3.5209744879059315,
+          0.0978681036744932,
+          0.009488327037605992
+        ],
+        "truth_interpolated_at_odometry_stamp_m": [
+          9.32241366159124,
+          6.486457727216802,
+          0.01793652921190119
+        ],
+        "odom_y_minus_spawn_aligned_truth_y_m": 0.011410376457691523
+      },
+      "last_map_to_odom": {
+        "stamp_s": 36.499999192000004,
+        "translation_m": [
+          5.861172797146761,
+          6.297069726992614,
+          -0.009688448580291288
+        ]
+      }
+    },
+    "campus": {
+      "action_status": 4,
+      "actual_goal_error_m": 0.3668288151752453,
+      "failed_check": "single_goal_actual_arrival",
+      "later_waypoint_cancel_checks_executed": false,
+      "paired_observations": 45,
+      "median_truth_minus_amcl_xy_m": [
+        0.09848011015398761,
+        0.3706066607480327
+      ],
+      "first_paired_truth_minus_amcl_xy_m": [
+        0.10468703347852681,
+        0.32378405952698586
+      ],
+      "last_paired_truth_minus_amcl_xy_m": [
+        0.04387027403999255,
+        0.38480739706888745
+      ],
+      "endpoint_truth": {
+        "stamp_s": 45.699998979,
+        "position_m": [
+          9.435924544892664,
+          6.766558673620467,
+          0.010533239712102063
+        ]
+      },
+      "endpoint_amcl": {
+        "stamp_s": 45.119998993,
+        "position_m": [
+          9.370801747389788,
+          6.385784489953845,
+          0.0
+        ],
+        "truth_interpolated_at_amcl_stamp_m": [
+          9.41467202142978,
+          6.770591887022732,
+          0.010360919561918607
+        ]
+      },
+      "endpoint_odometry": {
+        "stamp_s": 45.619998981,
+        "position_m": [
+          3.643920570306491,
+          0.3713526338136165,
+          -0.01072461780493178
+        ],
+        "truth_interpolated_at_odometry_stamp_m": [
+          9.435882381384614,
+          6.7665493778842425,
+          0.010440101183505811
+        ],
+        "odom_y_minus_spawn_aligned_truth_y_m": 0.0048032559293743615
+      },
+      "last_map_to_odom": {
+        "stamp_s": 45.919998981000006,
+        "translation_m": [
+          5.745157426598359,
+          5.973197307541612,
+          0.00962375560620853
+        ]
+      }
+    },
+    "both_sessions_command_health": {
+      "observed_command_error_values": [
+        ""
+      ],
+      "observed_transport_error_values": [
+        ""
+      ],
+      "observed_command_rejected_count_values": [
+        0
+      ]
+    }
+  },
+  "input_equalities": {
+    "all_listed_fields_equal": true,
+    "exact_equal_runtime_provenance_fields": [
+      "engine_config_sha256",
+      "drive_profile_sha256",
+      "rig_sha256",
+      "lidar_sha256",
+      "imu_sha256",
+      "navigation_follow_sha256",
+      "source_control_config_sha256",
+      "control_profile",
+      "sim_step_seconds",
+      "physics_max_substep_seconds",
+      "physics_config_override",
+      "viewport_hz",
+      "pace_real_time",
+      "camera_hz",
+      "offscreen",
+      "no_rviz",
+      "profile_frames",
+      "bridge_inputs",
+      "native_navigation",
+      "pointlio_inputs",
+      "cpu_policy_source_sha256",
+      "runtime_identity_source_sha256",
+      "console_source_sha256",
+      "console_config_source_sha256",
+      "dependency_lock_sha256",
+      "transport"
+    ],
+    "scene_identity_differences": [
+      "scene_file output path",
+      "map_yaml output path"
+    ],
+    "localization_map_identity_differences": [
+      "navigation.metadata_path output path",
+      "navigation.raster_path output path",
+      "navigation.yaml_path output path"
+    ],
+    "scene_and_localization_contents_equal_apart_from_output_paths": true,
+    "native_runtime_module_equality_claimed": false
+  },
+  "geometry_comparison": {
+    "legacy_protection": {
+      "inset_m": 0.25,
+      "thickness_m": 0.48,
+      "bottom_m": -1.25,
+      "top_m": 4.8
+    },
+    "first_campus_protection": {
+      "inset_m": 0.1,
+      "thickness_m": 0.16,
+      "bottom_m": -1.25,
+      "top_m": 2.6
+    },
+    "inner_surface_outward_shift_m": 0.31,
+    "shift_formula": "(legacy inset + legacy thickness/2) - (campus inset + campus thickness/2) = (0.25+0.24)-(0.10+0.08)",
+    "proposed_restoration": "Restore the complete legacy collision/LiDAR guard geometry. Align the new visual glass inner face with the restored guard inner face; retain fixed decorative doors and NoCollision visual geometry.",
+    "visible_glass_top_m": 2.6,
+    "restored_geometry_retest_result_included": true
+  },
+  "interpretation": {
+    "finding": "The new scene has a persistent positive truth-minus-AMCL y offset already present near the start of motion. Both runs finish near the same estimated goal y while the new run finishes farther in positive world y. Same-time interpolation retains this discrepancy, and local odometry displacement follows the actual motion.",
+    "leading_explanation": "Changed perimeter collision/LiDAR geometry shifted global scan-to-map localization. The 0.31 m outward wall-face movement agrees with the direction and scale of the measured global offset change.",
+    "causal_status": "The geometry diagnosis is supported by both subsequent restored-geometry runs passing all 14 original action checks. The claim covers these recorded source-bound native routes; runtime implementation identity and the independent clock outcomes remain explicit in the follow-up.",
+    "acceptance_policy": "The original actual endpoint threshold below 0.25 m, all 14 action checks and all 32 clock checks remained unchanged. Preserve realtime-01 as the localization failure, realtime-03 as an action pass with failed clock windows, and realtime-04 as the complete subsequent pass.",
+    "no_truth_feedback_or_pose_override_used_by_this_audit": true
+  },
+  "restored_geometry_followup": {
+    "reporting_basis": "Final report values supplied by the parent/root after inspecting the completed native runs; this audit update launched no runtime.",
+    "realtime_03": {
+      "session_directory": "D:/simulator/artifacts/maps/campus-gym-20261119/realtime-03",
+      "overall_status": "failed_clock_short_windows",
+      "geometry": "restored legacy collision/LiDAR protection: inset 0.25 m, thickness 0.48 m, bottom -1.25 m, top 4.8 m",
+      "action_status": "passed",
+      "action_checks_passed": 14,
+      "action_checks_total": 14,
+      "clock_status": "failed",
+      "clock_checks_passed": 30,
+      "clock_checks_total": 32,
+      "single_goal_actual_error_m": 0.11615278439713532,
+      "waypoint_actual_error_m": 0.08144515592268442,
+      "cancel_braking_distance_m": 0.12574418436414267,
+      "cancel_drift_m": 0.0,
+      "overall_realtime_factor": 1.0000441612856468,
+      "scene_draw_hz": 59.99944543287373
+    },
+    "realtime_04": {
+      "session_directory": "D:/simulator/artifacts/maps/campus-gym-20261119/realtime-04",
+      "status": "passed",
+      "action_status": "passed",
+      "action_checks_passed": 14,
+      "action_checks_total": 14,
+      "clock_status": "passed",
+      "clock_checks_passed": 32,
+      "clock_checks_total": 32,
+      "single_goal_actual_error_m": 0.07006501645189686,
+      "waypoint_actual_error_m": 0.06487789710390221,
+      "cancel_braking_distance_m": 0.09020762938704889,
+      "cancel_drift_m": 0.0,
+      "overall_realtime_factor": 1.0000360190791153,
+      "scene_draw_hz": 59.99742299022542,
+      "fixed_10s_factor_range": [
+        0.9975909680672828,
+        1.001220532331061
+      ],
+      "rolling_10s_factor_range": [
+        0.990139865442275,
+        1.0101391641433524
+      ],
+      "input_hashes_unchanged": true,
+      "native_module_same_as_realtime_03": true,
+      "module_sha256_prefix": "4b362baa",
+      "module_identity_note": "Only the prefix was included in the follow-up summary; use the session runtime-provenance.json for the complete SHA-256.",
+      "cleanup_errors_reported": [],
+      "exit_code_reported": 0,
+      "configuration_changes_from_realtime_03": [],
+      "scope": "One unchanged-parameter repetition passed after the final native views ended. The failed realtime-03 clock gates remain recorded; this result does not establish elimination of all scheduling jitter."
+    }
+  }
+}

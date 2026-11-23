@@ -15,7 +15,9 @@
 #ifndef SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
 #define SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
 
+#include <deque>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "message_filters/subscriber.h"
@@ -71,9 +73,16 @@ private:
   std::unique_ptr<message_filters::Synchronizer<SyncPolicy>> sync_;
 
   tf2::Transform tf_lidar_to_robot_base_;
-  rclcpp::Time previous_odometry_stamp_{0, 0, RCL_ROS_TIME};
-  tf2::Transform previous_transform_;
-  bool previous_odometry_valid_{false};
+  struct PoseSample
+  {
+    rclcpp::Time stamp;
+    tf2::Transform transform;
+  };
+  std::deque<PoseSample> velocity_samples_;
+  std::optional<PoseSample> latest_mount_;
+  bool direct_control_odom_{false};
+  void publishDirectOdometry(const nav_msgs::msg::Odometry & input);
+  double velocity_window_s_{0.0};
   rclcpp::TimerBase::SharedPtr diagnostic_timer_;
   uint64_t received_odometry_{0}, received_clouds_{0}, paired_{0}, transformed_{0};
   double latest_odom_stamp_{0.0}, latest_cloud_stamp_{0.0};

@@ -4,6 +4,9 @@
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMeshActor.h"
+#include "Engine/StaticMesh.h"
 #include "Dom/JsonObject.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
@@ -25,6 +28,13 @@ struct FCameraHeadingProbeState
     TSharedPtr<FJsonObject> Before;
     TArray<TSharedPtr<FJsonValue>> Samples,Metrics;
     bool bMapOnly=false,bSetupMouseSent=false,bToggleSent=false,bFocusLost=false,bRefocused=false;
+    bool bOcclusion=false,bCrossedYawSeam=false,bOcclusionNoCapture=false;
+    TWeakObjectPtr<AStaticMeshActor> Occluder;
+    int32 BehindRayFrames=0,FrontRayFrames=0,IntendedDriveFrames=0;
+    double PreviousOrbitYaw=0,PeakViewYawError=0,MinimumIntendedDriveDot=1;
+    double MinimumRawPlanarDepth=1.e9,MaximumRawPlanarDepth=-1.e9;
+    double MaximumRawTargetYawError=0,PeakFrameYawDelta=0;
+    FVector PreviousAimDirection=FVector::ForwardVector;
 };
 
 namespace
@@ -52,8 +62,23 @@ void AImportLabGameMode::TickCameraHeadingProbe(double DeltaSeconds)
         CameraHeadingProbe=MakeShared<FCameraHeadingProbeState>();
         auto& P=*CameraHeadingProbe;
         P.bMapOnly=FParse::Param(FCommandLine::Get(),TEXT("CameraHeadingMapProbe"));
+        P.bOcclusion=FParse::Param(FCommandLine::Get(),TEXT("CameraAimOcclusionProbe"));
+        P.bOcclusionNoCapture=P.bOcclusion&&FParse::Param(FCommandLine::Get(),TEXT("OcclusionNoCapture"));
+        if(P.bOcclusionNoCapture)
+        {
+            ControlPendingCapture.Reset();
+            OverviewCapture->bCaptureEveryFrame=false;
+            for(const auto& Camera:Rig->GetCameras())Camera.Value->bCaptureEveryFrame=false;
+        }
+        if(P.bOcclusion&&(P.bMapOnly||bRosControl||bRosAimControl))
+        {Abort(TEXT("camera occlusion fixture requires manual authority and its dedicated flat map"));return;}
         P.InitialGeneration=Rig->GetMotionGeneration();P.InitialRecoveries=ContactRecoveryCount;
-        ControlReport->SetStringField(TEXT("probe"),TEXT("native_camera_heading_v1"));
+        ControlReport->SetStringField(TEXT("probe"),P.bOcclusion?TEXT("native_camera_aim_occlusion_v1"):TEXT("native_camera_heading_v1"));
+        ControlReport->SetBoolField(TEXT("camera_occlusion_fixture"),P.bOcclusion);
+        ControlReport->SetBoolField(TEXT("capture_disabled"),P.bOcclusionNoCapture);
+        if(P.bOcclusion)ControlReport->SetNumberField(TEXT("capture_sets_expected"),P.bOcclusionNoCapture?0:3);
+        ControlReport->SetStringField(TEXT("occlusion_fixture_scope"),
+            P.bOcclusion?TEXT("native Visibility trace + shared manual input; Camera Ignore; physical chassis braked except a <=0.1m drive; no runtime pose override"):TEXT("none"));
         ControlReport->SetBoolField(TEXT("map_only"),P.bMapOnly);
         ControlReport->SetBoolField(TEXT("pose_overrides_used"),false);
         ControlReport->SetBoolField(TEXT("os_input_verified"),false);
@@ -66,7 +91,7 @@ void AImportLabGameMode::TickCameraHeadingProbe(double DeltaSeconds)
     }
     auto& P=*CameraHeadingProbe;
     P.Seconds+=DeltaSeconds;
-    const bool TerminalReset=!P.bMapOnly&&P.Phase>=14;
+    const bool TerminalReset=!P.bMapOnly&&!P.bOcclusion&&P.Phase>=14;
     if(Rig->GetActorTransform().ContainsNaN()||Rig->GetActorUpVector().Z<.65||
         Rig->GetActorLocation().Z<ContactSpawn.GetLocation().Z-150||P.Seconds>65||
         (!TerminalReset&&(Rig->GetMotionGeneration()!=P.InitialGeneration||
@@ -97,6 +122,7 @@ void AImportLabGameMode::TickCameraHeadingProbe(double DeltaSeconds)
         P.Before=ManualControlState();P.StartPosition=Rig->GetActorLocation();
         P.ReferenceDirection=Aim->GetForwardVector();P.StartViewYaw=OrbitYaw;
         P.StartHullYaw=Rig->GetActorRotation().Yaw;
+        P.PreviousOrbitYaw=OrbitYaw;P.PreviousAimDirection=Aim->GetForwardVector();
     }
     P.PhaseSeconds+=DeltaSeconds;
     FManualControlInput Input;
@@ -173,6 +199,19 @@ void AImportLabGameMode::TickCameraHeadingProbe(double DeltaSeconds)
         Metric->SetNumberField(TEXT("drive_samples"),P.DriveFrames);
         Metric->SetNumberField(TEXT("minimum_map_arrow_dot"),P.MinimumMapDot);
         Metric->SetNumberField(TEXT("map_samples"),P.MapFrames);
+        if(P.bOcclusion)
+        {
+            Metric->SetNumberField(TEXT("behind_muzzle_raw_trace_frames"),P.BehindRayFrames);
+            Metric->SetNumberField(TEXT("front_muzzle_raw_trace_frames"),P.FrontRayFrames);
+            Metric->SetNumberField(TEXT("minimum_raw_planar_depth_cm"),P.MinimumRawPlanarDepth);
+            Metric->SetNumberField(TEXT("maximum_raw_planar_depth_cm"),P.MaximumRawPlanarDepth);
+            Metric->SetNumberField(TEXT("maximum_legacy_raw_target_yaw_error_deg"),P.MaximumRawTargetYawError);
+            Metric->SetNumberField(TEXT("peak_actual_view_yaw_error_deg_after_settle"),P.PeakViewYawError);
+            Metric->SetNumberField(TEXT("peak_frame_actual_yaw_delta_deg"),P.PeakFrameYawDelta);
+            Metric->SetNumberField(TEXT("minimum_requested_drive_vs_view_dot"),P.MinimumIntendedDriveDot);
+            Metric->SetNumberField(TEXT("intended_drive_frames"),P.IntendedDriveFrames);
+            Metric->SetBoolField(TEXT("crossed_view_yaw_180_seam"),P.bCrossedYawSeam);
+        }
         P.Metrics.Add(MakeShared<FJsonValueObject>(Metric));
         ControlReport->SetArrayField(TEXT("phase_metrics"),P.Metrics);
         ControlReport->SetNumberField(TEXT("final_motion_generation"),double(Rig->GetMotionGeneration()));
@@ -185,20 +224,166 @@ void AImportLabGameMode::TickCameraHeadingProbe(double DeltaSeconds)
         ++P.Phase;P.PhaseSeconds=0;P.Frames=0;P.PeakHeadingError=0;P.MinimumDriveDot=1;
         P.MinimumMapDot=1;P.PeakOrbitOffset=0;P.DriveFrames=0;P.MapFrames=0;
         P.bSetupMouseSent=false;P.bToggleSent=false;P.bFocusLost=false;P.bRefocused=false;
-        if(Capture){ControlPendingCapture=Capture;Rig->SetContactDrive(0,0,true);}
+        P.BehindRayFrames=0;P.FrontRayFrames=0;P.IntendedDriveFrames=0;P.PeakViewYawError=0;
+        P.MinimumIntendedDriveDot=1;P.MinimumRawPlanarDepth=1.e9;P.MaximumRawPlanarDepth=-1.e9;
+        P.MaximumRawTargetYawError=0;P.PeakFrameYawDelta=0;P.bCrossedYawSeam=false;
+        if(Capture&&!P.bOcclusionNoCapture){ControlPendingCapture=Capture;Rig->SetContactDrive(0,0,true);}
     };
     auto Finish=[&]()
     {
-        const int32 Expected=P.bMapOnly?4:16;
+        const int32 Expected=P.bOcclusion?10:P.bMapOnly?4:16;
+        if(P.bOcclusion)ControlReport->SetNumberField(TEXT("capture_sets_written"),P.Captures);
         if(ControlChecks.Num()!=Expected||!WriteControlReport(TEXT("passed")))
         {Abort(TEXT("camera heading probe incomplete"));return;}
         UE_LOG(LogRMSim,Display,TEXT("CAMERA_HEADING_PASSED map_only=%d checks=%d captures=%d"),
             P.bMapOnly,ControlChecks.Num(),P.Captures);
+        if(P.Occluder.IsValid())P.Occluder->Destroy();
         Rig->SetContactDrive(0,0,true);bReady=false;FPlatformMisc::RequestExitWithStatus(false,0);
     };
     const auto Moved=[&](){return FVector::Dist2D(P.StartPosition,Rig->GetActorLocation());};
     const auto StableMoving=[&](){return P.PeakHeadingError<.5&&Moved()>30&&
         P.DriveFrames>20&&P.MinimumDriveDot>.9999;};
+
+    if(P.bOcclusion)
+    {
+        Input.Brake=true;
+        auto PlacePlate=[&](double DepthCm)
+        {
+            if(!P.Occluder.IsValid())
+            {
+                auto* Plate=GetWorld()->SpawnActor<AStaticMeshActor>();
+                auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube"));
+                if(!Plate||!Mesh)return false;
+                P.Occluder=Plate;
+                auto* C=Plate->GetStaticMeshComponent();
+                C->SetMobility(EComponentMobility::Movable);C->SetStaticMesh(Mesh);
+                C->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+                C->SetCollisionResponseToAllChannels(ECR_Ignore);
+                C->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+                C->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+                C->SetGenerateOverlapEvents(false);
+                Plate->SetActorScale3D(FVector(.04,8.,6.));
+            }
+            const FVector Flat=ChaseCamera->GetActorForwardVector().GetSafeNormal2D();
+            FVector Center=Aim->GetComponentLocation()+Flat*DepthCm;
+            Center.Z=Rig->GetActorLocation().Z+150.;
+            P.Occluder->SetActorLocationAndRotation(Center,FRotator(0,Flat.Rotation().Yaw,0));
+            return true;
+        };
+        auto Observe=[&]()
+        {
+            const FVector View=ChaseCamera->GetActorForwardVector();
+            const FVector Actual=Aim->GetForwardVector();
+            P.PeakFrameYawDelta=FMath::Max(P.PeakFrameYawDelta,
+                HeadingError(P.PreviousAimDirection,Actual));
+            P.PreviousAimDirection=Actual;
+            if(FMath::Abs(OrbitYaw-P.PreviousOrbitYaw)>180.)P.bCrossedYawSeam=true;
+            P.PreviousOrbitYaw=OrbitYaw;
+            if(P.PhaseSeconds>.3)
+                P.PeakViewYawError=FMath::Max(P.PeakViewYawError,HeadingError(View,Actual));
+            FHitResult Hit;
+            FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimOcclusionFixture),false,Rig);
+            const FVector Start=ChaseCamera->GetActorLocation();
+            if(GetWorld()->LineTraceSingleByChannel(Hit,Start,Start+View*100000.,ECC_Visibility,Query)&&
+                Hit.GetActor()==P.Occluder.Get())
+            {
+                const FVector Raw=Hit.ImpactPoint-Aim->GetComponentLocation();
+                const double Depth=FVector::DotProduct(Raw,View.GetSafeNormal2D());
+                P.MinimumRawPlanarDepth=FMath::Min(P.MinimumRawPlanarDepth,Depth);
+                P.MaximumRawPlanarDepth=FMath::Max(P.MaximumRawPlanarDepth,Depth);
+                if(Depth< -25.)++P.BehindRayFrames;
+                if(Depth>100.)++P.FrontRayFrames;
+                P.MaximumRawTargetYawError=FMath::Max(P.MaximumRawTargetYawError,HeadingError(View,Raw));
+                if(!P.Samples.IsEmpty()&&P.Samples.Last()->AsObject()->GetNumberField(TEXT("seconds"))==P.Seconds)
+                {
+                    const auto Sample=P.Samples.Last()->AsObject();
+                    Sample->SetArrayField(TEXT("raw_camera_hit_cm"),HeadingVector(Hit.ImpactPoint));
+                    Sample->SetArrayField(TEXT("muzzle_position_cm"),HeadingVector(Aim->GetComponentLocation()));
+                    Sample->SetArrayField(TEXT("chase_view_direction"),HeadingVector(View));
+                    Sample->SetNumberField(TEXT("raw_planar_depth_cm"),Depth);
+                    Sample->SetNumberField(TEXT("legacy_raw_target_yaw_error_deg"),HeadingError(View,Raw));
+                }
+            }
+            if(!Input.Brake&&Input.Throttle>0&&P.PhaseSeconds>.3)
+            {
+                const auto V=Rig->GetVelocityCommandState()->GetArrayField(TEXT("requested_linear_m_s"));
+                const FVector2D Requested(V[0]->AsNumber(),V[1]->AsNumber());
+                const FVector2D Wanted(View.X,-View.Y);
+                P.MinimumIntendedDriveDot=FMath::Min(P.MinimumIntendedDriveDot,
+                    FVector2D::DotProduct(Requested.GetSafeNormal(),Wanted.GetSafeNormal()));
+                ++P.IntendedDriveFrames;
+            }
+        };
+        auto ApplyObserved=[&](){Apply();Observe();};
+        const auto BehindAligned=[&](){return P.BehindRayFrames>30&&
+            P.MaximumRawTargetYawError>150.&&P.PeakViewYawError<.5&&P.PeakFrameYawDelta<3.;};
+        switch(P.Phase)
+        {
+        case 0:
+            ApplyObserved();if(P.PhaseSeconds<1.5)return;
+            Check(TEXT("occlusion_supported_manual_spawn"),bHadInputFocus&&!bRosControl&&!bRosAimControl&&
+                Rig->GetCommandOriginVelocity().Size()<10&&Rig->GetActorUpVector().Z>.95);return;
+        case 1:
+            if(First)
+            {
+                Input.MouseX=FMath::FindDeltaAngleDegrees(OrbitYaw,170.)/MouseSensitivity;
+                Input.MouseY=-OrbitPitch/MouseSensitivity;
+            }
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("occlusion_precondition_view_170_degrees"),!bSightMode&&!bFreeLook&&
+                HeadingError(FRotator(0,170.,0).Vector(),Aim->GetForwardVector())<2.&&
+                FMath::Abs(FMath::FindDeltaAngleDegrees(OrbitYaw,170.))<.001);return;
+        case 2:
+            if(First&&!PlacePlate(-150.)){Abort(TEXT("cannot build native occlusion fixture"));return;}
+            if(First)Input.MouseX=.01/MouseSensitivity;
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("behind_muzzle_camera_hit_preserves_forward_aim"),BehindAligned(),TEXT("occlusion-behind"));return;
+        case 3:
+            MouseYaw(30.);Input.MouseY=-31.25*DeltaSeconds/MouseSensitivity;
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("occluded_mouse_right_down_crosses_yaw_seam"),BehindAligned()&&
+                P.bCrossedYawSeam&&OrbitPitch< -24.&&OrbitYaw< -160.);return;
+        case 4:
+            MouseYaw(-40.);Input.MouseY=30.*DeltaSeconds/MouseSensitivity;
+            ApplyObserved();if(P.PhaseSeconds<1.2)return;
+            Check(TEXT("occluded_mouse_left_up_crosses_yaw_seam"),BehindAligned()&&
+                P.bCrossedYawSeam&&OrbitPitch>10.&&OrbitYaw>140.);return;
+        case 5:
+            Input.FreeLook=true;MouseYaw(100.);
+            if(P.PhaseSeconds>.2&&!P.bToggleSent){Input.ToggleSight=true;P.bToggleSent=true;}
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("occluded_c_shift_keeps_gimbal_direction"),bFreeLook&&bSightMode&&
+                PC->GetViewTarget()==ChaseCamera&&P.PeakHeadingError<.5&&P.PeakOrbitOffset>70.);return;
+        case 6:
+            ApplyObserved();if(P.PhaseSeconds<.6)return;
+            Check(TEXT("occluded_c_release_returns_scope_without_flip"),!bFreeLook&&bSightMode&&
+                PC->GetViewTarget()==SightCamera&&P.PeakHeadingError<.5);return;
+        case 7:
+            Input.ToggleSight=First;
+            if(P.PhaseSeconds>.25){MouseYaw(10.);Input.MouseY=-10.*DeltaSeconds/MouseSensitivity;}
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("occluded_scope_exit_mouse_resumes_without_flip"),!bFreeLook&&!bSightMode&&
+                PC->GetViewTarget()==ChaseCamera&&BehindAligned(),TEXT("occlusion-return"));return;
+        case 8:
+            Input.Brake=false;SetMotion(.1,0);MouseYaw(2.);
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            Check(TEXT("occluded_wasd_follows_forward_camera_intent"),BehindAligned()&&
+                P.IntendedDriveFrames>30&&P.MinimumIntendedDriveDot>.9999&&Moved()>1.&&Moved()<15.);return;
+        case 9:
+            if(First&&!PlacePlate(300.)){Abort(TEXT("cannot place forward parallax fixture"));return;}
+            if(First)Input.MouseX=.01/MouseSensitivity;
+            ApplyObserved();if(P.PhaseSeconds<.8)return;
+            {
+                const FVector Desired=(TraceViewPoint(ChaseCamera->GetActorLocation(),
+                    ChaseCamera->GetActorForwardVector())-Aim->GetComponentLocation()).GetSafeNormal();
+                Check(TEXT("front_occluder_retains_real_parallax_aim"),P.FrontRayFrames>30&&
+                    FVector::DotProduct(Desired,Aim->GetForwardVector())>FMath::Cos(FMath::DegreesToRadians(1.))&&
+                    Rig->GetCommandOriginVelocity().Size()<10,TEXT("occlusion-front"));
+            }
+            return;
+        default:Finish();return;
+        }
+    }
 
     if(P.bMapOnly)
     {

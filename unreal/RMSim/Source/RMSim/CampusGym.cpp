@@ -285,6 +285,7 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     FString GlassMaterialPath=TEXT("/Game/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_glass.M_glass");
     FString EnvironmentMaterialPath=TEXT("/Game/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_environment.M_environment");
     FString EnvironmentCubemapPath=TEXT("/Game/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_CampusCourtyard.T_CampusCourtyard");
+    FString CloudShadowsMaterialPath;
     const FObj* Presentation=nullptr;
     if(Manifest->HasField(TEXT("presentation_assets")))
     {
@@ -299,7 +300,8 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         };
         if(!OverridePath(TEXT("glass_material"),GlassMaterialPath)||
            !OverridePath(TEXT("environment_material"),EnvironmentMaterialPath)||
-           !OverridePath(TEXT("environment_cubemap"),EnvironmentCubemapPath))
+           !OverridePath(TEXT("environment_cubemap"),EnvironmentCubemapPath)||
+           !OverridePath(TEXT("cloud_shadows_material"),CloudShadowsMaterialPath))
             return Fail(TEXT("invalid local presentation asset path"));
     }
     TMap<FString,UMaterialInterface*> Materials;
@@ -503,6 +505,12 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         A->SetActorHiddenInGame(true);A->Tags.Add(FName(*Name));Actors.Add(Name,A);
     }
     FGroup Glass=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("glass")],TEXT("GlassFence"));
+#if WITH_DEV_AUTOMATION_TESTS
+    // These switches isolate contributions in dedicated GPU comparisons only.
+    FString RenderIsolation;
+    FParse::Value(FCommandLine::Get(),TEXT("GymRenderIsolation="),RenderIsolation);
+    const bool ProfileRig=FParse::Param(FCommandLine::Get(),TEXT("ProfileGymRenderRig"));
+#endif
     FGroup Frame=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("steel_light")],TEXT("FenceMullions"),true);
     FGroup Gaskets=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("rubber")],TEXT("FenceGaskets"));
     FGroup Hardware=NewGroup(Host,Meshes[TEXT("cylinder")],Materials[TEXT("steel_light")],TEXT("DoorHardware"),true);
@@ -566,6 +574,24 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         }
         GateLabels.Add(TextLabel(Host,TEXT("SERVICE ACCESS  /  CLOSED"),FVector(CX+GateCentre,CY+Sign*(Y+(OutsidePerimeter?.020:-.065)),2.43),Sign<0?-90:90,.085,FColor(225,231,232)));
     }
+#if WITH_DEV_AUTOMATION_TESTS
+    if(RenderIsolation==TEXT("fence_glass"))Glass.Component->SetHiddenInGame(true);
+    if(ProfileRig)
+    {
+        TArray<FTransform> PanelTransforms;
+        int32 DuplicatePlacements=0;
+        for(int32 I=0;I<Glass.Component->GetInstanceCount();++I)
+        {
+            FTransform Panel;
+            Glass.Component->GetInstanceTransform(I,Panel,true);
+            if(PanelTransforms.ContainsByPredicate([&](const FTransform& Previous){return Panel.Equals(Previous,1.e-6);}))
+                ++DuplicatePlacements;
+            PanelTransforms.Add(Panel);
+        }
+        UE_LOG(LogTemp,Display,TEXT("RMSIM_GYM_GPU_OBJECT fence_glass instances=%d duplicate_placements=%d material=%s hidden=%d"),
+            PanelTransforms.Num(),DuplicatePlacements,*Glass.Component->GetMaterial(0)->GetPathName(),RenderIsolation==TEXT("fence_glass"));
+    }
+#endif
     if(VenueEnabled)
     {
     if(!HasNativeMeshes)
@@ -624,6 +650,31 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     Sun->GetLightComponent()->SetLightColor(FLinearColor(.90,.95,1.0));
     auto* SunC=CastChecked<UDirectionalLightComponent>(Sun->GetLightComponent());
     SunC->SetDynamicShadowDistanceMovableLight(8000);
+    if(!CloudShadowsMaterialPath.IsEmpty())
+    {
+        auto* CloudMaterial=LoadObject<UMaterialInterface>(nullptr,*CloudShadowsMaterialPath);
+        if(!CloudMaterial||!CloudMaterial->IsLightFunctionMaterial())return Fail(TEXT("missing cloud light function: ")+CloudShadowsMaterialPath);
+        auto* CloudShadows=UMaterialInstanceDynamic::Create(CloudMaterial,Sun);
+        const FVector TowardSun=(-SunC->GetDirection()).GetSafeNormal();
+        CloudShadows->SetVectorParameterValue(TEXT("CloudSunDirection"),FLinearColor(TowardSun.X,TowardSun.Y,TowardSun.Z));
+        SunC->SetLightFunctionMaterial(CloudShadows);
+        SunC->SetLightFunctionFadeDistance(200000.f);
+        SunC->SetLightFunctionDisabledBrightness(1.f);
+#if WITH_DEV_AUTOMATION_TESTS
+        float FixedTime=-1.f;
+        if(FParse::Value(FCommandLine::Get(),TEXT("GymCloudTime="),FixedTime)&&FMath::IsFinite(FixedTime)&&FixedTime>=0.f)
+        {
+            Background->SetScalarParameterValue(TEXT("FixedCloudTime"),FixedTime);
+            CloudShadows->SetScalarParameterValue(TEXT("FixedCloudTime"),FixedTime);
+        }
+#endif
+        UE_LOG(LogTemp,Display,TEXT("RMSIM_CAMPUS_CLOUD_SHADOWS material=%s toward_sun=%s"),*CloudShadowsMaterialPath,*TowardSun.ToString());
+    }
+#if WITH_DEV_AUTOMATION_TESTS
+    if(RenderIsolation==TEXT("sun_shadows"))SunC->SetCastShadows(false);
+    if(ProfileRig)UE_LOG(LogTemp,Display,TEXT("RMSIM_GYM_GPU_OBJECT sun direction=%s intensity=%.2f shadows=%d cascade_distance_cm=8000"),
+        *Sun->GetActorForwardVector().ToString(),SunIntensity,SunC->CastShadows);
+#endif
     const TArray<TSharedPtr<FJsonValue>>* Lights=nullptr;
     if(!Layout->TryGetArrayField(TEXT("lights"),Lights)||Lights->Num()>16)return Fail(TEXT("invalid light rig"));
     for(const auto& Entry:*Lights)
@@ -641,6 +692,12 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         if(HasNativeMeshes&&O->HasField(TEXT("cast_shadows"))&&!O->TryGetBoolField(TEXT("cast_shadows"),Shadowed))
             return Fail(TEXT("native light cast_shadows must be boolean"));
         C->SetCastShadows(Shadowed);ShadowedLightCount+=Shadowed;++LightCount;
+#if WITH_DEV_AUTOMATION_TESTS
+        const bool DisableRect=RenderIsolation==TEXT("rect_all")||RenderIsolation==FString::Printf(TEXT("rect_%d"),LightCount);
+        if(DisableRect)C->SetVisibility(false);
+        if(ProfileRig)UE_LOG(LogTemp,Display,TEXT("RMSIM_GYM_GPU_OBJECT rect_%d name=%s center_m=%s radius_cm=2500 shadows=%d hidden=%d"),
+            LightCount,*A->GetName(),*P.ToString(),Shadowed,DisableRect);
+#endif
     }
     APostProcessVolume* Post=World->SpawnActor<APostProcessVolume>();
     Post->bUnbound=true;Post->Priority=2;

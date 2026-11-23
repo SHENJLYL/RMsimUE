@@ -4,7 +4,12 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--duration',type=float,default=480.);args=p.parse_args()
+    p=argparse.ArgumentParser()
+    p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--duration',type=float,default=480.)
+    p.add_argument('--follow-profile',type=Path,default=ROOT/'assets/vehicles/aim_sentry/navigation-follow.json')
+    args=p.parse_args()
+    expected_rate=float(json.loads(args.follow_profile.read_text(encoding='utf-8-sig'))['control']['max_yaw_rate'])
     args.output.mkdir(parents=True,exist_ok=False)
     from rmsim_bridge.native_transport import configure_navigation_transport
     os.environ['ROS_DOMAIN_ID']='71';configure_navigation_transport()
@@ -57,7 +62,9 @@ def main():
         check('real_navigation_follow_active',len(following)>50,samples=len(following))
         check('actual_gimbal_tracks_shaped_target',bool(errors) and statistics.median(errors)<.08,median_error_rad=statistics.median(errors) if errors else None)
         check('actual_gimbal_changes_direction',yaw_travel>.3,accumulated_yaw_travel_rad=yaw_travel)
-        check('original_yaw_rate_limit_retained',bool(following) and max(abs(r['follow']['yaw_rate']) for r in following)<=1.000001)
+        check('vehicle_profile_yaw_rate_limit_respected',
+              bool(following) and max(abs(r['follow']['yaw_rate']) for r in following)<=expected_rate+1.e-6,
+              configured_rate_rad_s=expected_rate)
         check('navigation_fire_stays_disabled',bool(rows) and all(not r['trigger'] for r in rows))
         check('moving_mount_has_live_pointclouds',len(clouds)>10 and max(c['points'] for c in clouds)>100,clouds=len(clouds),maximum_points=max((c['points'] for c in clouds),default=0))
         check('moving_mount_imu_and_tf_received',len(imu)>200 and bool(transforms),imu_samples=len(imu),joint_tf=transforms)

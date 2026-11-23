@@ -66,12 +66,15 @@ class ViewerCameraApiTests(unittest.TestCase):
         self.assertEqual(physics_digest(self.model, self.data), self.before)
 
     def test_rotate_both_axes_and_refresh_real_camera(self):
+        self.events.callbacks['move'](self.window, 10.0, 10.0)
+        self.assertEqual(self.input.revision, 0)  # Unpressed mouse motion cannot trigger redraw.
         self.events.buttons = {glfw.MOUSE_BUTTON_LEFT}
         before = (self.camera.azimuth, self.camera.elevation)
         self.events.callbacks['move'](self.window, 48.0, 32.0)
         self.assertNotEqual((self.camera.azimuth, self.camera.elevation), before)
         self.events.keys = {glfw.KEY_LEFT_SHIFT}
         self.events.callbacks['move'](self.window, 72.0, 48.0)
+        self.assertEqual(self.input.revision, 2)
         mujoco.mjv_updateCamera(self.model, self.data, self.camera, self.scene)
         self.assertTrue(all(np.isfinite(camera.pos).all() for camera in self.scene.camera))
 
@@ -92,18 +95,23 @@ class ViewerCameraApiTests(unittest.TestCase):
         self.events.callbacks['scroll'](self.window, 0.0, 2.0)
         self.assertNotEqual(self.camera.distance, before_distance)
         self.assertGreater(self.camera.distance, 0)
+        self.assertEqual(self.input.revision, 4)
 
     def test_home_follow_and_close_do_not_change_solver_state(self):
         key = self.events.callbacks['key']
+        self.camera.distance = 4.25
         key(self.window, glfw.KEY_F, 0, glfw.PRESS, 0)
         self.assertFalse(self.input.follow)
+        self.assertEqual(self.camera.distance, 4.25)
         key(self.window, glfw.KEY_F, 0, glfw.PRESS, 0)
         self.assertTrue(self.input.follow)
+        self.assertEqual(self.camera.distance, 4.25)
         key(self.window, glfw.KEY_HOME, 0, glfw.PRESS, 0)
         self.assertFalse(self.input.follow)
         np.testing.assert_array_equal(self.camera.lookat, self.model.stat.center)
         self.assertGreaterEqual(self.camera.distance, 3.0)
         key(self.window, glfw.KEY_F, 0, glfw.PRESS, 0)
+        self.assertEqual(self.input.revision, 4)
         mujoco.mjv_updateCamera(self.model, self.data, self.camera, self.scene)
         self.assertEqual(self.camera.trackbodyid, 1)
         key(self.window, glfw.KEY_ESCAPE, 0, glfw.PRESS, 0)

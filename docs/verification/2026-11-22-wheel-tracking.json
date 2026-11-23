@@ -1,0 +1,629 @@
+{
+  "criteria": {
+    "scenario": "RMUC2027 Windows native UE and ROS 2",
+    "start_xy_m": [
+      7.86,
+      -6.78
+    ],
+    "target_xy_m": [
+      -8.32,
+      6.16
+    ],
+    "strict_wall_limit_s": 26,
+    "gyro_rad_s": 2,
+    "original_guard_required": true
+  },
+  "runs": {
+    "startup_failure": {
+      "status": "failed",
+      "error": "TimeoutError('route timeout')",
+      "action_timing": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "161db2226088e4322a939c0583565e81e26e8b50ea1a1d0faae50455d1907fed",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d206e25e830805e1c9353c49a62c00f00a4cbfcaab08e664a6fef68b98bc26b6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-wheel-record",
+      "path_stop_preview_log_entries": 0,
+      "coasting_stop_logged_cycles": 0
+    },
+    "lead_timeout": {
+      "status": "failed",
+      "error": "TimeoutError('route timeout')",
+      "actual_start": [
+        7.860088616074769,
+        -6.780624149308614,
+        0.26328535145789517
+      ],
+      "action_timing": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "incomplete_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": null,
+            "endpoint_error_m": 12.833217469869593,
+            "truth_samples": 2750,
+            "checked_poses": 4125,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3662212643975611,
+            "max_truth_interval_s": 0.04000000000000625
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "161db2226088e4322a939c0583565e81e26e8b50ea1a1d0faae50455d1907fed",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d206e25e830805e1c9353c49a62c00f00a4cbfcaab08e664a6fef68b98bc26b6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-wheel-lead",
+      "path_stop_preview_log_entries": 0,
+      "coasting_stop_logged_cycles": 14
+    },
+    "record_control": {
+      "status": "passed",
+      "actual_start": [
+        7.85843613331541,
+        -6.782614047483265,
+        0.21105764431095195
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 45.940940299999056,
+          "sim_s": 45.92
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.18474186804837497,
+            "truth_samples": 2086,
+            "checked_poses": 4636,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3596540136344988,
+            "max_truth_interval_s": 0.03500000000000014
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "161db2226088e4322a939c0583565e81e26e8b50ea1a1d0faae50455d1907fed",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d206e25e830805e1c9353c49a62c00f00a4cbfcaab08e664a6fef68b98bc26b6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-wheel-record-retry",
+      "path_stop_preview_log_entries": 0,
+      "coasting_stop_logged_cycles": 80
+    },
+    "lead_contact_probe": {
+      "status": "passed",
+      "actual_start": [
+        7.860041240731703,
+        -6.780284131453508,
+        0.27042990141600615
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 48.16053710000051,
+          "sim_s": 48.144999999999996
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.21648986639898604,
+            "truth_samples": 2040,
+            "checked_poses": 4775,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3650623954406278,
+            "max_truth_interval_s": 0.04000000000000625
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "75f257504c443460d3f3d25b2db52d31a7a2f1b034bd3afa385e3e630c33ffba",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d206e25e830805e1c9353c49a62c00f00a4cbfcaab08e664a6fef68b98bc26b6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-wheel-contact-lead",
+      "path_stop_preview_log_entries": 0,
+      "coasting_stop_logged_cycles": 81
+    },
+    "stop_preview": {
+      "status": "passed",
+      "actual_start": [
+        7.862597535404173,
+        -6.779768835248295,
+        0.259982485366917
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 44.20698410000114,
+          "sim_s": 43.900000000000006
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2195703243783532,
+            "truth_samples": 1848,
+            "checked_poses": 4592,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36735072678300007,
+            "max_truth_interval_s": 0.045000000000001705
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "75f257504c443460d3f3d25b2db52d31a7a2f1b034bd3afa385e3e630c33ffba",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "9d85f09927affa51fbc51288707c83a0ac88ceb2624468f2e3719b7263ee1d50",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-path-stop-preview",
+      "path_stop_preview_log_entries": 38,
+      "coasting_stop_logged_cycles": 53
+    },
+    "stop_preview_platform": {
+      "status": "passed",
+      "action_timing": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 5.476046200001292,
+          "sim_s": 5.499999999999998
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 7.374851599997783,
+          "sim_s": 7.395
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 1.9866032999998424,
+          "sim_s": 2.0
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09448924952875765,
+            "truth_samples": 264,
+            "checked_poses": 415,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6520030144590474,
+            "max_truth_interval_s": 0.054999999999999716
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.026537612045155468,
+            "truth_samples": 340,
+            "checked_poses": 751,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9075789517647286,
+            "max_truth_interval_s": 0.030000000000001137
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.04718992169766121,
+            "truth_samples": 120,
+            "checked_poses": 191,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.679010826580691,
+            "max_truth_interval_s": 0.03500000000000014
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "provenance": {
+        "module_sha256": "75f257504c443460d3f3d25b2db52d31a7a2f1b034bd3afa385e3e630c33ffba",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "9d85f09927affa51fbc51288707c83a0ac88ceb2624468f2e3719b7263ee1d50",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418",
+        "pace_real_time": true,
+        "no_rviz": false,
+        "offscreen": false
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-path-stop-preview",
+      "path_stop_preview_log_entries": 5,
+      "coasting_stop_logged_cycles": 3
+    }
+  },
+  "wheel_tracking": {
+    "seed-gyro-rate-middle-wheel-lead": {
+      "case": "seed-gyro-rate-middle-wheel-lead",
+      "mode": "lead",
+      "timing": [],
+      "status": "failed",
+      "zones": {
+        "right": {
+          "samples": 417,
+          "first_s": 6.76,
+          "last_s": 17.315,
+          "request_p50": 1.801,
+          "shaped_p50": 1.096,
+          "measured_p50": 0.836,
+          "along_speed_gap_p50": 0.079,
+          "steer_error_deg_p50": 1.252,
+          "steer_error_deg_p90": 4.587,
+          "wheel_rolling_error_p50": 0.025,
+          "wheel_rolling_error_p90": 0.14,
+          "on_brake_ratio": 0.086,
+          "zone_seconds": 10.58,
+          "brake_engagements": 7,
+          "brake_seconds": 0.91,
+          "potentially_correctable_ratio": 0.54,
+          "flat_speed_gap_p50": 0.037,
+          "flat_count": 221,
+          "slope_speed_gap_p50": 0.099,
+          "slope_count": 5
+        },
+        "other": {
+          "samples": 2235,
+          "first_s": 0.0,
+          "last_s": 66.94,
+          "request_p50": 4.208,
+          "shaped_p50": 3.366,
+          "measured_p50": 0.011,
+          "along_speed_gap_p50": 3.502,
+          "steer_error_deg_p50": 0.297,
+          "steer_error_deg_p90": 1.417,
+          "wheel_rolling_error_p50": 0.008,
+          "wheel_rolling_error_p90": 0.048,
+          "on_brake_ratio": 0.017,
+          "zone_seconds": 56.36,
+          "brake_engagements": 9,
+          "brake_seconds": 1.005,
+          "potentially_correctable_ratio": 0.584,
+          "flat_speed_gap_p50": 3.612,
+          "flat_count": 2017,
+          "slope_speed_gap_p50": 1.637,
+          "slope_count": 10
+        }
+      }
+    },
+    "seed-gyro-rate-middle-wheel-record-retry": {
+      "case": "seed-gyro-rate-middle-wheel-record-retry",
+      "mode": "record",
+      "timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 45.940940299999056,
+          "sim_s": 45.92
+        }
+      ],
+      "status": "passed",
+      "zones": {
+        "right": {
+          "samples": 443,
+          "first_s": 8.95,
+          "last_s": 20.475,
+          "request_p50": 1.702,
+          "shaped_p50": 1.007,
+          "measured_p50": 0.708,
+          "along_speed_gap_p50": 0.095,
+          "steer_error_deg_p50": 1.044,
+          "steer_error_deg_p90": 4.663,
+          "wheel_rolling_error_p50": 0.026,
+          "wheel_rolling_error_p90": 0.111,
+          "on_brake_ratio": 0.115,
+          "zone_seconds": 11.55,
+          "brake_engagements": 9,
+          "brake_seconds": 1.29,
+          "potentially_correctable_ratio": 0.49,
+          "flat_speed_gap_p50": 0.061,
+          "flat_count": 209,
+          "slope_speed_gap_p50": 0.195,
+          "slope_count": 2
+        },
+        "left": {
+          "samples": 436,
+          "first_s": 29.1,
+          "last_s": 39.85,
+          "request_p50": 1.605,
+          "shaped_p50": 1.024,
+          "measured_p50": 0.657,
+          "along_speed_gap_p50": 0.094,
+          "steer_error_deg_p50": 1.099,
+          "steer_error_deg_p90": 5.178,
+          "wheel_rolling_error_p50": 0.03,
+          "wheel_rolling_error_p90": 0.096,
+          "on_brake_ratio": 0.094,
+          "zone_seconds": 10.775,
+          "brake_engagements": 10,
+          "brake_seconds": 0.99,
+          "potentially_correctable_ratio": 0.385,
+          "flat_speed_gap_p50": 0.075,
+          "flat_count": 229,
+          "slope_speed_gap_p50": 1.49,
+          "slope_count": 2
+        },
+        "other": {
+          "samples": 930,
+          "first_s": 0.0,
+          "last_s": 45.92,
+          "request_p50": 2.65,
+          "shaped_p50": 2.029,
+          "measured_p50": 1.875,
+          "along_speed_gap_p50": 0.079,
+          "steer_error_deg_p50": 0.802,
+          "steer_error_deg_p90": 3.268,
+          "wheel_rolling_error_p50": 0.016,
+          "wheel_rolling_error_p90": 0.053,
+          "on_brake_ratio": 0.102,
+          "zone_seconds": 23.595,
+          "brake_engagements": 10,
+          "brake_seconds": 2.385,
+          "potentially_correctable_ratio": 0.556,
+          "flat_speed_gap_p50": 0.071,
+          "flat_count": 720,
+          "slope_speed_gap_p50": 0.347,
+          "slope_count": 76
+        }
+      }
+    },
+    "seed-gyro-rate-middle-wheel-contact-lead": {
+      "case": "seed-gyro-rate-middle-wheel-contact-lead",
+      "mode": "lead",
+      "timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 48.16053710000051,
+          "sim_s": 48.144999999999996
+        }
+      ],
+      "status": "passed",
+      "zones": {
+        "right": {
+          "samples": 404,
+          "first_s": 6.925,
+          "last_s": 17.375,
+          "request_p50": 1.818,
+          "shaped_p50": 0.981,
+          "measured_p50": 0.803,
+          "along_speed_gap_p50": 0.073,
+          "steer_error_deg_p50": 1.362,
+          "steer_error_deg_p90": 5.02,
+          "wheel_rolling_error_p50": 0.028,
+          "wheel_rolling_error_p90": 0.127,
+          "on_brake_ratio": 0.134,
+          "zone_seconds": 10.475,
+          "brake_engagements": 7,
+          "brake_seconds": 1.405,
+          "potentially_correctable_ratio": 0.51,
+          "flat_speed_gap_p50": 0.041,
+          "flat_count": 205,
+          "slope_speed_gap_p50": 0.532,
+          "slope_count": 4
+        },
+        "left": {
+          "samples": 553,
+          "first_s": 25.695,
+          "last_s": 39.595,
+          "request_p50": 1.649,
+          "shaped_p50": 0.562,
+          "measured_p50": 0.435,
+          "along_speed_gap_p50": 0.089,
+          "steer_error_deg_p50": 1.318,
+          "steer_error_deg_p90": 5.644,
+          "wheel_rolling_error_p50": 0.028,
+          "wheel_rolling_error_p90": 0.124,
+          "on_brake_ratio": 0.156,
+          "zone_seconds": 13.92,
+          "brake_engagements": 15,
+          "brake_seconds": 2.23,
+          "potentially_correctable_ratio": 0.356,
+          "flat_speed_gap_p50": 0.054,
+          "flat_count": 224,
+          "slope_speed_gap_p50": 0.11,
+          "slope_count": 2
+        },
+        "other": {
+          "samples": 937,
+          "first_s": 0.0,
+          "last_s": 48.145,
+          "request_p50": 2.813,
+          "shaped_p50": 1.855,
+          "measured_p50": 1.877,
+          "along_speed_gap_p50": 0.073,
+          "steer_error_deg_p50": 0.769,
+          "steer_error_deg_p90": 3.756,
+          "wheel_rolling_error_p50": 0.02,
+          "wheel_rolling_error_p90": 0.065,
+          "on_brake_ratio": 0.08,
+          "zone_seconds": 23.75,
+          "brake_engagements": 12,
+          "brake_seconds": 1.96,
+          "potentially_correctable_ratio": 0.517,
+          "flat_speed_gap_p50": 0.067,
+          "flat_count": 672,
+          "slope_speed_gap_p50": 0.137,
+          "slope_count": 79
+        }
+      }
+    },
+    "seed-gyro-rate-middle-path-stop-preview": {
+      "case": "seed-gyro-rate-middle-path-stop-preview",
+      "mode": "record",
+      "timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 44.20698410000114,
+          "sim_s": 43.900000000000006
+        }
+      ],
+      "status": "passed",
+      "zones": {
+        "right": {
+          "samples": 477,
+          "first_s": 6.1,
+          "last_s": 18.32,
+          "request_p50": 1.51,
+          "shaped_p50": 0.959,
+          "measured_p50": 0.726,
+          "along_speed_gap_p50": 0.09,
+          "steer_error_deg_p50": 1.324,
+          "steer_error_deg_p90": 4.845,
+          "wheel_rolling_error_p50": 0.022,
+          "wheel_rolling_error_p90": 0.12,
+          "on_brake_ratio": 0.096,
+          "zone_seconds": 12.27,
+          "brake_engagements": 9,
+          "brake_seconds": 1.19,
+          "potentially_correctable_ratio": 0.514,
+          "flat_speed_gap_p50": 0.063,
+          "flat_count": 233,
+          "slope_speed_gap_p50": 0.395,
+          "slope_count": 2
+        },
+        "left": {
+          "samples": 396,
+          "first_s": 26.075,
+          "last_s": 35.925,
+          "request_p50": 1.646,
+          "shaped_p50": 1.116,
+          "measured_p50": 0.8,
+          "along_speed_gap_p50": 0.1,
+          "steer_error_deg_p50": 1.0,
+          "steer_error_deg_p90": 4.391,
+          "wheel_rolling_error_p50": 0.025,
+          "wheel_rolling_error_p90": 0.11,
+          "on_brake_ratio": 0.091,
+          "zone_seconds": 9.88,
+          "brake_engagements": 5,
+          "brake_seconds": 0.91,
+          "potentially_correctable_ratio": 0.371,
+          "flat_speed_gap_p50": 0.054,
+          "flat_count": 205,
+          "slope_speed_gap_p50": 1.063,
+          "slope_count": 4
+        },
+        "other": {
+          "samples": 871,
+          "first_s": 0.0,
+          "last_s": 43.9,
+          "request_p50": 2.901,
+          "shaped_p50": 2.446,
+          "measured_p50": 2.206,
+          "along_speed_gap_p50": 0.086,
+          "steer_error_deg_p50": 0.758,
+          "steer_error_deg_p90": 2.681,
+          "wheel_rolling_error_p50": 0.015,
+          "wheel_rolling_error_p90": 0.053,
+          "on_brake_ratio": 0.056,
+          "zone_seconds": 21.75,
+          "brake_engagements": 7,
+          "brake_seconds": 1.23,
+          "potentially_correctable_ratio": 0.56,
+          "flat_speed_gap_p50": 0.071,
+          "flat_count": 694,
+          "slope_speed_gap_p50": 0.24,
+          "slope_count": 79
+        }
+      }
+    }
+  }
+}

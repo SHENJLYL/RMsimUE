@@ -1,0 +1,535 @@
+{
+  "status": "timing_gate_open",
+  "manual_reference_reported_seconds": 26.0,
+  "screenshot_association": {
+    "session": "console-live/20261122T082214Z-d97071e0",
+    "start_xy": [
+      7.86,
+      -6.78
+    ],
+    "end_xy": [
+      -8.32,
+      6.16
+    ],
+    "action_wall_s": 48.7021602
+  },
+  "fixture": {
+    "initial_yaw_rad": 0,
+    "uses_real_motion_after_goal": true
+  },
+  "selected_candidate": "seed-brake-model",
+  "passed_strict_26_seconds": false,
+  "production_source_restored": true,
+  "controller_file_hashes": {
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp": {
+      "production_sha256": "5e39902e5472612a972e2ef6c5d605cad0d28fb4451a973df913e440946b7987",
+      "candidate_sha256": "6cde6324d028e6270bccb2426c43d6365b3b19f443b6ec231732240555675fe1"
+    },
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp": {
+      "production_sha256": "0e3016c70f3dd0743b3fd6fe1212791fdd2fa97fb2a3a4918844b7b64b143d5e",
+      "candidate_sha256": "9c9de40748fb4a4ddf0fd594e2af54c42efba2ceb8495360fc80dc9282d5c03a"
+    },
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": {
+      "production_sha256": "4fff4ccf22d8a4456ced30df002614b78c8385eb4b25f34aa4e252ba31701676",
+      "candidate_sha256": "5dd0c4f2d13670fcdb4c36967931cba7e1e88db3cdecccbe76bbfd8f6b2ddd5e"
+    }
+  },
+  "platform_regression_overlap": {
+    "grid_center_xy": [
+      8.775,
+      5.275
+    ],
+    "occupied_footprints": 2
+  },
+  "unit_test": "jerk-limited stop numeric integration passed at eight speeds",
+  "cases": {
+    "fixed-preview-live": {
+      "result": {
+        "legs": [],
+        "status": "failed",
+        "error": "TimeoutError('route timeout')",
+        "action_timing": []
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "regions-three-brake": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.36601700063924,
+              6.211760968172101
+            ],
+            "estimated": [
+              9.319624116606967,
+              6.1269676321894835,
+              19.599959999
+            ],
+            "error_m": 0.06380408685211775
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.559061159963014,
+              -0.00011841967348279059
+            ],
+            "estimated": [
+              7.530874125677545,
+              -0.0032789823829491027,
+              28.799959999
+            ],
+            "error_m": 0.009061933739241445
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.94569609212225,
+              0.20065214235504908
+            ],
+            "estimated": [
+              8.915843579030962,
+              0.20089422571855486,
+              31.899959999
+            ],
+            "error_m": 0.049535186253475416
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.223579299999983,
+            "sim_s": 5.225000000000001
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 8.178734000000986,
+            "sim_s": 8.195
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.0818560000006983,
+            "sim_s": 2.1050000000000004
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.06380408685211775,
+            "truth_samples": 251,
+            "checked_poses": 330,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.5278642938833982,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.009061933739241445,
+            "truth_samples": 377,
+            "checked_poses": 569,
+            "occupied_footprints": 2,
+            "min_perimeter_clearance_m": 0.9360060726017623,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.049535186253475416,
+            "truth_samples": 125,
+            "checked_poses": 152,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.671365040083695,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-brake-model": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.325397020557814,
+              6.33461138203401
+            ],
+            "estimated": [
+              -8.324419642361194,
+              6.179339911583637,
+              58.099959999
+            ],
+            "error_m": 0.1746947697177238
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860305345285171,
+          -6.7801241582360925,
+          -1.2623410834478712e-06
+        ],
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 40.89925609999955,
+            "sim_s": 40.9
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1746947697177238,
+            "truth_samples": 1684,
+            "checked_poses": 3311,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.47242381914033515,
+            "max_truth_interval_s": 0.03999999999999915
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-corridor-lead": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.284744431531994,
+              6.310236710638041
+            ],
+            "estimated": [
+              -8.30844337685032,
+              6.15257826900184,
+              65.499720001
+            ],
+            "error_m": 0.15431793263046448
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860172102215688,
+          -6.780138672001067,
+          -3.4693273018212396e-05
+        ],
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 45.47880570000052,
+            "sim_s": 45.474999999999994
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.15431793263046448,
+            "truth_samples": 1868,
+            "checked_poses": 3466,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.451590526318131,
+            "max_truth_interval_s": 0.04499999999999815
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-curves": {
+      "result": {
+        "legs": [],
+        "status": "failed",
+        "actual_start": [
+          7.860188482913154,
+          -6.780126832815947,
+          -1.1979158344485773e-05
+        ],
+        "error": "TimeoutError('route timeout')",
+        "action_timing": []
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-heading": {
+      "result": {
+        "legs": [],
+        "status": "failed",
+        "actual_start": [
+          7.860266331538367,
+          -6.78010838941971,
+          1.281969330715948e-06
+        ],
+        "error": "TimeoutError('route timeout')",
+        "action_timing": []
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-path-profile": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 6,
+            "actual": [
+              7.177208118791905,
+              4.582235315154172
+            ],
+            "estimated": [
+              5.783657843240416,
+              4.493061406787072,
+              49.899680000000004
+            ],
+            "error_m": 15.577316870305244
+          }
+        ],
+        "status": "failed",
+        "actual_start": [
+          7.860189583694675,
+          -6.780104271261892,
+          1.1890752996003344e-05
+        ],
+        "error": "RuntimeError('action failed')",
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 26.35413090000111,
+            "sim_s": 36.839999999999996
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 6,
+            "endpoint_error_m": 15.577316870305244,
+            "truth_samples": 1024,
+            "checked_poses": 1715,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.47252750340946026,
+            "max_truth_interval_s": 0.7149999999999999
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-smooth-visible": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 6,
+            "actual": [
+              2.324822082356627,
+              -6.779642049227574
+            ],
+            "estimated": [
+              2.2047227914051044,
+              -6.741589684817515,
+              37.699959999
+            ],
+            "error_m": 16.755493831193565
+          }
+        ],
+        "status": "failed",
+        "actual_start": [
+          7.859868404927994,
+          -6.780148555545308,
+          4.5443233238307335e-05
+        ],
+        "error": "RuntimeError('action failed')",
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 15.865155499999673,
+            "sim_s": 15.870000000000001
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 6,
+            "endpoint_error_m": 16.755493831193565,
+            "truth_samples": 699,
+            "checked_poses": 774,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.45694042823469605,
+            "max_truth_interval_s": 0.07500000000000284
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    },
+    "seed-valid-plan": {
+      "result": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.322762664849428,
+              6.296429173314025
+            ],
+            "estimated": [
+              -8.301485525868472,
+              6.150460153407106,
+              66.099839996
+            ],
+            "error_m": 0.13645714216639063
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860204866364634,
+          -6.780119938164679,
+          -1.3148083107027072e-06
+        ],
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 48.42789230000017,
+            "sim_s": 49.964999999999996
+          }
+        ]
+      },
+      "static_clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.13645714216639063,
+            "truth_samples": 1983,
+            "checked_poses": 3601,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.19103486003817471,
+            "max_truth_interval_s": 0.4549999999999983
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "passes_26_s_gate": false
+    }
+  }
+}

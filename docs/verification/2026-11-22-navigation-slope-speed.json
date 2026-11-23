@@ -1,0 +1,236 @@
+{
+  "platform": "Windows native, RMUC2027 in MuJoCo, pinned sentry_ws profile",
+  "scope": "Three separate NavigateToPose goals from the same spawn; sum of seconds from sending goals to result; excludes readiness and observer pause",
+  "target_seconds": 20,
+  "target_met": false,
+  "terrain_scope": "Sensor-derived support plane at up to 35 degrees; retains legacy obstacles for unsupported points, no occupancy map edits",
+  "slope_log_windows": {
+    "01-terrain_analysis.log": 34,
+    "01-terrain_analysis_ext.log": 38
+  },
+  "cases": {
+    "baseline": {
+      "action_status": "passed",
+      "sum_action_s": 26.4801091999999,
+      "per_goal_s": [
+        12.576382399999943,
+        3.3014528999999584,
+        10.6022739
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1535,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.0995135591174915,
+        0.025821368530724843,
+        0.053120261602378344
+      ]
+    },
+    "continuous-01": {
+      "action_status": "failed",
+      "sum_action_s": 0.0019763999998758663,
+      "per_goal_s": [
+        0.0019763999998758663
+      ],
+      "static_sweep": "failed",
+      "checked_poses": 0,
+      "overlapping_poses": 0,
+      "errors_m": []
+    },
+    "continuous-02": {
+      "action_status": "failed",
+      "sum_action_s": null,
+      "per_goal_s": [],
+      "static_sweep": "failed",
+      "checked_poses": 0,
+      "overlapping_poses": 0,
+      "errors_m": []
+    },
+    "final": {
+      "action_status": "passed",
+      "sum_action_s": 22.62349499999982,
+      "per_goal_s": [
+        10.618233099999998,
+        3.0906952000000274,
+        8.914566699999796
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1413,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.11965066074756943,
+        0.0275095377611143,
+        0.07777949092588059
+      ]
+    },
+    "fine-slope": {
+      "action_status": "passed",
+      "sum_action_s": 24.92665500000021,
+      "per_goal_s": [
+        11.540719999999965,
+        3.0818913000002794,
+        10.304043699999966
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1541,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.10485495395552448,
+        0.045146332325970207,
+        0.075475300922982
+      ]
+    },
+    "slope-only": {
+      "action_status": "passed",
+      "sum_action_s": 23.999978199999987,
+      "per_goal_s": [
+        9.232142300000078,
+        3.4048018999999385,
+        11.36303399999997
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1458,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.12960654674478628,
+        0.045011415123991,
+        0.058509780310231324
+      ]
+    },
+    "speed-01": {
+      "action_status": "passed",
+      "sum_action_s": 23.96095830000013,
+      "per_goal_s": [
+        12.48700430000008,
+        3.290511400000014,
+        8.183442600000035
+      ],
+      "static_sweep": "failed",
+      "checked_poses": 1446,
+      "overlapping_poses": 5,
+      "errors_m": [
+        0.09547460381553255,
+        0.04623803166143711,
+        0.05888681561924424
+      ]
+    },
+    "speed-02": {
+      "action_status": "passed",
+      "sum_action_s": 25.29041510000002,
+      "per_goal_s": [
+        12.82496610000021,
+        3.8794455999998263,
+        8.586003399999981
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1514,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.10830154573153895,
+        0.03791136040569675,
+        0.0825865592584818
+      ]
+    },
+    "speed-03": {
+      "action_status": "passed",
+      "sum_action_s": 23.490924499999892,
+      "per_goal_s": [
+        10.033959299999879,
+        3.0821395000000393,
+        10.374825699999974
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1392,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.13129402468746554,
+        0.029981474184112466,
+        0.07024349407735897
+      ]
+    },
+    "speed-04": {
+      "action_status": "passed",
+      "sum_action_s": 26.228313600000092,
+      "per_goal_s": [
+        11.33030749999989,
+        3.358943000000181,
+        11.539063100000021
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1459,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.09310349897111267,
+        0.03355161600023787,
+        0.0683832316532417
+      ]
+    },
+    "speed-05": {
+      "action_status": "passed",
+      "sum_action_s": 27.007766300000185,
+      "per_goal_s": [
+        13.1215373,
+        2.8728217000002587,
+        11.013407299999926
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1507,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.1375647061578529,
+        0.028136682835595516,
+        0.082307258614686
+      ]
+    },
+    "speed-06": {
+      "action_status": "passed",
+      "sum_action_s": 23.602781700000378,
+      "per_goal_s": [
+        12.230886900000314,
+        2.922837499999787,
+        8.449057300000277
+      ],
+      "static_sweep": "passed",
+      "checked_poses": 1478,
+      "overlapping_poses": 0,
+      "errors_m": [
+        0.10885931459598566,
+        0.036400008508751976,
+        0.09175051812059756
+      ]
+    }
+  },
+  "source_hashes": {
+    "ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp": "01d72ba5c61135d780e293b0e75ec3aa42bcdf9b2b1a53b0d15133871c02a7b9",
+    "ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp": "0fe7874f1e4e354f803623e6469925f7af96ca18522affc9de58583b54a4583a",
+    "ros2_ws/src/terrain_analysis/CMakeLists.txt": "7222a70a0de86f155c82a7774a8401c9297422f740ba1924cd7b317ac4e96a09",
+    "ros2_ws/src/terrain_analysis_ext/CMakeLists.txt": "86b013c2f98aa201f16d0215ab0290c8d049f8889be9663b0cc79e3f2d3cd797",
+    "ros2_ws/src/terrain_analysis_ext/package.xml": "f293f24098411b0d0c8d7c2df4ff87f16ce98ed9f634f79a14f2516a3898c4dc",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": "6326febcc03e6132f568dca48759b691d21d6466a9ef787b91868d407d164532",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": "d8002da8d150d8764c0e67287a126acdb9f23dbbd01b5f41b6ea0860e0be53a4",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "6fc5c23a04b862e1fe6c4eda445d5938601b101268bad25a03b7ad9e679d6f40",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/sentry_navigation_source.py": "791debfbfac1ef6180384e84909656456cee9da0d01382bf4ab188ab97db5837",
+    "ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp": "486240842f181e4804b7993b9f57e2d31e7cd138592d84a24f18ed9d7dc2d858",
+    "ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp": "6795e8a5b08c05fd96b7e825db9bd7572627938fbc7025d339b7e76c3f371c65",
+    "tests/control/test_navigation_speed.py": "449a27106feea3f4f87d55fa877de79a5f84ba76a007a1d72fd52fd168858855",
+    "tests/control/test_navigation_drive_profile.py": "683386bf4aa1c2b15f73aca7e1aef050c8f5a97bf969cde7bb06ae8e95a05cd8"
+  },
+  "deployed_sha256": {
+    "controller_server.exe": "de658ba853dbd912be69ca09c174d81c06a66a51a473ab1fa0879ed9366262b1",
+    "pb_omni_pid_pursuit_controller.dll": "40da6f1ce07f2d523a84bf6a72eeea75bc32a5a75f39bafb7af8c9cdd81aeb55",
+    "terrainAnalysis.exe": "87a61cceac7be954cb08ae4e204a985445c45dea8113b687a8a103dc13ef4a47",
+    "terrainAnalysisExt.exe": "84924c6efaec9604109cd2fdec0af585530b5358d16fa43be1fc61aad1250ea2"
+  },
+  "smoke": {
+    "action_status": "passed",
+    "action_error": null,
+    "cancelled_braking_m": 0.19216750321239753,
+    "action_checks": 18,
+    "clock_status": "passed",
+    "clock_checks": 32,
+    "realtime_factor": 0.9999813314330914
+  },
+  "cxx_test": "Uphill, downhill, obstacle over ramp, steep face, abrupt step and sparse collinear returns",
+  "config_tests": 25,
+  "evidence_root": "D:\\simulator\\artifacts\\navigation\\slope-speed-20261122"
+}

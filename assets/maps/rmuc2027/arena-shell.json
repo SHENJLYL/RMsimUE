@@ -67,13 +67,14 @@
     ]
   },
   "asset_license": "Original SketchupBox model project with attribution, CC0 exterior, official DJI / RoboMaster logos. Raw source must not be redistributed separately.",
-  "notes": "Source-faithful SchoolGym, original benches only, clear original windows, full-detail 3D campus trees, 8K-source sky; long glass inner faces flush to the measured outer envelope of the original wave-channel platforms. CC0 brick entrance walls preserve the existing paths; an independent distant ground ring encloses the original campus ground under the enlarged sky background.",
+  "notes": "SchoolGym with clear perimeter glass and blurred baked environment reflections. The two courtyards have continuous CC0 brick walls with end returns, with moving cloud cover and a matched solar shadow projection. Original field collision and source landscaping remain.",
   "render_profile": "RMSimGymLumen",
-  "navigation_package": "navigation-console-platform",
+  "navigation_package": "navigation-console-platform-support-v2",
   "presentation_assets": {
-    "glass_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_ClearBoundaryGlass.M_ClearBoundaryGlass",
-    "environment_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolLandscape.M_SchoolLandscape",
-    "environment_cubemap": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_SchoolSky8K.T_SchoolSky8K"
+    "glass_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_ClearBoundaryGlassBakedReflection.M_ClearBoundaryGlassBakedReflection",
+    "environment_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolLandscapeClouds.M_SchoolLandscapeClouds",
+    "environment_cubemap": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Textures/T_SchoolSky8K.T_SchoolSky8K",
+    "cloud_shadows_material": "/Game/RMSim/Maps/rmuc2027/Arena/SchoolGymFidelity/Materials/M_SchoolCloudShadows.M_SchoolCloudShadows"
   },
   "outdoor_background": {
     "sky_diameter_m": 16000,

@@ -1,0 +1,889 @@
+{
+  "schema": "rmsim_campus_gym_release_v1",
+  "status": "passed_in_recorded_windows_scope",
+  "recorded_utc": "2026-11-19T04:16:58.854714+00:00",
+  "scope": "Campus gym art, closed decorative glass gates and unchanged validated physical perimeter; native Windows UE 5.8.4.",
+  "source_base_commit": "e5d2942cdb58e5c2f7ed55a226fb0c18f5caf3c0",
+  "workspace_baseline_commit": "bea30a56c1accb319e5656af8bd8a6a09de5dbb8",
+  "publication_scope": "Only campus-gym changes on published main base. Current unified navigation/WT working-tree changes are not included by this feature slice.",
+  "builds": {
+    "publication": {
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_s": 6.568371899978956,
+      "command": [
+        "E:\\simulator-tools\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+        "RMSimEditor",
+        "Win64",
+        "Development",
+        "D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\publish-worktree\\unreal\\RMSim\\RMSim.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=8",
+        "-Log=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\publish-build-04\\ubt.log"
+      ],
+      "utc": "2026-11-19T03:57:53.895901+00:00",
+      "module_sha256": "5b4d54a85cd4d2302344f44cbe74b17d50c992d47b1d9f4610db404ed8c68048",
+      "evidence": {
+        "path": "artifacts/maps/campus-gym-20261119/publish-build-04/verification.json",
+        "bytes": 658,
+        "sha256": "90eb0be3e4675c3c0316191713af8153e73d55044bc886d13422b07a5d85bf04"
+      }
+    },
+    "current_workspace": {
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_s": 6.312822899984894,
+      "command": [
+        "E:\\simulator-tools\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+        "RMSimEditor",
+        "Win64",
+        "Development",
+        "D:\\simulator\\unreal\\RMSim\\RMSim.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=8",
+        "-Log=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\workspace-build-05\\ubt.log"
+      ],
+      "utc": "2026-11-19T03:57:55.448361+00:00",
+      "module_sha256": "4b362baa116ba0c926295ceb2b86c53c582b9322e8ac7bb6d1aca692970693a9",
+      "evidence": {
+        "path": "artifacts/maps/campus-gym-20261119/workspace-build-05/verification.json",
+        "bytes": 604,
+        "sha256": "7b203742419a6870625bf7030845c1c658eafe2ad5df80b58e2ab0de4b81178b"
+      }
+    },
+    "isolated_physical_probe": {
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_s": 6.65705110001727,
+      "command": [
+        "E:\\simulator-tools\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+        "RMSimEditor",
+        "Win64",
+        "Development",
+        "D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\preview-project\\unreal\\RMSim\\RMSim.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=8",
+        "-Log=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\build-12\\ubt.log"
+      ],
+      "utc": "2026-11-19T03:57:11.683044+00:00",
+      "module_sha256": "9bd12d192bab3e985ba18527093db8cbab16a84b85a4b2dbfc2d40268f342a5e",
+      "evidence": {
+        "path": "artifacts/maps/campus-gym-20261119/build-12/verification.json",
+        "bytes": 648,
+        "sha256": "f94238b316f2bda3e368dacafb6734cac6e721d46a6cea2a4a421ac4ca42bcfa"
+      }
+    }
+  },
+  "protected_baseline_sha256": {
+    "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+    "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+  },
+  "resource_setup": {
+    "status": "passed",
+    "evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/setup-repeat-01/verification.json",
+      "bytes": 4527,
+      "sha256": "eaab22f4b78dc22f915f29748c6eba219ee361843c09605b31d23d1a85335461"
+    },
+    "source_manifest_sha256": "796b0d62c51c3263dcb0765ac1237a9230c596bfcf673a8b191f4fc3f599e626",
+    "layout_sha256": "cb07702d6d522c595586fc69e8fe37279d69d264e02055c9c09c625d02ac21e1",
+    "scripts_sha256": {
+      "tools\\maps\\prepare_campus_gym_assets.py": "9795562ffdb0e0543849f770f962f977221b10c6f655e3420db84111f191db28",
+      "tools\\maps\\build_campus_gym_layout.py": "467783c08ce6039529af244e445c344e9f7ced2ee1313395bf1a2411a5b0b242",
+      "tools\\unreal\\import_campus_gym_assets.py": "14418dafc13df78eef9af39b4638da4fbd0472e5eba160c2efe3c51e685f483b"
+    }
+  },
+  "native_scene": {
+    "status": "passed",
+    "evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/publish-native-03/verification.json",
+      "bytes": 47069,
+      "sha256": "ba223a8ac34d89090e422d62a373e9f630f13cdbdcfa8e56ccad240ce12067ad"
+    },
+    "views": [
+      {
+        "view": "hero",
+        "status": "passed",
+        "checks": {
+          "process_exit_zero": true,
+          "native_report_passed": true,
+          "all_96_closed_boundary_sweeps": true,
+          "four_continuous_collision_walls": true,
+          "four_fixed_gate_leaves": true,
+          "no_gate_interaction": true,
+          "glass_translucent": true,
+          "twelve_indoor_rect_lights": true,
+          "cosmetic_no_collision": true,
+          "gym_loaded": true,
+          "no_shader_compile_errors": true,
+          "no_fatal_errors": true,
+          "no_invalid_attachment": true,
+          "two_native_pngs_decoded": true
+        },
+        "elapsed_wall_s": 22.279069599986542,
+        "screenshots": {
+          "overview.png": {
+            "bytes": 2919250,
+            "sha256": "b8296b8ffe8bc8eb4a9ec9610fee02a12076a930ba8cb32e888ae395522b6231",
+            "width": 1600,
+            "height": 1000,
+            "decoded": true
+          },
+          "aim_camera.png": {
+            "bytes": 1127129,
+            "sha256": "840ea597435ee511d2ec6a6f7b20c30e103d3b802dcaaf1d93b8993359d44057",
+            "width": 1280,
+            "height": 720,
+            "decoded": true
+          }
+        }
+      },
+      {
+        "view": "field",
+        "status": "passed",
+        "checks": {
+          "process_exit_zero": true,
+          "native_report_passed": true,
+          "all_96_closed_boundary_sweeps": true,
+          "four_continuous_collision_walls": true,
+          "four_fixed_gate_leaves": true,
+          "no_gate_interaction": true,
+          "glass_translucent": true,
+          "twelve_indoor_rect_lights": true,
+          "cosmetic_no_collision": true,
+          "gym_loaded": true,
+          "no_shader_compile_errors": true,
+          "no_fatal_errors": true,
+          "no_invalid_attachment": true,
+          "two_native_pngs_decoded": true
+        },
+        "elapsed_wall_s": 21.678648800007068,
+        "screenshots": {
+          "overview.png": {
+            "bytes": 2354558,
+            "sha256": "5766200feb1de6f51761d62629b04dd8f49e93cbf6f968a6a1e0cc0950aee70f",
+            "width": 1600,
+            "height": 1000,
+            "decoded": true
+          },
+          "aim_camera.png": {
+            "bytes": 1125560,
+            "sha256": "3c7e37d536a4988464ea8aeba95a56183334a5537d54d147bea0a770f992713b",
+            "width": 1280,
+            "height": 720,
+            "decoded": true
+          }
+        }
+      },
+      {
+        "view": "gate",
+        "status": "passed",
+        "checks": {
+          "process_exit_zero": true,
+          "native_report_passed": true,
+          "all_96_closed_boundary_sweeps": true,
+          "four_continuous_collision_walls": true,
+          "four_fixed_gate_leaves": true,
+          "no_gate_interaction": true,
+          "glass_translucent": true,
+          "twelve_indoor_rect_lights": true,
+          "cosmetic_no_collision": true,
+          "gym_loaded": true,
+          "no_shader_compile_errors": true,
+          "no_fatal_errors": true,
+          "no_invalid_attachment": true,
+          "two_native_pngs_decoded": true
+        },
+        "elapsed_wall_s": 21.690032800019253,
+        "screenshots": {
+          "overview.png": {
+            "bytes": 2289160,
+            "sha256": "32c4133a960f3af0cafdf50a6d10797f352241f60af846a14c20cbe1edc269f7",
+            "width": 1600,
+            "height": 1000,
+            "decoded": true
+          },
+          "aim_camera.png": {
+            "bytes": 1125570,
+            "sha256": "7f8895dd887f5342f39e64cd580ef2b8e1049d126d4ccffe7fafd61807cb1499",
+            "width": 1280,
+            "height": 720,
+            "decoded": true
+          }
+        }
+      },
+      {
+        "view": "reverse",
+        "status": "passed",
+        "checks": {
+          "process_exit_zero": true,
+          "native_report_passed": true,
+          "all_96_closed_boundary_sweeps": true,
+          "four_continuous_collision_walls": true,
+          "four_fixed_gate_leaves": true,
+          "no_gate_interaction": true,
+          "glass_translucent": true,
+          "twelve_indoor_rect_lights": true,
+          "cosmetic_no_collision": true,
+          "gym_loaded": true,
+          "no_shader_compile_errors": true,
+          "no_fatal_errors": true,
+          "no_invalid_attachment": true,
+          "two_native_pngs_decoded": true
+        },
+        "elapsed_wall_s": 22.75859599999967,
+        "screenshots": {
+          "overview.png": {
+            "bytes": 2877550,
+            "sha256": "70a57820206ded2fe9562f507cb73b77e444f4278b299dee413765c503b64358",
+            "width": 1600,
+            "height": 1000,
+            "decoded": true
+          },
+          "aim_camera.png": {
+            "bytes": 1127753,
+            "sha256": "409409441c86e46733e30da1458ec6f0d060576f628503f06cc1577908b0bdcb",
+            "width": 1280,
+            "height": 720,
+            "decoded": true
+          }
+        }
+      }
+    ],
+    "boundary_geometry": {
+      "status": "passed",
+      "scope": "native collision sweeps; cosmetic glass and shut doors; no gate interaction; source CAD ignored for boundary-isolation queries only",
+      "sweep_samples": 96,
+      "sweep_passed": 96,
+      "collision_inset_m": 0.25,
+      "collision_thickness_m": 0.48,
+      "collision_top_m": 4.8,
+      "glass_top_m": 2.6,
+      "continuous_collision_walls": 4,
+      "glass_panels": 58,
+      "fixed_gate_leaves": 4,
+      "gate_interaction_enabled": false,
+      "cosmetic_no_collision": true,
+      "visual_instances": 1659,
+      "visual_groups": 37,
+      "indoor_rect_lights": 12,
+      "glass_material_blend": "translucent"
+    },
+    "assistant_visual_review": {
+      "status": "passed",
+      "views": [
+        "hero",
+        "field",
+        "gate",
+        "reverse"
+      ],
+      "scope": "Actual native PNG inspection by independent assistant; no user visual approval is claimed.",
+      "blocking_visual_defects": []
+    },
+    "input_sha256": {
+      "project": "cff0b070f49bd58a4dc19952e40e4d3d685a5d22ae697e451eeff43d3bd74fbf",
+      "map": "6d0661a2ac33493c9678e323183a081b35421fa533b6b764e409a62fab4022da",
+      "mesh_rig": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "arena_manifest": "51767858fb459f985b04dd0d1e44af250a58b16f420a817ef516b6add9d33e57",
+      "layout": "cb07702d6d522c595586fc69e8fe37279d69d264e02055c9c09c625d02ac21e1",
+      "source_manifest": "796b0d62c51c3263dcb0765ac1237a9230c596bfcf673a8b191f4fc3f599e626",
+      "module": "5b4d54a85cd4d2302344f44cbe74b17d50c992d47b1d9f4610db404ed8c68048",
+      "verifier_script": "a75c27c63587d8c7075029ad0ea7a18613ded78db82a7a9611cf35fc90592572",
+      "source/CampusGym.cpp": "479eda14ddc4ea35a97c161513acea3a9a75c7a5b0b2283227d97409adbb5305",
+      "source/CampusGym.h": "d61a85cde294febdf10668099111f2899a23c8a6f4d58422ba9f9ae7e421df72",
+      "source/ArenaShell.cpp": "e0d6d35a881731b73d34bc1ab38cca9d674eef7a868c2733b5d50325dd6ceaf2",
+      "source/ArenaShell.h": "9c3a5aa6df939e5abf1f1618deffd620ba0b43ae075981a425e12525a29eb963",
+      "source/ImportLabGameMode.cpp": "86f9f9c047176790f0de2f0af343e8864377ec0a337acb79a82cece0676ad951",
+      "source/ImportLabGameMode.h": "5c29e5331e697a1bbbcf8f0bae26f1c248abb8a505f108807e27229f4eb8600a",
+      "config/DefaultEngine.ini": "274203cfbb8fc5a1631f88e753a26e8efa26c7f33e9651c0861f1417d1fca11c",
+      "config/DefaultGame.ini": "9833cb1fbcba66cf561e709d3a7e08a02e2389860ddaec8a6f97f23cf489c190",
+      "setup/tools/maps/prepare_campus_gym_assets.py": "9795562ffdb0e0543849f770f962f977221b10c6f655e3420db84111f191db28",
+      "setup/tools/maps/prepare_campus_seat_row.py": "d3f3c39e9948417d12c07f1c799c6c5f9d0982e2fadde860980e81d0fef4dfa6",
+      "setup/tools/maps/build_campus_gym_layout.py": "467783c08ce6039529af244e445c344e9f7ced2ee1313395bf1a2411a5b0b242",
+      "setup/tools/unreal/setup_campus_gym.py": "4298d38f4df7e39fe105c812227fe71fffa882071acdf7cb9934d2cdc11f0e57",
+      "setup/tools/unreal/import_campus_gym_assets.py": "14418dafc13df78eef9af39b4638da4fbd0472e5eba160c2efe3c51e685f483b"
+    },
+    "native_asset_sha256": {
+      "Materials/M_acoustic_wood.uasset": "a3d1f4737c928b530a9307179c8c04de16d6be1e94ae1d04edd9cd3365d0bd0c",
+      "Materials/M_concrete.uasset": "9236ca3408c6e3f649db6aabfbe6eb2efdd40a5c02059af8133df8b9fe8d853a",
+      "Materials/M_court_line.uasset": "c354862c1d3e4cb9e0e5bdf224e1cbf7e4136f7b58a36416735d4cda08217da9",
+      "Materials/M_emissive.uasset": "480cca765df862455d3d177d9fc9526129a1af7dd8d84dfd24adfbaa163986fb",
+      "Materials/M_environment.uasset": "056fa554d6747246af52b477393ff9376199e39281692be833307cf0c0696e85",
+      "Materials/M_glass.uasset": "0c24fde64fd24970c0156e67c8a15f898c485f3b99ba49c4c61ef22f7159ffd8",
+      "Materials/M_plaster.uasset": "8d5a906c2fe2e399226797d8732b506f52ae0c6f0fbfd20bf0d5356f378e4f4a",
+      "Materials/M_rubber.uasset": "f8f3d389da1e1ecff87c65f8fb528514a43d26265cb0ea0437848c6856653533",
+      "Materials/M_scoreboard.uasset": "03104cef1807fbd4e8d67df86fe431a155bb9a20f1e2eec1c380f4a28663994d",
+      "Materials/M_seat_blue.uasset": "679fd4ae39784a7e8fe451330dc79d1c323f91a4750e981179e055a01b020f72",
+      "Materials/M_seat_gray.uasset": "23585276889b20d826b7d2bcfe3584b968fe340b05b66d7369136e4bc4f839ee",
+      "Materials/M_seat_red.uasset": "173d038f8d7c031b958b93a5de6a1e1ef1fba35166328581992148af234fb3f5",
+      "Materials/M_steel.uasset": "43e4dbbe8b3957636d407a60bcaec323855f04ec179893f4dbf64cd91c9395d8",
+      "Materials/M_steel_light.uasset": "a9f3f8f3d1a441c9b6c111b44fa1e5f4d9d719b27697e91accebdc93742b5016",
+      "Materials/M_wood_floor.uasset": "70aa7b12d820594a07f64f88914bd599277eb70e695970fe78eaff8cd12735f0",
+      "Meshes/SM_SeatRow.uasset": "ad703737c5d9aca04ada5d64a0492ba47c297d724167a380fbb6611c0eb0ac36",
+      "Textures/T_CampusCourtyard.uasset": "2bc3d8634903006a002a5020d81ea5cadce5659c6f797ac176eecfacf50a030c",
+      "Textures/T_Concrete046_Color.uasset": "f8fc212ec66c9d4abc20f367d052f1f9b5fda88cacc1d63c0a17a4a9b3fe0ec2",
+      "Textures/T_Concrete046_NormalDX.uasset": "fd5530fc9e939eba91fac279177ae95db3dd44f23c718514625b80099356eeee",
+      "Textures/T_Concrete046_Roughness.uasset": "923d33c6266d9eb66b520f8b6c1d614b5f941f5850412412ebb11676f5f1cd5f",
+      "Textures/T_Metal050A_Color.uasset": "17c31b1bfce7b667e2a01141b625d2caa063a3939d225e8ff5919149cc371f1e",
+      "Textures/T_Metal050A_Metalness.uasset": "deca2431580dc11ad2a34c57377ecb56ce30f9b0f9811463e9728dc9be58c4df",
+      "Textures/T_Metal050A_NormalDX.uasset": "ff7c4632afa3f8684dde24f27ceff53dc225dbd79fe2f9199b168e4321eac797",
+      "Textures/T_Metal050A_Roughness.uasset": "571cbd3504fed742f51524017fa0a2c790e0ccabe7c77211352d0cfba21711c6",
+      "Textures/T_Wood049_Color.uasset": "62a4683dc72726e00eefa43d864fea939d41c4ecaf234151bf4713717ded58c9",
+      "Textures/T_Wood049_NormalDX.uasset": "a9cbe21c31b120e2b6e64d7114ff751e74e7cabbd42be36bda257ee9a46fad34",
+      "Textures/T_Wood049_Roughness.uasset": "4f0ced589473f52f88febdf1328e648b233c8d59c34c5643918ffc2eba134e52",
+      "Textures/T_WoodFloor051_Color.uasset": "1b6bf28fc727fbb2382b9fc5dad8d87a2a8c4a60e3e5d5cbb8ff9d07e5c831af",
+      "Textures/T_WoodFloor051_NormalDX.uasset": "12d714e7c556ebbd45e757fd79cfda43c979b9ba7dc493b1b14e312d728d62a3",
+      "Textures/T_WoodFloor051_Roughness.uasset": "92357368beca37b6ad94978e153c3ae5f352806c364236265d1ff4ea671edf32"
+    }
+  },
+  "current_workspace_native": {
+    "status": "passed",
+    "evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/workspace-native-02/verification.json",
+      "bytes": 34708,
+      "sha256": "e6149a30a8f4b2a59cdbaf94af100ad88a25ddf716419432ff5cb48e03dc1e0a"
+    },
+    "views": [
+      {
+        "view": "hero",
+        "status": "passed",
+        "checks": {
+          "passed": 14,
+          "total": 14
+        }
+      },
+      {
+        "view": "gate",
+        "status": "passed",
+        "checks": {
+          "passed": 14,
+          "total": 14
+        }
+      }
+    ]
+  },
+  "physical_vehicle_boundary": {
+    "status": "passed",
+    "checks": {
+      "process_exit_zero": true,
+      "six_physical_checks_passed": true,
+      "no_pose_override": true,
+      "no_reset": true,
+      "boundary_margin_positive": true,
+      "reverse_released_wall": true
+    },
+    "command": [
+      "E:\\simulator-tools\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\preview-project\\unreal\\RMSim\\RMSim.uproject",
+      "/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode",
+      "-game",
+      "-RenderOffScreen",
+      "-unattended",
+      "-NoSound",
+      "-NoSplash",
+      "-ContactProbe",
+      "-CampusGymBoundaryProbe",
+      "-MapFile=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\preview-scene\\boundary-restored-01-map.json",
+      "-SpawnId=gym_south_guard",
+      "-MeshRigFile=D:\\simulator\\assets\\vehicles\\aim_sentry\\ue_mesh_rig.json",
+      "-EvidenceDir=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\boundary-restored-01\\evidence",
+      "-GymProbeOutput=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\boundary-restored-01\\boundary-report.json",
+      "-NoShaderWorker",
+      "-abslog=D:\\simulator\\artifacts\\maps\\campus-gym-20261119\\boundary-restored-01\\runtime.log"
+    ],
+    "elapsed_s": 35.474532799999,
+    "exit_code": 0,
+    "module_sha256": "9bd12d192bab3e985ba18527093db8cbab16a84b85a4b2dbfc2d40268f342a5e",
+    "map_sha256": "15f378558c84f1c576a188927b607a76ef5ca3e7fc318b1a17c49f675efc8254",
+    "utc": "2026-11-19T03:57:47.253396+00:00",
+    "peak_approach_actual_speed_m_s": 1.5842432698247308,
+    "minimum_boundary_margin_cm": 48.16410872101267,
+    "reverse_clearance_cm": 60.47218293045733,
+    "failure_reason": null,
+    "evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/boundary-restored-01/verification.json",
+      "bytes": 1706,
+      "sha256": "bf36f784d4fce33f32acf3751e355317e55d50514d4f1fd0930b0cfd291a6d80"
+    },
+    "scope": "South decorative-gate region, real wheel drive and contact, sustained drive, braking and reverse; isolated current-unified API fixture.",
+    "speed_interpretation": "Peak measured approach speed; not instantaneous impact speed and not a completed 2 m/s impact.",
+    "margin_interpretation": "ContactChassis plus four wheel bounds relative to original map rectangle; does not include every articulated gun/gimbal part.",
+    "probe_reference": "tests/native/campus_gym_boundary/README.md"
+  },
+  "realtime_navigation": {
+    "status": "passed",
+    "session": "realtime-04",
+    "evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/realtime-04-launcher/verification.json",
+      "bytes": 15353,
+      "sha256": "21223cb9ed0f01a9c8788f682c848269dfa0cad75c95358a484dc8565a1a91e8"
+    },
+    "clock_evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/realtime-04/clock/verification.json",
+      "bytes": 29541,
+      "sha256": "7b25c51281cd0ff260d7bcba260da8f1cf21e96cb6df67537823aea094d3e4c4"
+    },
+    "action_evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/realtime-04/actions/verification.json",
+      "bytes": 9914,
+      "sha256": "a26dc9eb5c76e856b35e21da461367b26ec4992a0b1c70e69e8bf99ed6aaf2ca"
+    },
+    "orchestration_evidence": {
+      "path": "artifacts/maps/campus-gym-20261119/realtime-04-orchestration/verification.json",
+      "bytes": 3952,
+      "sha256": "e07657c09b8aebf7f506d70f91036c1f4a192c810cf0bf86c5483ee5f7f9d4b2"
+    },
+    "configuration": {
+      "viewport": [
+        640,
+        360
+      ],
+      "scene_hz_target": 60,
+      "camera_capture_hz": 0,
+      "fixed_step_s": 0.005,
+      "sensor_budget": "production",
+      "cpu_policy": "performance",
+      "profile_frames": 0
+    },
+    "clock_checks": [
+      {
+        "name": "producer_monotonic_telemetry_present",
+        "passed": true,
+        "valid_rows": 874,
+        "observations": 874,
+        "read_errors": 0
+      },
+      {
+        "name": "every_decoded_snapshot_has_clock_metadata",
+        "passed": true
+      },
+      {
+        "name": "production_measurement_contract",
+        "passed": true,
+        "diagnostic_sensor_budget": false,
+        "requested_seconds": 90.0,
+        "expected_rays_per_second": 200000.0,
+        "expected_imu_hz": 200.0,
+        "expected_scan_hz": 10.0
+      },
+      {
+        "name": "session_identity_constant",
+        "passed": true,
+        "identities": [
+          [
+            "355E4B2947144AD570C2A39C2CA25E45",
+            0
+          ]
+        ]
+      },
+      {
+        "name": "sim_clock_never_regresses",
+        "passed": true
+      },
+      {
+        "name": "producer_clock_never_regresses",
+        "passed": true
+      },
+      {
+        "name": "ready_and_fresh_for_entire_window",
+        "passed": true,
+        "maximum_bridge_age_s": 0.562585300009232,
+        "maximum_snapshot_age_s": 0.5294226000260096
+      },
+      {
+        "name": "no_observation_gap_over_one_second",
+        "passed": true
+      },
+      {
+        "name": "production_visual_configuration",
+        "passed": true,
+        "required_viewport_hz": 60,
+        "check_scope": "configuration only"
+      },
+      {
+        "name": "complete_requested_window",
+        "passed": true,
+        "sampled_wall_span_s": 90.13660090000485,
+        "required_wall_span_s": 90.0
+      },
+      {
+        "name": "no_producer_gap_over_one_second",
+        "passed": true
+      },
+      {
+        "name": "overall_rate_0p98_to_1p02",
+        "passed": true,
+        "factor": 1.0000360190791153
+      },
+      {
+        "name": "all_ten_second_windows_0p98_to_1p02",
+        "passed": true
+      },
+      {
+        "name": "all_rolling_ten_second_windows_0p98_to_1p02",
+        "passed": true,
+        "stride_seconds": 1.0,
+        "windows": 81
+      },
+      {
+        "name": "native_scene_draw_telemetry_present",
+        "passed": true,
+        "required_fields": [
+          "scene_rendered_frames",
+          "target_scene_hz",
+          "renderer_enabled",
+          "scene_render_hz"
+        ]
+      },
+      {
+        "name": "native_scene_draw_counter_never_regresses",
+        "passed": true
+      },
+      {
+        "name": "native_renderer_enabled_with_60hz_target",
+        "passed": true
+      },
+      {
+        "name": "native_scene_draw_rate_60hz",
+        "passed": true,
+        "measured_scene_hz": 59.99742299022542,
+        "minimum_hz": 57.0,
+        "maximum_hz": 63.0
+      },
+      {
+        "name": "all_ten_second_scene_draw_windows_60hz",
+        "passed": true
+      },
+      {
+        "name": "all_rolling_ten_second_scene_draw_windows_60hz",
+        "passed": true,
+        "stride_seconds": 1.0,
+        "windows": 81
+      },
+      {
+        "name": "sensor_counter_span_positive",
+        "passed": true
+      },
+      {
+        "name": "imu_sensor_set_present_and_constant",
+        "passed": true
+      },
+      {
+        "name": "imu_counter_schema_imu",
+        "passed": true
+      },
+      {
+        "name": "imu_sampling_rate_imu",
+        "passed": true,
+        "measured_hz": 200.00000447082326
+      },
+      {
+        "name": "imu_no_loss_or_reset_imu",
+        "passed": true
+      },
+      {
+        "name": "imu_counter_schema_mid360_imu",
+        "passed": true
+      },
+      {
+        "name": "imu_sampling_rate_mid360_imu",
+        "passed": true,
+        "measured_hz": 200.00000447082326
+      },
+      {
+        "name": "imu_no_loss_or_reset_mid360_imu",
+        "passed": true
+      },
+      {
+        "name": "lidar_counter_schema",
+        "passed": true
+      },
+      {
+        "name": "lidar_ray_budget_preserved",
+        "passed": true,
+        "measured_rays_per_second": 200000.00447082325
+      },
+      {
+        "name": "lidar_scan_cadence_preserved",
+        "passed": true,
+        "measured_scan_hz": 9.995562681840012
+      },
+      {
+        "name": "lidar_no_loss_or_reset",
+        "passed": true
+      }
+    ],
+    "clock_check_count": {
+      "passed": 32,
+      "total": 32
+    },
+    "action_checks": [
+      {
+        "name": "native_stack_ready",
+        "passed": true,
+        "identity": [
+          "355E4B2947144AD570C2A39C2CA25E45",
+          0
+        ]
+      },
+      {
+        "name": "single_goal_accepted",
+        "passed": true
+      },
+      {
+        "name": "single_goal_actual_arrival",
+        "passed": true,
+        "status": 4,
+        "error_m": 0.07006501645189686,
+        "position": [
+          9.442093076433478,
+          6.469617433808765,
+          0.01801304476308225
+        ]
+      },
+      {
+        "name": "original_planner_path",
+        "passed": true,
+        "points": 76
+      },
+      {
+        "name": "waypoint_sequence_accepted",
+        "passed": true
+      },
+      {
+        "name": "waypoint_sequence_actual_arrival",
+        "passed": true,
+        "status": 4,
+        "missed_waypoints": [],
+        "error_m": 0.06487789710390221
+      },
+      {
+        "name": "waypoints_observed_in_order",
+        "passed": true,
+        "indices": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "cancel_test_goal_accepted",
+        "passed": true
+      },
+      {
+        "name": "native_action_cancelled",
+        "passed": true,
+        "status": 5
+      },
+      {
+        "name": "cancelled_vehicle_stopped",
+        "passed": true,
+        "braking_m": 0.09020762938704889,
+        "drift_m": 0.0
+      },
+      {
+        "name": "gimbal_follows_original_shaped_target",
+        "passed": true,
+        "samples": 1150,
+        "median_error_rad": 0.00641680542568725,
+        "yaw_travel_rad": 15.374828295767026
+      },
+      {
+        "name": "original_gimbal_rate_limit",
+        "passed": true
+      },
+      {
+        "name": "mounted_lidar_and_imu_live",
+        "passed": true,
+        "clouds": 323,
+        "imu": 6590
+      },
+      {
+        "name": "session_and_no_fire_preserved",
+        "passed": true
+      }
+    ],
+    "action_check_count": {
+      "passed": 14,
+      "total": 14
+    },
+    "measured_realtime_factor": 1.0000360190791153,
+    "measured_scene_draw_hz": 59.99742299022542,
+    "sensor_rates": {
+      "imu": {
+        "imu": {
+          "measured_hz": 200.00000447082326,
+          "increments": {
+            "measured_samples": 18028,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        },
+        "mid360_imu": {
+          "measured_hz": 200.00000447082326,
+          "increments": {
+            "measured_samples": 18028,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        }
+      },
+      "lidar": {
+        "rays_per_second": 200000.00447082325,
+        "scans_per_second": 9.995562681840012,
+        "increments": {
+          "traced_rays": 18028000,
+          "published_scans": 901,
+          "dropped_scans": 0,
+          "history_resets": 0
+        }
+      }
+    },
+    "fixed_window_factor_range": [
+      0.9975909680672828,
+      1.001220532331061
+    ],
+    "rolling_window_factor_range": [
+      0.990139865442275,
+      1.0101391641433524
+    ],
+    "complete_action_inside_clock": true,
+    "frozen_inputs_unchanged": true,
+    "input_sha256": {
+      "unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll": "4b362baa116ba0c926295ceb2b86c53c582b9322e8ac7bb6d1aca692970693a9",
+      "unreal/RMSim/Source/RMSim/CampusGym.cpp": "479eda14ddc4ea35a97c161513acea3a9a75c7a5b0b2283227d97409adbb5305",
+      "unreal/RMSim/Source/RMSim/CampusGym.h": "d61a85cde294febdf10668099111f2899a23c8a6f4d58422ba9f9ae7e421df72",
+      "unreal/RMSim/Source/RMSim/ArenaShell.cpp": "e0d6d35a881731b73d34bc1ab38cca9d674eef7a868c2733b5d50325dd6ceaf2",
+      "unreal/RMSim/Source/RMSim/ImportLabGameMode.cpp": "908666252545bb5d203bb1e8ce56d48f9db415d08d89265e4ae332f4145084c1",
+      "unreal/RMSim/Source/RMSim/RMSim.Build.cs": "a44f85a530a4bda189f6f5a17382555030b70196453d8a809873b5f4ff06b006",
+      "unreal/RMSim/Config/DefaultEngine.ini": "f4230933dc6a22b2b3ab3732e8db8c07925c078e65e5a863bca3bef5f7ac6286",
+      "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+      "assets/maps/rmuc2027/arena-shell.json": "51767858fb459f985b04dd0d1e44af250a58b16f420a817ef516b6add9d33e57",
+      "assets/maps/rmuc2027/arena/campus-gym/layout.json": "cb07702d6d522c595586fc69e8fe37279d69d264e02055c9c09c625d02ac21e1",
+      "assets/maps/rmuc2027/arena/campus-gym/SOURCE.json": "796b0d62c51c3263dcb0765ac1237a9230c596bfcf673a8b191f4fc3f599e626",
+      "assets/maps/rmuc2027/navigation-console/scene.json": "fd9c6bad8650f5b0728ac3d636cbc991858d0d6464252017d7a53ac51807bd33",
+      "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87",
+      "assets/vehicles/aim_sentry/ue_mesh_rig.json": "2dcfadfb8ae69463de6463bd14c2b45e938155be694f214a5d706821ed08f308",
+      "assets/vehicles/aim_sentry/sensors/mid360.json": "484d0088296d3c69861e6f3b14907da03f99ef9f1472fb6fb41994c096762229",
+      "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "be50ccce20d0d3d799079f76be5ff3cd620f1b6a4a19451750364c8cb4dfe778",
+      "tools/integration/run_navigation_realtime_acceptance.py": "7b9f75f49f3f1e625a7449281d96ae746d5897c5b70a5dc19c16fddd3bb5396c",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_acoustic_wood.uasset": "a3d1f4737c928b530a9307179c8c04de16d6be1e94ae1d04edd9cd3365d0bd0c",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_concrete.uasset": "9236ca3408c6e3f649db6aabfbe6eb2efdd40a5c02059af8133df8b9fe8d853a",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_court_line.uasset": "c354862c1d3e4cb9e0e5bdf224e1cbf7e4136f7b58a36416735d4cda08217da9",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_emissive.uasset": "480cca765df862455d3d177d9fc9526129a1af7dd8d84dfd24adfbaa163986fb",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_environment.uasset": "056fa554d6747246af52b477393ff9376199e39281692be833307cf0c0696e85",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_glass.uasset": "0c24fde64fd24970c0156e67c8a15f898c485f3b99ba49c4c61ef22f7159ffd8",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_plaster.uasset": "8d5a906c2fe2e399226797d8732b506f52ae0c6f0fbfd20bf0d5356f378e4f4a",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_rubber.uasset": "f8f3d389da1e1ecff87c65f8fb528514a43d26265cb0ea0437848c6856653533",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_scoreboard.uasset": "03104cef1807fbd4e8d67df86fe431a155bb9a20f1e2eec1c380f4a28663994d",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_seat_blue.uasset": "679fd4ae39784a7e8fe451330dc79d1c323f91a4750e981179e055a01b020f72",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_seat_gray.uasset": "23585276889b20d826b7d2bcfe3584b968fe340b05b66d7369136e4bc4f839ee",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_seat_red.uasset": "173d038f8d7c031b958b93a5de6a1e1ef1fba35166328581992148af234fb3f5",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_steel.uasset": "43e4dbbe8b3957636d407a60bcaec323855f04ec179893f4dbf64cd91c9395d8",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_steel_light.uasset": "a9f3f8f3d1a441c9b6c111b44fa1e5f4d9d719b27697e91accebdc93742b5016",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Materials/M_wood_floor.uasset": "70aa7b12d820594a07f64f88914bd599277eb70e695970fe78eaff8cd12735f0",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Meshes/SM_SeatRow.uasset": "ad703737c5d9aca04ada5d64a0492ba47c297d724167a380fbb6611c0eb0ac36",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_CampusCourtyard.uasset": "2bc3d8634903006a002a5020d81ea5cadce5659c6f797ac176eecfacf50a030c",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Concrete046_Color.uasset": "f8fc212ec66c9d4abc20f367d052f1f9b5fda88cacc1d63c0a17a4a9b3fe0ec2",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Concrete046_NormalDX.uasset": "fd5530fc9e939eba91fac279177ae95db3dd44f23c718514625b80099356eeee",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Concrete046_Roughness.uasset": "923d33c6266d9eb66b520f8b6c1d614b5f941f5850412412ebb11676f5f1cd5f",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Metal050A_Color.uasset": "17c31b1bfce7b667e2a01141b625d2caa063a3939d225e8ff5919149cc371f1e",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Metal050A_Metalness.uasset": "deca2431580dc11ad2a34c57377ecb56ce30f9b0f9811463e9728dc9be58c4df",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Metal050A_NormalDX.uasset": "ff7c4632afa3f8684dde24f27ceff53dc225dbd79fe2f9199b168e4321eac797",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Metal050A_Roughness.uasset": "571cbd3504fed742f51524017fa0a2c790e0ccabe7c77211352d0cfba21711c6",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Wood049_Color.uasset": "62a4683dc72726e00eefa43d864fea939d41c4ecaf234151bf4713717ded58c9",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Wood049_NormalDX.uasset": "a9cbe21c31b120e2b6e64d7114ff751e74e7cabbd42be36bda257ee9a46fad34",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_Wood049_Roughness.uasset": "4f0ced589473f52f88febdf1328e648b233c8d59c34c5643918ffc2eba134e52",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_WoodFloor051_Color.uasset": "1b6bf28fc727fbb2382b9fc5dad8d87a2a8c4a60e3e5d5cbb8ff9d07e5c831af",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_WoodFloor051_NormalDX.uasset": "12d714e7c556ebbd45e757fd79cfda43c979b9ba7dc493b1b14e312d728d62a3",
+      "unreal/RMSim/Content/RMSim/Maps/rmuc2027/Arena/Campus/Textures/T_WoodFloor051_Roughness.uasset": "92357368beca37b6ad94978e153c3ae5f352806c364236265d1ff4ea671edf32"
+    },
+    "navigation_source": {
+      "control_source": {
+        "mode": "simulation",
+        "source_path": "D:\\simulator\\ros2_ws\\src\\pb2025_nav_bringup\\config\\simulation\\nav2_params.yaml",
+        "source_sha256": "be50ccce20d0d3d799079f76be5ff3cd620f1b6a4a19451750364c8cb4dfe778"
+      },
+      "navigation_velocity_limit_mps": 5.0,
+      "smoother_max_velocity": [
+        5.0,
+        2.0,
+        3.0
+      ],
+      "smoother_max_accel": [
+        0.8,
+        0.8,
+        3.0
+      ],
+      "smoother_max_decel": [
+        -3.0,
+        -3.0,
+        -5.0
+      ]
+    },
+    "truth_scope": "Independent evaluation only; no truth input to localization or navigation."
+  },
+  "retained_iterations": [
+    {
+      "id": "visual-04",
+      "result": "failed",
+      "reason": "Duplicate ThinTranslucent output after material reimport; generated material is now rebuilt."
+    },
+    {
+      "id": "import-06",
+      "result": "failed",
+      "reason": "Seat OBJ reimport lost metre-to-centimetre scale; exact generated mesh is now rebuilt and bounds checked."
+    },
+    {
+      "id": "publish-native-01",
+      "result": "failed",
+      "reason": "Deprecated PNG helper appended allocated trailing bytes; valid image compression replaced it."
+    },
+    {
+      "id": "realtime-01",
+      "result": "failed",
+      "clock_passed": 32,
+      "single_goal_error_m": 0.3668288151752453,
+      "reason": "Trial physical inner face moved outward 0.31 m and shifted localization. Final guard restores old geometry.",
+      "diagnostic": {
+        "path": "artifacts/maps/campus-gym-20261119/boundary-localization-audit.json",
+        "bytes": 11489,
+        "sha256": "506eeeb130a449d41efc2532129fccab118268486c8d47c0aa8cd6ba448c6062"
+      }
+    },
+    {
+      "id": "realtime-02",
+      "result": "startup_blocked",
+      "reason": "Existing other authorized camera/gyro test caused launcher mutual-exclusion exit 3; no UE/ROS session started."
+    },
+    {
+      "id": "realtime-03",
+      "result": "failed",
+      "clock_passed": 30,
+      "clock_total": 32,
+      "action_passed": 14,
+      "reason": "Fixed and rolling ten-second rate windows outside 0.98..1.02; overall rate and scene/sensor checks passed.",
+      "clock_evidence": {
+        "path": "artifacts/maps/campus-gym-20261119/realtime-03/clock/verification.json",
+        "bytes": 29540,
+        "sha256": "536587ec6c619530510d974de25df28aa2735a71e4d6615cb4528e44acac042d"
+      }
+    }
+  ],
+  "limitations": [
+    "Native Ubuntu not run.",
+    "Realtime evidence is 640x360 scene rendering; 1600x1000 exported stills do not establish 1080p realtime.",
+    "No photometric/camera-response or glass/LiDAR material calibration.",
+    "One real vehicle wall approach; other impact speeds, angles and vehicles need their own evidence.",
+    "Display scanout and broad GUI input coverage are outside this native scene Draw telemetry test."
+  ]
+}

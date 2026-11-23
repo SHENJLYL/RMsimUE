@@ -5,6 +5,7 @@ param(
  [string]$LidarProfile='',
  [int]$Port=19671,
  [switch]$SkipRos,
+ [switch]$Synchronous,
  [int]$ProbeTimeoutSeconds=360
 )
 Set-StrictMode -Version Latest
@@ -74,11 +75,14 @@ try {
  if((Get-Content -LiteralPath $arena -Raw|ConvertFrom-Json).render_profile -eq 'RMSimGymLumen'){
   $arguments+=@('-CustomConfig=RMSimGymLumen','-d3d12','-sm6')
  }else{$arguments+='-d3d11'}
+ if($Synchronous){$arguments+='-MujocoSynchronous'}
  $report.command=@($ue.Editor)+$arguments;Save-Report
  $process=Start-Process -FilePath $ue.Editor -ArgumentList $arguments -WindowStyle Hidden -PassThru
  [void]$process.Handle;$report.pid=$process.Id;Save-Report
  Write-Output ('Owned MuJoCo sensor UE PID '+$process.Id)
- Run-OwnedProbe $python @((Join-Path $PSScriptRoot 'probe_mujoco_sensors.py'),'--port',$Port.ToString(),'--output',(Join-Path $out 'tcp')) 'tcp-probe'
+ $tcpArguments=@((Join-Path $PSScriptRoot 'probe_mujoco_sensors.py'),'--port',$Port.ToString(),'--output',(Join-Path $out 'tcp'))
+ if(-not $Synchronous){$tcpArguments+='--expect-dedicated'}
+ Run-OwnedProbe $python $tcpArguments 'tcp-probe'
  $tcp=Get-Content -LiteralPath (Join-Path $out 'tcp/verification.json') -Raw -Encoding UTF8 | ConvertFrom-Json
  if($tcp.status -ne 'passed'){throw 'TCP sensor report is incomplete.'}
  if($tcp.final_state.lidar.profile_md5 -ne (Get-FileHash -LiteralPath $lidar -Algorithm MD5).Hash.ToLowerInvariant()){throw 'Observed LiDAR profile does not match the requested input.'}
@@ -87,6 +91,7 @@ try {
  $report.tcp_checks=@($tcp.checks).Count;$report.observed_simulation_rate=$tcp.observed_simulation_rate
  if(-not $SkipRos){
   $rosArguments=@('-NoProfile','-File',(Join-Path $root 'tools/environment/run-env.ps1'),'powershell.exe','-NoProfile','-File',(Join-Path $PSScriptRoot 'Run-MujocoRosSensorProbe.ps1'),'-Port',$Port.ToString(),'-OutputDirectory',(Join-Path $out 'ros'))
+  if(-not $Synchronous){$rosArguments+='-ExpectDedicated'}
   Run-OwnedProbe 'powershell.exe' $rosArguments 'ros-probe'
   $ros=Get-Content -LiteralPath (Join-Path $out 'ros/verification.json') -Raw -Encoding UTF8 | ConvertFrom-Json
   if($ros.status -ne 'passed'){throw 'Native ROS sensor report is incomplete.'}

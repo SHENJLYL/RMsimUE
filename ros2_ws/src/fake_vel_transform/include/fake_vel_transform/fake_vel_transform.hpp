@@ -62,6 +62,8 @@ private:
   double translation_scale_;
 
   double current_robot_base_angle_{0.0};
+  double current_robot_yaw_rate_{0.0};
+  bool project_heading_to_stamp_{false};
   double max_odom_age_;
   bool odom_ready_{false};
   rclcpp::Time odom_stamp_{0, 0, RCL_ROS_TIME};

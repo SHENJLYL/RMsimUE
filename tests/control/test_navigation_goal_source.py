@@ -39,6 +39,22 @@ class NavigationGoalSourceTests(unittest.TestCase):
         return prepare(self.reference, self.map, 'vehicle_beta',
                        [.6, -.4, .15], 'simulation', str(path))[0]
 
+    def test_map_clearance_is_used_by_the_default_source_and_preserves_external_navigation(self):
+        manifest=self.folder/'metadata.json'
+        metadata=json.loads(manifest.read_text())
+        metadata['navigation_clearance']={'preferred_curve_m':.84,'inflation_radius_m':.45}
+        manifest.write_text(json.dumps(metadata))
+        default=self.adapted()
+        chosen=default['planner_server']['ros__parameters']['GridBased']
+        original=self.data['planner_server']['ros__parameters']['GridBased']
+        self.assertEqual(chosen['route_backend'], original['plugin'])
+        self.assertEqual(chosen['plugin'], 'pb_nav2_plugins::ClearancePlanner')
+        self.assertEqual(chosen['curve_clearance'], .84)
+        for name in ('local_costmap','global_costmap'):
+            self.assertEqual(default[name][name]['ros__parameters']['inflation_layer']['inflation_radius'], .45)
+        override=self.adapted(self.external(self.data))
+        self.assertEqual(override['planner_server']['ros__parameters']['GridBased'],original)
+
     def test_working_goal_and_localization_values_are_explicit_source_choices(self):
         checker = self.data['controller_server']['ros__parameters']['general_goal_checker']
         self.assertEqual(checker['xy_goal_tolerance'], .05)

@@ -26,6 +26,7 @@ ament_auto_add_library(pb_back_up_frees_space_behavior SHARED
 
 ament_auto_add_library(layers SHARED
   src/layers/intensity_voxel_layer.cpp
+  src/planning/clearance_planner.cpp
 )
 # Nav2 itself also ships layers.dll; keep this plugin's binary identity distinct.
 set_target_properties(layers PROPERTIES OUTPUT_NAME pb_nav2_layers)
@@ -38,6 +39,7 @@ if(BUILD_TESTING)
 endif()
 
 pluginlib_export_plugin_description_file(nav2_core behavior_plugin.xml)
+pluginlib_export_plugin_description_file(nav2_core clearance_planner_plugin.xml)
 pluginlib_export_plugin_description_file(nav2_costmap_2d costmap_plugins.xml)
 
 ament_auto_package(

@@ -1,0 +1,32 @@
+{
+  "platform": "Windows native, UE 5.8.4, RMUC2027",
+  "launcher_contract_checks": 55,
+  "evidence_root": "artifacts/integration/mujoco-viewer-default-off-20261120",
+  "api_paths": {
+    "normal_navigation": "Play-Navigation.cmd",
+    "explicit_viewer": "tools/environment/Start-NavigationConsole.ps1 -MujocoViewer",
+    "paired_measurement": "tools/integration/measure_fullscreen_observers.py --viewer-ab"
+  },
+  "module_sha256": "4f7ec4d009ed1673057409ce285d378ec76428a65e6d83c298c16360f92bcd91",
+  "settings_matched_within_each_run": true,
+  "fullscreen_pixels": [2560, 1440],
+  "viewport_target_hz": 120,
+  "native_step_seconds": 0.001,
+  "clock_source": "dedicated_MuJoCo_snapshot",
+  "nav_ready_with_viewer_off": true,
+  "viewer_process_or_transport_with_viewer_off": false,
+  "runs": [
+    {
+      "report": "fullscreen-ab-01/summary.json",
+      "viewer_on": {"sample_seconds": 20.33885, "scene_draw_hz": 50.4945, "gpu_ms_median": 19.5548, "simulation_rate": 1.00325, "exit": 0},
+      "viewer_off": {"sample_seconds": 4.06966, "scene_draw_hz": 51.60135, "gpu_ms_median": 19.6711, "simulation_rate": 1.02957, "exit": 0},
+      "matched_focused_tail_with_rviz_paused_scene_draw_hz": {"viewer_on": 56.5696, "viewer_off": 51.60135}
+    },
+    {
+      "report": "fullscreen-ab-02/summary.json",
+      "viewer_on": {"sample_seconds": 11.18251, "scene_draw_hz": 52.04557, "gpu_ms_median": 18.6134, "simulation_rate": 0.98994, "exit": 0},
+      "viewer_off": {"qualifying_focused_samples": 0, "exit": 0}
+    }
+  ],
+  "sustained_fps_improvement_verified": false
+}

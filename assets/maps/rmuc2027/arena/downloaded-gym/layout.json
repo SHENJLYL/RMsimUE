@@ -1,0 +1,951 @@
+{
+  "schema": "rmsim_campus_gym_layout_v1",
+  "units": "m",
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "native_meshes": {
+    "RMVenueBranding": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueBranding.RMVenueBranding",
+    "RMVenueFloor": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueFloor.RMVenueFloor",
+    "RMVenueGalleryXNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGalleryXNeg.RMVenueGalleryXNeg",
+    "RMVenueGalleryXPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGalleryXPos.RMVenueGalleryXPos",
+    "RMVenueGalleryYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGalleryYNeg.RMVenueGalleryYNeg",
+    "RMVenueGalleryYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGalleryYPos.RMVenueGalleryYPos",
+    "RMVenueGlassXNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGlassXNeg.RMVenueGlassXNeg",
+    "RMVenueGlassXPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGlassXPos.RMVenueGlassXPos",
+    "RMVenueGlassYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGlassYNeg.RMVenueGlassYNeg",
+    "RMVenueGlassYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueGlassYPos.RMVenueGlassYPos",
+    "RMVenueLightsCenter": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueLightsCenter.RMVenueLightsCenter",
+    "RMVenueLightsYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueLightsYNeg.RMVenueLightsYNeg",
+    "RMVenueLightsYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueLightsYPos.RMVenueLightsYPos",
+    "RMVenueRailXNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRailXNeg.RMVenueRailXNeg",
+    "RMVenueRailXPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRailXPos.RMVenueRailXPos",
+    "RMVenueRailYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRailYNeg.RMVenueRailYNeg",
+    "RMVenueRailYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRailYPos.RMVenueRailYPos",
+    "RMVenueRoofYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRoofYNeg.RMVenueRoofYNeg",
+    "RMVenueRoofYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueRoofYPos.RMVenueRoofYPos",
+    "RMVenueSeatsYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueSeatsYNeg.RMVenueSeatsYNeg",
+    "RMVenueSeatsYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueSeatsYPos.RMVenueSeatsYPos",
+    "RMVenueStructureCenter": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueStructureCenter.RMVenueStructureCenter",
+    "RMVenueStructureXNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueStructureXNeg.RMVenueStructureXNeg",
+    "RMVenueStructureXPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueStructureXPos.RMVenueStructureXPos",
+    "RMVenueWallXNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueWallXNeg.RMVenueWallXNeg",
+    "RMVenueWallXPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueWallXPos.RMVenueWallXPos",
+    "RMVenueWallYNeg": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueWallYNeg.RMVenueWallYNeg",
+    "RMVenueWallYPos": "/Game/RMSim/Maps/rmuc2027/Arena/DownloadedGym/Meshes/RMVenueWallYPos.RMVenueWallYPos"
+  },
+  "groups": [
+    {
+      "id": "RMVenueBranding",
+      "mesh": "RMVenueBranding",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -0.5091640000000011,
+            -0.017999500000000168,
+            5.1617865
+          ],
+          "size": [
+            31.16567,
+            39.995999,
+            3.908759
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueFloor",
+      "mesh": "RMVenueFloor",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.02278749999999974,
+            -0.0,
+            -0.398799
+          ],
+          "size": [
+            33.130123,
+            18.758672,
+            0.187598
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGalleryXNeg",
+      "mesh": "RMVenueGalleryXNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -14.968839,
+            0.04549100000000017,
+            7.2304975
+          ],
+          "size": [
+            1.0501239999999985,
+            36.400152000000006,
+            0.00017300000000020077
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGalleryXPos",
+      "mesh": "RMVenueGalleryXPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            14.904752,
+            -0.028836500000000598,
+            7.227543000000001
+          ],
+          "size": [
+            0.9219439999999999,
+            36.251497,
+            0.006082000000000143
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGalleryYNeg",
+      "mesh": "RMVenueGalleryYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.09063649999999956,
+            18.078127000000002,
+            7.230584
+          ],
+          "size": [
+            29.195422999999998,
+            0.328754,
+            0.0
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGalleryYPos",
+      "mesh": "RMVenueGalleryYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            1.4999999997655777e-06,
+            -18.0630025,
+            7.230584
+          ],
+          "size": [
+            29.502187,
+            0.18316500000000246,
+            0.0
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGlassXNeg",
+      "mesh": "RMVenueGlassXNeg",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -16.409683,
+            0.11132900000000046,
+            8.4384655
+          ],
+          "size": [
+            0.15958000000000183,
+            25.486890000000002,
+            1.685479
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGlassXPos",
+      "mesh": "RMVenueGlassXPos",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            16.540637,
+            -0.029904999999999404,
+            8.4384655
+          ],
+          "size": [
+            0.006472000000002254,
+            25.487354,
+            1.685479
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGlassYNeg",
+      "mesh": "RMVenueGlassYNeg",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            0.3905234999999996,
+            20.258671,
+            9.5876685
+          ],
+          "size": [
+            25.419945,
+            0.1267700000000005,
+            0.6557569999999995
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueGlassYPos",
+      "mesh": "RMVenueGlassYPos",
+      "material": "source",
+      "cast_shadow": false,
+      "instances": [
+        {
+          "center": [
+            -0.31662249999999936,
+            -20.233221,
+            9.5876685
+          ],
+          "size": [
+            25.420261,
+            0.025393999999998584,
+            0.6557569999999995
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueLightsCenter",
+      "mesh": "RMVenueLightsCenter",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.407832,
+            -0.09252650000000001,
+            11.4969545
+          ],
+          "size": [
+            23.164786,
+            1.321081,
+            0.46359700000000004
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueLightsYNeg",
+      "mesh": "RMVenueLightsYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.4078330000000001,
+            12.0463155,
+            10.503002
+          ],
+          "size": [
+            23.164788,
+            0.7217950000000002,
+            0.39038599999999946
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueLightsYPos",
+      "mesh": "RMVenueLightsYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.021838500000000316,
+            -11.92451,
+            10.597954
+          ],
+          "size": [
+            23.164785000000002,
+            0.7225919999999988,
+            0.39351800000000026
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRailXNeg",
+      "mesh": "RMVenueRailXNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -14.8654785,
+            0.08681299999999936,
+            7.314662
+          ],
+          "size": [
+            0.9094070000000016,
+            36.133724,
+            0.2909860000000002
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRailXPos",
+      "mesh": "RMVenueRailXPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            14.799094,
+            -0.08265600000000006,
+            7.3146605000000005
+          ],
+          "size": [
+            0.8442919999999994,
+            35.98147,
+            0.2909809999999995
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRailYNeg",
+      "mesh": "RMVenueRailYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.1016174999999997,
+            17.980756999999997,
+            7.314662
+          ],
+          "size": [
+            29.113719,
+            0.33996600000000043,
+            0.2909839999999999
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRailYPos",
+      "mesh": "RMVenueRailYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.039705000000000545,
+            -17.979315999999997,
+            7.3146605000000005
+          ],
+          "size": [
+            29.112688,
+            0.1970080000000003,
+            0.2909809999999995
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRoofYNeg",
+      "mesh": "RMVenueRoofYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.2798549999999995,
+            10.4427575,
+            12.129438
+          ],
+          "size": [
+            34.773725999999996,
+            21.024401,
+            2.3475040000000007
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueRoofYPos",
+      "mesh": "RMVenueRoofYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.2798549999999995,
+            -10.4392485,
+            12.129438
+          ],
+          "size": [
+            34.773725999999996,
+            21.024399,
+            2.3475040000000007
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueSeatsYNeg",
+      "mesh": "RMVenueSeatsYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.04711550000000031,
+            14.2159145,
+            1.7931685
+          ],
+          "size": [
+            31.975909,
+            10.241069000000001,
+            3.799991
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueSeatsYPos",
+      "mesh": "RMVenueSeatsYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.003523000000000387,
+            -14.201691,
+            1.793168
+          ],
+          "size": [
+            31.926366,
+            10.08231,
+            3.79999
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueStructureCenter",
+      "mesh": "RMVenueStructureCenter",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.3074575000000004,
+            -0.07338999999999984,
+            6.2800385
+          ],
+          "size": [
+            11.768108999999999,
+            40.838938,
+            13.815190999999999
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueStructureXNeg",
+      "mesh": "RMVenueStructureXNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -11.252479000000001,
+            -0.07338999999999984,
+            6.2800385
+          ],
+          "size": [
+            11.754472,
+            40.838938,
+            13.815190999999999
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueStructureXPos",
+      "mesh": "RMVenueStructureXPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            10.7566885,
+            -0.07338999999999984,
+            6.2800385
+          ],
+          "size": [
+            12.020001,
+            40.838938,
+            13.815190999999999
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueWallXNeg",
+      "mesh": "RMVenueWallXNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -12.1214525,
+            0.04854300000000045,
+            6.248447499999999
+          ],
+          "size": [
+            9.530620999999998,
+            40.803838,
+            13.581405
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueWallXPos",
+      "mesh": "RMVenueWallXPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            12.1044725,
+            -0.01595200000000041,
+            6.248447499999999
+          ],
+          "size": [
+            9.457841000000002,
+            40.674848,
+            13.581405
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueWallYNeg",
+      "mesh": "RMVenueWallYNeg",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            -0.04087200000000024,
+            15.654184,
+            5.167215499999999
+          ],
+          "size": [
+            33.072748,
+            12.759546,
+            11.418941
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RMVenueWallYPos",
+      "mesh": "RMVenueWallYPos",
+      "material": "source",
+      "cast_shadow": true,
+      "instances": [
+        {
+          "center": [
+            0.0,
+            -15.627534999999998,
+            5.2046435
+          ],
+          "size": [
+            33.18996,
+            12.655489999999999,
+            11.344083
+          ],
+          "rotation_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "center": [
+        -9.0,
+        -12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        -3.0,
+        -12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        3.0,
+        -12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        9.0,
+        -12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        -9.0,
+        0.0,
+        11.18
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        -3.0,
+        0.0,
+        11.18
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        3.0,
+        0.0,
+        11.18
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        9.0,
+        0.0,
+        11.18
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        -9.0,
+        12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        -3.0,
+        12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        3.0,
+        12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    },
+    {
+      "center": [
+        9.0,
+        12.0,
+        10.22
+      ],
+      "rotation_deg": [
+        0,
+        90,
+        0
+      ],
+      "width_m": 3.0,
+      "height_m": 0.65,
+      "cast_shadows": true
+    }
+  ],
+  "source": {
+    "title": "Indoor Basketball Court",
+    "author": "nguyennghiakk / Nguyen Trong Nghia",
+    "author_url": "https://sketchfab.com/nguyennghiakk",
+    "source_url": "https://sketchfab.com/3d-models/indoor-basketball-court-943a9bc962974d02aa34592084687c3c",
+    "download_url": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/943a9bc962974d02aa34592084687c3c.glb",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "bytes": 56073224,
+    "sha256": "2da363924cc4786a6d859990c26a0a48ec7427083a64f32f565817aac4127d99",
+    "asset_extras": {
+      "author": "nguyennghiakk (https://sketchfab.com/nguyennghiakk)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/indoor-basketball-court-943a9bc962974d02aa34592084687c3c",
+      "title": "Indoor Basketball Court"
+    },
+    "bounds_min_m": [
+      -12.197378158569336,
+      -9.503893852233887,
+      -0.07498025894165039
+    ],
+    "bounds_max_m": [
+      12.251785278320312,
+      9.81484317779541,
+      7.6643242835998535
+    ],
+    "original_triangles": 971868,
+    "original_meshes": 127,
+    "all_3_images_embedded": true
+  },
+  "prepared_sha256": "f8d3bb16c286bc6c5ecf868e67e138c10aaaf8d2c5c164f202fab14a2403d20c",
+  "source_geometry_policy": "Whole downloaded gym, uniformly scaled; original RMUC field and vehicle unchanged."
+}

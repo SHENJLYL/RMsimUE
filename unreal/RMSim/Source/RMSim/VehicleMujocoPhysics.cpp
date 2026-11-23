@@ -55,8 +55,115 @@ double AVehicleRig::GetDynamicsGravityCmS2() const
 FVector AVehicleRig::GetVelocity() const
 {
     if(MujocoDynamics)
-    { FMujocoBodyState S; return MujocoDynamics->GetBody(TEXT("body"),S)?S.VelocityCmS:FVector::ZeroVector; }
+    { FMujocoBodyState S; return MujocoDynamics->GetBody(MujocoRootBodyName,S)?S.VelocityCmS:FVector::ZeroVector; }
     return Super::GetVelocity();
+}
+
+bool AVehicleRig::InitializeCanonicalMujocoPhysics(const FString& CanonicalFilename,const FString& ModelFilename,FString& Error)
+{
+    auto Fail=[&Error](const FString& Why){Error=Why;return false;};
+    if(bContactPhysics||!GetWorld()||Links.IsEmpty())return Fail(TEXT("Canonical MuJoCo requires an inactive canonical visual rig"));
+    TArray<FString> BodyNames;
+    for(const auto& Pair:Links)BodyNames.Add(Pair.Key);
+    auto Native=MakeShared<FMujocoVehicleDynamics>();
+    if(!Native->Initialize(ModelFilename,BodyNames,CanonicalFilename,FString(),Error))return false;
+    const auto Manifest=Native->Manifest();
+    if(!Manifest)return Fail(TEXT("Canonical MuJoCo manifest unavailable"));
+    MujocoRootBodyName=Native->RootBody();
+    MujocoYawBodyName=Native->YawBody();
+    MujocoPitchBodyName=Native->PitchBody();
+    ControlType=TEXT("differential_drive");
+    Manifest->TryGetStringField(TEXT("control_type"),ControlType);
+    bSwerveContact=ControlType.Equals(TEXT("holonomic"),ESearchCase::IgnoreCase);
+    // Initialize default drive parameters without requiring an AIM drive-profile.json.
+    auto EmptySpec=MakeShared<FJsonObject>();
+    if(!InitializeDriveProfile(EmptySpec,Error))return false;
+    const TSharedPtr<FJsonObject>* Limits=nullptr;
+    if(Manifest->TryGetObjectField(TEXT("limits"),Limits))
+    {
+        double Linear=0,Angular=0;
+        if((*Limits)->TryGetNumberField(TEXT("linear_mps"),Linear)&&FMath::IsFinite(Linear)&&Linear>0)
+        {
+            DriveParameters.Add(TEXT("MaxForwardSpeedMps"),Linear);
+            DriveParameters.Add(TEXT("MaxReverseSpeedMps"),Linear);
+            DriveParameters.Add(TEXT("MaxLateralSpeedMps"),bSwerveContact?Linear:0.0);
+            DriveParameters.Add(TEXT("MaxWheelSpeedMps"),FMath::Max(Linear*1.5,4.0));
+        }
+        if((*Limits)->TryGetNumberField(TEXT("angular_rps"),Angular)&&FMath::IsFinite(Angular)&&Angular>0)
+        {
+            DriveParameters.Add(TEXT("ManualYawRateRadS"),Angular);
+            DriveParameters.Add(TEXT("GyroMaxRadS"),FMath::Min(Angular,5.0));
+        }
+    }
+    ContactMotorDamping=2.0;ContactMotorTorqueNm=8.0;ContactBrakeTorqueNm=12.0;
+    const FVector SourceWorldGravity(0,0,GetWorld()->GetGravityZ());
+    if(!Native->GravityCmS2().Equals(SourceWorldGravity,1.e-4))
+        return Fail(FString::Printf(TEXT("MuJoCo gravity differs from active UE World: native=%s source=%s"),
+            *Native->GravityCmS2().ToString(),*SourceWorldGravity.ToString()));
+    FTransform SpawnPose=GetActorTransform();
+    const TSharedPtr<FJsonObject>* SpawnObj=nullptr;
+    const TArray<TSharedPtr<FJsonValue>>* SpawnPosArr=nullptr;
+    if(Manifest->TryGetObjectField(TEXT("spawn"),SpawnObj)&&(*SpawnObj)->TryGetArrayField(TEXT("root_position_m"),SpawnPosArr)&&SpawnPosArr->Num()==3)
+    {
+        FVector Loc=SpawnPose.GetLocation();
+        Loc.Z=(*SpawnPosArr)[2]->AsNumber()*100.0;
+        SpawnPose.SetLocation(Loc);
+    }
+    const double InitialYaw=ManualYaw,InitialPitch=ManualPitch;
+    if(!Native->Reset(SpawnPose,Error,InitialYaw,InitialPitch))return false;
+    for(const auto& Part:Native->BodyNames())
+    {
+        if(!Native->ConfigureBodyDamping(Part,0.05,0.05,Error))return false;
+    }
+    const TArray<TSharedPtr<FJsonValue>>* Wheels=nullptr;
+    if(Manifest->TryGetArrayField(TEXT("wheels"),Wheels))
+    {
+        for(const auto& Value:*Wheels)
+        {
+            const auto WJ=Value->AsObject();
+            FContactWheel W;
+            const TArray<TSharedPtr<FJsonValue>> *PosArr=nullptr,*AxisArr=nullptr;
+            if(!WJ||!WJ->TryGetStringField(TEXT("part"),W.WheelPart)||!WJ->TryGetNumberField(TEXT("radius_m"),W.RadiusMetres)||
+               W.RadiusMetres<=0||!WJ->TryGetArrayField(TEXT("position_m"),PosArr)||PosArr->Num()!=3)
+                return Fail(TEXT("Canonical MuJoCo wheel entry invalid"));
+            W.RestLocalCm=FVector((*PosArr)[0]->AsNumber()*100.,-(*PosArr)[1]->AsNumber()*100.,(*PosArr)[2]->AsNumber()*100.);
+            W.LeftOffsetMetres=(*PosArr)[1]->AsNumber();
+            W.WheelAxisSign=1.0;
+            if(WJ->TryGetArrayField(TEXT("axis_in_root"),AxisArr)&&AxisArr->Num()==3)
+            {
+                const double Ay=(*AxisArr)[1]->AsNumber();
+                W.WheelAxisSign=(Ay<0)?-1.0:1.0;
+            }
+            W.EffortNm=ContactMotorTorqueNm;
+            WJ->TryGetNumberField(TEXT("effort_nm"),W.EffortNm);
+            if(!FMath::IsFinite(W.EffortNm)||W.EffortNm<=0)W.EffortNm=ContactMotorTorqueNm;
+            if(!Native->ConfigureServo(W.WheelPart,0,ContactMotorDamping,W.EffortNm,Error))return false;
+            ContactWheels.Add(W);
+        }
+    }
+    double GimbalKp=80,GimbalKd=8,GimbalTorque=12;
+    const TSharedPtr<FJsonObject>* GimbalControl=nullptr;
+    if(Manifest->TryGetObjectField(TEXT("gimbal_control"),GimbalControl))
+    {
+        (*GimbalControl)->TryGetNumberField(TEXT("stiffness_nm_rad"),GimbalKp);
+        (*GimbalControl)->TryGetNumberField(TEXT("damping_nm_s"),GimbalKd);
+        (*GimbalControl)->TryGetNumberField(TEXT("max_torque_nm"),GimbalTorque);
+    }
+    double SourceYawDegrees=540.,SourcePitchDegrees=360.;
+    GConfig->GetDouble(TEXT("RMSim.ManualControl"),TEXT("GimbalYawSpeedDeg"),SourceYawDegrees,GGameIni);
+    GConfig->GetDouble(TEXT("RMSim.ManualControl"),TEXT("GimbalPitchSpeedDeg"),SourcePitchDegrees,GGameIni);
+    MujocoYawRateLimit=FMath::DegreesToRadians(SourceYawDegrees);MujocoPitchRateLimit=FMath::DegreesToRadians(SourcePitchDegrees);
+    if(!MujocoYawBodyName.IsEmpty()&&!Native->ConfigureServo(MujocoYawBodyName,GimbalKp,GimbalKd,GimbalTorque,Error))return false;
+    if(!MujocoPitchBodyName.IsEmpty()&&!Native->ConfigureServo(MujocoPitchBodyName,GimbalKp,GimbalKd,GimbalTorque,Error))return false;
+    MujocoYawTarget=InitialYaw;MujocoPitchTarget=InitialPitch;MujocoYawTargetRate=MujocoPitchTargetRate=0;
+    if(!MujocoYawBodyName.IsEmpty())Native->SetServoTarget(MujocoYawBodyName,MujocoYawTarget,0,true);
+    if(!MujocoPitchBodyName.IsEmpty())Native->SetServoTarget(MujocoPitchBodyName,MujocoPitchTarget,0,false);
+    MujocoDynamics=Native;
+    bContactPhysics=true;bTerrainFollowing=false;GroundContacts.Reset();TerrainBlockReason.Reset();
+    SyncMujocoPose();SetContactDrive(0,0,true);
+    UE_LOG(LogRMSim,Display,TEXT("CONTACT_PHYSICS_READY canonical_MuJoCo vehicle=%s control=%s step=%.6f bodies=%d wheels=%d"),
+        *VehicleId,*ControlType,Native->Timestep(),Native->BodyNames().Num(),ContactWheels.Num());
+    return true;
 }
 
 bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error)
@@ -193,33 +300,142 @@ bool AVehicleRig::SetMujocoGimbal(double Yaw,double Pitch,FString& Error)
     const auto* PitchBinding=Joints.Find(PitchJoint);
     if(!MujocoDynamics||!PitchBinding||!FMath::IsFinite(Yaw)||!FMath::IsFinite(Pitch)||Pitch<PitchBinding->Lower||Pitch>PitchBinding->Upper)
     {Error=TEXT("invalid MuJoCo gimbal target");return false;}
+    const double PrevYawTarget=MujocoYawTarget,PrevPitchTarget=MujocoPitchTarget;
     MujocoYawTarget=FMath::UnwindRadians(Yaw);MujocoPitchTarget=Pitch;
-    const double Dt=FMath::Max(.0001,MujocoFrameSeconds);
-    MujocoYawTargetRate=FMath::Clamp(FMath::FindDeltaAngleRadians(ManualYaw,Yaw)/Dt,-MujocoYawRateLimit,MujocoYawRateLimit);
-    MujocoPitchTargetRate=FMath::Clamp((Pitch-ManualPitch)/Dt,-MujocoPitchRateLimit,MujocoPitchRateLimit);
+    DedicatedGimbalExpiry=0;
+    const double Dt=FMath::Max(.005,MujocoFrameSeconds);
+    // Feedforward velocity comes from target motion, not measured tracking error,
+    // preventing frame-to-frame kick/drop oscillation on the physical barrel.
+    MujocoYawTargetRate=FMath::Clamp(FMath::FindDeltaAngleRadians(PrevYawTarget,MujocoYawTarget)/Dt,-MujocoYawRateLimit,MujocoYawRateLimit);
+    MujocoPitchTargetRate=FMath::Clamp((MujocoPitchTarget-PrevPitchTarget)/Dt,-MujocoPitchRateLimit,MujocoPitchRateLimit);
     return true;
+}
+
+bool AVehicleRig::SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall)
+{
+    FString Error;
+    if(DedicatedMujocoPeriod<=0||!SetMujocoGimbal(Yaw,Pitch,Error))return false;
+    MujocoYawTargetRate=FMath::Clamp(YawRate,-MujocoYawRateLimit,MujocoYawRateLimit);
+    MujocoPitchTargetRate=FMath::Clamp(PitchRate,-MujocoPitchRateLimit,MujocoPitchRateLimit);
+    DedicatedGimbalTime=MujocoDynamics->Time();
+    DedicatedGimbalExpiry=ExpiresWall;
+    return true;
+}
+
+bool AVehicleRig::StartDedicatedMujoco(double PeriodSeconds, FString& Error)
+{
+    if(!MujocoDynamics)
+    {
+        Error=TEXT("dedicated MuJoCo requires a ready native vehicle");
+        return false;
+    }
+    if(!MujocoDynamics->StartDedicated(PeriodSeconds,Error))return false;
+    DedicatedMujocoPeriod=PeriodSeconds;
+    PrimaryActorTick.bTickEvenWhenPaused=true;
+    return true;
+}
+
+bool AVehicleRig::ReadDedicatedMujocoProgress(uint64& Steps,uint64& Failsafes) const
+{
+    return MujocoDynamics&&MujocoDynamics->ReadDedicatedProgress(Steps,Failsafes);
+}
+
+void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query)
+{
+    check(IsInGameThread());
+    if(!MujocoDynamics)return;
+    const auto& Names=MujocoDynamics->BodyNames();
+    bool Reposed=false;
+    MujocoDynamics->VisitDedicatedQueryFrames([&](double Time,const TArray<FTransform>& Parts,bool Latest)
+    {
+        // Both self-occlusion and arena rays use the original UE collision channels.
+        // The arena is fixed. Replay the exact native robot poses, then leave the
+        // latest frame restored before ROS, gameplay or the viewport reads it.
+        if(ApplyScenePoses&&(!Latest||Reposed))
+        {
+            for(int32 I=0;I<Names.Num();++I)
+                if(Names[I]==MujocoRootBodyName)SetActorTransform(Parts[I],false,nullptr,ETeleportType::None);
+            for(int32 I=0;I<Names.Num();++I)
+            {
+                if(auto* const* Link=Links.Find(Names[I]))(*Link)->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
+                if(auto* Body=MujocoQueryBodies.FindRef(Names[I]))Body->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
+            }
+            Reposed=true;
+        }
+        Query(Time);
+    });
 }
 
 void AVehicleRig::TickMujocoPhysics(double Seconds)
 {
     if(!MujocoDynamics||bMujocoFailed)return;
+    const bool Dedicated=MujocoDynamics->IsDedicated();
+    const auto Fail=[this](const FString& Error)
+    {
+        bMujocoFailed=true;
+        SetContactDrive(0,0,true);
+        UE_LOG(LogRMSim,Error,TEXT("MUJOCO_STEP_FAILED %s"),*Error);
+        FPlatformMisc::RequestExitWithStatus(false,2);
+    };
+    if(Dedicated)
+    {
+        const bool Paused=GetWorld()->IsPaused();
+        MujocoDynamics->SetDedicatedPaused(Paused);
+        if(Paused)return;
+        const double Before=MujocoDynamics->Time();
+        bool Updated=false;
+        FString Error;
+        if(!MujocoDynamics->ConsumeDedicatedFrame(Updated,Error)){Fail(Error);return;}
+        // With no new completed batch, leave the worker's prior lease intact.
+        // Republishing old staged actuator targets could extend their lifetime.
+        if(!Updated)return;
+        SyncMujocoPose();
+        DedicatedControlSeconds=MujocoDynamics->Time()-Before;
+        if(DedicatedControlSeconds>0)MujocoFrameSeconds=DedicatedControlSeconds;
+        return;
+    }
     // The fixed-step source is double precision; AActor::Tick narrows it to
     // float, which otherwise turns the first 5 ms frame into four 1 ms steps.
     if(FApp::UseFixedTimeStep())Seconds=FApp::GetFixedDeltaTime();
-    MujocoFrameSeconds=Seconds;
-    if(bExternalDriveLease&&FPlatformTime::Seconds()>ExternalDriveDeadline)SetContactDrive(0,0,true);
-    const bool CurrentActive=bMotorCurrentControl&&bMotorCommandValid&&!bContactBrake&&bExternalDriveLease&&FPlatformTime::Seconds()<=ExternalDriveDeadline;
-    if(CurrentActive!=bApplyingMotorCurrent)SetMotorServosEnabled(!CurrentActive);
-    if(CurrentActive)ApplyMotorCurrentDrive();else UpdateContactDrive(Seconds);
-    MujocoDynamics->SetServoTarget(TEXT("yaw"),MujocoYawTarget,MujocoYawTargetRate,true);
-    MujocoDynamics->SetServoTarget(TEXT("pitch"),MujocoPitchTarget,MujocoPitchTargetRate,false);
-    // A one-frame velocity feed-forward must not persist without a fresh target.
-    MujocoYawTargetRate=0;MujocoPitchTargetRate=0;
+    if(Seconds>0)MujocoFrameSeconds=Seconds;
+    RefreshMujocoInputs(Seconds,FPlatformTime::Seconds());
     FString Error;
     if(!MujocoDynamics->Step(Seconds,Error))
-    {bMujocoFailed=true;SetContactDrive(0,0,true);UE_LOG(LogRMSim,Error,TEXT("MUJOCO_STEP_FAILED %s"),*Error);FPlatformMisc::RequestExitWithStatus(false,2);return;}
+    {Fail(Error);return;}
     SyncMujocoPose();
     MujocoDynamics->FlushTiming();
+}
+
+void AVehicleRig::RefreshMujocoInputs(double Seconds,double Now)
+{
+    const bool LeaseExpired=bExternalDriveLease&&Now>ExternalDriveDeadline;
+    if(LeaseExpired)SetContactDrive(0,0,true);
+    const bool CurrentActive=bMotorCurrentControl&&bMotorCommandValid&&!bContactBrake&&bExternalDriveLease&&!LeaseExpired;
+    if(CurrentActive!=bApplyingMotorCurrent)SetMotorServosEnabled(!CurrentActive);
+    if(CurrentActive)ApplyMotorCurrentDrive();else UpdateContactDrive(Seconds);
+    if(MujocoDynamics->IsDedicated()&&DedicatedGimbalExpiry>0)
+    {
+        if(!MujocoYawBodyName.IsEmpty())MujocoDynamics->SetServoTrajectory(MujocoYawBodyName,MujocoYawTarget,MujocoYawTargetRate,true,DedicatedGimbalTime,DedicatedGimbalExpiry);
+        if(!MujocoPitchBodyName.IsEmpty())MujocoDynamics->SetServoTrajectory(MujocoPitchBodyName,MujocoPitchTarget,MujocoPitchTargetRate,false,DedicatedGimbalTime,DedicatedGimbalExpiry);
+    }
+    else
+    {
+        if(!MujocoYawBodyName.IsEmpty())MujocoDynamics->SetServoTarget(MujocoYawBodyName,MujocoYawTarget,MujocoYawTargetRate,true);
+        if(!MujocoPitchBodyName.IsEmpty())MujocoDynamics->SetServoTarget(MujocoPitchBodyName,MujocoPitchTarget,MujocoPitchTargetRate,false);
+        MujocoYawTargetRate=0;MujocoPitchTargetRate=0;
+    }
+}
+
+void AVehicleRig::SubmitDedicatedMujocoInputs()
+{
+    if(!MujocoDynamics||!MujocoDynamics->IsDedicated()||bMujocoFailed||DedicatedControlSeconds<=0)return;
+    const double Now=FPlatformTime::Seconds();
+    const double Seconds=DedicatedControlSeconds;
+    DedicatedControlSeconds=0;
+    RefreshMujocoInputs(Seconds,Now);
+    // The worker also enforces the wall lease with the game thread stalled.
+    const double Deadline=bExternalDriveLease&&!bContactBrake?FMath::Min(Now+.25,ExternalDriveDeadline):Now+.25;
+    MujocoDynamics->SubmitDedicatedControls(Deadline);
 }
 
 bool AVehicleRig::SampleSensorParentWorldAtTime(const FString& ParentFrame,double SolverTime,FTransform& OutPose) const
@@ -245,7 +461,7 @@ void AVehicleRig::SyncMujocoPose()
     if(!MujocoDynamics)return;
     FScopedMujocoTiming SyncTiming(*MujocoDynamics,EMujocoTimingScope::Sync);
     FMujocoBodyState Root;
-    if(!MujocoDynamics->GetBody(TEXT("body"),Root))return;
+    if(!MujocoDynamics->GetBody(MujocoRootBodyName,Root))return;
     SetActorTransform(Root.World,false,nullptr,ETeleportType::None);
     for(const FString& Part:MujocoDynamics->BodyNames())
     {
@@ -254,8 +470,9 @@ void AVehicleRig::SyncMujocoPose()
         if(auto* Query=MujocoQueryBodies.FindRef(Part))
         {Query->SetWorldTransform(State.World,false,nullptr,ETeleportType::None);Query->ComponentVelocity=State.VelocityCmS;}
     }
-    double Rate=0;MujocoDynamics->GetJoint(TEXT("yaw"),ManualYaw,Rate);ManualYaw=FMath::UnwindRadians(ManualYaw);
-    MujocoDynamics->GetJoint(TEXT("pitch"),ManualPitch,Rate);
+    double Rate=0;
+    if(!MujocoYawBodyName.IsEmpty()){MujocoDynamics->GetJoint(MujocoYawBodyName,ManualYaw,Rate);ManualYaw=FMath::UnwindRadians(ManualYaw);}
+    if(!MujocoPitchBodyName.IsEmpty()){MujocoDynamics->GetJoint(MujocoPitchBodyName,ManualPitch,Rate);}
     const double Now=GetWorld()->GetTimeSeconds();
     FScopedMujocoTiming ContactTiming(*MujocoDynamics,EMujocoTimingScope::ContactIdentity);
     for(const auto& C:MujocoDynamics->Contacts())
@@ -287,8 +504,21 @@ void AVehicleRig::ResetMujocoPose(const FTransform& Pose)
     ++MotionGeneration;ObstacleContacts.Reset();ObstacleContactWriteIndex=0;ContactObservations.Reset();
     bFreeRollingDiagnostic=false;DriveAcceleration=FVector2D::ZeroVector;DriveFilteredWorld=FVector2D::ZeroVector;
     DriveFilteredYaw=0;DriveSpeedAcceleration=0;DriveDirectionRate=0;MujocoYawTarget=MujocoPitchTarget=MujocoYawTargetRate=MujocoPitchTargetRate=0;
+    DedicatedGimbalExpiry=0;
+    DedicatedControlSeconds=0;
     for(auto& W:ContactWheels){W.SteeringTargetRad=0;W.SteeringMeasuredRad=0;W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;}
     SyncMujocoPose();SetContactDrive(0,0,true);ExternalDriveDeadline=0;
+    if(DedicatedMujocoPeriod>0&&!StartDedicatedMujoco(DedicatedMujocoPeriod,Error))
+    {
+        bMujocoFailed=true;
+        UE_LOG(LogRMSim,Error,TEXT("MUJOCO_DEDICATED_RESET_FAILED %s"),*Error);
+        FPlatformMisc::RequestExitWithStatus(false,2);
+    }
+}
+
+int32 AVehicleRig::GetMujocoWarningCount() const
+{
+    return MujocoDynamics ? MujocoDynamics->WarningCount() : 0;
 }
 
 TSharedRef<FJsonObject> AVehicleRig::GetMujocoContactState() const
@@ -333,7 +563,7 @@ TSharedRef<FJsonObject> AVehicleRig::GetMujocoContactState() const
     {
         FMujocoBodyState B;if(!MujocoDynamics->GetBody(Part,B))continue;auto J=MjBodyJson(B);J->SetStringField(TEXT("part"),Part);
         if(auto* const* Link=Links.Find(Part))SyncError=FMath::Max(SyncError,FVector::Dist((*Link)->GetComponentLocation(),B.World.GetLocation()));
-        if(Part==TEXT("body"))State->SetObjectField(TEXT("chassis"),J);
+        if(Part==MujocoRootBodyName)State->SetObjectField(TEXT("chassis"),J);
         double Position=0,Velocity=0;if(MujocoDynamics->GetJoint(Part,Position,Velocity)){J->SetNumberField(TEXT("joint_position"),Position);J->SetNumberField(TEXT("joint_velocity"),Velocity);}
         Bodies.Add(MakeShared<FJsonValueObject>(J));
     }

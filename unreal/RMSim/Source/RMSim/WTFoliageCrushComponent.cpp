@@ -1,359 +1,542 @@
 #include "WTFoliageCrushComponent.h"
+#include "WTBreakableGeometry.h"
 #include "VehicleRig.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
-#include "Engine/StaticMeshActor.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "Misc/ConfigCacheIni.h"
+#include "PhysicsEngine/BodyInstance.h"
 
 namespace
 {
-constexpr float SoftTriggerCm=135.f;
-constexpr float ContactProximityCm=54.f;
-constexpr float ScanIntervalSeconds=.075f;
-constexpr int32 MaxAnimated=48;
-const TCHAR* KindText(int32 Kind)
+constexpr double ScanInterval=.06;
+constexpr double ContactGap=.10;
+constexpr int32 MaxDebris=32,MaxLeafPatches=20,MaxRemainders=512;
+
+AActor* SpawnLeaves(UWorld* World,const FTransform& Pose,
+    const TArray<FProcMeshSection>& Sections,const TArray<UMaterialInterface*>& Materials,
+    UProceduralMeshComponent*& Out)
 {
-    switch(Kind){case 0:return TEXT("soft_crush");case 1:return TEXT("wood_fence_bend");
-        case 2:return TEXT("wood_fracture");default:return TEXT("metal_fence_bend");}
+    Out=nullptr;
+    if(!World)return nullptr;
+    AActor* Actor=World->SpawnActor<AActor>();
+    if(!Actor)return nullptr;
+    auto* Mesh=NewObject<UProceduralMeshComponent>(Actor);
+    Actor->SetRootComponent(Mesh);Actor->AddInstanceComponent(Mesh);
+    Mesh->SetMobility(EComponentMobility::Movable);
+    Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    Mesh->SetGenerateOverlapEvents(false);Mesh->SetCanEverAffectNavigation(false);
+    Mesh->RegisterComponent();Actor->SetActorTransform(Pose);
+    for(int32 S=0;S<Sections.Num();++S)
+    {
+        FProcMeshSection Copy=Sections[S];Copy.bEnableCollision=false;
+        Mesh->SetProcMeshSection(S,Copy);
+        if(Materials.IsValidIndex(S))Mesh->SetMaterial(S,Materials[S]);
+    }
+    Out=Mesh;return Actor;
+}
+
+void AppendTriangle(FProcMeshSection& Section,const FProcMeshSection& Source,int32 Offset)
+{
+    for(int32 K=0;K<3;++K)
+    {
+        const FProcMeshVertex& V=Source.ProcVertexBuffer[Source.ProcIndexBuffer[Offset+K]];
+        Section.ProcIndexBuffer.Add(Section.ProcVertexBuffer.Num());
+        Section.ProcVertexBuffer.Add(V);Section.SectionLocalBox+=V.Position;
+    }
+    Section.bSectionVisible=true;Section.bEnableCollision=false;
+}
+// Expand a touched triangle to its small, welded leaf card within one material.
+// Shared edges join the two sides of a card; touching a single branch vertex cannot
+// propagate damage through a plant. Large connected surfaces stay anchored.
+void CompleteLeafCards(const FProcMeshSection& Section,const FTransform& Original,TArray<bool>& Touch)
+{
+    const int32 Triangles=Section.ProcIndexBuffer.Num()/3;
+    if(Triangles==0)return;
+    TArray<int32> Parent,WeldedIndex;Parent.SetNumUninitialized(Triangles);
+    WeldedIndex.SetNumUninitialized(Section.ProcVertexBuffer.Num());
+    TMap<FIntVector,int32> Welded;TMap<uint64,int32> EdgeOwner;
+    TArray<FVector> Normals;Normals.SetNumUninitialized(Triangles);
+    for(int32 I=0;I<Triangles;++I)Parent[I]=I;
+    for(int32 I=0;I<Section.ProcVertexBuffer.Num();++I)
+    {
+        const FVector P=Section.ProcVertexBuffer[I].Position*1000.;
+        const FIntVector Key(FMath::RoundToInt(P.X),FMath::RoundToInt(P.Y),FMath::RoundToInt(P.Z));
+        if(const int32* Found=Welded.Find(Key))WeldedIndex[I]=*Found;
+        else {WeldedIndex[I]=I;Welded.Add(Key,I);}
+    }
+    auto Root=[&](int32 I)
+    {
+        int32 R=I;while(Parent[R]!=R)R=Parent[R];
+        while(Parent[I]!=I){const int32 Next=Parent[I];Parent[I]=R;I=Next;}
+        return R;
+    };
+    for(int32 T=0;T<Triangles;++T)
+    {
+        const uint32 A=Section.ProcIndexBuffer[3*T],B=Section.ProcIndexBuffer[3*T+1],C=Section.ProcIndexBuffer[3*T+2];
+        Normals[T]=FVector::CrossProduct(Section.ProcVertexBuffer[B].Position-Section.ProcVertexBuffer[A].Position,
+            Section.ProcVertexBuffer[C].Position-Section.ProcVertexBuffer[A].Position).GetSafeNormal();
+        for(int32 K=0;K<3;++K)
+        {
+            const int32 V0=WeldedIndex[Section.ProcIndexBuffer[3*T+K]],V1=WeldedIndex[Section.ProcIndexBuffer[3*T+(K+1)%3]];
+            const uint64 Edge=(uint64(FMath::Min(V0,V1))<<32)|uint32(FMath::Max(V0,V1));
+            if(const int32* Other=EdgeOwner.Find(Edge))
+            {
+                if(FMath::Abs(FVector::DotProduct(Normals[T],Normals[*Other]))>.90)
+                    Parent[Root(T)]=Root(*Other);
+            }
+            else EdgeOwner.Add(Edge,T);
+        }
+    }
+    TArray<int32> Sizes;Sizes.Init(0,Triangles);
+    TArray<bool> Any;Any.Init(false,Triangles);
+    TArray<FBox> Bounds;Bounds.Init(FBox(ForceInit),Triangles);
+    for(int32 T=0;T<Triangles;++T)
+    {
+        const int32 R=Root(T);++Sizes[R];Any[R]=Any[R]||Touch[T];
+        for(int32 K=0;K<3;++K)Bounds[R]+=Original.TransformPosition(
+            Section.ProcVertexBuffer[Section.ProcIndexBuffer[3*T+K]].Position);
+    }
+    for(int32 T=0;T<Triangles;++T)
+    {
+        const int32 R=Root(T);
+        Touch[T]=Any[R]&&Sizes[R]<=8&&Bounds[R].GetSize().GetMax()<=120.;
+    }
+}
+
+double DistanceToSweep2D(const FVector& Point,const FVector& From,const FVector& To)
+{
+    FVector D=To-From;D.Z=0;
+    const double T=D.SizeSquared()>1.e-6?FMath::Clamp(FVector::DotProduct(Point-From,D)/D.SizeSquared(),0.,1.):0.;
+    return FVector::Dist2D(Point,From+D*T);
+}
+bool HasTriangles(const TArray<FProcMeshSection>& Sections)
+{
+    for(const auto& S:Sections)if(S.ProcIndexBuffer.Num()>0)return true;
+    return false;
 }
 }
 
 bool UWTFoliageCrushComponent::IsSoftShrub(const FString& Name)
 {
-    // Excludes trunked trees, flower-bed concrete/stone bases and rigid planters.
-    return Name.StartsWith(TEXT("prop_bush_flowers_")) ||
-        Name.StartsWith(TEXT("prop_tree_poplar_bush_")) ||
-        Name.StartsWith(TEXT("prop_tree_tilia_bush_")) ||
-        (Name.StartsWith(TEXT("prop_flower_bed_")) && Name.Contains(TEXT("_flowers_")));
+    // Exact visual-only plant parts. Flower-bed bases and real tree trunks are excluded.
+    static const TSet<FString> Names={
+        TEXT("prop_bush_flowers_a"),TEXT("prop_bush_flowers_b"),TEXT("prop_bush_flowers_c"),
+        TEXT("prop_tree_poplar_bush_medium_a"),TEXT("prop_tree_poplar_bush_medium_b"),
+        TEXT("prop_tree_tilia_bush_a"),TEXT("prop_tree_tilia_bush_b"),
+        TEXT("prop_flower_bed_b_flowers_a"),TEXT("prop_flower_bed_c_flowers_a")};
+    return Names.Contains(Name);
 }
 
 bool UWTFoliageCrushComponent::ClassifyHard(const FString& Name,EKind& Kind)
 {
-    if(Name.StartsWith(TEXT("prop_sicily_gardens_wood_planks_")) ||
-       Name.StartsWith(TEXT("prop_wood_fence_h_plank")) ||
-       Name.StartsWith(TEXT("prop_wood_debris_")))
-    {Kind=EKind::WoodFracture;return true;}
-    if(Name.StartsWith(TEXT("prop_wood_fence_")) ||
-       Name.StartsWith(TEXT("prop_wood_gates_")))
-    {Kind=EKind::WoodBend;return true;}
-    if(Name.StartsWith(TEXT("prop_sicily_fence_cafe_")) ||
-       Name.StartsWith(TEXT("prop_sicily_villa_railing_")))
-    {Kind=EKind::MetalBend;return true;}
-    return false; // Rails, sleepers, concrete, masonry and fixed infrastructure remain separate.
+    // The original h panel has 8-11 cm timber rails; preserve it for this 20 kg vehicle.
+    // Partial-rail geometry support is reserved for a separately authored weak asset.
+    if(Name==TEXT("prop_wood_fence_h_plank")){Kind=EKind::WoodBoard;return true;}
+    return false; // Masonry balustrades, metal, gates, posts and timber assemblies stay fixed.
 }
 
 void UWTFoliageCrushComponent::Initialize(UWorld* World)
 {
-    Groups.Reset();Falling.Reset();TotalCrushed=0;TotalBroken=0;ScanAccumulator=0;
-    GConfig->GetDouble(TEXT("RMSim.Destruction"),TEXT("WoodImpactMps"),WoodImpactMps,GGameIni);
-    GConfig->GetDouble(TEXT("RMSim.Destruction"),TEXT("MetalImpactMps"),MetalImpactMps,GGameIni);
-    GConfig->GetDouble(TEXT("RMSim.Destruction"),TEXT("WoodPressureSeconds"),WoodPressureSeconds,GGameIni);
-    GConfig->GetDouble(TEXT("RMSim.Destruction"),TEXT("MetalPressureSeconds"),MetalPressureSeconds,GGameIni);
-    if(!FMath::IsFinite(WoodImpactMps)||WoodImpactMps<.2||WoodImpactMps>15 ||
-       !FMath::IsFinite(MetalImpactMps)||MetalImpactMps<.2||MetalImpactMps>15 ||
-       !FMath::IsFinite(WoodPressureSeconds)||WoodPressureSeconds<.1||WoodPressureSeconds>15 ||
-       !FMath::IsFinite(MetalPressureSeconds)||MetalPressureSeconds<.1||MetalPressureSeconds>15)
-    {UE_LOG(LogTemp,Error,TEXT("invalid RMSim.Destruction threshold"));return;}
-    if(!World)return;
-    int32 SoftInstances=0,SoftCollidersDisabled=0,HardInstances=0;
+    Groups.Reset();Leaves.Reset();Debris.Reset();Remainders.Reset();
+    TotalCrushed=0;TotalBroken=0;ScanAccumulator=0;ContactCursor=0;MotionGeneration=MAX_uint64;
+    if(!World || !World->GetOutermost()->GetName().Contains(TEXT("wt_vlaanderen")))return;
+    auto Read=[&](const TCHAR* Key,double& Value,double Low,double High)
+    {
+        GConfig->GetDouble(TEXT("RMSim.Destruction"),Key,Value,GGameIni);
+        return FMath::IsFinite(Value)&&Value>=Low&&Value<=High;
+    };
+    if(!Read(TEXT("RailImpactMps"),RailImpactMps,1.,10.) ||
+       !Read(TEXT("BoardImpactMps"),BoardImpactMps,1.,10.) ||
+       !Read(TEXT("RailImpulseNs"),RailImpulseNs,1.,100.) ||
+       !Read(TEXT("BoardImpulseNs"),BoardImpulseNs,1.,100.) ||
+       !Read(TEXT("RailPushNewtons"),RailPushNewtons,20.,500.) ||
+       !Read(TEXT("BoardPushNewtons"),BoardPushNewtons,20.,500.) ||
+       !Read(TEXT("RailPushSeconds"),RailPushSeconds,.5,10.) ||
+       !Read(TEXT("BoardPushSeconds"),BoardPushSeconds,.5,10.))
+    {UE_LOG(LogTemp,Error,TEXT("WT_DESTRUCTION_INVALID_CONFIG"));return;}
+    int32 Soft=0,Hard=0,Excluded=0;
     for(TActorIterator<AActor> It(World);It;++It)
     {
         TArray<UHierarchicalInstancedStaticMeshComponent*> Components;
         It->GetComponents<UHierarchicalInstancedStaticMeshComponent>(Components);
-        for(UHierarchicalInstancedStaticMeshComponent* Visual:Components)
+        for(auto* Visual:Components)
         {
             if(!Visual || !Visual->GetStaticMesh() ||
-               Visual->GetStaticMesh()->GetName().StartsWith(TEXT("col_")) ||
                Visual->GetCollisionEnabled()!=ECollisionEnabled::NoCollision)continue;
             const FString Name=Visual->GetStaticMesh()->GetName();
+            if(Name.StartsWith(TEXT("col_")))continue;
             EKind Kind=EKind::Soft;
-            const bool Soft=IsSoftShrub(Name);
-            if(!Soft&&!ClassifyHard(Name,Kind))continue;
-            UHierarchicalInstancedStaticMeshComponent* Matched=nullptr;
-            for(UHierarchicalInstancedStaticMeshComponent* Other:Components)
+            const bool Plant=IsSoftShrub(Name);
+            if(!Plant && !ClassifyHard(Name,Kind))
             {
-                if(Other==Visual || !Other || !Other->GetStaticMesh())continue;
-                if(Other->GetStaticMesh()->GetName()==TEXT("col_")+Name &&
+                if(Name.StartsWith(TEXT("prop_wood_")) || Name.StartsWith(TEXT("prop_sicily_villa_railing_")) ||
+                   Name.StartsWith(TEXT("prop_sicily_fence_cafe_")) ||
+                   Name.StartsWith(TEXT("prop_sicily_gardens_wood_planks_")))
+                    Excluded+=Visual->GetInstanceCount();
+                continue;
+            }
+            UHierarchicalInstancedStaticMeshComponent* Collider=nullptr;
+            for(auto* Other:Components)
+                if(Other && Other!=Visual && Other->GetStaticMesh() &&
+                   Other->GetStaticMesh()->GetName()==TEXT("col_")+Name &&
                    Other->GetInstanceCount()==Visual->GetInstanceCount())
-                {Matched=Other;break;}
-            }
-            if(!Soft && !Matched)continue; // Solid until native collider is explicitly matched.
-            FGroup Group;Group.Visual=Visual;Group.Collider=Matched;Group.Kind=Kind;
+                {Collider=Other;break;}
+            if(!Plant && !Collider)continue;
+            FGroup Group;Group.Visual=Visual;Group.Collider=Collider;Group.Kind=Kind;
             Groups.Add(MoveTemp(Group));
-            if(Soft)
+            if(Plant)
             {
-                SoftInstances+=Visual->GetInstanceCount();
-                if(Matched)
-                {
-                    SoftCollidersDisabled+=Matched->GetInstanceCount();
-                    Matched->SetCollisionProfileName(TEXT("NoCollision"));
-                    Matched->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-                }
+                Soft+=Visual->GetInstanceCount();
+                if(Collider)Collider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             }
-            else HardInstances+=Visual->GetInstanceCount();
+            else Hard+=Visual->GetInstanceCount();
         }
     }
-    UE_LOG(LogTemp,Display,
-        TEXT("WT_DESTRUCTION_READY groups=%d soft_visuals=%d soft_colliders_disabled=%d rigid_breakables=%d"),
-        Groups.Num(),SoftInstances,SoftCollidersDisabled,HardInstances);
+    UE_LOG(LogTemp,Display,TEXT("WT_DESTRUCTION_READY policy=local_contact_v2 groups=%d soft_nonblocking=%d local_wood_candidates=%d protected_wood_and_structures=%d"),
+        Groups.Num(),Soft,Hard,Excluded);
 }
 
-void UWTFoliageCrushComponent::SpawnSplinters(const FGroup& Group,
-    const FTransform& Original,const FVector& Direction,int32 Count)
+bool UWTFoliageCrushComponent::EnsureGeometry(FGroup& Group)
 {
-    UHierarchicalInstancedStaticMeshComponent* Source=Group.Visual.Get();
-    UWorld* World=GetWorld();
-    if(!Source || !Source->GetStaticMesh() || !World)return;
-    UStaticMesh* Cube=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube"));
-    if(!Cube)return;
-    const FBox Bound=Source->GetStaticMesh()->GetBoundingBox();
-    const FVector WorldSize=Bound.GetSize()*Original.GetScale3D().GetAbs();
-    const int32 LongAxis=WorldSize.X>=WorldSize.Y?0:1;
-    const float LongSize=FMath::Clamp(static_cast<float>(WorldSize[LongAxis]),25.f,450.f);
-    const float ShortHorizontal=FMath::Clamp(static_cast<float>(WorldSize[1-LongAxis]),4.f,50.f);
-    const float Vertical=FMath::Clamp(static_cast<float>(WorldSize.Z),4.f,70.f);
-    const FVector Normal=Direction.GetSafeNormal2D();
-    UMaterialInterface* Wood=Source->GetStaticMesh()->GetMaterial(0);
-    for(int32 I=0;I<Count;++I)
+    if(Group.bGeometryTried)return Group.Template.Num()>0;
+    Group.bGeometryTried=true;
+    auto* Visual=Group.Visual.Get();
+    if(!Visual || !WTBreakableGeometry::CopySections(Visual->GetStaticMesh(),Group.Template,Group.Materials))
     {
-        FVector Local=Bound.GetCenter();
-        Local[LongAxis]+=(float(I)+.5f-float(Count)/2.f)*Bound.GetSize()[LongAxis]/Count;
-        FTransform Pose=Original;
-        Pose.SetLocation(Original.TransformPosition(Local));
-        FActorSpawnParameters Params;
-        Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-        AStaticMeshActor* Fragment=World->SpawnActor<AStaticMeshActor>(
-            AStaticMeshActor::StaticClass(),Pose,Params);
-        if(!Fragment)continue;
-        UStaticMeshComponent* Body=Fragment->GetStaticMeshComponent();
-        Body->SetMobility(EComponentMobility::Movable);
-        Body->SetStaticMesh(Cube);
-        if(Wood)Body->SetMaterial(0,Wood);
-        Body->SetCollisionProfileName(TEXT("PhysicsActor"));
-        const float ShardLength=LongSize/Count*.84f;
-        const float Variation=I%2?.78f:1.0f;
-        FVector Dimensions=LongAxis==0?
-            FVector(ShardLength,ShortHorizontal*Variation,Vertical*.8f):
-            FVector(ShortHorizontal*Variation,ShardLength,Vertical*.8f);
-        Fragment->SetActorScale3D(Dimensions/100.f);
-        Body->SetSimulatePhysics(true);
-        Body->SetMassOverrideInKg(NAME_None,FMath::Clamp(ShardLength*.006f,.15f,1.5f),true);
-        Body->AddImpulse(Normal*(48.f+I*18.f)+FVector(0,0,42.f+I*16.f));
-        Body->AddAngularImpulseInRadians(
-            FVector((I&1)?1.f:-1.f,0.4f,0.7f)*(8.f+2.f*I),NAME_None,true);
-        Fragment->SetLifeSpan(3.7f);
+        UE_LOG(LogTemp,Warning,TEXT("WT_DESTRUCTION_GEOMETRY_UNAVAILABLE mesh=%s; retaining original geometry"),
+            Visual&&Visual->GetStaticMesh()?*Visual->GetStaticMesh()->GetName():TEXT("invalid"));
+        return false;
     }
+    return true;
 }
 
-void UWTFoliageCrushComponent::Trigger(FGroup& Group,int32 Index,
-    const FVector& VehicleLocationCm,const FVector& Direction,bool HasHit)
+bool UWTFoliageCrushComponent::CrushPatch(FGroup& Group,int32 Index,
+    const FVector& From,const FVector& To,const FBox& VehicleBounds,const FVector& Direction)
 {
-    UHierarchicalInstancedStaticMeshComponent* Source=Group.Visual.Get();
-    if(!Source || !Source->GetStaticMesh() || Group.Removed.Contains(Index))return;
+    auto* Visual=Group.Visual.Get();
+    if(!Visual || !EnsureGeometry(Group) || Leaves.Num()>=MaxLeafPatches ||
+       Remainders.Num()>=MaxRemainders || Direction.IsNearlyZero() || !VehicleBounds.IsValid)return false;
     FTransform Original;
-    if(!Source->GetInstanceTransform(Index,Original,true))return;
-    const FBox Local=Source->GetStaticMesh()->GetBoundingBox();
-    const FVector Root=Original.TransformPosition(FVector(Local.GetCenter().X,Local.GetCenter().Y,Local.Min.Z));
-    if(Group.Kind==EKind::Soft && FVector::DistSquared2D(Root,VehicleLocationCm)>FMath::Square(SoftTriggerCm))
-        return;
-    UWorld* World=GetWorld();
-    if(!World)return;
-    FActorSpawnParameters Params;
-    Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    AStaticMeshActor* Fallen=nullptr;
-    if(Group.Kind!=EKind::WoodFracture)
+    const FSoftRemainder* Existing=Group.SoftRemainders.Find(Index);
+    if(Existing)Original=Existing->Original;
+    else if(!Visual->GetInstanceTransform(Index,Original,true))return false;
+    const auto& Input=Existing?Existing->Sections:Group.Template;
+    TArray<FProcMeshSection> Keep,Fall;Keep.SetNum(Input.Num());Fall.SetNum(Input.Num());
+    const FString Name=Visual->GetStaticMesh()->GetName();
+    const bool Woody=Name.StartsWith(TEXT("prop_tree_poplar_")) || Name.StartsWith(TEXT("prop_bush_flowers_"));
+    const FVector CenterOffset=VehicleBounds.GetCenter()-To;
+    const FVector Samples[3]={From+CenterOffset,(From+To)*.5+CenterOffset,To+CenterOffset};
+    int32 Touched=0,Total=0;
+    for(int32 S=0;S<Input.Num();++S)
     {
-        Fallen=World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(),Original,Params);
-        if(!Fallen)return;
-        UStaticMeshComponent* Mesh=Fallen->GetStaticMeshComponent();
-        Mesh->SetMobility(EComponentMobility::Movable);
-        Mesh->SetCollisionProfileName(TEXT("NoCollision"));
-        Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        Mesh->SetStaticMesh(Source->GetStaticMesh());
-        Fallen->SetActorTransform(Original);
+        const auto& Section=Input[S];
+        TArray<bool> Touches;Touches.Init(false,Section.ProcIndexBuffer.Num()/3);
+        for(int32 I=0;I+2<Section.ProcIndexBuffer.Num();I+=3)
+        {
+            ++Total;
+            bool Touch=false;
+            // Verified woody slot zero stays anchored and visible.
+            if(!(Woody && S==0))
+            {
+                const FVector A=Original.TransformPosition(Section.ProcVertexBuffer[Section.ProcIndexBuffer[I]].Position);
+                const FVector B=Original.TransformPosition(Section.ProcVertexBuffer[Section.ProcIndexBuffer[I+1]].Position);
+                const FVector C=Original.TransformPosition(Section.ProcVertexBuffer[Section.ProcIndexBuffer[I+2]].Position);
+                const double MinZ=FMath::Min3(A.Z,B.Z,C.Z),MaxZ=FMath::Max3(A.Z,B.Z,C.Z);
+                if(MinZ<=VehicleBounds.Max.Z+5. && MaxZ>=VehicleBounds.Min.Z-3.)
+                    for(const FVector& P:Samples)
+                        if(FVector::DistSquared(P,FMath::ClosestPointOnTriangleToPoint(P,A,B,C))<FMath::Square(30.))
+                        {Touch=true;break;}
+            }
+            Touches[I/3]=Touch;
+        }
+        if(!(Woody && S==0))CompleteLeafCards(Section,Original,Touches);
+        for(int32 I=0;I+2<Section.ProcIndexBuffer.Num();I+=3)
+        {
+            AppendTriangle(Touches[I/3]?Fall[S]:Keep[S],Section,I);
+            Touched+=Touches[I/3]?1:0;
+        }
     }
-    // Corresponding source visual and collision components use the same RMI1
-    // ordering. Remove only this instance; other solid fences stay physical.
-    FTransform Hidden=Original;
-    Hidden.SetScale3D(Original.GetScale3D()*0.0001);
-    Source->UpdateInstanceTransform(Index,Hidden,true,true,true);
-    if(auto* Collider=Group.Collider.Get())
-        Collider->UpdateInstanceTransform(Index,Hidden,true,true,true);
-    Group.Removed.Add(Index);Group.PressureSeconds.Remove(Index);Group.ApproachPeakMps.Remove(Index);
-
-    if(Group.Kind==EKind::WoodFracture || Group.Kind==EKind::WoodBend)
-        SpawnSplinters(Group,Original,Direction,Group.Kind==EKind::WoodFracture?4:2);
-    if(Fallen)
+    if(Touched==0)return false;
+    UProceduralMeshComponent *KeepMesh=nullptr,*FallMesh=nullptr;
+    AActor* KeepActor=SpawnLeaves(GetWorld(),Original,Keep,Group.Materials,KeepMesh);
+    AActor* FallActor=SpawnLeaves(GetWorld(),Original,Fall,Group.Materials,FallMesh);
+    if(!KeepActor || !FallActor)
+    {if(KeepActor)KeepActor->Destroy();if(FallActor)FallActor->Destroy();return false;}
+    if(Existing && Existing->Actor.IsValid())Existing->Actor->Destroy();
+    else
     {
-        FFalling Animation;
-        Animation.Actor=Fallen;Animation.OriginalWorld=Original;
-        Animation.Root=Root;Animation.Travel=Direction.GetSafeNormal2D();
-        Animation.Axis=FVector::CrossProduct(FVector::UpVector,Animation.Travel).GetSafeNormal();
-        Animation.bWood=Group.Kind==EKind::WoodBend;
-        Animation.AngleAmplitude=Group.Kind==EKind::Soft?1.25f:1.55f;
-        Animation.Duration=Group.Kind==EKind::Soft?4.3f:5.1f;
-        Animation.Hold=Group.Kind==EKind::Soft?3.1f:3.8f;
-        Falling.Add(MoveTemp(Animation));
+        FTransform Hidden=Original;Hidden.SetScale3D(FVector::ZeroVector);
+        Visual->UpdateInstanceTransform(Index,Hidden,true,true,true);
     }
-    if(Group.Kind==EKind::Soft)++TotalCrushed;else ++TotalBroken;
-    UE_LOG(LogTemp,Display,
-        TEXT("WT_DESTRUCTION_EVENT kind=%s mesh=%s instance=%d hit=%d crushed=%d hard_broken=%d"),
-        KindText(static_cast<int32>(Group.Kind)),*Source->GetStaticMesh()->GetName(),Index,
-        HasHit?1:0,TotalCrushed,TotalBroken);
+    FSoftRemainder Remaining;Remaining.Actor=KeepActor;Remaining.Original=Original;Remaining.Sections=MoveTemp(Keep);
+    Group.SoftRemainders.Add(Index,MoveTemp(Remaining));Remainders.Add(KeepActor);
+    FLeafFall State;State.Actor=FallActor;State.Mesh=FallMesh;State.Original=Original;State.Initial=MoveTemp(Fall);
+    State.Direction=Direction.GetSafeNormal2D();State.SweepFrom=From;State.SweepTo=To;
+    State.GroundZ=VehicleBounds.Min.Z;
+    Leaves.Add(MoveTemp(State));++TotalCrushed;
+    UE_LOG(LogTemp,Display,TEXT("WT_FOLIAGE_PATCH mesh=%s instance=%d touched_triangles=%d retained_triangles=%d dir=(%.3f,%.3f,%.3f)"),
+        *Name,Index,Touched,Total-Touched,Direction.X,Direction.Y,Direction.Z);
+    return true;
 }
 
-bool UWTFoliageCrushComponent::ProbeOneOfEach(TArray<FString>& Outcomes)
+void UWTFoliageCrushComponent::AdvanceLeaves(double Seconds)
 {
-    Outcomes.Reset();
-    bool Seen[4]={false,false,false,false};
-    for(FGroup& Group:Groups)
+    for(int32 I=Leaves.Num()-1;I>=0;--I)
     {
-        const int32 Kind=static_cast<int32>(Group.Kind);
-        if(Seen[Kind])continue;
-        UHierarchicalInstancedStaticMeshComponent* Visual=Group.Visual.Get();
-        if(!Visual || Visual->GetInstanceCount()<1)continue;
-        UHierarchicalInstancedStaticMeshComponent* Collider=Group.Collider.Get();
-        if(Group.Kind!=EKind::Soft &&
-           (!Collider || Collider->GetCollisionEnabled()==ECollisionEnabled::NoCollision))return false;
-        FTransform Before,After,OtherBefore,OtherAfter;
-        if(!Visual->GetInstanceTransform(0,Before,true))return false;
-        const bool CheckOther=Visual->GetInstanceCount()>1;
-        if(CheckOther && !Visual->GetInstanceTransform(1,OtherBefore,true))return false;
-        const FBox Bounds=Visual->GetStaticMesh()->GetBoundingBox();
-        const FVector Root=Before.TransformPosition(FVector(Bounds.GetCenter().X,Bounds.GetCenter().Y,Bounds.Min.Z));
-        const int32 PreviousCrush=TotalCrushed,PreviousBreak=TotalBroken;
-        Trigger(Group,0,Root,FVector::ForwardVector,true);
-        if(!Visual->GetInstanceTransform(0,After,true) ||
-           After.GetScale3D().SizeSquared()>=Before.GetScale3D().SizeSquared()*.00001 ||
-           (CheckOther && (!Visual->GetInstanceTransform(1,OtherAfter,true) ||
-                           !OtherBefore.Equals(OtherAfter,1.e-5))))return false;
-        if(Group.Kind==EKind::Soft)
+        auto& State=Leaves[I];auto* Actor=State.Actor.Get();auto* Mesh=State.Mesh.Get();
+        if(!Actor || !Mesh){Leaves.RemoveAtSwap(I);continue;}
+        const double PreviousElapsed=State.Elapsed;
+        State.Elapsed+=Seconds;
+        if(State.Elapsed>=6.)
+        {Actor->Destroy();Leaves.RemoveAtSwap(I);continue;}
+        // Settle once at two seconds; the remaining lifetime only waits for disposal.
+        if(PreviousElapsed>=2.)continue;
+        // Damped bend with zero initial velocity; roots stay put, lower leaves settle toward the ground.
+        const double T=FMath::Min(State.Elapsed,2.);
+        const double Response=1.-FMath::Exp(-6.*T)*(1.+6.*T);
+        const FVector Axis=FVector::CrossProduct(FVector::UpVector,State.Direction).GetSafeNormal();
+        for(int32 S=0;S<State.Initial.Num();++S)
         {
-            if(TotalCrushed!=PreviousCrush+1 ||
-               (Collider && Collider->GetCollisionEnabled()!=ECollisionEnabled::NoCollision))return false;
+            const auto& Section=State.Initial[S];
+            if(Section.ProcVertexBuffer.IsEmpty())continue;
+            TArray<FVector> Positions,Normals;TArray<FProcMeshTangent> Tangents;
+            Positions.Reserve(Section.ProcVertexBuffer.Num());Normals.Reserve(Section.ProcVertexBuffer.Num());
+            Tangents.Reserve(Section.ProcVertexBuffer.Num());
+            for(const auto& V:Section.ProcVertexBuffer)
+            {
+                const FVector W=State.Original.TransformPosition(V.Position);
+                const double Height=FMath::Max(0.,W.Z-State.GroundZ);
+                const double Locality=FMath::Clamp(1.-DistanceToSweep2D(W,State.SweepFrom,State.SweepTo)/95.,0.,1.);
+                const double Angle=1.25*Response*FMath::Sqrt(Locality)*FMath::Clamp(Height/35.,0.,1.);
+                const FQuat Bend(Axis,Angle);
+                FVector New=W+State.Direction*(Height*FMath::Sin(Angle));
+                New.Z=W.Z-Height*(1.-FMath::Cos(Angle));
+                Positions.Add(State.Original.InverseTransformPosition(New));
+                const FVector N=State.Original.TransformVectorNoScale(V.Normal);
+                Normals.Add(State.Original.InverseTransformVectorNoScale(Bend.RotateVector(N)).GetSafeNormal());
+                const FVector Tangent=State.Original.TransformVectorNoScale(V.Tangent.TangentX);
+                Tangents.Add(FProcMeshTangent(
+                    State.Original.InverseTransformVectorNoScale(Bend.RotateVector(Tangent)).GetSafeNormal(),V.Tangent.bFlipTangentY));
+            }
+            // Empty attribute arrays preserve the section's original UV0-3 and vertex colors.
+            const TArray<FVector2D> KeepUV;const TArray<FColor> KeepColors;
+            Mesh->UpdateMeshSection(S,Positions,Normals,KeepUV,KeepUV,KeepUV,KeepUV,KeepColors,Tangents);
         }
-        else
-        {
-            FTransform RemovedCollision;
-            if(TotalBroken!=PreviousBreak+1 ||
-               Collider->GetCollisionEnabled()==ECollisionEnabled::NoCollision ||
-               !Collider->GetInstanceTransform(0,RemovedCollision,true) ||
-               RemovedCollision.GetScale3D().SizeSquared()>=Before.GetScale3D().SizeSquared()*.00001)
-                return false;
-        }
-        Seen[Kind]=true;
-        Outcomes.Add(FString::Printf(TEXT("%s:%s"),KindText(Kind),*Visual->GetStaticMesh()->GetName()));
     }
-    return Seen[0] && Seen[1] && Seen[2] && Seen[3];
+}
+
+bool UWTFoliageCrushComponent::BreakLocal(FGroup& Group,int32 Index,const FVector& Point,
+    const FVector& Direction,double ImpulseNs,double SpeedMps,const AVehicleRig* Rig)
+{
+    auto* Visual=Group.Visual.Get();auto* Collider=Group.Collider.Get();
+    if(!Visual || !Collider || Group.Removed.Contains(Index) ||
+       Debris.Num()+2>MaxDebris || Remainders.Num()>=MaxRemainders)return false;
+    FTransform Original,CollisionPose;
+    if(!Visual->GetInstanceTransform(Index,Original,true) ||
+       !Collider->GetInstanceTransform(Index,CollisionPose,true) ||
+       !Original.Equals(CollisionPose,.01))return false;
+    FBodyInstance* Body=Collider->GetBodyInstance(NAME_None,false,Index);
+    if(!Body || Body->GetCollisionEnabled()==ECollisionEnabled::NoCollision)return false;
+    const bool Fence=Group.Kind==EKind::WoodRail;
+    if(!WTBreakableGeometry::Create(GetWorld(),Visual->GetStaticMesh(),Original,Point,Direction,
+        ImpulseNs,SpeedMps,Fence,const_cast<AVehicleRig*>(Rig),Debris,Remainders))return false;
+    // Disable this exact physics body. Never alter its transform or neighboring body indices.
+    Body->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    FTransform Hidden=Original;Hidden.SetScale3D(FVector::ZeroVector);
+    Visual->UpdateInstanceTransform(Index,Hidden,true,true,true);
+    Group.Removed.Add(Index);Group.Pressure.Remove(Index);++TotalBroken;
+    UE_LOG(LogTemp,Display,TEXT("WT_DESTRUCTION_EVENT kind=%s mesh=%s instance=%d point=(%.2f,%.2f,%.2f) dir=(%.3f,%.3f,%.3f) impulse_Ns=%.3f normal_speed_mps=%.3f remaining_structure=solid fragments=source_geometry"),
+        Fence?TEXT("local_rail"):TEXT("local_board"),*Visual->GetStaticMesh()->GetName(),Index,
+        Point.X,Point.Y,Point.Z,Direction.X,Direction.Y,Direction.Z,ImpulseNs,SpeedMps);
+    return true;
 }
 
 void UWTFoliageCrushComponent::Advance(const AVehicleRig* Rig,double Seconds)
 {
-    if(!Rig || !Rig->IsContactPhysics())return;
-    const float Dt=FMath::Clamp(static_cast<float>(Seconds),0.f,.1f);
-    for(int32 I=Falling.Num()-1;I>=0;--I)
-    {
-        FFalling& State=Falling[I];
-        AStaticMeshActor* Actor=State.Actor.Get();
-        if(!Actor){Falling.RemoveAtSwap(I);continue;}
-        State.Elapsed+=Dt;
-        if(State.Elapsed>=State.Duration){Actor->Destroy();Falling.RemoveAtSwap(I);continue;}
-        const float T=State.Elapsed;
-        // Damped flexible response, with heavier fence sections buckling more
-        // slowly than shrubs and delayed, shrinking disposal.
-        const float Speed=State.bWood?3.1f:4.3f;
-        const float Fall=1.f-FMath::Exp(-Speed*T);
-        const float Rebound=(State.bWood?.06f:.11f)*FMath::Sin(10.f*T)*FMath::Exp(-2.7f*T);
-        const FQuat Tilt(State.Axis,State.AngleAmplitude*(Fall+Rebound));
-        const float Fade=T<=State.Hold?1.f:
-            FMath::Clamp((State.Duration-T)/(State.Duration-State.Hold),.001f,1.f);
-        FTransform Pose=State.OriginalWorld;
-        Pose.SetRotation(Tilt*State.OriginalWorld.GetRotation());
-        Pose.SetLocation(State.Root+
-            Tilt.RotateVector(State.OriginalWorld.GetLocation()-State.Root)+
-            State.Travel*(16.f*FMath::Min(T,1.f)));
-        Pose.SetScale3D(State.OriginalWorld.GetScale3D()*Fade);
-        Actor->SetActorTransform(Pose,false,nullptr,ETeleportType::TeleportPhysics);
-    }
-
-    ScanAccumulator+=Dt;
-    if(ScanAccumulator<ScanIntervalSeconds)return;
-    const float Step=FMath::Min(static_cast<float>(ScanAccumulator),.25f);
-    ScanAccumulator=0;
+    if(!Rig || !Rig->IsContactPhysics() || !FMath::IsFinite(Seconds) || Seconds<=0.)return;
+    const double Dt=FMath::Min(Seconds,.1);
+    AdvanceLeaves(Dt);
+    Debris.RemoveAll([](const auto& A){return !A.IsValid();});
+    Remainders.RemoveAll([](const auto& A){return !A.IsValid();});
+    const double Now=GetWorld()->GetTimeSeconds();
     const FVector Position=Rig->GetActorLocation();
-    const FVector Actual=Rig->GetCommandOriginVelocity().GetSafeNormal2D();
-    const FVector ActualVelocity=Rig->GetCommandOriginVelocity();
-    const FVector Wanted=Rig->GetRequestedDriveWorldVelocityCmS();
-    const FVector Direction=ActualVelocity.SizeSquared2D()>FMath::Square(40.f)?
-        Actual:Wanted.GetSafeNormal2D();
-    int32 Started=0;
-    for(FGroup& Group:Groups)
+    if(MotionGeneration!=Rig->GetMotionGeneration())
     {
-        auto* Visual=Group.Visual.Get();
-        if(!Visual)continue;
-        const TArray<int32> Candidates=Visual->GetInstancesOverlappingSphere(Position,350.f,true);
-        for(int32 Index:Candidates)
+        MotionGeneration=Rig->GetMotionGeneration();PreviousVehicle=Position;
+        for(auto& Group:Groups)Group.Pressure.Reset();
+    }
+    struct FHitBatch { FVector Point,Normal;double Impulse=0,StrongestImpulse=0,Speed=0,Time=0; };
+    TMap<uint64,FHitBatch> Hits;
+    TArray<FVehicleObstacleContact> Events;
+    Rig->GetObstacleContactsSince(ContactCursor,Events);
+    for(const auto& E:Events)
+    {
+        if(E.MotionGeneration!=MotionGeneration || Now-E.TimeSeconds>ContactGap ||
+           E.InstanceIndex<0 || E.ImpulseNs<=0. || FMath::Abs(E.IntoObstacleNormal.Z)>.45)continue;
+        for(int32 G=0;G<Groups.Num();++G)
         {
-            if(Group.Removed.Contains(Index))continue;
-            FTransform Transform;
-            if(!Visual->GetInstanceTransform(Index,Transform,true))continue;
-            const FBox Box=Visual->GetStaticMesh()->GetBoundingBox().TransformBy(Transform);
-            const FVector Closest=Box.GetClosestPointTo(Position);
-            const FVector Toward=(Closest-Position).GetSafeNormal2D();
-            const double Range2D=FVector::DistSquared2D(Closest,Position);
-            if(Group.Kind==EKind::Soft)
-            {
-                if(ActualVelocity.SizeSquared2D()>=FMath::Square(40.f) &&
-                   FVector::DotProduct(Direction,Toward)>-.3 &&
-                   FVector::DistSquared2D(Position,Transform.TransformPosition(
-                       FVector(Visual->GetStaticMesh()->GetBoundingBox().GetCenter().X,
-                               Visual->GetStaticMesh()->GetBoundingBox().GetCenter().Y,
-                               Visual->GetStaticMesh()->GetBoundingBox().Min.Z)))<FMath::Square(SoftTriggerCm))
-                {
-                    if(Falling.Num()<MaxAnimated){Trigger(Group,Index,Position,Direction,false);++Started;}
-                }
-                continue;
-            }
-            auto* Collider=Group.Collider.Get();
-            if(!Collider)continue;
-            double ImpulseNs=0;
-            const bool Hit=Rig->GetRecentHitAgainst(Collider,Closest,100.,.22,ImpulseNs);
-            const bool Near=Range2D<FMath::Square(ContactProximityCm) &&
-                FMath::Abs(Closest.Z-Position.Z)<120.;
-            const float SpeedMps=static_cast<float>(ActualVelocity.Size2D()/100.);
-            const float RequestedMps=static_cast<float>(Wanted.Size2D()/100.);
-            const float HardThreshold=static_cast<float>(Group.Kind==EKind::MetalBend?MetalImpactMps:WoodImpactMps);
-            const float HoldThreshold=static_cast<float>(Group.Kind==EKind::MetalBend?MetalPressureSeconds:WoodPressureSeconds);
-            const bool TowardObject=FVector::DotProduct(Wanted.GetSafeNormal2D(),Toward)>.25;
-            // Capture approach speed BEFORE the solver arrests the vehicle at
-            // the obstacle. The instantaneous post-contact speed may be zero.
-            float& Peak=Group.ApproachPeakMps.FindOrAdd(Index);
-            if(Range2D<FMath::Square(170.f) && TowardObject && RequestedMps>.5f)
-                Peak=FMath::Max(Peak,SpeedMps);
-            else if(Range2D>FMath::Square(270.f))Peak=0;
-            const bool FastHit=Hit && (SpeedMps>=HardThreshold || Peak>=HardThreshold ||
-                ImpulseNs>=(Group.Kind==EKind::MetalBend?42.0:22.0));
-            // Pushing against an actual source collider at low speed builds
-            // damage; no idle/time-only destruction and no guessed world pose.
-            const bool Persistent=Near && TowardObject && RequestedMps>=.65f &&
-                SpeedMps<FMath::Max(.55f,RequestedMps*.6f) && (Hit || Range2D<FMath::Square(22.f));
-            float& Damage=Group.PressureSeconds.FindOrAdd(Index);
-            Damage=Persistent?Damage+Step:FMath::Max(0.f,Damage-Step*.65f);
-            if(FastHit || (Near && Damage>=HoldThreshold))
-            {
-                if(Falling.Num()<MaxAnimated && Started<6)
-                {
-                    UE_LOG(LogTemp,Display,
-                        TEXT("WT_DESTRUCTION_THRESHOLD mode=%s speed_mps=%.3f peak_approach_mps=%.3f wanted_mps=%.3f impulse_Ns=%.3f pressure_seconds=%.3f contact=%d"),
-                        FastHit?TEXT("impact"):TEXT("pressure"),SpeedMps,Peak,RequestedMps,ImpulseNs,Damage,Hit?1:0);
-                    Trigger(Group,Index,Position,Direction,Hit);
-                    ++Started;
-                }
-            }
-            if(Started>=8)return;
+            auto& Group=Groups[G];
+            if(Group.Kind==EKind::Soft || Group.Collider.Get()!=E.OtherComponent.Get() ||
+               Group.Removed.Contains(E.InstanceIndex))continue;
+            auto* Visual=Group.Visual.Get();FTransform Pose;
+            if(!Visual || !Visual->GetInstanceTransform(E.InstanceIndex,Pose,true))continue;
+            const uint64 Key=(uint64(G)<<32)|uint32(E.InstanceIndex);
+            auto& Batch=Hits.FindOrAdd(Key);
+            const double Speed=FMath::Max(0.,FVector::DotProduct(E.PreImpactVelocityCmS,E.IntoObstacleNormal)/100.);
+            if(Batch.Impulse>0. && FVector::DotProduct(Batch.Normal,E.IntoObstacleNormal)<.7)continue;
+            if(E.ImpulseNs>Batch.StrongestImpulse)
+            {Batch.Point=E.PointCm;Batch.Normal=E.IntoObstacleNormal;Batch.StrongestImpulse=E.ImpulseNs;}
+            Batch.Impulse+=E.ImpulseNs;Batch.Speed=FMath::Max(Batch.Speed,Speed);
+            Batch.Time=FMath::Max(Batch.Time,E.TimeSeconds);
+            break;
         }
     }
+    const FVector Wanted=Rig->GetRequestedDriveWorldVelocityCmS()/100.;
+    const double VehicleSpeedCmS=Rig->GetCommandOriginVelocity().Size2D();
+    // Cancel intent every frame, including frames without new collision callbacks.
+    for(auto& Group:Groups)
+        for(auto It=Group.Pressure.CreateIterator();It;++It)
+            if(VehicleSpeedCmS>=60. || FVector::DotProduct(Wanted,It.Value().LastNormal)<.5)
+                It.RemoveCurrent();
+    for(const auto& Pair:Hits)
+    {
+        auto& Group=Groups[int32(Pair.Key>>32)];const int32 Index=int32(uint32(Pair.Key));
+        const auto& H=Pair.Value;const bool Rail=Group.Kind==EKind::WoodRail;
+        FTransform Pose;auto* Visual=Group.Visual.Get();
+        if(!Visual || !Visual->GetInstanceTransform(Index,Pose,true) ||
+           !WTBreakableGeometry::CanBreakAt(Visual->GetStaticMesh(),Pose,H.Point,Rail))continue;
+        const double SpeedThreshold=Rail?RailImpactMps:BoardImpactMps;
+        const double ImpulseThreshold=Rail?RailImpulseNs:BoardImpulseNs;
+        const bool Impact=H.Speed>=SpeedThreshold && H.Impulse>=ImpulseThreshold;
+        auto& Pressure=Group.Pressure.FindOrAdd(Index);
+        const double Interval=Pressure.LastContact>=0.?H.Time-Pressure.LastContact:-1.;
+        const bool SameFace=Pressure.LastContact>=0. &&
+            FVector::DotProduct(Pressure.LastNormal,H.Normal)>=.7;
+        const bool Duplicate=Pressure.LastContact>=0. && FMath::Abs(Interval)<=1.e-6;
+        const bool OutOfOrder=Pressure.LastContact>=0. && Interval<-1.e-6;
+        const bool Continuous=SameFace && Interval>1.e-6 && Interval<=ContactGap+1.e-6;
+        const bool Intent=FVector::DotProduct(Wanted,H.Normal)>=.5 && VehicleSpeedCmS<60.;
+        // Collision impulse belongs to the interval between contact events, not this game tick.
+        const double Force=Continuous?H.Impulse/Interval:0.;
+        const bool Pushing=Intent && Continuous && Force>=(Rail?RailPushNewtons:BoardPushNewtons);
+        if(!Intent)
+        {
+            Pressure.Seconds=0.;Pressure.ImpulseNs=0.;
+            Pressure.LastContact=-1.;Pressure.LastNormal=FVector::ZeroVector;
+        }
+        // Duplicate or older samples cannot add time or move the time baseline backwards.
+        else if(!OutOfOrder && (!Duplicate || !SameFace))
+        {
+            if(Pushing){Pressure.Seconds+=Interval;Pressure.ImpulseNs+=H.Impulse;}
+            else {Pressure.Seconds=0.;Pressure.ImpulseNs=0.;}
+            // First contact, a gap or a new face establishes a baseline without adding pressure time.
+            Pressure.LastContact=H.Time;Pressure.LastNormal=H.Normal;
+        }
+        const double Hold=Rail?RailPushSeconds:BoardPushSeconds;
+        const bool Sustained=Pushing && Pressure.Seconds>=Hold;
+        if(Impact || Sustained)
+        {
+            const double PressureTime=Pressure.Seconds;
+            // Only this frame's impulse powers debris. Accumulated fatigue is never launch momentum.
+            if(BreakLocal(Group,Index,H.Point,H.Normal,H.Impulse,H.Speed,Rig))
+                UE_LOG(LogTemp,Display,TEXT("WT_DESTRUCTION_THRESHOLD mode=%s instance=%d normal_speed_mps=%.3f impulse_Ns=%.3f force_N=%.2f continuous_seconds=%.3f"),
+                    Impact?TEXT("impact"):TEXT("pressure"),Index,H.Speed,H.Impulse,Force,PressureTime);
+        }
+    }
+    // Consume queued contacts before expiring their previous pressure state.
+    for(auto& Group:Groups)
+        for(auto It=Group.Pressure.CreateIterator();It;++It)
+            if(It.Value().LastContact<0. || Now-It.Value().LastContact>ContactGap+1.e-6)
+                It.RemoveCurrent();
+
+    ScanAccumulator+=Dt;
+    if(ScanAccumulator<ScanInterval)return;
+    ScanAccumulator=0;
+    const FVector Motion=Position-PreviousVehicle;
+    const double Travel=Motion.Size2D();
+    const FVector Velocity=Rig->GetCommandOriginVelocity();
+    if(Travel>.5 && Travel<100. && Velocity.Size2D()>15. && FVector::DotProduct(Motion,Velocity)>0.)
+    {
+        FBox VehicleBounds=Rig->GetFoliageContactBounds();
+        if(!VehicleBounds.IsValid){PreviousVehicle=Position;return;}
+        FHitResult Ground;
+        FCollisionQueryParams GroundQuery(SCENE_QUERY_STAT(WTFoliageGround),false);
+        GroundQuery.AddIgnoredActor(Rig);
+        FVector GroundStart=VehicleBounds.GetCenter();GroundStart.Z=VehicleBounds.Min.Z+12.;
+        if(GetWorld()->LineTraceSingleByObjectType(Ground,GroundStart,GroundStart-FVector(0,0,120.),
+            FCollisionObjectQueryParams(ECC_WorldStatic),GroundQuery) && Ground.ImpactNormal.Z>.5)
+            VehicleBounds.Min.Z=Ground.ImpactPoint.Z;
+        for(auto& Group:Groups)
+        {
+            if(Group.Kind!=EKind::Soft)continue;
+            auto* Visual=Group.Visual.Get();if(!Visual)continue;
+            TArray<int32> Candidates=Visual->GetInstancesOverlappingSphere(Position,90.f,true);
+            for(const auto& Existing:Group.SoftRemainders)
+                if(Existing.Value.Actor.IsValid() &&
+                   Existing.Value.Actor->GetComponentsBoundingBox().ComputeSquaredDistanceToPoint(Position)<FMath::Square(90.))
+                    Candidates.AddUnique(Existing.Key);
+            for(int32 Index:Candidates)
+                CrushPatch(Group,Index,PreviousVehicle,Position,VehicleBounds,Motion.GetSafeNormal2D());
+        }
+    }
+    PreviousVehicle=Position;
+}
+
+int32 UWTFoliageCrushComponent::ActiveAnimations() const
+{
+    int32 Count=Leaves.Num();for(const auto& Actor:Debris)if(Actor.IsValid())++Count;return Count;
+}
+
+bool UWTFoliageCrushComponent::ProbeOneOfEach(TArray<FString>& Outcomes)
+{
+    Outcomes.Reset();EKind Kind;
+    for(const TCHAR* Name:{TEXT("prop_sicily_villa_railing_a"),TEXT("prop_sicily_fence_cafe_a"),
+        TEXT("prop_sicily_gardens_wood_planks_a"),TEXT("prop_wood_debris_f"),
+        TEXT("prop_wood_fence_m_pole"),TEXT("prop_wood_gates_b"),TEXT("prop_russia_rails_sleeper_a"),
+        TEXT("prop_wood_fence_h_unknown"),TEXT("prop_wood_fence_h")})
+        if(ClassifyHard(Name,Kind))return false;
+    Outcomes.Add(TEXT("protected_materials_and_structures:9"));
+    bool SeenRail=false,SeenBoard=false;
+    for(auto& Group:Groups)
+    {
+        if(Group.Kind==EKind::Soft)continue;
+        bool& Seen=Group.Kind==EKind::WoodRail?SeenRail:SeenBoard;
+        if(Seen)continue;
+        auto* Visual=Group.Visual.Get();auto* Collider=Group.Collider.Get();FTransform Original;
+        if(!Visual || !Collider || !Visual->GetInstanceTransform(0,Original,true))return false;
+        const FBox B=Visual->GetStaticMesh()->GetBoundingBox();
+        FVector Local=B.GetCenter();
+        Local.Z=B.Min.Z+B.GetSize().Z*(Group.Kind==EKind::WoodRail?.48:.40);
+        const int32 PairAxis=B.GetSize().X>B.GetSize().Y?0:1;
+        if(Group.Kind==EKind::WoodBoard)Local[PairAxis]=B.Max[PairAxis]-1.;
+        const FVector Point=Original.TransformPosition(Local);
+        FVector LocalNormal=FVector::ZeroVector;LocalNormal[PairAxis]=1.;
+        const FVector Dir=Original.TransformVectorNoScale(LocalNormal).GetSafeNormal2D();
+        FTransform NeighborBefore,NeighborAfter;
+        const bool Neighbor=Visual->GetInstanceCount()>1;
+        if(Neighbor)Visual->GetInstanceTransform(1,NeighborBefore,true);
+        if(!BreakLocal(Group,0,Point,Dir,12.,4.,nullptr))return false;
+        if(Neighbor && (!Visual->GetInstanceTransform(1,NeighborAfter,true) || !NeighborBefore.Equals(NeighborAfter)))return false;
+        auto* Body=Collider->GetBodyInstance(NAME_None,false,0);
+        if(!Body || Body->GetCollisionEnabled()!=ECollisionEnabled::NoCollision)return false;
+        if(Neighbor)
+        {
+            auto* OtherBody=Collider->GetBodyInstance(NAME_None,false,1);
+            if(!OtherBody || OtherBody->GetCollisionEnabled()==ECollisionEnabled::NoCollision)return false;
+        }
+        Outcomes.Add(Group.Kind==EKind::WoodRail?TEXT("rail_local_fracture_neighbor_preserved"):TEXT("board_local_fracture_neighbor_preserved"));
+        Seen=true;
+    }
+    return !SeenRail && SeenBoard;
+}
+
+void UWTFoliageCrushComponent::EndPlay(const EEndPlayReason::Type Reason)
+{
+    for(auto& State:Leaves)if(State.Actor.IsValid())State.Actor->Destroy();
+    for(auto& Actor:Debris)if(Actor.IsValid())Actor->Destroy();
+    for(auto& Actor:Remainders)if(Actor.IsValid())Actor->Destroy();
+    Leaves.Reset();Debris.Reset();Remainders.Reset();Groups.Reset();
+    Super::EndPlay(Reason);
 }

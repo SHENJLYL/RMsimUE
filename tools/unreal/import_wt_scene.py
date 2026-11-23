@@ -25,6 +25,9 @@ from wt_vertex_opacity import validate_scene_vertex_opacity, validate_vertex_opa
 from wt_runtime_virtual_texture import bind_rvt_world
 from wt_landclass import validate_landclass_surface
 from wt_overview import import_overview
+from prepare_wt_destruction_geometry import HARD_MESHES, SOFT_MESHES
+
+DESTRUCTION_CPU_MESHES = frozenset(HARD_MESHES + SOFT_MESHES)
 
 IMPORT_VERSION = 3
 
@@ -176,6 +179,8 @@ def import_mesh(package,asset_path,spec,collision,mats,cache,cache_file,folder,s
     if 'billboard_bounds_m' in spec:
         signature['billboard_bounds_m']=spec['billboard_bounds_m']
         signature['leaf_adapter']=spec['leaf_adapter']
+    if not collision and name in DESTRUCTION_CPU_MESHES:
+        signature['runtime_cpu_access']=True
     old=cache['assets'].get(asset_path,{})
     mesh=unreal.load_asset(asset_path) if unreal.EditorAssetLibrary.does_asset_exist(asset_path) else None
     saved_file=asset_file(asset_path)
@@ -232,6 +237,8 @@ def import_mesh(package,asset_path,spec,collision,mats,cache,cache_file,folder,s
     if 'billboard_bounds_m' in spec:
         mesh.set_editor_property('negative_bounds_extension',unreal.Vector(0,0,0))
         mesh.set_editor_property('positive_bounds_extension',unreal.Vector(0,0,0))
+    if not collision and name in DESTRUCTION_CPU_MESHES:
+        mesh.set_editor_property('allow_cpu_access', True)
     record=bounds_record(mesh,spec)
     billboard_bounds=extend_billboard_bounds(mesh,spec)
     if not unreal.EditorAssetLibrary.save_loaded_asset(mesh,only_if_is_dirty=False):raise RuntimeError('failed to save mesh '+name)
@@ -269,7 +276,7 @@ def import_scene(source_file):
         manifest_sha256=digest(source_file),source_manifest=str(source_file),engine=str(unreal.SystemLibrary.get_engine_version()),
         import_version=IMPORT_VERSION,
         importer_scripts_sha256={name:digest(Path(__file__).resolve().with_name(name)) for name in
-                                 ('import_wt_scene.py','wt_mission_supplements.py','author_wt_mission_objects.py','wt_materials.py','wt_material_slots.py','wt_mesh_geometry.py','wt_vertex_opacity.py','wt_runtime_virtual_texture.py','wt_tree_alpha.py','wt_landclass.py','wt_overview.py','wt_water.py','wt_rendinst_decals.py','wt_landdetail.py','wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py','wt_object_normals.py', 'wt_lc_reflectance.py', 'wt_grass_alpha_mips.py')},
+                                 ('import_wt_scene.py','wt_mission_supplements.py','author_wt_mission_objects.py','prepare_wt_destruction_geometry.py','wt_materials.py','wt_material_slots.py','wt_mesh_geometry.py','wt_vertex_opacity.py','wt_runtime_virtual_texture.py','wt_tree_alpha.py','wt_landclass.py','wt_overview.py','wt_water.py','wt_rendinst_decals.py','wt_landdetail.py','wt_height_decals.py','wt_ground_microdetails.py','wt_ground_material_verify.py','wt_object_normals.py', 'wt_lc_reflectance.py', 'wt_grass_alpha_mips.py')},
         map_asset=world_path,mesh_results=[],runtime_verified=False,source_limits=source['limitations'])
     def record():save_json(evidence/'report.json',report)
     record()

@@ -1,0 +1,572 @@
+{
+  "objective": {
+    "start_m": [
+      7.86,
+      -6.78
+    ],
+    "goal_m": [
+      -8.32,
+      6.16
+    ],
+    "strict_wall_s": 26,
+    "gyro_enabled": true
+  },
+  "runs": {
+    "previous_best": {
+      "case": "seed-gyro-rate-middle-turn-confirmed-overlay",
+      "result": "passed",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 41.38990807533264,
+      "action_solver_s": 40.900000000000006,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.20174349089826427,
+            "truth_samples": 1737,
+            "checked_poses": 4325,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36522032607170196,
+            "max_truth_interval_s": 0.07499999999999574
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "matched_old_control": {
+      "case": "seed-gyro-rate-middle-stitch-control",
+      "result": "failed",
+      "error": "TimeoutError('route timeout')",
+      "action_status": 5,
+      "action_wall_s": 67.06085205078125,
+      "action_solver_s": 67.78,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "prefix_stitch": {
+      "case": "seed-gyro-rate-middle-stitch-prefix",
+      "result": "passed",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 50.62312173843384,
+      "action_solver_s": 52.305,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.21014846437233156,
+            "truth_samples": 2152,
+            "checked_poses": 4759,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.25348484973090013,
+            "max_truth_interval_s": 0.875
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "applied_prefix_count": 10
+    },
+    "departure_heading": {
+      "case": "seed-gyro-rate-middle-exit-heading",
+      "result": "passed",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 49.6954460144043,
+      "action_solver_s": 56.415000000000006,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.21014648611702638,
+            "truth_samples": 2063,
+            "checked_poses": 4792,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36627734909646303,
+            "max_truth_interval_s": 0.9250000000000007
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "applied_alternate_heading_count": 0
+    },
+    "stationary_amcl_recheck": {
+      "case": "seed-gyro-rate-middle-stationary-localization",
+      "result": "arrival_error",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 44.70548129081726,
+      "action_solver_s": 46.040000000000006,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2685429909097784,
+            "truth_samples": 1880,
+            "checked_poses": 4538,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36180788158069355,
+            "max_truth_interval_s": 0.33000000000000185
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "requested_updates": 0
+    },
+    "lower_landing": {
+      "case": "seed-gyro-rate-middle-lower-landing",
+      "result": "passed",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 40.04574656486511,
+      "action_solver_s": 40.025000000000006,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1589784292714107,
+            "truth_samples": 1654,
+            "checked_poses": 4207,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3633921035777883,
+            "max_truth_interval_s": 0.6750000000000007
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "lower_landing_repeat": {
+      "case": "seed-gyro-rate-middle-lower-landing-repeat",
+      "result": "passed",
+      "error": null,
+      "action_status": 4,
+      "action_wall_s": 46.22840428352356,
+      "action_solver_s": 46.305,
+      "alignment_scope": "terminal event time includes canceled action, not successful crossing time",
+      "verified_gyro_rad_s": 2,
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.20201580004807443,
+            "truth_samples": 1933,
+            "checked_poses": 4493,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36504912300055103,
+            "max_truth_interval_s": 0.11499999999999844
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    }
+  },
+  "regional_clearance": {
+    "regions-three-exit-heading": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.05874279630162454,
+          "truth_samples": 325,
+          "checked_poses": 461,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.6260585399430455,
+          "max_truth_interval_s": 0.054999999999999716
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.04084338081504591,
+          "truth_samples": 342,
+          "checked_poses": 760,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.9512758009483393,
+          "max_truth_interval_s": 0.08000000000000185
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.08552524447109236,
+          "truth_samples": 139,
+          "checked_poses": 211,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 4.721683735443052,
+          "max_truth_interval_s": 0.03500000000000014
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "regions-three-trace-lower-landing": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.07120368376536343,
+          "truth_samples": 309,
+          "checked_poses": 457,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.6242220637462681,
+          "max_truth_interval_s": 0.04499999999999993
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.04528752252424718,
+          "truth_samples": 373,
+          "checked_poses": 802,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.9588515274588507,
+          "max_truth_interval_s": 0.054999999999999716
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.029854513464686296,
+          "truth_samples": 134,
+          "checked_poses": 217,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 4.644267121665152,
+          "max_truth_interval_s": 0.11500000000000199
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    }
+  },
+  "wave_trace": {
+    "case": "regions-three-trace-lower-landing",
+    "attribution_scope": "Surface proximity is diagnostic and does not label an obstacle as ground.",
+    "legs": {
+      "0": {
+        "registration_supported_frames": 7,
+        "marked_returns_away_from_static_walls": 18,
+        "marks_near_authored_surface": 0,
+        "frames_with_marks_near_authored_surface": 0
+      },
+      "1": {
+        "registration_supported_frames": 21,
+        "marked_returns_away_from_static_walls": 34,
+        "marks_near_authored_surface": 17,
+        "frames_with_marks_near_authored_surface": 5,
+        "near_surface_marks_with_synchronized_grid": 15,
+        "near_surface_marks_near_lethal_grid_cell": 2,
+        "map_patch_present": 17,
+        "map_patch_accepted_by_existing_flat_span": 17
+      },
+      "2": {
+        "registration_supported_frames": 13,
+        "marked_returns_away_from_static_walls": 0,
+        "marks_near_authored_surface": 0,
+        "frames_with_marks_near_authored_surface": 0
+      }
+    }
+  },
+  "stall_replay": {
+    "case": "seed-gyro-rate-middle-stitch-control",
+    "approximate_samples_with_occupied_margin": 44,
+    "departure_requires_heading_change": 44,
+    "frequent_map_cells": [
+      [
+        [
+          8.19,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.24,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.29,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.34,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.39,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.44,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.49,
+          3.68
+        ],
+        43
+      ],
+      [
+        [
+          8.54,
+          3.68
+        ],
+        43
+      ]
+    ],
+    "example_samples": [
+      {
+        "elapsed": 10.62,
+        "estimated": [
+          8.396,
+          4.104
+        ],
+        "occupied_margin_cells": 18,
+        "headings_deg": [
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      },
+      {
+        "elapsed": 14.7,
+        "estimated": [
+          8.396,
+          4.116
+        ],
+        "occupied_margin_cells": 12,
+        "headings_deg": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      },
+      {
+        "elapsed": 18.7,
+        "estimated": [
+          8.399,
+          4.111
+        ],
+        "occupied_margin_cells": 16,
+        "headings_deg": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      },
+      {
+        "elapsed": 22.98,
+        "estimated": [
+          8.391,
+          4.111
+        ],
+        "occupied_margin_cells": 16,
+        "headings_deg": [
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      },
+      {
+        "elapsed": 26.18,
+        "estimated": [
+          8.39,
+          4.119
+        ],
+        "occupied_margin_cells": 12,
+        "headings_deg": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      }
+    ]
+  },
+  "physical_speed_categories": [
+    {
+      "case": "seed-gyro-rate-middle-turn-confirmed-overlay",
+      "summary": {
+        "other": {
+          "seconds": 20.745,
+          "distance_m": 42.17,
+          "near_stop_without_brake_s": 1.17,
+          "slow_after_shaping_s": 2.56,
+          "slow_despite_filtered_s": 0.285,
+          "normal_travel_s": 14.975,
+          "physical_brake_s": 1.075,
+          "low_request_s": 0.68
+        },
+        "right": {
+          "seconds": 10.305,
+          "distance_m": 8.497,
+          "normal_travel_s": 2.02,
+          "physical_brake_s": 1.23,
+          "low_request_s": 0.91,
+          "slow_after_shaping_s": 1.47,
+          "near_stop_without_brake_s": 1.935,
+          "slow_despite_filtered_s": 2.74
+        },
+        "left": {
+          "seconds": 9.85,
+          "distance_m": 8.229,
+          "normal_travel_s": 1.1,
+          "slow_despite_filtered_s": 2.61,
+          "slow_after_shaping_s": 1.995,
+          "low_request_s": 3.04,
+          "physical_brake_s": 0.395,
+          "near_stop_without_brake_s": 0.71
+        }
+      }
+    },
+    {
+      "case": "seed-gyro-rate-middle-lower-landing",
+      "summary": {
+        "other": {
+          "seconds": 20.71,
+          "distance_m": 42.009,
+          "near_stop_without_brake_s": 1.2,
+          "slow_after_shaping_s": 2.75,
+          "slow_despite_filtered_s": 0.14,
+          "normal_travel_s": 14.54,
+          "low_request_s": 0.815,
+          "physical_brake_s": 1.265
+        },
+        "right": {
+          "seconds": 8.91,
+          "distance_m": 8.033,
+          "slow_despite_filtered_s": 3.07,
+          "normal_travel_s": 1.185,
+          "low_request_s": 1.61,
+          "slow_after_shaping_s": 1.465,
+          "physical_brake_s": 0.7,
+          "near_stop_without_brake_s": 0.88
+        },
+        "left": {
+          "seconds": 8.645,
+          "distance_m": 8.437,
+          "normal_travel_s": 1.345,
+          "slow_despite_filtered_s": 2.085,
+          "near_stop_without_brake_s": 0.9,
+          "physical_brake_s": 0.67,
+          "slow_after_shaping_s": 1.32,
+          "low_request_s": 2.325
+        }
+      }
+    }
+  ],
+  "source_sha256": {
+    "ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp": "cbee92af51898438a852b7396750ce6d29b9856afd6fd24bf37e38ea0b51bb6e",
+    "ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp": "4050415313a0c4bf8b2dbbc1c9cd1b044c7621ffecc52bd8a2b9ec2e356c66bd",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "0de38dc7287460788e82b17dad197893697ab01ca1540c828b349769e04a8cba",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": "d9dfcf8555bff66e870a1ef6e388e7f5cefa77192e2fe0f7c7419ce202bd1067",
+    "ros2_ws/src/pb_nav2_plugins/src/planning/clearance_planner.cpp": "9ca5c3da9f72fb55559f1872d68a1f91c63cfc2afc177c87a2edfbc1c13a4f1d",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_runner.py": "9cac393ef802b1ce48435245da66e72b64ea7b5c6a841127d2a7422ca2394b5e"
+  },
+  "trials_promoted": false,
+  "terrain_unit_test_groups": 6,
+  "time_gate_passed": false,
+  "mppi_windows_smoke": {
+    "package": "ros2-nav2-mppi-controller-1.1.20-np2py314hc1ae816_22",
+    "archive_sha256": "4ae3a737f8da21273817b004ddd28c0b6679740e49b4f2ac17d2d87385b5d327",
+    "dll_sha256": "ed97bcae19ae4e0e667fc9c1f6e5bd2f5cbdcb42f03017f5f2f55e40b596751c",
+    "isolated_lock_sha256": "15a99747880ad6101614022ec53b6d03179535c4cfdac3b8ef380108149973df",
+    "scope": "Native pluginlib class instantiation only",
+    "native_loader_output": "Instantiated nav2_mppi_controller::MPPIController from C:\\Users\\SHEN\\AppData\\Local\\Temp\\RMSimMppiSmoke-20261122\\mppi-environment\\.pixi\\envs\\default\\Library\\bin\\mppi_controller.dll",
+    "published_navigation_candidate": false
+  }
+}

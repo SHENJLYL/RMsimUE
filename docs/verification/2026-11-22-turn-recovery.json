@@ -1,0 +1,500 @@
+{
+  "scope": "Windows native UE and ROS 2, confirmed physical startup at 2 rad/s",
+  "original_gate": {
+    "start": [
+      7.86,
+      -6.78
+    ],
+    "goal": [
+      -8.32,
+      6.16
+    ],
+    "strict_wall_limit_s": 26
+  },
+  "fast_baseline_wall_s": 46.72048829999767,
+  "experiments": [
+    {
+      "label": "前视点候选",
+      "cross": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-clearance-preview",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 52.167846199998166,
+            "sim_s": 53.725
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                -8.32,
+                6.16
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.20665042569082265,
+              "truth_samples": 2145,
+              "checked_poses": 4868,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.36714443515900363,
+              "max_truth_interval_s": 0.5600000000000023
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      },
+      "platform": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-clearance-preview",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.10908240000208,
+            "sim_s": 5.124999999999998
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 7.172737599998072,
+            "sim_s": 7.199999999999999
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 1.9881123000013758,
+            "sim_s": 1.9949999999999974
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                9.35,
+                6.15
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.09199322117830207,
+              "truth_samples": 247,
+              "checked_poses": 380,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.6406100030606723,
+              "max_truth_interval_s": 0.03500000000000014
+            },
+            {
+              "goal": [
+                7.55,
+                0.0
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.0420281204309132,
+              "truth_samples": 332,
+              "checked_poses": 738,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.9013896769240657,
+              "max_truth_interval_s": 0.030000000000001137
+            },
+            {
+              "goal": [
+                8.95,
+                0.25
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.05650698763606611,
+              "truth_samples": 121,
+              "checked_poses": 191,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 4.692658394411332,
+              "max_truth_interval_s": 0.030000000000001137
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      }
+    },
+    {
+      "label": "仅在物理更新时裁剪车体系速度",
+      "cross": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-single-axis-cap",
+        "status": "failed",
+        "error": "TimeoutError('route timeout')",
+        "timing": [],
+        "clearance": {
+          "status": "failed",
+          "legs": [],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      },
+      "platform": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-single-axis-cap",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.152090400002635,
+            "sim_s": 5.125
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 8.874321700001019,
+            "sim_s": 8.875
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.0875864000008733,
+            "sim_s": 2.1050000000000004
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                9.35,
+                6.15
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.08087978205469652,
+              "truth_samples": 248,
+              "checked_poses": 388,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.6530211113870403,
+              "max_truth_interval_s": 0.054999999999999716
+            },
+            {
+              "goal": [
+                7.55,
+                0.0
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.05037753134270317,
+              "truth_samples": 400,
+              "checked_poses": 836,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.916119759802003,
+              "max_truth_interval_s": 0.03500000000000014
+            },
+            {
+              "goal": [
+                8.95,
+                0.25
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.05368812510743108,
+              "truth_samples": 125,
+              "checked_poses": 194,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 4.697227434577547,
+              "max_truth_interval_s": 0.030000000000001137
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      }
+    },
+    {
+      "label": "低速驶离并保留单次限速试验",
+      "cross": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-clearance-departure",
+        "status": "failed",
+        "error": "RuntimeError('action failed')",
+        "timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 11.977434899999935,
+            "sim_s": 14.825
+          }
+        ],
+        "clearance": {
+          "status": "failed",
+          "legs": [
+            {
+              "goal": [
+                -8.32,
+                6.16
+              ],
+              "status": 6,
+              "endpoint_error_m": 20.84573028647974,
+              "truth_samples": 546,
+              "checked_poses": 1222,
+              "occupied_footprints": 38,
+              "min_perimeter_clearance_m": 0.36074165357887544,
+              "max_truth_interval_s": 0.9550000000000018
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      },
+      "platform": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-clearance-departure",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 4.8220117000018945,
+            "sim_s": 4.824999999999999
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 6.772611399999732,
+            "sim_s": 6.774999999999999
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.3022879999989527,
+            "sim_s": 2.3049999999999997
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                9.35,
+                6.15
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.07361554661610782,
+              "truth_samples": 235,
+              "checked_poses": 379,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.6155770271257073,
+              "max_truth_interval_s": 0.03500000000000014
+            },
+            {
+              "goal": [
+                7.55,
+                0.0
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.07586896145789623,
+              "truth_samples": 312,
+              "checked_poses": 747,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.924274931869554,
+              "max_truth_interval_s": 0.030000000000001137
+            },
+            {
+              "goal": [
+                8.95,
+                0.25
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.04716007268590033,
+              "truth_samples": 132,
+              "checked_poses": 208,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 4.661024186517544,
+              "max_truth_interval_s": 0.030000000000001137
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      }
+    },
+    {
+      "label": "单独验证低速驶离",
+      "cross": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-clearance-departure-isolated",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 40.61244640000223,
+            "sim_s": 43.97
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                -8.32,
+                6.16
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.22905444617136053,
+              "truth_samples": 1710,
+              "checked_poses": 4378,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.36193329816616693,
+              "max_truth_interval_s": 0.9499999999999993
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      },
+      "platform": {
+        "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-clearance-departure-isolated",
+        "status": "passed",
+        "error": null,
+        "timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 6.387422899999365,
+            "sim_s": 6.41
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 7.98484660000031,
+            "sim_s": 7.994999999999997
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 1.9574227000011888,
+            "sim_s": 1.9400000000000013
+          }
+        ],
+        "clearance": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                9.35,
+                6.15
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.082014427529158,
+              "truth_samples": 302,
+              "checked_poses": 439,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.6412966307511925,
+              "max_truth_interval_s": 0.054999999999999716
+            },
+            {
+              "goal": [
+                7.55,
+                0.0
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.06460037326184873,
+              "truth_samples": 366,
+              "checked_poses": 790,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.9248557710480971,
+              "max_truth_interval_s": 0.03500000000000014
+            },
+            {
+              "goal": [
+                8.95,
+                0.25
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.06501127975429963,
+              "truth_samples": 120,
+              "checked_poses": 188,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 4.656776904694049,
+              "max_truth_interval_s": 0.060000000000002274
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "departure_log_entries": 0
+      }
+    }
+  ],
+  "bounded_pacing_trial": {
+    "evidence": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-bounded-clock",
+    "status": "passed",
+    "error": null,
+    "timing": [
+      {
+        "goal": [
+          -8.32,
+          6.16
+        ],
+        "wall_s": 46.23884429999816,
+        "sim_s": 46.175
+      }
+    ],
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.2251752633141345,
+          "truth_samples": 1928,
+          "checked_poses": 4646,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.3666026616984155,
+          "max_truth_interval_s": 0.045000000000001705
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "departure_log_entries": 0,
+    "realignment_count": 36,
+    "total_discarded_deadline_debt_s": 2.274798
+  }
+}

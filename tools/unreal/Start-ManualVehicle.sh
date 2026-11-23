@@ -102,6 +102,10 @@ fi
 
 run_args=("$project" '/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode'
     -game -windowed -ResX=1600 -ResY=1000 -NoSplash "-MeshRigFile=\"$rig\"" "-MapFile=\"$map_file\"" "-SpawnId=\"$spawn_id\"")
+if [[ "$map_file" == "$repo/assets/maps/rmuc2027/map.json" ]]; then
+    run_args+=(-CustomConfig=RMSimGymLumen -vulkan -sm6)
+    if ! $capture_only; then run_args+=('-ExecCmds="r.ScreenPercentage 50"' -RMSimViewportHz=120); fi
+fi
 if $training; then run_args+=(-TrainingMode); fi
 if ! $kinematic_preview; then run_args+=(-ContactPhysics); fi
 if $ros_bridge; then

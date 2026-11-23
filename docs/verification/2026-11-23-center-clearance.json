@@ -1,0 +1,255 @@
+{
+  "expected_curve_clearance_m": 0.84,
+  "inflation_radius_m": 0.45,
+  "reference_profile": "seed-gyro-max-configured-bag-five-single-stop-profile.yaml",
+  "corrected_profile_sha256": "d6b1820cf51deb7810021830aae05808d6bb6425a714a028396bf9062b3c803f",
+  "only_profile_changes": [
+    "local_costmap inflation_radius",
+    "global_costmap inflation_radius"
+  ],
+  "cases": {
+    "seed-gyro-max-configured-center-arc84": {
+      "artifact": "artifacts/navigation/cross-field-turns-20261122/seed-gyro-max-configured-center-arc84",
+      "status": "failed",
+      "error": "TimeoutError('route timeout')",
+      "wall_and_sim_s": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "bag_review": true,
+      "sensor_integrity": {
+        "common_timestamps": 809,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 34,
+        "publisher": {
+          "published_scans": 843,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [
+        "localizer_restarted",
+        "scene_draw_hitch",
+        "raw_lidar_gap"
+      ],
+      "point_lio_starts": 2,
+      "runtime_parameters_sha256": "00ca544542972df4d8b5228bb8600c456b598703876af3b6c913754aaa3cdc11"
+    },
+    "seed-gyro-max-configured-center-arc84-repeat": {
+      "artifact": "artifacts/navigation/cross-field-turns-20261122/seed-gyro-max-configured-center-arc84-repeat",
+      "status": "passed",
+      "error": null,
+      "wall_and_sim_s": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 38.9879959999962,
+          "sim_s": 38.855,
+          "wall_since_rviz_ready_s": 39.60348309999972,
+          "sim_since_rviz_ready_s": 39.464999999999996
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2335569783497264,
+            "truth_samples": 1607,
+            "checked_poses": 5471,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.4155292702454201,
+            "max_truth_interval_s": 0.060000000000002274
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "bag_review": true,
+      "sensor_integrity": {
+        "common_timestamps": 612,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 612,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [
+        "scene_draw_hitch"
+      ],
+      "point_lio_starts": 1,
+      "runtime_parameters_sha256": "46165d60473c97c2de619f39fb14e5b46b51f89d56fb4d17e4fe9bb77b648058"
+    },
+    "regions-three-center-arc84": {
+      "artifact": "artifacts/navigation/cross-field-turns-20261122/regions-three-center-arc84",
+      "status": "passed",
+      "error": null,
+      "wall_and_sim_s": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 6.249622900002578,
+          "sim_s": 6.105,
+          "wall_since_rviz_ready_s": 6.697340200000326,
+          "sim_since_rviz_ready_s": 6.5
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 9.58204939999996,
+          "sim_s": 9.600000000000001,
+          "wall_since_rviz_ready_s": 17.283985800000664,
+          "sim_since_rviz_ready_s": 17.095
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 2.2188905000002705,
+          "sim_s": 2.2550000000000026,
+          "wall_since_rviz_ready_s": 20.52077019999706,
+          "sim_since_rviz_ready_s": 20.35
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09640510912367271,
+            "truth_samples": 299,
+            "checked_poses": 576,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.7302477499217346,
+            "max_truth_interval_s": 0.054999999999999716
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1696673813937508,
+            "truth_samples": 424,
+            "checked_poses": 1299,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9089593301646985,
+            "max_truth_interval_s": 0.030000000000001137
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.12026393524564748,
+            "truth_samples": 129,
+            "checked_poses": 312,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.636031413419431,
+            "max_truth_interval_s": 0.0449999999999946
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "bag_review": true,
+      "sensor_integrity": {
+        "common_timestamps": 440,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 440,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [
+        "game_tick_stall"
+      ],
+      "point_lio_starts": 1,
+      "runtime_parameters_sha256": "5ed622af5c44779356dcc9cd6ceed32c0265a4f0f66ffd76ae756c648348750f"
+    },
+    "seed-gyro-max-configured-center-arc84-lio": {
+      "artifact": "artifacts/navigation/cross-field-turns-20261122/seed-gyro-max-configured-center-arc84-lio",
+      "status": "passed",
+      "error": null,
+      "wall_and_sim_s": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 38.53857799999969,
+          "sim_s": 38.11,
+          "wall_since_rviz_ready_s": 38.57697109999572,
+          "sim_since_rviz_ready_s": 38.11
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.189767460890582,
+            "truth_samples": 1587,
+            "checked_poses": 5529,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.4659859944523328,
+            "max_truth_interval_s": 0.09499999999999886
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "bag_review": true,
+      "sensor_integrity": {
+        "common_timestamps": 609,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 609,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [
+        "scene_draw_hitch"
+      ],
+      "point_lio_starts": 1,
+      "runtime_parameters_sha256": "23d690649e182d20cff8387f3cf322d3b02419ca8eebe4c759c6f976094418fc"
+    }
+  }
+}

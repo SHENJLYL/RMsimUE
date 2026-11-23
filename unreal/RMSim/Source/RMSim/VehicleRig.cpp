@@ -191,9 +191,9 @@ bool AVehicleRig::LoadCanonical(const FString& Filename, FString& Error)
         return Fail(Error, TEXT("invalid gimbal mapping"));
     for (const auto& Value : *SensorData)
         if (!AddSensor(Value->AsObject(), Error)) return false;
-    UE_LOG(LogRMSim, Display, TEXT("IMPORTED %s: %d links, %d joints, %d cameras; kinematic visualization only"),
+    bCanonicalRig = true;
+    UE_LOG(LogRMSim, Display, TEXT("IMPORTED %s: %d links, %d joints, %d cameras; canonical rig ready"),
         *VehicleId, Links.Num(), Joints.Num(), Cameras.Num());
-    UE_LOG(LogRMSim, Warning, TEXT("Inertials/collision metadata are retained in canonical source but not used for dynamics in this lab."));
     return true;
 }
 

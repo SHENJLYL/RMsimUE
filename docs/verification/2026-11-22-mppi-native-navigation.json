@@ -1,0 +1,1122 @@
+{
+  "criterion": {
+    "start_m": [
+      7.86,
+      -6.78
+    ],
+    "goal_m": [
+      -8.32,
+      6.16
+    ],
+    "gyro_setpoint_rad_s": 2.0,
+    "action_wall_s_strictly_less_than": 26.0
+  },
+  "cases": {
+    "short": {
+      "diagnostics": {
+        "case": "seed-gyro-rate-middle-mppi-follow-short-index",
+        "duration": {
+          "wall_s": 3.2365148067474365,
+          "physics_s": 3.4800000000000004,
+          "terminal_status": [
+            4
+          ]
+        },
+        "controller_logs": {
+          "missed_controller_periods": 0,
+          "prediction_failures": 0,
+          "hard_brake": 0,
+          "braking_cap": 0,
+          "loaded_predictor": 1
+        },
+        "sampled_velocity": {
+          "other": {
+            "samples": 5,
+            "median_mppi_proposal_m_s": 0.685,
+            "median_measured_odom_m_s": 0.704
+          }
+        }
+      },
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              6.82,
+              -4.62
+            ],
+            "status": 4,
+            "actual": [
+              6.928046999367994,
+              -4.684073690664027
+            ],
+            "estimated": [
+              6.808593397265387,
+              -4.626785364755982,
+              20.199959999
+            ],
+            "error_m": 0.12561684563678793
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.858226852805723,
+          -6.782848419314705,
+          0.18486742042358822
+        ],
+        "action_scope": "short-route steering at 5 rad/s",
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 2,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 2.003038214763436
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              6.82,
+              -4.62
+            ],
+            "wall_s": 3.2522249000003285,
+            "sim_s": 3.4799999999999986
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              6.82,
+              -4.62
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.12561684563678793,
+            "truth_samples": 380,
+            "checked_poses": 524,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3593646746687291,
+            "max_truth_interval_s": 0.05000000000000071
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "launch_phase": "stopped"
+    },
+    "stock_cross_field": {
+      "diagnostics": {
+        "case": "seed-gyro-rate-middle-mppi-predictor",
+        "duration": {
+          "wall_s": 67.04829859733582,
+          "physics_s": 68.68,
+          "terminal_status": [
+            5
+          ]
+        },
+        "controller_logs": {
+          "missed_controller_periods": 9,
+          "prediction_failures": 0,
+          "hard_brake": 60,
+          "braking_cap": 1215,
+          "loaded_predictor": 1
+        },
+        "sampled_velocity": {
+          "other": {
+            "samples": 25,
+            "median_mppi_proposal_m_s": 3.086,
+            "median_measured_odom_m_s": 1.869
+          },
+          "right_bend": {
+            "samples": 18,
+            "median_mppi_proposal_m_s": 3.322,
+            "median_measured_odom_m_s": 0.508
+          },
+          "left_bend": {
+            "samples": 41,
+            "median_mppi_proposal_m_s": 3.81,
+            "median_measured_odom_m_s": 0.084
+          }
+        }
+      },
+      "route": {
+        "legs": [],
+        "status": "failed",
+        "actual_start": [
+          7.860355882277057,
+          -6.780642094096134,
+          0.27605558931045715
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.3199999999995082,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.3225336829479521
+          }
+        },
+        "error": "TimeoutError('route timeout')",
+        "action_timing": []
+      },
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "launch_phase": "stopped",
+      "unfinished_segment_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": null,
+            "endpoint_error_m": 11.39437866847159,
+            "truth_samples": 2765,
+            "checked_poses": 4809,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3626623582112769,
+            "max_truth_interval_s": 0.3550000000000004
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "stock_platform": {
+      "diagnostics": {
+        "case": "regions-three-mppi-predictor",
+        "duration": {
+          "wall_s": 28.39102077484131,
+          "physics_s": 28.375,
+          "terminal_status": [
+            4,
+            4,
+            4
+          ]
+        },
+        "controller_logs": {
+          "missed_controller_periods": 2,
+          "prediction_failures": 0,
+          "hard_brake": 24,
+          "braking_cap": 383,
+          "loaded_predictor": 1
+        },
+        "sampled_velocity": {
+          "right_bend": {
+            "samples": 25,
+            "median_mppi_proposal_m_s": 3.862,
+            "median_measured_odom_m_s": 0.258
+          },
+          "other": {
+            "samples": 9,
+            "median_mppi_proposal_m_s": 1.193,
+            "median_measured_odom_m_s": 0.53
+          }
+        }
+      },
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.327095777236492,
+              6.226270653617555
+            ],
+            "estimated": [
+              9.30520525870981,
+              6.1507995972580165,
+              24.299959999
+            ],
+            "error_m": 0.07963551986173889
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.612252180554697,
+              -0.014652939160898264
+            ],
+            "estimated": [
+              7.558378350829886,
+              -0.002296750430785366,
+              42.69968
+            ],
+            "error_m": 0.06395344095408495
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.937848049951501,
+              0.24820070423206794
+            ],
+            "estimated": [
+              8.899280877780573,
+              0.25916884203120016,
+              46.299959999
+            ],
+            "error_m": 0.01228443548730206
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 6.370798500000092,
+            "sim_s": 6.399999999999999
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 17.408907400000317,
+            "sim_s": 17.405
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.601759800000764,
+            "sim_s": 2.5800000000000054
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.07963551986173889,
+            "truth_samples": 298,
+            "checked_poses": 443,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.5893049273787849,
+            "max_truth_interval_s": 0.07000000000000028
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.06395344095408495,
+            "truth_samples": 746,
+            "checked_poses": 1179,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9189557096536893,
+            "max_truth_interval_s": 0.0400000000000027
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.01228443548730206,
+            "truth_samples": 147,
+            "checked_poses": 223,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.680375968641693,
+            "max_truth_interval_s": 0.035000000000003695
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "launch_phase": "stopped"
+    },
+    "guarded_comparison_cross_field": {
+      "diagnostics": {
+        "case": "seed-gyro-rate-middle-mppi-arbitration",
+        "duration": {
+          "wall_s": 46.47764492034912,
+          "physics_s": 48.06,
+          "terminal_status": [
+            4
+          ]
+        },
+        "controller_logs": {
+          "missed_controller_periods": 9,
+          "prediction_failures": 0,
+          "hard_brake": 59,
+          "braking_cap": 395,
+          "loaded_predictor": 1
+        },
+        "sampled_velocity": {
+          "other": {
+            "samples": 32,
+            "median_mppi_proposal_m_s": 3.143,
+            "median_measured_odom_m_s": 1.7
+          },
+          "right_bend": {
+            "samples": 12,
+            "median_mppi_proposal_m_s": 3.486,
+            "median_measured_odom_m_s": 0.955
+          },
+          "left_bend": {
+            "samples": 14,
+            "median_mppi_proposal_m_s": 4.255,
+            "median_measured_odom_m_s": 0.568
+          }
+        }
+      },
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.303441769198843,
+              6.35530159522549
+            ],
+            "estimated": [
+              -8.29859170040371,
+              6.152689177442509,
+              63.299800003
+            ],
+            "error_m": 0.19600226556059377
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860068227402926,
+          -6.780475470187041,
+          0.2572578592539547
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.2749999999992934,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.242375855619767
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 46.477999499999896,
+            "sim_s": 48.035
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.19600226556059377,
+            "truth_samples": 1945,
+            "checked_poses": 4636,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3716765613614852,
+            "max_truth_interval_s": 0.6099999999999994
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "launch_phase": "stopped",
+      "reported_switches_to_nominal": 13
+    },
+    "guarded_comparison_platform": {
+      "diagnostics": {
+        "case": "regions-three-mppi-arbitration",
+        "duration": {
+          "wall_s": 20.570876121520996,
+          "physics_s": 20.575000000000003,
+          "terminal_status": [
+            4,
+            4,
+            4
+          ]
+        },
+        "controller_logs": {
+          "missed_controller_periods": 1,
+          "prediction_failures": 0,
+          "hard_brake": 0,
+          "braking_cap": 93,
+          "loaded_predictor": 1
+        },
+        "sampled_velocity": {
+          "right_bend": {
+            "samples": 15,
+            "median_mppi_proposal_m_s": 2.559,
+            "median_measured_odom_m_s": 0.77
+          },
+          "other": {
+            "samples": 7,
+            "median_mppi_proposal_m_s": 1.09,
+            "median_measured_odom_m_s": 0.81
+          }
+        }
+      },
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.350369466484032,
+              6.244102776433431
+            ],
+            "estimated": [
+              9.351407444294887,
+              6.157898729763139,
+              20.699959999
+            ],
+            "error_m": 0.09410350173061086
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.556884925202874,
+              -0.0471584023381447
+            ],
+            "estimated": [
+              7.5147677772128,
+              0.007935260412648582,
+              32.39968
+            ],
+            "error_m": 0.047658337215386544
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.911270345277709,
+              0.20881793238629076
+            ],
+            "estimated": [
+              8.888474961820656,
+              0.21582820735028907,
+              35.499760002
+            ],
+            "error_m": 0.056532723690336795
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.78504459999931,
+            "sim_s": 5.800000000000001
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 10.70305399999961,
+            "sim_s": 10.7
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.0837602999999945,
+            "sim_s": 2.1000000000000014
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09410350173061086,
+            "truth_samples": 272,
+            "checked_poses": 412,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6103366936615378,
+            "max_truth_interval_s": 0.04499999999999815
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.047658337215386544,
+            "truth_samples": 471,
+            "checked_poses": 911,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.8965548019446613,
+            "max_truth_interval_s": 0.03999999999999915
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.056532723690336795,
+            "truth_samples": 124,
+            "checked_poses": 196,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.7099521923763215,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "launch_phase": "stopped"
+    },
+    "seed-gyro-rate-middle-mppi-follow-short": {
+      "package_index_errors": [
+        "[FATAL] [1795358500.986298800] [controller_server]: Failed to create controller. Exception: According to the loaded plugin descriptions the class nav2_mppi_controller::MPPIController with base class type nav2_core::Controller does not exist. Declared types are  pb_omni_pid_pursuit_controller::OmniPidPursuitController"
+      ],
+      "route": {
+        "legs": [],
+        "status": "failed",
+        "error": "TimeoutError('route timeout')",
+        "action_timing": []
+      }
+    },
+    "seed-gyro-rate-middle-mppi-follow-short-overlay": {
+      "package_index_errors": [
+        "[FATAL] [1795358734.861577300] [controller_server]: Failed to create controller. Exception: According to the loaded plugin descriptions the class nav2_mppi_controller::MPPIController with base class type nav2_core::Controller does not exist. Declared types are  pb_omni_pid_pursuit_controller::OmniPidPursuitController"
+      ],
+      "route": {
+        "legs": [],
+        "status": "failed",
+        "error": "RuntimeError('Navigation launcher stopped')",
+        "action_timing": []
+      }
+    }
+  },
+  "isolated_runtime": {
+    "package": "ros2-nav2-mppi-controller-1.1.20-np2py314hc1ae816_22",
+    "files": {
+      "bin/mppi_controller.dll": "ed97bcae19ae4e0e667fc9c1f6e5bd2f5cbdcb42f03017f5f2f55e40b596751c",
+      "bin/mppi_critics.dll": "23dba0908410c8ef54281674e45f82cb75fb737aad1ba5b6c61bd5652a5e5dbd",
+      "share/ament_index/resource_index/nav2_core__pluginlib__plugin/nav2_mppi_controller": "76687f56c41b181e6ae31d6a997507d524a2cd5a2e7b0a8768fce31fb00c9d0b",
+      "share/ament_index/resource_index/nav2_mppi_controller__pluginlib__plugin/nav2_mppi_controller": "1c91390f43fa29db0f9b3f73db26f53e28bf59f86e816dc89fa7460b7aa08cd9",
+      "share/ament_index/resource_index/package_run_dependencies/nav2_mppi_controller": "e50d6417306cdff4971fd48cdc7924d9f8e37c5355e45150cdb86604c0664447",
+      "share/ament_index/resource_index/packages/nav2_mppi_controller": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "share/ament_index/resource_index/parent_prefix_path/nav2_mppi_controller": "97f6dc9a198dec62053f2d296823b1f7dc0aeb3a31bff7ec8fba9331ac62e635",
+      "share/nav2_mppi_controller/critics.xml": "71df392cdf71b53f9d0637884571375fb33ca1cc738188d024eb330ba00cf141",
+      "share/nav2_mppi_controller/mppic.xml": "4e248ffcbedd26070c6912ab531d2ecd52069d5211e6594da2644a392506a1d0",
+      "share/nav2_mppi_controller/package.xml": "50f56eb7b79b5098b4e24cc689d8a5e8de5b850f4f5ee219c42c843df8e2e74d"
+    }
+  },
+  "runtime_integration": "Predict the translation in the navigation frame. Pass every candidate through the original full rotating body and measured stopping checks.",
+  "deployed_default": false,
+  "completed_timing_gate": false,
+  "code_sha256": {
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": "2862906f44c211dbd359c637a6d2420e4d9d950d7b209c5719455f3040ceb77d",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp": "9e69ba2ad73b3dbcb940a2f1dc2bfa0f2bf7b48307418cd25aaeb8420e83b9de",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "0de38dc7287460788e82b17dad197893697ab01ca1540c828b349769e04a8cba"
+  },
+  "actuated_model": {
+    "runtime": {
+      "package": "ros2-nav2-mppi-controller-1.1.20-np2py314hc1ae816_22",
+      "files": {
+        "bin/mppi_controller.dll": "d3e098e002ead8501d8264314eacf533e6cc44af09d7d98e404a7a14c203d8e1",
+        "bin/mppi_critics.dll": "2270e50c9934f2a12b4233117b272c624ff5901c3181dc59b9397a90c6b9a660",
+        "share/ament_index/resource_index/nav2_core__pluginlib__plugin/nav2_mppi_controller": "76687f56c41b181e6ae31d6a997507d524a2cd5a2e7b0a8768fce31fb00c9d0b",
+        "share/ament_index/resource_index/nav2_mppi_controller__pluginlib__plugin/nav2_mppi_controller": "1c91390f43fa29db0f9b3f73db26f53e28bf59f86e816dc89fa7460b7aa08cd9",
+        "share/ament_index/resource_index/package_run_dependencies/nav2_mppi_controller": "e50d6417306cdff4971fd48cdc7924d9f8e37c5355e45150cdb86604c0664447",
+        "share/ament_index/resource_index/packages/nav2_mppi_controller": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "share/ament_index/resource_index/parent_prefix_path/nav2_mppi_controller": "97f6dc9a198dec62053f2d296823b1f7dc0aeb3a31bff7ec8fba9331ac62e635",
+        "share/nav2_mppi_controller/critics.xml": "71df392cdf71b53f9d0637884571375fb33ca1cc738188d024eb330ba00cf141",
+        "share/nav2_mppi_controller/mppic.xml": "4e248ffcbedd26070c6912ab531d2ecd52069d5211e6594da2644a392506a1d0",
+        "share/nav2_mppi_controller/package.xml": "50f56eb7b79b5098b4e24cc689d8a5e8de5b850f4f5ee219c42c843df8e2e74d"
+      },
+      "upstream": "a097086719c88f781aa59788eca29ac6ca5e56db",
+      "model": "RmsimSwerve"
+    },
+    "profile_sha256": "bab5c4d27054350922ad80d7ed4597d3832382bda89988162285515aa2a6522a",
+    "response_source_sha256": "3d84c58e7df5093546662f7497d3085dc246103449c3b69bad746c894721981f",
+    "swerve_test": "measured-start acceleration, lateral turn and stop-before-reverse passed",
+    "cases": {
+      "seed-gyro-rate-middle-mppi-actuated-follow-short": {
+        "evaluation": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                6.82,
+                -4.62
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.1766613893401236,
+              "truth_samples": 213,
+              "checked_poses": 356,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.36753527758464877,
+              "max_truth_interval_s": 0.125
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "diagnostic": {
+          "case": "seed-gyro-rate-middle-mppi-actuated-follow-short",
+          "duration": {
+            "wall_s": 3.13590145111084,
+            "physics_s": 3.91,
+            "terminal_status": [
+              4
+            ]
+          },
+          "controller_logs": {
+            "missed_controller_periods": 0,
+            "prediction_failures": 0,
+            "hard_brake": 0,
+            "braking_cap": 0,
+            "loaded_predictor": 1
+          },
+          "sampled_velocity": {
+            "other": {
+              "samples": 5,
+              "median_mppi_proposal_m_s": 0.299,
+              "median_measured_odom_m_s": 0.203
+            }
+          }
+        }
+      },
+      "seed-gyro-rate-middle-mppi-actuated": {
+        "evaluation": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                -8.32,
+                6.16
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.17611325076814338,
+              "truth_samples": 2438,
+              "checked_poses": 6102,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.37063024889020735,
+              "max_truth_interval_s": 0.4750000000000014
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "diagnostic": {
+          "case": "seed-gyro-rate-middle-mppi-actuated",
+          "duration": {
+            "wall_s": 59.15900707244873,
+            "physics_s": 61.900000000000006,
+            "terminal_status": [
+              4
+            ]
+          },
+          "controller_logs": {
+            "missed_controller_periods": 10,
+            "prediction_failures": 0,
+            "hard_brake": 50,
+            "braking_cap": 720,
+            "loaded_predictor": 1
+          },
+          "sampled_velocity": {
+            "other": {
+              "samples": 46,
+              "median_mppi_proposal_m_s": 1.992,
+              "median_measured_odom_m_s": 1.194
+            },
+            "right_bend": {
+              "samples": 15,
+              "median_mppi_proposal_m_s": 1.828,
+              "median_measured_odom_m_s": 0.774
+            },
+            "left_bend": {
+              "samples": 14,
+              "median_mppi_proposal_m_s": 1.98,
+              "median_measured_odom_m_s": 0.809
+            }
+          }
+        }
+      },
+      "regions-three-mppi-actuated": {
+        "evaluation": {
+          "status": "passed",
+          "legs": [
+            {
+              "goal": [
+                9.35,
+                6.15
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.09855413263282597,
+              "truth_samples": 249,
+              "checked_poses": 399,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.5679177846816433,
+              "max_truth_interval_s": 0.10000000000000142
+            },
+            {
+              "goal": [
+                7.55,
+                0.0
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.05748447224644112,
+              "truth_samples": 419,
+              "checked_poses": 843,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 0.9348871087523941,
+              "max_truth_interval_s": 0.10000000000000142
+            },
+            {
+              "goal": [
+                8.95,
+                0.25
+              ],
+              "status": 4,
+              "endpoint_error_m": 0.0294930274863663,
+              "truth_samples": 135,
+              "checked_poses": 209,
+              "occupied_footprints": 0,
+              "min_perimeter_clearance_m": 4.663653254290848,
+              "max_truth_interval_s": 0.045000000000001705
+            }
+          ],
+          "half_width_m": 0.27,
+          "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+        },
+        "diagnostic": {
+          "case": "regions-three-mppi-actuated",
+          "duration": {
+            "wall_s": 18.3617045879364,
+            "physics_s": 18.37,
+            "terminal_status": [
+              4,
+              4,
+              4
+            ]
+          },
+          "controller_logs": {
+            "missed_controller_periods": 1,
+            "prediction_failures": 0,
+            "hard_brake": 4,
+            "braking_cap": 113,
+            "loaded_predictor": 1
+          },
+          "sampled_velocity": {
+            "right_bend": {
+              "samples": 12,
+              "median_mppi_proposal_m_s": 0.896,
+              "median_measured_odom_m_s": 0.779
+            },
+            "other": {
+              "samples": 10,
+              "median_mppi_proposal_m_s": 0.913,
+              "median_measured_odom_m_s": 0.784
+            }
+          }
+        }
+      }
+    },
+    "scope": "The steering model and a 512-sample batch were tested together in the isolated Windows run."
+  },
+  "all_speed_comparison": {
+    "diagnostic": {
+      "case": "seed-gyro-rate-middle-mppi-compare-all",
+      "duration": {
+        "wall_s": 48.160584926605225,
+        "physics_s": 50.745000000000005,
+        "terminal_status": [
+          4
+        ]
+      },
+      "controller_logs": {
+        "missed_controller_periods": 4,
+        "prediction_failures": 0,
+        "hard_brake": 95,
+        "braking_cap": 389,
+        "loaded_predictor": 1
+      },
+      "sampled_velocity": {
+        "other": {
+          "samples": 36,
+          "median_mppi_proposal_m_s": 3.289,
+          "median_measured_odom_m_s": 1.481
+        },
+        "right_bend": {
+          "samples": 13,
+          "median_mppi_proposal_m_s": 3.399,
+          "median_measured_odom_m_s": 0.702
+        },
+        "left_bend": {
+          "samples": 12,
+          "median_mppi_proposal_m_s": 4.342,
+          "median_measured_odom_m_s": 0.768
+        }
+      }
+    },
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.20583855439186347,
+          "truth_samples": 1988,
+          "checked_poses": 4733,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.3633499501866986,
+          "max_truth_interval_s": 0.7199999999999989
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "runtime_changes_retained": false
+  },
+  "default_short_smoke": {
+    "case": "seed-gyro-rate-middle-no-mppi-follow-short",
+    "mppi_active": false,
+    "default_profile_sha256": "0de38dc7287460788e82b17dad197893697ab01ca1540c828b349769e04a8cba",
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            6.82,
+            -4.62
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.12984714745028825,
+          "truth_samples": 192,
+          "checked_poses": 326,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.36545834513302555,
+          "max_truth_interval_s": 0.08500000000000085
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    }
+  }
+}

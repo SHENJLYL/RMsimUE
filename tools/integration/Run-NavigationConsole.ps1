@@ -1,4 +1,4 @@
-param([ValidateSet('rmuc2027','import_lab')][string]$Scene='rmuc2027',[string]$EngineRoot='E:/simulator-tools/UE_5.8',[string]$OutputDirectory='', [int]$Port=9451, [int]$Domain=71, [switch]$NoRviz,[switch]$Offscreen,[switch]$NoRhi,[switch]$ProfileSensorTiming,[switch]$ProfileMujocoTiming,[int]$ProfileFrames=0,[switch]$VerifyLidarQueries,[switch]$LidarSerialQuery,[double]$ViewportHz=60,[ValidateScript({$_ -eq 0 -or ($_ -ge 1 -and $_ -le 60)})][double]$CameraHz=0,[switch]$PaceRealTime,[ValidateSet('performance','system')][string]$CpuPolicy='performance',[ValidateSet('simulation','reality')][string]$ControlProfile='simulation',[string]$NavigationSource='',[string]$LocalizationMapYaml='',[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetX=0,[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetY=0,[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetYaw=0,[string]$NavigationFollowProfile='',[string]$LidarProfile='',[ValidateSet(0.001,0.002,0.005,0.01)][double]$SimStep=0.005,[double]$RunSeconds=0,[ValidateSet('chaos','mujoco')][string]$PhysicsBackend='mujoco',[string]$MujocoModel='')
+param([ValidateSet('rmuc2027','import_lab')][string]$Scene='rmuc2027',[string]$EngineRoot='E:/simulator-tools/UE_5.8',[string]$OutputDirectory='', [int]$Port=9451, [int]$Domain=71, [switch]$NoRviz,[switch]$Offscreen,[switch]$Fullscreen,[ValidateRange(64,16384)][int]$Width,[ValidateRange(64,16384)][int]$Height,[switch]$ViewerTimingDiagnostic,[switch]$ViewerContinuousRenderDiagnostic,[switch]$NoRhi,[switch]$ProfileSensorTiming,[switch]$ProfileMujocoTiming,[int]$ProfileFrames=0,[switch]$VerifyLidarQueries,[switch]$LidarSerialQuery,[double]$ViewportHz=60,[ValidateScript({$_ -eq 0 -or ($_ -ge 1 -and $_ -le 60)})][double]$CameraHz=0,[switch]$PaceRealTime,[switch]$OperatorGyro=$true,[switch]$NoOperatorGyro,[ValidateSet('performance','system')][string]$CpuPolicy='performance',[ValidateSet('simulation','reality')][string]$ControlProfile='simulation',[string]$NavigationSource='',[string]$LocalizationMapYaml='',[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetX=0,[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetY=0,[ValidateScript({-not [double]::IsNaN($_) -and -not [double]::IsInfinity($_)})][double]$InitialPoseOffsetYaw=0,[string]$NavigationFollowProfile='',[string]$LidarProfile='',[ValidateSet(0.001,0.002,0.005,0.01)][double]$SimStep=0.005,[double]$RunSeconds=0,[ValidateSet('chaos','mujoco')][string]$PhysicsBackend='mujoco',[string]$MujocoModel='',[switch]$MujocoViewer,[ValidateRange(50,100)][int]$RenderScale=100)
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 . (Join-Path $root 'ros2_ws/install_control/local_setup.ps1')
@@ -12,6 +12,12 @@ $arguments+=@('--physics-backend',$PhysicsBackend)
 if($MujocoModel){$arguments+=@('--mujoco-model',[IO.Path]::GetFullPath($MujocoModel))}
 if($NoRviz){$arguments+='--no-rviz'}
 if($Offscreen){$arguments+='--offscreen'}
+if($Fullscreen){$arguments+='--fullscreen'}
+if($PSBoundParameters.ContainsKey('Width')){$arguments+=@('--width',$Width)}
+if($PSBoundParameters.ContainsKey('Height')){$arguments+=@('--height',$Height)}
+if($MujocoViewer){$arguments+='--mujoco-viewer'}
+if($ViewerTimingDiagnostic){$arguments+='--viewer-timing-diagnostic'}
+if($ViewerContinuousRenderDiagnostic){$arguments+='--viewer-continuous-render-diagnostic'}
 if($NoRhi){$arguments+='--no-rhi'}
 if($ProfileSensorTiming){$arguments+='--profile-sensor-timing'}
 if($ProfileMujocoTiming){$arguments+='--profile-mujoco-timing'}
@@ -19,7 +25,9 @@ if($ProfileFrames){$arguments+=@('--profile-frames',$ProfileFrames)}
 if($VerifyLidarQueries){$arguments+='--verify-lidar-queries'}
 if($LidarSerialQuery){$arguments+='--lidar-serial-query'}
 if($ViewportHz -gt 0){$arguments+=@('--viewport-hz',$ViewportHz.ToString([Globalization.CultureInfo]::InvariantCulture))}
+if($RenderScale -ne 100){$arguments+=@('--render-scale',$RenderScale)}
 if($PaceRealTime){$arguments+='--pace-real-time'}
+if($NoOperatorGyro -or -not $OperatorGyro){$arguments+='--no-operator-gyro'}
 if($NavigationSource){$arguments+=@('--navigation-source',[IO.Path]::GetFullPath($NavigationSource))}
 if($LocalizationMapYaml){$arguments+=@('--localization-map-yaml',[IO.Path]::GetFullPath($LocalizationMapYaml))}
 $arguments+=@('--cpu-policy',$CpuPolicy)

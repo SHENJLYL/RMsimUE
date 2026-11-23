@@ -17,6 +17,7 @@ param(
     [string]$MujocoModel='',
     [switch]$SimRealTimePace,
     [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz=0,
+    [ValidateRange(50,100)][int]$RenderScale=100,
     [double]$SimStepSeconds=0,
     [int]$RosPort=9451,
     [switch]$CheckOnly,
@@ -84,6 +85,7 @@ try {
     if($MujocoModel){$arguments+=@('-MujocoModel',$MujocoModel)}
     if($SimRealTimePace){$arguments+='-SimRealTimePace'}
     if($ViewportHz -gt 0){$arguments+=@('-ViewportHz',$ViewportHz.ToString([Globalization.CultureInfo]::InvariantCulture))}
+    if($RenderScale -ne 100){$arguments+=@('-RenderScale',$RenderScale)}
     if($TrainingMode){$arguments+='-TrainingMode'}
     if($SingleShaderWorker){$arguments+='-SingleShaderWorker'}
     if($RosBridge -or $RosControl -or $RosMotorControl -or $RosAimControl -or $RosImu -or $ImuProfile -or $RosLidar -or $LidarProfile){

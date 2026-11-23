@@ -1,0 +1,1722 @@
+{
+  "criterion": {
+    "start_m": [
+      7.86,
+      -6.78
+    ],
+    "goal_m": [
+      -8.32,
+      6.16
+    ],
+    "wall_s_strictly_less_than": 26,
+    "gyro_setpoint_rad_s": 2.0
+  },
+  "runs": {
+    "best_previous": {
+      "identity": "seed-gyro-rate-middle-lower-landing",
+      "action_wall_s": 40.04574656486511,
+      "action_solver_s": 40.025000000000006,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.326056081615468,
+              6.318863038020402
+            ],
+            "estimated": [
+              -8.324229916048752,
+              6.148853548903206,
+              57.599959999
+            ],
+            "error_m": 0.1589784292714107
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860354050856302,
+          -6.780635507288574,
+          0.2702558530575713
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.3050000000015949,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.305182746991993
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 40.046747100000175,
+            "sim_s": 40.025000000000006
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1589784292714107,
+            "truth_samples": 1654,
+            "checked_poses": 4207,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3633921035777883,
+            "max_truth_interval_s": 0.6750000000000007
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "route_ranking": {
+      "identity": "seed-gyro-rate-middle-curve-time-ranking",
+      "action_wall_s": 48.56624364852905,
+      "action_solver_s": 49.2,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.29818543704082,
+              6.408163549818839
+            ],
+            "estimated": [
+              -8.351784110998418,
+              6.1862863316799706,
+              68.899839996
+            ],
+            "error_m": 0.24912049818468887
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.858676772159005,
+          -6.783053458949644,
+          0.18505177303913448
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 2,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 2.0145022409884685
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 48.56709620000038,
+            "sim_s": 49.175
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.24912049818468887,
+            "truth_samples": 2207,
+            "checked_poses": 5733,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3594687315057552,
+            "max_truth_interval_s": 0.14000000000000057
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "scorer_observations": {
+        "choices": {
+          "2": 26,
+          "0": 17,
+          "1": 1
+        },
+        "median_modeled_improvement_s": 0.8250000000000002
+      }
+    },
+    "platform_ranking": {
+      "identity": "regions-three-curve-time-ranking",
+      "action_wall_s": 18.39998769760132,
+      "action_solver_s": 18.400000000000002,
+      "terminal_status": [
+        4,
+        4,
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.309026257233558,
+              6.230946840320854
+            ],
+            "estimated": [
+              9.287639747106894,
+              6.1511845044912805,
+              21.199959999
+            ],
+            "error_m": 0.09072617347943372
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.558099344736708,
+              -0.04788202654660061
+            ],
+            "estimated": [
+              7.522280209962633,
+              -0.011663957506526046,
+              30.399919998
+            ],
+            "error_m": 0.04856220599780665
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.936922627496328,
+              0.1899463016032462
+            ],
+            "estimated": [
+              8.9111573790064,
+              0.21888193222273333,
+              33.899839996
+            ],
+            "error_m": 0.061461080064769885
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.710223800000676,
+            "sim_s": 5.725000000000001
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 8.183767399999851,
+            "sim_s": 8.195
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.4718544999996084,
+            "sim_s": 2.4949999999999974
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09072617347943372,
+            "truth_samples": 274,
+            "checked_poses": 436,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.5959651978446698,
+            "max_truth_interval_s": 0.054999999999999716
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.04856220599780665,
+            "truth_samples": 380,
+            "checked_poses": 791,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9350610768614835,
+            "max_truth_interval_s": 0.054999999999999716
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.061461080064769885,
+            "truth_samples": 143,
+            "checked_poses": 219,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.682894424120489,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "envelope_trace": {
+      "identity": "seed-gyro-rate-middle-velocity-envelope",
+      "action_wall_s": 45.815048933029175,
+      "action_solver_s": 46.245000000000005,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.28653378462729,
+              6.418153464851242
+            ],
+            "estimated": [
+              -8.317112316087792,
+              6.199636330059111,
+              67.599919998
+            ],
+            "error_m": 0.260313655012706
+          }
+        ],
+        "status": "arrival_error",
+        "actual_start": [
+          7.860347164307847,
+          -6.780620745445518,
+          0.2625553370336758
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.2900000000015766,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.2586416738834836
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 45.815799199999674,
+            "sim_s": 46.245
+          }
+        ]
+      },
+      "clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.260313655012706,
+            "truth_samples": 1918,
+            "checked_poses": 4630,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3613252057174936,
+            "max_truth_interval_s": 0.17999999999999972
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "native_lateral": {
+      "identity": "seed-gyro-rate-middle-native-lateral-cap",
+      "action_wall_s": 48.157113790512085,
+      "action_solver_s": 48.53,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.270454645963689,
+              6.355494774156341
+            ],
+            "estimated": [
+              -8.341888526418755,
+              6.146003813562444,
+              66.199959999
+            ],
+            "error_m": 0.2016753550363112
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860123714626235,
+          -6.780559313188331,
+          0.2692476524645234
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.3050000000015949,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.2972057807477322
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 48.157784600000014,
+            "sim_s": 48.53
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2016753550363112,
+            "truth_samples": 2021,
+            "checked_poses": 4657,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3645348595548734,
+            "max_truth_interval_s": 0.054999999999999716
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "native_lateral_platform": {
+      "identity": "regions-three-native-lateral-cap",
+      "action_wall_s": 18.337445497512817,
+      "action_solver_s": 18.305,
+      "terminal_status": [
+        4,
+        4,
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.305580750832878,
+              6.2297817906925745
+            ],
+            "estimated": [
+              9.283824690591395,
+              6.148015510550551,
+              21.499959999
+            ],
+            "error_m": 0.0913137657896365
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.575892943065586,
+              0.002871977333054421
+            ],
+            "estimated": [
+              7.529983534016343,
+              0.014242924363776943,
+              30.499720001
+            ],
+            "error_m": 0.026051732272524084
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.94330813698573,
+              0.1991546307797986
+            ],
+            "estimated": [
+              8.904613056272105,
+              0.2051746827437695,
+              33.599839996
+            ],
+            "error_m": 0.05128384347667748
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 6.2761123000000225,
+            "sim_s": 6.27
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 7.996877999999924,
+            "sim_s": 8.015
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.0760998999994627,
+            "sim_s": 2.0649999999999977
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.0913137657896365,
+            "truth_samples": 292,
+            "checked_poses": 431,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.5976477559583759,
+            "max_truth_interval_s": 0.045000000000001705
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.026051732272524084,
+            "truth_samples": 364,
+            "checked_poses": 769,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9253218981942186,
+            "max_truth_interval_s": 0.23000000000000043
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.05128384347667748,
+            "truth_samples": 130,
+            "checked_poses": 202,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.6838570024721164,
+            "max_truth_interval_s": 0.035000000000003695
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "continuous_origin": {
+      "identity": "seed-gyro-rate-middle-continuous-curve-origin",
+      "action_wall_s": 47.824848890304565,
+      "action_solver_s": 48.425000000000004,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.324495790087141,
+              6.372180495433441
+            ],
+            "estimated": [
+              -8.35948270802963,
+              6.165816692999275,
+              60.099959999
+            ],
+            "error_m": 0.2122281196516807
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.859894919144169,
+          -6.780176736020351,
+          0.2507689263039774
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.2599999999993017,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.2019611898933533
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 47.825655200000256,
+            "sim_s": 48.425
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2122281196516807,
+            "truth_samples": 2038,
+            "checked_poses": 4776,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36994182014637733,
+            "max_truth_interval_s": 0.07499999999999929
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "continuous_origin_platform": {
+      "identity": "regions-three-continuous-curve-origin",
+      "action_wall_s": 16.852813482284546,
+      "action_solver_s": 16.825,
+      "terminal_status": [
+        4,
+        4,
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.303980575599498,
+              6.247502421078624
+            ],
+            "estimated": [
+              9.278443322869418,
+              6.16469225338846,
+              20.599959999
+            ],
+            "error_m": 0.10781701877879382
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.60318268064338,
+              -0.02882144623695396
+            ],
+            "estimated": [
+              7.551890087955311,
+              -0.005219671503615686,
+              29.299959999
+            ],
+            "error_m": 0.06049027428938816
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.944839955552217,
+              0.21817582406346878
+            ],
+            "estimated": [
+              8.911267273359798,
+              0.2426823755913725,
+              32.399720001
+            ],
+            "error_m": 0.03223979269074761
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 5.081978100000924,
+            "sim_s": 5.07
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 7.7030448999994405,
+            "sim_s": 7.699999999999999
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.0834231000008003,
+            "sim_s": 2.0950000000000024
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.10781701877879382,
+            "truth_samples": 251,
+            "checked_poses": 409,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6149675425769389,
+            "max_truth_interval_s": 0.0400000000000027
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.06049027428938816,
+            "truth_samples": 353,
+            "checked_poses": 768,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.894717087989817,
+            "max_truth_interval_s": 0.04499999999999815
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.03223979269074761,
+            "truth_samples": 125,
+            "checked_poses": 198,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.673322142070518,
+            "max_truth_interval_s": 0.03499999999999659
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    },
+    "path_relative_preview": {
+      "identity": "seed-gyro-rate-middle-path-relative-preview",
+      "action_wall_s": 50.2561674118042,
+      "action_solver_s": 50.25,
+      "terminal_status": [
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "actual": [
+              -8.281794118718624,
+              6.3621964503667385
+            ],
+            "estimated": [
+              -8.311397283634902,
+              6.149088406670952,
+              71.999919998
+            ],
+            "error_m": 0.2057743762118975
+          }
+        ],
+        "status": "passed",
+        "actual_start": [
+          7.860257816553797,
+          -6.78042895089738,
+          0.26275428502507386
+        ],
+        "gyro_idle": {
+          "configured": {
+            "velocity_command_mode": "external_shaped_velocity",
+            "applied_velocity_command_mode": "external_shaped_velocity",
+            "output_velocity_shaper": "shared_drive_profile_v1",
+            "control_parameters": {
+              "MaxForwardSpeedMps": 5,
+              "MaxReverseSpeedMps": 2.5,
+              "MaxLateralSpeedMps": 4,
+              "LinearAccelerationMps2": 2,
+              "PrecisionSpeedMps": 0.35,
+              "LinearDecelerationMps2": 4,
+              "BrakeDecelerationMps2": 7,
+              "LinearJerkMps3": 6,
+              "DecelerationJerkMps3": 20,
+              "ManualYawRateRadS": 1.5707963267948966,
+              "LateralAccelerationMps2": 8,
+              "DirectionJerkMps3": 70,
+              "AngularAccelerationRadS2": 3,
+              "AngularDecelerationRadS2": 5,
+              "GyroDefaultRadS": 2,
+              "GyroMinRadS": 0.1,
+              "GyroMaxRadS": 5,
+              "GyroStepRadS": 0.5,
+              "SteeringRateRadS": 15.707963267948966,
+              "SteeringStiffnessNmRad": 80,
+              "SteeringDampingNmS": 8,
+              "SteeringTorqueNm": 8,
+              "MaxWheelSpeedMps": 6.5,
+              "WheelVelocityIntegralGainPerSecond": 3,
+              "WheelIntegralTorqueLimitNm": 2.5,
+              "YawVelocityFeedback": 0,
+              "LinearVelocityFeedback": 0
+            },
+            "speed_acceleration_m_s2": 0,
+            "direction_rate_rad_s": 0,
+            "requested_in_world_frame": true,
+            "requested_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "filtered_world_linear_m_s": [
+              0,
+              0,
+              0
+            ],
+            "applied_requested_yaw_rad_s": 2,
+            "filtered_yaw_rad_s": 1.2900000000015766,
+            "physical_brake": false,
+            "operator_gyro_available": true,
+            "operator_gyro_setpoint_rad_s": 2,
+            "measured_yaw_rad_s": 1.2623463403059754
+          }
+        },
+        "action_timing": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "wall_s": 50.2581895000003,
+            "sim_s": 50.25
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2057743762118975,
+            "truth_samples": 2104,
+            "checked_poses": 4783,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3658836115579449,
+            "max_truth_interval_s": 0.129999999999999
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "path_correction_separations_reported": 38
+    },
+    "path_relative_platform": {
+      "identity": "regions-three-path-relative-preview",
+      "action_wall_s": 18.132813692092896,
+      "action_solver_s": 18.130000000000003,
+      "terminal_status": [
+        4,
+        4,
+        4
+      ],
+      "route": {
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "actual": [
+              9.321140213604817,
+              6.211746021527818
+            ],
+            "estimated": [
+              9.305466669113441,
+              6.120260670579415,
+              19.299959999
+            ],
+            "error_m": 0.06815760005523472
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "actual": [
+              7.594241631580211,
+              -0.05388621733195151
+            ],
+            "estimated": [
+              7.528343125776614,
+              -0.021920886778929116,
+              27.599959999
+            ],
+            "error_m": 0.06972120468856956
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "actual": [
+              8.960282671211761,
+              0.21286912432801097
+            ],
+            "estimated": [
+              8.926538109575445,
+              0.23117114582653642,
+              30.799760002
+            ],
+            "error_m": 0.038528369488182376
+          }
+        ],
+        "status": "passed",
+        "action_timing": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "wall_s": 6.677643700000772,
+            "sim_s": 6.654999999999999
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "wall_s": 7.276784800000314,
+            "sim_s": 7.280000000000001
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "wall_s": 2.1813396999987162,
+            "sim_s": 2.2049999999999983
+          }
+        ]
+      },
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.06815760005523472,
+            "truth_samples": 309,
+            "checked_poses": 462,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.7677933125954035,
+            "max_truth_interval_s": 0.05999999999999872
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.06972120468856956,
+            "truth_samples": 340,
+            "checked_poses": 765,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9293716849399369,
+            "max_truth_interval_s": 0.05000000000000071
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.038528369488182376,
+            "truth_samples": 129,
+            "checked_poses": 203,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.658721111761258,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      }
+    }
+  },
+  "observed_speed_envelope": {
+    "case": "seed-gyro-rate-middle-velocity-envelope",
+    "scope": "Throttled controller samples excluding early hard stops and clock-gapped samples.",
+    "results": {
+      "other": {
+        "samples": 216,
+        "median": {
+          "curvature_m_s": 3.636,
+          "body_m_s": 3.26,
+          "preview_m_s": 3.09,
+          "sent_m_s": 2.728,
+          "drive_applied_m_s": 2.541,
+          "drive_filtered_m_s": 1.612,
+          "odom_m_s": 1.546,
+          "physical_m_s": 1.609,
+          "pose_age_s": 0.08
+        },
+        "first_limit_below_2m_s": {
+          "bridge_or_vehicle_input": 23,
+          "vehicle_shaper": 60,
+          "wheel_or_state_lag": 9,
+          "upcoming_stop": 13,
+          "immediate_command_guard": 8,
+          "curve_speed": 22
+        },
+        "simultaneous_drive_braking_samples": 14
+      },
+      "right": {
+        "samples": 82,
+        "median": {
+          "curvature_m_s": 2.52,
+          "body_m_s": 2.52,
+          "preview_m_s": 2.053,
+          "sent_m_s": 1.446,
+          "drive_applied_m_s": 1.513,
+          "drive_filtered_m_s": 1.062,
+          "odom_m_s": 0.946,
+          "physical_m_s": 0.91,
+          "pose_age_s": 0.085
+        },
+        "first_limit_below_2m_s": {
+          "upcoming_stop": 13,
+          "immediate_command_guard": 23,
+          "bridge_or_vehicle_input": 4,
+          "curve_speed": 26,
+          "vehicle_shaper": 8,
+          "wheel_or_state_lag": 8
+        },
+        "simultaneous_drive_braking_samples": 8
+      },
+      "left": {
+        "samples": 100,
+        "median": {
+          "curvature_m_s": 2.309,
+          "body_m_s": 2.309,
+          "preview_m_s": 2.021,
+          "sent_m_s": 1.534,
+          "drive_applied_m_s": 1.453,
+          "drive_filtered_m_s": 0.983,
+          "odom_m_s": 0.726,
+          "physical_m_s": 0.759,
+          "pose_age_s": 0.077
+        },
+        "first_limit_below_2m_s": {
+          "wheel_or_state_lag": 4,
+          "vehicle_shaper": 17,
+          "immediate_command_guard": 18,
+          "upcoming_stop": 13,
+          "bridge_or_vehicle_input": 7,
+          "curve_speed": 35
+        },
+        "simultaneous_drive_braking_samples": 3
+      }
+    }
+  },
+  "approximate_map_tangent_speed": [
+    {
+      "case": "seed-gyro-rate-middle-lower-landing",
+      "scope": "Approximate diagnostic ray and sampled map; no command is certified.",
+      "zones": {
+        "other": {
+          "samples": 58,
+          "median_physical_m_s": 2.441,
+          "median_nominal_cap_using_static_m_s": 4.5,
+          "median_nominal_cap_using_seen_cells_m_s": 4.5,
+          "nominal_below_2_and_alternate_at_least_2": 5,
+          "every_sampled_direction_below_2": 1
+        },
+        "right": {
+          "samples": 21,
+          "median_physical_m_s": 0.943,
+          "median_nominal_cap_using_static_m_s": 3.071,
+          "median_nominal_cap_using_seen_cells_m_s": 3.029,
+          "nominal_below_2_and_alternate_at_least_2": 1,
+          "every_sampled_direction_below_2": 4
+        },
+        "left": {
+          "samples": 26,
+          "median_physical_m_s": 1.046,
+          "median_nominal_cap_using_static_m_s": 2.666,
+          "median_nominal_cap_using_seen_cells_m_s": 2.595,
+          "nominal_below_2_and_alternate_at_least_2": 8,
+          "every_sampled_direction_below_2": 1
+        }
+      }
+    },
+    {
+      "case": "seed-gyro-rate-middle-curve-time-ranking",
+      "scope": "Approximate diagnostic ray and sampled map; no command is certified.",
+      "zones": {
+        "other": {
+          "samples": 82,
+          "median_physical_m_s": 1.581,
+          "median_nominal_cap_using_static_m_s": 4.5,
+          "median_nominal_cap_using_seen_cells_m_s": 4.5,
+          "nominal_below_2_and_alternate_at_least_2": 4,
+          "every_sampled_direction_below_2": 5
+        },
+        "right": {
+          "samples": 30,
+          "median_physical_m_s": 0.798,
+          "median_nominal_cap_using_static_m_s": 2.685,
+          "median_nominal_cap_using_seen_cells_m_s": 2.386,
+          "nominal_below_2_and_alternate_at_least_2": 9,
+          "every_sampled_direction_below_2": 4
+        },
+        "left": {
+          "samples": 32,
+          "median_physical_m_s": 0.795,
+          "median_nominal_cap_using_static_m_s": 2.301,
+          "median_nominal_cap_using_seen_cells_m_s": 2.198,
+          "nominal_below_2_and_alternate_at_least_2": 8,
+          "every_sampled_direction_below_2": 5
+        }
+      }
+    }
+  ],
+  "compared_speed_envelopes": {
+    "native_lateral": {
+      "case": "seed-gyro-rate-middle-native-lateral-cap",
+      "scope": "Throttled controller samples excluding early hard stops and clock-gapped samples.",
+      "results": {
+        "other": {
+          "samples": 200,
+          "median": {
+            "curvature_m_s": 4.554,
+            "body_m_s": 3.768,
+            "preview_m_s": 3.118,
+            "sent_m_s": 2.954,
+            "drive_applied_m_s": 2.666,
+            "drive_filtered_m_s": 2.124,
+            "odom_m_s": 1.941,
+            "physical_m_s": 1.956,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "bridge_or_vehicle_input": 15,
+            "vehicle_shaper": 53,
+            "wheel_or_state_lag": 9,
+            "immediate_command_guard": 5,
+            "upcoming_stop": 8,
+            "curve_speed": 14
+          },
+          "simultaneous_drive_braking_samples": 5
+        },
+        "right": {
+          "samples": 92,
+          "median": {
+            "curvature_m_s": 3.207,
+            "body_m_s": 2.716,
+            "preview_m_s": 2.554,
+            "sent_m_s": 1.624,
+            "drive_applied_m_s": 1.528,
+            "drive_filtered_m_s": 0.964,
+            "odom_m_s": 0.716,
+            "physical_m_s": 0.762,
+            "pose_age_s": 0.08
+          },
+          "first_limit_below_2m_s": {
+            "immediate_command_guard": 38,
+            "vehicle_shaper": 15,
+            "wheel_or_state_lag": 12,
+            "bridge_or_vehicle_input": 3,
+            "upcoming_stop": 22
+          },
+          "simultaneous_drive_braking_samples": 6
+        },
+        "left": {
+          "samples": 118,
+          "median": {
+            "curvature_m_s": 2.76,
+            "body_m_s": 2.733,
+            "preview_m_s": 1.957,
+            "sent_m_s": 1.545,
+            "drive_applied_m_s": 1.438,
+            "drive_filtered_m_s": 0.777,
+            "odom_m_s": 0.547,
+            "physical_m_s": 0.526,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "wheel_or_state_lag": 8,
+            "immediate_command_guard": 19,
+            "upcoming_stop": 59,
+            "bridge_or_vehicle_input": 10,
+            "vehicle_shaper": 18
+          },
+          "simultaneous_drive_braking_samples": 11
+        }
+      }
+    },
+    "continuous_origin": {
+      "case": "seed-gyro-rate-middle-continuous-curve-origin",
+      "scope": "Throttled controller samples excluding early hard stops and clock-gapped samples.",
+      "results": {
+        "other": {
+          "samples": 223,
+          "median": {
+            "curvature_m_s": 3.894,
+            "body_m_s": 3.181,
+            "preview_m_s": 3.005,
+            "sent_m_s": 2.815,
+            "drive_applied_m_s": 2.526,
+            "drive_filtered_m_s": 1.919,
+            "odom_m_s": 1.679,
+            "physical_m_s": 1.78,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "bridge_or_vehicle_input": 17,
+            "vehicle_shaper": 51,
+            "wheel_or_state_lag": 7,
+            "upcoming_stop": 19,
+            "immediate_command_guard": 20,
+            "curve_speed": 11
+          },
+          "simultaneous_drive_braking_samples": 4
+        },
+        "right": {
+          "samples": 92,
+          "median": {
+            "curvature_m_s": 2.677,
+            "body_m_s": 2.532,
+            "preview_m_s": 2.384,
+            "sent_m_s": 1.664,
+            "drive_applied_m_s": 1.541,
+            "drive_filtered_m_s": 1.02,
+            "odom_m_s": 0.752,
+            "physical_m_s": 0.824,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "immediate_command_guard": 32,
+            "bridge_or_vehicle_input": 5,
+            "curve_speed": 6,
+            "upcoming_stop": 33,
+            "vehicle_shaper": 9,
+            "wheel_or_state_lag": 7
+          },
+          "simultaneous_drive_braking_samples": 5
+        },
+        "left": {
+          "samples": 102,
+          "median": {
+            "curvature_m_s": 2.191,
+            "body_m_s": 2.191,
+            "preview_m_s": 1.857,
+            "sent_m_s": 1.473,
+            "drive_applied_m_s": 1.448,
+            "drive_filtered_m_s": 0.92,
+            "odom_m_s": 0.733,
+            "physical_m_s": 0.789,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "wheel_or_state_lag": 7,
+            "upcoming_stop": 30,
+            "immediate_command_guard": 13,
+            "curve_speed": 26,
+            "bridge_or_vehicle_input": 5,
+            "vehicle_shaper": 19
+          },
+          "simultaneous_drive_braking_samples": 2
+        }
+      }
+    },
+    "path_relative_preview": {
+      "case": "seed-gyro-rate-middle-path-relative-preview",
+      "scope": "Throttled controller samples excluding early hard stops and clock-gapped samples.",
+      "results": {
+        "other": {
+          "samples": 211,
+          "median": {
+            "curvature_m_s": 3.634,
+            "body_m_s": 3.402,
+            "preview_m_s": 3.161,
+            "sent_m_s": 2.804,
+            "drive_applied_m_s": 2.688,
+            "drive_filtered_m_s": 1.94,
+            "odom_m_s": 1.904,
+            "physical_m_s": 1.861,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "bridge_or_vehicle_input": 11,
+            "vehicle_shaper": 61,
+            "wheel_or_state_lag": 6,
+            "immediate_command_guard": 16,
+            "curve_speed": 15,
+            "upcoming_stop": 4
+          },
+          "simultaneous_drive_braking_samples": 8
+        },
+        "right": {
+          "samples": 98,
+          "median": {
+            "curvature_m_s": 2.575,
+            "body_m_s": 2.558,
+            "preview_m_s": 2.491,
+            "sent_m_s": 1.691,
+            "drive_applied_m_s": 1.597,
+            "drive_filtered_m_s": 0.883,
+            "odom_m_s": 0.669,
+            "physical_m_s": 0.637,
+            "pose_age_s": 0.077
+          },
+          "first_limit_below_2m_s": {
+            "immediate_command_guard": 26,
+            "bridge_or_vehicle_input": 4,
+            "curve_speed": 13,
+            "upcoming_stop": 28,
+            "vehicle_shaper": 21,
+            "wheel_or_state_lag": 4
+          },
+          "simultaneous_drive_braking_samples": 7
+        },
+        "left": {
+          "samples": 125,
+          "median": {
+            "curvature_m_s": 2.128,
+            "body_m_s": 2.128,
+            "preview_m_s": 1.566,
+            "sent_m_s": 1.289,
+            "drive_applied_m_s": 0.879,
+            "drive_filtered_m_s": 0.475,
+            "odom_m_s": 0.388,
+            "physical_m_s": 0.337,
+            "pose_age_s": 0.075
+          },
+          "first_limit_below_2m_s": {
+            "wheel_or_state_lag": 2,
+            "immediate_command_guard": 9,
+            "upcoming_stop": 47,
+            "curve_speed": 40,
+            "bridge_or_vehicle_input": 8,
+            "vehicle_shaper": 11
+          },
+          "simultaneous_drive_braking_samples": 23
+        }
+      }
+    }
+  },
+  "default_profile_sha256": "0de38dc7287460788e82b17dad197893697ab01ca1540c828b349769e04a8cba",
+  "runtime_promoted": false,
+  "timing_gate_passed": false
+}

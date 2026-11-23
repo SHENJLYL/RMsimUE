@@ -174,7 +174,12 @@ def localization_map_checks(provenance, declared_map, helper):
     try:
         selection_valid = selection in ("package_default", "explicit", "single_map")
         if selection == "package_default" or (selection == "single_map" and scene.get("scene") == "rmuc2027"):
-            manifest = ROOT/"assets/maps/rmuc2027/navigation-console/SOURCE.json"
+            perimeter_file = ROOT/"assets/maps/rmuc2027/arena-shell.json"
+            perimeter = json.loads(perimeter_file.read_text(encoding="utf-8-sig")) if perimeter_file.is_file() else {}
+            package_name = perimeter.get("navigation_package", "navigation-console")
+            if not isinstance(package_name, str) or not re.fullmatch(r"[a-z0-9_-]+", package_name):
+                raise ValueError("Invalid active navigation package directory")
+            manifest = ROOT/"assets/maps/rmuc2027"/package_name/"SOURCE.json"
             package = helper.packaged_localization_map(
                 manifest.parent, json.loads(manifest.read_text(encoding="utf-8-sig")))
             details["package_manifest"] = {"path": str(manifest), "sha256": digest(manifest)}

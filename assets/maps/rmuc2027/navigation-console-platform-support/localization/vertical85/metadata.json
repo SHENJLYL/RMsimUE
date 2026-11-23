@@ -1,0 +1,290 @@
+{
+  "role": "offline_geometry_candidate",
+  "status": "generated_not_native_validated",
+  "map_id": "rmuc2027",
+  "source_md5": "b0453f53370193c59ef594a56003872b",
+  "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+  "descriptor_sha256": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9",
+  "reference_navigation_raster_sha256": "14e88d3c4af1873752f7972e5bcf88efcd0d41a596bb3362a0ccc1be72d5fd15",
+  "reference_navigation_yaml_sha256": "cc4145c59632b9666f1b952809f9c3c9bbe316f58f22c803fc94609dec2faaaf",
+  "reference_navigation_manifest_sha256": "6b01f0f1b9e0720fe42dc4bb41c9422bb8ed88400cb8aa74d8a064e4c3efa0f1",
+  "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+  "map_yaml_sha256": "cc4145c59632b9666f1b952809f9c3c9bbe316f58f22c803fc94609dec2faaaf",
+  "raster_sha256": "cb08aeada9817a5f0561900526c99f71e570b1cdfd219b037ec3ef54dfbb1f82",
+  "surface_provenance_sha256": "857ed185f79a33f7bcda1b4c9924e42c21d40cb0082a4ad3b2669ba2acc0a2c7",
+  "geometry_reader_sha256": "4fd91f07932fb0dfe9bba7f90cc561742e2a1daeecbb228458a9e5741b8bdd91",
+  "source_step_sha256": "a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0",
+  "source_to_sim_translation_m": [
+    -7.152952372635468e-06,
+    -1.6243433957331543,
+    1.6403436655816601
+  ],
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "units": "m",
+  "width": 582,
+  "height": 344,
+  "resolution": 0.05000000000000071,
+  "resolution_float32": 0.05000000074505806,
+  "origin": [
+    -14.550000000000008,
+    -8.600000000000009,
+    0.0
+  ],
+  "geometry_bounds_m": [
+    [
+      -13.999995709747502,
+      -8.00156545639038,
+      -0.3009999990463257
+    ],
+    [
+      13.99999581660583,
+      8.00156545639038,
+      3.4976830552570872
+    ]
+  ],
+  "algorithm": "Original fixed vertical85 CAD projections retained at identical world coordinates; add actual inward-facing surfaces of the four closed collision slabs at the declared wave-platform boundary; whole-cell grid padding only.",
+  "normal_criterion": {
+    "minimum_surface_inclination_from_horizontal_deg": 85.0,
+    "maximum_abs_normal_z": 0.08715574274765814,
+    "justification": "Structural near-vertical surfaces; excludes the 42 degree traversable corrugation slope and horizontal support surfaces; fixed before scoring any scan."
+  },
+  "height_filter": {
+    "mode": "none",
+    "source_geometry_z_range_m": [
+      -0.3009999990463257,
+      3.4976830552570872
+    ],
+    "reason": "Recorded LaserScan has no original hit z; no unmeasured narrow slice is assumed. Actual per-cell contributing face z ranges are preserved."
+  },
+  "rasterization": {
+    "grid_cells": "[origin+i*resolution, origin+(i+1)*resolution] closed conservative intersections",
+    "numerical_boundary_epsilon_m": 1e-09,
+    "geometry_translation_adjustment_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "amcl_model_note": "Score with unchanged upstream MAP_GXWX; no half-cell shift or evaluation-pose registration."
+  },
+  "geometry_triangles_total": 1614431,
+  "geometry_degenerate_triangles": 29,
+  "selected_triangles": 523273,
+  "selected_triangles_by_group": {
+    "floor": 853,
+    "centre_platform": 307542,
+    "red_ramp_dart_station": 69700,
+    "blue_ramp_dart_station": 69679,
+    "red_road": 11151,
+    "blue_road": 11056,
+    "red_resource_zone": 7584,
+    "blue_resource_zone": 7566,
+    "red_fortress": 2,
+    "blue_fortress": 2,
+    "base_footing": 154,
+    "fan_frame": 40,
+    "fan": 9468,
+    "base": 28468,
+    "runtime_perimeter_west": 2,
+    "runtime_perimeter_east": 2,
+    "runtime_perimeter_south": 2,
+    "runtime_perimeter_north": 2
+  },
+  "groups": [
+    "floor",
+    "centre_platform",
+    "red_ramp_dart_station",
+    "blue_ramp_dart_station",
+    "red_road",
+    "blue_road",
+    "red_resource_zone",
+    "blue_resource_zone",
+    "red_fortress",
+    "blue_fortress",
+    "base_footing",
+    "fan_frame",
+    "fan",
+    "base",
+    "runtime_perimeter_west",
+    "runtime_perimeter_east",
+    "runtime_perimeter_south",
+    "runtime_perimeter_north"
+  ],
+  "occupied_cells": 25160,
+  "free_cells": 140902,
+  "unknown_cells": 34146,
+  "cell_group_records": 27468,
+  "wall_seconds": 4.306348199999775,
+  "evaluation_inputs_used": [],
+  "original_navigation_preserved": false,
+  "limits": [
+    "No native AMCL precision claim",
+    "Horizontal top surfaces and oblique ramps may still appear in the unchanged terrain-derived scan and are not represented by this candidate",
+    "Visibility/occlusion not encoded in 2D surface union",
+    "Per-cell z bounds are conservative contributing-triangle extrema",
+    "Comparison must preserve all exact recorded scan pairs and original AMCL likelihood semantics"
+  ],
+  "runtime_boundary": {
+    "schema": "rmsim_runtime_boundary_identity_v1",
+    "sha256": "f416f6520940d821f62590e979fb2ade480e487822cb49667fafa2852ece126e",
+    "geometry": {
+      "schema": "rmsim_closed_perimeter_geometry_v1",
+      "map_id": "rmuc2027",
+      "units": "m",
+      "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+      "source_bounds_m": {
+        "lo": [
+          -13.999996185302734,
+          -8.001565933227539,
+          -0.3009999990463257
+        ],
+        "hi": [
+          13.999996185302734,
+          8.001565933227539,
+          3.497683048248291
+        ]
+      },
+      "physics_contract": "outside_platform_bounds_v1",
+      "outside_clearance_m": 0.0,
+      "collision_thickness_m": 0.48,
+      "collision_bottom_m": -1.25,
+      "collision_top_m": 4.8,
+      "target_bounds_m": {
+        "lo": [
+          -13.999996185302734,
+          -7.522840576171875,
+          -0.3009999990463257
+        ],
+        "hi": [
+          13.999996185302734,
+          7.522841186523437,
+          3.497683048248291
+        ]
+      },
+      "collision_channels": {
+        "Camera": "Ignore",
+        "Visibility": "Block",
+        "physics": "Block"
+      },
+      "walls": [
+        {
+          "id": "west",
+          "lo": [
+            -14.479996185302735,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            -13.999996185302734,
+            8.002841186523437,
+            4.8
+          ]
+        },
+        {
+          "id": "east",
+          "lo": [
+            13.999996185302734,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            8.002841186523437,
+            4.8
+          ]
+        },
+        {
+          "id": "south",
+          "lo": [
+            -14.479996185302735,
+            -8.002840576171875,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            -7.522840576171875,
+            4.8
+          ]
+        },
+        {
+          "id": "north",
+          "lo": [
+            -14.479996185302735,
+            7.522841186523437,
+            -1.25
+          ],
+          "hi": [
+            14.479996185302735,
+            8.002841186523437,
+            4.8
+          ]
+        }
+      ],
+      "localization_faces": [
+        {
+          "id": "west",
+          "start_xy_m": [
+            -13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            -13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "east",
+          "start_xy_m": [
+            13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "south",
+          "start_xy_m": [
+            -13.999996185302734,
+            -7.522840576171875
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            -7.522840576171875
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        },
+        {
+          "id": "north",
+          "start_xy_m": [
+            -13.999996185302734,
+            7.522841186523437
+          ],
+          "end_xy_m": [
+            13.999996185302734,
+            7.522841186523437
+          ],
+          "bottom_m": -1.25,
+          "top_m": 4.8
+        }
+      ],
+      "localization_visibility": "inward faces visible from the continuously enclosed field"
+    }
+  },
+  "effective_scene_geometry_sha256": "c2a18f9a1c5bba3c623a6fa575b100d04d51d7f013998cce026fa9481420b2dc",
+  "boundary_padding_cells": 11,
+  "boundary_exporter_sha256": "5fe695db67a626f93a4d7a6073d1b6397998e2f225d7b4e1f8175d756d10ae23",
+  "boundary_geometry_helper_sha256": "2d9f834b08ea31ec89e8824defe7d22dc5156c05a66b1a0eb1e05f3648469159",
+  "baseline_localization_metadata_sha256": "cd580917d0ab95646261b21040cdaf2896168e4624bde196d32fdf9835d89a6d",
+  "runtime_boundary_added_face_records": 1724,
+  "runtime_boundary_face_cells": 1720,
+  "original_cad_geometry_preserved": true,
+  "reference_navigation_manifest_role": "immutable_baseline_before_boundary_augmentation",
+  "baseline_occupied_over_prior_free_cells": 13733,
+  "original_cad_exporter_sha256": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1"
+}

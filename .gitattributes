@@ -34,7 +34,7 @@ artifacts/maps/wt-scene-*/**/*.json -text whitespace=blank-at-eol,blank-at-eof,s
 artifacts/maps/wt_existing/*-20261117-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 artifacts/maps/wt_existing/*-20261118-01/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve exact CC0 license package bytes referenced by SHA256.
-assets/maps/rmuc2027/arena/kenney-mini-arena/LICENSE.txt -text
+assets/maps/rmuc2027/arena/kenney-mini-arena/LICENSE.txt -text whitespace=cr-at-eol,-blank-at-eol
 
 # Preserve the exact prepared bytes of the unified Flanders source contracts and evidence.
 assets/maps/wt_vlaanderen/foliage-enhanced/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
@@ -51,7 +51,7 @@ assets/maps/wt_vlaanderen/ground-microdetails/**/*.json -text whitespace=blank-a
 artifacts/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 # Unified diff empty-context markers are a required single space; preserve the original patch.
-third_party/patches/point-lio-native.patch whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+third_party/patches/**/*.patch whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/maps/wt_vlaanderen/foliage-enhanced/enhancement-proof.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/maps/wt_vlaanderen/foliage-enhanced/foliage.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 assets/maps/wt_vlaanderen/foliage-enhanced/native-sample-fixture.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

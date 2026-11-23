@@ -30,7 +30,7 @@ def parameters(data,robot,imu_id,sentry_source='',*,source_tuning=None):
     gravity=number(data['imu']['gravity_z_mps2'],'world gravity')
     return {'use_sim_time':True,'common.lid_topic':'/'+robot+'/'+identifier(lidar['id'])+'/livox',
         'common.imu_topic':'/'+robot+'/'+imu_id+'/data_raw',
-        'common.imu_qos_depth':5,**si_acceleration_parameters(),
+        'common.reliable_sensors':True,'common.imu_qos_depth':5,**si_acceleration_parameters(),
         'mapping.gravity':[0.,0.,gravity],'mapping.gravity_init':[0.,0.,gravity],
         'mapping.extrinsic_T':translation,'mapping.extrinsic_R':rotation,
         'mapping.imu_time_inte':1./number(imu['rate_hz'],'IMU rate'),
@@ -72,7 +72,9 @@ class PointLioRunner(Node):
             code=self.child.returncode;self.stop();raise RuntimeError('Original Point-LIO exited unexpectedly: '+str(code))
         if not ready:
             if time.monotonic()-self.received>2:self.stop()
-            self.phase='waiting_for_sensors'
+            same_stream = (self.child and self.state and self.state.get('connected') and
+                           (self.state.get('session'),self.state.get('epoch')) == self.identity)
+            self.phase='waiting_for_stream' if same_stream else 'waiting_for_sensors'
         else:
             identity=(self.state['session'],self.state['epoch'])
             if identity!=self.identity or self.child is None:

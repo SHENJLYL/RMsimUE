@@ -1,0 +1,42 @@
+{
+  "platform": "Windows native, UE 5.8.4 D3D12, RMUC2027",
+  "module_sha256": "6209e2c7f8484e82e47043ef1f589b38e9ecbaa648be9c9a5132cb3c2c06b489",
+  "evidence_root": "artifacts/integration/gym-render-tuning",
+  "launcher_contract_checks": 56,
+  "default_primary_render_percent": 100,
+  "output_pixels": [2560, 1440],
+  "offscreen_orbit": {
+    "samples_per_profile": 38,
+    "native_and_75_report": "tsr-final-ab/summary.json",
+    "50_report": "tsr50-orbit/summary.json",
+    "100": {"internal_pixels": [2560, 1440], "gpu_ms_median": 16.3297, "frame_ms_median": 16.6917},
+    "75": {"internal_pixels": [1920, 1080], "gpu_ms_median": 11.8086, "frame_ms_median": 12.18285},
+    "50": {"internal_pixels": [1280, 720], "gpu_ms_median": 8.57845, "frame_ms_median": 9.04845},
+    "visual_comparison": "render-scale-comparison.jpg"
+  },
+  "fullscreen_navigation_75": {
+    "report": "tsr75-navigation/status.json",
+    "exit": 0,
+    "last_scene_draw_hz": 74.31865,
+    "last_simulation_rate": 0.9988
+  },
+  "fullscreen_navigation_50": {
+    "report": "tsr50-navigation/status.json",
+    "sampling": "tsr50-navigation-observation.json",
+    "exit": 0,
+    "foreground_seconds": 22.02238,
+    "scene_draw_hz": 107.20914,
+    "simulation_rate": 1.00194,
+    "gpu_ms_median": 8.51445,
+    "native_step_seconds": 0.001,
+    "nav2_ready": true,
+    "rviz_ready": true,
+    "mujoco_observer_enabled": false,
+    "scope": "Stationary vehicle and continuous foreground UE Draw counts; monitor scanout and long moving routes not measured"
+  },
+  "rejected_diagnostics": {
+    "quality_and_scheduling": "quality-screen-01/summary.json",
+    "stationary_shadows": "stationary-csm-final/summary.json",
+    "additional_light_scheduling": "moving-candidates-01/summary.json"
+  }
+}

@@ -61,5 +61,15 @@ def source_profile(reference, mode, explicit_source=''):
         for layer in ('static_layer','intensity_voxel_layer','inflation_layer'):
             if layer not in settings.get('plugins',[]) or layer not in settings:
                 raise ValueError('Original collision avoidance layer missing: '+layer)
-    return blocks, {'mode':mode, 'source_path':str(source),
+    # Keep the historical terrain blocks and allow a selected sentry profile
+    # to name the physically supported incline limit for the two classifiers.
+    slopes = {}
+    for name in ('terrain_analysis', 'terrain_analysis_ext'):
+        params = parsed.get(name, {}).get('ros__parameters', {})
+        if 'maxPassableSlopeDeg' in params:
+            limit = params['maxPassableSlopeDeg']
+            if type(limit) not in (float, int) or not 0 <= limit <= 45:
+                raise ValueError(name + ' maxPassableSlopeDeg must be between 0 and 45')
+            slopes[name] = float(limit)
+    return blocks, {'max_passable_slope_deg':slopes, 'mode':mode, 'source_path':str(source),
                     'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()}

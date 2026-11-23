@@ -1,0 +1,21 @@
+{
+  "schema": "rmsim_navigation_release_v1",
+  "surveyed_ground": {
+    "file": "terrain-ground.bin",
+    "sha256": "be5ecd0a11fe6869904a7b1f7bb015f13bbccda8ccb1a1f0f62b7a7871e1aca6"
+  },
+  "simulation_navigation": {
+    "file": "navigation-profile.yaml",
+    "sha256": "75cd653d024e2751a16e65349b83bee6bca2dc33f17e91d659543c56259f139a",
+    "ground_support": {
+      "file": "terrain-support.bin",
+      "sha256": "abf39a8bfe19158690a8773355e0b3669dc2321d070a6a6df959d36aa3009c28"
+    }
+  },
+  "navigation_clearance": {
+    "preferred_curve_m": 0.62,
+    "inflation_radius_m": 0.45
+  },
+  "map_package_sha256": "24497ab1772bc8a118780596db713b7e96ab75875bf424b31b17278b81d08778",
+  "source_sha256": "75cd653d024e2751a16e65349b83bee6bca2dc33f17e91d659543c56259f139a"
+}

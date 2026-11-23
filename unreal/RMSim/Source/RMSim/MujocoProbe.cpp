@@ -5,8 +5,76 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "HAL/PlatformMisc.h"
+#include "HAL/PlatformProcess.h"
+#include "HAL/PlatformTime.h"
 #include "Misc/Parse.h"
 #include "Misc/CommandLine.h"
+
+bool AImportLabGameMode::TickDedicatedMujocoProof()
+{
+#if WITH_DEV_AUTOMATION_TESTS
+    if(!FParse::Param(FCommandLine::Get(),TEXT("MujocoThreadProof")))return false;
+    if(!Rig||Rig->GetDedicatedMujocoPeriod()<=0)
+    {
+        Abort(TEXT("MuJoCo thread proof requires the production dedicated solver"));return true;
+    }
+    const double Time=Rig->GetSimulationTimeSeconds();
+    switch(DedicatedMujocoProofPhase)
+    {
+    case 0:
+        if(Time>.5)Rig->SetContactDrive(.35,0,false);
+        Rig->SubmitDedicatedMujocoInputs();
+        if(Time<2.)return true;
+        {
+            uint64 Before=0,After=0,BeforeFailsafe=0,AfterFailsafe=0;
+            const double Start=FPlatformTime::Seconds();
+            if(!Rig->ReadDedicatedMujocoProgress(Before,BeforeFailsafe)||Rig->GetCommandOriginVelocity().Size2D()<15)
+            {Abort(TEXT("Dedicated worker proof did not start from actual motion"));return true;}
+            FPlatformProcess::SleepNoStats(.35f);
+            const double Wall=FPlatformTime::Seconds()-Start;
+            const bool Running=Rig->ReadDedicatedMujocoProgress(After,AfterFailsafe);
+            const bool SnapshotHeld=Rig->GetSimulationTimeSeconds()==Time;
+            const double Advanced=After>=Before?double(After-Before)*Rig->GetDynamicsStepSeconds():0.;
+            UE_LOG(LogRMSim,Display,TEXT("MUJOCO_THREAD_PROOF_STALL wall_s=%.6f solved_s=%.6f steps=%llu snapshot_held=%s failsafes=%llu"),
+                Wall,Advanced,After>=Before?After-Before:0,SnapshotHeld?TEXT("true"):TEXT("false"),AfterFailsafe-BeforeFailsafe);
+            if(!Running||!SnapshotHeld||Advanced<Wall*.85||Advanced>Wall*1.15||AfterFailsafe!=BeforeFailsafe+1)
+            {Abort(TEXT("Worker clock, snapshot or independent wall lease failed during the blocked game thread"));return true;}
+        }
+        Rig->SetContactDrive(0,0,true);
+        ++DedicatedMujocoProofPhase;
+        return true;
+    case 1:
+        Rig->SubmitDedicatedMujocoInputs();
+        if(Time<3.2)return true;
+        {
+            const uint64 Before=Rig->GetMotionGeneration();
+            ResetContactVehicle(TEXT("dedicated_thread_proof"),false);
+            if(Rig->GetMotionGeneration()!=Before+1||Rig->GetSimulationTimeSeconds()!=0.)
+            {Abort(TEXT("MuJoCo reset exposed time from a prior worker generation"));return true;}
+        }
+        ++DedicatedMujocoProofPhase;
+        return true;
+    default:
+        Rig->SubmitDedicatedMujocoInputs();
+        if(Time<.8)return true;
+        {
+            const auto State=Rig->GetContactState();
+            double Oldest=0,Newest=0;int32 Count=0;
+            const bool History=Rig->GetSensorPoseHistoryRange(Oldest,Newest,Count);
+            const double Error=State->GetNumberField(TEXT("max_visual_body_position_error_cm"));
+            if(!History||Count<480||Newest!=Time||Oldest<0||Rig->GetCommandOriginVelocity().Size2D()>2.||Error>.001)
+            {Abort(TEXT("Post-reset history or body snapshot is inconsistent"));return true;}
+            UE_LOG(LogRMSim,Display,TEXT("MUJOCO_THREAD_PROOF_PASSED generation=%llu solver_s=%.6f history_samples=%d visual_error_cm=%.9f"),
+                Rig->GetMotionGeneration(),Time,Count,Error);
+        }
+        bReady=false;
+        FPlatformMisc::RequestExitWithStatus(false,0);
+        return true;
+    }
+#else
+    return false;
+#endif
+}
 
 void AImportLabGameMode::TickMujocoProbe(double DeltaSeconds)
 {

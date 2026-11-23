@@ -1,0 +1,132 @@
+{
+  "status": "threaded_runtime_native_verified_performance_gates_open",
+  "module_sha256": "1f8e84a886f92c6f62fea105d661592577e6ba618d9546bf729043264c8775bf",
+  "native_exits": {
+    "navigation": 2,
+    "proof": 0,
+    "sensors": 0
+  },
+  "worker_stall": "MUJOCO_THREAD_PROOF_STALL wall_s=0.349941 solved_s=0.350000 steps=350 snapshot_held=true failsafes=1",
+  "worker_reset": "MUJOCO_THREAD_PROOF_PASSED generation=1 solver_s=0.800000 history_samples=502 visual_error_cm=0.000057003",
+  "worker_instances_joined": 2,
+  "sensor_checks": {
+    "tcp": 23,
+    "ros2": 14,
+    "native_ray_query": {
+      "material_equivalence": "passed",
+      "max_error_cm": 0,
+      "queries": 8192,
+      "rays": 4096
+    }
+  },
+  "navigation": {
+    "action_status": "passed",
+    "check_count": 18,
+    "action_metrics": [
+      {
+        "name": "short_goal_actual_arrival",
+        "passed": true,
+        "status": 4,
+        "error_m": 0.08384972546134797,
+        "strict_threshold_m": 0.25
+      },
+      {
+        "name": "cancelled_vehicle_stopped",
+        "passed": true,
+        "braking_m": 0.1493101128681736,
+        "drift_m": 0.00015256285859360265,
+        "strict_braking_threshold_m": 0.2,
+        "strict_drift_threshold_m": 0.02
+      }
+    ],
+    "clock_status": "failed",
+    "overall_simulation_rate": 0.9999228246829942,
+    "rolling_rate_range": [
+      0.9047005431036872,
+      1.098371868871697
+    ],
+    "overall_scene_draw_hz": 57.82642245664624,
+    "failed_clock_checks": [
+      "all_rolling_ten_second_windows_0p98_to_1p02",
+      "all_ten_second_scene_draw_windows_60hz",
+      "all_rolling_ten_second_scene_draw_windows_60hz"
+    ],
+    "sensor_rates": {
+      "imu": {
+        "imu": {
+          "measured_hz": 200.0,
+          "increments": {
+            "measured_samples": 12037,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        },
+        "mid360_imu": {
+          "measured_hz": 200.0,
+          "increments": {
+            "measured_samples": 12037,
+            "missed_periods": 0,
+            "dropped_samples": 0,
+            "history_resets": 0,
+            "invalid_samples": 0
+          }
+        }
+      },
+      "lidar": {
+        "rays_per_second": 200000.0,
+        "scans_per_second": 10.00249231536097,
+        "increments": {
+          "traced_rays": 12037000,
+          "published_scans": 602,
+          "dropped_scans": 0,
+          "history_resets": 0
+        }
+      }
+    }
+  },
+  "fullscreen": {
+    "dimensions": [
+      2560,
+      1440
+    ],
+    "requested_hz": 120,
+    "observed_scene_draw_by_epoch": [
+      {
+        "epoch": 0,
+        "wall_s": 35.01536560000386,
+        "scene_draw_hz": 51.03473773239149
+      },
+      {
+        "epoch": 1,
+        "wall_s": 34.01405850000447,
+        "scene_draw_hz": 46.127985579838814
+      }
+    ],
+    "measurement_status": "failed",
+    "invalid_window_conditions": [
+      "Declared foreground role changed: ue",
+      "Session/epoch changed or was missing"
+    ],
+    "actual_R_reset": true,
+    "navigation_recovered": true,
+    "accepted_snapshots": 2574,
+    "snapshot_sequence_gaps": 0,
+    "body_pose_matches": true,
+    "hardware_ray_tracing": false,
+    "lumen_gi": true,
+    "lumen_reflections": true,
+    "fullscreen_100fps_verified": false
+  },
+  "platform": "Windows",
+  "ubuntu_native_verified": false,
+  "evidence_sha256": {
+    "thread-proof-command-first/verification.json": "29fc6f58212b53a5fa21ba42793cafd5c55ff9568c1c4756da34bf13e71d9029",
+    "native-sensors-command-first/verification.json": "3bb2d66dd72d49cb22f38d0bfbce9b06789a379cb1dba0f49160a35a2a23a609",
+    "navigation-command-first/actions/verification.json": "6ccfca0950967bf1bc65b060752d0b9855be1f22ba0fc9b52affeda52e343840",
+    "navigation-command-first/clock/verification.json": "b93f5a11adc7f7093ad60edfad70b28ff9ad82ede9a12e7d06909b0c07973acb",
+    "fullscreen-120-final/session/status.json": "efd96ec345c224bd2b38ab45693cbf43234e3cf13a08b36ae0d2324d0b392a98",
+    "fullscreen-120-final/measurement/verification.json": "7f879d94cbeeffcf114c6dceaff925f15e77e64e0e5f2ea52bfb94cc02ac676f"
+  }
+}

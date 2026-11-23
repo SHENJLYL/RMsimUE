@@ -1,0 +1,415 @@
+{
+  "created_utc": "2026-11-20T08:44:22.909098+00:00",
+  "latest_runs": [
+    {
+      "id": "ros-bridge-build-03",
+      "kind": "ros_build",
+      "metrics": {
+        "all_installed_modules_match": true,
+        "all_sources_unchanged": true,
+        "exit_code": 0,
+        "module_count": 24,
+        "navigation_config_binding": "navigation_config.py",
+        "navigation_profile_binding": "navigation_drive_profile.py",
+        "preflight_process_count": 0,
+        "ros_nodes_started": 0,
+        "ue_started": false
+      },
+      "module_sha256": null,
+      "reports": {
+        "installed": {
+          "path": "artifacts/sensors/mid360-physical-20261120/ros-bridge-build-03/source-installed-after.json",
+          "sha256": "a153c0a3acc1ee19be3b0a6039b69c3f848b7bad80ee2ae0fad46b8932249a0e"
+        },
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/ros-bridge-build-03/verification.json",
+          "sha256": "dff1d4da85358bcd1433dd4441795ffc41e103ba0afa58390f8c3cc33976b6d2"
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "id": "build-13",
+      "kind": "build",
+      "metrics": {
+        "exit_code": 0
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/build-13/verification.json",
+          "sha256": "6324574d9626589b3df0af5987c8aa494a23254db8c9d7d3d97d651f3374ce63"
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "id": "native-sensors-09-final-query",
+      "kind": "sensors",
+      "metrics": {
+        "lidar_query_verification": {
+          "material_equivalence": "passed",
+          "max_error_cm": 0,
+          "queries": 8192,
+          "rays": 4096
+        },
+        "observed_simulation_rate": 1.0109205615078474,
+        "real_time_gate": false,
+        "ros_checks": 14,
+        "sensor_profile_binding": "passed",
+        "tcp_checks": 23
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/native-sensors-09-final-query/verification.json",
+          "sha256": "dc6b4373c5a7e465499ec9e440cda042dbd04771a175d463691440d613255b64"
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "id": "navigation-standard-07",
+      "kind": "navigation",
+      "metrics": {
+        "action_checks": {
+          "failed_names": [],
+          "other_names": [],
+          "passed": 18,
+          "total": 18
+        },
+        "action_gate_status": "passed",
+        "actual_goal_error_m": 0.13194854226145367,
+        "actual_vehicle_control_count": 27,
+        "cancel_braking_m": 0.16994498816381995,
+        "cancel_braking_threshold_m": 0.2,
+        "cancel_drift_m": 6.699054157387388e-05,
+        "cancel_drift_threshold_m": 0.02,
+        "cleanup_error_count": 0,
+        "clock_checks": {
+          "failed_names": [
+            "all_ten_second_windows_0p98_to_1p02",
+            "all_rolling_ten_second_windows_0p98_to_1p02"
+          ],
+          "other_names": [],
+          "passed": 30,
+          "total": 32
+        },
+        "clock_gate_status": "failed",
+        "complete_action_covered_by_clock": true,
+        "deployed_limit_check_name": "deployed_manual_navigation_limits",
+        "deployed_limit_check_passed": true,
+        "first_public_zero_observer_delay_ms": 26.32070000981912,
+        "first_public_zero_stamp_minus_cancel_latest_diagnostic_ms": 25.0,
+        "fixed_max_realtime_factor": 1.0564522148308662,
+        "fixed_min_realtime_factor": 0.9446282114528337,
+        "fixed_window_count": 6,
+        "goal_check_name": "short_goal_actual_arrival",
+        "goal_error_threshold_m": 0.25,
+        "immediate_stop_delta": 1,
+        "mujoco_timing_diagnostic": false,
+        "no_rhi_diagnostic": false,
+        "nonzero_after_first_zero": 0,
+        "output_velocity_shaper": "shared_drive_profile_v1",
+        "production_eligible": true,
+        "profile_frames": 0,
+        "profiling": {
+          "frames": 0,
+          "mujoco_timing": false,
+          "scope": "unprofiled production observation",
+          "sensor_timing": false
+        },
+        "public_commands_after_cancel": 24,
+        "realtime_factor": 0.9998410526283349,
+        "requested_wall_seconds": 60.0,
+        "rolling_max_realtime_factor": 1.0699379853048447,
+        "rolling_min_realtime_factor": 0.8944889640542847,
+        "rolling_window_count": 51,
+        "sensor_timing_diagnostic": false,
+        "sim_elapsed_s": 59.99046315770009,
+        "stop_check_name": "cancelled_vehicle_stopped",
+        "stop_observation_interpretation": [
+          "No raw upstream zero input or intermediate smoother messages were subscribed. The counters prove the implemented path ran and suppressed residuals, but do not timestamp raw-zero arrival.",
+          "Wall delay uses observer receipt times. Simulation delay compares the first public command stamp with the cancel event's latest received diagnostic solver time; diagnostic receipt phase is retained explicitly.",
+          "The two navigation snapshots can lag their event times; counter deltas span their recorded receipt window within the same identity."
+        ],
+        "stop_policy_consistent": true,
+        "suppressed_smoother_output_delta": 4,
+        "wall_elapsed_s": 60.0
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "actions": {
+          "path": "artifacts/sensors/mid360-physical-20261120/navigation-standard-07/actions/verification.json",
+          "sha256": "afeaa418108ebf070c98505da48f3275b3076e150a67af820cc1704d297d0d19"
+        },
+        "clock": {
+          "path": "artifacts/sensors/mid360-physical-20261120/navigation-standard-07/clock/verification.json",
+          "sha256": "6205f574f06bac8a636dfb9d207986334258d4f0568160542093586e8c55846c"
+        },
+        "provenance": {
+          "path": "artifacts/sensors/mid360-physical-20261120/navigation-standard-07/runtime-provenance.json",
+          "sha256": "b463ed5b16cdeb22e926b7558bb663c4b6d83c0b44d34ff997790a16c6a692ca"
+        },
+        "stop_analysis": {
+          "path": "artifacts/sensors/mid360-physical-20261120/cancel-analysis-07/analysis.json",
+          "sha256": "9eb4f64828b2e389371db69640e7cee6c6520adb6f118aec279a74bd371afb20"
+        },
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/navigation-standard-07-orchestration/verification.json",
+          "sha256": "ca467da2b0338330e7df77072110054f04ea21f9d5a53e256223f8bfe082766f"
+        }
+      },
+      "status": "failed"
+    },
+    {
+      "id": "native-shared-drive-02",
+      "kind": "native",
+      "metrics": {
+        "actual_planar_excursion_m": 0.6299767951802644,
+        "declared_scope": "native Windows complete RMUC MuJoCo model; shared vehicle controller and watchdog; no sensor, navigation or realtime acceptance",
+        "maximum_planar_excursion_m": 1,
+        "tcp_checks": 13
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/native-shared-drive-02/verification.json",
+          "sha256": "2111e7a2df11015e47195e81e05de705af358234c79e8bec61428557b4a9c913"
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "id": "manual-camera-rmuc-03",
+      "kind": "manual",
+      "metrics": {
+        "c_orbit_detail": "free-look yaw offset 90.00deg; drive/turret dot 1.000000",
+        "checks": {
+          "failed_names": [],
+          "other_names": [],
+          "passed": 6,
+          "total": 6
+        },
+        "decoded_captures": 8,
+        "helper_exit_code": 0,
+        "measured_peak_speed_m_s": 4.920216919797283,
+        "os_input_verified": false,
+        "probe_scope": "Existing six-check CameraDriveProbe, full original RMUC geometry, native MuJoCo, declared test spawn only",
+        "process_exit": 0,
+        "shift_exit_detail": "scope=0 direction_hold=1 reticle=0 view drift=0.00000deg drive/turret dot=1.000000",
+        "shift_scope_detail": "scope=1 free_look=0 drive/turret dot=1.000000"
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/manual-camera-rmuc-03/verification.json",
+          "sha256": "17cc84e521612c839f3d5ed7a8b67d033b4c2163edcd74764ccb069d7c7a0e76"
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "id": "manual-standard-handoff-01",
+      "kind": "manual_handoff",
+      "metrics": {
+        "checks": {
+          "failed_names": [],
+          "other_names": [],
+          "passed": 9,
+          "total": 9
+        },
+        "left_running": true,
+        "os_driving_inputs_sent": false,
+        "reviewed_screenshot_count": 1,
+        "scope": "Standard entry, loaded native backend and visible window handoff; no additional driving or long-rate acceptance",
+        "ue_pid": 10412
+      },
+      "module_sha256": "85ee653ec4a901cc3b65ff9f05104d6aadb056bc2da5aeab5fca79f963a00217",
+      "reports": {
+        "launch": {
+          "path": "artifacts/sensors/mid360-physical-20261120/manual-standard-handoff-01/handoff.json",
+          "sha256": "ff30874a8af86267bb0da99cb30237921426acaf4bc0dbd76722fd991f22c36c"
+        },
+        "verification": {
+          "path": "artifacts/sensors/mid360-physical-20261120/manual-standard-handoff-01/verification.json",
+          "sha256": "462ad4c044102cc564a48008348f69f6af3601e8433b526e4fd999f370b49156"
+        }
+      },
+      "status": "passed"
+    }
+  ],
+  "model_identity": {
+    "calibrated": false,
+    "geometry_manifest_sha256": "0f3f9354127116eb63d4c02bbaa657c75c985a276128a0029e93744979311adb",
+    "manifest_sha256": "f5583e06f7c337e37c16dd61d71e5998617084e170c191b2a6f5d4c1a741a204",
+    "model_sha256": "6dc6edb0d5f45b80cae3dc4073584d895450d10f826107e213138f64e689097a",
+    "physics_identity_sha256": "2d3db4b1a6eb0b1f24d38ff33f98342984a812652be140b1653b6ff0c69e2f77",
+    "runtime_bindings_count": 33,
+    "runtime_sha256": "544b51a2a79f5bd10341a977ddba7db22c8639db4f1c8b5d13081363af4019e4",
+    "total_mass_kg": 25.6
+  },
+  "primary_summary": {
+    "path": "artifacts/sensors/mid360-physical-20261120/release-summary.json",
+    "sha256": "247b2f13b17b64ef98f888a24abb60ae41fa8b786ccb7dc050fb62bd21f57285"
+  },
+  "prior_attempts_count": 35,
+  "references": {
+    "boundary_measurement_proof": {
+      "path": "artifacts/sensors/mid360-physical-20261120/boundary-analysis-01/offline-proof.json",
+      "sha256": "64828db5c6b3fb8c2c470d8322c6fae260b6119ff0d216f3895ab20ca14e7fb0"
+    },
+    "clock_state_atomic_tests": {
+      "path": "artifacts/sensors/mid360-physical-20261120/clock-state-atomic-01/verification.json",
+      "sha256": "70160d930a2d1e21d2366ee3c2bea9b89d82e33f2d9c79dfe5c404b044cdede4"
+    },
+    "contact_identity_harness": {
+      "path": "artifacts/sensors/mid360-physical-20261120/contact-identity-harness-01/source-check.json",
+      "sha256": "52463011899eff636e9356cff60e795906e2b356b6c3c17f3d36172e6601e6e4"
+    },
+    "contact_identity_source": {
+      "path": "artifacts/sensors/mid360-physical-20261120/contact-identity-cache-01/source-check.json",
+      "sha256": "711e0da7014bc3a63d1455d0ace953f84158e660789e73377ef3927b0d06bbb9"
+    },
+    "contact_identity_withdrawal": {
+      "path": "artifacts/sensors/mid360-physical-20261120/contact-identity-withdrawal-01/verification.json",
+      "sha256": "056d25d2d02bf9acfc398794d5c78c6b9d4ab2b05fe0501f5bb70d4ab9965667"
+    },
+    "final_cancel_stop_observation": {
+      "path": "artifacts/sensors/mid360-physical-20261120/cancel-analysis-07/analysis.json",
+      "sha256": "9eb4f64828b2e389371db69640e7cee6c6520adb6f118aec279a74bd371afb20"
+    },
+    "final_change_record": {
+      "path": "docs/changes/2026-11-20-mujoco-integration.md",
+      "sha256": "34e68f3ed1a589677f35637bc5b7cd60007935344965da25da1f9ce590b22ba6"
+    },
+    "geometry_identity": {
+      "path": "assets/vehicles/aim_sentry/mujoco/rmuc2027/manifest.json",
+      "sha256": "f5583e06f7c337e37c16dd61d71e5998617084e170c191b2a6f5d4c1a741a204"
+    },
+    "low_speed_physical_contact": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-low-speed-analysis-04/comparison.json",
+      "sha256": "512cfbc264a6fde3064364d260a65f0b2d6c7d996e06325c172358c99a5b4d93"
+    },
+    "manual_entry": {
+      "path": "Play-ManualVehicle.cmd",
+      "sha256": "89fa20a4c0d5502e3fbeda7295f930603c54dfc5682df237602abbdd6883b8c3"
+    },
+    "mid360_imu_profile": {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360-imu.json",
+      "sha256": "ef08511264e81ca49da04859b6aa5a246b3d2097b0bd4dd31271be8a7b61de5e"
+    },
+    "mid360_model_limits": {
+      "path": "docs/sensors/mid360-physical-model.md",
+      "sha256": "8233e10eed3d034972161a3b9055d5eba36cc8a82ab45b000ce5c05b110e8d39"
+    },
+    "mid360_mount": {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360-source.json",
+      "sha256": "fba46387fe544d66b2a0f60d30e4a19f685d8d618909efdd46921b5474f5a5c7"
+    },
+    "mid360_official_sources": {
+      "path": "docs/sensors/mid360-physical-model.md",
+      "sha256": "8233e10eed3d034972161a3b9055d5eba36cc8a82ab45b000ce5c05b110e8d39"
+    },
+    "mid360_profile": {
+      "path": "assets/vehicles/aim_sentry/sensors/mid360.json",
+      "sha256": "4add2dd8a139c0319d4777cb058caf339ea04e4f1ecace881e067d24d789d8ff"
+    },
+    "native_integration_architecture": {
+      "path": ".codestable/architecture/ARCHITECTURE.md",
+      "sha256": "e3719de19f38f2849147a7fedc21b4d4a9e3194e4e4efbb3fb91b8946598385c"
+    },
+    "native_integration_guide": {
+      "path": "docs/guides/mujoco-integration.md",
+      "sha256": "2c0dc4b3ed517decaecbedd887401380b7e5c5c94a8460556187896c67d81a7c"
+    },
+    "navigation_entry": {
+      "path": "Play-Navigation.cmd",
+      "sha256": "002cc6233bef3d599326e5b26e2706180547165a9ebc7e5425a160f8e499a5a1"
+    },
+    "offline_contract_counts": {
+      "path": "artifacts/sensors/mid360-physical-20261120/release-preparation-01/candidate-contract-counts.json",
+      "sha256": "949ba1366890266f4cdcabf63fcb57f61d55574dece8296a1ffca18073fb9181"
+    },
+    "original_terrain_clearance": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-terrain-source-01/brief.json",
+      "sha256": "0fcce73bd03627dac85572917a3bd16623cd399409fbbf1eac3e9178e84097ec"
+    },
+    "original_terrain_geometry": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-terrain-source-01/verification.json",
+      "sha256": "f2c0420191612bfd0dde21fae289bd162a5cdad1765ef284d536203d30330264"
+    },
+    "original_terrain_source_bundle": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-terrain-source-01/source-bundle.json",
+      "sha256": "635077710569912d75bab11a084d508114f5f65437218e606954b20538e53930"
+    },
+    "pacing_analysis": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-profile-analysis-02/pacing-summary.json",
+      "sha256": "d33802dffd784c11846b9494703c47f3bdb33cccf75a670ab4d8bd8eb937080d"
+    },
+    "pacing_compiled_policy": {
+      "path": "artifacts/sensors/mid360-physical-20261120/pacing-deadline-01/compiled-policy/verification.json",
+      "sha256": "3c3c9da1571537df5cfdc51c8a0493c642ffcd195ea6d8ebf3d247f146a26493"
+    },
+    "pacing_deadline_policy": {
+      "path": "artifacts/sensors/mid360-physical-20261120/pacing-deadline-01/verification.json",
+      "sha256": "87a641774ca99842abb6a658b872ba24fb000454f83f8d1887fbc98bd9ceb51f"
+    },
+    "ros_bridge_install": {
+      "path": "artifacts/sensors/mid360-physical-20261120/ros-bridge-build-03/source-installed-after.json",
+      "sha256": "a153c0a3acc1ee19be3b0a6039b69c3f848b7bad80ee2ae0fad46b8932249a0e"
+    },
+    "sdk_cache_comparison": {
+      "path": "artifacts/integration/mujoco-ue-20261120/native-reference-win-rmsim3-01/verification.json",
+      "sha256": "6d99d5d1ba7210b3b3976917918c61225747c08cedb9d225ac2c87a139884ade"
+    },
+    "sdk_cache_scope": {
+      "path": "docs/physics/mujoco-static-flex-cache.md",
+      "sha256": "0314ee0dc1c64c14ff1c6ae227aabac762b64d62c5609984e4f56cc9b3c3c281"
+    },
+    "standard_manual_launch_proof": {
+      "path": "artifacts/sensors/mid360-physical-20261120/manual-standard-handoff-01/handoff.json",
+      "sha256": "ff30874a8af86267bb0da99cb30237921426acaf4bc0dbd76722fd991f22c36c"
+    },
+    "standard_manual_reviewed_image": {
+      "path": "artifacts/sensors/mid360-physical-20261120/manual-standard-handoff-01/manual-viewport-02.png",
+      "sha256": "6b3093f373d98621e3ba62f2cc5179402698495a56b045245dc790e4840c4aae"
+    },
+    "standard_manual_visible_handoff": {
+      "path": "artifacts/sensors/mid360-physical-20261120/manual-standard-handoff-01/verification.json",
+      "sha256": "462ad4c044102cc564a48008348f69f6af3601e8433b526e4fd999f370b49156"
+    },
+    "stop_intent_actual_ros_types": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-stop-intent-01/installed-message-check.json",
+      "sha256": "fdecac546da69a41a0a966a696066d1ff3cf1c10d63451589f1cd5adc97903e9"
+    },
+    "stop_intent_cancel_analysis": {
+      "path": "artifacts/sensors/mid360-physical-20261120/cancel-analysis-06/comparison.json",
+      "sha256": "5de127919f1a7ce35dbc5d914c8ca0e9bab36fa184155471de4279419bb52000"
+    },
+    "stop_intent_contracts": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-stop-intent-01/tests.json",
+      "sha256": "69e92f6508d2d2ce77d8ef187d043f81000c2c41d05b1eab640540edf86d83cc"
+    },
+    "stop_intent_independent_review": {
+      "path": "artifacts/sensors/mid360-physical-20261120/navigation-stop-observation-01/independent-review.json",
+      "sha256": "8663327345b9f92a9d497308eb88ed96eb2b757e20c72aac8f56d016dffc8dad"
+    }
+  },
+  "release_status": "partial",
+  "required_verification_passed": false,
+  "schema": "rmsim_mujoco_integration_release_reference_v1",
+  "source_drive_profile": {
+    "control_count": 27,
+    "control_sha256": "cf0175463e0f6ed9126d681fe3a84235e404bcf87dea2d96ab037cafe9ddf9b7",
+    "path": "assets/vehicles/aim_sentry/drive-profile.json",
+    "physics_count": 16,
+    "physics_sha256": "dc6bd8361bfdf2197d3c6221b23a69e342db2881b3000150b86c908a61e5ab3c",
+    "section_hash_encoding": "UTF-8 sorted-key compact Python JSON; allow_nan=False",
+    "sha256": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+  },
+  "unresolved_items": [
+    "Formal navigation-standard-07 on build13 passed all 18 action checks with complete action/clock coverage, but failed the unchanged fixed and rolling ten-second 0.98..1.02 clock gates. Clock result is 30/32, overall factor 0.9998410526283349, rolling range 0.8944889640542847..1.0699379853048447. Retain partial release status and this performance item.",
+    "Retain the documented low-speed wave-terrain operating condition: the archived build10 source-geometry audit confirms chassis/road contact near the stalled goal, alongside contact in successful profiled runs. The original geometry and collision radii remain unchanged; broader low-speed wave-terrain convergence coverage remains open."
+  ]
+}

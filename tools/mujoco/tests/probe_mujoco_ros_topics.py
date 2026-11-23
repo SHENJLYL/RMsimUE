@@ -73,6 +73,7 @@ class Observer(Node):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("--port",type=int,required=True);p.add_argument("--output",type=Path,required=True)
+    p.add_argument("--expect-dedicated", action="store_true")
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     report={"schema":"rmsim_mujoco_ros_sensor_v1","status":"running","checks":[],
         "scope":"Native Windows ROS2 installed bridge, actual MuJoCo clock and real UE sensors; observer has no evaluation-truth subscription",
@@ -102,7 +103,7 @@ def main():
         node.pump(2.)
         d=node.diag
         check("ros_clock_identifies_mujoco",d.get("physics_backend")=="mujoco" and
-            d.get("clock_source")=="synchronous_MuJoCo_solver" and abs(d.get("dynamics_step_s",0)-.001)<1e-12
+            d.get("clock_source")==("dedicated_MuJoCo_snapshot" if args.expect_dedicated else "synchronous_MuJoCo_solver") and abs(d.get("dynamics_step_s",0)-.001)<1e-12
             and abs(d.get("fixed_step_s",0)-.005)<1e-12 and d["map"]["id"]=="rmuc2027",
             physics_backend=d.get("physics_backend"),clock_source=d.get("clock_source"),dynamics_step_s=d.get("dynamics_step_s"),map=d["map"])
         check("native_ros_sim_time",len(node.clocks)>20 and all(b>=a for a,b in zip(node.clocks,node.clocks[1:]))

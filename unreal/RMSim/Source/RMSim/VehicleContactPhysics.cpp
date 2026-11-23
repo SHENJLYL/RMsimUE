@@ -49,6 +49,7 @@ bool AVehicleRig::InitializeContactPhysics(const FString& Filename,FString& Erro
     {
         FString Model;
         if(!FParse::Value(FCommandLine::Get(),TEXT("MujocoModel="),Model)||Model.IsEmpty()){Error=TEXT("MuJoCo requires a model manifest/XML");return false;}
+        if(bCanonicalRig)return InitializeCanonicalMujocoPhysics(Filename,Model,Error);
         return InitializeMujocoPhysics(Filename,Model,Error);
     }
     if(!Backend.Equals(TEXT("chaos"),ESearchCase::IgnoreCase)){Error=TEXT("unsupported physics backend: ")+Backend;return false;}

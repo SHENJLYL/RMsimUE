@@ -29,6 +29,7 @@ param(
     [string]$MujocoModel='',
     [switch]$SimRealTimePace,
     [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz=0,
+    [ValidateRange(50,100)][int]$RenderScale=100,
     [double]$SimStepSeconds=0,
     [int]$RosPort=9451,
     [int]$TimeoutSeconds = 90
@@ -126,6 +127,7 @@ try {
     if ($SimRealTimePace) { $arguments += '-SimRealTimePace' }
     if ($PhysicsBackend -eq 'mujoco' -and $ViewportHz -eq 0) { $ViewportHz=60 }
     if ($ViewportHz -gt 0) { $arguments += '-RMSimViewportHz='+$ViewportHz.ToString($culture) }
+    if ($RenderScale -ne 100) { $arguments += '-ExecCmds='+(Quote-UnrealArgument ('r.ScreenPercentage '+$RenderScale)) }
     if ($ContactPhysics -or $PhysicsBackend -eq 'mujoco') { $arguments += '-ContactPhysics' }
     $runStartedUtc = [DateTime]::UtcNow
     if ($ManualProbe) {

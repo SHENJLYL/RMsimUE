@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "purpose": "RMSimUE5 official DJI / RoboMaster signs for the selected indoor basketball gym",
+  "originals": [
+    {
+      "file": "dji_logo_white_official.svg",
+      "url": "https://www-cdn.djiits.com/dps/a4cb06c299208ffb34ecdcf8b2a5d94a.svg",
+      "page": "https://www.dji.com/",
+      "evidence": "Official website footer image, alt=DJI Logo, class=logo white",
+      "sha256": "a46fd9e7b6654c3835d73752bd5edf970014be002fb16288b351e50609251af7",
+      "bytes": 2523,
+      "width": 42.0,
+      "height": 24.0,
+      "viewBox": "0 0 42 24",
+      "background": "transparent"
+    },
+    {
+      "file": "robomaster_wordmark_official.svg",
+      "url": "https://rm-static.djicdn.com/robomasters/dps/f4ed821f19e0c9fdd826f35953c67cd7.svg",
+      "page": "https://www.robomaster.com/zh-CN",
+      "evidence": "Official site configuration v1.common.popo.icon.logo",
+      "sha256": "5cdb8f89a26d2dea694652d8db7a95f21164e002df834f1a2b120612bc99e31b",
+      "bytes": 8296,
+      "width": 200.0,
+      "height": 14.0,
+      "viewBox": "0 0 200 14",
+      "background": "transparent"
+    },
+    {
+      "file": "robomaster_full_black_official.png",
+      "url": "https://rm-static.djicdn.com/robomasters/public/document/RoboMaster-mecha-logo.png",
+      "page": "https://www.robomaster.com/en-US/resource/pages/announcement/713",
+      "evidence": "Official announcement attachment: RoboMaster Official Logo; dark gray original",
+      "sha256": "9eb61acdc7e8bfa46eef2322ba40178d3bde9563fa8be941886ae41261fd1cec",
+      "bytes": 48741,
+      "width": 1800,
+      "height": 1487,
+      "mode": "P",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent": true,
+      "alpha_bbox": [
+        0,
+        0,
+        1800,
+        1487
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "file": "sign_horizontal_4x1_white.png",
+      "sha256": "620c7274c28de21324b4385be27f82435a0a891de8627f9eb643b68a2a161839",
+      "bytes": 91785,
+      "width": 4096,
+      "height": 1024,
+      "mode": "RGBA",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent": false,
+      "alpha_bbox": [
+        0,
+        0,
+        4096,
+        1024
+      ],
+      "svg": "sign_horizontal_4x1_white.svg",
+      "sources": [
+        "robomaster_wordmark_official.svg",
+        "dji_logo_white_official.svg"
+      ],
+      "transformation": "Unchanged logo path geometry, monochrome fills, uniform fit, plain background and divider",
+      "usage": "Opaque horizontal sign, aspect ratio 4:1"
+    },
+    {
+      "file": "sign_vertical_1x2_white.png",
+      "sha256": "03bc22a55d1796ef6431f32836d3b6d5646ca1a5e744b872d3ba9f48efeaf7fb",
+      "bytes": 91666,
+      "width": 1024,
+      "height": 2048,
+      "mode": "RGBA",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent": false,
+      "alpha_bbox": [
+        0,
+        0,
+        1024,
+        2048
+      ],
+      "svg": "sign_vertical_1x2_white.svg",
+      "sources": [
+        "robomaster_full_black_official.png",
+        "dji_logo_white_official.svg"
+      ],
+      "transformation": "Official bitmap silhouette and DJI paths preserved, monochrome color, uniform fit, plain background and divider",
+      "usage": "Opaque vertical sign, aspect ratio 1:2"
+    },
+    {
+      "file": "sign_horizontal_4x1_black.png",
+      "sha256": "7ceaba275d3d6a431fca68f8ad8979756fd41c78455278e73c2add6cec64d77c",
+      "bytes": 94884,
+      "width": 4096,
+      "height": 1024,
+      "mode": "RGBA",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent": false,
+      "alpha_bbox": [
+        0,
+        0,
+        4096,
+        1024
+      ],
+      "svg": "sign_horizontal_4x1_black.svg",
+      "sources": [
+        "robomaster_wordmark_official.svg",
+        "dji_logo_white_official.svg"
+      ],
+      "transformation": "Unchanged logo path geometry, monochrome fills, uniform fit, plain background and divider",
+      "usage": "Opaque horizontal sign, aspect ratio 4:1"
+    },
+    {
+      "file": "sign_vertical_1x2_black.png",
+      "sha256": "bc9f3a94d9e8387a4a367477d5f35d3b7ad148f6446e38560cd1c04dfc190766",
+      "bytes": 97032,
+      "width": 1024,
+      "height": 2048,
+      "mode": "RGBA",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent": false,
+      "alpha_bbox": [
+        0,
+        0,
+        1024,
+        2048
+      ],
+      "svg": "sign_vertical_1x2_black.svg",
+      "sources": [
+        "robomaster_full_black_official.png",
+        "dji_logo_white_official.svg"
+      ],
+      "transformation": "Official bitmap silhouette and DJI paths preserved, monochrome color, uniform fit, plain background and divider",
+      "usage": "Opaque vertical sign, aspect ratio 1:2"
+    }
+  ],
+  "recipe": {
+    "geometry": "DJI and RoboMaster wordmark use exact original SVG path d values. No retracing or generative artwork.",
+    "colors": {
+      "white_board": {
+        "background": "#ffffff",
+        "logos": "#000000",
+        "divider": "#d9dce0"
+      },
+      "black_board": {
+        "background": "#080b10",
+        "logos": "#ffffff",
+        "divider": "#39404a"
+      }
+    },
+    "horizontal": {
+      "canvas": [
+        4096,
+        1024
+      ],
+      "robomaster_wordmark_xywh": [
+        180,
+        412,
+        2750,
+        192.5
+      ],
+      "dji_xywh": [
+        3280,
+        337.7,
+        610,
+        348.6
+      ],
+      "divider_xywh": [
+        3090,
+        296,
+        3,
+        432
+      ]
+    },
+    "vertical": {
+      "canvas": [
+        1024,
+        2048
+      ],
+      "robomaster_full_xywh": [
+        112,
+        248,
+        800,
+        660.8888888888889
+      ],
+      "dji_xywh": [
+        212,
+        1320,
+        600,
+        342.85714285714283
+      ],
+      "divider_xywh": [
+        192,
+        1110,
+        640,
+        2
+      ]
+    },
+    "full_logo_color_matrix": {
+      "black": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0",
+      "white": "0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0",
+      "verification": "Rendered full-logo alpha matches official source pixel-for-pixel (max absolute difference 0)."
+    },
+    "fit": "All artwork is uniformly scaled using xMidYMid meet. Vectors are inlined to prevent rasterization at website thumbnail sizes.",
+    "rasterizer": "Inkscape 1.4; export-png-color-mode=RGBA_8",
+    "generator": "prepare_branding.py",
+    "generator_sha256": "e222442ee16288f37fed2307a74f2f2db522dd1f267d042a9e63022f7671bd9c"
+  },
+  "ue_import": {
+    "sRGB": true,
+    "compression": "Default or BC7 for sign BaseColor; verify alpha compression when using transparent logo masks",
+    "addressing": "Clamp",
+    "aspect_ratio": "Preserve marked aspect ratio through plane scale/UV or rerender from supplied SVG; do not stretch letters"
+  },
+  "rights_note": "Official brand artwork. DJI and RoboMaster trademark rights remain with their owners. Venue asset CC-BY licensing is separate and does not relicense these logos."
+}

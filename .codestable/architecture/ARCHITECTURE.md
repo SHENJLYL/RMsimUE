@@ -205,6 +205,15 @@ rmuc-06对应此前带10Hz RGB、全局5ms最大物理子步配置，原生导�
 
 本轮结构、来源和逐项验收入口见 `docs/changes/2026-11-18-unified-flanders.md`、碰撞与草地专项指南。完整导航 UE/ROS 门禁继续采用其独立证据，feature 检查点与 main 发布状态分别管理。
 
+
+## 弗兰德斯局部破坏与材料保护（2026-11-18）
+
+运行时在保存场景就绪后建立明确的资源策略：19 个薄木板组合可局部断裂；1,479 个旧硬候选恢复保护，4,647 个软植被实例进行局部非阻挡压倒。`prepare_wt_destruction_geometry.py` 使 11 个派生视觉 StaticMesh 保持 CPU 可读，源 FBX/RMI/材质/World 身份保持。`ProceduralMeshComponent` 复制原网格属性并承载保留几何与 Chaos 碎片。
+
+`VehicleRig::DispatchPhysicsCollisionHit` 保存带精确实例号、接触时间和运动代数的有限事件队列，原碰撞通知继续传递。破坏组件独立读取游标并用真实接触匹配实例；高速破坏同时要求法向速度与冲量，持续破坏要求同面真实接触和持续驱动意图。力的分母采用接触事件间隔，间断、松开、反向与换面清除累计，累计值不作为碎片发射动量。
+
+最终 build-06 模块 `b9278d1a8dab8cdcd27b3fa5b9e295c05fb042a4ea1bae7c6ab762b503af84b8` 在 Windows UE5.8.4 通过六项破坏用例和五项驾驶/复位回归。最终 92 PNG 与 2,075 个输入身份绑定于 `artifacts/maps/wt-destruction-fix-20261118/release-verification.json`。静态余部的二次破坏与 Ubuntu 原生执行保留为明确覆盖边界；详细策略、旧模块与失败记录见 `docs/changes/2026-11-18-flanders-destruction-realism.md`。
+
 ## 弗兰德斯钢轨补充与任务出生来源（2026-11-19）
 
 生成补充覆盖扩展为 237 个资产、951 个 cell、18,488 个源实例。34 个 `world_static_000` 中的钢轨 SCN 对象按 `railroad_rails_tile_a` 精确选择，共 160,336 个原三角形；每对象一个中心局部 BVH 和 identity 旋转 RMI。源 SCN、NPZ、视觉 FBX、原 identity RMI、每面索引及材质归属共同绑定。仅钢轨新导出规范正交 FBX 节点为精确 -90°；逐元素指纹保留其他数据。既有同步空间加载、QueryAndPhysics / BlockAll、出生锚点和迟滞策略继续使用。
@@ -257,12 +266,47 @@ Native 实时节拍以当前仿真 epoch 的起点和实际 solver 时间维护�
 
 MID-360 v3 使用 200,000 个 5 μs 发射槽/秒、4 通道、默认 10 Hz 完整组帧和有界发送队列。每束姿态从原生 1 ms 历史节点插值，射线查询采用当前 UE 场景快照；游戏线程调度、线程池批量求交、游戏线程光学/材质处理。IMU 以整数采样索引保持 200 Hz，真实测点速度在 t±1 ms 的支撑窗口计算比力。传感器安装原点与坐标轴按官方机械定义修正，具体近似和标定状态见 docs/sensors/mid360-physical-model.md。适用范围和真实验收见 docs/guides/mujoco-integration.md、docs/changes/2026-11-20-mujoco-integration.md。
 
+
 ## 2026-11-20：UE5、MuJoCo 与 RViz 三窗口导航
 
-标准 `Play-Navigation.cmd` 的可见 MuJoCo 模式由同一个 `navigation_console.py` 管理 UE5、MuJoCo 显示窗口、ROS 桥、Point-LIO、AMCL/Nav2 和 RViz。专用显示环境先加载经过身份校验的完整模型并绑定本机接收端，再启动原生求解与导航；显示窗口完成首个匹配原生状态的画面，且原导航定位就绪后打开 RViz。无 RViz／离屏自动验收路径保持原有图形条件。各子进程、状态和输入身份写入同一会话目录，关闭显示窗口或 RViz、执行 Stop-Navigation.cmd 均由控制台收尾。
+标准 `Play-Navigation.cmd` 由 `navigation_console.py` 管理 UE5、ROS 桥、Point-LIO、AMCL/Nav2 和 RViz。默认省去独立的 MuJoCo 显示进程、显示依赖检查和专用 UDP 链路。显式开启观察窗时，专用环境先加载经过身份校验的完整模型并绑定本机接收端，再启动原生求解与导航。观察窗收到首个匹配原生状态，且导航定位就绪后打开 RViz。各子进程、状态和输入身份写入同一会话目录，关闭 RViz 或已启用的观察窗、执行 Stop-Navigation.cmd 均由控制台收尾。
 
 `FMujocoVehicleDynamics` 的可选私有 publisher 在现有 Step 最终状态验证后，以 30 Hz 仿真时间槽向 127.0.0.1 非阻塞单向 UDP 发送完整 qpos、qvel、act、ctrl 和全部 body 位姿。快照携带模型与物理身份、会话 token、重置 generation、单调 sequence 和原生时间；未请求显示时不创建 socket 或采样。原动力学、控制和传感器调用顺序保持，显示端没有控制回传接口。
 
 `tools/mujoco/live_viewer.py` 使用官方 MuJoCo 4.0.1 的低层 mjv/mjr 与 GLFW 显示同一份经过校验的模型：249 个源车辆凸壳、14 组固定场地三角面和四面边界完整保留。每个快照只更新位置派生和显示数据，并核对全部 16 个 body 的位置和四元数；静态 flex 显示缓冲在严格 world 固定约束下复用。显示端不进行动力学积分、碰撞或前向动力学求解；UE 内定制运行库保持唯一车辆动力学来源。定位与导航继续只消费原传感器和估计结果。
 
 鼠标与 F／Home 仅操作 MuJoCo 观察相机。数据中断时保留最后一个有效原生画面并显示 stale 状态，旧代数、乱序、身份不符和非有限数据均拒绝。真实窗口、导航移动、复位和生命周期的具体结果以 `docs/verification/2026-11-20-three-window-navigation.json` 与对应会话记录为准。
+
+Windows 启动器将所属 UE PID 交给 MuJoCo 观察窗口和 RViz 覆盖检测插件。前台不透明 UE 全屏窗口完全覆盖相应窗口时，MuJoCo 暂停 OpenGL 绘制，RViz 停止主 OGRE 渲染目标的自动绘制。置顶及可见窗口继续绘制，RViz 在露出时请求刷新。观察窗口接收 UDP 快照，RViz 继续处理 ROS 消息、TF 和视图更新。同画质全屏 100 FPS 待验证。开源线程模型及 GPU 样本见 `docs/research/mujoco-ue5-performance-20261120.md`。
+
+## 2026-11-20：独立原生求解与 UE 快照
+
+标准实时 MuJoCo 路径的 `FMujocoVehicleDynamics::FDedicated` 持有唯一运行的求解线程。每批 5 ms 推进原生 1 ms 子步，以单调墙钟累计截止时间。游戏线程发布整批执行器控制及墙钟租约，消费完整车体/关节/时间快照。复位等待旧线程加入后清理历史，再按新代数重建。原生 LK 1 kHz 模式仍使用显式同步步进。
+
+游戏线程消费历史并用真实 5 ms 车体/云台姿态回放 LiDAR 场景查询，TF 按严格递增原生时间发布，最后恢复最新视觉姿态。对固定 RMUC 原几何作查询，使用 1 ms 原生姿态历史计算双 IMU 与射线发射姿态。视口采用独立时钟。Windows 功能证据已通过，严格分段/滚动实时和全屏 100 FPS 待验证。见 `docs/changes/2026-11-20-mujoco-dedicated-thread.md`。
+
+## 2026-11-20：RGB 异步传感器读回
+
+ROS RGB 使用同一 UE 场景相机。游戏线程记录采集时的物理时间和相机相对位姿，渲染线程按捕获顺序提交 GPU staging copy，并在 fence 完成后逐行读回。三个槽位有界复用，积压时计数，断线或复位后丢弃旧连接帧。UDP 观察、状态包、IMU 和 LiDAR 的时钟独立。ROS 图像、内参与相机光学 TF 共用原采集时间；关闭 RGB 的导航模式继续发布内参与 TF。
+
+## 2026-11-21：主视口渲染比例
+
+Windows 底层导航启动器默认保留原生分辨率，可显式传入 `-RenderScale` 选择主视口内部采样比例。RMUC 的 `Play-Navigation.cmd` 和手动、训练快捷入口默认传入 50% 与 120 Hz 目标。`navigation_console.py` 将请求写入会话来源和状态，并通过 UE 的 `r.ScreenPercentage` 启动选项生效。输出由视口尺寸决定，仿真和 ROS 发布配置与该比例独立。原生对照见 `docs/changes/2026-11-21-ue-render-tuning.md`。
+
+RMUC 场馆的 `presentation_assets` 可配置玻璃、天空与太阳云影。云影材质与天空共享云密度函数和游戏时间，`CampusGym.cpp` 从当前太阳组件向材质写入投影方向。入口装饰墙仍由场馆 layout 提供且关闭碰撞、导航。 [场馆立面与天气](../../docs/changes/2026-11-21-school-weather.md)
+
+RMUC 的正常模式共享 `assets/maps/rmuc2027/map.json` 和 `arena-shell.json`。导航从规范场景生成会话文件，套用路线包的出生点，并检查规范和路线两份场景的几何与栅格匹配。Windows 的 MuJoCo、Chaos 导航均逐字节快照规范场馆；Windows 和 Linux 手动从规范路径直接加载。 [同源验证](../../docs/changes/2026-11-21-rmuc-shared-venue.md)
+
+## 2026-11-21：底盘指令的碰撞检查
+
+Omni PID 在导航坐标系生成平移方向，使用估计的 base_stabilized 姿态摆放底盘足迹，并在局部代价地图中检查指令扫掠、制动位移及横向惯性。局部地图使用 navigation_frame。ROS 桥将有效导航速度转换为固定里程计方向，通过估计底盘偏航和关节角驱动云台。车速为零或速度输入暂缺时维持最近有效方向，估计偏航投影最长 0.50 秒。关节反馈按最短角差报告跨 ±π 的速度。车包和更新周期决定停车预测参数。
+
+独立 MPPI 配置可在固定导航系下提供平移候选，原全向控制器仍核验候选车体限值、停止扫掠及转弯净空。小陀螺与云台由各自控制链处理。默认入口继续使用原跟踪方向及控制配置。
+
+## 2026-11-21：导航速度生成
+
+RMUC 仿真使用 10 m 滚动窗口及原 5 m 地形观测半径，候选停车位移仍经车身完整扫掠和观测范围约束。Omni PID 平移阻尼采用实测沿目标方向的速度，安全前视点在局部地图分辨率内细化。曲率限速比例连续演变，弯前与终点收速从车辆参数计算。
+
+## 2026-11-22：坡面识别与角前速度
+
+选定 sentry_ws 配置可为 terrain_analysis 和 terrain_analysis_ext 指定最大可行坡度。节点用 odom 系中的低表面点拟合局部支持面。接受同一实测坡面连续相接的高侧与低侧平台，核对高度变化和拟合残差。接近支持面的点为地面，其他点沿用原高度和体素标记路径。Omni PID 对浅弯设置连续进入速度，静态体素代价和车身制动扫掠约束巡航。

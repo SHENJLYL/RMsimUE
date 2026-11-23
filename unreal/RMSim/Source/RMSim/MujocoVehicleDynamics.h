@@ -11,7 +11,7 @@ enum class EMujocoTimingScope : uint8
 };
 
 // All published quantities use UE coordinates/centimetres. The owned MuJoCo model
-// uses ROS right-handed SI coordinates and is accessed only on the game thread.
+// uses ROS right-handed SI coordinates. Readers consume an immutable frame in dedicated mode.
 struct FMujocoBodyState
 {
     FTransform World = FTransform::Identity;
@@ -46,11 +46,25 @@ public:
         const FString& RigFilename, const FString& DriveProfileFilename, FString& Error);
     bool Reset(const FTransform& ChassisPose, FString& Error, double InitialYaw = 0, double InitialPitch = 0);
     bool Step(double Seconds, FString& Error);
+    bool StartDedicated(double PeriodSeconds, FString& Error);
+    void StopDedicated();
+    bool IsDedicated() const { return Dedicated.IsValid(); }
+    void SetDedicatedPaused(bool Paused);
+    void SubmitDedicatedControls(double DeadlineWallSeconds);
+    bool ConsumeDedicatedFrame(bool& Updated, FString& Error);
+    bool ReadDedicatedProgress(uint64& Steps, uint64& Failsafes) const;
+    void VisitDedicatedQueryFrames(TFunctionRef<void(double,const TArray<FTransform>&,bool)> Visitor);
     bool ConfigureServo(const FString& Part, double Stiffness, double Damping, double ForceLimit, FString& Error);
     bool SetServoTarget(const FString& Part, double Position, double Velocity, bool Wrap);
+    bool SetServoTrajectory(const FString& Part, double Position, double Velocity,
+        bool Wrap, double AtSolverTime, double ExpiresWall);
     bool SetTorque(const FString& Part, double Torque);
     bool SetForceLimit(const FString& Part, double ForceLimit);
+    bool SetRootExternalWrench(const FVector& ForceWorldRosN, const FVector& TorqueWorldRosNm);
     bool ConfigureBodyDamping(const FString& Part, double LinearPerSecond, double AngularPerSecond, FString& Error);
+    const FString& RootBody() const { return RootBodyName; }
+    const FString& YawBody() const { return YawBodyName; }
+    const FString& PitchBody() const { return PitchBodyName; }
     bool GetJoint(const FString& Part, double& Position, double& Velocity) const;
     bool GetBody(const FString& Part, FMujocoBodyState& Out) const;
     // Absolute native solver seconds; UE world centimetres. GT only, no extrapolation.
@@ -63,22 +77,28 @@ public:
     void RecordTiming(EMujocoTimingScope Scope, double WallSeconds) const;
     void FlushTiming();
     const TArray<FString>& BodyNames() const { return OrderedBodyNames; }
-    const TArray<FMujocoContactSample>& Contacts() const { return FrameContacts; }
+    const TArray<FMujocoContactSample>& Contacts() const;
     const TSharedPtr<FJsonObject>& Manifest() const { return ManifestObject; }
+    int32 WarningCount() const;
     double Time() const;
     double Timestep() const;
     FVector GravityCmS2() const;
-    uint64 Steps() const { return TotalSteps; }
+    uint64 Steps() const;
     TSharedRef<FJsonObject> Diagnostics() const;
 
 private:
     struct FImplementation;
+    struct FDedicated;
     TUniquePtr<FImplementation> Impl;
+    TUniquePtr<FDedicated> Dedicated;
     TSharedPtr<FJsonObject> ManifestObject;
     TArray<FString> OrderedBodyNames;
     TArray<FMujocoContactSample> FrameContacts;
     FString ModelPath;
     FString ModelMd5;
+    FString RootBodyName = TEXT("body");
+    FString YawBodyName = TEXT("yaw");
+    FString PitchBodyName = TEXT("pitch");
     int32 VerifiedRuntimeBindings = 0;
     bool bPhysicsIdentityVerified = false;
     double RemainderSeconds = 0;

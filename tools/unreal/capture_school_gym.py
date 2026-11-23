@@ -10,6 +10,7 @@ def main():
  a.add_argument('--output',type=Path,required=True)
  a.add_argument('--views',nargs='+',default=['CompleteGym','DriverView','WindowView'])
  a.add_argument('--capture-delay',type=float,default=40)
+ a.add_argument('--cloud-time',type=float,help='Freeze both sky clouds and projected shadows at this time for comparisons')
  a.add_argument('--timeout',type=float,default=900)
  args=a.parse_args();root=args.root.resolve();out=args.output.resolve()
  if out.exists():raise FileExistsError('Output path already used')
@@ -41,7 +42,8 @@ def main():
  'EntryEastOutside':{'position':[43,-7.16435424805,3.1],'target':[24,-7.16435424805,2.0],'fov':96},
  'EntryBrickDetail':{'position':[35,11,1.5],'target':[31.9,5,.65],'fov':78},
  'EntryWestUpperDetail':{'position':[-28,-27,1.3],'target':[-32,-23,.7],'fov':75},
- 'GroundSkySeam':{'position':[-72,-5.53,1.8],'target':[-150,-5.53,1.5],'fov':80}
+ 'GroundSkySeam':{'position':[-72,-5.53,1.8],'target':[-150,-5.53,1.5],'fov':80},
+ 'OutdoorClouds':{'position':[44,-9,2.9],'target':[84,-9,8.0],'fov':84}
  }
  def ros(v):return ','.join(f'{x:.7g}' for x in (v[0],-v[1],v[2]))
  config=root/'assets/maps/rmuc2027/arena-shell.json'
@@ -56,6 +58,7 @@ def main():
  report={'status':'running','utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
          'manifest_sha256':sha(config),'layout_sha256':sha(layout),
          'source_map_sha256':sha(root/'assets/maps/rmuc2027/map.json'),
+         'cloud_time_seconds':args.cloud_time,
          'vehicle_sha256':sha(root/'assets/vehicles/aim_sentry/ue_mesh_rig.json'),
          'ue_module_sha256':sha(root/'unreal/RMSim/Binaries/Win64/UnrealEditor-RMSim.dll'),'views':[]}
  try:
@@ -70,6 +73,7 @@ def main():
       '-GymProbeOutput='+str(folder/'boundary.json'),'-CaptureDir='+str(folder),
       '-CaptureDelay='+str(args.capture_delay),'-ExitAfterCapture',
       '-ResX=1600','-ResY=1000','-ForceRes','-abslog='+str(folder/'ue.log')]
+   if args.cloud_time is not None:cmd.append('-GymCloudTime='+str(args.cloud_time))
    (folder/'command.json').write_text(json.dumps(cmd,indent=2),encoding='utf-8')
    print('SCHOOL_RUNTIME_VIEW_START',name,flush=True)
    start=time.monotonic()

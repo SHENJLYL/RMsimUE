@@ -33,9 +33,15 @@ class SentryNavigationSourceTests(unittest.TestCase):
         follow=original['controller_server']['ros__parameters']['FollowPath']
         follow['v_linear_max']=5.0
         follow['min_approach_linear_velocity']=0.05
-        follow['approach_velocity_scaling_dist']=2.0
+        follow['approach_velocity_scaling_dist']=1.5
+        follow.update(translation_kp=4.0, min_lookahead_dist=.65, tracking_deceleration=4.0,
+                      reduction_ratio_at_high_curvature=.65, max_velocity_scaling_factor_rate=1.3)
+        for node in ('terrain_analysis','terrain_analysis_ext'):
+            original[node]['ros__parameters']['maxPassableSlopeDeg'] = 35.0
         follow['use_interpolation']=True
-        follow['max_lookahead_dist']=2.0
+        follow['max_lookahead_dist']=3.0
+        follow['lookahead_time']=1.2
+        original['sensor_scan_generation']['ros__parameters']['odometry_velocity_window_s'] = 0.08
         smooth=original['velocity_smoother']['ros__parameters']
         smooth['max_velocity']=[5.0,2.0,3.0]
         smooth['min_velocity']=[-1.5,-2.0,-3.0]
@@ -49,6 +55,7 @@ class SentryNavigationSourceTests(unittest.TestCase):
         reality=yaml.safe_load(self.reference.read_text(encoding='utf-8'))
         for node in ('amcl','pointcloud_to_laserscan'):
             original[node]=reality[node]
+        original['local_costmap']['local_costmap']['ros__parameters'].update(width=10, height=10)
         self.assertEqual(original,patched)
         manual=json.loads((ROOT/'assets/vehicles/aim_sentry/drive-profile.json').read_text())['control']
         self.assertEqual(patched['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],manual['MaxForwardSpeedMps'])
@@ -66,8 +73,9 @@ class SentryNavigationSourceTests(unittest.TestCase):
             with self.subTest(mode=name):
                 cfg,_=prepare(self.reference,self.map,'aim_sentry',[.6,-.4,.15],name)
                 raw=yaml.safe_load((self.source/name/'nav2_params.yaml').read_text(encoding='utf-8'))
-                self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath'],
-                                 raw['controller_server']['ros__parameters']['FollowPath'])
+                follow = dict(raw['controller_server']['ros__parameters']['FollowPath'])
+                follow.update(collision_body_frame='aim_sentry/base_stabilized', collision_observation_range=5.0)
+                self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath'],follow)
                 self.assertEqual(cfg['controller_server']['ros__parameters']['general_goal_checker'],
                                  raw['controller_server']['ros__parameters']['general_goal_checker'])
                 native_smoother=dict(cfg['velocity_smoother']['ros__parameters'])
@@ -79,7 +87,11 @@ class SentryNavigationSourceTests(unittest.TestCase):
                 self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],speed)
                 self.assertEqual(cfg['velocity_smoother']['ros__parameters']['max_accel'][0],acceleration)
                 self.assertEqual(cfg['velocity_smoother']['ros__parameters']['max_decel'][0],-deceleration)
-                self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['reduction_ratio_at_high_curvature'],.5)
+                self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['reduction_ratio_at_high_curvature'],
+                                 .65 if name=='simulation' else .5)
+                for terrain in ('terrain_analysis','terrain_analysis_ext'):
+                    self.assertEqual(cfg[terrain]['ros__parameters'].get('maxPassableSlopeDeg',0.0),
+                                     35.0 if name=='simulation' else 0.0)
                 for node in ('local_costmap','global_costmap'):
                     native=cfg[node][node]['ros__parameters']
                     orig=raw[node][node]['ros__parameters']
@@ -102,7 +114,7 @@ class SentryNavigationSourceTests(unittest.TestCase):
         self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['v_linear_max'],1.7)
         self.assertEqual(cfg['velocity_smoother']['ros__parameters']['max_velocity'][:2],[1.7,1.2])
         self.assertEqual(cfg['velocity_smoother']['ros__parameters']['min_velocity'][:2],[-1.1,-1.2])
-        self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['reduction_ratio_at_high_curvature'],.5)
+        self.assertEqual(cfg['controller_server']['ros__parameters']['FollowPath']['reduction_ratio_at_high_curvature'],.65)
 
     def test_pointlio_filters_follow_the_same_source_yaml(self):
         reference=yaml.safe_load((self.source/'simulation/nav2_params.yaml').read_text(encoding='utf-8'))['point_lio']['ros__parameters']

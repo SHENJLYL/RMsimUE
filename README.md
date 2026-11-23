@@ -1,5 +1,7 @@
 # RM Simulator
 
+RMUC 默认入口使用 32.4 秒稳态 MPC 配置。Windows 使用 `Play-Navigation.cmd` 或 `Play-Simulator.cmd` 中的内置导航模式。[当前版本与验证](docs/changes/2026-11-24-simulator-snapshot.md)
+
 UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接触物理驾驶、射击训练和原控制/传感器链路；长期目标保留 Windows/Ubuntu 原生同源算法、通用车辆包、可换地图、高画质和联机权威比赛。
 
 [当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-20-mujoco-integration.md) · [仓库与本地资源](docs/guides/repository.md)
@@ -8,7 +10,7 @@ UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接�
 
 当前活动工程统一在 `D:\simulator`。RMUC、弗兰德斯、训练和导航入口使用同一个 `unreal/RMSim/RMSim.uproject`；车辆动力学与手动驾驶参数共用 `assets/vehicles/aim_sentry/drive-profile.json`，云台和观察设置共用 `unreal/RMSim/Config/DefaultGame.ini`。导航沿用所选 `sentry_ws` YAML 的控制、规划、避障和速度平滑算法，运动能力限值从同一车辆 `drive-profile.json` 生成；手动与导航在车辆端共用连续整形器、执行器和传感器包。
 
-AIM 当前手动与标准导航的速度上限为前进 **5 m/s**、后退 **2.5 m/s**、横移 **4 m/s**；悬挂为 **2000 N/m、140 N·s/m**。切换地图直接选择入口，地图包保存地形、材质、布局和出生点。原地图工作树保留在本目录的 `artifacts/archive/wt-vlaanderen-before-unified-20261118`。工程整合、枕木与路肩碰撞、地表细节和植被修正的逐项结果见[本轮变更](docs/changes/2026-11-18-unified-flanders.md)。
+AIM 当前车辆配置的前进、倒车、横移速度上限各为 **4.6 m/s**，每个悬挂模块为 **2000 N/m、280 N·s/m**，预载 **60 N**。切换地图直接选择入口，地图包保存地形、材质、布局和出生点。原地图工作树保留在本目录的 `artifacts/archive/wt-vlaanderen-before-unified-20261118`。工程整合、枕木与路肩碰撞、地表细节和植被修正的逐项结果见[本轮变更](docs/changes/2026-11-18-unified-flanders.md)。
 
 ## 弗兰德斯原图驾驶
 
@@ -38,9 +40,9 @@ AIM 当前手动与标准导航的速度上限为前进 **5 m/s**、后退 **2.5
 
 松键主动制动。启动入口会阻止重复游戏实例与构建期间启动。[操作说明](docs/guides/manual-controls.md) · [训练规则](docs/guides/training-combat.md)
 
-## 最新实证：悬挂与接触驾驶
+## 2026-11-17 实证：悬挂与接触驾驶
 
-AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂每模块 **2000 N/m、140 N·s/m**；上一轮1800/130，质量、预载、行程、轮胎凸包、摩擦与控制增益保持不变。
+AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。11 月 17 日对照采用每模块 **2000 N/m、140 N·s/m**；上一轮1800/130，质量、预载、行程、轮胎凸包、摩擦与控制增益保持不变。
 
 同模块原生对照：100N附加载荷压缩15.620→14.447mm，卸载回弹峰值1.085→0.774mm，冲量后反弹0.213→0.029mm。新配置两次专项结果一致。2026-11-17悬挂版本的模块/参数完成92项原生回归与48PNG，覆盖操控、小陀螺、红蓝波浪往返、坡面制动、射击/复位、ROS速度桥与原LK电流环；另有两次悬挂专项各4项/6PNG。
 
@@ -48,7 +50,7 @@ AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。当前悬挂�
 
 ## 算法、地图与车辆扩展
 
-Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。当前2000/140悬挂下，原LK/Point-LIO联合11项通过。最新已完成两轮RMUC断线重连与自主往返各14项、平地实际R复位恢复17项，合计45项导航检查；两轮实际去程误差0.1871/0.1830m、返程0.0902/0.1026m，沿用0.25m门限。Windows导航进程使用经校验的127.0.0.1 UDP配置，解决已复现的重启消息中断；原失败证据保留。[导航指南](docs/guides/native-navigation.md) · [恢复验收](artifacts/navigation/reconnect-tf-20261117/release-summary.json)
+Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。11 月 17 日的 2000/140 悬挂配置下，原LK/Point-LIO联合11项通过。该配置完成两轮RMUC断线重连与自主往返各14项、平地实际R复位恢复17项，合计45项导航检查；两轮实际去程误差0.1871/0.1830m、返程0.0902/0.1026m，沿用0.25m门限。Windows导航进程使用经校验的127.0.0.1 UDP配置，解决已复现的重启消息中断；原失败证据保留。[导航指南](docs/guides/native-navigation.md) · [恢复验收](artifacts/navigation/reconnect-tf-20261117/release-summary.json)
 
 标准手动与导航入口使用完整 RMUC2027 MuJoCo 场地包，切换其他地图时须提供匹配的物理模型；启动校验会拒绝身份不匹配的地图。弗兰德斯原图由专用 `Play-WarThunder.cmd` 打开已验证的保存关卡，其动态破坏与碎屑尚需建立对应 MuJoCo 实体。[地图说明](docs/guides/map-packages.md)
 

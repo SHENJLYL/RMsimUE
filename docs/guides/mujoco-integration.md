@@ -58,7 +58,7 @@ Native 实时节拍以当前仿真 epoch 的起点和实际 solver 时间维护�
 
 手动输入沿云台方向生成世界速度；导航输入使用 base_link 速度。两种输入在车辆端复用同一个连续整形器，连续导航消息保留加速度和方向变化状态。轮速分配、转向伺服、力矩、悬挂及接触继续读取同一车辆包。手动小陀螺使用既有独立模式参数。
 
-导航先由原 fake_vel_transform 将 navigation_frame 指令转到 base_link，再进入原 velocity_smoother。运行参数为 max_velocity=[5,4,π/2]、min_velocity=[−2.5,−4,−π/2]、max_accel=[2,2,3]、max_decel=[−4,−4,−5]；方向变化的 8 m/s² 限制由共同车辆整形器执行。两个消息类型适配位于已有 NavigationRunner 中，公共 /aim_sentry/cmd_vel 继续发布带仿真时钟的 TwistStamped。
+导航在固定的 navigation_frame 中使用原 velocity_smoother 平滑平移速度，再由 fake_vel_transform 将命令投影到 base_link。公共 `/aim_sentry/cmd_vel` 使用带仿真时间戳的 TwistStamped。共同车辆整形器根据当前车身朝向执行 5 / 2.5 / 4 m/s 前进、倒车和横移限值，以及 2 / 4 / 7 m/s² 加速、减速和制动限值。方向变化上限为 8 m/s²。
 
 导航明确的零速度目标经坐标、时戳及 session/epoch 校验后，立即通过公共 cmd_vel 进入车辆制动，同时仍交给原 smoother。停止锁存期间将 smoother 的剩余非零尾段替换为零；只有时间戳严格更新的合法非零目标才能解除锁存。状态失效、断连和 epoch 更新清理适配器；恢复后等待新的合法输入。运行状态以 velocity_stop_policy=immediate_zero_target_latch_v1 和对应计数记录实际行为。
 

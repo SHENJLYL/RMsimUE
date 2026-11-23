@@ -1,0 +1,586 @@
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+@@ -13,6 +13,8 @@
+ // limitations under the License.
+ 
+ #include "pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp"
++
++#include <limits>
+ 
+ #include "nav2_core/exceptions.hpp"
+ #include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
+@@ -420,10 +422,13 @@
+   }
+   auto can_stop = [&](double requested_speed) {
+     // Start easing off two controller cycles before the independent measured-speed stop.
++    // Reserve space for the estimated pose and the swerve transition near
++    // walls. The allowance vanishes at crawl speed so tight, clear routes
++    // remain possible. The independent measured-speed stop uses the real footprint.
++    const double transition_margin = std::min(0.24, 0.08 * requested_speed);
+     return clear(heading * sweep::stoppingDistance(requested_speed, collision_reaction_time_ + 2.0 * control_duration_,
+-      collision_deceleration_), drift,
+-      std::min(requested_speed, std::abs(measured.x * heading.y - measured.y * heading.x)) * control_duration_
+-      + 0.02 * requested_speed);
++      collision_deceleration_), drift, transition_margin +
++      std::min(requested_speed, std::abs(measured.x * heading.y - measured.y * heading.x)) * control_duration_);
+   };
+   if (!can_stop(lin_vel)) {
+     double low = 0.0, high = lin_vel;
+@@ -689,11 +694,26 @@
+   geometry_msgs::msg::PoseStamped backward_pose, forward_pose;
+   std::vector<double> cumulative_distances = calculateCumulativeDistances(path);
+ 
++  // Interpolated carrots live on the path. The straight-line distance to the
++  // robot picks the wrong curvature samples whenever the path bends.
++  const auto & carrot = lookahead_pose.pose.position;
+   double lookahead_pose_cumulative_distance = 0.0;
+-  geometry_msgs::msg::PoseStamped robot_base_frame_pose;
+-  robot_base_frame_pose.pose = geometry_msgs::msg::Pose();
+-  lookahead_pose_cumulative_distance =
+-    nav2_util::geometry_utils::euclidean_distance(robot_base_frame_pose, lookahead_pose);
++  double best_error = std::numeric_limits<double>::infinity();
++  for (size_t i = 1; i < path.poses.size(); ++i) {
++    const auto & a = path.poses[i - 1].pose.position;
++    const auto & b = path.poses[i].pose.position;
++    const double dx = b.x - a.x, dy = b.y - a.y;
++    const double length = cumulative_distances[i] - cumulative_distances[i - 1];
++    if (length <= 1e-9) {continue;}
++    const double fraction = std::clamp(
++      ((carrot.x - a.x) * dx + (carrot.y - a.y) * dy) / (length * length), 0.0, 1.0);
++    const double error = std::hypot(carrot.x - a.x - fraction * dx, carrot.y - a.y - fraction * dy);
++    if (error < best_error) {
++      best_error = error;
++      lookahead_pose_cumulative_distance = cumulative_distances[i - 1] + fraction * length;
++      if (error < 1e-8) {break;}
++    }
++  }
+ 
+   backward_pose = findPoseAtDistance(
+     path, cumulative_distances, lookahead_pose_cumulative_distance - backward_dist);
+@@ -716,17 +736,10 @@
+   double x2 = current_point.x, y2 = current_point.y;
+   double x3 = far_point.x, y3 = far_point.y;
+ 
+-  double center_x = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) +
+-                     (x3 * x3 + y3 * y3) * (y1 - y2)) /
+-                    (2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)));
+-  double center_y = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) +
+-                     (x3 * x3 + y3 * y3) * (x2 - x1)) /
+-                    (2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)));
+-  double radius = std::hypot(x2 - center_x, y2 - center_y);
+-  if (std::isnan(radius) || std::isinf(radius) || radius < 1e-9) {
+-    return 1e9;
+-  }
+-  return radius;
++  const double twice_area = std::abs((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1));
++  if (twice_area < 1e-9) {return 1e9;}
++  return std::hypot(x2 - x1, y2 - y1) * std::hypot(x3 - x2, y3 - y2) *
++         std::hypot(x3 - x1, y3 - y1) / (2.0 * twice_area);
+ }
+ 
+ void OmniPidPursuitController::visualizeCurvaturePoints(
+diff --git a/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml b/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
+--- a/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
++++ b/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
+@@ -94,6 +94,7 @@
+ sensor_scan_generation:
+   ros__parameters:
+     use_sim_time: True
++    odometry_velocity_window_s: 0.08
+     lidar_frame: "front_mid360"
+     base_frame: "base_footprint"
+     robot_base_frame: "gimbal_yaw"
+@@ -396,15 +397,15 @@
+       min_max_sum_error: 1.0
+       lookahead_dist: 2.0
+       use_velocity_scaled_lookahead_dist: true
+-      lookahead_time: 1.0
++      lookahead_time: 1.2
+       min_lookahead_dist: 0.65
+-      max_lookahead_dist: 2.0
++      max_lookahead_dist: 3.0
+       use_interpolation: true  # interpolated lookahead on high-speed wave routes
+       use_rotate_to_heading: false
+       use_rotate_to_heading_treshold: 0.1
+       min_approach_linear_velocity: 0.05  # AIM physics: allow lower speed near final goal
+       approach_velocity_scaling_dist: 1.5  # Final slowdown after the computed braking envelope.
+-      tracking_deceleration: 3.0
++      tracking_deceleration: 4.0
+       v_linear_min: -2.5
+       v_linear_max: 5.0  # AIM manual forward speed cap; sentry_ws simulation owns this setting
+       v_angular_min: -3.0
+diff --git a/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp b/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp
+--- a/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp
++++ b/ros2_ws/src/terrain_analysis/include/terrain_analysis/slope_ground.hpp
+@@ -3,6 +3,7 @@
+ #include <algorithm>
+ #include <array>
+ #include <cmath>
++#include <optional>
+ #include <vector>
+ 
+ namespace terrain_analysis
+@@ -12,14 +13,16 @@
+ class SlopeGround
+ {
+ public:
+-  explicit SlopeGround(int width) : width_(width), low_(width * width), planes_(width * width) {}
++  explicit SlopeGround(int width)
++  : width_(width), low_(width * width), ramps_(width * width), platforms_(width * width) {}
+ 
+   void reset(double tangent)
+   {
+     max_gradient_ = tangent;
+     if (enabled()) {
+       std::fill(low_.begin(), low_.end(), Sample{});
+-      std::fill(planes_.begin(), planes_.end(), Plane{});
++      std::fill(ramps_.begin(), ramps_.end(), Plane{});
++      std::fill(platforms_.begin(), platforms_.end(), Plane{});
+     }
+   }
+ 
+@@ -44,24 +47,49 @@
+             }
+           }
+         }
+-        auto & result = planes_[index(ix, iy)];
+-        // Try the whole patch first, then a half-patch at a slope transition.
++        const int cell = index(ix, iy);
++        auto & ramp = ramps_[cell];
++        auto & platform = platforms_[cell];
++        // Shrink only where the whole surface is curved or ends at a transition.
+         for (const auto & region : regions_) {
+-          const auto plane = fitRegion(neighbors, region);
+-          if (plane.valid) {
+-            result = plane;
+-            break;
+-          }
++          const bool corner = region[1] - region[0] == 1 && region[3] - region[2] == 1;
++          const auto plane = fitRegion(neighbors, region, corner);
++          if (!plane.valid) {continue;}
++          auto & surface = std::hypot(plane.gx, plane.gy) >= min_slope_ ? ramp : platform;
++          if (!surface.valid) {surface = plane;}
++          if (ramp.valid && platform.valid) {break;}
+         }
+       }
+     }
+-  }
+-
+-  bool onSlope(int ix, int iy, double x, double y, double z) const
+-  {
+-    if (!enabled() || !inside(ix, iy)) {return false;}
+-    const auto & plane = planes_[index(ix, iy)];
+-    return plane.valid && std::abs(z - plane.height(x, y)) <= residual_;
++    // Accept a level landing only where an already supported ramp approaches
++    // its height at this cell. An isolated flat top remains an obstacle.
++    for (int ix = 0; ix < width_; ++ix) {
++      for (int iy = 0; iy < width_; ++iy) {
++        const int cell = index(ix, iy);
++        auto & platform = platforms_[cell];
++        if (platform.valid && !connectedToRamp(ix, iy)) {platform.valid = false;}
++      }
++    }
++  }
++
++  std::optional<double> elevationAboveSupport(int ix, int iy, double x, double y, double z) const
++  {
++    if (!enabled() || !inside(ix, iy)) {return std::nullopt;}
++    const int cell = index(ix, iy);
++    const auto & ramp = ramps_[cell];
++    const auto & platform = platforms_[cell];
++    if (!ramp.valid && !platform.valid) {return std::nullopt;}
++    const auto matches = [&](const Plane & plane) {
++      return plane.valid && std::abs(z - plane.height(x, y)) <= residual_;
++    };
++    if (matches(ramp) || matches(platform)) {return 0.0;}
++    const double height = ramp.valid && platform.valid ?
++      std::min(ramp.height(x, y), platform.height(x, y)) :
++      (ramp.valid ? ramp : platform).height(x, y);
++    const double elevation = z - height;
++    // Retain the original drop/obstacle policy for points below the support.
++    if (elevation < -residual_) {return std::nullopt;}
++    return std::max(0.0, elevation);
+   }
+ 
+ private:
+@@ -72,11 +100,14 @@
+     double height(double px, double py) const {return z + gx * (px - x) + gy * (py - y);}
+   };
+   static constexpr double residual_ = 0.035;
++  static constexpr double min_slope_ = 0.08;
+   // Inclusive crop in a 3x3 patch, always retaining the point's own cell.
+-  static constexpr std::array<std::array<int, 4>, 5> regions_{{
+-    {0, 2, 0, 2}, {0, 1, 0, 2}, {1, 2, 0, 2}, {0, 2, 0, 1}, {0, 2, 1, 2}}};
+-
+-  Plane fitRegion(const std::array<Sample, 9> & points, const std::array<int, 4> & region) const
++  static constexpr std::array<std::array<int, 4>, 9> regions_{{
++    {0, 2, 0, 2}, {0, 1, 0, 2}, {1, 2, 0, 2}, {0, 2, 0, 1}, {0, 2, 1, 2},
++    {0, 1, 0, 1}, {0, 1, 1, 2}, {1, 2, 0, 1}, {1, 2, 1, 2}}};
++
++  Plane fitRegion(
++    const std::array<Sample, 9> & points, const std::array<int, 4> & region, bool corner) const
+   {
+     Plane plane;
+     int count = 0;
+@@ -91,7 +122,7 @@
+       plane.y += points[i].y;
+       plane.z += points[i].z;
+     }
+-    if (count < 5) {return {};}
++    if (count < (corner ? 4 : 5)) {return {};}
+     plane.x /= count;
+     plane.y /= count;
+     plane.z /= count;
+@@ -108,15 +139,60 @@
+     plane.gx = (yy * xz - xy * yz) / det;
+     plane.gy = (xx * yz - xy * xz) / det;
+     const double gradient = std::hypot(plane.gx, plane.gy);
+-    if (gradient < 0.08 || gradient > max_gradient_) {return {};}
++    if (gradient > max_gradient_) {return {};}
++    int supporting_cells = 0;
+     for (int i = 0; i < 9; ++i) {
+-      if (!points[i].valid) {continue;}
+-      const double dz = points[i].z - plane.height(points[i].x, points[i].y);
+-      // A lower neighboring surface rules out fitting the top of a step or box.
+-      if (dz < -residual_ || (selected(i) && dz > residual_)) {return {};}
+-    }
++      const auto & sample = points[i];
++      if (!sample.valid) {continue;}
++      const double dz = sample.z - plane.height(sample.x, sample.y);
++      if (std::abs(dz) <= residual_) {
++        ++supporting_cells;
++        continue;
++      }
++      if (selected(i)) {return {};}
++      if (dz >= 0.0) {continue;}
++      // Avoid extrapolating a plane down through the other side of a crest.
++      // A lower sample outside the fit must still have a physically gradual
++      // approach from at least one adjacent sample that supports the plane.
++      bool continuous = false;
++      for (int j = 0; j < 9; ++j) {
++        if (!selected(j) || std::abs(i / 3 - j / 3) + std::abs(i % 3 - j % 3) != 1) {
++          continue;
++        }
++        const auto & neighbor = points[j];
++        const double spacing = std::hypot(sample.x - neighbor.x, sample.y - neighbor.y);
++        continuous |= neighbor.z - sample.z <= max_gradient_ * spacing + 0.01;
++      }
++      if (!continuous) {return {};}
++      ++supporting_cells;
++    }
++    if (supporting_cells < 5) {return {};}
+     plane.valid = true;
+     return plane;
++  }
++
++  bool connectedToRamp(int ix, int iy) const
++  {
++    const auto & landing = low_[index(ix, iy)];
++    static constexpr std::array<std::array<int, 2>, 4> adjacent{{
++      {-1, 0}, {1, 0}, {0, -1}, {0, 1}}};
++    for (const auto & direction : adjacent) {
++      const int x = ix + direction[0], y = iy + direction[1];
++      if (!inside(x, y)) {continue;}
++      const int cell = index(x, y);
++      const auto & ramp = ramps_[cell];
++      if (!ramp.valid) {continue;}
++      const auto & lower = low_[cell];
++      const double rise = landing.z - lower.z;
++      const double spacing = std::hypot(landing.x - lower.x, landing.y - lower.y);
++      const double predicted = ramp.height(landing.x, landing.y);
++      if (rise >= 0.015 && rise <= max_gradient_ * spacing + 0.01 &&
++        std::abs(landing.z - predicted) <= residual_)
++      {
++        return true;
++      }
++    }
++    return false;
+   }
+ 
+   bool enabled() const {return max_gradient_ > 0.0;}
+@@ -125,6 +201,6 @@
+   int width_;
+   double max_gradient_{};
+   std::vector<Sample> low_;
+-  std::vector<Plane> planes_;
++  std::vector<Plane> ramps_, platforms_;
+ };
+ }  // namespace terrain_analysis
+diff --git a/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp b/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
+--- a/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
++++ b/ros2_ws/src/terrain_analysis/src/terrainAnalysis.cpp
+@@ -574,9 +574,11 @@
+               planarVoxelDyObs[planarVoxelWidth * indX + indY] < minDyObsPointNum || !clearDyObs) {
+               float disZ = point.z - planarVoxelElev[planarVoxelWidth * indX + indY];
+               if (considerDrop) disZ = fabs(disZ);
+-              if (slope_ground.onSlope(indX, indY, point.x, point.y, point.z)) {
+-                slope_obstacles_removed += disZ >= 0.10f;
+-                disZ = 0.0f;
++              if (const auto elevation = slope_ground.elevationAboveSupport(
++                  indX, indY, point.x, point.y, point.z)) {
++                const float relative = static_cast<float>(*elevation);
++                slope_obstacles_removed += disZ >= 0.10f && relative < 0.10f;
++                disZ = std::min(disZ, relative);
+               }
+               int planarPointElevSize = planarPointElev[planarVoxelWidth * indX + indY].size();
+               if (disZ >= 0 && disZ < vehicleHeight && planarPointElevSize >= minBlockPointNum) {
+diff --git a/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp b/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+--- a/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
++++ b/ros2_ws/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+@@ -540,9 +540,11 @@
+               indY < planarVoxelWidth) {
+             int ind = planarVoxelWidth * indX + indY;
+             float disZ = fabs(point.z - planarVoxelElev[ind]);
+-            if (slope_ground.onSlope(indX, indY, point.x, point.y, point.z)) {
+-              slope_obstacles_removed += disZ >= 0.10f;
+-              disZ = 0.0f;
++            if (const auto elevation = slope_ground.elevationAboveSupport(
++                indX, indY, point.x, point.y, point.z)) {
++              const float relative = static_cast<float>(*elevation);
++              slope_obstacles_removed += disZ >= 0.10f && relative < 0.10f;
++              disZ = std::min(disZ, relative);
+             }
+             if (disZ < vehicleHeight &&
+                 (planarVoxelConn[ind] == 2 || !checkTerrainConn)) {
+diff --git a/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp b/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
+--- a/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
++++ b/ros2_ws/src/pb_nav2_plugins/src/layers/intensity_voxel_layer.cpp
+@@ -109,7 +109,15 @@
+   resetMaps();
+ 
+   // if not enabled, stop here
++  // resetMaps clears this layer, but the master only recomposes dirty cells.
++  // Include the previous marks, even when this scan finds nothing there.
++  if (previous_bounds_.valid()) {
++    touch(previous_bounds_.min_x, previous_bounds_.min_y, min_x, min_y, max_x, max_y);
++    touch(previous_bounds_.max_x, previous_bounds_.max_y, min_x, min_y, max_x, max_y);
++  }
++  Bounds current_bounds{1e30, 1e30, -1e30, -1e30};
+   if (!enabled_) {
++    previous_bounds_ = current_bounds;
+     return;
+   }
+ 
+@@ -171,7 +179,10 @@
+         unsigned int index = getIndex(mx, my);
+ 
+         costmap_[index] = LETHAL_OBSTACLE;
+-        touch(static_cast<double>(px), static_cast<double>(py), min_x, min_y, max_x, max_y);
++        double cell_x, cell_y;
++        mapToWorld(mx, my, cell_x, cell_y);
++        touch(cell_x, cell_y, &current_bounds.min_x, &current_bounds.min_y,
++          &current_bounds.max_x, &current_bounds.max_y);
+       }
+     }
+   }
+@@ -197,7 +208,13 @@
+     voxel_pub_->publish(grid_msg);
+   }
+ 
+-  updateFootprint(robot_x, robot_y, robot_yaw, min_x, min_y, max_x, max_y);
++  updateFootprint(robot_x, robot_y, robot_yaw, &current_bounds.min_x, &current_bounds.min_y,
++    &current_bounds.max_x, &current_bounds.max_y);
++  if (current_bounds.valid()) {
++    touch(current_bounds.min_x, current_bounds.min_y, min_x, min_y, max_x, max_y);
++    touch(current_bounds.max_x, current_bounds.max_y, min_x, min_y, max_x, max_y);
++  }
++  previous_bounds_ = current_bounds;
+ }
+ 
+ void IntensityVoxelLayer::updateOrigin(double new_origin_x, double new_origin_y)
+diff --git a/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
+--- a/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
++++ b/ros2_ws/src/pb_nav2_plugins/include/pb_nav2_plugins/layers/intensity_voxel_layer.hpp
+@@ -61,6 +61,12 @@
+     double * max_x, double * max_y);
+ 
+ private:
++  struct Bounds
++  {
++    double min_x, min_y, max_x, max_y;
++    bool valid() const {return min_x <= max_x && min_y <= max_y;}
++  };
++  Bounds previous_bounds_{1e30, 1e30, -1e30, -1e30};
+   bool publish_voxel_;
+   rclcpp::Publisher<nav2_msgs::msg::VoxelGrid>::SharedPtr voxel_pub_;
+   nav2_voxel_grid::VoxelGrid voxel_grid_;
+diff --git a/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp b/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
+--- a/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
++++ b/ros2_ws/src/sensor_scan_generation/src/sensor_scan_generation.cpp
+@@ -15,6 +15,8 @@
+ #include "sensor_scan_generation/sensor_scan_generation.hpp"
+ 
+ #include <chrono>
++#include <cmath>
++#include <stdexcept>
+ #include "pcl_ros/transforms.hpp"
+ #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+ 
+@@ -27,6 +29,10 @@
+   this->declare_parameter<std::string>("lidar_frame", "");
+   this->declare_parameter<std::string>("base_frame", "");
+   this->declare_parameter<std::string>("robot_base_frame", "");
++  velocity_window_s_ = this->declare_parameter<double>("odometry_velocity_window_s", 0.0);
++  if (!std::isfinite(velocity_window_s_) || velocity_window_s_ < 0.0 || velocity_window_s_ > 0.25) {
++    throw std::invalid_argument("odometry_velocity_window_s must be in [0, 0.25]");
++  }
+ 
+   this->get_parameter("lidar_frame", lidar_frame_);
+   this->get_parameter("base_frame", base_frame_);
+@@ -147,13 +153,25 @@
+   out.pose.pose.position.z = origin.z();
+   out.pose.pose.orientation = tf2::toMsg(transform.getRotation());
+ 
+-  if (previous_odometry_valid_) {
+-    const double dt = (stamp - previous_odometry_stamp_).seconds();
++  if (!velocity_samples_.empty() && stamp <= velocity_samples_.back().stamp) {
++    velocity_samples_.clear();
++  }
++  // Pose and stamp are unchanged. Estimate twist over a short interval to
++  // prevent single LIO scan corrections from driving the stopping envelope.
++  while (velocity_samples_.size() > 1 &&
++    (stamp - velocity_samples_[1].stamp).seconds() >= velocity_window_s_)
++  {
++    velocity_samples_.pop_front();
++  }
++  if (!velocity_samples_.empty()) {
++    const auto & previous = velocity_samples_.front();
++    const auto & previous_transform = previous.transform;
++    const double dt = (stamp - previous.stamp).seconds();
+     if (dt > 0.0) {
+       const auto inverse_rotation = transform.getRotation().inverse();
+       const auto linear_velocity = tf2::quatRotate(
+-        inverse_rotation, (transform.getOrigin() - previous_transform_.getOrigin()) / dt);
+-      auto delta = transform.getRotation() * previous_transform_.getRotation().inverse();
++        inverse_rotation, (transform.getOrigin() - previous_transform.getOrigin()) / dt);
++      auto delta = transform.getRotation() * previous_transform.getRotation().inverse();
+       delta.normalize();
+       if (delta.w() < 0.0) {
+         delta = tf2::Quaternion(-delta.x(), -delta.y(), -delta.z(), -delta.w());
+@@ -168,9 +186,7 @@
+       out.twist.twist.angular.z = angular_velocity.z();
+     }
+   }
+-  previous_transform_ = transform;
+-  previous_odometry_stamp_ = stamp;
+-  previous_odometry_valid_ = true;
++  velocity_samples_.push_back({stamp, transform});
+ 
+   pub_chassis_odometry_->publish(out);
+ }
+diff --git a/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp b/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
+--- a/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
++++ b/ros2_ws/src/sensor_scan_generation/include/sensor_scan_generation/sensor_scan_generation.hpp
+@@ -15,6 +15,7 @@
+ #ifndef SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
+ #define SENSOR_SCAN_GENERATION__SENSOR_SCAN_GENERATION_HPP_
+ 
++#include <deque>
+ #include <memory>
+ #include <string>
+ 
+@@ -71,9 +72,13 @@
+   std::unique_ptr<message_filters::Synchronizer<SyncPolicy>> sync_;
+ 
+   tf2::Transform tf_lidar_to_robot_base_;
+-  rclcpp::Time previous_odometry_stamp_{0, 0, RCL_ROS_TIME};
+-  tf2::Transform previous_transform_;
+-  bool previous_odometry_valid_{false};
++  struct PoseSample
++  {
++    rclcpp::Time stamp;
++    tf2::Transform transform;
++  };
++  std::deque<PoseSample> velocity_samples_;
++  double velocity_window_s_{0.0};
+   rclcpp::TimerBase::SharedPtr diagnostic_timer_;
+   uint64_t received_odometry_{0}, received_clouds_{0}, paired_{0}, transformed_{0};
+   double latest_odom_stamp_{0.0}, latest_cloud_stamp_{0.0};
+diff --git a/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp b/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp
+--- a/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp
++++ b/ros2_ws/src/terrain_analysis/test/slope_ground_test.cpp
+@@ -5,6 +5,10 @@
+ int main()
+ {
+   terrain_analysis::SlopeGround ground(5);
++  const auto surface = [&](int ix, int iy, double x, double y, double z) {
++    const auto elevation = ground.elevationAboveSupport(ix, iy, x, y, z);
++    return elevation && *elevation < 0.035;
++  };
+   const double max_gradient = std::tan(35.0 * std::acos(-1.0) / 180.0);
+   for (double gradient : {.65, -.65}) {
+     ground.reset(max_gradient);
+@@ -17,8 +21,8 @@
+       }
+     }
+     ground.fit();
+-    if (!ground.onSlope(2,2,.46,.47,gradient*.46+.1*.47) ||
+-         ground.onSlope(2,2,.46,.47,gradient*.46+.1*.47+.15)) {return 1;}
++    if (!surface(2,2,.46,.47,gradient*.46+.1*.47) ||
++         surface(2,2,.46,.47,gradient*.46+.1*.47+.15)) {return 1;}
+   }
+   std::cout << "PASS uphill downhill and obstacle over ramp\n";
+   for (int kind = 0; kind < 3; ++kind) {
+@@ -32,7 +36,60 @@
+     }
+     ground.fit();
+     const double z = kind==0 ? .4 : kind==1 ? .16 : 0.;
+-    if (ground.onSlope(2,2,.4,.4,z)) {return 1;}
++    if (surface(2,2,.4,.4,z)) {return 1;}
+   }
+   std::cout << "PASS steep face, step and collinear returns remain unclassified\n";
++
++  ground.reset(max_gradient);
++  for (int x = 0; x < 5; ++x) {
++    const double px = .2 * x;
++    const double z = px <= .4 ? .6 * px : .24 - .45 * (px - .4);
++    for (int y = 0; y < 5; ++y) {
++      const double py = .2 * y;
++      ground.observe(x, y, px, py, z);
++      ground.observe(x, y, px, py, z + .12);
++    }
++  }
++  ground.fit();
++  if (!surface(2, 2, .4, .4, .24) ||
++    surface(2, 2, .4, .4, .36))
++  {
++    return 1;
++  }
++  std::cout << "PASS traversable crest and obstacle above the crest\n";
++
++
++  for (double step : {0.0, 0.12}) {
++    ground.reset(max_gradient);
++    for (int x = 0; x < 5; ++x) {
++      const double px = .2 * x;
++      const double z = x < 2 ? .38 * px : .15 + step;
++      for (int y = 0; y < 5; ++y) {
++        ground.observe(x, y, px, .2 * y, z);
++      }
++    }
++    ground.fit();
++    if (surface(2, 2, .41, .41, .15 + step) != (step == 0.0) ||
++      surface(2, 2, .41, .41, .27 + step))
++    {
++      return 1;
++    }
++  }
++  std::cout << "PASS ramp landing, raised step and protruding obstacle\n";
++
++  ground.reset(max_gradient);
++  for (int x = 0; x < 5; ++x) {
++    for (int y = 0; y < 5; ++y) {
++      ground.observe(x, y, .2 * x, .2 * y, .6 * .2 * x);
++    }
++  }
++  ground.fit();
++  const auto near_surface = ground.elevationAboveSupport(2, 2, .4, .4, .29);
++  const auto obstacle = ground.elevationAboveSupport(2, 2, .4, .4, .36);
++  if (!near_surface || *near_surface >= .10 || !obstacle || *obstacle <= .10 ||
++    ground.elevationAboveSupport(2, 2, .4, .4, .14))
++  {
++    return 1;
++  }
++  std::cout << "PASS height above support, protrusion and drop fallback\n";
+ }

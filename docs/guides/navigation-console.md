@@ -2,15 +2,21 @@
 
 ## 打开与关闭
 
-在已准备资产的本机，双击根目录 **Play-Navigation.cmd**，或运行 `D:\simulator\Play-Navigation.cmd`，无需附加参数。标准入口依次打开 **MuJoCo 观察窗口、UE5 场景窗口和 RViz 导航窗口**，同时启动原生 ROS 桥、Point-LIO、AMCL/Nav2。MuJoCo 观察窗口先加载当前物理模型；UE 内的 MuJoCo 开始计算后，它显示同一车辆的原生状态。定位、Nav2 和观察窗口首帧均就绪后，RViz 自动出现。
+在已准备资产的本机，双击根目录 **Play-Navigation.cmd**，或运行 `D:\simulator\Play-Navigation.cmd`。标准入口打开 **UE5 场景窗口和 RViz 导航窗口**，同时启动原生 ROS 桥、Point-LIO、AMCL/Nav2。MuJoCo 在 UE 进程内运行物理求解，独立的 MuJoCo 观察窗口默认关闭。定位和 Nav2 就绪后，RViz 自动出现。
 
 当前已准备的完整原生场景是 **RMUC2027**，默认位于红方波浪路线。`Play-Navigation.cmd import_lab` 会被完整 MuJoCo 场景校验阻止；该参数对应的完整原生模型尚待准备。
 
-关闭 RViz 或 MuJoCo 观察窗口会结束本次启动器拥有的整套导航进程，也可双击 **Stop-Navigation.cmd**。手动驾驶入口是 `Play-ManualVehicle.cmd`，训练入口是 `Play-Training.cmd`。同一工程使用一个 UE 游戏实例；启动器会检测已有实例，先关闭当前手动预览再打开导航。
+关闭 RViz 会结束本次启动器拥有的整套导航进程，也可双击 **Stop-Navigation.cmd**。手动驾驶入口是 `Play-ManualVehicle.cmd`，训练入口是 `Play-Training.cmd`。同一工程使用一个 UE 游戏实例。启动器会检测已有实例，先关闭当前手动预览再打开导航。
 
-新机器先按仓库说明准备 UE、合法来源资产、原生 ROS 环境，以及 `tools/mujoco/requirements.txt` 对应的独立 MuJoCo 环境，再运行 `tools/environment/Prepare-NavigationConsole.cmd` 准备 RViz 依赖。启动器会检查依赖和模型身份；会话日志、三个窗口的进程信息及同步状态保存在 `artifacts/navigation/console-live` 下。当前实际运行证据来自 Windows；Ubuntu 同源入口与原生运行结果分别记录在[当前进度](../progress/current.md)。
+新机器先按仓库说明准备 UE、来源资产和原生 ROS 环境，再运行 `tools/environment/Prepare-NavigationConsole.cmd` 准备 RViz 依赖。启用独立观察窗口时另需 `tools/mujoco/requirements.txt` 对应的已验证独立环境。启动器会检查依赖和模型身份。会话日志、进程信息及同步状态保存在 `artifacts/navigation/console-live` 下。当前原生验证来自 Windows。 [当前进度](../progress/current.md)
 
 ## MuJoCo 观察窗口
+
+需要调试原生碰撞、轮地接触或观察窗传输时，从仓库根目录显式开启。
+
+```powershell
+& .\tools\environment\Start-NavigationConsole.ps1 -MujocoViewer
+```
 
 窗口显示当前车辆的完整动力学模型，默认跟随底盘。相机输入只改变观察位置。
 
@@ -24,6 +30,10 @@
 | Esc / 关闭窗口 | 结束本次三窗口导航会话 |
 
 观察窗口的状态和模型身份在会话目录的 `mujoco-viewer/status.json` 中；会话根目录 `status.json` 的 `pids.mujoco_viewer` 记录实际窗口进程，`launcher_pids` 另存 Windows 启动转发进程。启动或运行异常可从 `mujoco_viewer.log` 和控制台顶层错误定位。
+
+Windows 上，所属 UE 全屏窗口在前台并完全盖住 MuJoCo 时暂停该观察窗口的绘制。露出窗口后继续显示收到的最新状态，置顶的观察窗口保持绘制。状态中的 `unreceived_snapshot_sequences` 表示接收到的序号之间的缺口，与 `distinct_native_snapshot_frames` 表示的实际显示数量分别记录。 [性能与源代码对照](../research/mujoco-ue5-performance-20261120.md)
+
+`Prepare-NavigationConsole.cmd` 也会构建 RViz 的覆盖检测插件。同一会话的前台全屏 UE 完全盖住 RViz 时，RViz 主视口暂停绘制，ROS 消息、地图和 TF 继续更新。露出窗口即可操作；置顶、部分可见或位于其他显示器的 RViz 继续绘制。
 
 ## 单点与多航点
 
@@ -87,7 +97,15 @@ RMUC 默认地图包由 `assets/maps/rmuc2027/arena-shell.json` 的 `navigation_
 
 ## 标准仿真速度与渲染
 
-标准手动和导航均采用 UE 进程内的原生 MuJoCo。动力学以 **1 ms** 步长积分，UE 每 **5 ms / 200 Hz** 交换状态并驱动传感器；普通帧迟到时继续完成全部物理步，按绝对墙钟截止时间追赶。场景绘制采用独立 **60 Hz** 目标节拍，地图、车辆网格与光照由原 UE 场景渲染。
+双击 RMUC 的 `Play-Navigation.cmd` 默认使用 50% 内部渲染比例与 120 Hz 视口目标。需要选择其它比例时，可直接调用 PowerShell 启动器。例如在仓库根目录以 2560×1440 输出运行：
+
+```powershell
+& .\tools\environment\Start-NavigationConsole.ps1 -Fullscreen -Width 2560 -Height 1440 -ViewportHz 120 -RenderScale 75
+```
+
+75% 在此尺寸下以 1920×1080 渲染，50% 以 1280×720 渲染，两档都由 TSR 重建到 2560×1440。细线和纹理可能有采样差异。`-RenderScale` 接受 50–100 的整数，本机已实测 75 和 50 档。 [渲染对照](../changes/2026-11-21-ue-render-tuning.md)
+
+标准手动和导航均采用 UE 进程内的原生 MuJoCo。独立物理线程以 **1 ms** 步长积分，每 **5 ms** 生成一批完整状态，按绝对墙钟截止时间追赶。UE 读取最新完成的快照进行绘制，按顺序处理真实 5 ms 的传感器查询姿态。UE 视口采用独立 **60 Hz** 目标节拍，实测 Draw 与目标分别记录。 [独立线程验证记录](../changes/2026-11-20-mujoco-dedicated-thread.md)
 
 MuJoCo 观察窗口以单向 loopback UDP 接收 **30 Hz 仿真时间**的原生状态快照，展示当前动力学模型、底盘和关节姿态。它按模型身份和完整车体姿态核对显示结果，摄像机操作用于观察；车辆动力学和控制由 UE 内的同一求解器执行。快照过期时窗口显示冻结状态，控制台进入恢复状态；异常退出保留错误并清理本次会话。
 
@@ -99,13 +117,13 @@ Windows 混合核心平台默认 `-CpuPolicy performance`：从可用 CPU Sets �
 
 策略只作用于本次启动的 UE 子进程。CPU 集合、核心预算、完整命令和读回结果进入会话来源记录。
 
-当前导航默认 `-CameraHz 0`，关闭未使用的 ROS RGB 图像采集与同步读回，保留 CameraInfo 和安装 TF。UE 可见场景维持 60 Hz 目标；Mid-360 为 200k 射线/仿真秒、10 Hz 点云，两路 IMU 为 200 Hz。需要 RGB 算法输入时显式开启：
+当前导航默认 `-CameraHz 0`，只发布 CameraInfo 和安装 TF。UE 可见场景维持 60 Hz 目标；Mid-360 为 200k 射线/仿真秒、10 Hz 点云，两路 IMU 为 200 Hz。需要 RGB 算法输入时显式开启：
 
 ```powershell
 .\tools\environment\Start-NavigationConsole.ps1 -Scene rmuc2027 -CameraHz 10
 ```
 
-`-CameraHz` 接受 0 或 1–60 Hz。RGB 开启配置的实时性能独立验证；正式性能报告会明确记录相机状态、真实时钟比例、滚动时间窗、Draw 调用与传感器计数。
+`-CameraHz` 接受 0 或 1–60 Hz。启用 RGB 后，UE 通过有界队列异步读回 GPU 图像。图像、内参和相机光学 TF 使用采集时刻；TCP 相机元数据的 `missed_captures` 记录错过的采集槽。RGB 开启配置的实时性能独立验证，报告记录实测相机状态、时钟比例、Draw 和传感器计数。
 
 ## sentry 云台跟随与实际 Mid-360 安装
 

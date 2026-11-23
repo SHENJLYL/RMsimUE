@@ -1,0 +1,70 @@
+{
+  "platform": "Windows native, ROS 2 Humble, RMUC2027, MuJoCo",
+  "evidence_root": "artifacts/navigation/chassis-sweep-20261121",
+  "installed_plugin": {
+    "pid": 58660,
+    "module": "D:\\simulator\\ros2_ws\\install_navigation\\pb_omni_pid_pursuit_controller\\bin\\pb_omni_pid_pursuit_controller.dll",
+    "sha256": "901872B2169986C742CF1F96E3484497A2C7B44C48A373D360C4C455C8F8E976"
+  },
+  "source_hashes": {
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": "3aac659e4fc063f2fbf0e605b704487272dbb5d321cfa2c9828d221b4b8b2ff1",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp": "be1de1dba8b3afe6c46b05bb046f9f0ed6cf8aa12f3c14949621beee1a907ca6",
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": "556fe30deaca71f61a1ffda2d6c2e40428cf001d6b637e05b7849a003022d084",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt": "5b3bbec0f08b7d38b07c8464b864819ef9dcb92b9faca26eed6f23e574196ed1",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp": "ea2b267cb02ce56431b009bfee1f32c7ecbfa1e8f8e304dda1e56c8c78a8d519",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp": "f1cc7961913789e0396917ab81d96e2407d685bb848c37e93516c02d8dfc8e59"
+  },
+  "unit_checks": 13,
+  "route": {
+    "status": "passed",
+    "legs": [
+      {
+        "goal": [
+          4.85,
+          3.06
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.16188888260098136,
+        "truth_samples": 480,
+        "checked_poses": 739,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 0.6698999709697706,
+        "max_truth_interval_s": 0.0600000000000005
+      },
+      {
+        "goal": [
+          8.53,
+          2.09
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.17318030594197975,
+        "truth_samples": 108,
+        "checked_poses": 234,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 4.026756972513199,
+        "max_truth_interval_s": 0.04499999999999815
+      },
+      {
+        "goal": [
+          7.29,
+          -6.47
+        ],
+        "status": 4,
+        "endpoint_error_m": 0.07131059996320684,
+        "truth_samples": 427,
+        "checked_poses": 730,
+        "occupied_footprints": 0,
+        "min_perimeter_clearance_m": 0.7104655620884879,
+        "max_truth_interval_s": 0.0799999999999983
+      }
+    ],
+    "half_width_m": 0.27,
+    "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+  },
+  "controller_patience_exceeded_on_final_route": 0,
+  "protective_brake_warnings": 9,
+  "action_checks": 18,
+  "clock_checks": 32,
+  "rtf": 1.0000008336823967,
+  "initial_clock_gate": "smoke-01 failed segmented Draw timing; action checks passed"
+}

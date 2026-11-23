@@ -114,6 +114,8 @@ void LoamInterfaceNode::odometryCallback(const nav_msgs::msg::Odometry::ConstSha
   out.pose.pose.position.z = origin.z();
   out.pose.pose.orientation = tf2::toMsg(tf_odom_to_lidar.getRotation());
 
+  // The global frame changed; the twist remains in the same physical child frame.
+  out.twist = msg->twist;
   odom_pub_->publish(out);
 }
 

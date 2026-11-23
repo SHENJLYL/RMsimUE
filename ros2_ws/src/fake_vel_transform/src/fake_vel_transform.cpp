@@ -14,6 +14,8 @@
 
 #include "fake_vel_transform/fake_vel_transform.hpp"
 
+#include <algorithm>
+
 #include <cmath>
 #include <stdexcept>
 #include <vector>
@@ -40,6 +42,7 @@ FakeVelTransform::FakeVelTransform(const rclcpp::NodeOptions & options)
   this->declare_parameter<float>("init_spin_speed", 0.0);
   this->declare_parameter<double>("translation_scale", 1.0);
   max_odom_age_ = this->declare_parameter<double>("max_odom_age", 0.5);
+  project_heading_to_stamp_ = this->declare_parameter<bool>("project_heading_to_stamp", false);
 
   this->get_parameter("robot_base_frame", robot_base_frame_);
   this->get_parameter("fake_robot_base_frame", fake_robot_base_frame_);
@@ -103,6 +106,11 @@ void FakeVelTransform::odometryCallback(const nav_msgs::msg::Odometry::ConstShar
   }
   current_robot_base_angle_ = tf2::getYaw(q);
   current_robot_orientation_ = q;
+  tf2::Quaternion attitude;
+  tf2::fromMsg(q, attitude);
+  const auto & w = msg->twist.twist.angular;
+  const auto yaw_rate = tf2::quatRotate(attitude, tf2::Vector3(w.x,w.y,w.z)).z();
+  current_robot_yaw_rate_ = std::isfinite(yaw_rate) ? std::clamp(yaw_rate, -5.5, 5.5) : 0.0;
   odom_stamp_ = stamp;
   odom_ready_ = true;
   publishTransform();
@@ -115,7 +123,9 @@ void FakeVelTransform::cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr
     odom_ready_ && age >= -0.05 && age <= max_odom_age_ && std::isfinite(msg->linear.x) &&
     std::isfinite(msg->linear.y) && std::isfinite(msg->angular.z)) {
     // The fake frame follows the odometry axes; rotate each new command into the gimbal frame.
-    cmd_vel_chassis_pub_->publish(transformVelocity(msg, current_robot_base_angle_));
+    const double yaw = current_robot_base_angle_ + (project_heading_to_stamp_ ?
+      current_robot_yaw_rate_ * std::clamp(age, 0.0, 0.15) : 0.0);
+    cmd_vel_chassis_pub_->publish(transformVelocity(msg, yaw));
     return;
   }
   geometry_msgs::msg::TwistStamped stop;

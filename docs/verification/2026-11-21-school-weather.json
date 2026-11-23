@@ -1,0 +1,50 @@
+{
+  "platform": "Windows native, UE 5.8.4, D3D12 SM6",
+  "evidence_root": "artifacts/changes/school-weather-20261121",
+  "module_sha256": "81da107f4875d199fcc3e962cf2cd345303c9df8e33a0d3dad359a779a0e8082",
+  "layout_sha256": "90a0c09d7a7a528378dc236c8aa754c1722c1d3e44fa88bbf11bcf67ab19ab22",
+  "arena_sha256": "5bd72341f1eb39e4545e548b52b4000b1258d52f2ca86c8691b24b0a8788a6c8",
+  "model_physics_sha256": "2d3db4b1a6eb0b1f24d38ff33f98342984a812652be140b1653b6ff0c69e2f77",
+  "launch": {"default_rmuc_render_scale_percent": 50, "viewport_target_hz": 120, "launcher_tests": 56},
+  "render_assets": "author-02/report.json",
+  "wall": {
+    "outward_adjustment_m": 10,
+    "inner_faces_ros_x_m": [-42.0158752, 41.9841248],
+    "straight_length_m_per_court": 64,
+    "return_length_m": 4.3,
+    "visible_height_m": 2.535,
+    "minimum_clearance_to_outer_steps_m": 14.2631994,
+    "brick_mesh_instances": 56,
+    "navigation_collision": false
+  },
+  "views": {
+    "fixed_view_reports": ["final-views-t0/report.json", "final-views-t60/report.json"],
+    "runtime_collision_sweeps_per_view": 96,
+    "view_count": 5,
+    "comparison_image": "final-visual-comparison.jpg",
+    "cloud_phase_seconds": [0, 60],
+    "sky_mean_absolute_rgb_difference": 26.9654,
+    "grass_patch_mean_luma": [211.9646, 206.7451]
+  },
+  "tsr": {
+    "flickering_period": 4,
+    "history_sample_count": 24,
+    "rejection_sample_count": 3,
+    "fixed_view_frames_per_profile": 14,
+    "far_rail_window_flickering_pixel_percent": [2.0296, 1.498],
+    "luma_standard_deviation_threshold": 3,
+    "comparison": "temporal-luma-comparison.json"
+  },
+  "runtime": {
+    "motion_fixture": "final-orbit/summary.json",
+    "moving_camera_gpu_ms_median": 7.8199,
+    "navigation": "navigation-release/status.json",
+    "navigation_exit": 0,
+    "rviz_started": true,
+    "last_simulation_rate": 0.99761,
+    "last_scene_draw_hz": 115.0769,
+    "last_gpu_ms": 8.0148,
+    "qualifying_continuous_foreground_samples": 0,
+    "native_mujoco_step_seconds": 0.001
+  }
+}

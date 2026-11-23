@@ -1,0 +1,408 @@
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+@@ -15,6 +15,7 @@
+ #include "pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp"
+ 
+ #include "nav2_core/exceptions.hpp"
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
+ #include "nav2_util/geometry_utils.hpp"
+ #include "nav2_util/node_utils.hpp"
+ 
+@@ -157,6 +158,20 @@
+     plugin_name_ + ".max_velocity_scaling_factor_rate", max_velocity_scaling_factor_rate_);
+ 
+   node->get_parameter("controller_frequency", control_frequency);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_body_frame",
++    rclcpp::ParameterValue(costmap_ros_->getBaseFrameID()));
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_deceleration",
++    rclcpp::ParameterValue(2.0));
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_reaction_time",
++    rclcpp::ParameterValue(0.2));
++  node->get_parameter(plugin_name_ + ".collision_body_frame", collision_body_frame_);
++  node->get_parameter(plugin_name_ + ".collision_deceleration", collision_deceleration_);
++  node->get_parameter(plugin_name_ + ".collision_reaction_time", collision_reaction_time_);
++  if (collision_body_frame_.empty() || !std::isfinite(collision_deceleration_) ||
++    collision_deceleration_ <= 0 || !std::isfinite(collision_reaction_time_) ||
++    collision_reaction_time_ < 0) {
++    throw nav2_core::PlannerException("Invalid chassis collision envelope configuration");
++  }
+ 
+   transform_tolerance_ = tf2::durationFromSec(transform_tolerance);
+   control_duration_ = 1.0 / control_frequency;
+@@ -232,6 +247,71 @@
+   double lookahead_dist = getLookAheadDistance(velocity);
+ 
+   auto carrot_pose = getLookAheadPoint(lookahead_dist, transformed_plan);
++  // The costmap's virtual tracking axes and the footprint's physical yaw are independent.
++  const auto & map_frame = costmap_ros_->getGlobalFrameID();
++  geometry_msgs::msg::PoseStamped nav_pose, body_pose, body_origin;
++  body_origin.header = pose.header;
++  body_origin.header.frame_id = collision_body_frame_;
++  body_origin.pose.orientation.w = 1.0;
++  if (!transformPose(map_frame, pose, nav_pose) || !transformPose(map_frame, body_origin, body_pose)) {
++    throw nav2_core::PlannerException("Missing transform for chassis collision prediction");
++  }
++  const double nav_yaw = tf2::getYaw(nav_pose.pose.orientation);
++  const double body_yaw = tf2::getYaw(body_pose.pose.orientation);
++  const auto & origin = body_pose.pose.position;
++  auto rotate = [](double x, double y, double yaw) -> sweep::Vector {
++    return {x * std::cos(yaw) - y * std::sin(yaw), x * std::sin(yaw) + y * std::cos(yaw)};
++  };
++  const auto measured = rotate(velocity.linear.x, velocity.linear.y, body_yaw);
++  const double speed = measured.length();
++  if (!std::isfinite(speed) || !std::isfinite(velocity.angular.z) || !std::isfinite(nav_yaw) ||
++    !std::isfinite(origin.x) || !std::isfinite(origin.y)) {
++    throw nav2_core::PlannerException("Invalid chassis motion for collision prediction");
++  }
++  const auto footprint = costmap_ros_->getRobotFootprint();
++  if (footprint.size() < 3) {throw nav2_core::PlannerException("Missing chassis footprint");}
++  std::vector<sweep::Vector> body;
++  if (enable_rotation_ || std::abs(velocity.angular.z) > 0.02) {
++    // Bound every chassis yaw during rotation with a circumscribed polygon.
++    double radius = 0.0;
++    for (const auto & v : footprint) {radius = std::max(radius, std::hypot(v.x, v.y));}
++    constexpr int sides = 20;
++    radius /= std::cos(M_PI / sides);
++    for (int i = 0; i < sides; ++i) {
++      const double angle = 2.0 * M_PI * i / sides;
++      body.push_back({origin.x + radius * std::cos(angle), origin.y + radius * std::sin(angle)});
++    }
++  } else {
++    for (const auto & vertex : footprint) {
++      const auto offset = rotate(vertex.x, vertex.y, body_yaw);
++      body.push_back({origin.x + offset.x, origin.y + offset.y});
++    }
++  }
++  const auto coasting = measured * (collision_reaction_time_ + speed / (2.0 * collision_deceleration_));
++  auto clear = [&](sweep::Vector travel, sweep::Vector drift) {
++    return sweep::clear(*costmap, body, travel, drift, nav2_costmap_2d::LETHAL_OBSTACLE);
++  };
++  if (!clear(coasting, {})) {
++    // Braking is a valid control action. Throwing on every brake cycle makes
++    // controller_server clear a populated costmap when failure_tolerance expires.
++    RCLCPP_WARN_THROTTLE(logger_, *clock_, 1000, "Braking for blocked or unobserved chassis stopping footprint");
++    geometry_msgs::msg::TwistStamped stop;
++    stop.header = pose.header;
++    return stop;
++  }
++  sweep::Vector heading, drift;
++  for (;;) {
++    const auto & p = carrot_pose.pose.position;
++    const double angle = std::atan2(p.y, p.x) + nav_yaw;
++    heading = {std::cos(angle), std::sin(angle)};
++    drift = sweep::transverseDrift(coasting, heading);
++    if (clear(heading * std::hypot(p.x, p.y), drift)) {break;}
++    if (lookahead_dist <= costmap->getResolution()) {
++      throw nav2_core::PlannerException("No clear chassis sweep to a local tracking point");
++    }
++    lookahead_dist = std::max(costmap->getResolution(), 0.5 * lookahead_dist);
++    carrot_pose = getLookAheadPoint(lookahead_dist, transformed_plan);
++  }
+   carrot_pub_->publish(createCarrotMsg(carrot_pose));
+ 
+   double lin_dist = hypot(carrot_pose.pose.position.x, carrot_pose.pose.position.y);
+@@ -252,27 +332,25 @@
+ 
+   applyApproachVelocityScaling(transformed_plan, lin_vel);
+ 
+-  // Transform local frame to global frame to use in collision checking
+-  nav_msgs::msg::Path costmap_frame_local_plan;
+-
+-  int sample_points = 10;
+-  int plan_size = transformed_plan.poses.size();
+-  for (int i = 0; i < sample_points; ++i) {
+-    int index = std::min((i * plan_size) / sample_points, plan_size - 1);
+-    geometry_msgs::msg::PoseStamped map_pose;
+-    transformPose(costmap_ros_->getGlobalFrameID(), transformed_plan.poses[index], map_pose);
+-    costmap_frame_local_plan.poses.push_back(map_pose);
+-  }
+-
++  // lin_dist is a magnitude; theta_dist already carries reverse and strafe directions.
++  lin_vel = std::max(0.0, lin_vel);
++  auto can_stop = [&](double requested_speed) {
++    return clear(heading * sweep::stoppingDistance(requested_speed, collision_reaction_time_,
++      collision_deceleration_), drift);
++  };
++  if (!can_stop(lin_vel)) {
++    double low = 0.0, high = lin_vel;
++    for (int i = 0; i < 12; ++i) {
++      const double trial = 0.5 * (low + high);
++      if (can_stop(trial)) {low = trial;} else {high = trial;}
++    }
++    lin_vel = low;
++  }
+   geometry_msgs::msg::TwistStamped cmd_vel;
+   cmd_vel.header = pose.header;
+-  if (!isCollisionDetected(costmap_frame_local_plan)) {
+-    cmd_vel.twist.linear.x = lin_vel * cos(theta_dist);
+-    cmd_vel.twist.linear.y = lin_vel * sin(theta_dist);
+-    cmd_vel.twist.angular.z = angular_vel;
+-  } else {
+-    throw nav2_core::PlannerException("Collision detected in the trajectory. Stopping the robot!");
+-  }
++  cmd_vel.twist.linear.x = lin_vel * std::cos(theta_dist);
++  cmd_vel.twist.linear.y = lin_vel * std::sin(theta_dist);
++  cmd_vel.twist.angular.z = angular_vel;
+ 
+   return cmd_vel;
+ }
+@@ -324,7 +402,9 @@
+     stamped_pose.header.frame_id = global_plan_.header.frame_id;
+     stamped_pose.header.stamp = robot_pose.header.stamp;
+     stamped_pose.pose = global_plan_pose.pose;
+-    transformPose(costmap_ros_->getBaseFrameID(), stamped_pose, transformed_pose);
++    if (!transformPose(costmap_ros_->getBaseFrameID(), stamped_pose, transformed_pose)) {
++      throw nav2_core::PlannerException("Unable to transform a local tracking point");
++    }
+     transformed_pose.pose.position.z = 0.0;
+     return transformed_pose;
+   };
+@@ -385,6 +465,7 @@
+     pose.header.frame_id = prev_pose_it->header.frame_id;
+     pose.header.stamp = goal_pose_it->header.stamp;
+     pose.pose.position = point;
++    pose.pose.orientation = goal_pose_it->pose.orientation;
+     return pose;
+   }
+ 
+@@ -444,27 +525,6 @@
+     return true;
+   } catch (tf2::TransformException & ex) {
+     RCLCPP_ERROR(logger_, "Exception in transformPose: %s", ex.what());
+-  }
+-  return false;
+-}
+-
+-bool OmniPidPursuitController::isCollisionDetected(const nav_msgs::msg::Path & path)
+-{
+-  auto costmap = costmap_ros_->getCostmap();
+-  for (const auto & pose_stamped : path.poses) {
+-    const auto & pose = pose_stamped.pose;
+-    unsigned int mx, my;
+-    if (costmap->worldToMap(pose.position.x, pose.position.y, mx, my)) {
+-      if (costmap->getCost(mx, my) >= nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE) {
+-        return true;
+-      }
+-    } else {
+-      // RCLCPP_WARN(
+-      //   logger_,
+-      //   "The Local path is not in the costmap. Cannot check for collisions. "
+-      //   "Proceed at your own risk, slow the robot, or increase your costmap size.");
+-      return false;
+-    }
+   }
+   return false;
+ }
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+@@ -189,12 +189,9 @@
+    */
+   void applyApproachVelocityScaling(const nav_msgs::msg::Path & path, double & linear_vel) const;
+ 
+-  /**
+-   * @brief Checks if collision is detected along the given path
+-   * @param path Local path to check for collisions
+-   * @return True if collision detected, false otherwise
+-   */
+-  bool isCollisionDetected(const nav_msgs::msg::Path & path);
++  // Physical chassis frame can differ from the navigation axes of the costmap.
++  std::string collision_body_frame_;
++  double collision_deceleration_, collision_reaction_time_;
+ 
+ private:
+   /**
+@@ -265,7 +262,7 @@
+   nav2_costmap_2d::Costmap2D * costmap_;
+   rclcpp::Logger logger_{rclcpp::get_logger("OmniPidPursuitController")};
+   rclcpp::Clock::SharedPtr clock_;
+-  double last_velocity_scaling_factor_;
++  double last_velocity_scaling_factor_{0.0};
+ 
+   std::shared_ptr<PID> move_pid_;
+   std::shared_ptr<PID> heading_pid_;
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+@@ -22,6 +22,10 @@
+ )
+ 
+ if(BUILD_TESTING)
++  enable_testing()
++  add_executable(swept_footprint_test test/swept_footprint_test.cpp)
++  target_include_directories(swept_footprint_test PRIVATE include)
++  add_test(NAME swept_footprint COMMAND swept_footprint_test)
+   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+   set(ament_cmake_clang_tidy_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-tidy")
+   find_package(ament_lint_auto REQUIRED)
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+new file mode 100644
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+@@ -0,0 +1,98 @@
++#pragma once
++
++#include <algorithm>
++#include <cmath>
++#include <limits>
++#include <vector>
++
++namespace pb_omni_pid_pursuit_controller::sweep
++{
++struct Vector
++{
++  double x, y;
++  Vector operator*(double scale) const { return {x * scale, y * scale}; }
++  double dot(Vector other) const { return x * other.x + y * other.y; }
++  double length() const { return std::hypot(x, y); }
++};
++
++// Project the swept convex footprint and a square map cell on each separating axis.
++// The two displacements bound motion along the command and residual lateral coasting.
++template<class Grid>
++bool clear(const Grid & grid, const std::vector<Vector> & body, Vector travel, Vector drift,
++  unsigned char blocked_cost)
++{
++  if (body.size() < 3 || !std::isfinite(travel.length()) || !std::isfinite(drift.length())) {
++    return false;
++  }
++  for (const auto & vertex : body) {
++    if (!std::isfinite(vertex.x) || !std::isfinite(vertex.y)) {return false;}
++  }
++  struct Interval {Vector axis; double low, high;};
++  const double half_cell = 0.5 * grid.getResolution();
++  auto bounds = [&](Vector axis) {
++    double lo = std::numeric_limits<double>::infinity();
++    double hi = -lo;
++    for (const auto & vertex : body) {
++      double projection = axis.dot(vertex);
++      lo = std::min(lo, projection);
++      hi = std::max(hi, projection);
++    }
++    for (const auto shift : {travel, drift}) {
++      const double offset = axis.dot(shift);
++      lo += std::min(0.0, offset);
++      hi += std::max(0.0, offset);
++    }
++    return Interval{axis, lo, hi};
++  };
++
++  const auto x = bounds({1, 0});
++  const auto y = bounds({0, 1});
++  unsigned int left, bottom, right, top;
++  if (!std::isfinite(x.low) || !std::isfinite(y.low) || !std::isfinite(x.high) || !std::isfinite(y.high) ||
++    !grid.worldToMap(x.low - 1e-9, y.low - 1e-9, left, bottom) ||
++    !grid.worldToMap(x.high + 1e-9, y.high + 1e-9, right, top)) {
++    return false;
++  }
++
++  std::vector<Interval> axes;
++  axes.reserve(body.size() + 2);
++  auto add_edge = [&](Vector edge) {
++    if (edge.x == 0 && edge.y == 0) {return;}
++    auto interval = bounds({-edge.y, edge.x});
++    const double cell_projection = half_cell * (std::abs(edge.x) + std::abs(edge.y));
++    interval.low -= cell_projection;
++    interval.high += cell_projection;
++    axes.push_back(interval);
++  };
++  for (size_t i = 0; i < body.size(); ++i) {
++    const auto & next = body[(i + 1) % body.size()];
++    add_edge({next.x - body[i].x, next.y - body[i].y});
++  }
++  add_edge(travel);
++  add_edge(drift);
++  for (unsigned int my = bottom; my <= top; ++my) {
++    for (unsigned int mx = left; mx <= right; ++mx) {
++      if (grid.getCost(mx, my) < blocked_cost) {continue;}
++      Vector cell;
++      grid.mapToWorld(mx, my, cell.x, cell.y);
++      const bool overlaps = std::all_of(axes.begin(), axes.end(), [&](const Interval & axis) {
++        const double p = axis.axis.dot(cell);
++        return p >= axis.low && p <= axis.high;
++      });
++      if (overlaps) {return false;}
++    }
++  }
++  return true;
++}
++
++inline double stoppingDistance(double speed, double delay, double deceleration)
++{
++  return speed * delay + speed * speed / (2.0 * deceleration);
++}
++
++inline Vector transverseDrift(Vector stopping_displacement, Vector heading)
++{
++  const double forward = std::max(0.0, stopping_displacement.dot(heading));
++  return {stopping_displacement.x - forward * heading.x, stopping_displacement.y - forward * heading.y};
++}
++}  // namespace pb_omni_pid_pursuit_controller::sweep
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp
+new file mode 100644
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/swept_footprint_test.cpp
+@@ -0,0 +1,62 @@
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
++
++#include <array>
++#include <cstdlib>
++#include <iostream>
++
++namespace sweep = pb_omni_pid_pursuit_controller::sweep;
++struct Grid {
++  std::array<unsigned char, 100 * 100> cells{};
++  double getResolution() const {return 0.05;}
++  bool worldToMap(double x, double y, unsigned int & mx, unsigned int & my) const {
++    if (x < -2.5 || y < -2.5 || x >= 2.5 || y >= 2.5) {return false;}
++    mx = static_cast<unsigned int>((x + 2.5) / getResolution());
++    my = static_cast<unsigned int>((y + 2.5) / getResolution());
++    return true;
++  }
++  void mapToWorld(unsigned int mx, unsigned int my, double & x, double & y) const {
++    x = -2.5 + (mx + 0.5) * getResolution();
++    y = -2.5 + (my + 0.5) * getResolution();
++  }
++  unsigned char getCost(unsigned int x, unsigned int y) const {return cells[100*y+x];}
++  void mark(double x, double y, unsigned char cost) {
++    unsigned int mx,my;
++    if (!worldToMap(x,y,mx,my)) {std::abort();}
++    cells[100*my+mx] = cost;
++  }
++};
++void require(bool condition, const char * name) {
++  if (!condition) {std::cerr << name << " failed\n"; std::exit(1);}
++  std::cout << "PASS " << name << '\n';
++}
++int main() {
++  Grid map;
++  std::vector<sweep::Vector> body{{-.27,-.27},{-.27,.27},{.27,.27},{.27,-.27}};
++  auto safe = [&](sweep::Vector travel, sweep::Vector drift = {}) {
++    return sweep::clear(map,body,travel,drift,254);
++  };
++  require(safe({1,std::sqrt(3.)}),"open shortcut");
++  map.mark(.475,.825,254);
++  require(!safe({1,std::sqrt(3.)}),"corner cutting blocked");
++  require(safe({1,0}),"shorter tracking point reachable");
++  require(!safe({1,0},{0,.8}),"lateral momentum swept");
++  require(!safe({2.3,0}),"footprint outside map rejected");
++  map = Grid{}; map.mark(.625,.225,255);
++  require(!safe({1,0}),"unknown under chassis corner");
++  map = Grid{}; map.mark(.025,.025,254);
++  require(!safe({0,0}),"obstacle inside stationary footprint");
++  map = Grid{}; map.mark(-.725,.025,254);
++  require(!safe({-1,0}),"reverse sweep blocked");
++  map = Grid{}; map.mark(.025,.325,254);
++  require(safe({1,0}),"aligned chassis clears narrow passage");
++  for (auto & v:body) {
++    const double scale = std::sqrt(0.5);
++    v = {(v.x-v.y)*scale,(v.x+v.y)*scale};
++  }
++  require(!safe({1,0}),"rotated corner hits same wall");
++  map = Grid{};
++  require(!safe({sweep::stoppingDistance(5,.45,4),0}),"full speed cannot stop inside map");
++  require(safe({sweep::stoppingDistance(1,.45,4),0}),"reduced speed can stop");
++  body.front().y = std::numeric_limits<double>::quiet_NaN();
++  require(!safe({0,0}),"invalid footprint cannot authorize motion");
++}

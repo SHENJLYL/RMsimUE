@@ -1,0 +1,1189 @@
+{
+  "scenario": "RMUC2027 Windows native UE and ROS 2, same NavigateToPose end points",
+  "start_xy_m": [
+    7.86,
+    -6.78
+  ],
+  "finish_xy_m": [
+    -8.32,
+    6.16
+  ],
+  "gyro_setpoint_rad_s": 2,
+  "strict_wall_limit_s": 26,
+  "runs": {
+    "prior_preview": {
+      "status": "passed",
+      "actual_start": [
+        7.862597535404173,
+        -6.779768835248295,
+        0.259982485366917
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 44.20698410000114,
+          "sim_s": 43.900000000000006
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.2195703243783532,
+            "truth_samples": 1848,
+            "checked_poses": 4592,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36735072678300007,
+            "max_truth_interval_s": 0.045000000000001705
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-path-stop-preview",
+      "configuration_sha256": {
+        "module_sha256": "75f257504c443460d3f3d25b2db52d31a7a2f1b034bd3afa385e3e630c33ffba",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "9d85f09927affa51fbc51288707c83a0ac88ceb2624468f2e3719b7263ee1d50",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 21.75,
+          "brake_seconds": 1.23,
+          "engagements": 7,
+          "nearest_plan_gt_p50_p90_m": [
+            0.121,
+            0.309
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.059,
+            0.23
+          ]
+        },
+        "right": {
+          "physical_seconds": 12.27,
+          "brake_seconds": 1.19,
+          "engagements": 9,
+          "nearest_plan_gt_p50_p90_m": [
+            0.064,
+            0.183
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.055,
+            0.129
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 6.42,
+          "brake_seconds": 0.76,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.122,
+            0.209
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.046,
+            0.101
+          ]
+        },
+        "left": {
+          "physical_seconds": 9.88,
+          "brake_seconds": 0.91,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.057,
+            0.169
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.041,
+            0.156
+          ]
+        }
+      }
+    },
+    "raw_right_trace": {
+      "status": "passed",
+      "actual_start": [
+        7.858192878103736,
+        -6.7828040726337955,
+        0.2141247616586281
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 46.693858499998896,
+          "sim_s": 46.67
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.23734138239437302,
+            "truth_samples": 2095,
+            "checked_poses": 4777,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3593383238009116,
+            "max_truth_interval_s": 0.035000000000003695
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-right-trace",
+      "configuration_sha256": {
+        "module_sha256": "9006842fdb3014a181d67d61492c6ff2c8c37686d42a6fbb710d45b21b2020f2",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "9d85f09927affa51fbc51288707c83a0ac88ceb2624468f2e3719b7263ee1d50",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 23.975,
+          "brake_seconds": 1.815,
+          "engagements": 10,
+          "nearest_plan_gt_p50_p90_m": [
+            0.11,
+            0.192
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.046,
+            0.133
+          ]
+        },
+        "right": {
+          "physical_seconds": 12.195,
+          "brake_seconds": 0.93,
+          "engagements": 9,
+          "nearest_plan_gt_p50_p90_m": [
+            0.081,
+            0.161
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.035,
+            0.134
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 7.625,
+          "brake_seconds": 0.755,
+          "engagements": 7,
+          "nearest_plan_gt_p50_p90_m": [
+            0.108,
+            0.162
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.027,
+            0.099
+          ]
+        },
+        "left": {
+          "physical_seconds": 10.5,
+          "brake_seconds": 0.225,
+          "engagements": 4,
+          "nearest_plan_gt_p50_p90_m": [
+            0.031,
+            0.11
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.024,
+            0.096
+          ]
+        }
+      }
+    },
+    "cross_track_damping": {
+      "status": "failed",
+      "error": "TimeoutError('route timeout')",
+      "actual_start": [
+        7.860138009515508,
+        -6.78037885932804,
+        0.2390598139214365
+      ],
+      "action_timing": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-cross-track-damping",
+      "incomplete_clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": null,
+            "endpoint_error_m": 10.985152162623125,
+            "truth_samples": 2730,
+            "checked_poses": 3832,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3662779609147835,
+            "max_truth_interval_s": 0.0350000000000108
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "configuration_sha256": {
+        "module_sha256": "9006842fdb3014a181d67d61492c6ff2c8c37686d42a6fbb710d45b21b2020f2",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d076389bad717578311f6138772aafe4a3b63b45356773589899a7e1fa375102",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 54.105,
+          "brake_seconds": 42.725,
+          "engagements": 13,
+          "nearest_plan_gt_p50_p90_m": [
+            0.134,
+            0.303
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.038,
+            0.254
+          ]
+        },
+        "right": {
+          "physical_seconds": 12.85,
+          "brake_seconds": 1.5,
+          "engagements": 9,
+          "nearest_plan_gt_p50_p90_m": [
+            0.089,
+            0.154
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.052,
+            0.149
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 7.105,
+          "brake_seconds": 0.655,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.094,
+            0.159
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.044,
+            0.101
+          ]
+        }
+      }
+    },
+    "cross_track_damping_platform": {
+      "status": "passed",
+      "action_timing": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 5.738416399999551,
+          "sim_s": 5.6800000000000015
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 8.205351699998573,
+          "sim_s": 8.149999999999999
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 2.0749446999980137,
+          "sim_s": 2.1050000000000004
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09269163052739757,
+            "truth_samples": 274,
+            "checked_poses": 411,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6574742673643099,
+            "max_truth_interval_s": 0.05000000000000071
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.03667521042539685,
+            "truth_samples": 376,
+            "checked_poses": 790,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9132206063265957,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.07345197454624074,
+            "truth_samples": 126,
+            "checked_poses": 206,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.68304388269358,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-cross-track-damping",
+      "configuration_sha256": {
+        "module_sha256": "9006842fdb3014a181d67d61492c6ff2c8c37686d42a6fbb710d45b21b2020f2",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "d076389bad717578311f6138772aafe4a3b63b45356773589899a7e1fa375102",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      }
+    },
+    "local_terrain_global_2m": {
+      "status": "passed",
+      "actual_start": [
+        7.860146027305773,
+        -6.780391133842112,
+        0.2768057463480306
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 46.86454849999791,
+          "sim_s": 46.7
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.22796961993820528,
+            "truth_samples": 1950,
+            "checked_poses": 4682,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36838637876838387,
+            "max_truth_interval_s": 0.035000000000003695
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-local-terrain-global",
+      "configuration_sha256": {
+        "module_sha256": "9006842fdb3014a181d67d61492c6ff2c8c37686d42a6fbb710d45b21b2020f2",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "00460d6c9f7c01f99499c19c306684f33c8074ce71655be96aca5476643238e1",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 24.59,
+          "brake_seconds": 1.295,
+          "engagements": 9,
+          "nearest_plan_gt_p50_p90_m": [
+            0.086,
+            0.283
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.057,
+            0.216
+          ]
+        },
+        "right": {
+          "physical_seconds": 11.28,
+          "brake_seconds": 0.775,
+          "engagements": 8,
+          "nearest_plan_gt_p50_p90_m": [
+            0.084,
+            0.182
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.056,
+            0.162
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 4.05,
+          "brake_seconds": 0.295,
+          "engagements": 3,
+          "nearest_plan_gt_p50_p90_m": [
+            0.118,
+            0.181
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.032,
+            0.068
+          ]
+        },
+        "left": {
+          "physical_seconds": 10.83,
+          "brake_seconds": 0.715,
+          "engagements": 6,
+          "nearest_plan_gt_p50_p90_m": [
+            0.03,
+            0.09
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.034,
+            0.094
+          ]
+        }
+      }
+    },
+    "local_terrain_global_2m_platform": {
+      "status": "passed",
+      "action_timing": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 6.994996800000081,
+          "sim_s": 7.0
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 8.31201929999952,
+          "sim_s": 8.295000000000002
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 2.075682999999117,
+          "sim_s": 2.0950000000000024
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.07159076627186975,
+            "truth_samples": 329,
+            "checked_poses": 467,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6004949099130035,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.025343441876663653,
+            "truth_samples": 376,
+            "checked_poses": 790,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9298617715736286,
+            "max_truth_interval_s": 0.030000000000001137
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.04663591863968996,
+            "truth_samples": 125,
+            "checked_poses": 185,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.685563220956965,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-local-terrain-global",
+      "configuration_sha256": {
+        "module_sha256": "9006842fdb3014a181d67d61492c6ff2c8c37686d42a6fbb710d45b21b2020f2",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "00460d6c9f7c01f99499c19c306684f33c8074ce71655be96aca5476643238e1",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      }
+    },
+    "ego_echo_diagnostic": {
+      "status": "passed",
+      "actual_start": [
+        7.85970393273376,
+        -6.7800911317804164,
+        0.2555821817213241
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 48.137733300001855,
+          "sim_s": 47.73
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.23156903379610677,
+            "truth_samples": 2003,
+            "checked_poses": 4711,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.36652283588890544,
+            "max_truth_interval_s": 0.04000000000000625
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-ego-return-audit",
+      "configuration_sha256": {
+        "module_sha256": "7af7abcf05464846856772b353d6e6de162486c2caefa7ea4f735c65c2aa53f9",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "9d85f09927affa51fbc51288707c83a0ac88ceb2624468f2e3719b7263ee1d50",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 25.63,
+          "brake_seconds": 2.21,
+          "engagements": 11,
+          "nearest_plan_gt_p50_p90_m": [
+            0.119,
+            0.28
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.045,
+            0.201
+          ]
+        },
+        "right": {
+          "physical_seconds": 11.1,
+          "brake_seconds": 0.75,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.079,
+            0.196
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.041,
+            0.159
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 4.875,
+          "brake_seconds": 0.375,
+          "engagements": 2,
+          "nearest_plan_gt_p50_p90_m": [
+            0.121,
+            0.207
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.059,
+            0.121
+          ]
+        },
+        "left": {
+          "physical_seconds": 11.0,
+          "brake_seconds": 0.475,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.061,
+            0.138
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.047,
+            0.14
+          ]
+        }
+      }
+    },
+    "local_terrain_global_1p25m": {
+      "status": "passed",
+      "actual_start": [
+        7.860144781368545,
+        -6.780660973028394,
+        0.2574700242841267
+      ],
+      "action_timing": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 45.421310699999594,
+          "sim_s": 45.39
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.19761045695996537,
+            "truth_samples": 1934,
+            "checked_poses": 4507,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.3662218886464048,
+            "max_truth_interval_s": 0.03999999999999915
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-local-terrain-tight-global",
+      "configuration_sha256": {
+        "module_sha256": "7af7abcf05464846856772b353d6e6de162486c2caefa7ea4f735c65c2aa53f9",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "6d205af1449dcd3492fcfd115796ba7ee7a9a5f709afbd79efb024e0dd5995a6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      },
+      "zones": {
+        "other": {
+          "physical_seconds": 21.135,
+          "brake_seconds": 1.855,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.092,
+            0.232
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.041,
+            0.171
+          ]
+        },
+        "right": {
+          "physical_seconds": 9.37,
+          "brake_seconds": 0.75,
+          "engagements": 5,
+          "nearest_plan_gt_p50_p90_m": [
+            0.084,
+            0.158
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.055,
+            0.155
+          ]
+        },
+        "right_exit": {
+          "physical_seconds": 4.325,
+          "brake_seconds": 0.25,
+          "engagements": 2,
+          "nearest_plan_gt_p50_p90_m": [
+            0.084,
+            0.15
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.024,
+            0.126
+          ]
+        },
+        "left": {
+          "physical_seconds": 14.885,
+          "brake_seconds": 1.225,
+          "engagements": 10,
+          "nearest_plan_gt_p50_p90_m": [
+            0.04,
+            0.119
+          ],
+          "nearest_plan_est_p50_p90_m": [
+            0.026,
+            0.122
+          ]
+        }
+      }
+    },
+    "local_terrain_global_1p25m_platform": {
+      "status": "passed",
+      "action_timing": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 5.752835700001015,
+          "sim_s": 5.654999999999998
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 7.175014000000374,
+          "sim_s": 7.195
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 2.2054000000025553,
+          "sim_s": 2.205000000000002
+        }
+      ],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.09203800648121352,
+            "truth_samples": 269,
+            "checked_poses": 420,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6045780583139557,
+            "max_truth_interval_s": 0.03999999999999915
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.04735182766591454,
+            "truth_samples": 334,
+            "checked_poses": 758,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.9226417370308237,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.045874260633956956,
+            "truth_samples": 128,
+            "checked_poses": 201,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.700068556646075,
+            "max_truth_interval_s": 0.030000000000001137
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "evidence_path": "artifacts\\navigation\\cross-field-turns-20261122\\regions-three-gyro-local-terrain-tight-global",
+      "configuration_sha256": {
+        "module_sha256": "7af7abcf05464846856772b353d6e6de162486c2caefa7ea4f735c65c2aa53f9",
+        "mujoco_model_sha256": "23646b5d96f2a3b079f4a40cd6b5fc0a9bcd6252c21d0701f61fbea19a4ce589",
+        "source_control_config_sha256": "6d205af1449dcd3492fcfd115796ba7ee7a9a5f709afbd79efb024e0dd5995a6",
+        "drive_profile_sha256": "c30cd26e036451bff434b280d6a5b006d4ccd74ac88908fa61c077f5d82b8418"
+      }
+    }
+  },
+  "right_turn_obstacle_samples": [
+    {
+      "time_s": 10.611,
+      "position": [
+        9.075,
+        4.595
+      ],
+      "block": [
+        10.156,
+        4.769
+      ],
+      "approx_static_distance_m": 0.169,
+      "cloud_age_s": 0.139,
+      "floor_offset_samples": 42,
+      "floor_offset_support": 42,
+      "floor_offset_estimate": -0.08336685667745769,
+      "matching_support_returns": 0,
+      "nearby_marked_returns": [
+        {
+          "x": 10.176,
+          "y": 4.78,
+          "z": 0.194,
+          "intensity": 0.217,
+          "prior_height_delta": 0.12,
+          "reference_span": 0.0049285888671875
+        },
+        {
+          "x": 10.193,
+          "y": 4.756,
+          "z": 0.118,
+          "intensity": 0.141,
+          "prior_height_delta": 0.043,
+          "reference_span": 0.004928112030029297
+        },
+        {
+          "x": 10.208,
+          "y": 4.885,
+          "z": 0.126,
+          "intensity": 0.149,
+          "prior_height_delta": 0.055,
+          "reference_span": 0.0049288272857666016
+        },
+        {
+          "x": 10.233,
+          "y": 4.73,
+          "z": 0.185,
+          "intensity": 0.186,
+          "prior_height_delta": 0.11,
+          "reference_span": null
+        },
+        {
+          "x": 10.245,
+          "y": 4.721,
+          "z": 0.186,
+          "intensity": 0.187,
+          "prior_height_delta": 0.11,
+          "reference_span": null
+        },
+        {
+          "x": 10.172,
+          "y": 4.886,
+          "z": 0.179,
+          "intensity": 0.202,
+          "prior_height_delta": 0.108,
+          "reference_span": 0.0049283504486083984
+        },
+        {
+          "x": 10.218,
+          "y": 4.869,
+          "z": 0.196,
+          "intensity": 0.197,
+          "prior_height_delta": 0.124,
+          "reference_span": 0.004929065704345703
+        },
+        {
+          "x": 10.202,
+          "y": 4.632,
+          "z": 0.217,
+          "intensity": 0.233,
+          "prior_height_delta": 0.139,
+          "reference_span": 0.0049283504486083984
+        },
+        {
+          "x": 10.233,
+          "y": 4.714,
+          "z": 0.212,
+          "intensity": 0.106,
+          "prior_height_delta": 0.137,
+          "reference_span": null
+        },
+        {
+          "x": 10.251,
+          "y": 4.701,
+          "z": 0.226,
+          "intensity": 0.114,
+          "prior_height_delta": 0.15,
+          "reference_span": null
+        },
+        {
+          "x": 10.222,
+          "y": 4.826,
+          "z": 0.228,
+          "intensity": 0.229,
+          "prior_height_delta": 0.155,
+          "reference_span": 0.004929065704345703
+        },
+        {
+          "x": 10.233,
+          "y": 4.905,
+          "z": 0.212,
+          "intensity": 0.213,
+          "prior_height_delta": 0.141,
+          "reference_span": null
+        },
+        {
+          "x": 10.219,
+          "y": 4.658,
+          "z": 0.289,
+          "intensity": 0.203,
+          "prior_height_delta": 0.212,
+          "reference_span": 0.0049283504486083984
+        },
+        {
+          "x": 10.237,
+          "y": 4.682,
+          "z": 0.299,
+          "intensity": 0.198,
+          "prior_height_delta": 0.223,
+          "reference_span": null
+        },
+        {
+          "x": 10.221,
+          "y": 4.806,
+          "z": 0.256,
+          "intensity": 0.257,
+          "prior_height_delta": 0.183,
+          "reference_span": 0.0049285888671875
+        },
+        {
+          "x": 10.24,
+          "y": 4.888,
+          "z": 0.284,
+          "intensity": 0.285,
+          "prior_height_delta": 0.213,
+          "reference_span": null
+        },
+        {
+          "x": 10.245,
+          "y": 4.734,
+          "z": 0.352,
+          "intensity": 0.354,
+          "prior_height_delta": 0.277,
+          "reference_span": null
+        },
+        {
+          "x": 10.179,
+          "y": 4.857,
+          "z": 0.351,
+          "intensity": 0.374,
+          "prior_height_delta": 0.28,
+          "reference_span": 0.004929065704345703
+        },
+        {
+          "x": 10.225,
+          "y": 4.704,
+          "z": 0.4,
+          "intensity": 0.3,
+          "prior_height_delta": 0.324,
+          "reference_span": null
+        },
+        {
+          "x": 10.243,
+          "y": 4.728,
+          "z": 0.363,
+          "intensity": 0.364,
+          "prior_height_delta": 0.288,
+          "reference_span": null
+        },
+        {
+          "x": 10.259,
+          "y": 4.828,
+          "z": 0.375,
+          "intensity": 0.377,
+          "prior_height_delta": 0.303,
+          "reference_span": null
+        },
+        {
+          "x": 10.228,
+          "y": 4.91,
+          "z": 0.373,
+          "intensity": 0.374,
+          "prior_height_delta": 0.302,
+          "reference_span": null
+        },
+        {
+          "x": 10.248,
+          "y": 4.661,
+          "z": 0.433,
+          "intensity": 0.331,
+          "prior_height_delta": 0.356,
+          "reference_span": null
+        },
+        {
+          "x": 10.252,
+          "y": 4.681,
+          "z": 0.471,
+          "intensity": 0.362,
+          "prior_height_delta": 0.394,
+          "reference_span": null
+        },
+        {
+          "x": 10.226,
+          "y": 4.813,
+          "z": 0.468,
+          "intensity": 0.469,
+          "prior_height_delta": 0.394,
+          "reference_span": null
+        },
+        {
+          "x": 10.226,
+          "y": 4.751,
+          "z": 0.258,
+          "intensity": 0.26,
+          "prior_height_delta": 0.184,
+          "reference_span": null
+        },
+        {
+          "x": 10.231,
+          "y": 4.638,
+          "z": 0.384,
+          "intensity": 0.296,
+          "prior_height_delta": 0.306,
+          "reference_span": null
+        },
+        {
+          "x": 10.201,
+          "y": 4.639,
+          "z": 0.11,
+          "intensity": 0.126,
+          "prior_height_delta": 0.033,
+          "reference_span": 0.0049283504486083984
+        },
+        {
+          "x": 10.237,
+          "y": 4.64,
+          "z": 0.571,
+          "intensity": 0.48,
+          "prior_height_delta": 0.494,
+          "reference_span": null
+        }
+      ]
+    },
+    {
+      "time_s": 14.516,
+      "position": [
+        7.305,
+        6.481
+      ],
+      "block": [
+        6.656,
+        5.87
+      ],
+      "approx_static_distance_m": 0.495,
+      "cloud_age_s": 0.196,
+      "floor_offset_samples": 10,
+      "floor_offset_support": 9,
+      "floor_offset_estimate": -0.07212010305374861,
+      "matching_support_returns": 0,
+      "nearby_marked_returns": []
+    },
+    {
+      "time_s": 14.894,
+      "position": [
+        7.334,
+        6.494
+      ],
+      "block": [
+        7.354,
+        6.91
+      ],
+      "approx_static_distance_m": 0.566,
+      "cloud_age_s": 0.051,
+      "floor_offset_samples": 7,
+      "floor_offset_support": 7,
+      "floor_offset_estimate": -0.036617851816117764,
+      "matching_support_returns": 0,
+      "nearby_marked_returns": []
+    },
+    {
+      "time_s": 16.695,
+      "position": [
+        6.729,
+        6.442
+      ],
+      "block": [
+        6.162,
+        6.862
+      ],
+      "approx_static_distance_m": 0.614,
+      "cloud_age_s": 0.15,
+      "floor_offset_samples": 33,
+      "floor_offset_support": 30,
+      "floor_offset_estimate": -0.0327599011361599,
+      "matching_support_returns": 0,
+      "nearby_marked_returns": [
+        {
+          "x": 6.142,
+          "y": 6.875,
+          "z": 0.074,
+          "intensity": 0.115,
+          "prior_height_delta": 0.055,
+          "reference_span": 0.003927946090698242
+        }
+      ]
+    },
+    {
+      "time_s": 19.35,
+      "position": [
+        5.709,
+        6.089
+      ],
+      "block": [
+        4.799,
+        6.105
+      ],
+      "approx_static_distance_m": 0.731,
+      "cloud_age_s": 0.025,
+      "floor_offset_samples": 36,
+      "floor_offset_support": 33,
+      "floor_offset_estimate": -0.019585854723118246,
+      "matching_support_returns": 0,
+      "nearby_marked_returns": [
+        {
+          "x": 4.864,
+          "y": 6.018,
+          "z": 0.154,
+          "intensity": 0.144,
+          "prior_height_delta": 0.113,
+          "reference_span": 0.003928422927856445
+        }
+      ]
+    }
+  ],
+  "ego_returns": {
+    "reported_samples": 1954,
+    "maximum_accepted_own_echo_m": 0.23692293942316994,
+    "own_echoes_beyond_half_metre": 0
+  },
+  "right_turn_overlay": "artifacts\\navigation\\cross-field-turns-20261122\\seed-gyro-rate-middle-path-stop-preview\\right-turn-overlay.png"
+}

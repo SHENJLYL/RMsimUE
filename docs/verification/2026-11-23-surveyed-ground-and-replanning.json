@@ -1,0 +1,790 @@
+{
+  "frame_replay_counts": {
+    "regions-three-center-arc84": {
+      "/terrain_map": {
+        "wave_landmarks": {
+          "frames": 222,
+          "marks": 7570,
+          "marks_matching_ground": 13,
+          "corrected": 13,
+          "corrected_matching_ground": 13,
+          "marks_above_support": 6289,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 0,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        },
+        "inclined_surface": {
+          "frames": 222,
+          "marks": 7083,
+          "marks_matching_ground": 9,
+          "corrected": 11,
+          "corrected_matching_ground": 9,
+          "marks_above_support": 6511,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 2,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        },
+        "all": {
+          "frames": 222,
+          "marks": 70109,
+          "marks_matching_ground": 91,
+          "corrected": 95,
+          "corrected_matching_ground": 91,
+          "marks_above_support": 20485,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 4,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        }
+      },
+      "/terrain_map_ext": {
+        "wave_landmarks": {
+          "frames": 223,
+          "marks": 10106,
+          "marks_matching_ground": 23,
+          "corrected": 22,
+          "corrected_matching_ground": 22,
+          "marks_above_support": 8700,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 0,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_neighbor_discontinuity": 1
+        },
+        "inclined_surface": {
+          "frames": 223,
+          "marks": 7797,
+          "marks_matching_ground": 90,
+          "corrected": 107,
+          "corrected_matching_ground": 89,
+          "marks_above_support": 7008,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 18,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_neighbor_discontinuity": 1
+        },
+        "all": {
+          "frames": 223,
+          "marks": 136723,
+          "marks_matching_ground": 631,
+          "corrected": 737,
+          "corrected_matching_ground": 630,
+          "marks_above_support": 62174,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 107,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_neighbor_discontinuity": 1
+        }
+      }
+    },
+    "seed-gyro-max-configured-center-arc84-repeat": {
+      "/terrain_map": {
+        "wave_landmarks": {
+          "frames": 416,
+          "marks": 16097,
+          "marks_matching_ground": 59,
+          "corrected": 62,
+          "corrected_matching_ground": 59,
+          "marks_above_support": 12613,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 3,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        },
+        "inclined_surface": {
+          "frames": 416,
+          "marks": 6641,
+          "marks_matching_ground": 20,
+          "corrected": 24,
+          "corrected_matching_ground": 20,
+          "marks_above_support": 5700,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 4,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        },
+        "all": {
+          "frames": 416,
+          "marks": 144132,
+          "marks_matching_ground": 225,
+          "corrected": 239,
+          "corrected_matching_ground": 225,
+          "marks_above_support": 70161,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 14,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0
+        }
+      },
+      "/terrain_map_ext": {
+        "wave_landmarks": {
+          "frames": 417,
+          "marks": 18212,
+          "marks_matching_ground": 69,
+          "corrected": 71,
+          "corrected_matching_ground": 66,
+          "marks_above_support": 14607,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 5,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_central_discontinuity": 2,
+          "remaining_neighbor_discontinuity": 1
+        },
+        "inclined_surface": {
+          "frames": 417,
+          "marks": 7727,
+          "marks_matching_ground": 151,
+          "corrected": 176,
+          "corrected_matching_ground": 148,
+          "marks_above_support": 6266,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 28,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_central_discontinuity": 2,
+          "remaining_neighbor_discontinuity": 1
+        },
+        "all": {
+          "frames": 417,
+          "marks": 250265,
+          "marks_matching_ground": 947,
+          "corrected": 1074,
+          "corrected_matching_ground": 943,
+          "marks_above_support": 127103,
+          "corrected_above_support": 0,
+          "corrected_unclassified": 131,
+          "changed_near_static_edge": 0,
+          "changed_without_reference_in_audit": 0,
+          "remaining_registration_or_residual": 1,
+          "remaining_central_discontinuity": 2,
+          "remaining_neighbor_discontinuity": 1
+        }
+      }
+    }
+  },
+  "summary": {
+    "/terrain_map": {
+      "wave_landmarks": {
+        "marks_matching_ground": 72,
+        "corrected_matching_ground": 72,
+        "marks_above_support": 18902,
+        "corrected_above_support": 0,
+        "corrected": 75,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 3
+      },
+      "inclined_surface": {
+        "marks_matching_ground": 29,
+        "corrected_matching_ground": 29,
+        "marks_above_support": 12211,
+        "corrected_above_support": 0,
+        "corrected": 35,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 6
+      },
+      "all": {
+        "marks_matching_ground": 316,
+        "corrected_matching_ground": 316,
+        "marks_above_support": 90646,
+        "corrected_above_support": 0,
+        "corrected": 334,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 18
+      }
+    },
+    "/terrain_map_ext": {
+      "wave_landmarks": {
+        "marks_matching_ground": 92,
+        "corrected_matching_ground": 88,
+        "marks_above_support": 23307,
+        "corrected_above_support": 0,
+        "corrected": 93,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 5
+      },
+      "inclined_surface": {
+        "marks_matching_ground": 241,
+        "corrected_matching_ground": 237,
+        "marks_above_support": 13274,
+        "corrected_above_support": 0,
+        "corrected": 283,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 46
+      },
+      "all": {
+        "marks_matching_ground": 1578,
+        "corrected_matching_ground": 1573,
+        "marks_above_support": 189277,
+        "corrected_above_support": 0,
+        "corrected": 1811,
+        "changed_near_static_edge": 0,
+        "corrected_unclassified": 238
+      }
+    }
+  },
+  "map_package": "assets\\maps\\rmuc2027\\navigation-console-platform-support-v2",
+  "map_manifest_sha256": "3f518149121fa0dc63243966d10df96e6de6346b724b6c3a5e6268105d454f85",
+  "surveyed_ground_sha256": "be5ecd0a11fe6869904a7b1f7bb015f13bbccda8ccb1a1f0f62b7a7871e1aca6",
+  "native": {
+    "regions-three-survey-final": {
+      "case": "artifacts/navigation/cross-field-turns-20261122/regions-three-survey-final",
+      "action_status": "passed",
+      "error": null,
+      "times": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 5.330468299995118,
+          "sim_s": 5.25,
+          "wall_since_rviz_ready_s": 5.358182599993597,
+          "sim_since_rviz_ready_s": 5.274999999999999
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 7.400984299994889,
+          "sim_s": 7.384999999999998,
+          "wall_since_rviz_ready_s": 13.759477099993092,
+          "sim_since_rviz_ready_s": 13.609999999999996
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 2.284332999995968,
+          "sim_s": 2.245000000000001,
+          "wall_since_rviz_ready_s": 17.04471019999619,
+          "sim_since_rviz_ready_s": 16.869999999999997
+        }
+      ],
+      "gyro": null,
+      "verified_recording": true,
+      "lidar_integrity": {
+        "common_timestamps": 356,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 356,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.12261118226513011,
+            "truth_samples": 262,
+            "checked_poses": 523,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.6747512221865684,
+            "max_truth_interval_s": 0.05000000000000071
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1190702555589116,
+            "truth_samples": 347,
+            "checked_poses": 1117,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.8715606348472895,
+            "max_truth_interval_s": 0.060000000000002274
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.10770203173778832,
+            "truth_samples": 135,
+            "checked_poses": 330,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.676562324404376,
+            "max_truth_interval_s": 0.03999999999999915
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "classification_nodes": {
+        "01-terrain_analysis.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 7
+        },
+        "01-terrain_analysis_ext.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 30
+        }
+      },
+      "validated_whole_route_replacements": 0,
+      "rejected_whole_routes": 2,
+      "active_profile": {
+        "plugin": "pb_nav2_plugins::ClearancePlanner",
+        "curve_clearance": 0.84,
+        "how_many_corners": 8,
+        "w_euc_cost": 1.0,
+        "w_traversal_cost": 10.0,
+        "w_heuristic_cost": 1.0
+      },
+      "reference_matches_map": true,
+      "post_filter_cloud_audit": {
+        "/terrain_map": {
+          "wave_landmarks": {
+            "frames": 185,
+            "marks": 4635,
+            "marks_matching_ground": 0,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 3572,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          },
+          "inclined_surface": {
+            "frames": 185,
+            "marks": 4611,
+            "marks_matching_ground": 0,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 4215,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          },
+          "all": {
+            "frames": 185,
+            "marks": 57521,
+            "marks_matching_ground": 0,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 15957,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          }
+        },
+        "/terrain_map_ext": {
+          "wave_landmarks": {
+            "frames": 185,
+            "marks": 6464,
+            "marks_matching_ground": 0,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 5364,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          },
+          "inclined_surface": {
+            "frames": 185,
+            "marks": 5012,
+            "marks_matching_ground": 0,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 4511,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          },
+          "all": {
+            "frames": 185,
+            "marks": 112247,
+            "marks_matching_ground": 0,
+            "corrected": 1,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 47935,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 1,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0
+          }
+        }
+      }
+    },
+    "seed-gyro-max-configured-survey-final": {
+      "case": "artifacts/navigation/cross-field-turns-20261122/seed-gyro-max-configured-survey-final",
+      "action_status": "passed",
+      "error": null,
+      "times": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 40.08616459999757,
+          "sim_s": 39.855,
+          "wall_since_rviz_ready_s": 40.1218807999976,
+          "sim_since_rviz_ready_s": 39.855
+        }
+      ],
+      "gyro": [
+        5
+      ],
+      "verified_recording": true,
+      "lidar_integrity": {
+        "common_timestamps": 554,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 554,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.22282663319827134,
+            "truth_samples": 1658,
+            "checked_poses": 6253,
+            "occupied_footprints": 97,
+            "min_perimeter_clearance_m": 0.46580052637977953,
+            "max_truth_interval_s": 0.045000000000001705
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "classification_nodes": {
+        "01-terrain_analysis.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 16
+        },
+        "01-terrain_analysis_ext.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 44
+        }
+      },
+      "validated_whole_route_replacements": 0,
+      "rejected_whole_routes": 15,
+      "active_profile": {
+        "plugin": "pb_nav2_plugins::ClearancePlanner",
+        "curve_clearance": 0.84,
+        "how_many_corners": 8,
+        "w_euc_cost": 1.0,
+        "w_traversal_cost": 10.0,
+        "w_heuristic_cost": 1.0
+      },
+      "reference_matches_map": true,
+      "post_filter_cloud_audit": {
+        "/terrain_map": {
+          "wave_landmarks": {
+            "frames": 371,
+            "marks": 13777,
+            "marks_matching_ground": 1,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 10770,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 1
+          },
+          "inclined_surface": {
+            "frames": 371,
+            "marks": 6696,
+            "marks_matching_ground": 4,
+            "corrected": 5,
+            "corrected_matching_ground": 3,
+            "marks_above_support": 5434,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 2,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 1
+          },
+          "all": {
+            "frames": 371,
+            "marks": 122829,
+            "marks_matching_ground": 40,
+            "corrected": 54,
+            "corrected_matching_ground": 39,
+            "marks_above_support": 69591,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 15,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 1
+          }
+        },
+        "/terrain_map_ext": {
+          "wave_landmarks": {
+            "frames": 376,
+            "marks": 16616,
+            "marks_matching_ground": 3,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 13409,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 3
+          },
+          "inclined_surface": {
+            "frames": 376,
+            "marks": 7794,
+            "marks_matching_ground": 5,
+            "corrected": 0,
+            "corrected_matching_ground": 0,
+            "marks_above_support": 6247,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 0,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 3,
+            "remaining_registration_or_residual": 2
+          },
+          "all": {
+            "frames": 376,
+            "marks": 221496,
+            "marks_matching_ground": 102,
+            "corrected": 9,
+            "corrected_matching_ground": 4,
+            "marks_above_support": 127466,
+            "corrected_above_support": 0,
+            "corrected_unclassified": 5,
+            "changed_near_static_edge": 0,
+            "changed_without_reference_in_audit": 0,
+            "remaining_central_discontinuity": 3,
+            "remaining_registration_or_residual": 95
+          }
+        }
+      }
+    },
+    "regions-three-default-survey": {
+      "case": "artifacts/navigation/cross-field-turns-20261122/regions-three-default-survey",
+      "action_status": "passed",
+      "error": null,
+      "times": [
+        {
+          "goal": [
+            9.35,
+            6.15
+          ],
+          "wall_s": 6.001422100001946,
+          "sim_s": 5.975,
+          "wall_since_rviz_ready_s": 6.027316100000462,
+          "sim_since_rviz_ready_s": 5.999999999999998
+        },
+        {
+          "goal": [
+            7.55,
+            0.0
+          ],
+          "wall_s": 14.624353600003815,
+          "sim_s": 14.445000000000004,
+          "wall_since_rviz_ready_s": 21.65849690000323,
+          "sim_since_rviz_ready_s": 21.450000000000003
+        },
+        {
+          "goal": [
+            8.95,
+            0.25
+          ],
+          "wall_s": 3.190726699998777,
+          "sim_s": 3.1750000000000043,
+          "wall_since_rviz_ready_s": 25.850817099999404,
+          "sim_since_rviz_ready_s": 25.655
+        }
+      ],
+      "gyro": null,
+      "verified_recording": true,
+      "lidar_integrity": {
+        "common_timestamps": 436,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 436,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [],
+      "clearance": {
+        "status": "passed",
+        "legs": [
+          {
+            "goal": [
+              9.35,
+              6.15
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.14026642088628297,
+            "truth_samples": 279,
+            "checked_poses": 559,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.5920646845256012,
+            "max_truth_interval_s": 0.030000000000001137
+          },
+          {
+            "goal": [
+              7.55,
+              0.0
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.1687638331970486,
+            "truth_samples": 636,
+            "checked_poses": 1744,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 0.8524587066963077,
+            "max_truth_interval_s": 0.03500000000000014
+          },
+          {
+            "goal": [
+              8.95,
+              0.25
+            ],
+            "status": 4,
+            "endpoint_error_m": 0.16026068121732823,
+            "truth_samples": 169,
+            "checked_poses": 438,
+            "occupied_footprints": 0,
+            "min_perimeter_clearance_m": 4.538834906533513,
+            "max_truth_interval_s": 0.03999999999999915
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "classification_nodes": {
+        "01-terrain_analysis.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 9
+        },
+        "01-terrain_analysis_ext.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 39
+        }
+      },
+      "validated_whole_route_replacements": 0,
+      "rejected_whole_routes": 9,
+      "active_profile": {
+        "plugin": "pb_nav2_plugins::ClearancePlanner",
+        "curve_clearance": 0.84,
+        "how_many_corners": 8,
+        "w_euc_cost": 1.0,
+        "w_traversal_cost": 10.0,
+        "w_heuristic_cost": 1.0
+      },
+      "reference_matches_map": true
+    },
+    "seed-gyro-max-configured-default-survey-live": {
+      "case": "artifacts/navigation/cross-field-turns-20261122/seed-gyro-max-configured-default-survey-live",
+      "action_status": "failed",
+      "error": "RuntimeError('action failed')",
+      "times": [
+        {
+          "goal": [
+            -8.32,
+            6.16
+          ],
+          "wall_s": 23.520434599995497,
+          "sim_s": 22.67,
+          "wall_since_rviz_ready_s": 23.542076999998244,
+          "sim_since_rviz_ready_s": 22.68
+        }
+      ],
+      "gyro": [
+        5
+      ],
+      "verified_recording": true,
+      "lidar_integrity": {
+        "common_timestamps": 395,
+        "unpaired_timestamps": 0,
+        "missing_paired_scans_between_first_and_last": 0,
+        "publisher": {
+          "published_scans": 395,
+          "frame_hz": 10,
+          "incomplete_scan_drops": 0,
+          "skipped_scan_windows": 0,
+          "dropped_scans": 0
+        }
+      },
+      "alerts": [],
+      "clearance": {
+        "status": "failed",
+        "legs": [
+          {
+            "goal": [
+              -8.32,
+              6.16
+            ],
+            "status": 6,
+            "endpoint_error_m": 17.268063905870974,
+            "truth_samples": 1003,
+            "checked_poses": 2565,
+            "occupied_footprints": 16,
+            "min_perimeter_clearance_m": 0.46422822657877116,
+            "max_truth_interval_s": 0.06500000000000128
+          }
+        ],
+        "half_width_m": 0.27,
+        "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+      },
+      "classification_nodes": {
+        "01-terrain_analysis.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 10
+        },
+        "01-terrain_analysis_ext.log": {
+          "loaded_reference": true,
+          "throttled_correction_reports": 35
+        }
+      },
+      "validated_whole_route_replacements": 0,
+      "rejected_whole_routes": 23,
+      "active_profile": {
+        "plugin": "pb_nav2_plugins::ClearancePlanner",
+        "how_many_corners": 8,
+        "w_euc_cost": 1.0,
+        "w_traversal_cost": 10.0,
+        "w_heuristic_cost": 1.0,
+        "route_backend": "nav2_theta_star_planner/ThetaStarPlanner",
+        "curve_clearance": 0.84
+      },
+      "reference_matches_map": true
+    }
+  },
+  "planner": "Full-path clearance on the start connector and each segment, sampled at half the cell width. No local interval replacement.",
+  "scope": "Ground-consistency counts are point returns over repeated frames. Independent evaluation uses the surveyed surface and the recorded transform, not human-labelled points. Wave and slope groups can overlap."
+}

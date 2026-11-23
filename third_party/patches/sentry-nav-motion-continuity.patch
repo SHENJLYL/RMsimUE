@@ -1,0 +1,450 @@
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp
+@@ -167,9 +167,17 @@
+   node->get_parameter(plugin_name_ + ".collision_body_frame", collision_body_frame_);
+   node->get_parameter(plugin_name_ + ".collision_deceleration", collision_deceleration_);
+   node->get_parameter(plugin_name_ + ".collision_reaction_time", collision_reaction_time_);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".collision_observation_range",
++    rclcpp::ParameterValue(0.0));
++  node->get_parameter(plugin_name_ + ".collision_observation_range", collision_observation_range_);
++  declare_parameter_if_not_declared(node, plugin_name_ + ".tracking_deceleration",
++    rclcpp::ParameterValue(collision_deceleration_));
++  node->get_parameter(plugin_name_ + ".tracking_deceleration", tracking_deceleration_);
+   if (collision_body_frame_.empty() || !std::isfinite(collision_deceleration_) ||
+     collision_deceleration_ <= 0 || !std::isfinite(collision_reaction_time_) ||
+-    collision_reaction_time_ < 0) {
++    collision_reaction_time_ < 0 || !std::isfinite(collision_observation_range_) ||
++    collision_observation_range_ < 0 || !std::isfinite(tracking_deceleration_) ||
++    tracking_deceleration_ <= 0 || tracking_deceleration_ > collision_deceleration_) {
+     throw nav2_core::PlannerException("Invalid chassis collision envelope configuration");
+   }
+ 
+@@ -241,7 +249,8 @@
+   std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*(costmap->getMutex()));
+ 
+   // Transform path to robot base frame
+-  auto transformed_plan = transformGlobalPlan(pose);
++  bool contains_goal = false;
++  auto transformed_plan = transformGlobalPlan(pose, contains_goal);
+ 
+   // Find look ahead distance and point on path and publish
+   double lookahead_dist = getLookAheadDistance(velocity);
+@@ -270,26 +279,41 @@
+   }
+   const auto footprint = costmap_ros_->getRobotFootprint();
+   if (footprint.size() < 3) {throw nav2_core::PlannerException("Missing chassis footprint");}
+-  std::vector<sweep::Vector> body;
+-  if (enable_rotation_ || std::abs(velocity.angular.z) > 0.02) {
+-    // Bound every chassis yaw during rotation with a circumscribed polygon.
+-    double radius = 0.0;
+-    for (const auto & v : footprint) {radius = std::max(radius, std::hypot(v.x, v.y));}
+-    constexpr int sides = 20;
+-    radius /= std::cos(M_PI / sides);
+-    for (int i = 0; i < sides; ++i) {
+-      const double angle = 2.0 * M_PI * i / sides;
+-      body.push_back({origin.x + radius * std::cos(angle), origin.y + radius * std::sin(angle)});
++  double footprint_radius = 0.0;
++  for (const auto & v : footprint) {
++    footprint_radius = std::max(footprint_radius, std::hypot(v.x, v.y));
++  }
++  std::vector<sweep::Vector> body, rotating_body;
++  for (const auto & vertex : footprint) {
++    const auto offset = rotate(vertex.x, vertex.y, body_yaw);
++    body.push_back({origin.x + offset.x, origin.y + offset.y});
++  }
++  constexpr int sides = 20;
++  const double radius = footprint_radius / std::cos(M_PI / sides);
++  for (int i = 0; i < sides; ++i) {
++    const double angle = 2.0 * M_PI * i / sides;
++    rotating_body.push_back({origin.x + radius * std::cos(angle), origin.y + radius * std::sin(angle)});
++  }
++  // In translation-only navigation, bound the excursion of every corner at the
++  // measured yaw rate over a full reaction and braking interval. A complete
++  // rotation remains the envelope for commands that can actively turn the base.
++  const double horizon = collision_reaction_time_ + std::max(speed, v_linear_max_) / collision_deceleration_;
++  const double yaw_excursion = std::min(M_PI, std::abs(velocity.angular.z) * horizon);
++  const double yaw_margin = 2.0 * footprint_radius * std::sin(0.5 * yaw_excursion);
++  const auto coasting = measured * (collision_reaction_time_ + speed / (2.0 * collision_deceleration_));
++  auto clear = [&](sweep::Vector travel, sweep::Vector drift, double margin = 0.0) {
++    // The rectangular window can extend past the terrain marking radius at its corners.
++    // Reserve room for the AIM sensor offset inside the chassis and the swept footprint.
++    if (collision_observation_range_ > 0.0 &&
++      travel.length() + drift.length() + 2.0 * footprint_radius + margin > collision_observation_range_) {
++      return false;
+     }
+-  } else {
+-    for (const auto & vertex : footprint) {
+-      const auto offset = rotate(vertex.x, vertex.y, body_yaw);
+-      body.push_back({origin.x + offset.x, origin.y + offset.y});
++    if (!enable_rotation_ && yaw_margin < footprint_radius &&
++      sweep::clear(*costmap, body, travel, drift, nav2_costmap_2d::LETHAL_OBSTACLE, yaw_margin + margin)) {
++      return true;
+     }
+-  }
+-  const auto coasting = measured * (collision_reaction_time_ + speed / (2.0 * collision_deceleration_));
+-  auto clear = [&](sweep::Vector travel, sweep::Vector drift) {
+-    return sweep::clear(*costmap, body, travel, drift, nav2_costmap_2d::LETHAL_OBSTACLE);
++    // This alternative circumscribes the chassis for all orientations.
++    return sweep::clear(*costmap, rotating_body, travel, drift, nav2_costmap_2d::LETHAL_OBSTACLE, margin);
+   };
+   if (!clear(coasting, {})) {
+     // Braking is a valid control action. Throwing on every brake cycle makes
+@@ -299,23 +323,39 @@
+     stop.header = pose.header;
+     return stop;
+   }
+-  sweep::Vector heading, drift;
+-  for (;;) {
+-    const auto & p = carrot_pose.pose.position;
++  auto reachable = [&](const geometry_msgs::msg::PoseStamped & candidate) {
++    const auto & p = candidate.pose.position;
+     const double angle = std::atan2(p.y, p.x) + nav_yaw;
+-    heading = {std::cos(angle), std::sin(angle)};
+-    drift = sweep::transverseDrift(coasting, heading);
+-    if (clear(heading * std::hypot(p.x, p.y), drift)) {break;}
++    const sweep::Vector heading{std::cos(angle), std::sin(angle)};
++    const auto drift = sweep::transverseDrift(coasting, heading);
++    return clear(heading * std::hypot(p.x, p.y), drift);
++  };
++  double rejected_distance = lookahead_dist;
++  while (!reachable(carrot_pose)) {
+     if (lookahead_dist <= costmap->getResolution()) {
+       throw nav2_core::PlannerException("No clear chassis sweep to a local tracking point");
+     }
++    rejected_distance = lookahead_dist;
+     lookahead_dist = std::max(costmap->getResolution(), 0.5 * lookahead_dist);
+     carrot_pose = getLookAheadPoint(lookahead_dist, transformed_plan);
+   }
++  // Keep a tested clear target while refining the coarse half-distance bracket.
++  while (rejected_distance - lookahead_dist > costmap->getResolution()) {
++    const double trial = 0.5 * (lookahead_dist + rejected_distance);
++    const auto candidate = getLookAheadPoint(trial, transformed_plan);
++    if (reachable(candidate)) {
++      carrot_pose = candidate;
++      lookahead_dist = trial;
++    } else {
++      rejected_distance = trial;
++    }
++  }
+   carrot_pub_->publish(createCarrotMsg(carrot_pose));
+ 
+   double lin_dist = hypot(carrot_pose.pose.position.x, carrot_pose.pose.position.y);
+   double theta_dist = atan2(carrot_pose.pose.position.y, carrot_pose.pose.position.x);
++  const sweep::Vector heading{std::cos(theta_dist + nav_yaw), std::sin(theta_dist + nav_yaw)};
++  const auto drift = sweep::transverseDrift(coasting, heading);
+   double angle_to_goal = tf2::getYaw(carrot_pose.pose.orientation);
+ 
+   if (use_rotate_to_heading_) {
+@@ -325,18 +365,45 @@
+     }
+   }
+ 
+-  auto lin_vel = move_pid_->calculate(lin_dist, 0);
++  // The carrot moves on every replan. Damping uses measured closing speed, so
++  // changing the reference cannot inject a one-cycle stop or acceleration kick.
++  auto lin_vel = move_pid_->calculate(lin_dist, 0, -measured.dot(heading));
+   auto angular_vel = enable_rotation_ ? heading_pid_->calculate(angle_to_goal, 0) : 0.0;
+ 
+   applyCurvatureLimitation(transformed_plan, carrot_pose, lin_vel);
+ 
+-  applyApproachVelocityScaling(transformed_plan, lin_vel);
++  if (contains_goal) {applyApproachVelocityScaling(transformed_plan, lin_vel);}
+ 
+   // lin_dist is a magnitude; theta_dist already carries reverse and strafe directions.
+   lin_vel = std::max(0.0, lin_vel);
++  // A bend consumes steering and braking distance. Find where the remaining
++  // route departs from the current tracking corridor. Do not stop solely
++  // because an otherwise straight path is cropped at the local map boundary.
++  const double hx = std::cos(theta_dist), hy = std::sin(theta_dist);
++  const double corridor = std::max(2.0 * costmap->getResolution(), 0.5 * footprint_radius);
++  double ahead = lin_dist;
++  bool beyond_carrot = false;
++  bool upcoming_turn = false;
++  for (const auto & waypoint : transformed_plan.poses) {
++    const auto & point = waypoint.pose.position;
++    beyond_carrot |= std::hypot(point.x, point.y) >= lin_dist - 1e-6;
++    if (!beyond_carrot) {continue;}
++    const double forward = point.x * hx + point.y * hy;
++    const double lateral = std::abs(point.x * hy - point.y * hx);
++    if (lateral > corridor || forward + costmap->getResolution() < ahead) {
++      upcoming_turn = true;
++      break;
++    }
++    ahead = std::max(ahead, forward);
++  }
++  if (upcoming_turn || contains_goal) {
++    lin_vel = std::min(lin_vel, sweep::approachSpeed(ahead, collision_reaction_time_, tracking_deceleration_));
++  }
+   auto can_stop = [&](double requested_speed) {
+-    return clear(heading * sweep::stoppingDistance(requested_speed, collision_reaction_time_,
+-      collision_deceleration_), drift);
++    // Start easing off two controller cycles before the independent measured-speed stop.
++    return clear(heading * sweep::stoppingDistance(requested_speed, collision_reaction_time_ + 2.0 * control_duration_,
++      collision_deceleration_), drift,
++      std::min(requested_speed, std::abs(measured.x * heading.y - measured.y * heading.x)) * control_duration_);
+   };
+   if (!can_stop(lin_vel)) {
+     double low = 0.0, high = lin_vel;
+@@ -364,7 +431,7 @@
+ }
+ 
+ nav_msgs::msg::Path OmniPidPursuitController::transformGlobalPlan(
+-  const geometry_msgs::msg::PoseStamped & pose)
++  const geometry_msgs::msg::PoseStamped & pose, bool & contains_goal)
+ {
+   if (global_plan_.poses.empty()) {
+     throw nav2_core::PlannerException("Received plan with zero length");
+@@ -395,6 +462,8 @@
+   auto transformation_end = std::find_if(
+     transformation_begin, global_plan_.poses.end(),
+     [&](const auto & pose) { return euclidean_distance(pose, robot_pose) > max_costmap_extent; });
++
++  contains_goal = transformation_end == global_plan_.poses.end();
+ 
+   // Lambda to transform a PoseStamped from global frame to local
+   auto transform_global_pose_to_local = [&](const auto & global_plan_pose) {
+@@ -563,17 +632,12 @@
+ void OmniPidPursuitController::applyApproachVelocityScaling(
+   const nav_msgs::msg::Path & path, double & linear_vel) const
+ {
+-  double approach_vel = linear_vel;
+-  double velocity_scaling = approachVelocityScalingFactor(path);
+-  double unbounded_vel = approach_vel * velocity_scaling;
+-  if (unbounded_vel < min_approach_linear_velocity_) {
+-    approach_vel = min_approach_linear_velocity_;
+-  } else {
+-    approach_vel *= velocity_scaling;
+-  }
+-
+-  // Use the lowest velocity between approach and other constraints, if all overlapping
+-  linear_vel = std::min(linear_vel, approach_vel);
++  // Bound the requested speed by a distance-based cap. Multiplying the PID
++  // output by the same distance again produces quadratic creep near the goal.
++  const double factor = std::clamp(approachVelocityScalingFactor(path), 0.0, 1.0);
++  if (factor >= 1.0) {return;}
++  const double cap = std::max(min_approach_linear_velocity_, v_linear_max_ * factor);
++  linear_vel = std::min(linear_vel, cap);
+ }
+ 
+ void OmniPidPursuitController::applyCurvatureLimitation(
+@@ -583,27 +647,19 @@
+   double curvature =
+     calculateCurvature(path, lookahead_pose, curvature_forward_dist_, curvature_backward_dist_);
+ 
+-  double scaled_linear_vel = linear_vel;
+-  if (curvature > curvature_min_) {
+-    double reduction_ratio = 1.0;
+-    if (curvature > curvature_max_) {
+-      reduction_ratio = reduction_ratio_at_high_curvature_;
+-    } else {
+-      reduction_ratio = 1.0 - (curvature - curvature_min_) / (curvature_max_ - curvature_min_) *
+-                                (1.0 - reduction_ratio_at_high_curvature_);
+-    }
+-
+-    double target_scaled_vel = linear_vel * reduction_ratio;
+-    scaled_linear_vel =
+-      last_velocity_scaling_factor_ + std::clamp(
+-                                        target_scaled_vel - last_velocity_scaling_factor_,
+-                                        -max_velocity_scaling_factor_rate_ * control_duration_,
+-                                        max_velocity_scaling_factor_rate_ * control_duration_);
+-  }
+-  scaled_linear_vel = std::max(scaled_linear_vel, 2.0 * min_approach_linear_velocity_);
+-
+-  linear_vel = std::min(linear_vel, scaled_linear_vel);
+-  last_velocity_scaling_factor_ = linear_vel;
++  double target_factor = 1.0;
++  if (curvature >= curvature_max_) {
++    target_factor = reduction_ratio_at_high_curvature_;
++  } else if (curvature > curvature_min_) {
++    const double blend = (curvature - curvature_min_) / (curvature_max_ - curvature_min_);
++    target_factor -= blend * (1.0 - reduction_ratio_at_high_curvature_);
++  }
++  // Limit the dimensionless scaling factor on both entry and exit. Limiting
++  // absolute speed here re-starts the ramp after each short tracking point.
++  const double change = max_velocity_scaling_factor_rate_ * control_duration_;
++  last_velocity_scaling_factor_ +=
++    std::clamp(target_factor - last_velocity_scaling_factor_, -change, change);
++  linear_vel *= last_velocity_scaling_factor_;
+ }
+ 
+ double OmniPidPursuitController::calculateCurvature(
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp
+@@ -114,7 +114,7 @@
+    * @param pose pose to transform
+    * @return Path in new frame
+    */
+-  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose);
++  nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose, bool & contains_goal);
+ 
+   /**
+    * @brief Transform a pose to another frame.
+@@ -192,6 +192,8 @@
+   // Physical chassis frame can differ from the navigation axes of the costmap.
+   std::string collision_body_frame_;
+   double collision_deceleration_, collision_reaction_time_;
++  double collision_observation_range_;
++  double tracking_deceleration_;
+ 
+ private:
+   /**
+@@ -262,7 +264,7 @@
+   nav2_costmap_2d::Costmap2D * costmap_;
+   rclcpp::Logger logger_{rclcpp::get_logger("OmniPidPursuitController")};
+   rclcpp::Clock::SharedPtr clock_;
+-  double last_velocity_scaling_factor_{0.0};
++  double last_velocity_scaling_factor_{1.0};
+ 
+   std::shared_ptr<PID> move_pid_;
+   std::shared_ptr<PID> heading_pid_;
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp
+@@ -28,6 +28,7 @@
+ 
+   // Returns the manipulated variable given a set_point and current process value
+   double calculate(double set_point, double pv);
++  double calculate(double set_point, double pv, double error_rate);
+   void setSumError(double sum_error);
+   ~PID();
+ 
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp
+@@ -21,6 +21,11 @@
+ 
+ double PID::calculate(double set_point, double pv)
+ {
++  return calculate(set_point, pv, (set_point - pv - pre_error_) / dt_);
++}
++
++double PID::calculate(double set_point, double pv, double error_rate)
++{
+   // Calculate error
+   double error = set_point - pv;
+ 
+@@ -38,8 +43,7 @@
+   }
+ 
+   // Derivative term
+-  double derivative = (error - pre_error_) / dt_;
+-  double d_out = kd_ * derivative;
++  double d_out = kd_ * error_rate;
+ 
+   // Calculate total output
+   double output = p_out + i_out + d_out;
+diff --git a/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml b/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
+--- a/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
++++ b/ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml
+@@ -423,8 +423,9 @@
+       global_frame: odom
+       robot_base_frame: gimbal_yaw_fake
+       rolling_window: true
+-      width: 5
+-      height: 5
++      # Cover the local terrain marks out to their configured 5 m range on each axis.
++      width: 10
++      height: 10
+       resolution: 0.05
+       robot_radius: 0.2
+       plugins: ["static_layer", "intensity_voxel_layer", "inflation_layer"]
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt
+@@ -26,6 +26,9 @@
+   add_executable(swept_footprint_test test/swept_footprint_test.cpp)
+   target_include_directories(swept_footprint_test PRIVATE include)
+   add_test(NAME swept_footprint COMMAND swept_footprint_test)
++  add_executable(pursuit_damping_test test/pursuit_damping_test.cpp src/pid.cpp)
++  target_include_directories(pursuit_damping_test PRIVATE include)
++  add_test(NAME pursuit_damping COMMAND pursuit_damping_test)
+   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+   set(ament_cmake_clang_tidy_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-tidy")
+   find_package(ament_lint_auto REQUIRED)
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+--- a/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp
+@@ -19,9 +19,9 @@
+ // The two displacements bound motion along the command and residual lateral coasting.
+ template<class Grid>
+ bool clear(const Grid & grid, const std::vector<Vector> & body, Vector travel, Vector drift,
+-  unsigned char blocked_cost)
++  unsigned char blocked_cost, double margin = 0.0)
+ {
+-  if (body.size() < 3 || !std::isfinite(travel.length()) || !std::isfinite(drift.length())) {
++  if (!std::isfinite(margin) || margin < 0.0 || body.size() < 3 || !std::isfinite(travel.length()) || !std::isfinite(drift.length())) {
+     return false;
+   }
+   for (const auto & vertex : body) {
+@@ -42,7 +42,9 @@
+       lo += std::min(0.0, offset);
+       hi += std::max(0.0, offset);
+     }
+-    return Interval{axis, lo, hi};
++    // Minkowski sum with a metric disk; projections of non-unit axes scale by their length.
++    const double extra = margin * axis.length();
++    return Interval{axis, lo - extra, hi + extra};
+   };
+ 
+   const auto x = bounds({1, 0});
+@@ -95,4 +97,10 @@
+   const double forward = std::max(0.0, stopping_displacement.dot(heading));
+   return {stopping_displacement.x - forward * heading.x, stopping_displacement.y - forward * heading.y};
+ }
++
++inline double approachSpeed(double distance, double delay, double deceleration)
++{
++  const double delayed = deceleration * delay;
++  return std::sqrt(delayed * delayed + 2.0 * deceleration * std::max(0.0, distance)) - delayed;
++}
+ }  // namespace pb_omni_pid_pursuit_controller::sweep
+diff --git a/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp
+new file mode 100644
+--- /dev/null
++++ b/ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp
+@@ -0,0 +1,43 @@
++#include "pb_omni_pid_pursuit_controller/pid.hpp"
++#include "pb_omni_pid_pursuit_controller/swept_footprint.hpp"
++#include <cmath>
++#include <iostream>
++
++int main()
++{
++  PID speed(.05, 5., -2.5, 3., .3, 0.);
++  speed.calculate(2., 0., -1.6);
++  const double after_shorter_target = speed.calculate(.8, 0., -1.6);
++  const double after_longer_target = speed.calculate(1.1, 0., -1.6);
++  const double approaching_faster = speed.calculate(1.1, 0., -2.6);
++  PID classic(.05, 100., -100., 0., 1., 0.);
++  namespace sweep = pb_omni_pid_pursuit_controller::sweep;
++  for (double distance : {0.0, 0.05, 0.5, 2.0, 5.0}) {
++    const double planned = sweep::approachSpeed(distance, .45, 2.0);
++    if (std::abs(sweep::stoppingDistance(planned, .45, 2.0) - distance) > 1e-8) {return 1;}
++  }
++  if (std::abs(after_shorter_target - 1.92) > 1e-9 ||
++    std::abs(after_longer_target - 2.82) > 1e-9 ||
++    std::abs(approaching_faster - 2.52) > 1e-9 ||
++    std::abs(classic.calculate(1., 0.) - 20.) > 1e-9 ||
++    std::abs(classic.calculate(.8, 0.) + 4.) > 1e-9) {
++    return 1;
++  }
++  std::cout << "PASS shortened and lengthened tracking points, measured damping and original heading PID\n";
++  struct CellGrid {
++    double getResolution() const {return .05;}
++    bool worldToMap(double x, double y, unsigned int & mx, unsigned int & my) const {
++      if (x < -1 || y < -1 || x >= 1 || y >= 1) {return false;}
++      mx = static_cast<unsigned int>((x + 1)/.05); my = static_cast<unsigned int>((y + 1)/.05); return true;
++    }
++    unsigned char getCost(unsigned int x, unsigned int y) const {return x==27 && y==20 ? 254 : 0;}
++    void mapToWorld(unsigned int x,unsigned int y,double & wx,double & wy) const {
++      wx=-1+(x+.5)*.05; wy=-1+(y+.5)*.05;
++    }
++  } grid;
++  const std::vector<sweep::Vector> body{{-.27,-.27},{.27,-.27},{.27,.27},{-.27,.27}};
++  if (!sweep::clear(grid,body,{0,.2},{},254,.02) || sweep::clear(grid,body,{0,.2},{},254,.12)) {
++    return 1;
++  }
++  return 0;
++}

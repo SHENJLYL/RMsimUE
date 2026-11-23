@@ -26,7 +26,7 @@ void URosImuComponent::AdvanceNative(double Time,bool Collect,double EpochSolver
     {
         const int64 End=RMSimSensors::EpochSampleGrid::LastSupported(SupportedThrough,C.Rate)+1;
         const int64 Due=FMath::Max<int64>(0,End-C.NextSampleIndex);
-        const int64 Missed=FMath::Max<int64>(0,Due-32);
+        const int64 Missed=FMath::Max<int64>(0,Due-PendingSamplesPerChannel());
         C.MissedPeriods+=Missed;C.NextSampleIndex+=Missed;
         for(int64 I=Missed;I<Due;++I)
         {

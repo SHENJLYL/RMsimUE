@@ -8,7 +8,9 @@ from rclpy.parameter import Parameter
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseWithCovarianceStamped,Twist,TwistStamped
 from sensor_msgs.msg import LaserScan
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid,Odometry
+from action_msgs.msg import GoalStatus,GoalStatusArray
+from tf2_ros import Buffer,TransformListener,TransformException
 from lifecycle_msgs.srv import GetState
 from std_srvs.srv import Empty,Trigger
 from rclpy.qos import qos_profile_sensor_data,QoSProfile,DurabilityPolicy,ReliabilityPolicy
@@ -46,6 +48,9 @@ class NavigationRunner(Node):
         self.map_yaml=str(Path(map_yaml).resolve())
         self.localization_map_yaml=self.declare_parameter('localization_map_yaml','').value
         initial=self.declare_parameter('initial_pose',[.6,-.4,.15]).value;self.initial_pose=initial
+        gate = self.declare_parameter('motion_ready_file','').value
+        self.motion_ready_file = Path(gate) if gate else None
+        self.motion_released = self.motion_ready_file is None
         self.runtime=self.declare_parameter('native_runtime','').value
         self.localization_only=self.declare_parameter('localization_only',False).value
         self.control_profile=self.declare_parameter('control_profile','legacy').value
@@ -70,6 +75,8 @@ class NavigationRunner(Node):
         from .sentry_navigation_source import source_profile
         self.source_identity=source_profile(reference,self.control_profile,self.control_source)[1]
         self.controller_config=cfg['controller_server']['ros__parameters']['FollowPath']
+        if self.controller_config.pop('rmsim_bagged_bt', False):
+            cfg['bt_navigator']['ros__parameters'].update(bt_loop_duration=32, default_server_timeout=500)
         self.smoother_config=cfg['velocity_smoother']['ros__parameters']
         self.params=self.output/'parameters.yaml';self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.state=None;self.lio=None;self.received=0.;self.identity=None;self.children={};self.streams=[];self.starts=0;self.phase='waiting'
@@ -88,10 +95,43 @@ class NavigationRunner(Node):
                                       'immediate_stops':0,'suppressed_smoother_outputs':0,'rejected_stop_releases':0}
         if self.drive_identity:
             topics=self.drive_identity['topics']
-            self.body_velocity_pub=self.create_publisher(Twist,topics['body_raw'],1)
             self.public_velocity_pub=self.create_publisher(TwistStamped,topics['public'],1)
-            self.create_subscription(TwistStamped,topics['body_stamped'],self.on_body_velocity,1)
-            self.create_subscription(Twist,topics['body_smoothed'],self.on_smoothed_body_velocity,1)
+            if self.drive_identity.get('smoother_frame')=='navigation':
+                self.create_subscription(Twist,topics['navigation_raw'],self.on_navigation_velocity,1)
+                if self.drive_identity.get('actuator_command_frame')=='odometry':
+                    self.world_velocity_pub=self.create_publisher(TwistStamped,topics['public_odometry'],1)
+                    self.create_subscription(Twist,topics['navigation_smoothed'],self.on_odometry_smoothed_velocity,1)
+                else:
+                    self.create_subscription(TwistStamped,topics['body_stamped'],self.on_world_smoothed_velocity,1)
+            else:
+                self.body_velocity_pub=self.create_publisher(Twist,topics['body_raw'],1)
+                self.create_subscription(TwistStamped,topics['body_stamped'],self.on_body_velocity,1)
+                self.create_subscription(Twist,topics['body_smoothed'],self.on_smoothed_body_velocity,1)
+            local=cfg['local_costmap']['local_costmap']['ros__parameters']
+            footprint=json.loads(local['footprint'])
+            padding=float(local.get('footprint_padding',0.0))
+            self.idle_spin_radius=max(math.hypot(abs(x)+padding,abs(y)+padding)
+                                      for x,y in footprint)+.085
+            self.idle_spin_pub=self.create_publisher(TwistStamped,'/'+self.robot+'/navigation/cmd_vel_operator_idle',1)
+            self.idle_spin_tf=Buffer()
+            self.idle_spin_listener=TransformListener(self.idle_spin_tf,self)
+            self.idle_spin_grid=None
+            self.idle_spin_odom=None
+            self.idle_spin_active_goals={}
+            self.navigation_executing_goals={}
+            self.idle_spin_last_motion=0.
+            self.idle_spin_sent=False
+            self.idle_spin_anchor=None
+            self.idle_spin_block='waiting'
+            qos=QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL,reliability=ReliabilityPolicy.RELIABLE)
+            for name in ('navigate_to_pose','navigate_through_poses','follow_waypoints','follow_path'):
+                self.create_subscription(GoalStatusArray,'/'+name+'/_action/status',
+                    lambda msg,name=name:self.on_idle_spin_action_status(name,msg),qos)
+            self.create_subscription(OccupancyGrid,'/local_costmap/costmap',
+                lambda msg:setattr(self,'idle_spin_grid',(msg,time.monotonic())),1)
+            self.create_subscription(Odometry,'/odometry',
+                lambda msg:setattr(self,'idle_spin_odom',(msg,time.monotonic())),qos_profile_sensor_data)
+            self.create_subscription(Twist,topics['navigation_raw'],self.on_idle_spin_motion,1)
         if self.map_identity:
             qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL)
             self.create_subscription(OccupancyGrid,cfg['map_server']['ros__parameters'].get('topic_name','map'),
@@ -101,12 +141,14 @@ class NavigationRunner(Node):
         self.create_timer(.1,self.poll,clock=Clock(clock_type=ClockType.STEADY_TIME))
 
     def velocity_adapter_ready(self):
-        return bool(self.drive_identity and self.nav_started and self.state
+        return bool(self.motion_released and self.drive_identity and self.nav_started and self.state
                     and self.state.get('connected') and self.state.get('state_fresh')
                     and self.identity==[self.state.get('session'),self.state.get('epoch')])
 
     def reset_velocity_adapter(self):
         self.body_input_ns=None;self.body_output_ns=None;self.body_stop_ns=None
+        self.navigation_motion_ns=None
+        self.navigation_result_brake=False
 
     @staticmethod
     def finite_planar_velocity(twist):
@@ -120,6 +162,176 @@ class NavigationRunner(Node):
         # Match the bridge's physical-brake threshold after planar validation.
         return all(abs(value)<1e-4 for value in (twist.linear.x,twist.linear.y,twist.angular.z))
 
+    def on_idle_spin_action_status(self, name, message):
+        executing={GoalStatus.STATUS_ACCEPTED,GoalStatus.STATUS_EXECUTING}
+        busy=executing | {GoalStatus.STATUS_CANCELING}
+        running=any(goal.status in executing for goal in message.status_list)
+        was_running=self.navigation_executing_goals.get(name,False)
+        self.navigation_executing_goals[name]=running
+        self.idle_spin_active_goals[name]=any(goal.status in busy for goal in message.status_list)
+        outer_running=any(value for key,value in self.navigation_executing_goals.items() if key!='follow_path')
+        outer_busy=any(value for key,value in self.idle_spin_active_goals.items() if key!='follow_path')
+        if was_running and not running and not outer_running:
+            # An action result can arrive without a surviving cmd_vel zero.
+            # Stop at the result and block any residual smoother or controller output.
+            self.navigation_result_brake=True
+            self.publish_navigation_brake()
+        elif running and not was_running and (name!='follow_path' or not outer_busy):
+            self.navigation_result_brake=False
+
+    def on_idle_spin_motion(self, message):
+        if self.finite_planar_velocity(message) and not self.stop_velocity(message):
+            self.idle_spin_last_motion=time.monotonic()
+
+    def idle_spin_clearance(self, wall):
+        if not self.idle_spin_grid or not self.idle_spin_odom:
+            self.idle_spin_block='missing_local_observation'
+            return False
+        grid,received=self.idle_spin_grid
+        odom,odom_received=self.idle_spin_odom
+        velocity=odom.twist.twist.linear
+        if wall-received>.30 or wall-odom_received>.25:
+            self.idle_spin_block='stale_local_observation'
+            return False
+        if self.idle_spin_anchor is None and not math.hypot(velocity.x,velocity.y)<.12:
+            self.idle_spin_block='translation_in_progress'
+            return False
+        try:
+            tf=self.idle_spin_tf.lookup_transform(grid.header.frame_id,self.robot+'/base_stabilized',rclpy.time.Time())
+        except TransformException:
+            self.idle_spin_block='local_pose_unavailable'
+            return False
+        stamp=tf.header.stamp.sec*1_000_000_000+tf.header.stamp.nanosec
+        age=self.get_clock().now().nanoseconds-stamp
+        if stamp<=0 or not -50_000_000<=age<=230_000_000:
+            self.idle_spin_block='stale_local_pose'
+            return False
+        x,y=tf.transform.translation.x,tf.transform.translation.y
+        if self.idle_spin_anchor is not None and math.dist((x,y),self.idle_spin_anchor)>.17:
+            self.idle_spin_block='translation_from_spin_anchor'
+            return False
+        g=grid.info
+        orientation=g.origin.orientation
+        if (not all(math.isfinite(v) for v in (x,y,g.resolution,g.origin.position.x,g.origin.position.y))
+                or g.resolution<=0 or abs(orientation.w)<.999
+                or abs(orientation.x)+abs(orientation.y)+abs(orientation.z)>.001
+                or len(grid.data)!=g.width*g.height):
+            self.idle_spin_block='invalid_costmap_geometry'
+            return False
+        # A rotating rectangle is bounded by its circumscribed disk. Include
+        # each grid cell whose area could contact that disk.
+        radius=self.idle_spin_radius+g.resolution*math.sqrt(.5)
+        mx=(x-g.origin.position.x)/g.resolution
+        my=(y-g.origin.position.y)/g.resolution
+        cells=radius/g.resolution
+        low_x,high_x=math.floor(mx-cells),math.floor(mx+cells)
+        low_y,high_y=math.floor(my-cells),math.floor(my+cells)
+        if low_x<0 or low_y<0 or high_x>=g.width or high_y>=g.height:
+            self.idle_spin_block='outside_local_costmap'
+            return False
+        for row in range(low_y, high_y+1):
+            for col in range(low_x, high_x+1):
+                if (col+.5-mx)**2+(row+.5-my)**2>cells*cells:
+                    continue
+                if not 0<=grid.data[row*g.width+col]<100:
+                    self.idle_spin_block='rotation_footprint_blocked'
+                    return False
+        if self.idle_spin_anchor is None:
+            self.idle_spin_anchor=(x,y)
+        self.idle_spin_block=''
+        return True
+
+    def update_operator_idle(self):
+        if not self.drive_identity:
+            return
+        wall=time.monotonic()
+        active=any(self.idle_spin_active_goals.values()) or wall-self.idle_spin_last_motion<.35
+        drive=(self.state or {}).get('drive') or {}
+        requested=drive.get('operator_gyro_setpoint_rad_s',0.)
+        if active or not self.velocity_adapter_ready() or not requested:
+            self.idle_spin_anchor=None
+        ready=(self.phase=='running' and self.velocity_adapter_ready()
+               and wall-self.received<=.25 and not active)
+        self.idle_spin_block='navigation_active' if active else 'not_armed'
+        allow=(ready and type(requested) in (int,float) and 0.<requested<=5.
+               and drive.get('operator_gyro_available') is True and self.idle_spin_clearance(wall))
+        if allow or (ready and self.idle_spin_sent):
+            stamp=self.get_clock().now()
+            if stamp.nanoseconds>0:
+                zero=TwistStamped()
+                zero.header.stamp=stamp.to_msg()
+                zero.header.frame_id=self.robot+'/base_link'
+                (self.idle_spin_pub if allow else self.public_velocity_pub).publish(zero)
+        self.idle_spin_sent=bool(allow)
+
+    def publish_navigation_brake(self):
+        now=self.get_clock().now().nanoseconds
+        if not self.velocity_adapter_ready() or now<=0:
+            return
+        self.navigation_motion_ns=None
+        self.body_input_ns=now
+        self.body_stop_ns=now
+        if self.publish_body_velocity(Twist()):
+            self.velocity_adapter_counts['immediate_stops']+=1
+
+    def on_navigation_velocity(self, message):
+        if not self.velocity_adapter_ready() or not self.finite_planar_velocity(message):
+            return
+        now=self.get_clock().now().nanoseconds
+        if now<=0:
+            return
+        if self.stop_velocity(message):
+            self.publish_navigation_brake()
+        elif not self.navigation_result_brake and (self.body_stop_ns is None or now>self.body_stop_ns):
+            self.navigation_motion_ns=now
+
+    def on_odometry_smoothed_velocity(self, message):
+        now=self.get_clock().now().nanoseconds
+        if (not self.velocity_adapter_ready() or self.navigation_motion_ns is None
+                or now-self.navigation_motion_ns>250_000_000
+                or not self.finite_planar_velocity(message) or now<=0):
+            return
+        if self.body_stop_ns is not None and now<=self.body_stop_ns:
+            return
+        if not self.idle_spin_odom or time.monotonic()-self.idle_spin_odom[1]>.23:
+            return
+        observed=self.idle_spin_odom[0]
+        age=now-observed.header.stamp.sec*1_000_000_000-observed.header.stamp.nanosec
+        if not -50_000_000<=age<=230_000_000:
+            return
+
+        cap=self.drive_identity['vehicle_control']['MaxForwardSpeedMps']
+        magnitude=math.hypot(message.linear.x,message.linear.y)
+        ratio=min(1.,cap/magnitude) if magnitude>0 else 1.
+        target=TwistStamped()
+        target.header.frame_id=self.robot+'/odom'
+        target.header.stamp=self.get_clock().now().to_msg()
+        target.twist.linear.x=ratio*message.linear.x
+        target.twist.linear.y=ratio*message.linear.y
+        target.twist.angular.z=message.angular.z
+        self.body_input_ns=now
+        self.body_output_ns=now
+        self.body_stop_ns=None
+        self.world_velocity_pub.publish(target)
+        self.velocity_adapter_counts['published_outputs']+=1
+
+    def on_world_smoothed_velocity(self, message):
+        now=self.get_clock().now().nanoseconds
+        stamp=message.header.stamp.sec*1_000_000_000+message.header.stamp.nanosec
+        if (not self.velocity_adapter_ready() or stamp<=0 or now-stamp< -50_000_000
+                or now-stamp>250_000_000 or message.header.frame_id!=self.robot+'/base_link'
+                or not self.finite_planar_velocity(message.twist)):
+            self.velocity_adapter_counts['rejected_inputs']+=1
+            return
+        if self.navigation_motion_ns is None or now-self.navigation_motion_ns>250_000_000:
+            return
+        self.body_input_ns=stamp
+        if self.body_stop_ns is not None and stamp<=self.body_stop_ns:
+            return
+        self.body_stop_ns=None
+        self.velocity_adapter_counts['accepted_inputs']+=1
+        self.publish_body_velocity(message.twist)
+
     def on_body_velocity(self,message):
         now=self.get_clock().now().nanoseconds
         stamp=message.header.stamp.sec*1_000_000_000+message.header.stamp.nanosec
@@ -132,6 +344,9 @@ class NavigationRunner(Node):
         if not valid:
             self.velocity_adapter_counts['rejected_inputs']+=1;return
         stop=self.stop_velocity(message.twist)
+        if not stop and self.navigation_result_brake:
+            self.velocity_adapter_counts['rejected_stop_releases']+=1
+            return
         if self.body_stop_ns is not None and not stop and stamp<=self.body_stop_ns:
             # A reordered command sharing the stop's clock tick cannot release it.
             self.velocity_adapter_counts['rejected_inputs']+=1
@@ -162,6 +377,8 @@ class NavigationRunner(Node):
         return True
 
     def on_smoothed_body_velocity(self,message):
+        if getattr(self,'idle_spin_sent',False) and self.stop_velocity(message):
+            return
         if (self.publish_body_velocity(message) and self.body_stop_ns is not None
                 and not self.stop_velocity(message)):
             self.velocity_adapter_counts['suppressed_smoother_outputs']+=1
@@ -286,13 +503,22 @@ class NavigationRunner(Node):
             if self.identity!=identity or not self.children:
                 self.stop();self.identity=identity;self.start()
             self.initialize_pose();self.phase='running' if self.localized and (self.localization_only or self.nav_active) else 'activating' if self.nav_started else 'localizing'
+        elif (self.children and self.state and self.state.get('connected') and self.lio and
+              self.lio.get('phase')=='waiting_for_stream' and self.lio.get('identity')==self.identity and
+              time.monotonic()-self.received<2):
+            self.phase='waiting_for_stream'
         elif time.monotonic()-self.received>1 or (self.lio and self.lio.get('phase')!='running'):
             self.stop();self.phase='waiting'
+        if not self.motion_released and self.motion_ready_file.is_file():
+            self.motion_released = True
+        self.update_operator_idle()
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
             output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,
             localization_map=self.map_identity,localization_map_verified=not self.map_identity or (all(self.map_seen.values()) and not self.map_fault),
             localization_map_topics=self.map_metadata.get('localization_map_binding'),map_input_fault=self.map_fault,
             control_profile=self.control_profile,control_source=self.source_identity,
+            operator_idle_spin=getattr(self,'idle_spin_sent',False),
+            operator_idle_reason=getattr(self,'idle_spin_block','unavailable'),
             drive_profile=self.drive_identity,velocity_adapter_counts=self.velocity_adapter_counts,
             velocity_stop_policy='immediate_zero_target_latch_v1' if self.drive_identity else 'legacy',
             velocity_stop_latched=self.body_stop_ns is not None,velocity_stop_stamp_ns=self.body_stop_ns,

@@ -1,0 +1,36 @@
+{
+  "platform": "Windows native; Linux launch script checked with bash -n",
+  "evidence_root": "artifacts/changes/rmuc-shared-venue-20261121",
+  "canonical_map": "assets/maps/rmuc2027/map.json",
+  "geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+  "layout_sha256": "4be4b51f34d3c94fb32d74b509bcf7d00faebbf867d23e76e973b9c62529c914",
+  "navigation_staging": {
+    "verification": "map-source-verification.json",
+    "canonical_files_equal_byte_for_byte": true,
+    "canonical_scene_equal_except_spawn": true,
+    "spawn_ros_m_yaw": [5.8, 6.4, 0],
+    "previous_snapshot_equal_previous_canonical": true,
+    "runtime_report": "navigation-live/runtime-provenance.json",
+    "windows_navigation_exit": 0,
+    "windows_navigation_ready": true,
+    "native_step_seconds": 0.001
+  },
+  "wall": {
+    "additional_setback_m": 34,
+    "inner_faces_x_m": [-76.0158752, 75.9841248],
+    "outer_step_clearance_m": 48.2631994,
+    "straight_length_m_per_side": 136,
+    "visible_height_m": 2.535,
+    "instances": 112
+  },
+  "native_views": {
+    "before": "chase-before/summary.json",
+    "after": "chase-after/summary.json",
+    "comparison": "chase-wall-comparison.jpg",
+    "canonical_door_views": "canonical-views/report.json",
+    "door_view_sweeps_per_view": 96
+  },
+  "launcher_contract_checks": 57,
+  "windows_manual_and_training_entry_preflight": "manual-preflight.log",
+  "linux_native_render_verified": false
+}

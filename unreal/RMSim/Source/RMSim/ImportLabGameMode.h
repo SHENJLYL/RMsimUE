@@ -13,6 +13,7 @@ class USceneCaptureComponent2D;
 class AStaticMeshActor;
 class FJsonObject;
 class FJsonValue;
+class FRMSimWindowsDeadlineWait;
 class URosBridgeComponent;
 class UWTFoliageCrushComponent;
 class UWTGeneratedCollisionComponent;
@@ -69,6 +70,10 @@ public:
     bool GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
     bool IsGunReticleVisible() const { return bSightMode && !bFreeLook; }
+    // Read the same native epoch/deadline as the pacer after a complete world tick.
+    bool GetMujocoRenderDeadline(double& OutWallDeadline,double& OutSolverSeconds,
+        double& OutStepSeconds,uint64& OutGeneration) const;
+    bool UsesDedicatedMujoco() const { return DedicatedMujocoStep>0; }
 private:
     UPROPERTY() AVehicleRig* Rig = nullptr;
     UPROPERTY() ATrainingRange* Training = nullptr;
@@ -98,10 +103,12 @@ private:
     double MovingCommandPhaseSeconds=-1,MovingTargetResponseSeconds=-1,MovingActualResponseSeconds=-1;
     double FrameAverageSeconds=0,LastFrameWallSeconds=0;
     double RealTimeStepSeconds=0,NextPhysicsFrameWall=-1;
+    double DedicatedMujocoStep=0,DedicatedPreviousSimTime=0;
     bool bMujocoRealTimePace=false;
     double MujocoPaceLastSimSeconds=-1,MujocoPaceCurrentLagSeconds=0,MujocoPaceMaxLagSeconds=0;
     double MujocoPaceLastLagWarningWall=-1;
     uint64 MujocoPaceMotionGeneration=0,MujocoPaceAnchorCount=0,MujocoPaceLagWarningCount=0;
+    TSharedPtr<FRMSimWindowsDeadlineWait> MujocoDeadlineWait;
     FDelegateHandle RealTimePaceHandle;
     void PacePhysicsFrame();
     FVector2D GyroPreviousFiltered=FVector2D::ZeroVector;
@@ -146,6 +153,26 @@ private:
     bool bReady = false;
     bool bDestructionProbeStarted = false;
     double DestructionProbeSeconds = 0;
+    bool TickDestructionValidation(double DeltaSeconds);
+    bool bDestructionValidationInitialized=false,bDestructionValidationFinished=false;
+    bool bDestructionExpectFixed=false;
+    int32 DestructionWarmFrames=0,DestructionCaptureIndex=0,DestructionCaptureCount=0;
+    int32 DestructionTargetContacts=0,DestructionExpectedInstance=INDEX_NONE;
+    uint64 DestructionContactCursor=0,DestructionMotionGeneration=0;
+    double DestructionDriveSpeed=0,DestructionFirstBreakSeconds=-1;
+    double DestructionPeakImpulseNs=0,DestructionPeakNormalSpeedMps=0;
+    FVector DestructionTargetCm=FVector::ZeroVector,DestructionApproach=FVector::ForwardVector;
+    FVector DestructionInitialPosition=FVector::ZeroVector;
+    FVector DestructionImpactNormal=FVector::ZeroVector;
+    FString DestructionExpectedMesh;
+    struct FDestructionDebrisObservation
+    {
+        TWeakObjectPtr<AActor> Actor;
+        FVector FirstPosition=FVector::ZeroVector,FirstVelocity=FVector::ZeroVector;
+        double FirstVelocitySeconds=-1,MaxForwardCm=0;
+        bool bPositiveMotion=false,bReverseInitialMotion=false;
+    };
+    TArray<FDestructionDebrisObservation> DestructionDebrisObservations;
     bool bMapOverview = false;
     bool bTacticalMapExpanded = false;
     bool bMapCursorActive = false;
@@ -175,6 +202,9 @@ private:
     double OrbitYaw = 0.0;
     double OrbitPitch = -12.0;
     double ChaseDistanceCm = 500.0;
+    double ChaseVisibleDistanceCm = 0.0;
+    double LastChaseViewWall = 0.0;
+    uint64 ChaseViewGeneration = 0;
     double ChasePivotHeightCm = 120.0;
     double ScopeBaseFov = 30.0;
     double MouseSensitivity = 0.04; // Degrees per raw count; FOV scaling is applied exactly once.
@@ -221,6 +251,8 @@ private:
     void TickTerrainProbe();
     void TickCombatProbe();
     void TickMujocoProbe(double DeltaSeconds);
+    bool TickDedicatedMujocoProof();
+    int32 DedicatedMujocoProofPhase=0;
     void TickContactProbe(double DeltaSeconds);
     void TickRailContactProbe(double DeltaSeconds);
     void TickCampusGymBoundaryProbe(double DeltaSeconds);

@@ -1,0 +1,120 @@
+{
+  "role": "offline_geometry_candidate",
+  "status": "generated_not_native_validated",
+  "map_id": "rmuc2027",
+  "source_md5": "b0453f53370193c59ef594a56003872b",
+  "source_collision_sha256": "9a36ee13d6284f60e7da1f2631af15472e9611bb7b2bad36ea84d92d87e47911",
+  "descriptor_sha256": "f4f76a7a30079d5abb608fe179b04deee1488102f48e1ff059b667a4feb8f3d9",
+  "reference_navigation_raster_sha256": "4d6d91d1dcd74bbdd19b297147ea4eff3420f17869e9ad502dfc3b2937420504",
+  "reference_navigation_yaml_sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772",
+  "reference_navigation_manifest_sha256": "dad95bf51473242b8cf06aaac42f4b8a7a148d9f31c096d995db09acbf08ba5f",
+  "scene_geometry_sha256": "bb03c3f09a40e780070375516ceb4252bf65802856659ea0a84fc742b450edd2",
+  "map_yaml_sha256": "bed44889cdeade890e86f25b9b61b95b4e174d43d508be06ef139e54ea3fa772",
+  "raster_sha256": "b571d22f4ed0ecc8b516b015d782e6eea6ea7349ceaa23fbacd9436597d4db0a",
+  "surface_provenance_sha256": "d3b3448498bf27e4e77c1e9be428cfc2ea8f4e3f47d2a8757ea99db44e341035",
+  "exporter_sha256": "ac2e8dbe4d3454ccb38397e7d00ddb375860a8fccd170128d813fed3e32159f1",
+  "geometry_reader_sha256": "4fd91f07932fb0dfe9bba7f90cc561742e2a1daeecbb228458a9e5741b8bdd91",
+  "source_step_sha256": "a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0",
+  "source_to_sim_translation_m": [
+    -7.152952372635468e-06,
+    -1.6243433957331543,
+    1.6403436655816601
+  ],
+  "coordinate_system": "ROS_RIGHT_HANDED_X_FORWARD_Y_LEFT_Z_UP",
+  "units": "m",
+  "width": 560,
+  "height": 322,
+  "resolution": 0.05000000000000071,
+  "resolution_float32": 0.05000000074505806,
+  "origin": [
+    -14.0,
+    -8.05,
+    0.0
+  ],
+  "geometry_bounds_m": [
+    [
+      -13.999995709747502,
+      -8.00156545639038,
+      -0.3009999990463257
+    ],
+    [
+      13.99999581660583,
+      8.00156545639038,
+      3.4976830552570872
+    ]
+  ],
+  "algorithm": "Original CAD collision triangles; physical face normals; conservative actual XY triangle projection; existing free cells retained; other cells unknown.",
+  "normal_criterion": {
+    "minimum_surface_inclination_from_horizontal_deg": 85.0,
+    "maximum_abs_normal_z": 0.08715574274765814,
+    "justification": "Structural near-vertical surfaces; excludes the 42 degree traversable corrugation slope and horizontal support surfaces; fixed before scoring any scan."
+  },
+  "height_filter": {
+    "mode": "none",
+    "source_geometry_z_range_m": [
+      -0.3009999990463257,
+      3.4976830552570872
+    ],
+    "reason": "Recorded LaserScan has no original hit z; no unmeasured narrow slice is assumed. Actual per-cell contributing face z ranges are preserved."
+  },
+  "rasterization": {
+    "grid_cells": "[origin+i*resolution, origin+(i+1)*resolution] closed conservative intersections",
+    "numerical_boundary_epsilon_m": 1e-09,
+    "geometry_translation_adjustment_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "amcl_model_note": "Score with unchanged upstream MAP_GXWX; no half-cell shift or evaluation-pose registration."
+  },
+  "geometry_triangles_total": 1614431,
+  "geometry_degenerate_triangles": 29,
+  "selected_triangles": 523265,
+  "selected_triangles_by_group": {
+    "floor": 853,
+    "centre_platform": 307542,
+    "red_ramp_dart_station": 69700,
+    "blue_ramp_dart_station": 69679,
+    "red_road": 11151,
+    "blue_road": 11056,
+    "red_resource_zone": 7584,
+    "blue_resource_zone": 7566,
+    "red_fortress": 2,
+    "blue_fortress": 2,
+    "base_footing": 154,
+    "fan_frame": 40,
+    "fan": 9468,
+    "base": 28468
+  },
+  "groups": [
+    "floor",
+    "centre_platform",
+    "red_ramp_dart_station",
+    "blue_ramp_dart_station",
+    "red_road",
+    "blue_road",
+    "red_resource_zone",
+    "blue_resource_zone",
+    "red_fortress",
+    "blue_fortress",
+    "base_footing",
+    "fan_frame",
+    "fan",
+    "base"
+  ],
+  "occupied_cells": 24262,
+  "free_cells": 141800,
+  "unknown_cells": 14258,
+  "occupied_over_prior_free_cells": 13733,
+  "cell_group_records": 25744,
+  "wall_seconds": 4.306348199999775,
+  "evaluation_inputs_used": [],
+  "original_navigation_preserved": true,
+  "limits": [
+    "No native AMCL precision claim",
+    "Horizontal top surfaces and oblique ramps may still appear in the unchanged terrain-derived scan and are not represented by this candidate",
+    "Visibility/occlusion not encoded in 2D surface union",
+    "Per-cell z bounds are conservative contributing-triangle extrema",
+    "Comparison must preserve all exact recorded scan pairs and original AMCL likelihood semantics"
+  ]
+}

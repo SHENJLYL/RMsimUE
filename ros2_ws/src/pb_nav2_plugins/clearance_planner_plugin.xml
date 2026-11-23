@@ -1,0 +1,5 @@
+<library path="pb_nav2_layers">
+  <class name="pb_nav2_plugins::ClearancePlanner" type="pb_nav2_plugins::ClearancePlanner" base_class_type="nav2_core::GlobalPlanner">
+    <description>Refines the Theta Star route using clearance and continuous curvature.</description>
+  </class>
+</library>

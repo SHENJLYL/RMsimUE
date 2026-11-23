@@ -1,0 +1,626 @@
+{
+  "platform": "Windows native ROS 2 Humble, MuJoCo RMUC2027",
+  "evidence_root": "D:\\simulator\\artifacts\\navigation\\chassis-motion-20261121",
+  "module": {
+    "pid": 58564,
+    "module": "D:\\simulator\\ros2_ws\\install_navigation\\pb_omni_pid_pursuit_controller\\bin\\pb_omni_pid_pursuit_controller.dll",
+    "sha256": "FFFD56D75E869A2B7CEAEE4976520887A198601132A70A3AB582CE8124867E35"
+  },
+  "source_hashes": {
+    "ros2_ws/src/rmsim_bridge/rmsim_bridge/navigation_config.py": "5587a8eca52d321d605635df211f5c3a21f6738b71595ee77eb80a664bac57fb",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/omni_pid_pursuit_controller.cpp": "43ce7f81e5a999d7e465a0795fe4fe76882fbd231067e8451fa67f834e51aa70",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/omni_pid_pursuit_controller.hpp": "5e39902e5472612a972e2ef6c5d605cad0d28fb4451a973df913e440946b7987",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/pid.hpp": "60d98ae23dfc758ace95a48516e2f3d1e1fd5202d57ed9a4bd14fcf948ff562c",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/src/pid.cpp": "39f53c23966d498979bb67e595d4464b07be559d685c0d3940a21f0d500046b2",
+    "ros2_ws/src/pb2025_nav_bringup/config/simulation/nav2_params.yaml": "ecc282cc8c523b400022d3a821c1b51dd211134f8dc0770e84824f01e9da8dfd",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/CMakeLists.txt": "a9c594d158421d53958fda11fbda8bbfc0543cfa1c42b75e1eebd36c27d73d88",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/include/pb_omni_pid_pursuit_controller/swept_footprint.hpp": "0e3016c70f3dd0743b3fd6fe1212791fdd2fa97fb2a3a4918844b7b64b143d5e",
+    "unreal/RMSim/Source/RMSim/VehicleDrive.cpp": "6023794c9920945db038a99e2f33ba40b8d12c640ddf7ef4ba8d764348897d44",
+    "tests/control/test_navigation_speed.py": "4a55a2d97b916452a37731662111dc67f487b9afec3f9bd3edfc5e933e5c2e12",
+    "tests/control/test_navigation_drive_profile.py": "e15eb11ff1ecf3fc7b2f85a82b3efe60ada5c2c38ebbf09329fcd02ddefc3ea9",
+    "ros2_ws/src/pb_omni_pid_pursuit_controller/test/pursuit_damping_test.cpp": "9065dc0001d27489d96898ad2537f4550bb3725bd4ec475fc24d15c9766766be"
+  },
+  "default_three_goal_metrics": {
+    "baseline": {
+      "total_s": 34.2,
+      "near_zero_command_entries": 25,
+      "interior_stops": 5
+    },
+    "candidate-01": {
+      "total_s": 35.2,
+      "near_zero_command_entries": 5,
+      "interior_stops": 4
+    },
+    "candidate-02": {
+      "total_s": 39.8,
+      "near_zero_command_entries": 12,
+      "interior_stops": 5
+    },
+    "candidate-03": {
+      "total_s": 36.3,
+      "near_zero_command_entries": 2,
+      "interior_stops": 2
+    },
+    "candidate-04": {
+      "total_s": 27.8,
+      "near_zero_command_entries": 7,
+      "interior_stops": 3
+    },
+    "final-07": {
+      "total_s": 30.2,
+      "near_zero_command_entries": 4,
+      "interior_stops": 1
+    },
+    "user-long-07": {
+      "total_s": 91.8,
+      "near_zero_command_entries": 34,
+      "interior_stops": 23
+    }
+  },
+  "baseline": {
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            4.85,
+            3.06
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.1345641068251251,
+          "truth_samples": 422,
+          "checked_poses": 687,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.8530705845163106,
+          "max_truth_interval_s": 0.049999999999998934
+        },
+        {
+          "goal": [
+            8.53,
+            2.09
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.004891786507615496,
+          "truth_samples": 258,
+          "checked_poses": 359,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 4.0808374134833025,
+          "max_truth_interval_s": 0.11499999999999488
+        },
+        {
+          "goal": [
+            7.29,
+            -6.47
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.1130214964135318,
+          "truth_samples": 361,
+          "checked_poses": 695,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.597114270871657,
+          "max_truth_interval_s": 0.03999999999999915
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "metrics": [
+      {
+        "goal": [
+          4.85,
+          3.06
+        ],
+        "duration_s": 13.9,
+        "path_m": 9.46,
+        "median_mps": 0.848,
+        "p95_mps": 2.451,
+        "stops": 1,
+        "seconds_nearly_stopped": 0.4,
+        "speed_variation_per_m": 1.162,
+        "levels": {
+          "raw": {
+            "n": 180,
+            "p50": 0.9812500000000002,
+            "p95": 2.7209472656249996,
+            "max": 2.870837402343749,
+            "zero_entries": 8
+          },
+          "final": {
+            "n": 194,
+            "p50": 0.8959002631919293,
+            "p95": 2.5840624087436512,
+            "max": 2.735968436645518,
+            "zero_entries": 8
+          },
+          "odom": {
+            "n": 87,
+            "p50": 0.8640337183824911,
+            "p95": 2.463505885879237,
+            "max": 2.6543142812421503,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 171,
+            "p50": 0.787228777340632,
+            "p95": 1.8464514300660695,
+            "max": 2.0,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          8.53,
+          2.09
+        ],
+        "duration_s": 8.4,
+        "path_m": 3.823,
+        "median_mps": 1.28,
+        "p95_mps": 1.986,
+        "stops": 1,
+        "seconds_nearly_stopped": 0.3,
+        "speed_variation_per_m": 1.643,
+        "levels": {
+          "raw": {
+            "n": 60,
+            "p50": 1.4138252754469638,
+            "p95": 2.608524493956587,
+            "max": 2.7282714843749996,
+            "zero_entries": 4
+          },
+          "final": {
+            "n": 71,
+            "p50": 1.1168035854567222,
+            "p95": 2.1635920142016882,
+            "max": 2.274040647855473,
+            "zero_entries": 4
+          },
+          "odom": {
+            "n": 30,
+            "p50": 1.2159795168787384,
+            "p95": 1.9226640998744966,
+            "max": 2.1473072264223445,
+            "zero_entries": 1
+          },
+          "carrot": {
+            "n": 51,
+            "p50": 0.67171055022849,
+            "p95": 1.3392048232062725,
+            "max": 1.8614552939828586,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          7.29,
+          -6.47
+        ],
+        "duration_s": 11.9,
+        "path_m": 11.748,
+        "median_mps": 0.889,
+        "p95_mps": 2.471,
+        "stops": 3,
+        "seconds_nearly_stopped": 0.6,
+        "speed_variation_per_m": 1.246,
+        "levels": {
+          "raw": {
+            "n": 190,
+            "p50": 1.6024999999999996,
+            "p95": 2.882969041886403,
+            "max": 3.1498706175601323,
+            "zero_entries": 13
+          },
+          "final": {
+            "n": 206,
+            "p50": 0.8012500111758498,
+            "p95": 2.536048694749466,
+            "max": 2.638660639797242,
+            "zero_entries": 13
+          },
+          "odom": {
+            "n": 94,
+            "p50": 0.9110246258659728,
+            "p95": 2.4519637166995096,
+            "max": 2.683005604978943,
+            "zero_entries": 1
+          },
+          "carrot": {
+            "n": 186,
+            "p50": 0.6997235029307517,
+            "p95": 2.0,
+            "max": 2.0000000000000004,
+            "zero_entries": 0
+          }
+        }
+      }
+    ],
+    "total_s": 34.2,
+    "near_zero_command_entries": 25,
+    "interior_stops": 5
+  },
+  "final": {
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            4.85,
+            3.06
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.08784668998092465,
+          "truth_samples": 345,
+          "checked_poses": 619,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.5529774982846423,
+          "max_truth_interval_s": 0.0400000000000027
+        },
+        {
+          "goal": [
+            8.53,
+            2.09
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.02098420730474814,
+          "truth_samples": 160,
+          "checked_poses": 260,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 4.091193089627042,
+          "max_truth_interval_s": 0.06999999999999673
+        },
+        {
+          "goal": [
+            7.29,
+            -6.47
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.047066192572190524,
+          "truth_samples": 448,
+          "checked_poses": 781,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.6585804193587617,
+          "max_truth_interval_s": 0.13500000000000512
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "metrics": [
+      {
+        "goal": [
+          4.85,
+          3.06
+        ],
+        "duration_s": 10.9,
+        "path_m": 9.677,
+        "median_mps": 0.954,
+        "p95_mps": 1.937,
+        "stops": 0,
+        "seconds_nearly_stopped": 0.0,
+        "speed_variation_per_m": 0.956,
+        "levels": {
+          "raw": {
+            "n": 174,
+            "p50": 1.5415028328380527,
+            "p95": 2.5227173215775642,
+            "max": 2.8228779129479697,
+            "zero_entries": 0
+          },
+          "final": {
+            "n": 174,
+            "p50": 1.4493999517209506,
+            "p95": 2.305818833722984,
+            "max": 2.431001029708947,
+            "zero_entries": 0
+          },
+          "odom": {
+            "n": 82,
+            "p50": 0.9140115627478418,
+            "p95": 1.9518334833199538,
+            "max": 2.062776687596213,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 174,
+            "p50": 0.8678572388492894,
+            "p95": 1.908506149667483,
+            "max": 2.0,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          8.53,
+          2.09
+        ],
+        "duration_s": 5.0,
+        "path_m": 3.901,
+        "median_mps": 1.221,
+        "p95_mps": 2.064,
+        "stops": 0,
+        "seconds_nearly_stopped": 0.0,
+        "speed_variation_per_m": 1.345,
+        "levels": {
+          "raw": {
+            "n": 54,
+            "p50": 1.5244249456226364,
+            "p95": 2.5258562119532932,
+            "max": 2.5547842205700517,
+            "zero_entries": 1
+          },
+          "final": {
+            "n": 56,
+            "p50": 1.226131363457082,
+            "p95": 2.097219438829748,
+            "max": 2.3435176516262346,
+            "zero_entries": 1
+          },
+          "odom": {
+            "n": 25,
+            "p50": 1.2249292157300193,
+            "p95": 2.094175703682527,
+            "max": 2.194314027032713,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 52,
+            "p50": 0.6773497227045044,
+            "p95": 1.892856441297598,
+            "max": 1.9581548717237152,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          7.29,
+          -6.47
+        ],
+        "duration_s": 14.3,
+        "path_m": 12.534,
+        "median_mps": 0.933,
+        "p95_mps": 1.856,
+        "stops": 1,
+        "seconds_nearly_stopped": 0.4,
+        "speed_variation_per_m": 1.32,
+        "levels": {
+          "raw": {
+            "n": 240,
+            "p50": 1.3002863258371526,
+            "p95": 2.1627406841754007,
+            "max": 2.7906007711326684,
+            "zero_entries": 3
+          },
+          "final": {
+            "n": 246,
+            "p50": 1.119749239931586,
+            "p95": 1.9623265430994954,
+            "max": 2.1987091051785406,
+            "zero_entries": 3
+          },
+          "odom": {
+            "n": 116,
+            "p50": 0.9447192126561152,
+            "p95": 1.914810741879832,
+            "max": 2.138559480517852,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 234,
+            "p50": 0.7631854528606835,
+            "p95": 1.6141612014884241,
+            "max": 2.0,
+            "zero_entries": 0
+          }
+        }
+      }
+    ],
+    "total_s": 30.2,
+    "near_zero_command_entries": 4,
+    "interior_stops": 1
+  },
+  "long_route": {
+    "clearance": {
+      "status": "passed",
+      "legs": [
+        {
+          "goal": [
+            -6.14,
+            5.27
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.11057574408510398,
+          "truth_samples": 1139,
+          "checked_poses": 2265,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.7475902991906249,
+          "max_truth_interval_s": 0.06500000000000483
+        },
+        {
+          "goal": [
+            8.83,
+            -2.8
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.05548911373858524,
+          "truth_samples": 1565,
+          "checked_poses": 3085,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 0.8642919895220205,
+          "max_truth_interval_s": 0.06499999999999773
+        },
+        {
+          "goal": [
+            8.22,
+            -3.52
+          ],
+          "status": 4,
+          "endpoint_error_m": 0.07110404203504088,
+          "truth_samples": 87,
+          "checked_poses": 106,
+          "occupied_footprints": 0,
+          "min_perimeter_clearance_m": 3.695016923136548,
+          "max_truth_interval_s": 0.0350000000000108
+        }
+      ],
+      "half_width_m": 0.27,
+      "scope": "Padded planar footprint vs static occupancy and physical perimeter, sampled truth and interpolated segments; not per-contact telemetry"
+    },
+    "metrics": [
+      {
+        "goal": [
+          -6.14,
+          5.27
+        ],
+        "duration_s": 37.2,
+        "path_m": 38.16,
+        "median_mps": 0.939,
+        "p95_mps": 2.535,
+        "stops": 10,
+        "seconds_nearly_stopped": 2.9,
+        "speed_variation_per_m": 1.222,
+        "levels": {
+          "raw": {
+            "n": 674,
+            "p50": 1.4574674781404722,
+            "p95": 3.1972616020721856,
+            "max": 3.5489149223054883,
+            "zero_entries": 14
+          },
+          "final": {
+            "n": 712,
+            "p50": 1.2055995719244814,
+            "p95": 2.6376558719966283,
+            "max": 3.5489150010364283,
+            "zero_entries": 14
+          },
+          "odom": {
+            "n": 326,
+            "p50": 0.9508818670674798,
+            "p95": 2.5926123332216737,
+            "max": 3.3834357656639615,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 640,
+            "p50": 0.816568661193316,
+            "p95": 2.0,
+            "max": 2.0000000000000004,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          8.83,
+          -2.8
+        ],
+        "duration_s": 51.8,
+        "path_m": 51.545,
+        "median_mps": 0.885,
+        "p95_mps": 2.302,
+        "stops": 13,
+        "seconds_nearly_stopped": 3.6,
+        "speed_variation_per_m": 1.38,
+        "levels": {
+          "raw": {
+            "n": 978,
+            "p50": 1.5066223501235736,
+            "p95": 2.8967285156250004,
+            "max": 3.732306732359083,
+            "zero_entries": 20
+          },
+          "final": {
+            "n": 1034,
+            "p50": 1.3607113985076675,
+            "p95": 2.533776917383013,
+            "max": 3.208314122352143,
+            "zero_entries": 20
+          },
+          "odom": {
+            "n": 476,
+            "p50": 0.901984696337551,
+            "p95": 2.3117465105260466,
+            "max": 2.980900112790133,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 924,
+            "p50": 0.7853074309300786,
+            "p95": 2.0,
+            "max": 2.0000000000000004,
+            "zero_entries": 0
+          }
+        }
+      },
+      {
+        "goal": [
+          8.22,
+          -3.52
+        ],
+        "duration_s": 2.8,
+        "path_m": 0.946,
+        "median_mps": 0.868,
+        "p95_mps": 0.898,
+        "stops": 0,
+        "seconds_nearly_stopped": 0.0,
+        "speed_variation_per_m": 0.375,
+        "levels": {
+          "raw": {
+            "n": 10,
+            "p50": 0.8979278841777406,
+            "p95": 1.0766555907495543,
+            "max": 1.0810632339466566,
+            "zero_entries": 0
+          },
+          "final": {
+            "n": 10,
+            "p50": 0.9503649786116464,
+            "p95": 1.0917423310924825,
+            "max": 1.1004797540043796,
+            "zero_entries": 0
+          },
+          "odom": {
+            "n": 5,
+            "p50": 0.9244164418906512,
+            "p95": 1.009558577794544,
+            "max": 1.0122243135561884,
+            "zero_entries": 0
+          },
+          "carrot": {
+            "n": 10,
+            "p50": 0.5038827305436024,
+            "p95": 0.7026639585636686,
+            "max": 0.7026639585636686,
+            "zero_entries": 0
+          }
+        }
+      }
+    ],
+    "total_s": 91.8,
+    "near_zero_command_entries": 34,
+    "interior_stops": 23
+  },
+  "action_checks": 18,
+  "braking_m": 0.1802381800749235,
+  "clock_status": "passed",
+  "clock_checks": 32,
+  "clock_failed": [],
+  "simulation_rate": 1.0000420442171942,
+  "tests": [
+    "original 13 swept-footprint checks",
+    "shortened/lengthened target, measured damping, original heading PID and stopping-distance inverse"
+  ],
+  "smoke_session": "smoke-07",
+  "ue_module_sha256": "2c7022704b40330bd0f8fb36fc8dc065dc2a6f998e85805ed17670f31f48e8c2",
+  "source_profile_tests": 25,
+  "rejected": {
+    "03": "Reached long-route goals but overlapped static occupancy on the second leg",
+    "04": "Cancel displacement 0.235 m exceeded 0.20 m",
+    "user-long-05": "Stopped near obstacle and timed out on the second goal",
+    "smoke-05": "ActionClient discovery exceeded warmup before a goal was sent",
+    "smoke-06": "Stalled near the short goal on the wave lane with a small nonzero command"
+  }
+}

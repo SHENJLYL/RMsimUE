@@ -137,8 +137,18 @@ void URosAimController::Drive(double Seconds)
         if((UnclampedP>PitchMax&&Pitch.Direction>0)||(UnclampedP<PitchMin&&Pitch.Direction<0))Pitch.Direction=-Pitch.Direction;
         Pitch.Target=CurrentWorld.Y;
     }
-    Rig->NudgeGimbal(FMath::Clamp(FMath::FindDeltaAngleRadians(BeforeY,DesiredY),-YawRateLimit*Seconds,YawRateLimit*Seconds),
-        FMath::Clamp(DesiredP-BeforeP,-PitchRateLimit*Seconds,PitchRateLimit*Seconds));
+    const double DeltaY=FMath::Clamp(FMath::FindDeltaAngleRadians(BeforeY,DesiredY),-YawRateLimit*Seconds,YawRateLimit*Seconds);
+    const double DeltaP=FMath::Clamp(DesiredP-BeforeP,-PitchRateLimit*Seconds,PitchRateLimit*Seconds);
+    if(bBodyFrame&&Rig->GetDedicatedMujocoPeriod()>0)
+    {
+        const auto BodyRate=[](const FAxis& Axis)
+        {
+            return Axis.Mode==1?Axis.Rate:0.;
+        };
+        if(Rig->SetDedicatedGimbalTrajectory(BeforeY+DeltaY,FMath::Clamp(BeforeP+DeltaP,PitchMin,PitchMax),
+            BodyRate(Yaw),BodyRate(Pitch),Deadline))return;
+    }
+    Rig->NudgeGimbal(DeltaY,DeltaP);
 }
 
 bool URosAimController::CanFire() const
@@ -162,7 +172,7 @@ void URosAimController::Advance(double Seconds)
         }
     }
     double Y,P;Rig->GetGimbalAngles(Y,P);
-    YawVelocity=bHaveSample&&Seconds>0?(Y-PreviousYaw)/Seconds:0;
+    YawVelocity=bHaveSample&&Seconds>0?FMath::FindDeltaAngleRadians(PreviousYaw,Y)/Seconds:0;
     PitchVelocity=bHaveSample&&Seconds>0?(P-PreviousPitch)/Seconds:0;
     PreviousYaw=Y;PreviousPitch=P;PreviousMuzzle=Aim->GetComponentTransform();bHaveSample=true;
 }

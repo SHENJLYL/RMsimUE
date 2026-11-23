@@ -1,0 +1,62 @@
+{
+  "platform": "Windows native, UE 5.8.4 D3D12, ROS 2 Humble",
+  "evidence_root": "artifacts/integration/render-and-sensors-20261120",
+  "rgb": {
+    "module_sha256": "4f7ec4d009ed1673057409ce285d378ec76428a65e6d83c298c16360f92bcd91",
+    "passed_run": "camera-final-repeat/verification.json",
+    "tcp_checks": 24,
+    "ros_checks": 14,
+    "samples": 76,
+    "resolution": [640, 360],
+    "requested_hz": 10,
+    "capture_to_packet_simulation_ms": {"min": 35, "median": 50, "max": 70},
+    "game_thread_mean_submit_ms": [0.218, 0.203],
+    "reported_missed_captures": 0,
+    "failed_run": "camera-final/ros/verification.json",
+    "failed_ros_imu_samples_last_sim_second": 194,
+    "failed_ros_imu_max_interval_ms": 40
+  },
+  "fullscreen": {
+    "module_sha256": "67eb182c71696a6c8f0c1d941ce10b4ea01b513dbee6137c8941d8c5d11c0d",
+    "rviz_plugin_sha256": "28be6ca0aaa82cf0a75643a775fb1ac7ad678b3279af4c0c9782d72605abff22",
+    "run": "fullscreen-observers-01/summary.json",
+    "actual_rviz_updates_while_paused": [61, 67],
+    "actual_rviz_draws_while_paused": [0, 0],
+    "actual_rviz_draws_after_exposure": [148, 134],
+    "accepted_mujoco_snapshots_while_session_active": 1510,
+    "mujoco_sequence_gaps": 0,
+    "ue_draw_hz_in_observed_focused_segments": {
+      "three_unpaused": 52.53,
+      "three_paused": [44.79, 45.09],
+      "ue_only": 53.77
+    },
+    "comparable_continuous_fps": false,
+    "sustained_100_fps": false
+  },
+  "gpu": {
+    "fixed_run": "gym-native-01/summary.json",
+    "moving_run": "gym-orbit-01/summary.json",
+    "moving_glass_run": "gym-orbit-glass-01/summary.json",
+    "scrolling_run": "gym-scroll-01/summary.json",
+    "actual_screenshot_resolution": [2560, 1440],
+    "fence_panels": 64,
+    "duplicate_fence_placements": 0,
+    "unique_rect_lights": 12,
+    "rect_lights_casting_shadows": 0,
+    "shadow_depth_gpu_median_ms": {
+      "fixed_references": [2.7535, 2.586],
+      "fixed_cache": 1.06,
+      "orbit_references": [2.7265, 2.5735],
+      "orbit_cache": 5.3505,
+      "orbit_scrolling_cache": 4.053
+    },
+    "fraction_rgb_channels_changed_more_than_eight_levels": {
+      "repeated_reference": 0.0013411458333333333,
+      "hidden_fence_glass": 0.12960657190393518,
+      "hidden_fence_glass_during_orbit": [0.11560393156828704, 0.24204327618634258]
+    },
+    "production_material_or_lighting_changes": false
+  },
+  "launcher_contract_tests": 53,
+  "ubuntu_native_verified": false
+}

@@ -43,8 +43,9 @@ class LidarPublisher:
             self.identity=key;self.sequence=0;self.fingerprint=fingerprint
             if self.raw_pub:self.node.destroy_publisher(self.raw_pub);self.node.destroy_publisher(self.cloud_pub)
             prefix='/'+self.node.robot_id+'/'+data['id']
-            self.raw_pub=self.node.create_publisher(CustomMsg,prefix+'/livox',qos_profile_sensor_data)
-            self.cloud_pub=self.node.create_publisher(PointCloud2,prefix+'/points',qos_profile_sensor_data)
+            sensor_qos=QoSProfile(depth=32,reliability=ReliabilityPolicy.RELIABLE)
+            self.raw_pub=self.node.create_publisher(CustomMsg,prefix+'/livox',sensor_qos)
+            self.cloud_pub=self.node.create_publisher(PointCloud2,prefix+'/points',sensor_qos)
             tf=TransformStamped();set_stamp(tf.header.stamp,state['sim_time_ns']);tf.header.frame_id=data['parent_frame_id'];tf.child_frame_id=data['frame_id']
             t=tf.transform;t.translation.x,t.translation.y,t.translation.z=map(float,local['position_m'])
             t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w=map(float,local['rotation_xyzw']);self.static_pub.publish(TFMessage(transforms=[tf]))

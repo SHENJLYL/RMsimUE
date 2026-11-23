@@ -160,12 +160,16 @@ def intrinsics(width, height, hfov_rad):
     return [focal, 0., width/2, 0., focal, height/2, 0., 0., 1.]
 
 
-def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id):
+def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id, *, operator_idle=False, navigation_frame=False):
     """values = linear x/y/z, angular x/y/z; unsupported components never disappear silently."""
     integer(sequence, 'sequence', 1)
     integer(stamp_ns, 'command stamp')
-    if frame_id != robot_id + '/base_link':
-        raise ProtocolError('cmd_vel must use the robot base_link frame')
+    frame = '/odom' if navigation_frame else '/base_link'
+    if frame_id != robot_id + frame:
+        required = 'odometry' if navigation_frame else 'robot base_link'
+        raise ProtocolError(f'cmd_vel must use the {required} frame')
+    if navigation_frame and not (state.get('drive') or {}).get('operator_gyro_available'):
+        raise ProtocolError('navigation velocity requires a native odometry frame')
     if len(values) != 6:
         raise ProtocolError('invalid twist')
     values = [number(v, 'twist') for v in values]
@@ -177,6 +181,10 @@ def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id):
     payload = dict(v=1, kind='command', session=state['session'], epoch=state['epoch'],
                    seq=sequence, stamp_ns=stamp_ns, frame_id=frame_id,
                    vx=values[0], vy=values[1], wz=values[5])
+    if operator_idle:
+        if any(values) or not (state.get('drive') or {}).get('operator_gyro_available'):
+            raise ProtocolError('operator idle spin requires zero twist and gyro capability')
+        payload['kind'] = 'operator_idle'
     raw = json.dumps(payload, allow_nan=False, separators=(',', ':')).encode('utf-8') + b'\n'
     if len(raw) > 4096:
         raise ProtocolError('command line exceeds limit')

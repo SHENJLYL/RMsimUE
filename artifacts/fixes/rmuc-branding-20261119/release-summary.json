@@ -1,0 +1,104 @@
+{
+  "status": "passed",
+  "utc": "2026-11-19T06:07:05.422785+00:00",
+  "default_launcher": "D:\\simulator\\Play-ManualVehicle.cmd",
+  "module_sha256": "142ab247439336f1439eae3e39081b5d6ea37cddfff2e6c00725d3a74ebbf2a6",
+  "changes": {
+    "active_campus_wall_titles_removed": 1,
+    "legacy_flags_removed": 8,
+    "unused_layout_titles_removed": 2,
+    "legacy_instances": 208,
+    "legacy_instanced_groups": 13,
+    "retained_event_text": "ROBOMASTER | RMUC 2027"
+  },
+  "validation": {
+    "native_checks": 50,
+    "native_boundary_sweeps": 316,
+    "offline_checks": 6,
+    "offline_exit_code": 0,
+    "source_inputs_unchanged_during_build": true,
+    "build_exit_code": 0,
+    "source_file_count": 70,
+    "native_views": [
+      {
+        "directory": "canonical-native-02/hero",
+        "checks": 14,
+        "contract": "preserve_validated_arena_shell_v1",
+        "outside_bounds_required": false,
+        "all_boundary_parts_outside_source_bounds": false,
+        "minimum_boundary_clearance_m": -0.6069999999999993,
+        "sweeps_passed": 96,
+        "png_sha256": "d086da9e535c99c09fe31a65d8c370939a524ff35c704e64e3ef4f17f8c1a23d"
+      },
+      {
+        "directory": "canonical-native-02/reverse",
+        "checks": 14,
+        "contract": "preserve_validated_arena_shell_v1",
+        "outside_bounds_required": false,
+        "all_boundary_parts_outside_source_bounds": false,
+        "minimum_boundary_clearance_m": -0.6069999999999993,
+        "sweeps_passed": 96,
+        "png_sha256": "7ad0567464120da5ce4fe299c0f02ef96559e3548d47f6d0eb466e0de9aa6725"
+      },
+      {
+        "directory": "outside-contract-native-01/field",
+        "checks": 14,
+        "contract": "outside_source_bounds_v1",
+        "outside_bounds_required": true,
+        "all_boundary_parts_outside_source_bounds": true,
+        "minimum_boundary_clearance_m": 0.0009999999999994458,
+        "sweeps_passed": 96,
+        "png_sha256": "ac460c3ad17bb114fd4732ac7741bd9c8f929de4bd6ff7ea06ee55d1c2586902"
+      }
+    ],
+    "legacy_checks": 8,
+    "legacy_sweeps": 28,
+    "visual_review": "Root reviewed the cleaned hero view; independent agent reviewed the final canonical reverse view. Unrelated wall lettering and flags absent; original event markings and architectural geometry preserved."
+  },
+  "compatibility_fix": {
+    "reason": "Parallel build abe5e7f1 included outside-only source before default manifest migration; canonical-native-01 reproduced the load failure.",
+    "supported_contracts": [
+      "preserve_validated_arena_shell_v1",
+      "outside_source_bounds_v1"
+    ],
+    "active_contract": "preserve_validated_arena_shell_v1",
+    "outside_test_scene_only": "D:\\simulator\\artifacts\\fixes\\rmuc-branding-20261119\\outside-compat-scene",
+    "main_manifest_unchanged": true,
+    "patch": "artifacts/fixes/rmuc-branding-20261119/campus-manifest-compatibility.patch"
+  },
+  "source_fingerprints": {
+    "unreal/RMSim/Source/RMSim/CampusGym.cpp": "1e0d93c9b4a1289d2cc39d5f3b5dc1e65b1221bc01b64aabcdef842e0acc2eaf",
+    "unreal/RMSim/Source/RMSim/ArenaShell.cpp": "2a59c89180de8d745be0efe070eb4cfc365f8fae365bc07b416a74c913cfac9a",
+    "assets/maps/rmuc2027/map.json": "6b45eaed7d086c37fffae09aff8939611815f7d178c4c943003972b108dfbdae",
+    "assets/maps/rmuc2027/arena-shell.json": "51767858fb459f985b04dd0d1e44af250a58b16f420a817ef516b6add9d33e57",
+    "assets/maps/rmuc2027/arena/campus-gym/layout.json": "edb59cea3f8ae4a5f69e63e2debcc594ee5b6d0c2433608e3793b5bc38bbd03a",
+    "assets/vehicles/aim_sentry/drive-profile.json": "fd1ece7218f9465f94090e31853cc191006427608e467e058a8081aa234f6a87"
+  },
+  "scope": {
+    "complete_ready_made_venue_model": "pending; current hall is generated architecture using reused CC0 seats/PBR/HDR assets",
+    "outside_boundary_default_migration": "pending independent driving/navigation acceptance; current default keeps the validated inset geometry",
+    "full_control_navigation_performance_suite_rerun": false
+  },
+  "retained_history": [
+    "build-01",
+    "campus-native-01",
+    "legacy-native-01",
+    "canonical-native-01"
+  ],
+  "source_branch": "fix/rmuc-branding-20261119",
+  "source_branch_base": "80edd34",
+  "handoff": {
+    "utc": "2026-11-19T06:12:27.820849+00:00",
+    "observed_current_module_sha256": "f178cc7a0a2ae098fbd02b209eeaece77bd2529d90ff37980615ea8bd6828145",
+    "venue_sources_match_native_acceptance": {
+      "unreal/RMSim/Source/RMSim/CampusGym.cpp": true,
+      "unreal/RMSim/Source/RMSim/ArenaShell.cpp": true
+    },
+    "binary_unrelated_wall_and_banner_names_absent": true,
+    "binary_event_name_present": true,
+    "default_launcher_preflight": "passed",
+    "interactive_window": "not_opened; another scene launch/import owned the official launch mutex",
+    "launcher_message": "A launch or scene import is already active for this project.",
+    "native_acceptance_module_remains": "142ab247439336f1439eae3e39081b5d6ea37cddfff2e6c00725d3a74ebbf2a6"
+  }
+}
