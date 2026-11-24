@@ -1,6 +1,8 @@
 """Console scene identity and RViz configuration contracts; no ROS/UE required."""
 import hashlib
+import io
 import json
+from contextlib import redirect_stderr
 from pathlib import Path
 import sys
 import tempfile
@@ -84,6 +86,29 @@ class NavigationConsoleTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'must reference its declared'):
             config.select_navigation_source(scene, 'simulation', output)
         self.assertEqual(config.select_navigation_source(scene, 'simulation', output, template), template.resolve())
+
+        # Reproduce an editor changing the YAML and updating only the old top-level digest.
+        template.write_bytes(b'ground_support_file: terrain-support.bin\r\ncurve_clearance: 0.62\r\n')
+        release['source_sha256'] = config.digest(template)
+        sidecar.write_text(json.dumps(release), encoding='utf-8')
+        legacy_scene = config.prepare_scene('rmuc2027', self.root/'legacy')
+        warning = io.StringIO()
+        with redirect_stderr(warning):
+            runtime = config.select_navigation_source(legacy_scene, 'simulation', output)
+        self.assertIn('matched legacy source_sha256', warning.getvalue())
+        self.assertTrue(runtime.read_text().endswith('curve_clearance: 0.62\n'))
+        self.assertEqual(json.loads(sidecar.read_text()), release)
+
+        support_bytes = support.read_bytes()
+        support.write_bytes(b'different support grid')
+        with redirect_stderr(io.StringIO()), self.assertRaisesRegex(ValueError, 'RMUC support grid differs'):
+            config.select_navigation_source(legacy_scene, 'simulation', output)
+        support.write_bytes(support_bytes)
+
+        template.write_bytes(template.read_bytes() + b'# changed without either digest\r\n')
+        with self.assertRaisesRegex(ValueError, 'set simulation_navigation.sha256'):
+            config.select_navigation_source(legacy_scene, 'simulation', output)
+
         release['map_package_sha256'] = '0'*64
         sidecar.write_text(json.dumps(release), encoding='utf-8')
         with self.assertRaisesRegex(ValueError, 'Navigation release differs'):

@@ -183,8 +183,20 @@ def select_navigation_source(scene: dict, control_profile: str, output: Path, ex
     profile = package['profile']
     source = directory/'navigation-profile.yaml'
     support = directory/'terrain-support.bin'
-    if profile['file'] != source.name or digest(source) != profile['sha256']:
-        raise ValueError('RMUC default navigation source differs from the map package')
+    if profile['file'] != source.name:
+        raise ValueError(f'RMUC navigation release must declare {source.name}')
+    source_bytes = source.read_bytes()
+    actual_sha256 = hashlib.sha256(source_bytes).hexdigest()
+    if actual_sha256 != profile['sha256']:
+        release_file = directory/'navigation-release.json'
+        if actual_sha256 != package.get('legacy_profile_sha256'):
+            raise ValueError(
+                f'RMUC default navigation source differs from the map package ({source}). '
+                f'For an intentional profile update, set simulation_navigation.sha256 in '
+                f'{release_file} to {actual_sha256}.'
+            )
+        print(f'RMUC navigation matched legacy source_sha256. Move this value to '
+              f'simulation_navigation.sha256 in {release_file}.', file=sys.stderr, flush=True)
     raw = profile['ground_support']
     if raw['file'] != support.name:
         raise ValueError('RMUC support grid differs from the map package')
@@ -202,8 +214,9 @@ def select_navigation_source(scene: dict, control_profile: str, output: Path, ex
         # A path in the template can come from a previous checkout. Always use the verified local grid.
         return match[1] + bound_path
 
+    source_text = source_bytes.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
     text, references = re.subn(r'(?m)^([ \t]*ground_support_file:[ \t]*)([^\r\n]*)$',
-                              bind_grid, source.read_text(encoding='utf-8'))
+                              bind_grid, source_text)
     if references == 0:
         raise ValueError('RMUC default navigation source has no support-grid reference')
     bound = output/'navigation-source.yaml'
@@ -322,7 +335,8 @@ def prepare_scene(scene_name: str, output: Path, localization_map_yaml=None, ini
                 initial_pose=initial, initial_pose_prior=initial_prior, view=view, scene_sha256=digest(scene_file), raster_sha256=digest(nav / 'map.pgm'),
                 localization_map_yaml=selected_map, localization_map_selection=selection,
                 localization_map_package=package_identity,
-                simulation_navigation_package={'directory': str(source.resolve()), 'profile': profile} if profile else None)
+                simulation_navigation_package={'directory': str(source.resolve()), 'profile': profile,
+                                               'legacy_profile_sha256': release.get('source_sha256')} if profile else None)
 
 def rviz_configuration(view: dict, robot_id: str = 'aim_sentry') -> dict:
     def topic(name, transient=False, sensor=False):

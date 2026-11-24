@@ -4,7 +4,7 @@ Provides a single GUI entry point to:
 - Pick any vehicle package (built-in or external vehicle.json / vehicle.canonical.json)
 - Pick any map package and spawn point
 - Choose mode: Pure Simulator + ROS 2 Bridge (external robot plug-in), Manual Drive,
-  Training Range, Built-in Navigation Baseline (32.4s MPC grounded μ=1.05), or War Thunder Flanders
+  Training Range, Built-in Navigation Baseline (32.2s Curvature-Profiled MPC 0-overlap μ=1.05), or War Thunder Flanders
 - Optionally launch the decoupled external sentry_ws connector against a live simulator
 """
 from __future__ import annotations
@@ -175,7 +175,7 @@ class RMSimLauncherApp(tk.Tk):
             ("pure_ros", "纯仿真 + 标准 ROS 2 桥（外部机器人/sentry_ws 接入）"),
             ("manual", "手动试驾（UE5 + MuJoCo，无 ROS 2）"),
             ("training", "静态靶射击训练（手动 + 弹道/靶场）"),
-            ("nav_baseline", "内置哨兵导航基线（Play-Navigation.cmd · RMUC 32.4s 稳态 MPC · μ=1.05 防翻滚）"),
+            ("nav_baseline", "内置哨兵导航基线（Play-Navigation.cmd · RMUC 32.2s 曲率规划 MPC · 0 碰撞）"),
             ("flanders", "弗兰德斯战雷原图（Play-WarThunder.cmd）"),
         ]
         for idx, (val, label) in enumerate(modes):
@@ -425,7 +425,7 @@ class RMSimLauncherApp(tk.Tk):
     def _launch_simulator(self) -> None:
         mode = self.mode_var.get()
         if mode == "nav_baseline":
-            self._run_background(["cmd", "/c", str(REPO_ROOT / "Play-Navigation.cmd")], "内置导航基线 32.4s 稳态 MPC")
+            self._run_background(["cmd", "/c", str(REPO_ROOT / "Play-Navigation.cmd")], "内置导航基线 32.2s 曲率规划 MPC")
             return
         if mode == "flanders":
             self._run_background(["cmd", "/c", str(REPO_ROOT / "Play-WarThunder.cmd")], "弗兰德斯原图")

@@ -540,9 +540,9 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
       return best_i;
     };
 
-    // 4. Fast exact rotating-disk costmap collision checker (mu=1.05: 16cm Tier-1 / 10cm Tier-2, 0 static hits)
-    const double hard_r = radius + 0.10;
-    const double safe_r = radius + 0.16;
+    // 4. Fast exact rotating-disk costmap collision checker (mu=1.05: 15.5cm Tier-1 / 9.5cm Tier-2)
+    const double hard_r = radius + 0.095;
+    const double safe_r = radius + 0.155;
     static const std::array<std::pair<double, double>, 19> kDiskOffsets = []() {
       std::array<std::pair<double, double>, 19> arr{};
       arr[0] = {0.0, 0.0};
@@ -586,13 +586,27 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
     const size_t i_mid = std::min(samples.size() - 1, static_cast<size_t>(7));
     const sweep::Vector t2{samples[i_mid].tx, samples[i_mid].ty};
 
-    // 6. Closed-loop Stage-2 Rollout Evaluator (mu=1.05 matched dynamics + 3D tilt & goal braking cap)
+    // 6. Closed-loop Stage-2 Rollout Evaluator (general lookahead curvature profiler + 3D tilt + goal braking)
     const auto & bq = body_pose.pose.orientation;
     const double uz = std::clamp(1.0 - 2.0 * (bq.x * bq.x + bq.y * bq.y), -1.0, 1.0);
     const double tilt_deg = std::acos(uz) * (180.0 / M_PI);
     double v_eff = (tilt_deg > 5.0)
       ? std::clamp(v_linear_max_ - 0.24 * (tilt_deg - 5.0), 2.3, v_linear_max_)
       : v_linear_max_;
+    // Lookahead curvature speed envelope: full speed on straights, smooth anticipatory braking before any corner
+    for (size_t i = 2; i + 2 < samples.size(); ++i) {
+      const double d_ahead = std::max(0.0, samples[i].s - s_near);
+      if (d_ahead > 4.2) {break;}
+      const double ds = std::max(0.10, samples[i + 2].s - samples[i - 2].s);
+      const double dot = std::clamp(
+        samples[i - 2].tx * samples[i + 2].tx + samples[i - 2].ty * samples[i + 2].ty, -1.0, 1.0);
+      const double kappa = std::acos(dot) / ds;
+      if (kappa > 0.18) {
+        const double v_turn = std::max(1.45, std::sqrt(3.4 / kappa));
+        const double v_allow = std::sqrt(v_turn * v_turn + 2.0 * 3.2 * d_ahead);
+        if (v_allow < v_eff) {v_eff = v_allow;}
+      }
+    }
     if (contains_goal) {
       const double rem_goal = std::max(0.0, plan_distances.back() - s_near);
       if (rem_goal < 4.5) {
@@ -676,8 +690,8 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
       const size_t i_m = project_idx(mid_x, mid_y, d2_mid);
       const double progress = (samples[i_end].s - s_near) + 0.35 * (samples[i_m].s - s_near);
       const double smooth_d2 = (u1.x - last_w.x) * (u1.x - last_w.x) + (u1.y - last_w.y) * (u1.y - last_w.y);
-      const double infl_pen = (max_infl > 85) ? 0.045 * (max_infl - 85) : 0.0;
-      out_score = 6.0 * progress - 1.4 * d2_mid - 2.2 * d2_end - infl_pen - 0.020 * smooth_d2;
+      const double infl_pen = (max_infl > 90) ? 0.032 * (max_infl - 90) : 0.0;
+      out_score = 5.0 * progress - 2.0 * d2_mid - 3.0 * d2_end - infl_pen - 0.030 * smooth_d2;
       return true;
     };
 

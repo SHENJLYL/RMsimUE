@@ -424,7 +424,7 @@ controller_server:
       emergency_brake_jerk: 35.0
       emergency_brake_latency: 0.12
       v_linear_min: -5.5
-      v_linear_max: 4.5  # Planted 5.5 m/s stiff-suspension <30s MPC baseline
+      v_linear_max: 4.6  # Planted 5.5 m/s stiff-suspension <30s MPC baseline
       v_angular_min: -3.0
       v_angular_max: 3.0
       curvature_min: 0.4                                # 低曲率阈值，低于此值不减速。
