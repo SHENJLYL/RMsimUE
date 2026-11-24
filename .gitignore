@@ -104,10 +104,13 @@ Thumbs.db
 # ROS recordings and SQLite sidecars stay local.
 *.db3
 *.db3-*
+*.db3.zstd
 *.mcap
 *.mcap.active
+*.mcap.zstd
 *.bag
 *.bag.active
+rosbag2_*/
 
 # Local experiment data. Opt in only to release summaries and source notices.
 /artifacts/**
