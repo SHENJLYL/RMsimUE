@@ -59,6 +59,7 @@ public:
     bool ConsumeDedicatedFrame(bool& Updated, FString& Error);
     bool ReadDedicatedProgress(uint64& Steps, uint64& Failsafes) const;
     void VisitDedicatedQueryFrames(TFunctionRef<void(double,const TArray<FTransform>&,bool)> Visitor);
+    void ClearDedicatedQueryFrames();
     bool ConfigureServo(const FString& Part, double Stiffness, double Damping, double ForceLimit, FString& Error);
     bool SetServoTarget(const FString& Part, double Position, double Velocity, bool Wrap);
     bool SetServoTrajectory(const FString& Part, double Position, double Velocity,

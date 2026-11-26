@@ -392,6 +392,14 @@ void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<v
     });
 }
 
+void AVehicleRig::ClearDedicatedLidarFrames()
+{
+    check(IsInGameThread());
+    if (!MujocoDynamics) return;
+    AVehicleRig* Primary = bMujocoSharedFollower ? MujocoOpponent.Get() : this;
+    if (Primary && Primary->MujocoDynamics) Primary->MujocoDynamics->ClearDedicatedQueryFrames();
+}
+
 void AVehicleRig::ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset)
 {
     const auto& Names = MujocoDynamics->BodyNames();

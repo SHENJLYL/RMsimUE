@@ -1027,7 +1027,14 @@ void FMujocoVehicleDynamics::VisitDedicatedQueryFrames(TFunctionRef<void(double,
     auto& Frames = Dedicated->PresentedQueries;
     for (int32 Index = 0; Index < Frames.Num(); ++Index)
         Visitor(Frames[Index].Time, Frames[Index].Parts, Index == Frames.Num() - 1);
-    Frames.Reset();
+#endif
+}
+
+void FMujocoVehicleDynamics::ClearDedicatedQueryFrames()
+{
+    check(IsInGameThread());
+#if RMSIM_WITH_MUJOCO
+    if (Dedicated) Dedicated->PresentedQueries.Reset();
 #endif
 }
 

@@ -72,6 +72,7 @@ public:
     bool SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall);
     bool ReadDedicatedMujocoProgress(uint64& Steps,uint64& Failsafes) const;
     void ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query);
+    void ClearDedicatedLidarFrames();
     void SubmitDedicatedMujocoInputs();
     const TCHAR* GetPhysicsBackendName() const { return IsMujocoPhysics()?TEXT("mujoco"):bContactPhysics?TEXT("chaos"):TEXT("kinematic"); }
     double GetSimulationTimeSeconds() const;

@@ -1087,7 +1087,11 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
     if(!ImuFixture.IsEmpty())TickImuFixture(DeltaSeconds);
     for (URosBridgeComponent* Bridge : RosBridges)
         if (Bridge) Bridge->Advance();
-    if(UsesDedicatedMujoco())Rig->SubmitDedicatedMujocoInputs();
+    if(UsesDedicatedMujoco())
+    {
+        Rig->ClearDedicatedLidarFrames();
+        Rig->SubmitDedicatedMujocoInputs();
+    }
     Elapsed += DeltaSeconds;
     {
         static bool bHudShotRequested = false;

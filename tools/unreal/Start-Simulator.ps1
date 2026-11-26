@@ -30,6 +30,7 @@ param(
     [int]$RuneClientBridgePort = 0,
     [switch]$Offscreen,
     [switch]$NoBridgeNode,
+    [switch]$WithRviz,
     [switch]$DryRun
 )
 
@@ -408,6 +409,7 @@ try {
                         $sentryArgs = @('-NoProfile','-File',(Quote-UnrealArgument (Join-Path $root 'tools/environment/Start-ExternalSentry.ps1')),
                             '-RobotId',$RobotId,'-Domain',$st.Seat.Domain,'-MapFile',(Quote-UnrealArgument $mapLaunch.MapFile),'-SpawnId',$st.Seat.Spawn,
                             '-MatchAutonomy')
+                        if (-not $WithRviz) { $sentryArgs += '-NoRviz' }
                         if ($NavigationSource) { $sentryArgs += @('-NavigationSource',(Quote-UnrealArgument $NavigationSource)) }
                         $sProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $sentryArgs -WindowStyle Hidden -PassThru `
                             -RedirectStandardOutput (Join-Path $ueLogDir "$tag.stdout.log") -RedirectStandardError (Join-Path $ueLogDir "$tag.stderr.log")
