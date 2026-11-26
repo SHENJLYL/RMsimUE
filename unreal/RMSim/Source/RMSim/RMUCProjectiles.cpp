@@ -58,22 +58,24 @@ void ARMUCGameReferee::FireProjectile(const FTransform& MuzzleTransform)
 
 void ARMUCGameReferee::SetRosFlywheels(AVehicleRig* Robot, bool bRequested)
 {
-    const auto Side = TeamFor(Robot);
-    if (!Side) return;
-    const auto& Shooter = Competitor(*Side);
-    const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(*Side)];
+    const FMatchRobotSlot* Slot = FindSlot(Robot);
+    if (!Slot) return;
+    const auto& Shooter = Slot->State;
+    const auto& Points = Slot->PointEffects;
     URMUCPhysicalAudio::SetFlywheelsRequested(Robot, bRequested && GameProgress == ERMUCGameProgress::Running &&
         !Shooter.ShooterLocked() && (Shooter.ProjectileAllowance17mm > 0 || Shooter.OwnLogistics.FortressReserve(Points) > 0));
 }
 
 FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& MuzzleTransform)
 {
-    const auto Side = TeamFor(Robot);
-    if (!Side) return TEXT("invalid_robot");
+    FMatchRobotSlot* Slot = FindSlot(Robot);
+    if (!Slot) return TEXT("invalid_robot");
     if (MuzzleTransform.ContainsNaN()) return TEXT("invalid_muzzle");
     if (GameProgress != ERMUCGameProgress::Running) return TEXT("match_not_running");
-    auto& Shooter = Competitor(*Side);
-    const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(*Side)];
+    auto& Shooter = Slot->State;
+    const auto& Points = Slot->PointEffects;
+    const double HeatLimit = Slot->HeatLimit();
+    const int32 MaxHp = Slot->MaxHp();
     if (Shooter.Hp <= 0) return TEXT("dead");
     if (Shooter.WeakTimer > 0.0) return TEXT("weak");
     if (Shooter.bOverheatMatchLocked) return TEXT("severe_overheat");
@@ -82,35 +84,34 @@ FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& M
     if (Shooter.OverspeedLockTimer > 0.0) return TEXT("overspeed");
     if (Shooter.ProjectileAllowance17mm <= 0 && Shooter.OwnLogistics.FortressReserve(Points) <= 0) return TEXT("no_ammo");
     if (MatchElapsedSeconds + 1e-8 < Shooter.NextShotTime) return TEXT("fire_interval");
-    const bool bRed = *Side == FieldTeam::Red;
+    const bool bRed = Slot->Team == FieldTeam::Red;
+    const FString ShooterName = Slot->DisplayName();
 
     if (!Shooter.OwnLogistics.ConsumeFortressRound(Points)) --Shooter.ProjectileAllowance17mm;
     Shooter.OwnLogistics.MarkCombat(MatchElapsedSeconds);
     ++Shooter.TotalShotsFired;
-    // RMUC 2027 §5.1.3: Shot is allowed to cross BarrelHeatLimit, then triggers overheat lock + FPV video cut until heat cools to 0!
+    // RMUC 2027 §5.1.3: Shot is allowed to cross HeatLimit, then triggers overheat lock + FPV video cut until heat cools to 0!
     Shooter.BarrelHeat += HeatPerShot;
     Shooter.NextShotTime = MatchElapsedSeconds + ShotInterval;
 
-    if (Shooter.BarrelHeat >= 2.0 * BarrelHeatLimit)
+    if (Shooter.BarrelHeat >= 2.0 * HeatLimit)
     {
         const int32 SevereDmg = FMath::Max(1, FMath::RoundToInt(
-            ComputeRMUCSevereOverheatDamage(Shooter.BarrelHeat, BarrelHeatLimit, SentryMaxHp)));
-        Shooter.BarrelHeat = 2.0 * BarrelHeatLimit;
-        ApplySentryDamage(*Side, std::nullopt, 0, SevereDmg, ERMUCHpDeductionReason::OverHeat);
+            ComputeRMUCSevereOverheatDamage(Shooter.BarrelHeat, HeatLimit, MaxHp)));
+        Shooter.BarrelHeat = 2.0 * HeatLimit;
+        ApplyRobotDamage(*Slot, nullptr, 0, SevereDmg, ERMUCHpDeductionReason::OverHeat);
     }
-    if (Shooter.BarrelHeat >= BarrelHeatLimit + SevereOverheat17mmOffset)
+    if (Shooter.BarrelHeat >= HeatLimit + SevereOverheat17mmOffset)
     {
         Shooter.bOverheatMatchLocked = true;
         Shooter.bOverheatLocked = true;
-        PushCombatBroadcast(bRed ? 1 : -1,
-            bRed ? TEXT("RED #7 SENTRY") : TEXT("BLUE #7 SENTRY"),
+        PushCombatBroadcast(bRed ? 1 : -1, ShooterName,
             TEXT("SEVERE OVERHEAT"), 0, TEXT("MATCH LOCKED"), 4.0);
     }
-    else if (Shooter.BarrelHeat > BarrelHeatLimit)
+    else if (Shooter.BarrelHeat > HeatLimit)
     {
         Shooter.bOverheatLocked = true;
-        PushCombatBroadcast(bRed ? 1 : -1,
-            bRed ? TEXT("RED #7 SENTRY") : TEXT("BLUE #7 SENTRY"),
+        PushCombatBroadcast(bRed ? 1 : -1, ShooterName,
             TEXT("OVERHEAT LOCK"), 0, TEXT("VIDEO CUT -> COOL TO 0"), 3.5);
     }
 
@@ -119,8 +120,7 @@ FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& M
     if (OverspeedMs >= 10.0)
     {
         Shooter.bOverspeedMatchLocked = true;
-        PushCombatBroadcast(bRed ? 1 : -1,
-            bRed ? TEXT("RED #7 SENTRY") : TEXT("BLUE #7 SENTRY"),
+        PushCombatBroadcast(bRed ? 1 : -1, ShooterName,
             TEXT("OVERSPEED >=+10"), 0, TEXT("MATCH LOCKED"), 4.0);
     }
     else if (OverspeedMs >= 5.0)
@@ -140,6 +140,7 @@ FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& M
     Pellet.Position = MuzzleTransform.GetLocation();
     Pellet.Velocity = Forward * LaunchSpeedCmS;
     Pellet.bFromRed = bRed;
+    Pellet.ShooterRig = Robot;
     URMUCPhysicalAudio::PlayFeeder(Robot, Pellet.Position);
 
     auto* Sphere = NewObject<UStaticMeshComponent>(this);
@@ -177,12 +178,13 @@ ARMUCGameReferee::EProjectileHit ARMUCGameReferee::ApplyProjectileDamage(
         Hit.bStartPenetrating || NormalSpeedCmS <= 1200.) return EProjectileHit::None;
 
     const FieldTeam Attacker = Pellet.bFromRed ? FieldTeam::Red : FieldTeam::Blue;
+    FMatchRobotSlot* ShooterSlot = FindSlot(Pellet.ShooterRig.Get());
     if (auto* Vehicle = Cast<AVehicleRig>(Hit.GetActor()))
     {
-        const auto Target = TeamFor(Vehicle);
-        if (!Target || *Target == Attacker) return EProjectileHit::None;
+        FMatchRobotSlot* TargetSlot = FindSlot(Vehicle);
+        if (!TargetSlot || TargetSlot->Team == Attacker) return EProjectileHit::None;
         const int32 ArmorId = ClassifyVehicleArmorHit(Hit, Vehicle);
-        if (ArmorId == INDEX_NONE || !ApplySentryDamage(*Target, Attacker, ArmorId, 20, ERMUCHpDeductionReason::ArmorHit))
+        if (ArmorId == INDEX_NONE || !ApplyRobotDamage(*TargetSlot, ShooterSlot, ArmorId, 20, ERMUCHpDeductionReason::ArmorHit))
             return EProjectileHit::None;
         return EProjectileHit::Armor;
     }
@@ -194,7 +196,7 @@ ARMUCGameReferee::EProjectileHit ARMUCGameReferee::ApplyProjectileDamage(
     {
         const int32 Ring = FMath::Clamp(11 - FMath::CeilToInt(OffsetCm / 1.5), 1, 10);
         if (bTargetRed != Pellet.bFromRed || !RuneRules.Hit(bTargetRed, Plate, Ring)) return EProjectileHit::None;
-        RecordHit(Attacker, 0);
+        if (ShooterSlot) RecordSlotHit(*ShooterSlot, 0); else RecordHit(Attacker, 0);
         return EProjectileHit::Rune;
     }
 
@@ -213,7 +215,7 @@ ARMUCGameReferee::EProjectileHit ARMUCGameReferee::ApplyProjectileDamage(
     const int32 Damage = FMath::RoundToInt(20. * AttackMultiplier * (1. - Defence.DefencePercent / 100.));
     const int32 Lost = ApplyFieldStructureHit(bTargetRed, bOutpost, Pellet.bFromRed, Damage);
     if (Lost <= 0) return EProjectileHit::None;
-    RecordHit(Attacker, Lost);
+    if (ShooterSlot) RecordSlotHit(*ShooterSlot, Lost); else RecordHit(Attacker, Lost);
     return EProjectileHit::Armor;
 }
 
@@ -235,7 +237,12 @@ void ARMUCGameReferee::StepProjectiles(double DeltaSeconds)
             Query.bReturnPhysicalMaterial = true;
             // Let a reflected pellet hit its own vehicle. Ignore the muzzle carrier only just after emission.
             if (Pellet.BounceCount == 0 && Pellet.Age < .02)
-                Query.AddIgnoredActor(VehicleFor(Pellet.bFromRed ? FieldTeam::Red : FieldTeam::Blue));
+            {
+                if (AVehicleRig* Ignored = Pellet.ShooterRig.Get())
+                    Query.AddIgnoredActor(Ignored);
+                else
+                    Query.AddIgnoredActor(VehicleFor(Pellet.bFromRed ? FieldTeam::Red : FieldTeam::Blue));
+            }
             FHitResult Hit;
             if (!GetWorld()->SweepSingleByChannel(Hit, Pellet.Position, End, FQuat::Identity,
                 ProjectileChannel, Shape, Query))

@@ -9,10 +9,10 @@ void ARMUCGameReferee::RequestOwnAmmoPurchase()
 void ARMUCGameReferee::RequestSentryAmmoPurchase(const AVehicleRig* Vehicle, bool bRemote)
 {
     using Mode = FRMUCSupplyRules::EPurchaseMode;
-    const auto Seat = TeamFor(Vehicle);
-    if (Seat && GameProgress == ERMUCGameProgress::Running && Competitor(*Seat).Hp > 0)
+    FMatchRobotSlot* Slot = FindSlot(Vehicle);
+    if (Slot && GameProgress == ERMUCGameProgress::Running && Slot->State.Hp > 0)
     {
-        auto& Request = Competitor(*Seat).AmmoPurchaseRequest;
+        auto& Request = Slot->State.AmmoPurchaseRequest;
         if (!Request) Request = bRemote ? Mode::Remote : Mode::Local;
     }
 }
@@ -26,28 +26,67 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
         FieldPhysicalContacts = {};
         OutpostControlSignals = {};
         for (auto& Seat : Competitors) Seat.AmmoPurchaseRequest.reset();
+        for (auto& Slot : MatchRobots)
+        {
+            Slot.ContactHold = {};
+            Slot.PhysicalContacts = {};
+            Slot.PointEffects = {};
+            Slot.State.AmmoPurchaseRequest.reset();
+        }
         return;
     }
 
     const double RunningSeconds = FMath::Clamp(DeltaSeconds, 0.0, MatchElapsedSeconds);
-    const auto Sample = [this](FieldTeam Team)
+    auto MergeContact = [](std::optional<bool>& Dst, const std::optional<bool>& Src)
     {
-        const unsigned Index = FRMUCFieldRules::Index(Team);
-        const auto* Vehicle = VehicleFor(Team);
-        const bool bAlive = IsValid(Vehicle) && Competitor(Team).Hp > 0;
-        auto& Physical = FieldPhysicalContacts[Index];
+        if (Src.value_or(false)) Dst = true;
+        else if (!Dst && Src) Dst = false;
+    };
+    auto MergePoints = [&](FRMUCFieldPoints& Dst, const FRMUCFieldPoints& Src)
+    {
+        for (unsigned Site = 0; Site < 2; ++Site)
+        {
+            MergeContact(Dst[Site].Supply, Src[Site].Supply);
+            MergeContact(Dst[Site].Base, Src[Site].Base);
+            MergeContact(Dst[Site].Fortress, Src[Site].Fortress);
+            MergeContact(Dst[Site].Outpost, Src[Site].Outpost);
+            MergeContact(Dst[Site].CentralHighland, Src[Site].CentralHighland);
+            MergeContact(Dst[Site].Vantage, Src[Site].Vantage);
+        }
+    };
+
+    FRMUCFieldPoints TeamHeld[2];
+    FRMUCFieldPoints TeamPhysical[2];
+    for (int32 T = 0; T < 2; ++T)
+    {
+        TeamHeld[T].fill({false, false, false, false, false, false});
+        TeamPhysical[T].fill({false, false, false, false, false, false});
+    }
+    TArray<FRMUCFieldPoints> SlotHeld;
+    SlotHeld.SetNum(MatchRobots.Num());
+    for (int32 I = 0; I < MatchRobots.Num(); ++I)
+    {
+        FMatchRobotSlot& Slot = MatchRobots[I];
+        const AVehicleRig* Vehicle = Slot.Vehicle.Get();
+        const bool bAlive = IsValid(Vehicle) && Slot.State.Hp > 0;
         if (bAlive)
         {
-            Physical = ObserveFieldPoints(*Vehicle);
+            Slot.PhysicalContacts = ObserveFieldPoints(*Vehicle);
         }
         else
         {
-            Physical.fill({false, false, false, false, false, false});
+            Slot.PhysicalContacts.fill({false, false, false, false, false, false});
         }
-        return FieldContactHolds[Index].Observe(Physical, MatchElapsedSeconds, bAlive);
-    };
-    FRMUCFieldPoints Red = Sample(FieldTeam::Red);
-    FRMUCFieldPoints Blue = Sample(FieldTeam::Blue);
+        SlotHeld[I] = Slot.ContactHold.Observe(Slot.PhysicalContacts, MatchElapsedSeconds, bAlive);
+        const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
+        MergePoints(TeamPhysical[TeamIdx], Slot.PhysicalContacts);
+        MergePoints(TeamHeld[TeamIdx], SlotHeld[I]);
+    }
+    FieldPhysicalContacts[0] = TeamPhysical[0];
+    FieldPhysicalContacts[1] = TeamPhysical[1];
+
+    FRMUCFieldPoints Red = TeamHeld[0];
+    FRMUCFieldPoints Blue = TeamHeld[1];
     std::array<FRMUCFieldRules::FSiteActivation, 2> Activation;
     for (const FieldTeam Site : FRMUCFieldRules::Teams)
     {
@@ -59,55 +98,61 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
 
     // Official ruling #208. Dart hits suppress the card's buffs, while the
     // continuous control observation still comes from the detected card.
-    for (const FieldTeam Site : FRMUCFieldRules::Teams)
+    auto ApplyDartSuppression = [&](FRMUCFieldPoints& Points)
     {
-        const unsigned Index = FRMUCFieldRules::Index(Site);
-        const auto& Incoming = Site == FieldTeam::Red ? BlueDart : RedDart;
-        if (Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::Outpost) > 0.)
+        for (const FieldTeam Site : FRMUCFieldRules::Teams)
         {
-            Red[Index].Outpost = false;
-            Blue[Index].Outpost = false;
+            const unsigned Index = FRMUCFieldRules::Index(Site);
+            const auto& Incoming = Site == FieldTeam::Red ? BlueDart : RedDart;
+            if (Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::Outpost) > 0.)
+                Points[Index].Outpost = false;
+            if (Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::FixedBase) > 0.)
+                Points[Index].Base = false;
         }
-        if (Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::FixedBase) > 0.)
-        {
-            Red[Index].Base = false;
-            Blue[Index].Base = false;
-        }
-    }
+    };
+    ApplyDartSuppression(Red);
+    ApplyDartSuppression(Blue);
     FieldPointEffects[FRMUCFieldRules::Index(FieldTeam::Red)] =
         FRMUCFieldPointEffects::Evaluate(FieldRules, FieldTeam::Red, MatchElapsedSeconds, Red, FieldPointLatches);
     FieldPointEffects[FRMUCFieldRules::Index(FieldTeam::Blue)] =
         FRMUCFieldPointEffects::Evaluate(FieldRules, FieldTeam::Blue, MatchElapsedSeconds, Blue, FieldPointLatches);
 
-    for (FieldTeam Team : FRMUCFieldRules::Teams)
+    for (int32 I = 0; I < MatchRobots.Num(); ++I)
     {
-        auto& Record = Competitor(Team);
-        const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(Team)];
+        FMatchRobotSlot& Slot = MatchRobots[I];
+        ApplyDartSuppression(SlotHeld[I]);
+        Slot.PointEffects = FRMUCFieldPointEffects::Evaluate(
+            FieldRules, Slot.Team, MatchElapsedSeconds, SlotHeld[I], FieldPointLatches);
+
+        auto& Record = Slot.State;
+        const auto& Points = Slot.PointEffects;
+        const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
         const int32 Before = Record.ProjectileAllowance17mm;
-        Record.OwnLogistics.Step(RunningSeconds, MatchElapsedSeconds, FieldRules.Get(Team).BaseHp,
-            Points, SentryMaxHp, Record.Hp, Record.ProjectileAllowance17mm);
+        Record.OwnLogistics.Step(RunningSeconds, MatchElapsedSeconds, FieldRules.Get(Slot.Team).BaseHp,
+            Points, Slot.MaxHp(), Record.Hp, Record.ProjectileAllowance17mm,
+            Slot.IsSentry(), &TeamInfantryFreeAmmoClaimed[TeamIdx], &TeamInfantryClaimedMinutes[TeamIdx]);
         if (Record.ProjectileAllowance17mm > Before)
         {
-            PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team),
+            PushCombatBroadcast(BroadcastTeam(Slot.Team), Slot.DisplayName(),
                 FString::Printf(TEXT("SUPPLY +%d AMMO"), Record.ProjectileAllowance17mm - Before), 0, TEXT(""), 2.5);
         }
         const int32 Delivered = Record.OwnLogistics.DeliverRemoteAmmo(MatchElapsedSeconds, Record.ProjectileAllowance17mm);
         if (Delivered > 0)
         {
-            PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team),
+            PushCombatBroadcast(BroadcastTeam(Slot.Team), Slot.DisplayName(),
                 FString::Printf(TEXT("REMOTE PURCHASE +%d AMMO"), Delivered), 0, TEXT(""), 2.5);
         }
         if (!Record.AmmoPurchaseRequest) continue;
         const auto Mode = *Record.AmmoPurchaseRequest;
         Record.AmmoPurchaseRequest.reset();
         const bool bRemote = Mode == FRMUCSupplyRules::EPurchaseMode::Remote;
-        const bool bLocalSeat = Team == FriendlyTeam();
+        const bool bLocalSeat = (I == 0);
         using EPurchase = FRMUCSupplyRules::EPurchase;
-        switch (Record.OwnLogistics.PurchaseAmmo(Points, Record.Hp > 0, Record.RemainingGoldCoin,
+        switch (Record.OwnLogistics.PurchaseAmmo(Points, Record.Hp > 0, TeamGold[TeamIdx],
             Record.ProjectileAllowance17mm, Mode, MatchElapsedSeconds))
         {
         case EPurchase::Accepted:
-            PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), bRemote
+            PushCombatBroadcast(BroadcastTeam(Slot.Team), Slot.DisplayName(), bRemote
                 ? TEXT("REMOTE AMMO ORDER -150 GOLD / 6s") : TEXT("AMMO PURCHASE +10 / -10 GOLD"), 0, TEXT(""), 2.5);
             break;
         case EPurchase::Unavailable:
@@ -122,6 +167,7 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
             break;
         }
     }
+    SyncSharedTeamState();
 }
 
 void ARMUCGameReferee::StepFieldControls(

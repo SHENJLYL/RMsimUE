@@ -42,10 +42,14 @@ struct FMujocoContactSample
 class FMujocoVehicleDynamics
 {
 public:
+    static constexpr int32 MaxMatchVehicles = 6;
     FMujocoVehicleDynamics();
     ~FMujocoVehicleDynamics();
     bool Initialize(const FString& Filename, const TArray<FString>& RequiredBodies,
-        const FString& RigFilename, const FString& DriveProfileFilename, FString& Error, bool bMatchWorld = false);
+        const FString& RigFilename, const FString& DriveProfileFilename, FString& Error,
+        bool bMatchWorld = false, int32 InMatchVehicleCount = 2);
+    bool AttachFollower(const TSharedPtr<FMujocoVehicleDynamics>& World, int32 Slot, const TArray<FString>& RequiredBodies,
+        const FString& RigFilename, const FString& DriveProfileFilename, FString& Error);
     bool AttachOpponent(const TSharedPtr<FMujocoVehicleDynamics>& World, const TArray<FString>& RequiredBodies,
         const FString& RigFilename, const FString& DriveProfileFilename, FString& Error);
     bool Reset(const FTransform& ChassisPose, FString& Error, double InitialYaw = 0, double InitialPitch = 0);
@@ -53,8 +57,11 @@ public:
     bool StartDedicated(double PeriodSeconds, FString& Error);
     void StopDedicated();
     bool IsDedicated() const { return World().Dedicated.IsValid(); }
-    bool IsMatchWorld() const { return World().bDualRig; }
+    bool IsMatchWorld() const { return World().MatchVehicleCount > 1; }
+    int32 GetMatchVehicleCount() const { return World().MatchVehicleCount; }
+    int32 GetVehicleSlot() const { return VehicleSlot(); }
     void SetDedicatedPaused(bool Paused);
+    void SubmitDedicatedControls(const TArray<double>& Deadlines);
     void SubmitDedicatedControls(double DeadlineWallSeconds, double OpponentDeadlineWallSeconds = 0);
     bool ConsumeDedicatedFrame(bool& Updated, FString& Error);
     bool ReadDedicatedProgress(uint64& Steps, uint64& Failsafes) const;
@@ -100,10 +107,12 @@ private:
     TSharedPtr<FMujocoVehicleDynamics> SharedWorld;
     FMujocoVehicleDynamics& World() { return SharedWorld ? *SharedWorld : *this; }
     const FMujocoVehicleDynamics& World() const { return SharedWorld ? *SharedWorld : *this; }
-    int32 VehicleSlot() const { return SharedWorld ? 1 : 0; }
+    int32 VehicleSlot() const { return AssignedVehicleSlot; }
+    int32 AssignedVehicleSlot = 0;
+    int32 MatchVehicleCount = 1;
     TSharedPtr<FJsonObject> ManifestObject;
     TArray<FString> OrderedBodyNames;
-    TArray<FMujocoContactSample> FrameContacts[2];
+    TArray<FMujocoContactSample> FrameContacts[MaxMatchVehicles];
     FString ModelPath;
     FString ModelMd5;
     FString SourceRigPath;
@@ -115,10 +124,9 @@ private:
     bool bPhysicsIdentityVerified = false;
     double RemainderSeconds = 0;
     uint64 TotalSteps = 0;
-    uint64 ResetCount[2] = {};
+    uint64 ResetCount[MaxMatchVehicles] = {};
     int32 LastFrameSteps = 0;
-    double MaximumPenetrationM[2] = {};
-    bool bDualRig = false;
+    double MaximumPenetrationM[MaxMatchVehicles] = {};
     bool ValidateState(FString& Error) const;
     void CollectContacts(const TArray<FVector>& BeforeVelocities);
     bool CaptureSensorHistory(FString& Error, int32 Slot);

@@ -43,6 +43,13 @@ enum class ERMUCHpDeductionReason : uint8
     ArmorCollision = 5
 };
 
+struct FRMUCMatchRobotSpawn
+{
+    AVehicleRig* Vehicle = nullptr;
+    bool bRed = true;
+    int32 RobotNumber = 7; // 7 = Auto Sentry, 3/4 = Standard Infantry
+};
+
 UCLASS()
 class RMSIM_API ARMUCGameReferee : public AActor
 {
@@ -56,7 +63,9 @@ public:
         const FString& MapFilename,
         const FString& SpawnTeam,
         const TMap<FString, AStaticMeshActor*>& ArenaMapBoxes,
-        FString& Error, AVehicleRig* Opponent = nullptr);
+        FString& Error, AVehicleRig* Opponent = nullptr,
+        int32 PrimaryRobotNumber = 7,
+        const TArray<FRMUCMatchRobotSpawn>& ExtraRobots = {});
     void Advance(
         double DeltaSeconds,
         bool bFirePressed,
@@ -96,8 +105,10 @@ public:
     bool IsDebugOverlayVisible() const { return bShowDebugOverlay; }
 
     bool IsFriendlyRed() const { return bFriendlyRed; }
+    int32 GetOwnRobotNumber() const { return PrimaryRobotNumber; }
     int32 GetOwnHp() const { return Own().Hp; }
-    int32 GetOwnMaxHp() const { return SentryMaxHp; }
+    int32 GetOwnMaxHp() const { return PrimaryRobotNumber == 7 ? SentryMaxHp : InfantryMaxHp; }
+    double GetOwnHeatLimit() const { return PrimaryRobotNumber == 7 ? BarrelHeatLimit : InfantryHeatLimit; }
     bool IsOwnAlive() const { return GetOwnHp() > 0; }
     bool IsChassisPowered() const { return IsChassisPoweredFor(Rig); }
     bool IsShooterLocked() const { return Own().ShooterLocked(); }
@@ -120,6 +131,7 @@ private:
         int32 BounceCount = 0;
         bool bFromRed = true;
         bool bDamageCredited = false;
+        TWeakObjectPtr<AVehicleRig> ShooterRig;
         UStaticMeshComponent* Visual = nullptr;
         TWeakObjectPtr<class UPointLightComponent> Light;
     };
@@ -191,8 +203,13 @@ private:
     TArray<FRhine3DBroadcastItem> StructuredBroadcasts;
 
     // Friendly team & IDs
-    bool bFriendlyRed = true; // true = Red 7 (id=7), false = Blue 7 (id=107)
+    bool bFriendlyRed = true; // true = Red, false = Blue
+    int32 PrimaryRobotNumber = 7; // 7 = Sentry, 3/4 = Infantry
     static constexpr int32 SentryMaxHp = 400;
+    static constexpr int32 InfantryMaxHp = 200;
+    static constexpr double InfantryHeatLimit = 200.0;
+    static constexpr double InfantryCoolingPerSec = 20.0;
+    static constexpr double InfantryPowerLimitW = 60.0;
     using FieldTeam = FRMUCFieldRules::Team;
     static constexpr int32 OutpostMaxHp = FRMUCFieldRules::OutpostMaxHp;
     static constexpr int32 BaseMaxHp = FRMUCFieldRules::BaseMaxHp;
@@ -339,17 +356,68 @@ private:
         }
     };
 
+    struct FMatchRobotSlot
+    {
+        TWeakObjectPtr<AVehicleRig> Vehicle;
+        FieldTeam Team = FieldTeam::Red;
+        int32 RobotNumber = 7; // 7 = Sentry, 3/4 = Infantry
+        FRMUCCompetitorState State;
+        TArray<UMaterialInstanceDynamic*> LedMats;
+        FVehicleArmorLight Armor;
+        FRMUCFieldContactHold ContactHold;
+        FRMUCFieldPoints PhysicalContacts;
+        FRMUCFieldPointEffects PointEffects;
+
+        bool IsSentry() const { return RobotNumber == 7; }
+        int32 MaxHp() const { return IsSentry() ? SentryMaxHp : InfantryMaxHp; }
+        int32 InitialAmmo() const { return IsSentry() ? FRMUCSupplyRules::InitialAllowance : 0; }
+        double HeatLimit() const { return IsSentry() ? 260.0 : InfantryHeatLimit; }
+        double BaseCoolingPerSec() const { return IsSentry() ? State.SimStance.Modifiers().BarrelCoolingPerSec : InfantryCoolingPerSec; }
+        double BasePowerLimitW() const { return IsSentry() ? State.SimStance.Modifiers().ChassisPowerLimitW : InfantryPowerLimitW; }
+        int32 ProtocolRobotId() const { return (Team == FieldTeam::Red ? 0 : 100) + RobotNumber; }
+        FString DisplayName() const
+        {
+            const TCHAR* Side = (Team == FieldTeam::Red) ? TEXT("RED") : TEXT("BLUE");
+            return IsSentry()
+                ? FString::Printf(TEXT("%s #7 SENTRY"), Side)
+                : FString::Printf(TEXT("%s #%d INFANTRY"), Side, RobotNumber);
+        }
+    };
+
+    TArray<FMatchRobotSlot> MatchRobots;
     std::array<FRMUCCompetitorState, 2> Competitors;
+    std::array<int32, 2> TeamGold = { FRMUCSupplyRules::InitialGold, FRMUCSupplyRules::InitialGold };
+    std::array<int32, 2> TeamInfantryFreeAmmoClaimed = { 0, 0 };
+    std::array<int32, 2> TeamInfantryClaimedMinutes = { 0, 0 };
     bool bPhysicalMatch = false;
     double EnemyPatrolPhase = 0.0;
 
     FieldTeam FriendlyTeam() const { return bFriendlyRed ? FieldTeam::Red : FieldTeam::Blue; }
+    FMatchRobotSlot* FindSlot(const AVehicleRig* Vehicle);
+    const FMatchRobotSlot* FindSlot(const AVehicleRig* Vehicle) const;
+    FMatchRobotSlot* FindSentrySlot(FieldTeam Team);
+    const FMatchRobotSlot* FindSentrySlot(FieldTeam Team) const;
+    FMatchRobotSlot* OwnSlot() { return MatchRobots.IsEmpty() ? nullptr : &MatchRobots[0]; }
+    const FMatchRobotSlot* OwnSlot() const { return MatchRobots.IsEmpty() ? nullptr : &MatchRobots[0]; }
+    void SyncSharedTeamState();
     std::optional<FieldTeam> TeamFor(const AVehicleRig* Vehicle) const;
-    AVehicleRig* VehicleFor(FieldTeam Team) const { return Team == FriendlyTeam() ? Rig : EnemyRig; }
-    FRMUCCompetitorState& Competitor(FieldTeam Team) { return Competitors[FRMUCFieldRules::Index(Team)]; }
-    const FRMUCCompetitorState& Competitor(FieldTeam Team) const { return Competitors[FRMUCFieldRules::Index(Team)]; }
-    FRMUCCompetitorState& Own() { return Competitor(FriendlyTeam()); }
-    const FRMUCCompetitorState& Own() const { return Competitor(FriendlyTeam()); }
+    AVehicleRig* VehicleFor(FieldTeam Team) const
+    {
+        if (const FMatchRobotSlot* Sentry = FindSentrySlot(Team)) return Sentry->Vehicle.Get();
+        return Team == FriendlyTeam() ? Rig : EnemyRig;
+    }
+    FRMUCCompetitorState& Competitor(FieldTeam Team)
+    {
+        if (FMatchRobotSlot* Sentry = FindSentrySlot(Team)) return Sentry->State;
+        return Competitors[FRMUCFieldRules::Index(Team)];
+    }
+    const FRMUCCompetitorState& Competitor(FieldTeam Team) const
+    {
+        if (const FMatchRobotSlot* Sentry = FindSentrySlot(Team)) return Sentry->State;
+        return Competitors[FRMUCFieldRules::Index(Team)];
+    }
+    FRMUCCompetitorState& Own() { return MatchRobots.IsEmpty() ? Competitor(FriendlyTeam()) : MatchRobots[0].State; }
+    const FRMUCCompetitorState& Own() const { return MatchRobots.IsEmpty() ? Competitor(FriendlyTeam()) : MatchRobots[0].State; }
     static const TCHAR* SentryName(FieldTeam Team)
     { return Team == FieldTeam::Red ? TEXT("RED #7 SENTRY") : TEXT("BLUE #7 SENTRY"); }
     static int32 BroadcastTeam(FieldTeam Team) { return Team == FieldTeam::Red ? 1 : -1; }
@@ -379,6 +447,9 @@ private:
         const UPrimitiveComponent* CentreVisibility);
     static int32 ClassifyVehicleArmorHit(const FHitResult& Hit, const AVehicleRig* Vehicle);
     void StepDynamicArenaAndEnemy(double DeltaSeconds);
+    void StepRfidAndBuffsSlot(FMatchRobotSlot& Slot, double DeltaSeconds);
+    void StepPowerAndHeatSlot(FMatchRobotSlot& Slot, double DeltaSeconds);
+    void RespawnSlot(FMatchRobotSlot& Slot, bool bBuyback);
     void StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds);
     void StepPowerAndHeat(FieldTeam Team, double DeltaSeconds);
     void RespawnCompetitor(FieldTeam Team, bool bBuyback);
@@ -386,6 +457,9 @@ private:
     void StepProjectiles(double DeltaSeconds);
     EProjectileHit ApplyProjectileDamage(const FProjectile& Pellet, const FHitResult& Hit, double NormalSpeedCmS);
     bool VerifyProjectileQueries();
+    bool ApplyRobotDamage(FMatchRobotSlot& Target, FMatchRobotSlot* Attacker, int32 ArmorId, int32 RawDamage,
+        ERMUCHpDeductionReason Reason);
+    void RecordSlotHit(FMatchRobotSlot& Attacker, int32 Damage);
     bool ApplySentryDamage(FieldTeam Target, std::optional<FieldTeam> Attacker, int32 ArmorId, int32 RawDamage,
         ERMUCHpDeductionReason Reason);
     void RecordHit(FieldTeam Attacker, int32 Damage);

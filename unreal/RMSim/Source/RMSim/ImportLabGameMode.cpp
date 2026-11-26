@@ -152,40 +152,115 @@ bool AImportLabGameMode::ConfigureMatchSeats(FString& Error)
         Error = TEXT("RMUC roster requires the rmuc2027 map and a red or blue primary team");
         return false;
     }
+    int32 PrimaryIndexInTeam = 0;
+    double PrimaryIndexNum = 0.;
+    if (Data->TryGetNumberField(TEXT("primary_index"), PrimaryIndexNum))
+    {
+        PrimaryIndexInTeam = FMath::RoundToInt(PrimaryIndexNum);
+    }
+
+    MatchSeats.Reset();
+    MatchRosTeams.Reset();
+    MatchPrimarySeatIndex = INDEX_NONE;
+
+    auto DefaultSpawnFor = [](const FString& Team, int32 RobotNum) -> FString
+    {
+        if (RobotNum == 3) return Team == TEXT("red") ? TEXT("red_3") : TEXT("blue_3");
+        if (RobotNum == 4) return Team == TEXT("red") ? TEXT("red_4") : TEXT("blue_4");
+        return Team == TEXT("red") ? TEXT("red") : TEXT("default");
+    };
+
     for (const TCHAR* Team : {TEXT("red"), TEXT("blue")})
     {
         const TArray<TSharedPtr<FJsonValue>>* Seats = nullptr;
-        if (!Data->TryGetArrayField(Team, Seats) || Seats->Num() != 1 || (*Seats)[0]->Type != EJson::Object)
+        if (!Data->TryGetArrayField(Team, Seats) || Seats->Num() < 1 || Seats->Num() > 3)
         {
-            Error = TEXT("RMUC dual match requires one AIM sentry on each team");
+            Error = TEXT("RMUC match requires 1 to 3 vehicles per team (up to 6 total)");
             return false;
         }
-        const auto Seat = (*Seats)[0]->AsObject();
-        FString VehicleId, Control;
-        if (!Seat->TryGetStringField(TEXT("vehicle_id"), VehicleId) || VehicleId != TEXT("aim_sentry") ||
-            !Seat->TryGetStringField(TEXT("control"), Control) ||
-            (Control != TEXT("manual") && Control != TEXT("sentry_ws") && Control != TEXT("ai")))
+        TSet<int32> UsedNumbers;
+        for (int32 SeatIdx = 0; SeatIdx < Seats->Num(); ++SeatIdx)
         {
-            Error = TEXT("Unsupported RMUC seat: the dual match currently uses AIM S7 and manual, sentry_ws, or passive AI seats");
-            return false;
-        }
-        if (Seat->HasField(TEXT("armor_number")))
-        {
-            double Number = 0.;
-            if (!Seat->TryGetNumberField(TEXT("armor_number"), Number) ||
-                (Number != 3. && Number != 4. && Number != 7.))
+            if ((*Seats)[SeatIdx]->Type != EJson::Object)
             {
-                Error = TEXT("RMUC armor_number must be 3, 4, or 7 for the default appearance");
+                Error = TEXT("Invalid RMUC roster seat entry");
                 return false;
             }
-            FName& Sticker = FCString::Strcmp(Team, TEXT("red")) == 0 ? MatchRedArmorSticker : MatchBlueArmorSticker;
-            if (Number == 3.) Sticker = RMUCArmorPresentation::Infantry3StickerTag;
-            if (Number == 4.) Sticker = RMUCArmorPresentation::Infantry4StickerTag;
+            const auto Seat = (*Seats)[SeatIdx]->AsObject();
+            FString VehicleId, Control;
+            if (!Seat->TryGetStringField(TEXT("vehicle_id"), VehicleId) || VehicleId != TEXT("aim_sentry") ||
+                !Seat->TryGetStringField(TEXT("control"), Control) ||
+                (Control != TEXT("manual") && Control != TEXT("sentry_ws") && Control != TEXT("ai")))
+            {
+                Error = TEXT("Unsupported RMUC seat: vehicles must use aim_sentry and manual, sentry_ws, or ai control");
+                return false;
+            }
+            int32 RobotNum = 7;
+            if (Seat->HasField(TEXT("armor_number")))
+            {
+                double Number = 7.;
+                if (!Seat->TryGetNumberField(TEXT("armor_number"), Number) ||
+                    (Number != 3. && Number != 4. && Number != 7.))
+                {
+                    Error = TEXT("RMUC armor_number must be 3, 4, or 7");
+                    return false;
+                }
+                RobotNum = FMath::RoundToInt(Number);
+            }
+            else
+            {
+                FString SeatRole;
+                if (Seat->TryGetStringField(TEXT("role"), SeatRole))
+                {
+                    if (SeatRole.Contains(TEXT("3"))) RobotNum = 3;
+                    else if (SeatRole.Contains(TEXT("4"))) RobotNum = 4;
+                }
+            }
+            if (UsedNumbers.Contains(RobotNum))
+            {
+                Error = TEXT("Duplicate robot number on the same team in RMUC roster");
+                return false;
+            }
+            UsedNumbers.Add(RobotNum);
+
+            FMatchSeatSpec Spec;
+            Spec.Team = Team;
+            Spec.RobotNumber = RobotNum;
+            Spec.Control = Control;
+            if (RobotNum == 3) Spec.ArmorSticker = RMUCArmorPresentation::Infantry3StickerTag;
+            else if (RobotNum == 4) Spec.ArmorSticker = RMUCArmorPresentation::Infantry4StickerTag;
+            FString SpawnOverride;
+            if (Seat->TryGetStringField(TEXT("spawn_id"), SpawnOverride) && !SpawnOverride.IsEmpty())
+                Spec.SpawnId = SpawnOverride;
+            else
+                Spec.SpawnId = DefaultSpawnFor(Spec.Team, Spec.RobotNumber);
+
+            if (Seats->Num() == 1)
+            {
+                FName& LegacySticker = FCString::Strcmp(Team, TEXT("red")) == 0 ? MatchRedArmorSticker : MatchBlueArmorSticker;
+                LegacySticker = Spec.ArmorSticker;
+            }
+
+            const int32 GlobalIdx = MatchSeats.Add(Spec);
+            if (Spec.Team == MatchPrimaryTeam && SeatIdx == PrimaryIndexInTeam)
+            {
+                MatchPrimarySeatIndex = GlobalIdx;
+            }
+            if (Control == TEXT("sentry_ws"))
+            {
+                MatchRosTeams.AddUnique(Team);
+            }
         }
-        if (Control == TEXT("sentry_ws"))
-        {
-            MatchRosTeams.AddUnique(Team);
-        }
+    }
+    if (MatchPrimarySeatIndex == INDEX_NONE)
+    {
+        Error = TEXT("RMUC roster primary_team / primary_index does not reference a valid seat");
+        return false;
+    }
+    if (MatchSeats.Num() > 6)
+    {
+        Error = TEXT("RMUC match supports at most 6 physical vehicles");
+        return false;
     }
     MatchRosTeam = MatchRosTeams.IsEmpty() ? FString() : MatchRosTeams[0];
     if (bHasRosTeam)
@@ -204,37 +279,49 @@ bool AImportLabGameMode::ConfigureMatchSeats(FString& Error)
         return false;
     }
     bPhysicalMatch = true;
-    bRosControl = MatchRosTeams.Contains(MatchPrimaryTeam);
+    const FMatchSeatSpec& PrimarySeat = MatchSeats[MatchPrimarySeatIndex];
+    bRosControl = (PrimarySeat.Control == TEXT("sentry_ws"));
     bBridgeControlsOpponent = !MatchRosTeams.IsEmpty() && !bRosControl;
     bRosAimControl = bRosControl;
     return true;
 }
 
-AVehicleRig* AImportLabGameMode::SpawnMatchOpponent(FString& Error)
+AVehicleRig* AImportLabGameMode::SpawnMatchSeatVehicle(const FMatchSeatSpec& Seat, int32 MujocoSlot, FString& Error)
 {
-    const FMapSpawn* OpposingSpawn = StageMap.Spawns.FindByPredicate([this](const FMapSpawn& Spawn)
+    const FMapSpawn* TargetSpawn = StageMap.Spawns.FindByPredicate([&Seat](const FMapSpawn& Spawn)
     {
-        return Spawn.Team == (MatchPrimaryTeam == TEXT("red") ? TEXT("blue") : TEXT("red"));
+        return Spawn.Id == Seat.SpawnId;
     });
-    if (!OpposingSpawn)
+    if (!TargetSpawn)
     {
-        Error = TEXT("The opposing team has no declared RMUC spawn");
+        TargetSpawn = StageMap.Spawns.FindByPredicate([&Seat](const FMapSpawn& Spawn)
+        {
+            return Spawn.Team == Seat.Team;
+        });
+    }
+    if (!TargetSpawn)
+    {
+        Error = FString::Printf(TEXT("No declared RMUC spawn '%s' for %s #%d"), *Seat.SpawnId, *Seat.Team, Seat.RobotNumber);
         return nullptr;
     }
     auto* Vehicle = GetWorld()->SpawnActor<AVehicleRig>();
     if (!Vehicle)
     {
-        Error = TEXT("Could not create the opposing AIM sentry");
+        Error = FString::Printf(TEXT("Could not create match vehicle %s #%d"), *Seat.Team, Seat.RobotNumber);
         return nullptr;
     }
     if (!Vehicle->LoadMeshRig(ContactRigFile, Error)) { Vehicle->Destroy(); return nullptr; }
-    const FVector Position = RosCoordinates::Position(OpposingSpawn->GroundMetres) +
+    const FVector Position = RosCoordinates::Position(TargetSpawn->GroundMetres) +
         FVector(0., 0., 2. - Vehicle->GetLocalCollisionBounds().Min.Z);
-    Vehicle->SetActorLocationAndRotation(Position, RosCoordinates::Rotation(FVector(0, 0, OpposingSpawn->YawRadians)));
+    Vehicle->SetActorLocationAndRotation(Position, RosCoordinates::Rotation(FVector(0, 0, TargetSpawn->YawRadians)));
     if (!Vehicle->SnapToTerrain(Error) || !Vehicle->AttachSharedMujoco(*Rig, ContactRigFile, Error))
     {
         Vehicle->Destroy();
         return nullptr;
+    }
+    if (!Seat.ArmorSticker.IsNone())
+    {
+        Vehicle->Tags.AddUnique(Seat.ArmorSticker);
     }
     for (const auto& Camera : Vehicle->GetCameras())
     {
@@ -243,6 +330,15 @@ AVehicleRig* AImportLabGameMode::SpawnMatchOpponent(FString& Error)
     }
     URMUCPhysicalAudio::AttachTo(Vehicle);
     return Vehicle;
+}
+
+AVehicleRig* AImportLabGameMode::SpawnMatchOpponent(FString& Error)
+{
+    FMatchSeatSpec Opposing;
+    Opposing.Team = (MatchPrimaryTeam == TEXT("red") ? TEXT("blue") : TEXT("red"));
+    Opposing.RobotNumber = 7;
+    Opposing.SpawnId = (Opposing.Team == TEXT("red") ? TEXT("red") : TEXT("default"));
+    return SpawnMatchSeatVehicle(Opposing, 1, Error);
 }
 
 void AImportLabGameMode::Abort(const FString& Reason)
@@ -927,7 +1023,7 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         if(bContactMode)
         {
             FString PhysicsError;
-            if (bPhysicalMatch) Rig->EnableMujocoMatchWorld();
+            if (bPhysicalMatch) Rig->EnableMujocoMatchWorld(FMath::Clamp(MatchSeats.Num(), 2, 6));
             if(!Rig->InitializeContactPhysics(ContactRigFile,PhysicsError)){Abort(PhysicsError);return;}
             ContactStart=Rig->GetActorTransform();
             ContactSpawn=ContactStart;
@@ -935,6 +1031,7 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         }
         if (StageMap.Id == TEXT("rmuc2027") && !bProbeActive && !bControlProbeActive)
             URMUCPhysicalAudio::AttachTo(Rig);
+        TMap<FString, AVehicleRig*> MatchRosVehicles;
         if(bTrainingMode)
         {
             Training=GetWorld()->SpawnActor<ATrainingRange>();FString TrainingError;
@@ -943,18 +1040,42 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         else if(StageMap.Id==TEXT("rmuc2027")&&!bProbeActive&&!FParse::Param(FCommandLine::Get(),TEXT("NoReferee")))
         {
             FString RefError;
-            AVehicleRig* Opponent = bPhysicalMatch ? SpawnMatchOpponent(RefError) : nullptr;
-            if (bPhysicalMatch && !Opponent) { Abort(RefError); return; }
-            if (Opponent)
+            AVehicleRig* Opponent = nullptr;
+            int32 PrimaryRobotNum = 7;
+            TArray<FRMUCMatchRobotSpawn> ExtraSpawns;
+            MatchSpawnedVehicles.Reset();
+            if (bPhysicalMatch)
             {
-                const bool bPrimaryRed = MatchPrimaryTeam == TEXT("red");
-                const FName PrimarySticker = bPrimaryRed ? MatchRedArmorSticker : MatchBlueArmorSticker;
-                const FName OpponentSticker = bPrimaryRed ? MatchBlueArmorSticker : MatchRedArmorSticker;
-                if (!PrimarySticker.IsNone()) Rig->Tags.Add(PrimarySticker);
-                if (!OpponentSticker.IsNone()) Opponent->Tags.Add(OpponentSticker);
+                const FMatchSeatSpec& PrimarySeat = MatchSeats[MatchPrimarySeatIndex];
+                PrimaryRobotNum = PrimarySeat.RobotNumber;
+                if (!PrimarySeat.ArmorSticker.IsNone()) Rig->Tags.AddUnique(PrimarySeat.ArmorSticker);
+                if (PrimarySeat.Control == TEXT("sentry_ws")) MatchRosVehicles.Add(PrimarySeat.Team, Rig);
+
+                int32 NextSlot = 1;
+                for (int32 SeatIdx = 0; SeatIdx < MatchSeats.Num(); ++SeatIdx)
+                {
+                    if (SeatIdx == MatchPrimarySeatIndex) continue;
+                    const FMatchSeatSpec& Seat = MatchSeats[SeatIdx];
+                    AVehicleRig* Vehicle = SpawnMatchSeatVehicle(Seat, NextSlot++, RefError);
+                    if (!Vehicle) { Abort(RefError); return; }
+                    MatchSpawnedVehicles.Add(Vehicle);
+                    if (Seat.Control == TEXT("sentry_ws")) MatchRosVehicles.Add(Seat.Team, Vehicle);
+                    if (!Opponent && Seat.Team != MatchPrimaryTeam && Seat.RobotNumber == 7)
+                    {
+                        Opponent = Vehicle;
+                    }
+                    else
+                    {
+                        FRMUCMatchRobotSpawn Extra;
+                        Extra.Vehicle = Vehicle;
+                        Extra.bRed = (Seat.Team == TEXT("red"));
+                        Extra.RobotNumber = Seat.RobotNumber;
+                        ExtraSpawns.Add(Extra);
+                    }
+                }
             }
             Referee=GetWorld()->SpawnActor<ARMUCGameReferee>();
-            if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent)){Abort(RefError);return;}
+            if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent,PrimaryRobotNum,ExtraSpawns)){Abort(RefError);return;}
         }
         if(bRosBridgeEnabled)
         {
@@ -969,8 +1090,12 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                 for (int32 Idx = 0; Idx < MatchRosTeams.Num(); ++Idx)
                 {
                     const FString& Team = MatchRosTeams[Idx];
-                    const bool bIsPrimary = (Team == MatchPrimaryTeam);
-                    AVehicleRig* BoundVehicle = bIsPrimary ? Rig : (Referee ? Referee->GetEnemyRig() : nullptr);
+                    AVehicleRig* BoundVehicle = MatchRosVehicles.FindRef(Team);
+                    const bool bIsPrimary = (BoundVehicle == Rig);
+                    if (!BoundVehicle)
+                    {
+                        BoundVehicle = (Team == MatchPrimaryTeam) ? Rig : (Referee ? Referee->GetEnemyRig() : nullptr);
+                    }
                     if (!BoundVehicle) { Abort(TEXT("Missing match vehicle for ROS bridge")); return; }
                     auto* BoundAim = bIsPrimary ? GetAimCapture() : BoundVehicle->GetCameras().FindRef(TEXT("aim_camera"));
                     FRosBridgeOptions Opts;

@@ -314,7 +314,9 @@ bool ARMUCGameReferee::Initialize(
     const FString& MapFilename,
     const FString& SpawnTeam,
     const TMap<FString, AStaticMeshActor*>& ArenaMapBoxes,
-    FString& Error, AVehicleRig* Opponent)
+    FString& Error, AVehicleRig* Opponent,
+    int32 InPrimaryRobotNumber,
+    const TArray<FRMUCMatchRobotSpawn>& ExtraRobots)
 {
     if (!Vehicle || !GetWorld())
     {
@@ -322,7 +324,8 @@ bool ARMUCGameReferee::Initialize(
         return false;
     }
     Rig = Vehicle;
-    bFriendlyRed = Opponent ? SpawnTeam == TEXT("red") :
+    PrimaryRobotNumber = (InPrimaryRobotNumber == 3 || InPrimaryRobotNumber == 4) ? InPrimaryRobotNumber : 7;
+    bFriendlyRed = (Opponent || !ExtraRobots.IsEmpty()) ? SpawnTeam == TEXT("red") :
         (!FParse::Param(FCommandLine::Get(), TEXT("RefereeBlueTeam")) &&
             (FParse::Param(FCommandLine::Get(), TEXT("RefereeRedTeam")) || SpawnTeam != TEXT("blue")));
     FString ZoneFile = FPaths::Combine(FPaths::GetPath(MapFilename), TEXT("field-zones.json"));
@@ -333,17 +336,58 @@ bool ARMUCGameReferee::Initialize(
     if (!FieldZones.Load(ZoneFile, ZoneError))
         UE_LOG(LogRMSim, Warning, TEXT("RMUC_FIELD_ZONES_UNAVAILABLE %s"), *ZoneError);
     LoadUiTextures();
-    BindVehicleLedMaterials(Rig, OwnLedMats, OwnArmor);
     BindRealArenaMeshes(ArenaMapBoxes);
-    bPhysicalMatch = Opponent != nullptr;
+    bPhysicalMatch = (Opponent != nullptr) || !ExtraRobots.IsEmpty();
+
+    MatchRobots.Reset();
+    auto AddRobotSlot = [&](AVehicleRig* V, FieldTeam T, int32 Num) -> FMatchRobotSlot&
+    {
+        FMatchRobotSlot& Slot = MatchRobots.AddDefaulted_GetRef();
+        Slot.Vehicle = V;
+        Slot.Team = T;
+        Slot.RobotNumber = (Num == 3 || Num == 4) ? Num : 7;
+        BindVehicleLedMaterials(V, Slot.LedMats, Slot.Armor);
+        BindProjectileVehicleSurfaces(V);
+        return Slot;
+    };
+
+    // Slot 0 is always the primary piloted/viewed vehicle (Rig).
+    FMatchRobotSlot& PrimarySlot = AddRobotSlot(Rig, FriendlyTeam(), PrimaryRobotNumber);
+    OwnLedMats = PrimarySlot.LedMats;
+    OwnArmor = PrimarySlot.Armor;
+
     if (bPhysicalMatch)
     {
         EnemyRig = Opponent;
-        BindVehicleLedMaterials(EnemyRig, EnemyLedMats, EnemyArmor);
+        if (EnemyRig)
+        {
+            FMatchRobotSlot& OppSlot = AddRobotSlot(EnemyRig, FRMUCFieldRules::Other(FriendlyTeam()), 7);
+            EnemyLedMats = OppSlot.LedMats;
+            EnemyArmor = OppSlot.Armor;
+        }
+        for (const FRMUCMatchRobotSpawn& Extra : ExtraRobots)
+        {
+            if (!IsValid(Extra.Vehicle) || Extra.Vehicle == Rig || Extra.Vehicle == EnemyRig) continue;
+            const FieldTeam ExtraTeam = Extra.bRed ? FieldTeam::Red : FieldTeam::Blue;
+            FMatchRobotSlot& Slot = AddRobotSlot(Extra.Vehicle, ExtraTeam, Extra.RobotNumber);
+            if (!EnemyRig && ExtraTeam != FriendlyTeam())
+            {
+                EnemyRig = Extra.Vehicle;
+                EnemyLedMats = Slot.LedMats;
+                EnemyArmor = Slot.Armor;
+            }
+        }
     }
-    else SpawnRealEnemySentry(VehicleRigFilename);
-    BindProjectileVehicleSurfaces(Rig);
-    BindProjectileVehicleSurfaces(EnemyRig);
+    else
+    {
+        SpawnRealEnemySentry(VehicleRigFilename);
+        if (EnemyRig)
+        {
+            FMatchRobotSlot& OppSlot = AddRobotSlot(EnemyRig, FRMUCFieldRules::Other(FriendlyTeam()), 7);
+            EnemyLedMats = OppSlot.LedMats;
+            EnemyArmor = OppSlot.Armor;
+        }
+    }
     int32 RunePort = 0;
     if (FParse::Value(FCommandLine::Get(), TEXT("RuneClientBridgePort="), RunePort))
     {
@@ -367,9 +411,9 @@ bool ARMUCGameReferee::Initialize(
 #if WITH_DEV_AUTOMATION_TESTS
     if (FParse::Param(FCommandLine::Get(), TEXT("RefereeHudAudioSelfTest"))) FRMUCHudAudio::RunSelfTest();
 #endif
-    UE_LOG(LogRMSim, Display, TEXT("RMUC_REFEREE_READY team=%s progress=%s remain=%.0f own_leds=%d enemy_rig=%d"),
-        bFriendlyRed ? TEXT("RED") : TEXT("BLUE"), *ProgressName(GameProgress), StageRemainSeconds,
-        OwnLedMats.Num(), EnemyRig != nullptr);
+    UE_LOG(LogRMSim, Display, TEXT("RMUC_REFEREE_READY team=%s num=%d robots=%d progress=%s remain=%.0f own_leds=%d enemy_rig=%d"),
+        bFriendlyRed ? TEXT("RED") : TEXT("BLUE"), PrimaryRobotNumber, MatchRobots.Num(), *ProgressName(GameProgress),
+        StageRemainSeconds, OwnLedMats.Num(), EnemyRig != nullptr);
     return true;
 }
 
@@ -393,6 +437,20 @@ void ARMUCGameReferee::ResetMatch(bool bWithCountdown)
     Red2Hp = Blue2Hp = 0;
     Red3Hp = Red4Hp = Blue3Hp = Blue4Hp = 200;
     Competitors = {};
+    TeamGold = { FRMUCSupplyRules::InitialGold, FRMUCSupplyRules::InitialGold };
+    TeamInfantryFreeAmmoClaimed = { 0, 0 };
+    TeamInfantryClaimedMinutes = { 0, 0 };
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        Slot.State = {};
+        Slot.State.Hp = Slot.MaxHp();
+        Slot.State.ProjectileAllowance17mm = Slot.InitialAmmo();
+        Slot.State.RemainingGoldCoin = TeamGold[FRMUCFieldRules::Index(Slot.Team)];
+        Slot.ContactHold = {};
+        Slot.PhysicalContacts = {};
+        Slot.PointEffects = {};
+    }
+    SyncSharedTeamState();
     FieldRules.Reset(FMath::RandBool());
     RuneRules.Reset(static_cast<uint32>(FMath::Rand()));
     if (RuneClientBridge) RuneClientBridge->BeginRound();
@@ -412,7 +470,7 @@ void ARMUCGameReferee::ResetMatch(bool bWithCountdown)
 #endif
     BaseArmorTravel = {};
     GoldTimer = 0.0;
-    DisplayedOwnHp = SentryMaxHp;
+    DisplayedOwnHp = GetOwnMaxHp();
     HudAudioHits = 0;
     HudAudioCountdownSecond = 0;
     NextHudHeatSoundSeconds = NextHudHitSoundSeconds = 0.0;
@@ -461,6 +519,8 @@ void ARMUCGameReferee::ToggleFriendlyTeam()
 {
     if (bPhysicalMatch) return; // The selected operator and ROS seats retain their team identities.
     bFriendlyRed = !bFriendlyRed;
+    if (MatchRobots.Num() >= 1) MatchRobots[0].Team = FriendlyTeam();
+    if (MatchRobots.Num() >= 2) MatchRobots[1].Team = FRMUCFieldRules::Other(FriendlyTeam());
     DisplayedOwnHp = GetOwnHp();
     RefreshDynamicMaterials();
     PushBannerEvent(bFriendlyRed ? TEXT("TEAM SWITCHED: RED SENTRY #7") : TEXT("TEAM SWITCHED: BLUE SENTRY #107"), 2.5);
@@ -468,7 +528,14 @@ void ARMUCGameReferee::ToggleFriendlyTeam()
 
 void ARMUCGameReferee::InjectSelfArmorHit(int32 ArmorId, int32 Damage)
 {
-    ApplySentryDamage(FriendlyTeam(), std::nullopt, FMath::Clamp(ArmorId, 0, 3), Damage, ERMUCHpDeductionReason::ArmorHit);
+    if (FMatchRobotSlot* Self = OwnSlot())
+    {
+        ApplyRobotDamage(*Self, nullptr, FMath::Clamp(ArmorId, 0, 3), Damage, ERMUCHpDeductionReason::ArmorHit);
+    }
+    else
+    {
+        ApplySentryDamage(FriendlyTeam(), std::nullopt, FMath::Clamp(ArmorId, 0, 3), Damage, ERMUCHpDeductionReason::ArmorHit);
+    }
 }
 
 void ARMUCGameReferee::PushCombatBroadcast(
@@ -479,6 +546,10 @@ void ARMUCGameReferee::PushCombatBroadcast(
     {
         S.ReplaceInline(TEXT("RED #7 SENTRY"), TEXT("红方7号哨兵"));
         S.ReplaceInline(TEXT("BLUE #7 SENTRY"), TEXT("蓝方7号哨兵"));
+        S.ReplaceInline(TEXT("RED #3 INFANTRY"), TEXT("红方3号步兵"));
+        S.ReplaceInline(TEXT("RED #4 INFANTRY"), TEXT("红方4号步兵"));
+        S.ReplaceInline(TEXT("BLUE #3 INFANTRY"), TEXT("蓝方3号步兵"));
+        S.ReplaceInline(TEXT("BLUE #4 INFANTRY"), TEXT("蓝方4号步兵"));
         S.ReplaceInline(TEXT("REFEREE"), TEXT("裁判"));
         S.ReplaceInline(TEXT("CAPTURED & REBUILT"), TEXT("占领并重建"));
         S.ReplaceInline(TEXT("ELIMINATED"), TEXT("击毁"));
@@ -552,21 +623,40 @@ void ARMUCGameReferee::RefreshDynamicMaterials()
         for (const auto& Light : Armor.SceneLights)
             RMUCArmorPresentation::SetPointLight(Light.Get(), Color, 1.30f * Level);
     };
-    SetArmor(OwnArmor, bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
-    const FLinearColor OwnCol = TeamLedColor(bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
-    for (UMaterialInstanceDynamic* M : OwnLedMats)
+    if (!MatchRobots.IsEmpty())
     {
-        RMUCArmorPresentation::SetLamp(M, bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
-        if (M) M->SetVectorParameterValue(TEXT("Color"), OwnCol);
+        for (const FMatchRobotSlot& Slot : MatchRobots)
+        {
+            const bool bRed = (Slot.Team == FieldTeam::Red);
+            const bool bAlive = Slot.State.Hp > 0;
+            const double Flash = Slot.State.OwnLedFlash;
+            SetArmor(Slot.Armor, bRed, bAlive, Flash);
+            const FLinearColor Col = TeamLedColor(bRed, bAlive, Flash);
+            for (UMaterialInstanceDynamic* M : Slot.LedMats)
+            {
+                RMUCArmorPresentation::SetLamp(M, bRed, bAlive, Flash);
+                if (M) M->SetVectorParameterValue(TEXT("Color"), Col);
+            }
+        }
     }
-    const bool bEnemyAlive = (bFriendlyRed ? Competitor(FieldTeam::Blue).Hp : Competitor(FieldTeam::Red).Hp) > 0;
-    const double EnemyFlash = Competitor(FRMUCFieldRules::Other(FriendlyTeam())).OwnLedFlash;
-    SetArmor(EnemyArmor, !bFriendlyRed, bEnemyAlive, EnemyFlash);
-    const FLinearColor EnemyCol = TeamLedColor(!bFriendlyRed, bEnemyAlive, EnemyFlash);
-    for (UMaterialInstanceDynamic* M : EnemyLedMats)
+    else
     {
-        RMUCArmorPresentation::SetLamp(M, !bFriendlyRed, bEnemyAlive, EnemyFlash);
-        if (M) M->SetVectorParameterValue(TEXT("Color"), EnemyCol);
+        SetArmor(OwnArmor, bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
+        const FLinearColor OwnCol = TeamLedColor(bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
+        for (UMaterialInstanceDynamic* M : OwnLedMats)
+        {
+            RMUCArmorPresentation::SetLamp(M, bFriendlyRed, IsOwnAlive(), Own().OwnLedFlash);
+            if (M) M->SetVectorParameterValue(TEXT("Color"), OwnCol);
+        }
+        const bool bEnemyAlive = (bFriendlyRed ? Competitor(FieldTeam::Blue).Hp : Competitor(FieldTeam::Red).Hp) > 0;
+        const double EnemyFlash = Competitor(FRMUCFieldRules::Other(FriendlyTeam())).OwnLedFlash;
+        SetArmor(EnemyArmor, !bFriendlyRed, bEnemyAlive, EnemyFlash);
+        const FLinearColor EnemyCol = TeamLedColor(!bFriendlyRed, bEnemyAlive, EnemyFlash);
+        for (UMaterialInstanceDynamic* M : EnemyLedMats)
+        {
+            RMUCArmorPresentation::SetLamp(M, !bFriendlyRed, bEnemyAlive, EnemyFlash);
+            if (M) M->SetVectorParameterValue(TEXT("Color"), EnemyCol);
+        }
     }
 
     const float Pulse = 0.5f + 0.5f * FMath::Sin(float(MatchElapsedSeconds * 4.5));
@@ -640,8 +730,9 @@ void ARMUCGameReferee::StepMatchClock(double DeltaSeconds)
         {
             GoldTimer -= 60.0;
             const int32 Income = FMath::RoundToInt(MatchElapsedSeconds / 60.) >= 6 ? 300 : 100;
-            for (auto& State : Competitors)
-                State.RemainingGoldCoin = FMath::Min(9999, State.RemainingGoldCoin + Income);
+            for (int32 T = 0; T < 2; ++T)
+                TeamGold[T] = FMath::Min(9999, TeamGold[T] + Income);
+            SyncSharedTeamState();
         }
         if (StageRemainSeconds <= 0.0)
         {
@@ -714,7 +805,7 @@ void ARMUCGameReferee::AdvanceHudAudio(ERMUCGameProgress PreviousProgress)
         NextHudHitSoundSeconds = MatchElapsedSeconds + .075;
     }
 
-    const double HeatRatio = Own().BarrelHeat / FMath::Max(1.0, BarrelHeatLimit);
+    const double HeatRatio = Own().BarrelHeat / FMath::Max(1.0, GetOwnHeatLimit());
     if (!bRunning || !IsOwnAlive() || HeatRatio <= .80)
     {
         NextHudHeatSoundSeconds = 0.0;
@@ -747,13 +838,87 @@ void ARMUCGameReferee::StepDynamicArenaAndEnemy(double DeltaSeconds)
         Record.OwnLedFlash = FMath::Max(0.0, Record.OwnLedFlash - DeltaSeconds);
         Record.HitConfirmHudFlash = FMath::Max(0.0, Record.HitConfirmHudFlash - DeltaSeconds);
     }
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        Slot.State.OwnHitHudFlash = FMath::Max(0.0, Slot.State.OwnHitHudFlash - DeltaSeconds);
+        Slot.State.OwnLedFlash = FMath::Max(0.0, Slot.State.OwnLedFlash - DeltaSeconds);
+        Slot.State.HitConfirmHudFlash = FMath::Max(0.0, Slot.State.HitConfirmHudFlash - DeltaSeconds);
+    }
     BaseHitFlash = FMath::Max(0.0, BaseHitFlash - DeltaSeconds);
     BannerEventTimer = FMath::Max(0.0, BannerEventTimer - DeltaSeconds);
     RefreshDynamicMaterials();
 }
 
+ARMUCGameReferee::FMatchRobotSlot* ARMUCGameReferee::FindSlot(const AVehicleRig* Vehicle)
+{
+    if (!Vehicle) return nullptr;
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        if (Slot.Vehicle.Get() == Vehicle) return &Slot;
+    }
+    return nullptr;
+}
+
+const ARMUCGameReferee::FMatchRobotSlot* ARMUCGameReferee::FindSlot(const AVehicleRig* Vehicle) const
+{
+    if (!Vehicle) return nullptr;
+    for (const FMatchRobotSlot& Slot : MatchRobots)
+    {
+        if (Slot.Vehicle.Get() == Vehicle) return &Slot;
+    }
+    return nullptr;
+}
+
+ARMUCGameReferee::FMatchRobotSlot* ARMUCGameReferee::FindSentrySlot(FieldTeam Team)
+{
+    FMatchRobotSlot* Fallback = nullptr;
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        if (Slot.Team != Team) continue;
+        if (Slot.IsSentry()) return &Slot;
+        if (!Fallback) Fallback = &Slot;
+    }
+    return Fallback;
+}
+
+const ARMUCGameReferee::FMatchRobotSlot* ARMUCGameReferee::FindSentrySlot(FieldTeam Team) const
+{
+    const FMatchRobotSlot* Fallback = nullptr;
+    for (const FMatchRobotSlot& Slot : MatchRobots)
+    {
+        if (Slot.Team != Team) continue;
+        if (Slot.IsSentry()) return &Slot;
+        if (!Fallback) Fallback = &Slot;
+    }
+    return Fallback;
+}
+
+void ARMUCGameReferee::SyncSharedTeamState()
+{
+    for (int32 T = 0; T < 2; ++T)
+    {
+        Competitors[T].RemainingGoldCoin = TeamGold[T];
+    }
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
+        Slot.State.RemainingGoldCoin = TeamGold[TeamIdx];
+        if (Slot.Team == FieldTeam::Red)
+        {
+            if (Slot.RobotNumber == 3) Red3Hp = Slot.State.Hp;
+            else if (Slot.RobotNumber == 4) Red4Hp = Slot.State.Hp;
+        }
+        else
+        {
+            if (Slot.RobotNumber == 3) Blue3Hp = Slot.State.Hp;
+            else if (Slot.RobotNumber == 4) Blue4Hp = Slot.State.Hp;
+        }
+    }
+}
+
 std::optional<ARMUCGameReferee::FieldTeam> ARMUCGameReferee::TeamFor(const AVehicleRig* Vehicle) const
 {
+    if (const FMatchRobotSlot* Slot = FindSlot(Vehicle)) return Slot->Team;
     if (Vehicle && Vehicle == Rig) return FriendlyTeam();
     if (Vehicle && Vehicle == EnemyRig) return FRMUCFieldRules::Other(FriendlyTeam());
     return std::nullopt;
@@ -761,6 +926,11 @@ std::optional<ARMUCGameReferee::FieldTeam> ARMUCGameReferee::TeamFor(const AVehi
 
 bool ARMUCGameReferee::IsChassisPoweredFor(const AVehicleRig* Robot) const
 {
+    if (const FMatchRobotSlot* Slot = FindSlot(Robot))
+    {
+        return Slot->State.Hp > 0 && Slot->State.ChassisPowerCutTimer <= 0.0 &&
+            GameProgress != ERMUCGameProgress::GameOver;
+    }
     const auto Team = TeamFor(Robot);
     return Team && Competitor(*Team).Hp > 0 && Competitor(*Team).ChassisPowerCutTimer <= 0.0 &&
         GameProgress != ERMUCGameProgress::GameOver;
@@ -775,27 +945,53 @@ bool ARMUCGameReferee::IsSimMatchAutonomyActive(const AVehicleRig* Robot) const
 bool ARMUCGameReferee::SetSimMatchStance(const AVehicleRig* Robot, const FString& Stance)
 {
     if (!bPhysicalMatch || !IsRosCompetitor(Robot) || GameProgress != ERMUCGameProgress::Running) return false;
-    const auto Team = TeamFor(Robot);
-    if (!Team || Competitor(*Team).Hp <= 0) return false;
+    FMatchRobotSlot* Slot = FindSlot(Robot);
+    if (!Slot || !Slot->IsSentry() || Slot->State.Hp <= 0) return false;
     ERMUCSentryStance Target = ERMUCSentryStance::Move;
     if (Stance == TEXT("MOVE")) Target = ERMUCSentryStance::Move;
     else if (Stance == TEXT("ATTACK")) Target = ERMUCSentryStance::Attack;
     else if (Stance == TEXT("DEFENSE")) Target = ERMUCSentryStance::Defense;
     else return false;
-    return Competitor(*Team).SimStance.TrySwitch(Target);
+    return Slot->State.SimStance.TrySwitch(Target);
 }
 
 bool ARMUCGameReferee::IsFpvVideoCutFor(const AVehicleRig* Robot) const
 {
+    if (const FMatchRobotSlot* Slot = FindSlot(Robot))
+    {
+        return Slot->State.bOverheatLocked || Slot->State.bOverheatMatchLocked;
+    }
     const auto Team = TeamFor(Robot);
     return Team && (Competitor(*Team).bOverheatLocked || Competitor(*Team).bOverheatMatchLocked);
 }
 
-void ARMUCGameReferee::RespawnCompetitor(FieldTeam Team, bool bBuyback)
+void ARMUCGameReferee::RespawnSlot(FMatchRobotSlot& Slot, bool bBuyback)
 {
-    auto& Record = Competitor(Team);
+    auto& Record = Slot.State;
+    const int32 MaxHp = Slot.MaxHp();
     // Official RMUC respawn: natural respawn -> 20% HP + 30s weak & invulnerable (cleared by friendly gain card);
     // instant buyback -> 100% HP + 0s weak + 3s invulnerable.
+    Record.Hp = bBuyback ? MaxHp : FMath::Max(1, FMath::RoundToInt(MaxHp * 0.20));
+    Record.RespawnTimer = 0.0;
+    Record.BarrelHeat = 0.0;
+    Record.ChassisBufferEnergyJ = 60.0;
+    Record.OverpowerDamageAccum = 0.0;
+    Record.OverheatDamageAccum = 0.0;
+    Record.bOverheatLocked = false;
+    Record.SimStance.Reset();
+    Record.WeakTimer = bBuyback ? 0.0 : 30.0;
+    Record.InvulnerableTimer = bBuyback ? 3.0 : 30.0;
+    SyncSharedTeamState();
+}
+
+void ARMUCGameReferee::RespawnCompetitor(FieldTeam Team, bool bBuyback)
+{
+    if (FMatchRobotSlot* Slot = FindSentrySlot(Team))
+    {
+        RespawnSlot(*Slot, bBuyback);
+        return;
+    }
+    auto& Record = Competitor(Team);
     Record.Hp = bBuyback ? SentryMaxHp : FMath::Max(1, FMath::RoundToInt(SentryMaxHp * 0.20));
     Record.RespawnTimer = 0.0;
     Record.BarrelHeat = 0.0;
@@ -812,25 +1008,38 @@ bool ARMUCGameReferee::RequestInstantRespawn()
 {
     if (GameProgress != ERMUCGameProgress::Running || IsOwnAlive()) return false;
     const int32 Cost = GetInstantRespawnCost();
-    auto& Record = Own();
-    if (Record.RemainingGoldCoin < Cost)
+    const unsigned TeamIdx = FRMUCFieldRules::Index(FriendlyTeam());
+    if (TeamGold[TeamIdx] < Cost)
     {
         PushBannerEvent(FString::Printf(TEXT("BUYBACK REQUIRES %d GOLD"), Cost), 2.5);
         return false;
     }
-    Record.RemainingGoldCoin -= Cost;
+    TeamGold[TeamIdx] -= Cost;
+    auto& Record = Own();
     ++Record.OwnBuybackCount;
-    RespawnCompetitor(FriendlyTeam(), true);
-    PushCombatBroadcast(BroadcastTeam(FriendlyTeam()), SentryName(FriendlyTeam()),
-        FString::Printf(TEXT("BUYBACK (-%dG)"), Cost), 0, TEXT("100% HP RESPAWN"), 3.0);
+    if (FMatchRobotSlot* Self = OwnSlot())
+    {
+        RespawnSlot(*Self, true);
+        PushCombatBroadcast(BroadcastTeam(Self->Team), Self->DisplayName(),
+            FString::Printf(TEXT("BUYBACK (-%dG)"), Cost), 0, TEXT("100% HP RESPAWN"), 3.0);
+    }
+    else
+    {
+        RespawnCompetitor(FriendlyTeam(), true);
+        PushCombatBroadcast(BroadcastTeam(FriendlyTeam()), SentryName(FriendlyTeam()),
+            FString::Printf(TEXT("BUYBACK (-%dG)"), Cost), 0, TEXT("100% HP RESPAWN"), 3.0);
+    }
+    SyncSharedTeamState();
     return true;
 }
 
-void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
+void ARMUCGameReferee::StepRfidAndBuffsSlot(FMatchRobotSlot& Slot, double DeltaSeconds)
 {
-    auto& Record = Competitor(Team);
+    auto& Record = Slot.State;
+    const FieldTeam Team = Slot.Team;
     const auto& Rune = RuneRules.Get(Team == FieldTeam::Red);
-    const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(Team)];
+    const auto& Points = Slot.PointEffects;
+    const int32 MaxHp = Slot.MaxHp();
     Record.EnergyBuffTimer = FMath::Max(0., Rune.BuffUntil - MatchElapsedSeconds);
     Record.EvSmallEnergy = Record.EnergyBuffTimer > 0. && !Rune.bBig ? 1 : 0;
     Record.EvBigEnergy = Record.EnergyBuffTimer > 0. && Rune.bBig ? 1 : 0;
@@ -839,6 +1048,7 @@ void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
     Record.BuffCooling = Record.EnergyBuffTimer > 0. ? Rune.CoolingMultiplier : 1;
     Record.BuffDefence = FMath::Max(Points.DefencePercent, Record.EnergyBuffTimer > 0. ? Rune.DefencePercent : 0);
     Record.BuffAttack = Record.EnergyBuffTimer > 0. ? Rune.AttackPercent : 0;
+    if (Slot.IsSentry())
     {
         const auto Modifiers = Record.SimStance.Modifiers();
         Record.BuffDefence = FMath::Max<uint8>(Record.BuffDefence, Modifiers.DefenceBonusPercent);
@@ -858,18 +1068,18 @@ void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
     if (Record.Hp <= 0)
     {
         // Official RMUC respawn acceleration: 4x speed when in own supply zone or own base HP < 2000.
-        const auto* Vehicle = VehicleFor(Team);
-        const bool bAtSupply = Vehicle && ObserveFieldPoints(*Vehicle)[FRMUCFieldRules::Index(Team)].Supply.value_or(false);
+        const AVehicleRig* Vehicle = Slot.Vehicle.Get();
+        const bool bAtSupply = IsValid(Vehicle) && ObserveFieldPoints(*Vehicle)[FRMUCFieldRules::Index(Team)].Supply.value_or(false);
         const bool bAccel = bAtSupply || FieldRules.Get(Team).BaseHp < 2000;
         Record.RespawnTimer += DeltaSeconds * (bAccel ? 4.0 : 1.0);
         if (Record.RespawnTimer >= Record.OwnRespawnDuration)
         {
-            RespawnCompetitor(Team, false);
-            PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("RESPAWNED"), 0,
+            RespawnSlot(Slot, false);
+            PushCombatBroadcast(BroadcastTeam(Team), Slot.DisplayName(), TEXT("RESPAWNED"), 0,
                 TEXT("20% HP / WEAK & INVULN (CLEAR AT GAIN CARD)"), 3.5);
         }
     }
-    else if (Record.WeakTimer > 0.0 && (Points.bSupply || Points.bFullOutpost || Points.bBase || Record.Hp >= SentryMaxHp))
+    else if (Record.WeakTimer > 0.0 && (Points.bSupply || Points.bFullOutpost || Points.bBase || Record.Hp >= MaxHp))
     {
         // Official RMUC rule: reading friendly supply/outpost/base gain card clears weak & invulnerable state.
         Record.WeakTimer = 0.0;
@@ -877,16 +1087,24 @@ void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
     }
 }
 
-void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
+void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
 {
-    const auto* Vehicle = VehicleFor(Team);
-    if (!Vehicle) return;
-    auto& Record = Competitor(Team);
+    if (FMatchRobotSlot* Slot = FindSentrySlot(Team)) StepRfidAndBuffsSlot(*Slot, DeltaSeconds);
+}
+
+void ARMUCGameReferee::StepPowerAndHeatSlot(FMatchRobotSlot& Slot, double DeltaSeconds)
+{
+    const AVehicleRig* Vehicle = Slot.Vehicle.Get();
+    if (!IsValid(Vehicle)) return;
+    auto& Record = Slot.State;
+    const FieldTeam Team = Slot.Team;
+    const int32 MaxHp = Slot.MaxHp();
+    const double HeatLimit = Slot.HeatLimit();
     Record.ChassisPowerCutTimer = FMath::Max(0.0, Record.ChassisPowerCutTimer - DeltaSeconds);
     Record.OverspeedLockTimer = FMath::Max(0.0, Record.OverspeedLockTimer - DeltaSeconds);
     Record.WeakTimer = FMath::Max(0.0, Record.WeakTimer - DeltaSeconds);
     Record.InvulnerableTimer = FMath::Max(0.0, Record.InvulnerableTimer - DeltaSeconds);
-    Record.SimStance.Step(DeltaSeconds);
+    if (Slot.IsSentry()) Record.SimStance.Step(DeltaSeconds);
 
     const FVector Velocity = Vehicle->GetCommandOriginVelocity();
     const double SpeedMps = FVector2D(Velocity.X, Velocity.Y).Size() * 0.01;
@@ -895,22 +1113,23 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
         (12.0 + 11.5 * SpeedMps * SpeedMps * 0.35 + 1.8 * YawRate * YawRate) : 0.0;
 
     Record.Referee10HzAccum += DeltaSeconds;
-    const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(Team)];
-    const auto StanceMod = Record.SimStance.Modifiers();
-    const double Cooling = FMath::Max(StanceMod.BarrelCoolingPerSec * FMath::Max<int32>(1, Record.BuffCooling),
-        StanceMod.BarrelCoolingPerSec + Points.FortressCoolingBonus);
+    const auto& Points = Slot.PointEffects;
+    const double BaseCooling = Slot.BaseCoolingPerSec();
+    const double Cooling = FMath::Max(BaseCooling * FMath::Max<int32>(1, Record.BuffCooling),
+        BaseCooling + Points.FortressCoolingBonus);
+    const double PowerLimit = Slot.BasePowerLimitW();
     while (Record.Referee10HzAccum >= 0.1)
     {
         Record.Referee10HzAccum -= 0.1;
         // Official RMUC 10Hz overheat HP deduction while Q1 > Q0 (before cooling tick)
-        if (Record.Hp > 0 && Record.BarrelHeat > BarrelHeatLimit)
+        if (Record.Hp > 0 && Record.BarrelHeat > HeatLimit)
         {
-            Record.OverheatDamageAccum += ComputeRMUCOverheatDamagePerTick(Record.BarrelHeat, BarrelHeatLimit, SentryMaxHp);
+            Record.OverheatDamageAccum += ComputeRMUCOverheatDamagePerTick(Record.BarrelHeat, HeatLimit, MaxHp);
             const int32 HeatDmg = FMath::FloorToInt(Record.OverheatDamageAccum + 1e-9);
             if (HeatDmg > 0)
             {
                 Record.OverheatDamageAccum -= HeatDmg;
-                ApplySentryDamage(Team, std::nullopt, 0, HeatDmg, ERMUCHpDeductionReason::OverHeat);
+                ApplyRobotDamage(Slot, nullptr, 0, HeatDmg, ERMUCHpDeductionReason::OverHeat);
             }
         }
         else
@@ -921,13 +1140,12 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
         if (Record.bOverheatLocked && !Record.bOverheatMatchLocked && Record.BarrelHeat <= 1e-6)
         {
             Record.bOverheatLocked = false;
-            PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("BARREL COOLED TO 0"),
+            PushCombatBroadcast(BroadcastTeam(Team), Slot.DisplayName(), TEXT("BARREL COOLED TO 0"),
                 0, TEXT("SHOOTER & VIDEO RESTORED"), 2.5);
         }
         if (Record.Hp <= 0) continue;
         // Official RMUC 10Hz chassis buffer energy & tiered overpower HP deduction (no 5s chassis cut)
-        const double Limit = StanceMod.ChassisPowerLimitW;
-        const double NetPower = Record.ChassisPowerW - Limit;
+        const double NetPower = Record.ChassisPowerW - PowerLimit;
         if (NetPower > 0.0)
         {
             if (Record.ChassisBufferEnergyJ > 1e-6)
@@ -937,17 +1155,17 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
             if (Record.ChassisBufferEnergyJ <= 1e-6)
             {
                 Record.OverpowerDamageAccum += ComputeRMUCOverpowerDamagePerTick(
-                    Record.ChassisPowerW, Limit, Record.ChassisBufferEnergyJ, SentryMaxHp);
+                    Record.ChassisPowerW, PowerLimit, Record.ChassisBufferEnergyJ, MaxHp);
                 const int32 PowerDmg = FMath::FloorToInt(Record.OverpowerDamageAccum + 1e-9);
                 if (PowerDmg > 0)
                 {
                     Record.OverpowerDamageAccum -= PowerDmg;
-                    ApplySentryDamage(Team, std::nullopt, 0, PowerDmg, ERMUCHpDeductionReason::OverPower);
+                    ApplyRobotDamage(Slot, nullptr, 0, PowerDmg, ERMUCHpDeductionReason::OverPower);
                 }
                 if (MatchElapsedSeconds >= Record.NextOverpowerBannerSec)
                 {
                     Record.NextOverpowerBannerSec = MatchElapsedSeconds + 2.0;
-                    PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("OVERPOWER"), 0, TEXT("HP PENALTY"), 2.0);
+                    PushCombatBroadcast(BroadcastTeam(Team), Slot.DisplayName(), TEXT("OVERPOWER"), 0, TEXT("HP PENALTY"), 2.0);
                 }
             }
         }
@@ -961,8 +1179,26 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
     Record.BuffRemainingEnergy = Ratio < 0.5 ? static_cast<uint8>(FMath::Clamp(FMath::RoundToInt(Ratio * 100.0), 0, 50)) : 0x32;
 }
 
+void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
+{
+    if (FMatchRobotSlot* Slot = FindSentrySlot(Team)) StepPowerAndHeatSlot(*Slot, DeltaSeconds);
+}
+
+void ARMUCGameReferee::RecordSlotHit(FMatchRobotSlot& Attacker, int32 Damage)
+{
+    ++Attacker.State.TotalHitsLanded;
+    Attacker.State.HitConfirmHudFlash = 0.30;
+    Attacker.State.LastHitDamageShown = Damage;
+    (Attacker.Team == FieldTeam::Red ? RedAttackDamage : BlueAttackDamage) += Damage;
+}
+
 void ARMUCGameReferee::RecordHit(FieldTeam Attacker, int32 Damage)
 {
+    if (FMatchRobotSlot* Slot = FindSentrySlot(Attacker))
+    {
+        RecordSlotHit(*Slot, Damage);
+        return;
+    }
     auto& Record = Competitor(Attacker);
     ++Record.TotalHitsLanded;
     Record.HitConfirmHudFlash = 0.30;
@@ -970,14 +1206,14 @@ void ARMUCGameReferee::RecordHit(FieldTeam Attacker, int32 Damage)
     (Attacker == FieldTeam::Red ? RedAttackDamage : BlueAttackDamage) += Damage;
 }
 
-bool ARMUCGameReferee::ApplySentryDamage(FieldTeam Target, std::optional<FieldTeam> Attacker, int32 ArmorId,
+bool ARMUCGameReferee::ApplyRobotDamage(FMatchRobotSlot& Target, FMatchRobotSlot* Attacker, int32 ArmorId,
     int32 RawDamage, ERMUCHpDeductionReason Reason)
 {
-    auto& Record = Competitor(Target);
+    auto& Record = Target.State;
     const bool bRulePenalty = (Reason == ERMUCHpDeductionReason::OverPower || Reason == ERMUCHpDeductionReason::OverHeat);
     if (GameProgress != ERMUCGameProgress::Running || Record.Hp <= 0 || (!bRulePenalty && Record.InvulnerableTimer > 0.0) || RawDamage <= 0)
         return false;
-    const int32 Attack = Attacker ? Competitor(*Attacker).BuffAttack : 0;
+    const int32 Attack = Attacker ? Attacker->State.BuffAttack : 0;
     const double Scale = bRulePenalty ? 1.0 :
         ((Attack > 0 ? Attack / 100. : 1.) * (1. + (Record.BuffVulnerability - Record.BuffDefence) / 100.));
     const int32 Damage = FMath::Min(Record.Hp, FMath::Max(1, FMath::RoundToInt(RawDamage * Scale)));
@@ -991,7 +1227,7 @@ bool ARMUCGameReferee::ApplySentryDamage(FieldTeam Target, std::optional<FieldTe
     Record.bHpDeducedThisStep = true;
     Record.OwnHitHudFlash = bRulePenalty ? 0.30 : 0.55;
     Record.OwnLedFlash = 0.30;
-    if (Attacker) RecordHit(*Attacker, Damage);
+    if (Attacker) RecordSlotHit(*Attacker, Damage);
     if (Record.Hp == 0)
     {
         Record.BarrelHeat = 0.0;
@@ -1001,12 +1237,26 @@ bool ARMUCGameReferee::ApplySentryDamage(FieldTeam Target, std::optional<FieldTe
         Record.bOverheatLocked = false;
         Record.RespawnTimer = 0.0;
         Record.OwnRespawnDuration = ComputeRMUCRespawnDurationSeconds(MatchElapsedSeconds, Record.OwnBuybackCount);
-        const FieldTeam Source = Attacker.value_or(FRMUCFieldRules::Other(Target));
-        PushCombatBroadcast(BroadcastTeam(Source), SentryName(Source), TEXT("ELIMINATED"),
-            BroadcastTeam(Target), SentryName(Target), 4.0);
-        if (auto* Vehicle = VehicleFor(Target)) Vehicle->SetContactDrive(0.0, 0.0, true);
+        const FieldTeam SourceTeam = Attacker ? Attacker->Team : FRMUCFieldRules::Other(Target.Team);
+        const FString SourceName = Attacker ? Attacker->DisplayName() : FString(SentryName(SourceTeam));
+        PushCombatBroadcast(BroadcastTeam(SourceTeam), SourceName, TEXT("ELIMINATED"),
+            BroadcastTeam(Target.Team), Target.DisplayName(), 4.0);
+        if (AVehicleRig* Vehicle = Target.Vehicle.Get(); IsValid(Vehicle))
+            Vehicle->SetContactDrive(0.0, 0.0, true);
     }
+    SyncSharedTeamState();
     return true;
+}
+
+bool ARMUCGameReferee::ApplySentryDamage(FieldTeam Target, std::optional<FieldTeam> Attacker, int32 ArmorId,
+    int32 RawDamage, ERMUCHpDeductionReason Reason)
+{
+    if (FMatchRobotSlot* TargetSlot = FindSentrySlot(Target))
+    {
+        FMatchRobotSlot* AttackerSlot = Attacker ? FindSentrySlot(*Attacker) : nullptr;
+        return ApplyRobotDamage(*TargetSlot, AttackerSlot, ArmorId, RawDamage, Reason);
+    }
+    return false;
 }
 
 void ARMUCGameReferee::Advance(
@@ -1020,6 +1270,7 @@ void ARMUCGameReferee::Advance(
     const double Dt = FMath::Clamp(DeltaSeconds, 0.0, 0.1);
     const ERMUCGameProgress PreviousProgress = GameProgress;
     for (auto& Record : Competitors) Record.bHpDeducedThisStep = false;
+    for (FMatchRobotSlot& Slot : MatchRobots) Slot.State.bHpDeducedThisStep = false;
     StepMatchClock(Dt);
     StepFieldDevices(Dt);
     if (RuneClientBridge) RuneClientBridge->Tick(*this);
@@ -1043,7 +1294,7 @@ void ARMUCGameReferee::Advance(
         if ((RespawnProofStage == 0 && MatchElapsedSeconds >= 12.0) ||
             (RespawnProofStage == 1 && IsOwnAlive() && Own().InvulnerableTimer <= 0.0))
         {
-            InjectSelfArmorHit(0, SentryMaxHp * 2);
+            InjectSelfArmorHit(0, GetOwnMaxHp() * 2);
             if (!IsOwnAlive()) ++RespawnProofStage;
         }
         else if (RespawnProofStage == 2 && Own().RespawnTimer >= 1.3 && RequestInstantRespawn())
@@ -1065,10 +1316,10 @@ void ARMUCGameReferee::Advance(
     if (!IsRosCompetitor(Rig)) SetRosFlywheels(Rig, bFirePressed && bHasMuzzle);
     if (GameProgress == ERMUCGameProgress::Running)
     {
-        for (FieldTeam Team : FRMUCFieldRules::Teams)
+        for (FMatchRobotSlot& Slot : MatchRobots)
         {
-            StepRfidAndBuffs(Team, Dt);
-            StepPowerAndHeat(Team, Dt);
+            StepRfidAndBuffsSlot(Slot, Dt);
+            StepPowerAndHeatSlot(Slot, Dt);
         }
         if (bFirePressed && bHasMuzzle) FireProjectile(MuzzleTransform);
     }
@@ -1085,10 +1336,11 @@ FString ARMUCGameReferee::CompactStatusText() const
     const int32 Mins = HudClockSeconds() / 60;
     const int32 Secs = HudClockSeconds() % 60;
     return FString::Printf(
-        TEXT("RMUC2027 %s %02d:%02d | %s7 HP %d/%d | Ammo %d | Heat %.0f/%.0f | Pwr %.0fW Buf %.0fJ"),
+        TEXT("RMUC2027 %s %02d:%02d | %s%d HP %d/%d | Ammo %d | Heat %.0f/%.0f | Pwr %.0fW Buf %.0fJ"),
         *ProgressName(GameProgress), Mins, Secs,
-        bFriendlyRed ? TEXT("RED") : TEXT("BLUE"),
-        GetOwnHp(), SentryMaxHp, Own().ProjectileAllowance17mm, Own().BarrelHeat, BarrelHeatLimit, Own().ChassisPowerW, Own().ChassisBufferEnergyJ);
+        bFriendlyRed ? TEXT("RED") : TEXT("BLUE"), PrimaryRobotNumber,
+        GetOwnHp(), GetOwnMaxHp(), Own().ProjectileAllowance17mm, Own().BarrelHeat, GetOwnHeatLimit(),
+        Own().ChassisPowerW, Own().ChassisBufferEnergyJ);
 }
 
 namespace RmUi
@@ -1447,47 +1699,53 @@ void ARMUCGameReferee::DrawTacticalMinimap(AHUD* Hud, UCanvas* Canvas, float X, 
         DrawArcLine(Hud, C, 24.0f * S, 0, 360, Srgb(82, 255, 165, 220), 2.0f * S, 24);
     }
 
-    // Enemy Sentry live circular numbered marker
-    if (EnemyRig)
+    // Live circular numbered markers for all spawned robots (S7 / I3 / I4)
+    for (int32 Idx = MatchRobots.Num() - 1; Idx >= 0; --Idx)
     {
-        const FVector EPos = UeCmToRosMeters(EnemyRig->GetActorLocation());
-        const FVector2D EP = ToMini(EPos.X, EPos.Y);
-        const bool bEnemyRed = !bFriendlyRed;
-        const FLinearColor ECol = bEnemyRed ? Srgb(238, 48, 42, 248) : Srgb(28, 148, 255, 248);
-        DrawCircleFilled(Canvas, EP, 9.5f * S, Srgb(12, 16, 22, 210), 20);
-        DrawCircleFilled(Canvas, EP, 8.2f * S, ECol, 20);
-        DrawArcLine(Hud, EP, 8.2f * S, 0, 360, Srgb(255, 255, 255, 235), 1.4f * S, 20);
-        if (TexDigitsAtlas) DrawDinText(Hud, TexDigitsAtlas, TEXT("7"), EP.X, EP.Y, 11.5f * S, 0);
-        else DrawCenteredText(Hud, TEXT("7"), Srgb(255, 255, 255, 255), EP.X, EP.Y, Font, 0.85f * S);
-    }
+        const FMatchRobotSlot& Slot = MatchRobots[Idx];
+        const AVehicleRig* Vehicle = Slot.Vehicle.Get();
+        if (!IsValid(Vehicle)) continue;
+        const bool bIsSelf = (Idx == 0);
+        const bool bIsRed = (Slot.Team == FieldTeam::Red);
+        const FVector Pos = UeCmToRosMeters(Vehicle->GetActorLocation());
+        const FVector2D P = ToMini(Pos.X, Pos.Y);
+        const FString NumStr = FString::FromInt(Slot.RobotNumber);
 
-    // Own Sentry live marker + translucent viewing cone + gold halo
-    if (Rig)
-    {
-        const FVector OPos = UeCmToRosMeters(Rig->GetActorLocation());
-        const FVector2D OP = ToMini(OPos.X, OPos.Y);
-        FVector GimbalFwd = Rig->GetActorForwardVector();
-        if (USceneCaptureComponent2D* const* AimCam = Rig->GetCameras().Find(TEXT("aim_camera")); AimCam && *AimCam)
+        if (bIsSelf)
         {
-            GimbalFwd = (*AimCam)->GetForwardVector();
-        }
-        else if (!Rig->GetCameras().IsEmpty())
-        {
-            if (USceneCaptureComponent2D* FirstCam = Rig->GetCameras().CreateConstIterator()->Value)
+            FVector GimbalFwd = Vehicle->GetActorForwardVector();
+            if (USceneCaptureComponent2D* const* AimCam = Vehicle->GetCameras().Find(TEXT("aim_camera")); AimCam && *AimCam)
             {
-                GimbalFwd = FirstCam->GetForwardVector();
+                GimbalFwd = (*AimCam)->GetForwardVector();
             }
+            else if (!Vehicle->GetCameras().IsEmpty())
+            {
+                if (USceneCaptureComponent2D* FirstCam = Vehicle->GetCameras().CreateConstIterator()->Value)
+                {
+                    GimbalFwd = FirstCam->GetForwardVector();
+                }
+            }
+            const FVector2D Dir = FVector2D(float(-GimbalFwd.X), float(GimbalFwd.Y)).GetSafeNormal();
+            const FVector2D Perp(-Dir.Y, Dir.X);
+            DrawConvexPoly(Canvas, { P, P + (Dir * 30.0f + Perp * 14.0f) * S, P + (Dir * 30.0f - Perp * 14.0f) * S },
+                Srgb(120, 238, 255, 78));
+            const FLinearColor OCol = bIsRed ? Srgb(242, 46, 40, 252) : Srgb(24, 148, 255, 252);
+            DrawCircleFilled(Canvas, P, 11.0f * S, Srgb(12, 16, 22, 215), 24);
+            DrawCircleFilled(Canvas, P, 9.2f * S, OCol, 24);
+            DrawArcLine(Hud, P, 11.2f * S, 0, 360, Srgb(255, 232, 112, 245), 1.8f * S, 24);
+            if (TexDigitsAtlas) DrawDinText(Hud, TexDigitsAtlas, NumStr, P.X, P.Y, 12.5f * S, 0);
+            else DrawCenteredText(Hud, NumStr, Srgb(255, 255, 255, 255), P.X, P.Y, Font, 0.90f * S);
         }
-        const FVector2D Dir = FVector2D(float(-GimbalFwd.X), float(GimbalFwd.Y)).GetSafeNormal();
-        const FVector2D Perp(-Dir.Y, Dir.X);
-        DrawConvexPoly(Canvas, { OP, OP + (Dir * 30.0f + Perp * 14.0f) * S, OP + (Dir * 30.0f - Perp * 14.0f) * S },
-            Srgb(120, 238, 255, 78));
-        const FLinearColor OCol = bFriendlyRed ? Srgb(242, 46, 40, 252) : Srgb(24, 148, 255, 252);
-        DrawCircleFilled(Canvas, OP, 11.0f * S, Srgb(12, 16, 22, 215), 24);
-        DrawCircleFilled(Canvas, OP, 9.2f * S, OCol, 24);
-        DrawArcLine(Hud, OP, 11.2f * S, 0, 360, Srgb(255, 232, 112, 245), 1.8f * S, 24);
-        if (TexDigitsAtlas) DrawDinText(Hud, TexDigitsAtlas, TEXT("7"), OP.X, OP.Y, 12.5f * S, 0);
-        else DrawCenteredText(Hud, TEXT("7"), Srgb(255, 255, 255, 255), OP.X, OP.Y, Font, 0.90f * S);
+        else
+        {
+            const uint8 Alpha = Slot.State.Hp > 0 ? 248 : 110;
+            const FLinearColor Col = bIsRed ? Srgb(238, 48, 42, Alpha) : Srgb(28, 148, 255, Alpha);
+            DrawCircleFilled(Canvas, P, 9.5f * S, Srgb(12, 16, 22, 210), 20);
+            DrawCircleFilled(Canvas, P, 8.2f * S, Col, 20);
+            DrawArcLine(Hud, P, 8.2f * S, 0, 360, Srgb(255, 255, 255, Alpha), 1.4f * S, 20);
+            if (TexDigitsAtlas) DrawDinText(Hud, TexDigitsAtlas, NumStr, P.X, P.Y, 11.5f * S, 0);
+            else DrawCenteredText(Hud, NumStr, Srgb(255, 255, 255, 255), P.X, P.Y, Font, 0.85f * S);
+        }
     }
 }
 
@@ -1706,16 +1964,17 @@ void ARMUCGameReferee::DrawMatchHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS)
             else DrawGradientQuad(Canvas, BTL, FMath::Lerp(BTL, BTR, Pct), FMath::Lerp(BL, BR, Pct), BL, C1, C2, 8);
         }
     };
-    DrawRobotUnderline(0, Red1Hp, 200, true, false);
+    const int32 OwnCardIdx2D = (PrimaryRobotNumber == 3) ? 2 : ((PrimaryRobotNumber == 4) ? 3 : 4);
+    DrawRobotUnderline(0, Red1Hp, 400, true, false);
     DrawRobotUnderline(1, Red2Hp, 250, true, false);
-    DrawRobotUnderline(2, Red3Hp, 200, true, false);
-    DrawRobotUnderline(3, Red4Hp, 200, true, false);
-    DrawRobotUnderline(4, Competitor(FieldTeam::Red).Hp, SentryMaxHp, true, bFriendlyRed);
-    DrawRobotUnderline(0, Blue1Hp, 200, false, false);
+    DrawRobotUnderline(2, Red3Hp, 200, true, bFriendlyRed && OwnCardIdx2D == 2);
+    DrawRobotUnderline(3, Red4Hp, 200, true, bFriendlyRed && OwnCardIdx2D == 3);
+    DrawRobotUnderline(4, Competitor(FieldTeam::Red).Hp, SentryMaxHp, true, bFriendlyRed && OwnCardIdx2D == 4);
+    DrawRobotUnderline(0, Blue1Hp, 400, false, false);
     DrawRobotUnderline(1, Blue2Hp, 250, false, false);
-    DrawRobotUnderline(2, Blue3Hp, 200, false, false);
-    DrawRobotUnderline(3, Blue4Hp, 200, false, false);
-    DrawRobotUnderline(4, Competitor(FieldTeam::Blue).Hp, SentryMaxHp, false, !bFriendlyRed);
+    DrawRobotUnderline(2, Blue3Hp, 200, false, !bFriendlyRed && OwnCardIdx2D == 2);
+    DrawRobotUnderline(3, Blue4Hp, 200, false, !bFriendlyRed && OwnCardIdx2D == 3);
+    DrawRobotUnderline(4, Competitor(FieldTeam::Blue).Hp, SentryMaxHp, false, !bFriendlyRed && OwnCardIdx2D == 4);
 
     // Active Energy Rune Glow Ring when Rune is activated
     if (RuneRules.Get(true).State == FRMUCRuneRules::Phase::Activated)
@@ -1733,8 +1992,8 @@ void ARMUCGameReferee::DrawMatchHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS)
     const int32 Mins = HudClockSeconds() / 60;
     const int32 Secs = HudClockSeconds() % 60;
     const FString ClockStr = FString::Printf(TEXT("%d:%02d"), Mins, Secs);
-    const int32 RedGold = bFriendlyRed ? Own().RemainingGoldCoin : Competitor(FRMUCFieldRules::Other(FriendlyTeam())).RemainingGoldCoin;
-    const int32 BlueGold = bFriendlyRed ? Competitor(FRMUCFieldRules::Other(FriendlyTeam())).RemainingGoldCoin : Own().RemainingGoldCoin;
+    const int32 RedGold = TeamGold[0];
+    const int32 BlueGold = TeamGold[1];
     if (TexDigitsAtlas)
     {
         DrawDinText(Hud, TexDigitsAtlas, ClockStr, CX, 43.0f * S, 38.0f * S, 0);
@@ -2060,8 +2319,8 @@ void ARMUCGameReferee::DrawMatchHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS)
     const float HpY = H - 120.0f * S;
     const float HpH = 33.0f * S;
     const float HpSkew = 19.0f * S;
-    const float HpPct = FMath::Clamp(float(GetOwnHp()) / float(SentryMaxHp), 0.0f, 1.0f);
-    const float TrailPct = FMath::Clamp(float(DisplayedOwnHp) / float(SentryMaxHp), 0.0f, 1.0f);
+    const float HpPct = FMath::Clamp(float(GetOwnHp()) / float(GetOwnMaxHp()), 0.0f, 1.0f);
+    const float TrailPct = FMath::Clamp(float(DisplayedOwnHp) / float(GetOwnMaxHp()), 0.0f, 1.0f);
 
     if (TrailPct > HpPct)
     {
@@ -2082,7 +2341,7 @@ void ARMUCGameReferee::DrawMatchHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS)
     }
     if (TexDigitsAtlas)
     {
-        DrawDinText(Hud, TexDigitsAtlas, FString::Printf(TEXT("%d / %d"), GetOwnHp(), SentryMaxHp),
+        DrawDinText(Hud, TexDigitsAtlas, FString::Printf(TEXT("%d / %d"), GetOwnHp(), GetOwnMaxHp()),
             HpStart + 22.0f * S, HpY + HpH * 0.5f, 23.0f * S, -1);
     }
 
@@ -2249,9 +2508,17 @@ TSharedRef<FJsonObject> ARMUCGameReferee::State() const
 
 TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) const
 {
-    const FieldTeam Team = TeamFor(Robot).value_or(FriendlyTeam());
-    const auto& View = Competitor(Team);
+    const FMatchRobotSlot* Slot = FindSlot(Robot);
+    if (!Slot) Slot = OwnSlot();
+    const FieldTeam Team = Slot ? Slot->Team : TeamFor(Robot).value_or(FriendlyTeam());
+    const auto& View = Slot ? Slot->State : Competitor(Team);
     const bool bViewRed = Team == FieldTeam::Red;
+    const int32 ViewRobotId = Slot ? Slot->ProtocolRobotId() : (bViewRed ? 7 : 107);
+    const int32 ViewMaxHp = Slot ? Slot->MaxHp() : SentryMaxHp;
+    const double ViewHeatLimit = Slot ? Slot->HeatLimit() : BarrelHeatLimit;
+    const double ViewCooling = Slot ? Slot->BaseCoolingPerSec() : View.SimStance.Modifiers().BarrelCoolingPerSec;
+    const double ViewPowerLimit = Slot ? Slot->BasePowerLimitW() : View.SimStance.Modifiers().ChassisPowerLimitW;
+    const int32 ViewGold = TeamGold[FRMUCFieldRules::Index(Team)];
     auto Root = MakeShared<FJsonObject>();
     Root->SetBoolField(TEXT("available"), true);
     Root->SetBoolField(TEXT("friendly_red"), bViewRed);
@@ -2279,17 +2546,17 @@ TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) con
     Root->SetObjectField(TEXT("all_robot_hp"), HP);
 
     auto RS = MakeShared<FJsonObject>();
-    RS->SetNumberField(TEXT("robot_id"), bViewRed ? 7 : 107);
+    RS->SetNumberField(TEXT("robot_id"), ViewRobotId);
     RS->SetNumberField(TEXT("robot_level"), RobotLevel);
     RS->SetNumberField(TEXT("current_hp"), View.Hp);
-    RS->SetNumberField(TEXT("maximum_hp"), SentryMaxHp);
-    RS->SetNumberField(TEXT("shooter_barrel_cooling_value"), FMath::RoundToInt(View.SimStance.Modifiers().BarrelCoolingPerSec));
-    RS->SetNumberField(TEXT("shooter_barrel_heat_limit"), FMath::RoundToInt(BarrelHeatLimit));
+    RS->SetNumberField(TEXT("maximum_hp"), ViewMaxHp);
+    RS->SetNumberField(TEXT("shooter_barrel_cooling_value"), FMath::RoundToInt(ViewCooling));
+    RS->SetNumberField(TEXT("shooter_barrel_heat_limit"), FMath::RoundToInt(ViewHeatLimit));
     RS->SetNumberField(TEXT("shooter_17mm_1_barrel_heat"), FMath::RoundToInt(View.BarrelHeat));
     RS->SetNumberField(TEXT("armor_id"), View.LastArmorId);
     RS->SetNumberField(TEXT("hp_deduction_reason"), static_cast<int32>(View.LastDeductionReason));
     RS->SetNumberField(TEXT("projectile_allowance_17mm"), View.ProjectileAllowance17mm);
-    RS->SetNumberField(TEXT("remaining_gold_coin"), View.RemainingGoldCoin);
+    RS->SetNumberField(TEXT("remaining_gold_coin"), ViewGold);
     RS->SetBoolField(TEXT("is_hp_deduced"), View.bHpDeducedThisStep);
     if (Robot)
     {
@@ -2332,7 +2599,7 @@ TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) con
     Root->SetObjectField(TEXT("rfid_status"), RF);
 
     Root->SetNumberField(TEXT("chassis_power_w"), View.ChassisPowerW);
-    Root->SetNumberField(TEXT("chassis_power_limit_w"), View.SimStance.Modifiers().ChassisPowerLimitW);
+    Root->SetNumberField(TEXT("chassis_power_limit_w"), ViewPowerLimit);
     Root->SetNumberField(TEXT("chassis_buffer_energy_j"), View.ChassisBufferEnergyJ);
     Root->SetObjectField(TEXT("field_devices"), FieldDeviceState());
     Root->SetBoolField(TEXT("chassis_powered"), IsChassisPoweredFor(Robot));
@@ -2466,22 +2733,23 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
     const int32 RHps[4]  = { Red1Hp, Red3Hp, Red4Hp, Competitor(FieldTeam::Red).Hp };
     const int32 BHps[4]  = { Blue1Hp, Blue3Hp, Blue4Hp, Competitor(FieldTeam::Blue).Hp };
     const int32 MHps[4]  = { 400, 200, 200, SentryMaxHp };
+    const int32 OwnCardIdx = (PrimaryRobotNumber == 3) ? 1 : ((PrimaryRobotNumber == 4) ? 2 : 3);
     St.RedUnits.Reserve(4);
     St.BlueUnits.Reserve(4);
     for (int32 I = 0; I < 4; ++I)
     {
-        FRhine3DRobotUnitState RU; RU.Code = Codes[I]; RU.Hp = RHps[I]; RU.MaxHp = MHps[I]; RU.bIsOwnUnit = (I == 3 && bFriendlyRed);
+        FRhine3DRobotUnitState RU; RU.Code = Codes[I]; RU.Hp = RHps[I]; RU.MaxHp = MHps[I]; RU.bIsOwnUnit = (I == OwnCardIdx && bFriendlyRed);
         St.RedUnits.Add(RU);
-        FRhine3DRobotUnitState BU; BU.Code = Codes[I]; BU.Hp = BHps[I]; BU.MaxHp = MHps[I]; BU.bIsOwnUnit = (I == 3 && !bFriendlyRed);
+        FRhine3DRobotUnitState BU; BU.Code = Codes[I]; BU.Hp = BHps[I]; BU.MaxHp = MHps[I]; BU.bIsOwnUnit = (I == OwnCardIdx && !bFriendlyRed);
         St.BlueUnits.Add(BU);
     }
 
     St.OwnHp = GetOwnHp();
-    St.OwnMaxHp = SentryMaxHp;
+    St.OwnMaxHp = GetOwnMaxHp();
     St.bOwnAlive = IsOwnAlive();
     St.Ammo17mm = Own().ProjectileAllowance17mm;
     St.MuzzleSpeedMs = static_cast<float>(LaunchSpeedCmS * 0.01);
-    St.BarrelHeatPct = FMath::Clamp(static_cast<float>(Own().BarrelHeat / FMath::Max(1.0, BarrelHeatLimit)), 0.0f, 1.0f);
+    St.BarrelHeatPct = FMath::Clamp(static_cast<float>(Own().BarrelHeat / FMath::Max(1.0, GetOwnHeatLimit())), 0.0f, 1.0f);
     St.SupercapPct   = FMath::Clamp(static_cast<float>(Own().ChassisBufferEnergyJ / 60.0), 0.0f, 1.0f);
 
     double GimYaw = 0.0, GimPitch = 0.0;
@@ -2528,7 +2796,7 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
         ? FMath::Clamp(static_cast<float>(Own().RespawnTimer / Own().OwnRespawnDuration), 0.0f, 1.0f) : 0.0f;
     St.RespawnRemainSeconds   = !St.bOwnAlive ? FMath::Max(0.0f, static_cast<float>(Own().OwnRespawnDuration - Own().RespawnTimer)) : 0.0f;
     St.BuybackGoldCost        = GetInstantRespawnCost();
-    St.RemainingGold          = Own().RemainingGoldCoin;
+    St.RemainingGold          = TeamGold[FRMUCFieldRules::Index(FriendlyTeam())];
     St.WeakRemainSeconds      = static_cast<float>(Own().WeakTimer);
     St.InvulnerableRemainSeconds = static_cast<float>(Own().InvulnerableTimer);
 
@@ -2536,8 +2804,8 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
     const auto EnemyTeam = FRMUCFieldRules::Other(OwnTeam);
     const unsigned OwnIndex = FRMUCFieldRules::Index(OwnTeam);
     const unsigned EnemyIndex = FRMUCFieldRules::Index(EnemyTeam);
-    const auto& OwnPoints = FieldPointEffects[OwnIndex];
-    const auto& OwnContacts = FieldPhysicalContacts[OwnIndex];
+    const auto& OwnPoints = OwnSlot() ? OwnSlot()->PointEffects : FieldPointEffects[OwnIndex];
+    const auto& OwnContacts = OwnSlot() ? OwnSlot()->PhysicalContacts : FieldPhysicalContacts[OwnIndex];
     St.bBuffHeal    = (Own().BuffRecovery > 0);
     St.bBuffArmor   = (Own().BuffDefence > 0);
     St.bBuffCooling = (Own().BuffCooling > 1) || (OwnPoints.FortressCoolingBonus > 0);
@@ -2572,12 +2840,12 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
     }
     else if (OwnPoints.bBase)
     {
-        St.ZoneStatusText = TEXT("基地增益区  //  防御 -50%  可就地买弹");
+        St.ZoneStatusText = TEXT("基地增益区  //  防御 -50%");
         St.bZoneStatusLocked = false;
     }
     else if (OwnPoints.bVantage)
     {
-        St.ZoneStatusText = TEXT("制高点增益区  //  防御 -50%  可就地买弹");
+        St.ZoneStatusText = TEXT("制高点增益区  //  防御 -50%");
         St.bZoneStatusLocked = false;
     }
     else if (OwnPoints.bCentralHighland)
@@ -2587,13 +2855,13 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
     }
     else if (OwnPoints.bSupply)
     {
-        St.ZoneStatusText = TEXT("补给区  //  持续回血 + 可买弹兑换");
+        St.ZoneStatusText = TEXT("补给区  //  持续回血 + F3 买弹兑换");
         St.bZoneStatusLocked = false;
     }
     else if (OwnPoints.bOutpost)
     {
         St.ZoneStatusText = OwnPoints.bFullOutpost
-            ? TEXT("前哨站阵地  //  已完全控制  可就地买弹")
+            ? TEXT("前哨站阵地  //  已完全控制")
             : TEXT("前哨站增益点  //  参与阵地争夺");
         St.bZoneStatusLocked = false;
     }
@@ -2609,37 +2877,33 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
         OutX = FMath::Clamp(-RosX, -13.6f, 13.6f);
         OutY = FMath::Clamp(-RosY, -7.6f, 7.6f);
     };
-    St.MapPins.Reserve(4);
-    if (Rig && IsValid(Rig))
+    St.MapPins.Reserve(FMath::Max(4, MatchRobots.Num()));
+    for (int32 Idx = 0; Idx < MatchRobots.Num(); ++Idx)
     {
+        const FMatchRobotSlot& Slot = MatchRobots[Idx];
+        const AVehicleRig* Vehicle = Slot.Vehicle.Get();
+        if (!IsValid(Vehicle)) continue;
         FRhine3DMapPin P;
-        WorldToArena(Rig->GetActorLocation(), P.ArenaX, P.ArenaY);
-        P.bIsRed = bFriendlyRed;
-        P.bIsSelf = true;
-        P.Label = TEXT("7");
-        // Align viewing cone with the real turret-mounted gimbal camera, not the chassis body!
-        FVector GimbalFwd = Rig->GetActorForwardVector();
-        if (USceneCaptureComponent2D* const* AimCam = Rig->GetCameras().Find(TEXT("aim_camera")); AimCam && *AimCam)
+        WorldToArena(Vehicle->GetActorLocation(), P.ArenaX, P.ArenaY);
+        P.bIsRed = (Slot.Team == FieldTeam::Red);
+        P.bIsSelf = (Idx == 0);
+        P.Label = FString::FromInt(Slot.RobotNumber);
+        if (P.bIsSelf)
         {
-            GimbalFwd = (*AimCam)->GetForwardVector();
-        }
-        else if (!Rig->GetCameras().IsEmpty())
-        {
-            if (USceneCaptureComponent2D* FirstCam = Rig->GetCameras().CreateConstIterator()->Value)
+            FVector GimbalFwd = Vehicle->GetActorForwardVector();
+            if (USceneCaptureComponent2D* const* AimCam = Vehicle->GetCameras().Find(TEXT("aim_camera")); AimCam && *AimCam)
             {
-                GimbalFwd = FirstCam->GetForwardVector();
+                GimbalFwd = (*AimCam)->GetForwardVector();
             }
+            else if (!Vehicle->GetCameras().IsEmpty())
+            {
+                if (USceneCaptureComponent2D* FirstCam = Vehicle->GetCameras().CreateConstIterator()->Value)
+                {
+                    GimbalFwd = FirstCam->GetForwardVector();
+                }
+            }
+            P.HeadingRad = FMath::Atan2(static_cast<float>(GimbalFwd.Y), static_cast<float>(-GimbalFwd.X));
         }
-        P.HeadingRad = FMath::Atan2(static_cast<float>(GimbalFwd.Y), static_cast<float>(-GimbalFwd.X));
-        St.MapPins.Add(P);
-    }
-    if (EnemyRig && IsValid(EnemyRig))
-    {
-        FRhine3DMapPin P;
-        WorldToArena(EnemyRig->GetActorLocation(), P.ArenaX, P.ArenaY);
-        P.bIsRed = !bFriendlyRed;
-        P.bIsSelf = false;
-        P.Label = TEXT("7");
         St.MapPins.Add(P);
     }
 

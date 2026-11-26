@@ -65,7 +65,7 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual FVector GetVelocity() const override;
     bool IsMujocoPhysics() const { return MujocoDynamics.IsValid(); }
-    void EnableMujocoMatchWorld() { bMujocoMatchWorld=true; }
+    void EnableMujocoMatchWorld(int32 VehicleCount = 2) { bMujocoMatchWorld=true; MujocoMatchVehicleCount=FMath::Clamp(VehicleCount, 2, 6); }
     bool AttachSharedMujoco(AVehicleRig& Primary,const FString& RigFilename,FString& Error);
     bool StartDedicatedMujoco(double PeriodSeconds, FString& Error);
     double GetDedicatedMujocoPeriod() const { return DedicatedMujocoPeriod; }
@@ -157,11 +157,14 @@ public:
 private:
     TSharedPtr<FMujocoVehicleDynamics> MujocoDynamics;
     TWeakObjectPtr<AVehicleRig> MujocoOpponent;
+    TArray<TWeakObjectPtr<AVehicleRig>> MujocoFollowers;
     bool bMujocoMatchWorld=false;
+    int32 MujocoMatchVehicleCount=2;
+    int32 MujocoAssignedSlot=0;
     bool bMujocoSharedFollower=false;
     UPROPERTY() TMap<FString,UStaticMeshComponent*> MujocoQueryBodies;
     bool InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error,
-        const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld={});
+        const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld={},int32 SharedSlot=1);
     bool InitializeCanonicalMujocoPhysics(const FString& CanonicalFilename,const FString& ModelFilename,FString& Error);
     FString MujocoRootBodyName=TEXT("body");
     FString MujocoYawBodyName=TEXT("yaw");

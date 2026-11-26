@@ -61,6 +61,8 @@ FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle
         Params.AddIgnoredActor(this);
         if (IsValid(Rig)) Params.AddIgnoredActor(Rig);
         if (IsValid(EnemyRig)) Params.AddIgnoredActor(EnemyRig);
+        for (const FMatchRobotSlot& Slot : MatchRobots)
+            if (AVehicleRig* V = Slot.Vehicle.Get(); IsValid(V)) Params.AddIgnoredActor(V);
         GetWorld()->LineTraceSingleByObjectType(Ground, Reader, Reader - FVector(0., 0., 18.),
             FCollisionObjectQueryParams(ECC_WorldStatic), Params);
     }
@@ -88,6 +90,11 @@ FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle
 
 FString ARMUCGameReferee::RequestClientRune(AVehicleRig* Vehicle)
 {
+    if (const FMatchRobotSlot* Slot = FindSlot(Vehicle))
+    {
+        if (Slot->State.Hp <= 0) return TEXT("robot_inactive");
+        return StartRuneAttempt(Slot->Team == FieldTeam::Red, Slot->RobotNumber);
+    }
     const auto Team = TeamFor(Vehicle);
     if (!Team) return TEXT("invalid_seat");
     if (Competitor(*Team).Hp <= 0) return TEXT("robot_inactive");

@@ -98,39 +98,82 @@ def discover_maps() -> list[dict]:
                 "path": str(mf),
                 "kind": data.get("kind", "unknown"),
                 "spawns": spawns,
-                "team_spawns": {s["team"]: s["id"] for s in entries if "team" in s and "id" in s},
+                "team_spawns": {
+                    spawn["team"]: spawn["id"] for spawn in entries
+                    if "team" in spawn and "id" in spawn and spawn.get("robot_number", 7) == 7
+                },
+                "robot_spawns": {
+                    (spawn["team"], int(spawn.get("robot_number", 7))): spawn["id"]
+                    for spawn in entries if "team" in spawn and "id" in spawn
+                },
             }
         )
     return items
 
 
+ROLE_TO_ARMOR_NUMBER = {
+    "S7 哨兵": 7,
+    "I3 步兵": 3,
+    "I4 步兵": 4,
+}
+
+
 def match_roster_payload(roster: dict[str, list[dict]], pilot: tuple[str, int],
                          map_entry: dict, auto_sentry: bool) -> dict:
     teams = ("red", "blue")
-    if any(len(roster[team]) != 1 for team in teams):
-        raise ValueError("红蓝双方各需一辆 AIM 哨兵。")
-    if any(roster[team][0]["vehicle_id"] != "aim_sentry" or roster[team][0]["role"] != "S7 哨兵"
-           for team in teams):
-        raise ValueError("当前比赛支持双方各一辆 AIM S7 哨兵。")
+    for team in teams:
+        seats = roster.get(team) or []
+        if not (1 <= len(seats) <= 3):
+            raise ValueError("红蓝双方每队需配置 1 至 3 辆车（S7 哨兵 / I3 步兵 / I4 步兵）。")
     primary_team, primary_idx = pilot
-    if primary_team not in teams or primary_idx != 0:
+    if primary_team not in teams or not (0 <= primary_idx < len(roster[primary_team])):
         raise ValueError("请为比赛选择有效的视角。")
     if not all(map_entry["team_spawns"].get(team) for team in teams):
         raise ValueError("比赛地图必须同时具有红方和蓝方出生点。")
-    ros_teams = [team for team in teams if roster[team][0]["control"] == "sentry_ws"]
+
+    robot_spawns = map_entry.get("robot_spawns") or {}
+    normalized: dict[str, list[dict]] = {"red": [], "blue": []}
+    ros_teams: list[str] = []
+    for team in teams:
+        used_nums: set[int] = set()
+        for item in roster[team]:
+            role = item.get("role", "S7 哨兵")
+            if item.get("vehicle_id") != "aim_sentry" or role not in ROLE_TO_ARMOR_NUMBER:
+                raise ValueError("当前比赛支持 AIM 底盘的 S7 哨兵、I3 步兵、I4 步兵。")
+            num = int(item.get("armor_number", ROLE_TO_ARMOR_NUMBER[role]))
+            if num in used_nums:
+                raise ValueError(f"{'红方' if team == 'red' else '蓝方'}存在重复的 #{num} 号车，请移除重复席位。")
+            used_nums.add(num)
+            ctrl = item.get("control", "ai")
+            if ctrl == "sentry_ws" and num != 7:
+                raise ValueError("步兵（I3/I4）暂不支持 sentry_ws，请改为「操作手手操」或「裁判AI目标车」。")
+            spawn_id = robot_spawns.get((team, num)) or map_entry["team_spawns"][team]
+            seat_copy = {
+                "role": role,
+                "vehicle_id": "aim_sentry",
+                "control": ctrl,
+                "armor_number": num,
+                "spawn_id": spawn_id,
+            }
+            normalized[team].append(seat_copy)
+            if ctrl == "sentry_ws" and team not in ros_teams:
+                ros_teams.append(team)
+
     if len(ros_teams) > 2:
         raise ValueError("一场比赛最多支持两辆 sentry_ws 哨兵（红蓝各一）。")
-    primary = roster[primary_team][primary_idx]
+    primary = normalized[primary_team][primary_idx]
     ros_team = "both" if len(ros_teams) == 2 else (ros_teams[0] if ros_teams else "")
     return {
         "map_id": map_entry["id"],
         "map_path": map_entry["path"],
-        "red": roster["red"],
-        "blue": roster["blue"],
+        "red": normalized["red"],
+        "blue": normalized["blue"],
         "primary_team": primary_team,
         "primary_index": primary_idx,
         "primary_role": primary["role"],
         "primary_control": primary["control"],
+        "primary_armor_number": primary["armor_number"],
+        "primary_spawn_id": primary["spawn_id"],
         "ros_team": ros_team,
         "ros_teams": ros_teams,
         "auto_sentry_ws": bool(ros_teams and auto_sentry),
@@ -141,8 +184,8 @@ class RMSimLauncherApp(tk.Tk):
     def __init__(self, initial_mode: str = "match") -> None:
         super().__init__()
         self.title("RM Simulator — 统一仿真启动器 (RMUC 2027)")
-        self.geometry("940x790")
-        self.minsize(840, 700)
+        self.geometry("940x810")
+        self.minsize(840, 720)
         self.configure(bg="#14181f")
 
         self.initial_mode = initial_mode
@@ -155,13 +198,17 @@ class RMSimLauncherApp(tk.Tk):
         self.match_roster: dict[str, list[dict]] = {
             "red": [
                 {"role": "S7 哨兵", "vehicle_id": default_veh, "control": "sentry_ws"},
+                {"role": "I3 步兵", "vehicle_id": default_veh, "control": "ai"},
+                {"role": "I4 步兵", "vehicle_id": default_veh, "control": "ai"},
             ],
             "blue": [
-                {"role": "S7 哨兵", "vehicle_id": default_veh, "control": "manual"},
+                {"role": "S7 哨兵", "vehicle_id": default_veh, "control": "sentry_ws"},
+                {"role": "I3 步兵", "vehicle_id": default_veh, "control": "manual"},
+                {"role": "I4 步兵", "vehicle_id": default_veh, "control": "ai"},
             ],
         }
         # Explicit operator pilot target: (team_key, index_in_team_list)
-        self.pilot_target: tuple[str, int] = ("blue", 0)
+        self.pilot_target: tuple[str, int] = ("blue", 1)
 
         self._setup_style()
         self._build_ui()
@@ -244,7 +291,7 @@ class RMSimLauncherApp(tk.Tk):
         # 2A. Match Mode Two-Team Roster Builder (shown in match mode)
         self.match_frame = ttk.LabelFrame(
             body,
-            text=" 2. RMUC 2027 比赛编队 · 红蓝各一辆 AIM 哨兵 ",
+            text=" 2. RMUC 2027 比赛编队 · 最多 6 车（红蓝各 S7 哨兵 + I3/I4 步兵） ",
             style="Card.TLabelframe",
             padding=10,
         )
@@ -252,7 +299,7 @@ class RMSimLauncherApp(tk.Tk):
         self.match_frame.columnconfigure(1, weight=1)
 
         veh_ids = ["aim_sentry"]
-        roles = ["S7 哨兵"]
+        roles = ["S7 哨兵", "I3 步兵", "I4 步兵"]
         ctrl_labels = ["sentry_ws 导航 (ROS 2)", "操作手手操 (键鼠)", "裁判AI目标车"]
         self._ctrl_label_to_key = {
             "sentry_ws 导航 (ROS 2)": "sentry_ws",
@@ -332,13 +379,25 @@ class RMSimLauncherApp(tk.Tk):
             fg="#f0d2a8",
             font=("Segoe UI", 9, "bold"),
         ).pack(side="left")
+        ttk.Button(
+            pilot_bar,
+            text="双哨兵 1v1",
+            style="Secondary.TButton",
+            command=self._apply_preset_2v2_sentry,
+        ).pack(side="right", padx=(6, 0))
+        ttk.Button(
+            pilot_bar,
+            text="6车完整编队",
+            style="Secondary.TButton",
+            command=self._apply_preset_6_vehicles,
+        ).pack(side="right", padx=(6, 0))
         tk.Label(
             pilot_bar,
             text="双击车辆或点「★ 设为我的视角」选择驾驶席",
             bg="#202836",
             fg="#9aa7b8",
             font=("Segoe UI", 8),
-        ).pack(side="right")
+        ).pack(side="right", padx=(0, 8))
 
         match_opt_row = tk.Frame(self.match_frame, bg="#1c222d")
         match_opt_row.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(6, 0))
@@ -580,11 +639,48 @@ class RMSimLauncherApp(tk.Tk):
             team_cn = "红方" if team_key == "red" else "蓝方"
             self._log(f"[驾驶席] 已选择: {team_cn} {item['role']} ({item['vehicle_id']}, {item['control']})")
 
+    def _apply_preset_6_vehicles(self) -> None:
+        default_veh = "aim_sentry"
+        self.match_roster = {
+            "red": [
+                {"role": "S7 哨兵", "vehicle_id": default_veh, "control": "sentry_ws"},
+                {"role": "I3 步兵", "vehicle_id": default_veh, "control": "ai"},
+                {"role": "I4 步兵", "vehicle_id": default_veh, "control": "ai"},
+            ],
+            "blue": [
+                {"role": "S7 哨兵", "vehicle_id": default_veh, "control": "sentry_ws"},
+                {"role": "I3 步兵", "vehicle_id": default_veh, "control": "manual"},
+                {"role": "I4 步兵", "vehicle_id": default_veh, "control": "ai"},
+            ],
+        }
+        self.pilot_target = ("blue", 1)
+        self._refresh_roster_lists()
+        self._log("[比赛编队] 已切换为 6 车完整编队（红蓝双全自动哨兵 + 4 步兵，默认手操蓝方 I3 步兵）。")
+
+    def _apply_preset_2v2_sentry(self) -> None:
+        default_veh = "aim_sentry"
+        self.match_roster = {
+            "red": [{"role": "S7 哨兵", "vehicle_id": default_veh, "control": "sentry_ws"}],
+            "blue": [{"role": "S7 哨兵", "vehicle_id": default_veh, "control": "manual"}],
+        }
+        self.pilot_target = ("blue", 0)
+        self._refresh_roster_lists()
+        self._log("[比赛编队] 已切换为双哨兵 1v1 编队。")
+
     def _add_match_vehicle(self, team_key: str) -> None:
         role = self.team_role_vars[team_key].get()
         veh_id = self.team_veh_vars[team_key].get()
         ctrl = self._ctrl_label_to_key.get(self.team_ctrl_vars[team_key].get(), "manual")
-        self.match_roster[team_key] = [{"role": role, "vehicle_id": veh_id, "control": ctrl}]
+        if role != "S7 哨兵" and ctrl == "sentry_ws":
+            messagebox.showwarning("配置提示", "步兵（I3/I4）暂不支持 sentry_ws，请改为「操作手手操」或「裁判AI目标车」。")
+            return
+        seats = self.match_roster[team_key]
+        existing = next((i for i, item in enumerate(seats) if item["role"] == role), None)
+        entry = {"role": role, "vehicle_id": veh_id, "control": ctrl}
+        if existing is not None:
+            seats[existing] = entry
+        else:
+            seats.append(entry)
         self._refresh_roster_lists()
         self._log(f"[比赛编队] {'红方' if team_key == 'red' else '蓝方'}: {role} ({veh_id}, {ctrl})")
 
@@ -718,7 +814,7 @@ class RMSimLauncherApp(tk.Tk):
             str(REPO_ROOT / "tools/unreal/Start-Simulator.ps1"),
             "-Vehicle", vehicle["path"],
             "-Map", rmuc_map["path"],
-            "-SpawnId", rmuc_map["team_spawns"][team],
+            "-SpawnId", roster["primary_spawn_id"],
             "-MatchRoster", str(roster_path),
             "-PhysicsBackend", "mujoco",
             "-RenderScale", self.scale_var.get(),

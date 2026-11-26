@@ -98,7 +98,19 @@ private:
     TArray<FString> MatchRosTeams;
     FName MatchRedArmorSticker;
     FName MatchBlueArmorSticker;
+    struct FMatchSeatSpec
+    {
+        FString Team;
+        int32 RobotNumber = 7;
+        FString Control;
+        FName ArmorSticker;
+        FString SpawnId;
+    };
+    TArray<FMatchSeatSpec> MatchSeats;
+    int32 MatchPrimarySeatIndex = 0;
+    UPROPERTY() TArray<AVehicleRig*> MatchSpawnedVehicles;
     bool ConfigureMatchSeats(FString& Error);
+    AVehicleRig* SpawnMatchSeatVehicle(const FMatchSeatSpec& Seat, int32 MujocoSlot, FString& Error);
     AVehicleRig* SpawnMatchOpponent(FString& Error);
     FString ImuFixture;
     double ImuFixtureElapsed=0;

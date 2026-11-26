@@ -174,23 +174,26 @@ bool AVehicleRig::InitializeCanonicalMujocoPhysics(const FString& CanonicalFilen
 
 bool AVehicleRig::AttachSharedMujoco(AVehicleRig& Primary,const FString& RigFilename,FString& Error)
 {
+    const int32 NextSlot = Primary.MujocoFollowers.Num() + 1;
     if (&Primary == this || GetWorld() != Primary.GetWorld() ||
         !Primary.MujocoDynamics || !Primary.MujocoDynamics->IsMatchWorld() ||
-        Primary.bMujocoSharedFollower || Primary.MujocoOpponent.IsValid() ||
+        Primary.bMujocoSharedFollower || NextSlot >= Primary.MujocoDynamics->GetMatchVehicleCount() ||
         Primary.MujocoDynamics->IsDedicated())
     {
-        Error = TEXT("MuJoCo opponent binding requires a ready shared match world before its first step");
+        Error = TEXT("MuJoCo follower binding requires a ready shared match world with an available slot before its first step");
         return false;
     }
-    if (!InitializeMujocoPhysics(RigFilename,FString(),Error,Primary.MujocoDynamics)) return false;
+    if (!InitializeMujocoPhysics(RigFilename,FString(),Error,Primary.MujocoDynamics,NextSlot)) return false;
     bMujocoSharedFollower = true;
+    MujocoAssignedSlot = NextSlot;
     MujocoOpponent = &Primary;
-    Primary.MujocoOpponent = this;
+    Primary.MujocoFollowers.Add(this);
+    if (!Primary.MujocoOpponent.IsValid()) Primary.MujocoOpponent = this;
     return true;
 }
 
 bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error,
-    const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld)
+    const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld,int32 SharedSlot)
 {
     auto Fail=[&Error](const FString& Why){Error=Why;return false;};
     if(bContactPhysics||!ContactBodies.IsEmpty()||!GetWorld()||Links.IsEmpty())return Fail(TEXT("MuJoCo requires an inactive imported visual rig"));
@@ -244,9 +247,9 @@ bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FStri
     auto Native=MakeShared<FMujocoVehicleDynamics>();
     if (SharedWorld)
     {
-        if (!Native->AttachOpponent(SharedWorld,BodyNames,RigFilename,ResolvedProfileFile,Error)) return false;
+        if (!Native->AttachFollower(SharedWorld,SharedSlot,BodyNames,RigFilename,ResolvedProfileFile,Error)) return false;
     }
-    else if (!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error,bMujocoMatchWorld))
+    else if (!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error,bMujocoMatchWorld,MujocoMatchVehicleCount))
         return false;
     const FVector SourceWorldGravity(0,0,GetWorld()->GetGravityZ());
     if(!Native->GravityCmS2().Equals(SourceWorldGravity,1.e-4))
@@ -351,14 +354,16 @@ bool AVehicleRig::SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double Ya
 
 bool AVehicleRig::StartDedicatedMujoco(double PeriodSeconds, FString& Error)
 {
-    if (!MujocoDynamics || bMujocoSharedFollower || (MujocoDynamics->IsMatchWorld() && !MujocoOpponent.IsValid()))
+    const int32 ExpectedFollowers = MujocoDynamics ? (MujocoDynamics->GetMatchVehicleCount() - 1) : 0;
+    if (!MujocoDynamics || bMujocoSharedFollower || (MujocoDynamics->IsMatchWorld() && MujocoFollowers.Num() < ExpectedFollowers))
     {
-        Error=TEXT("dedicated MuJoCo requires the ready owner rig and its match opponent");
+        Error=TEXT("dedicated MuJoCo requires the ready owner rig and all match followers");
         return false;
     }
     if(!MujocoDynamics->StartDedicated(PeriodSeconds,Error))return false;
     DedicatedMujocoPeriod=PeriodSeconds;
-    if (auto* Opponent = MujocoOpponent.Get()) Opponent->DedicatedMujocoPeriod = PeriodSeconds;
+    for (const auto& WeakFollower : MujocoFollowers)
+        if (auto* Follower = WeakFollower.Get()) Follower->DedicatedMujocoPeriod = PeriodSeconds;
     PrimaryActorTick.bTickEvenWhenPaused=true;
     return true;
 }
@@ -374,7 +379,7 @@ void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<v
     if(!MujocoDynamics)return;
     AVehicleRig* Primary = bMujocoSharedFollower ? MujocoOpponent.Get() : this;
     if (!Primary || !Primary->MujocoDynamics) return;
-    AVehicleRig* Opponent = Primary->MujocoOpponent.Get();
+    const int32 BodyStride = Primary->MujocoDynamics->BodyNames().Num();
     bool Reposed=false;
     Primary->MujocoDynamics->VisitDedicatedQueryFrames([&](double Time,const TArray<FTransform>& Parts,bool Latest)
     {
@@ -384,8 +389,9 @@ void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<v
         if(ApplyScenePoses&&(!Latest||Reposed))
         {
             Primary->ApplyMujocoQueryPose(Parts,0);
-            if (Opponent)
-                Opponent->ApplyMujocoQueryPose(Parts,Primary->MujocoDynamics->BodyNames().Num());
+            for (int32 I = 0; I < Primary->MujocoFollowers.Num(); ++I)
+                if (auto* Follower = Primary->MujocoFollowers[I].Get())
+                    Follower->ApplyMujocoQueryPose(Parts, (I + 1) * BodyStride);
             Reposed=true;
         }
         Query(Time);
@@ -417,8 +423,8 @@ void AVehicleRig::ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Off
 void AVehicleRig::TickMujocoPhysics(double Seconds)
 {
     if (!MujocoDynamics || bMujocoFailed || bMujocoSharedFollower) return;
-    AVehicleRig* Opponent = MujocoOpponent.Get();
-    if (MujocoDynamics->IsMatchWorld() && !Opponent) return;
+    const int32 ExpectedFollowers = MujocoDynamics->GetMatchVehicleCount() - 1;
+    if (MujocoDynamics->IsMatchWorld() && MujocoFollowers.Num() < ExpectedFollowers) return;
     const bool Dedicated=MujocoDynamics->IsDedicated();
     const auto Fail=[this](const FString& Error)
     {
@@ -442,10 +448,13 @@ void AVehicleRig::TickMujocoPhysics(double Seconds)
         SyncMujocoPose();
         DedicatedControlSeconds=MujocoDynamics->Time()-Before;
         if(DedicatedControlSeconds>0)MujocoFrameSeconds=DedicatedControlSeconds;
-        if (Opponent)
+        for (const auto& WeakFollower : MujocoFollowers)
         {
-            Opponent->MujocoFrameSeconds = MujocoFrameSeconds;
-            Opponent->SyncMujocoPose();
+            if (auto* Follower = WeakFollower.Get())
+            {
+                Follower->MujocoFrameSeconds = MujocoFrameSeconds;
+                Follower->SyncMujocoPose();
+            }
         }
         return;
     }
@@ -455,16 +464,20 @@ void AVehicleRig::TickMujocoPhysics(double Seconds)
     if(Seconds>0)MujocoFrameSeconds=Seconds;
     const double Now = FPlatformTime::Seconds();
     RefreshMujocoInputs(Seconds,Now);
-    if (Opponent)
+    for (const auto& WeakFollower : MujocoFollowers)
     {
-        Opponent->MujocoFrameSeconds = MujocoFrameSeconds;
-        Opponent->RefreshMujocoInputs(Seconds,Now);
+        if (auto* Follower = WeakFollower.Get())
+        {
+            Follower->MujocoFrameSeconds = MujocoFrameSeconds;
+            Follower->RefreshMujocoInputs(Seconds,Now);
+        }
     }
     FString Error;
     if(!MujocoDynamics->Step(Seconds,Error))
     {Fail(Error);return;}
     SyncMujocoPose();
-    if (Opponent) Opponent->SyncMujocoPose();
+    for (const auto& WeakFollower : MujocoFollowers)
+        if (auto* Follower = WeakFollower.Get()) Follower->SyncMujocoPose();
     MujocoDynamics->FlushTiming();
 }
 
@@ -495,10 +508,15 @@ void AVehicleRig::SubmitDedicatedMujocoInputs()
     const double Now=FPlatformTime::Seconds();
     const double Seconds=DedicatedControlSeconds;
     DedicatedControlSeconds=0;
-    const double Deadline = StageDedicatedMujocoInputs(Seconds,Now);
-    auto* Opponent = MujocoOpponent.Get();
-    const double OpponentDeadline = Opponent ? Opponent->StageDedicatedMujocoInputs(Seconds,Now) : 0.;
-    MujocoDynamics->SubmitDedicatedControls(Deadline,OpponentDeadline);
+    TArray<double> Deadlines;
+    Deadlines.Reserve(MujocoFollowers.Num() + 1);
+    Deadlines.Add(StageDedicatedMujocoInputs(Seconds,Now));
+    for (const auto& WeakFollower : MujocoFollowers)
+    {
+        auto* Follower = WeakFollower.Get();
+        Deadlines.Add(Follower ? Follower->StageDedicatedMujocoInputs(Seconds,Now) : 0.);
+    }
+    MujocoDynamics->SubmitDedicatedControls(Deadlines);
 }
 
 double AVehicleRig::StageDedicatedMujocoInputs(double Seconds,double Now)
@@ -552,13 +570,28 @@ void AVehicleRig::SyncMujocoPose()
         FHitResult Hit;
         if (C.OtherVehicleSlot != INDEX_NONE)
         {
-            if (const auto* Opponent = MujocoOpponent.Get()) Other = Opponent->MujocoQueryBodies.FindRef(C.OtherBodyName);
+            const AVehicleRig* Primary = bMujocoSharedFollower ? MujocoOpponent.Get() : this;
+            const AVehicleRig* OtherRig = nullptr;
+            if (Primary)
+            {
+                if (C.OtherVehicleSlot == 0) OtherRig = Primary;
+                else if (Primary->MujocoFollowers.IsValidIndex(C.OtherVehicleSlot - 1))
+                    OtherRig = Primary->MujocoFollowers[C.OtherVehicleSlot - 1].Get();
+            }
+            if (OtherRig) Other = OtherRig->MujocoQueryBodies.FindRef(C.OtherBodyName);
         }
         else
         {
             // Resolve the static surface's UE identity using the native solved contact.
             FCollisionQueryParams Query(SCENE_QUERY_STAT(MujocoContactVisualMapping),true,this);
-            if (const auto* Opponent = MujocoOpponent.Get()) Query.AddIgnoredActor(Opponent);
+            const AVehicleRig* Primary = bMujocoSharedFollower ? MujocoOpponent.Get() : this;
+            if (Primary)
+            {
+                if (Primary != this) Query.AddIgnoredActor(Primary);
+                for (const auto& WeakFollower : Primary->MujocoFollowers)
+                    if (const auto* Follower = WeakFollower.Get(); Follower && Follower != this)
+                        Query.AddIgnoredActor(Follower);
+            }
             if (GetWorld()->LineTraceSingleByChannel(Hit,C.PointCm-C.IntoObstacleNormal*2.,
                 C.PointCm+C.IntoObstacleNormal*2.,ECC_Visibility,Query) && FVector::Dist(Hit.ImpactPoint,C.PointCm)<=2.05)
                 Other = Hit.GetComponent();
