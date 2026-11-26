@@ -184,27 +184,28 @@ bool AImportLabGameMode::ConfigureMatchSeats(FString& Error)
         }
         if (Control == TEXT("sentry_ws"))
         {
-            if (!MatchRosTeam.IsEmpty())
-            {
-                Error = TEXT("One ROS 2 sentry seat is supported per match session");
-                return false;
-            }
-            MatchRosTeam = Team;
+            MatchRosTeams.AddUnique(Team);
         }
     }
-    if (bHasRosTeam && MatchRosTeam != RosTeamArgument)
+    MatchRosTeam = MatchRosTeams.IsEmpty() ? FString() : MatchRosTeams[0];
+    if (bHasRosTeam)
     {
-        Error = TEXT("-RosVehicleTeam does not match the selected sentry_ws roster seat");
-        return false;
+        const bool bValidBoth = (RosTeamArgument == TEXT("both") && MatchRosTeams.Num() == 2);
+        const bool bValidSingle = (MatchRosTeams.Num() == 1 && MatchRosTeam == RosTeamArgument);
+        if (!bValidBoth && !bValidSingle)
+        {
+            Error = TEXT("-RosVehicleTeam does not match the selected sentry_ws roster seat(s)");
+            return false;
+        }
     }
-    if (!MatchRosTeam.IsEmpty() && !FParse::Param(FCommandLine::Get(), TEXT("RosAimControl")))
+    if (!MatchRosTeams.IsEmpty() && !FParse::Param(FCommandLine::Get(), TEXT("RosAimControl")))
     {
         Error = TEXT("A sentry_ws match seat requires -RosAimControl");
         return false;
     }
     bPhysicalMatch = true;
-    bBridgeControlsOpponent = !MatchRosTeam.IsEmpty() && MatchRosTeam != MatchPrimaryTeam;
-    bRosControl = !MatchRosTeam.IsEmpty() && !bBridgeControlsOpponent;
+    bRosControl = MatchRosTeams.Contains(MatchPrimaryTeam);
+    bBridgeControlsOpponent = !MatchRosTeams.IsEmpty() && !bRosControl;
     bRosAimControl = bRosControl;
     return true;
 }
@@ -957,27 +958,83 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         }
         if(bRosBridgeEnabled)
         {
-            AVehicleRig* BoundVehicle = bBridgeControlsOpponent ? Referee->GetEnemyRig() : Rig;
-            auto* BoundAim = bBridgeControlsOpponent ? BoundVehicle->GetCameras().FindRef(TEXT("aim_camera")) : GetAimCapture();
-            RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
-            if(!RosBridge->Initialize(BoundVehicle,BoundAim,Training,bRosControl||bBridgeControlsOpponent,BridgeError)){Abort(BridgeError);return;}
-            if(Referee)
+            const bool bMultiMatchRos = bPhysicalMatch && !MatchRosTeams.IsEmpty();
+            if (bMultiMatchRos)
             {
-                RosBridge->SetReferee(Referee);
-                if (bRosAimControl || bBridgeControlsOpponent) Referee->BindRosCompetitor(BoundVehicle);
-            }
-            RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain,StageMap.bSavedScene);
-            if(!bBridgeControlsOpponent&&RosBridge->SupportsOperatorGyro()&&FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroStart")))
-            {
-                double StartupRate = GyroSpeedRadS;
-                if (FParse::Value(FCommandLine::Get(), TEXT("RosOperatorGyroStartRate="), StartupRate) &&
-                    FMath::IsFinite(StartupRate))
+                int32 BasePort = 9451;
+                FParse::Value(FCommandLine::Get(), TEXT("RosPort="), BasePort);
+                int32 PortRed = -1, PortBlue = -1;
+                const bool bHasPortRed = FParse::Value(FCommandLine::Get(), TEXT("RosPortRed="), PortRed);
+                const bool bHasPortBlue = FParse::Value(FCommandLine::Get(), TEXT("RosPortBlue="), PortBlue);
+                for (int32 Idx = 0; Idx < MatchRosTeams.Num(); ++Idx)
                 {
-                    GyroSpeedRadS = FMath::Clamp(StartupRate, Rig->GetDriveParameter(TEXT("GyroMinRadS")),
-                        Rig->GetDriveParameter(TEXT("GyroMaxRadS")));
+                    const FString& Team = MatchRosTeams[Idx];
+                    const bool bIsPrimary = (Team == MatchPrimaryTeam);
+                    AVehicleRig* BoundVehicle = bIsPrimary ? Rig : (Referee ? Referee->GetEnemyRig() : nullptr);
+                    if (!BoundVehicle) { Abort(TEXT("Missing match vehicle for ROS bridge")); return; }
+                    auto* BoundAim = bIsPrimary ? GetAimCapture() : BoundVehicle->GetCameras().FindRef(TEXT("aim_camera"));
+                    FRosBridgeOptions Opts;
+                    if (Team == TEXT("red") && bHasPortRed) Opts.PortOverride = PortRed;
+                    else if (Team == TEXT("blue") && bHasPortBlue) Opts.PortOverride = PortBlue;
+                    else Opts.PortOverride = BasePort + Idx;
+                    Opts.CapturePhaseFraction = double(Idx) / double(MatchRosTeams.Num());
+                    Opts.bLightweightAimCamera = true;
+                    URosBridgeComponent* Bridge = NewObject<URosBridgeComponent>(this);
+                    AddInstanceComponent(Bridge);
+                    Bridge->RegisterComponent();
+                    FString BridgeError;
+                    if (!Bridge->Initialize(BoundVehicle, BoundAim, Training, true, Opts, BridgeError)) { Abort(BridgeError); return; }
+                    if (Referee)
+                    {
+                        Bridge->SetReferee(Referee);
+                        Referee->BindRosCompetitor(BoundVehicle);
+                    }
+                    Bridge->SetMapIdentity(StageMap.Id, StageMap.SourceFile, StageMap.bMeshTerrain, StageMap.bSavedScene);
+                    if (Bridge->SupportsOperatorGyro() && FParse::Param(FCommandLine::Get(), TEXT("RosOperatorGyroStart")))
+                    {
+                        double StartupRate = GyroSpeedRadS;
+                        if (FParse::Value(FCommandLine::Get(), TEXT("RosOperatorGyroStartRate="), StartupRate) &&
+                            FMath::IsFinite(StartupRate))
+                        {
+                            StartupRate = FMath::Clamp(StartupRate, BoundVehicle->GetDriveParameter(TEXT("GyroMinRadS")),
+                                BoundVehicle->GetDriveParameter(TEXT("GyroMaxRadS")));
+                        }
+                        if (bIsPrimary)
+                        {
+                            GyroSpeedRadS = StartupRate;
+                            bGyroMode = true;
+                        }
+                        Bridge->SetOperatorGyro(StartupRate);
+                    }
+                    RosBridges.Add(Bridge);
+                    if (bIsPrimary || !RosBridge) RosBridge = Bridge;
                 }
-                bGyroMode=true;
-                RosBridge->SetOperatorGyro(GyroSpeedRadS);
+            }
+            else
+            {
+                AVehicleRig* BoundVehicle = bBridgeControlsOpponent ? Referee->GetEnemyRig() : Rig;
+                auto* BoundAim = bBridgeControlsOpponent ? BoundVehicle->GetCameras().FindRef(TEXT("aim_camera")) : GetAimCapture();
+                RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
+                if(!RosBridge->Initialize(BoundVehicle,BoundAim,Training,bRosControl||bBridgeControlsOpponent,BridgeError)){Abort(BridgeError);return;}
+                if(Referee)
+                {
+                    RosBridge->SetReferee(Referee);
+                    if (bRosAimControl || bBridgeControlsOpponent) Referee->BindRosCompetitor(BoundVehicle);
+                }
+                RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain,StageMap.bSavedScene);
+                if(!bBridgeControlsOpponent&&RosBridge->SupportsOperatorGyro()&&FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroStart")))
+                {
+                    double StartupRate = GyroSpeedRadS;
+                    if (FParse::Value(FCommandLine::Get(), TEXT("RosOperatorGyroStartRate="), StartupRate) &&
+                        FMath::IsFinite(StartupRate))
+                    {
+                        GyroSpeedRadS = FMath::Clamp(StartupRate, Rig->GetDriveParameter(TEXT("GyroMinRadS")),
+                            Rig->GetDriveParameter(TEXT("GyroMaxRadS")));
+                    }
+                    bGyroMode=true;
+                    RosBridge->SetOperatorGyro(GyroSpeedRadS);
+                }
+                RosBridges.Add(RosBridge);
             }
         }
         if(UsesDedicatedMujoco())
@@ -1028,7 +1085,8 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
     }
     TickManualControl(DeltaSeconds);
     if(!ImuFixture.IsEmpty())TickImuFixture(DeltaSeconds);
-    if(RosBridge)RosBridge->Advance();
+    for (URosBridgeComponent* Bridge : RosBridges)
+        if (Bridge) Bridge->Advance();
     if(UsesDedicatedMujoco())Rig->SubmitDedicatedMujocoInputs();
     Elapsed += DeltaSeconds;
     {

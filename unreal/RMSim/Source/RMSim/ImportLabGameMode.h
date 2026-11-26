@@ -83,6 +83,7 @@ private:
     UPROPERTY() ATrainingRange* Training = nullptr;
     UPROPERTY() ARMUCGameReferee* Referee = nullptr;
     UPROPERTY() URosBridgeComponent* RosBridge=nullptr;
+    UPROPERTY() TArray<URosBridgeComponent*> RosBridges;
     UPROPERTY() UWTFoliageCrushComponent* SoftFoliage=nullptr;
     UPROPERTY() UWTGeneratedCollisionComponent* GeneratedCollision=nullptr;
     bool bRosBridgeEnabled=false,bRosControl=false,bRosAimControl=false;
@@ -94,6 +95,7 @@ private:
 #endif
     FString MatchPrimaryTeam;
     FString MatchRosTeam;
+    TArray<FString> MatchRosTeams;
     FName MatchRedArmorSticker;
     FName MatchBlueArmorSticker;
     bool ConfigureMatchSeats(FString& Error);

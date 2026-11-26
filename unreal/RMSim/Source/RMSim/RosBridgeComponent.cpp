@@ -88,10 +88,16 @@ double URosBridgeComponent::SolverTime() const
 
 bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,FString& Error)
 {
+    return Initialize(Vehicle,Aim,Training,Control,FRosBridgeOptions{},Error);
+}
+
+bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,const FRosBridgeOptions& Options,FString& Error)
+{
     if(!Vehicle||!Vehicle->IsContactPhysics()||!Aim||UPhysicsSettings::Get()->bTickPhysicsAsync)
     {Error=TEXT("ROS bridge requires a physical rig and synchronous post-physics sampling");return false;}
     Rig=Vehicle;bControl=Control;RobotId=Rig->GetVehicleId();
     FParse::Value(FCommandLine::Get(),TEXT("RosRobotId="),RobotId);
+    if(!Options.RobotIdOverride.IsEmpty())RobotId=Options.RobotIdOverride;
     bProfileSensorTiming=FParse::Param(FCommandLine::Get(),TEXT("ProfileSensorTiming"));
     bMotorControl=FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
     FString MatchRoster;
@@ -116,28 +122,50 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     if(RobotId.IsEmpty()||RobotId.Len()>64||!FChar::IsAlpha(RobotId[0])){Error=TEXT("invalid ROS robot identifier");return false;}
     for(TCHAR C:RobotId)if(C>127||!(FChar::IsAlnum(C)||C=='_')){Error=TEXT("invalid ROS robot identifier");return false;}
     FParse::Value(FCommandLine::Get(),TEXT("RosPort="),Port);
+    if(Options.PortOverride>=1024&&Options.PortOverride<=65535)Port=Options.PortOverride;
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraWidth="),Width);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHeight="),Height);
     FParse::Value(FCommandLine::Get(),TEXT("RosCameraHz="),CameraHz);FParse::Value(FCommandLine::Get(),TEXT("RosCameraHFov="),HFovDegrees);
+    CapturePhaseFraction=FMath::IsFinite(Options.CapturePhaseFraction)?FMath::Clamp(Options.CapturePhaseFraction,0.0,0.99):0.0;
+    bLightweightAimCamera=Options.bLightweightAimCamera||bMatchBridge||FParse::Param(FCommandLine::Get(),TEXT("RosCameraLightweight"));
+    if(FParse::Param(FCommandLine::Get(),TEXT("RosCameraFullRender")))bLightweightAimCamera=false;
     if(Port<1024||Port>65535||Width<16||Width>1920||Height<16||Height>1080||
         !FMath::IsFinite(CameraHz)||(CameraHz!=0&&(CameraHz<1||CameraHz>60))||!FMath::IsFinite(HFovDegrees)||HFovDegrees<5||HFovDegrees>150)
     {Error=TEXT("invalid ROS port or camera configuration");return false;}
+    FString BindIp=TEXT("127.0.0.1");
+    FParse::Value(FCommandLine::Get(),TEXT("RosBindAddress="),BindIp);
+    if(!Options.BindAddress.IsEmpty())BindIp=Options.BindAddress;
     Sockets=ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     Listener=Sockets->CreateSocket(NAME_Stream,TEXT("RMSim loopback listener"),false);
-    bool Valid=false;auto Address=Sockets->CreateInternetAddr();Address->SetIp(TEXT("127.0.0.1"),Valid);Address->SetPort(Port);
+    bool Valid=false;auto Address=Sockets->CreateInternetAddr();Address->SetIp(*BindIp,Valid);Address->SetPort(Port);
     if(!Listener||!Valid||!Listener->SetNonBlocking(true)||!Listener->Bind(*Address)||!Listener->Listen(1))
-    {Error=TEXT("cannot bind exclusive ROS loopback port");CloseSocket(Listener);return false;}
-    Camera=NewObject<USceneCaptureComponent2D>(Rig,TEXT("RosCamera"));Camera->SetupAttachment(Aim);
+    {Error=FString::Printf(TEXT("cannot bind exclusive ROS port %s:%d"),*BindIp,Port);CloseSocket(Listener);return false;}
+    Camera=NewObject<USceneCaptureComponent2D>(Rig,*FString::Printf(TEXT("RosCamera_%d"),Port));Camera->SetupAttachment(Aim);
     Camera->SetRelativeTransform(FTransform::Identity);Camera->FOVAngle=HFovDegrees;Camera->CaptureSource=ESceneCaptureSource::SCS_FinalColorLDR;
     Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=true;
+    if(bLightweightAimCamera)
+    {
+        // Strip expensive viewport-only passes from multi-robot aim cameras while preserving emissive lightbars and armor stickers.
+        Camera->ShowFlags.SetDynamicShadows(false);
+        Camera->ShowFlags.SetVolumetricFog(false);
+        Camera->ShowFlags.SetBloom(false);
+        Camera->ShowFlags.SetMotionBlur(false);
+        Camera->ShowFlags.SetAmbientOcclusion(false);
+        Camera->ShowFlags.SetScreenSpaceReflections(false);
+        Camera->ShowFlags.SetAntiAliasing(false);
+        Camera->ShowFlags.SetTemporalAA(false);
+        Camera->ShowFlags.SetContactShadows(false);
+        Camera->ShowFlags.SetAtmosphere(false);
+        Camera->ShowFlags.SetFog(false);
+    }
     Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
     Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
     Rig->AddInstanceComponent(Camera);Camera->RegisterComponent();
-    UE_LOG(LogRMSim,Display,TEXT("ROS_CAMERA_CAPTURE enabled=%d nominal_hz=%.3f width=%d height=%d"),
-        CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height);
+    UE_LOG(LogRMSim,Display,TEXT("ROS_CAMERA_CAPTURE enabled=%d nominal_hz=%.3f width=%d height=%d lightweight=%d phase=%.2f"),
+        CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height,bLightweightAimCamera?1:0,CapturePhaseFraction);
     AimController=NewObject<URosAimController>(GetOwner());GetOwner()->AddInstanceComponent(AimController);AimController->RegisterComponent();
     if(!AimController->Initialize(Rig,Aim,Training,FParse::Param(FCommandLine::Get(),TEXT("RosAimControl")),Error))return false;
     AimController->SetReferee(Referee);
-    if(FParse::Param(FCommandLine::Get(),TEXT("RosImu")))
+    if(Options.bAllowImu&&FParse::Param(FCommandLine::Get(),TEXT("RosImu")))
     {
         FString Profile;
         if(!FParse::Value(FCommandLine::Get(),TEXT("ImuProfile="),Profile))
@@ -149,7 +177,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
         Imu=NewObject<URosImuComponent>(GetOwner());GetOwner()->AddInstanceComponent(Imu);Imu->RegisterComponent();
         if(!Imu->Initialize(Rig,Profile,Error))return false;
     }
-    if(FParse::Param(FCommandLine::Get(),TEXT("RosLidar")))
+    if(Options.bAllowLidar&&FParse::Param(FCommandLine::Get(),TEXT("RosLidar")))
     {
         FString Profile;
         if(!FParse::Value(FCommandLine::Get(),TEXT("LidarProfile="),Profile))
@@ -163,8 +191,10 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
         if(Imu&&Imu->UsesId(Lidar->GetSensorId())){Error=TEXT("IMU and LiDAR sensor ids must be unique");return false;}
     }
     EpochSolverTime=SolverTime();LastPollWall=FPlatformTime::Seconds();
+    NextImageSim=(CameraHz>0.0)?(CapturePhaseFraction/CameraHz):0.0;
     Rig->EnableExternalDriveLease(bControl);
-    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=127.0.0.1:%d control=%d camera=%dx%d %.1fHz physics_clock=%s"),Port,bControl,Width,Height,CameraHz,Rig->GetPhysicsBackendName());
+    UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_READY loopback=%s:%d control=%d camera=%dx%d %.1fHz lightweight=%d phase=%.2f physics_clock=%s"),
+        *BindIp,Port,bControl,Width,Height,CameraHz,bLightweightAimCamera?1:0,CapturePhaseFraction,Rig->GetPhysicsBackendName());
     return true;
 }
 
@@ -617,7 +647,7 @@ void URosBridgeComponent::Advance()
                 Session=FGuid::NewGuid().ToString();AcceptedSeq=-1;MatchStanceSequence=-1;MatchAmmoPurchaseSequence=-1;
                 LastCommandWall=-1;CommandStatus=bControl?TEXT("waiting"):TEXT("manual_mode");
                 NavigationFrameYawRad=-FMath::DegreesToRadians(Rig->GetActorRotation().Yaw);
-                LastStateWall=0;NextImageSim=SimTime;Inbound.Reset();Outbound.Reset();SendOffset=0;
+                LastStateWall=0;NextImageSim=SimTime+((CameraHz>0.0)?(CapturePhaseFraction/CameraHz):0.0);Inbound.Reset();Outbound.Reset();SendOffset=0;
                 if(AimController)AimController->Reset(false);
                 if(Imu)Imu->DiscardPending();
                 if(Lidar)Lidar->DiscardPending();
@@ -656,7 +686,7 @@ void URosBridgeComponent::Advance()
 
 void URosBridgeComponent::ResetEpoch()
 {
-    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=0;LastSimTime=0;RealTimeFactor=0;RateWindowWall=0;RateWindowSim=0;Disconnect(TEXT("reset"));
+    ++Epoch;EpochSolverTime=SolverTime();TickIndex=0;NextImageSim=(CameraHz>0.0)?(CapturePhaseFraction/CameraHz):0.0;LastSimTime=0;RealTimeFactor=0;RateWindowWall=0;RateWindowSim=0;Disconnect(TEXT("reset"));
     if(AimController)AimController->Reset(true);
     if(Imu)Imu->Reset();
     if(Lidar)Lidar->Reset();

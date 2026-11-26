@@ -118,9 +118,10 @@ def match_roster_payload(roster: dict[str, list[dict]], pilot: tuple[str, int],
     if not all(map_entry["team_spawns"].get(team) for team in teams):
         raise ValueError("比赛地图必须同时具有红方和蓝方出生点。")
     ros_teams = [team for team in teams if roster[team][0]["control"] == "sentry_ws"]
-    if len(ros_teams) > 1:
-        raise ValueError("一场比赛最多支持一辆 sentry_ws 哨兵。")
+    if len(ros_teams) > 2:
+        raise ValueError("一场比赛最多支持两辆 sentry_ws 哨兵（红蓝各一）。")
     primary = roster[primary_team][primary_idx]
+    ros_team = "both" if len(ros_teams) == 2 else (ros_teams[0] if ros_teams else "")
     return {
         "map_id": map_entry["id"],
         "map_path": map_entry["path"],
@@ -130,7 +131,8 @@ def match_roster_payload(roster: dict[str, list[dict]], pilot: tuple[str, int],
         "primary_index": primary_idx,
         "primary_role": primary["role"],
         "primary_control": primary["control"],
-        "ros_team": ros_teams[0] if ros_teams else "",
+        "ros_team": ros_team,
+        "ros_teams": ros_teams,
         "auto_sentry_ws": bool(ros_teams and auto_sentry),
     }
 
@@ -693,9 +695,11 @@ class RMSimLauncherApp(tk.Tk):
             domain = self.domain_var.get().strip() or "71"
             robot_id = self.robot_id_var.get().strip() or vehicle["id"]
             camera_hz = float(self.camera_hz_var.get().strip() or "15") if ros_team else 0
-            if ros_team and not (1024 <= int(port) <= 65535 and 0 <= int(domain) <= 232
+            max_port = 65534 if ros_team == "both" else 65535
+            max_domain = 231 if ros_team == "both" else 232
+            if ros_team and not (1024 <= int(port) <= max_port and 0 <= int(domain) <= max_domain
                                  and (camera_hz == 0 or 1 <= camera_hz <= 60)):
-                raise ValueError("请检查 ROS 端口（1024–65535）、域（0–232）和相机频率（1–60 Hz，0 使用 15 Hz）。")
+                raise ValueError("请检查 ROS 端口（1024–65534）、域（0–231）和相机频率（1–60 Hz，0 使用 15 Hz）。")
         except ValueError as exc:
             messagebox.showwarning("比赛配置", str(exc))
             return
@@ -733,9 +737,10 @@ class RMSimLauncherApp(tk.Tk):
                 "-Domain", domain,
                 "-CameraHz", str(int(camera_hz) if camera_hz and float(camera_hz).is_integer() else (camera_hz or 15)),
             ]
-            self.match_connector = self._external_sentry_command(
-                robot_id, domain, rmuc_map["path"], rmuc_map["team_spawns"][ros_team], nav_source,
-            )
+            if ros_team != "both":
+                self.match_connector = self._external_sentry_command(
+                    robot_id, domain, rmuc_map["path"], rmuc_map["team_spawns"][ros_team], nav_source,
+                )
             if self.match_owns_connector:
                 cmd.append("-AutoSentry")
                 if nav_source:
@@ -744,7 +749,12 @@ class RMSimLauncherApp(tk.Tk):
         self._log("\n================ RMUC 2027 比赛开启 ================")
         self._log(f"红方 {roster['red'][0]['control']} · 蓝方 {roster['blue'][0]['control']} · 本机视角 {team}")
         self._log(f"编队清单已写入: {roster_path}")
-        if ros_team:
+        if ros_team == "both":
+            self._log(
+                f"双全自动 ROS 2 哨兵已启用：红方 port={port} domain={domain}，"
+                f"蓝方 port={int(port)+1} domain={int(domain)+1}（轻量化分帧自瞄相机）。"
+            )
+        elif ros_team:
             self._log(f"ROS 2 参赛车辆为 {ros_team} ({robot_id})，定位从 {rmuc_map['team_spawns'][ros_team]} 出生点初始化。")
         self._run_background(cmd, "RMUC 2027 比赛仿真器")
 

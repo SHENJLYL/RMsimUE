@@ -11,7 +11,7 @@ param(
     [switch]$TrainingMode,
     [string]$MatchRoster = '',
     [switch]$MatchPreparation,
-    [ValidateSet('red', 'blue')][string]$RosVehicleTeam,
+    [ValidateSet('red', 'blue', 'both')][string]$RosVehicleTeam,
     [switch]$AutoSentry,
     [string]$NavigationSource = '',
     [switch]$RosBridge,
@@ -66,6 +66,7 @@ if ($AutoSentry -and (-not $RosVehicleTeam -or $NoBridgeNode)) {
     throw 'AutoSentry requires a match ROS vehicle and the standalone bridge node.'
 }
 $rosSpawn = ''
+$rosSeats = @()
 if ($MatchRoster) {
     $MatchRoster = Resolve-RepoPath $MatchRoster
     if (-not (Test-Path -LiteralPath $MatchRoster -PathType Leaf)) { throw "Missing match roster: $MatchRoster" }
@@ -74,11 +75,25 @@ if ($MatchRoster) {
     }
     if ($RosVehicleTeam) {
         $RosVehicleTeam = $RosVehicleTeam.ToLowerInvariant()
-        $spawns = @($mapJson.spawns | Where-Object { $_.team -ceq $RosVehicleTeam })
-        if ($spawns.Count -ne 1) { throw "Expected one match spawn for the $RosVehicleTeam ROS vehicle." }
-        $rosSpawn = [string]$spawns[0].id
+        $teamList = if ($RosVehicleTeam -eq 'both') { @('red', 'blue') } else { @($RosVehicleTeam) }
+        for ($i = 0; $i -lt $teamList.Count; $i++) {
+            $t = $teamList[$i]
+            $spawns = @($mapJson.spawns | Where-Object { $_.team -ceq $t })
+            if ($spawns.Count -ne 1) { throw "Expected one match spawn for the $t ROS vehicle." }
+            $rosSeats += [pscustomobject]@{
+                Team = $t
+                Spawn = [string]$spawns[0].id
+                Port = ($RosPort + $i)
+                Domain = ($Domain + $i)
+            }
+        }
+        $rosSpawn = $rosSeats[0].Spawn
         $RosBridge = $RosControl = $RosAimControl = $RosImu = $RosLidar = $true
         if ($CameraHz -eq 0) { $CameraHz = 15 }
+        if ($RosVehicleTeam -eq 'both' -and -not $PSBoundParameters.ContainsKey('CameraWidth') -and -not $PSBoundParameters.ContainsKey('CameraHeight')) {
+            $CameraWidth = 640
+            $CameraHeight = 480
+        }
         if ($AutoSentry -and $NavigationSource) {
             $NavigationSource = Resolve-RepoPath $NavigationSource
             if (-not (Test-Path -LiteralPath $NavigationSource -PathType Leaf)) {
@@ -301,8 +316,8 @@ function Test-LaunchLog([string]$Path, [string]$Pattern) {
         (Select-String -LiteralPath $Path -Quiet -Pattern $Pattern -ErrorAction SilentlyContinue)
 }
 
-$bridgeProc = $null
-$sentryProc = $null
+$bridgeProcs = @()
+$sentryProcs = @()
 $ueLogDir = Join-Path $root ('artifacts/unreal/pure-simulator/' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $ueLogDir -Force | Out-Null
 $ueLogPath = Join-Path $ueLogDir 'ue.log'
@@ -313,68 +328,103 @@ try {
     Write-Output "Started UE5 Simulator (PID $($ueProc.Id))"
     Write-Output "UE logs: $ueLogPath"
 
+    $activeSeats = if ($rosSeats.Count -gt 0) { $rosSeats } else {
+        @([pscustomobject]@{ Team = 'default'; Spawn = $SpawnId; Port = $RosPort; Domain = $Domain })
+    }
     $ueRosReady = $false
     if ($enableRos -and -not $NoBridgeNode) {
         $ueRosReady = -not $MatchRoster
         if ($MatchRoster) {
-            Write-Output "Waiting for this match's UE5 ROS bridge on port $RosPort..."
+            $portList = ($activeSeats | ForEach-Object { $_.Port }) -join ', '
+            Write-Output "Waiting for match UE5 ROS bridge(s) on port(s) $portList..."
             $deadline = [DateTime]::UtcNow.AddSeconds(120)
             while (-not $ueProc.HasExited -and [DateTime]::UtcNow -lt $deadline) {
-                if (Test-LaunchLog $ueLogPath ('ROS_BRIDGE_READY loopback=127\.0\.0\.1:' + $RosPort + ' ')) {
+                $allReady = $true
+                foreach ($seat in $activeSeats) {
+                    if (-not (Test-LaunchLog $ueLogPath ('ROS_BRIDGE_READY loopback=[^ ]+:' + $seat.Port + ' '))) {
+                        $allReady = $false
+                        break
+                    }
+                }
+                if ($allReady) {
                     $ueRosReady = $true
                     break
                 }
                 [void]$ueProc.WaitForExit(500)
             }
             if (-not $ueRosReady -and -not $ueProc.HasExited) {
-                Write-Warning "Timed out waiting for the match ROS bridge. See $ueLogPath"
+                Write-Warning "Timed out waiting for the match ROS bridge(s). See $ueLogPath"
             }
         }
     }
 
     if ($ueRosReady -and -not $ueProc.HasExited) {
-        $bridgeLogDir = Join-Path $root ('artifacts/ros2/simulator-bridge-' + $ueProc.Id)
-        New-Item -ItemType Directory -Force -Path $bridgeLogDir | Out-Null
-        $bridgeOut = Join-Path $bridgeLogDir 'stdout.log'
-        $bridgeErr = Join-Path $bridgeLogDir 'stderr.log'
-        $bridgeArgs = @('-NoProfile','-File',(Quote-UnrealArgument (Join-Path $root 'tools/environment/Start-RosBridge.ps1')),
-            '-RobotId',$RobotId,'-Domain',$Domain,'-Port',$RosPort)
-        if ($ueArgs -contains '-RosLidar') { $bridgeArgs += '-Lidar' }
-        if ($RosAimControl) { $bridgeArgs += '-AimControl' }
-        if ($navigationFollowProfile) { $bridgeArgs += @('-NavigationFollowProfile',(Quote-UnrealArgument $navigationFollowProfile)) }
-        $bridgeProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $bridgeArgs -WindowStyle Hidden -PassThru `
-            -RedirectStandardOutput $bridgeOut -RedirectStandardError $bridgeErr
-        Write-Output "Started standalone rmsim_bridge ROS 2 node (PID $($bridgeProc.Id)) for robot_id=$RobotId on port=$RosPort"
-        Write-Output "External robot code can connect via ROS_DOMAIN_ID=$Domain (use_sim_time:=true)."
-        Write-Output "Bridge logs: $bridgeLogDir"
+        $seatStates = @()
+        foreach ($seat in $activeSeats) {
+            $suffix = if ($activeSeats.Count -gt 1) { '-' + $seat.Team } else { '' }
+            $bridgeLogDir = Join-Path $root ('artifacts/ros2/simulator-bridge-' + $ueProc.Id + $suffix)
+            New-Item -ItemType Directory -Force -Path $bridgeLogDir | Out-Null
+            $bridgeOut = Join-Path $bridgeLogDir 'stdout.log'
+            $bridgeErr = Join-Path $bridgeLogDir 'stderr.log'
+            $bridgeArgs = @('-NoProfile','-File',(Quote-UnrealArgument (Join-Path $root 'tools/environment/Start-RosBridge.ps1')),
+                '-RobotId',$RobotId,'-Domain',$seat.Domain,'-Port',$seat.Port)
+            if ($ueArgs -contains '-RosLidar') { $bridgeArgs += '-Lidar' }
+            if ($RosAimControl) { $bridgeArgs += '-AimControl' }
+            if ($navigationFollowProfile) { $bridgeArgs += @('-NavigationFollowProfile',(Quote-UnrealArgument $navigationFollowProfile)) }
+            $bProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $bridgeArgs -WindowStyle Hidden -PassThru `
+                -RedirectStandardOutput $bridgeOut -RedirectStandardError $bridgeErr
+            $bridgeProcs += $bProc
+            $seatStates += [pscustomobject]@{
+                Seat = $seat
+                BridgeProc = $bProc
+                BridgeOut = $bridgeOut
+                BridgeErr = $bridgeErr
+                BridgeLogDir = $bridgeLogDir
+                AttachPending = [bool]$AutoSentry
+                SentryProc = $null
+            }
+            Write-Output "Started standalone rmsim_bridge ROS 2 node (PID $($bProc.Id)) for $($seat.Team) robot_id=$RobotId on port=$($seat.Port) domain=$($seat.Domain)"
+            Write-Output "Bridge logs: $bridgeLogDir"
+        }
 
-        $attach = [bool]$AutoSentry
         $deadline = [DateTime]::UtcNow.AddSeconds(90)
         while (-not $ueProc.WaitForExit(500)) {
-            if ($bridgeProc.HasExited) {
-                Write-Warning "ROS 2 bridge exited (code=$($bridgeProc.ExitCode)). See $bridgeLogDir"
-                break
-            }
-            if ($attach) {
-                $readyPattern = 'RMSim bridge listening to local simulator state; waiting for TCP 127\.0\.0\.1:' + $RosPort + '$'
-                if ((Test-LaunchLog $bridgeErr $readyPattern) -or (Test-LaunchLog $bridgeOut $readyPattern)) {
-                    $attach = $false
-                    $sentryArgs = @('-NoProfile','-File',(Quote-UnrealArgument (Join-Path $root 'tools/environment/Start-ExternalSentry.ps1')),
-                        '-RobotId',$RobotId,'-Domain',$Domain,'-MapFile',(Quote-UnrealArgument $mapLaunch.MapFile),'-SpawnId',$rosSpawn,
-                        '-MatchAutonomy')
-                    if ($NavigationSource) { $sentryArgs += @('-NavigationSource',(Quote-UnrealArgument $NavigationSource)) }
-                    $sentryProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $sentryArgs -WindowStyle Hidden -PassThru `
-                        -RedirectStandardOutput (Join-Path $ueLogDir 'sentry.stdout.log') -RedirectStandardError (Join-Path $ueLogDir 'sentry.stderr.log')
-                    Write-Output "Started sentry_ws localization and navigation (PID $($sentryProc.Id)) for $RosVehicleTeam at spawn=$rosSpawn. Logs: $ueLogDir"
-                } elseif ([DateTime]::UtcNow -ge $deadline) {
-                    $attach = $false
-                    Write-Warning "Timed out waiting for the ROS 2 bridge node. See $bridgeLogDir"
+            $anyBridgeAlive = $false
+            foreach ($st in $seatStates) {
+                if (-not $st.BridgeProc.HasExited) {
+                    $anyBridgeAlive = $true
+                } else {
+                    if ($st.AttachPending) {
+                        $st.AttachPending = $false
+                        Write-Warning "ROS 2 bridge for $($st.Seat.Team) exited (code=$($st.BridgeProc.ExitCode)). See $($st.BridgeLogDir)"
+                    }
+                    continue
+                }
+                if ($st.AttachPending) {
+                    $readyPattern = 'RMSim bridge listening to local simulator state; waiting for TCP 127\.0\.0\.1:' + $st.Seat.Port + '$'
+                    if ((Test-LaunchLog $st.BridgeErr $readyPattern) -or (Test-LaunchLog $st.BridgeOut $readyPattern)) {
+                        $st.AttachPending = $false
+                        $tag = if ($seatStates.Count -gt 1) { "sentry-$($st.Seat.Team)" } else { 'sentry' }
+                        $sentryArgs = @('-NoProfile','-File',(Quote-UnrealArgument (Join-Path $root 'tools/environment/Start-ExternalSentry.ps1')),
+                            '-RobotId',$RobotId,'-Domain',$st.Seat.Domain,'-MapFile',(Quote-UnrealArgument $mapLaunch.MapFile),'-SpawnId',$st.Seat.Spawn,
+                            '-MatchAutonomy')
+                        if ($NavigationSource) { $sentryArgs += @('-NavigationSource',(Quote-UnrealArgument $NavigationSource)) }
+                        $sProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $sentryArgs -WindowStyle Hidden -PassThru `
+                            -RedirectStandardOutput (Join-Path $ueLogDir "$tag.stdout.log") -RedirectStandardError (Join-Path $ueLogDir "$tag.stderr.log")
+                        $st.SentryProc = $sProc
+                        $sentryProcs += $sProc
+                        Write-Output "Started sentry_ws localization and navigation (PID $($sProc.Id)) for $($st.Seat.Team) at spawn=$($st.Seat.Spawn) domain=$($st.Seat.Domain). Logs: $ueLogDir"
+                    } elseif ([DateTime]::UtcNow -ge $deadline) {
+                        $st.AttachPending = $false
+                        Write-Warning "Timed out waiting for the ROS 2 bridge node ($($st.Seat.Team)). See $($st.BridgeLogDir)"
+                    }
+                }
+                if ($st.SentryProc -and $st.SentryProc.HasExited) {
+                    Write-Warning "The sentry_ws connector for $($st.Seat.Team) exited (code=$($st.SentryProc.ExitCode)). See $ueLogDir"
+                    $st.SentryProc = $null
                 }
             }
-            if ($sentryProc -and $sentryProc.HasExited) {
-                Write-Warning "The sentry_ws connector exited (code=$($sentryProc.ExitCode)). See $ueLogDir"
-                $sentryProc = $null
-            }
+            if (-not $anyBridgeAlive) { break }
         }
     }
 
@@ -388,12 +438,16 @@ try {
     }
     exit $ueProc.ExitCode
 } finally {
-    if ($sentryProc -and -not $sentryProc.HasExited) {
-        Write-Output "Stopping sentry_ws (PID $($sentryProc.Id))..."
-        & taskkill.exe /PID $sentryProc.Id /T /F | Out-Null
+    foreach ($sProc in $sentryProcs) {
+        if ($sProc -and -not $sProc.HasExited) {
+            Write-Output "Stopping sentry_ws (PID $($sProc.Id))..."
+            & taskkill.exe /PID $sProc.Id /T /F | Out-Null
+        }
     }
-    if ($bridgeProc -and -not $bridgeProc.HasExited) {
-        Write-Output "Stopping rmsim_bridge (PID $($bridgeProc.Id))..."
-        & taskkill.exe /PID $bridgeProc.Id /T /F | Out-Null
+    foreach ($bProc in $bridgeProcs) {
+        if ($bProc -and -not $bProc.HasExited) {
+            Write-Output "Stopping rmsim_bridge (PID $($bProc.Id))..."
+            & taskkill.exe /PID $bProc.Id /T /F | Out-Null
+        }
     }
 }

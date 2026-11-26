@@ -238,7 +238,7 @@ void ARMUCGameReferee::StepFieldDevices(double DeltaSeconds)
         GameProgress == ERMUCGameProgress::Running && MatchElapsedSeconds >= TacticalHpAt)
     {
         bTacticalHpFixtureTriggered = true;
-        const FieldTeam Seat = TeamFor(RosCompetitor).value_or(FriendlyTeam());
+        const FieldTeam Seat = (!RosCompetitors.IsEmpty() ? TeamFor(RosCompetitors[0]) : std::nullopt).value_or(FriendlyTeam());
         auto& Record = Competitor(Seat);
         const int32 Before = Record.Hp;
         if (Before > 140)

@@ -69,7 +69,8 @@ public:
     TSharedRef<FJsonObject> StateFor(const AVehicleRig* Robot) const;
     FString RequestRosShot(AVehicleRig* Robot, const FTransform& MuzzleTransform);
     void SetRosFlywheels(AVehicleRig* Robot, bool bRequested);
-    void BindRosCompetitor(AVehicleRig* Robot) { RosCompetitor = Robot; }
+    void BindRosCompetitor(AVehicleRig* Robot) { if (Robot) RosCompetitors.AddUnique(Robot); }
+    bool IsRosCompetitor(const AVehicleRig* Robot) const { return Robot && RosCompetitors.Contains(const_cast<AVehicleRig*>(Robot)); }
     bool IsChassisPoweredFor(const AVehicleRig* Robot) const;
     bool IsSimMatchAutonomyActive(const AVehicleRig* Robot) const;
     bool SetSimMatchStance(const AVehicleRig* Robot, const FString& Stance);
@@ -134,7 +135,7 @@ private:
 
     UPROPERTY() AVehicleRig* Rig = nullptr;
     UPROPERTY() AVehicleRig* EnemyRig = nullptr;
-    UPROPERTY() AVehicleRig* RosCompetitor = nullptr;
+    UPROPERTY() TArray<AVehicleRig*> RosCompetitors;
 
     // Direct bindings to REAL RMUC2027 arena actors from FMapStage::MapBoxes
     UPROPERTY() AStaticMeshActor* VisualBaseActor = nullptr;

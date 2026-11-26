@@ -758,13 +758,13 @@ bool ARMUCGameReferee::IsChassisPoweredFor(const AVehicleRig* Robot) const
 
 bool ARMUCGameReferee::IsSimMatchAutonomyActive(const AVehicleRig* Robot) const
 {
-    return bPhysicalMatch && Robot == RosCompetitor &&
+    return bPhysicalMatch && IsRosCompetitor(Robot) &&
         GameProgress == ERMUCGameProgress::Running && IsChassisPoweredFor(Robot);
 }
 
 bool ARMUCGameReferee::SetSimMatchStance(const AVehicleRig* Robot, const FString& Stance)
 {
-    if (!bPhysicalMatch || Robot != RosCompetitor || GameProgress != ERMUCGameProgress::Running) return false;
+    if (!bPhysicalMatch || !IsRosCompetitor(Robot) || GameProgress != ERMUCGameProgress::Running) return false;
     const auto Team = TeamFor(Robot);
     if (!Team || Competitor(*Team).Hp <= 0) return false;
     ERMUCSentryStance Target = ERMUCSentryStance::Move;
@@ -1052,7 +1052,7 @@ void ARMUCGameReferee::Advance(
     if (bThermalProof && GameProgress == ERMUCGameProgress::Running)
         bFirePressed = MatchElapsedSeconds < 11.0 || (MatchElapsedSeconds >= 14.0 && MatchElapsedSeconds < 23.0);
 #endif
-    if (RosCompetitor != Rig) SetRosFlywheels(Rig, bFirePressed && bHasMuzzle);
+    if (!IsRosCompetitor(Rig)) SetRosFlywheels(Rig, bFirePressed && bHasMuzzle);
     if (GameProgress == ERMUCGameProgress::Running)
     {
         for (FieldTeam Team : FRMUCFieldRules::Teams)

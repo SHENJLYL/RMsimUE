@@ -16,12 +16,24 @@ class URosAimController;
 class URosImuComponent;
 class URosLidarComponent;
 
+struct FRosBridgeOptions
+{
+    int32 PortOverride = -1;
+    FString RobotIdOverride;
+    FString BindAddress;
+    double CapturePhaseFraction = 0.0;
+    bool bLightweightAimCamera = false;
+    bool bAllowImu = true;
+    bool bAllowLidar = true;
+};
+
 UCLASS()
 class RMSIM_API URosBridgeComponent : public UActorComponent
 {
     GENERATED_BODY()
 public:
     bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,FString& Error);
+    bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,const FRosBridgeOptions& Options,FString& Error);
     void Advance();
     void ResetEpoch();
     void SetOperatorBrake(bool Brake);
@@ -61,7 +73,8 @@ private:
     int32 Port=9451,Width=1280,Height=720,SendOffset=0;
     int64 Epoch=0,TickIndex=0,AcceptedSeq=-1,RejectedCommands=0,Images=0;
     // Generic ROS retains 10Hz RGB; zero disables pixels while preserving TF/calibration.
-    double CameraHz=10,HFovDegrees=60,EpochSolverTime=0,LastCommandWall=-1,LastPollWall=0,LastStateWall=0,LastSendProgressWall=0,NextImageSim=0;
+    double CameraHz=10,HFovDegrees=60,CapturePhaseFraction=0.0,EpochSolverTime=0,LastCommandWall=-1,LastPollWall=0,LastStateWall=0,LastSendProgressWall=0,NextImageSim=0;
+    bool bLightweightAimCamera=false;
     TArray<TSharedPtr<FJsonValue>> SensorMountSamples;
     int64 DroppedSensorMountSamples=0;
     TArray<uint8> Inbound,Outbound;
