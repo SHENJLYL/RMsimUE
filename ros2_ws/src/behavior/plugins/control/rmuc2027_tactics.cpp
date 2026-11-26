@@ -436,10 +436,15 @@ public:
       const bool armor_hurt = (ref->hp_deduction_reason == 0) &&
         ((last_self_hp_ > 0 && ref->hp < last_self_hp_) || ref->is_hp_deduced);
       if (armor_hurt) {
-        self_under_attack_until_ = now + 4.5;
+        const bool fresh_attack = (now >= self_under_attack_until_ - 3.5);
+        self_under_attack_until_ = now + 5.0;
         static constexpr std::array<double, 4> kArmorYawOffset{0.0, kPi * 0.5, kPi, -kPi * 0.5};
         const int aid = std::clamp(ref->armor_id, 0, 3);
-        hurt_search_yaw_ = WrapAngle(ref->body_yaw_rad + kArmorYawOffset[static_cast<std::size_t>(aid)]);
+        const double next_yaw = WrapAngle(ref->body_yaw_rad + kArmorYawOffset[static_cast<std::size_t>(aid)]);
+        if (fresh_attack || std::abs(WrapAngle(next_yaw - hurt_search_yaw_)) > 0.6) {
+          scan_phase_ = 0.0;  // Snap dead-center onto hit armor first before sweeping!
+        }
+        hurt_search_yaw_ = next_yaw;
       }
       last_self_hp_ = ref->hp;
 
@@ -850,10 +855,10 @@ private:
     const bool targeting_enemy_outpost = (mode == Mode::EnemyOutpostAttack);
     const bool targeting_own_outpost = (mode == Mode::OwnOutpostAttack);
     if (under_attack && !vision.enemy_visible) {
-      // Highest priority: snap gimbal toward hit armor direction and sweep fast to acquire attacker!
+      // Highest priority: snap gimbal toward hit armor direction and sweep wide/fast to acquire attacker!
       center_yaw = hurt_search_yaw_;
-      amp_yaw = 1.65;   // +/- 95 deg fast counter-sweep centered on hit armor
-      freq = 3.2;
+      amp_yaw = 2.15;   // +/- 123 deg rapid counter-sweep covering full flank/rear even while spinning
+      freq = 3.6;
       center_pitch = 0.0;
       amp_pitch = 0.04;
       publish_while_moving = true;
@@ -923,11 +928,16 @@ private:
     fire.data = active && !ref->shooter_locked && !heat_throttled_ &&
       (ref->ammo > 0 || ref->own_fortress_active);
 
+    const bool under_attack = (last_tick_ < self_under_attack_until_);
     std_msgs::msg::String target;
-    const bool attack_outpost = mode == Mode::EnemyOutpostAttack ||
-      (mode == Mode::OwnOutpostAttack && ref && ref->own_outpost_enemy_owned && ref->own_outpost_hp > 0);
+    // If taking armor fire while sieging an outpost/base, immediately drop the structure lock
+    // (ENEMY_VEHICLE_FIRST forces sp_vision_25 to release outpost/base) so gimbal counter-sweep
+    // turns around right away to acquire and return fire on the attacking enemy vehicle!
+    const bool attack_outpost = !under_attack && (mode == Mode::EnemyOutpostAttack ||
+      (mode == Mode::OwnOutpostAttack && ref && ref->own_outpost_enemy_owned && ref->own_outpost_hp > 0));
+    const bool attack_base = !under_attack && mode == Mode::EnemyBaseAttack;
     target.data = attack_outpost ? "ENEMY_VEHICLE_THEN_OUTPOST" :
-      (mode == Mode::EnemyBaseAttack ? "ENEMY_VEHICLE_THEN_BASE" : "ENEMY_VEHICLE_FIRST");
+      (attack_base ? "ENEMY_VEHICLE_THEN_BASE" : "ENEMY_VEHICLE_FIRST");
     priority_->publish(target);
     fire_->publish(fire);
     aim_->publish(aim);
@@ -938,7 +948,6 @@ private:
     //   MOVE    (150W, 10/s cool, 0% def, +25% vuln): fast cross-field patrol/transit without active combat
     std::string desired_stance = ref ? ref->stance : "MOVE";
     if (active) {
-      const bool under_attack = (last_tick_ < self_under_attack_until_);
       const bool low_hp_defense = ref->hp <= 180 || healing_;
       const bool defensive_objective =
         mode == Mode::OwnOutpostHeal || mode == Mode::OwnBaseSupply || mode == Mode::OwnFortress ||
@@ -978,7 +987,7 @@ private:
 
     example_interfaces::msg::Float32 spin;
     const bool calm_outpost_siege =
-      !navigating && (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) && !vision.enemy_visible;
+      !navigating && !under_attack && (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) && !vision.enemy_visible;
     if (!active || quiet_supply || power_throttled_) {
       spin.data = 0.0f;
     } else if (navigating) {
