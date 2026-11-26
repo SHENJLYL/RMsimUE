@@ -345,7 +345,7 @@ class RMSimLauncherApp(tk.Tk):
         self.match_preparation_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="赛前准备（F6 跳过：按1下10s倒计时 / 按2下直接开赛）",
+            text="赛前准备（P 键跳过：按1下10s倒计时 / 按2下直接开赛）",
             variable=self.match_preparation_var,
             style="Card.TCheckbutton",
         ).pack(side="left", padx=(0, 12))

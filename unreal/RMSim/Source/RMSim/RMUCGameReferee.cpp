@@ -444,7 +444,7 @@ void ARMUCGameReferee::StartMatchNow()
         GameProgress = ERMUCGameProgress::CountDown;
         StageRemainSeconds = 10.0;
         HudAudioCountdownSecond = 0;
-        PushBannerEvent(TEXT("COUNTDOWN 10s — 再按 F6 直接开赛"), 3.0);
+        PushBannerEvent(TEXT("COUNTDOWN 10s — 再按 P 直接开赛"), 3.0);
         return;
     }
     if (GameProgress != ERMUCGameProgress::Running)

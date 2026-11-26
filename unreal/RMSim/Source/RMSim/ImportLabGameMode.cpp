@@ -1307,7 +1307,7 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
         }
         if (PC->WasInputKeyJustPressed(EKeys::T) || PC->WasInputKeyJustPressed(EKeys::F5))
             LastRuneClientResult = Referee->RequestClientRune(Rig);
-        if (PC->WasInputKeyJustPressed(EKeys::F6)) Referee->StartMatchNow();
+        if (PC->WasInputKeyJustPressed(EKeys::P) || PC->WasInputKeyJustPressed(EKeys::F6)) Referee->StartMatchNow();
         if (PC->WasInputKeyJustPressed(EKeys::F7)) Referee->ResetMatch(true);
         if (PC->WasInputKeyJustPressed(EKeys::F8)) Referee->ToggleFriendlyTeam();
         if (PC->WasInputKeyJustPressed(EKeys::F9)) Referee->InjectSelfArmorHit(0, 20);
