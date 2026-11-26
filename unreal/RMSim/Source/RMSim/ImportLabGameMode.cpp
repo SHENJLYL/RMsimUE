@@ -1423,7 +1423,8 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     Input.MapPointOfInterest = PC->WasInputKeyJustPressed(EKeys::MiddleMouseButton);
     if (Referee && Focused)
     {
-        if (PC->WasInputKeyJustPressed(EKeys::F3)) Referee->RequestOwnAmmoPurchase();
+        if (PC->WasInputKeyJustPressed(EKeys::F) || PC->WasInputKeyJustPressed(EKeys::F3))
+            Referee->RequestOwnAmmoPurchase();
         if (PC->WasInputKeyJustPressed(EKeys::L)) Referee->ToggleOwnDartTray();
         if (bDartPressed)
         {

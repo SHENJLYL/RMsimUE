@@ -2855,7 +2855,7 @@ void ARMUCGameReferee::DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double Gyro
     }
     else if (OwnPoints.bSupply)
     {
-        St.ZoneStatusText = TEXT("补给区  //  持续回血 + F3 买弹兑换");
+        St.ZoneStatusText = TEXT("补给区  //  持续回血 + 按 F 领弹/买弹(10发)");
         St.bZoneStatusLocked = false;
     }
     else if (OwnPoints.bOutpost)

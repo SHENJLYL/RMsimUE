@@ -219,39 +219,26 @@ public:
             FractionalRecovery = 0.0;
             return;
         }
-        if (Effects.bSupply)
+        if (Effects.bSupply && bIsSentry)
         {
             const int AvailableMinutes = std::clamp(static_cast<int>((Elapsed + TimeTolerance) / 60.0), 0, 6);
-            if (bIsSentry)
+            if (SentryFreeAmmoClaimed < SentryFreeAmmoCap && Allowance < 200 && AvailableMinutes > ClaimedMinutes)
             {
-                if (SentryFreeAmmoClaimed < SentryFreeAmmoCap && Allowance < 200 && AvailableMinutes > ClaimedMinutes)
-                {
-                    // Reserve half of each minute's 100 free 17mm rounds for infantry teammates;
-                    // sentry claims at most 50/min and at most 300 total across the match.
-                    const int Grant = std::min(50 * (AvailableMinutes - ClaimedMinutes),
-                        SentryFreeAmmoCap - SentryFreeAmmoClaimed);
-                    if (Grant > 0)
-                    {
-                        Allowance += Grant;
-                        SentryFreeAmmoClaimed += Grant;
-                    }
-                    ClaimedMinutes = AvailableMinutes;
-                }
-            }
-            else if (SharedInfantryFreeClaimed && SharedInfantryClaimedMinutes &&
-                *SharedInfantryFreeClaimed < SentryFreeAmmoCap && AvailableMinutes > *SharedInfantryClaimedMinutes)
-            {
-                // Infantry (#3/#4) share the remaining 50/min (up to 300 total) from the team's free 17mm pool.
-                const int Grant = std::min(50 * (AvailableMinutes - *SharedInfantryClaimedMinutes),
-                    SentryFreeAmmoCap - *SharedInfantryFreeClaimed);
+                // Reserve half of each minute's 100 free 17mm rounds for infantry teammates;
+                // sentry claims at most 50/min and at most 300 total across the match.
+                // Infantry (#3/#4) claim their 300-round share manually at 10 rounds per F press in Supply Zone.
+                const int Grant = std::min(50 * (AvailableMinutes - ClaimedMinutes),
+                    SentryFreeAmmoCap - SentryFreeAmmoClaimed);
                 if (Grant > 0)
                 {
                     Allowance += Grant;
-                    *SharedInfantryFreeClaimed += Grant;
+                    SentryFreeAmmoClaimed += Grant;
                 }
-                *SharedInfantryClaimedMinutes = AvailableMinutes;
+                ClaimedMinutes = AvailableMinutes;
             }
         }
+        (void)SharedInfantryFreeClaimed;
+        (void)SharedInfantryClaimedMinutes;
         if (Hp >= MaxHp)
         {
             FractionalRecovery = 0.0;

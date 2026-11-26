@@ -3,7 +3,37 @@
 
 void ARMUCGameReferee::RequestOwnAmmoPurchase()
 {
-    RequestSentryAmmoPurchase(Rig, false);
+    FMatchRobotSlot* Slot = OwnSlot();
+    if (!Slot || GameProgress != ERMUCGameProgress::Running || Slot->State.Hp <= 0) return;
+
+    const auto& Points = Slot->PointEffects;
+    if (Points.bSupply)
+    {
+        // Inside Supply Zone: Infantry (#3/#4) first claim 10 free rounds per press from the team's
+        // unlocked free infantry pool (50/min up to 300 total), then seamlessly buy 10 rounds / 10 gold.
+        if (!Slot->IsSentry())
+        {
+            const unsigned TeamIdx = FRMUCFieldRules::Index(Slot->Team);
+            const int32 AvailableMinutes = FMath::Clamp(FMath::FloorToInt((MatchElapsedSeconds + 1e-9) / 60.0), 0, 6);
+            const int32 UnlockedFree = FMath::Min(FRMUCSupplyRules::SentryFreeAmmoCap, AvailableMinutes * 50);
+            const int32 RemainingFree = UnlockedFree - TeamInfantryFreeAmmoClaimed[TeamIdx];
+            if (RemainingFree >= FRMUCSupplyRules::LocalAmmoAmount)
+            {
+                constexpr int32 StepRounds = FRMUCSupplyRules::LocalAmmoAmount; // 10 rounds per press
+                Slot->State.ProjectileAllowance17mm += StepRounds;
+                TeamInfantryFreeAmmoClaimed[TeamIdx] += StepRounds;
+                PushCombatBroadcast(BroadcastTeam(Slot->Team), Slot->DisplayName(),
+                    FString::Printf(TEXT("免费领弹 +%d (剩余可领 %d)"), StepRounds, RemainingFree - StepRounds),
+                    0, TEXT(""), 2.0);
+                return;
+            }
+        }
+        RequestSentryAmmoPurchase(Rig, false);
+        return;
+    }
+
+    // Outside Supply Zone: order the minimum official remote purchase (100 rounds / 150 gold, 6s out of combat).
+    RequestSentryAmmoPurchase(Rig, true);
 }
 
 void ARMUCGameReferee::RequestSentryAmmoPurchase(const AVehicleRig* Vehicle, bool bRemote)
