@@ -1,5 +1,6 @@
 #include "ImportLabGameMode.h"
 #include "VehicleRig.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "Components/StaticMeshComponent.h"
 #include "Dom/JsonObject.h"
 #include "Engine/World.h"
@@ -13,6 +14,42 @@
 bool AImportLabGameMode::TickDedicatedMujocoProof()
 {
 #if WITH_DEV_AUTOMATION_TESTS
+    if(FParse::Param(FCommandLine::Get(),TEXT("ManualGyroAimProof")))
+    {
+        auto* Aim = GetAimCapture();
+        if (!Rig || Rig->GetDedicatedMujocoPeriod() <= 0 || !Rig->HasSteeringModules() || !Aim)
+        { Abort(TEXT("Manual gyro aim proof requires dedicated MuJoCo, swerve and a gimbal")); return true; }
+
+        const double Time = Rig->GetSimulationTimeSeconds();
+        const double Step = FMath::Max(0., Time - DedicatedPreviousSimTime);
+        DedicatedPreviousSimTime = Time;
+        FManualControlInput Input;
+        Input.ToggleSight = Time > .5 && !bSightMode;
+        Input.ToggleGyro = Time > 1. && !bGyroMode;
+        if (Time > 3.5 && Time < 5.5)
+            Input.Throttle = .6 / Rig->GetDriveParameter(TEXT("MaxForwardSpeedMps"));
+        if (Time > 3.5 && Time < 4.) Input.MouseY = 220. * Step;
+        Input.FreeLook = Time > 5.5;
+        if (Input.FreeLook && Time < 6.) Input.MouseX = 500. * Step;
+        ApplyManualInput(Input, Step);
+        Rig->SubmitDedicatedMujocoInputs();
+
+        constexpr double SampleTimes[] = {2.7, 3., 3.3, 4.7, 5., 5.3, 6.1, 6.4, 6.7};
+        if (Time >= SampleTimes[DedicatedMujocoProofPhase])
+        {
+            const FVector Target = Input.FreeLook ? HeldManualAimDirection : FRotator(OrbitPitch, OrbitYaw, 0).Vector();
+            const double Error = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(
+                FVector::DotProduct(Target, Aim->GetForwardVector()), -1., 1.)));
+            UE_LOG(LogRMSim, Display, TEXT("MANUAL_GYRO_AIM_PROOF sample=%d error_deg=%.6f chassis_rad_s=%.6f speed_cm_s=%.6f view_pitch_deg=%.6f"),
+                DedicatedMujocoProofPhase, Error, Rig->GetMeasuredYawRate(), Rig->GetCommandOriginVelocity().Size2D(), OrbitPitch);
+            if (++DedicatedMujocoProofPhase == UE_ARRAY_COUNT(SampleTimes))
+            {
+                bReady = false;
+                FPlatformMisc::RequestExitWithStatus(false, 0);
+            }
+        }
+        return true;
+    }
     if(!FParse::Param(FCommandLine::Get(),TEXT("MujocoThreadProof")))return false;
     if(!Rig||Rig->GetDedicatedMujocoPeriod()<=0)
     {

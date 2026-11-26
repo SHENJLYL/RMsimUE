@@ -776,8 +776,9 @@ def main() -> int:
         if args.lidar_serial_query: display_flags.append('-LidarSerialQuery')
         if args.viewport_hz: display_flags.append('-RMSimViewportHz='+str(args.viewport_hz))
         if args.pace_real_time: display_flags.append('-SimRealTimePace')
+        if args.offscreen: display_flags.append('-NoSound')
         ue_command = [str(value) for value in [editor, project, '/Engine/Maps/Entry?game=/Script/RMSim.ImportLabGameMode',
-            '-game',*display_flags,'-NoSplash','-NoSound',
+            '-game',*display_flags,'-NoSplash',
             # Apply before world/Chaos creation; manual entry points retain their 1/240 s substeps.
             provenance['physics_config_override'],
             '-RosControl','-RosAimControl','-RosImu','-RosLidar','-RosOperatorGyroControl',

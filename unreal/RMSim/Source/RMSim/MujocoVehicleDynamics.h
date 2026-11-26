@@ -26,6 +26,7 @@ struct FMujocoContactSample
 {
     FString BodyName;
     FString OtherName;
+    FString OtherBodyName;
     FVector PointCm = FVector::ZeroVector;
     FVector IntoObstacleNormal = FVector::ZeroVector;
     FVector PreImpactVelocityCmS = FVector::ZeroVector;
@@ -34,6 +35,7 @@ struct FMujocoContactSample
     double TimeSeconds = 0;
     int32 OtherGeom = INDEX_NONE;
     int32 OtherFlex = INDEX_NONE;
+    int32 OtherVehicleSlot = INDEX_NONE;
 };
 
 /** A single authoritative native MuJoCo model; never advances Chaos bodies. */
@@ -43,14 +45,17 @@ public:
     FMujocoVehicleDynamics();
     ~FMujocoVehicleDynamics();
     bool Initialize(const FString& Filename, const TArray<FString>& RequiredBodies,
+        const FString& RigFilename, const FString& DriveProfileFilename, FString& Error, bool bMatchWorld = false);
+    bool AttachOpponent(const TSharedPtr<FMujocoVehicleDynamics>& World, const TArray<FString>& RequiredBodies,
         const FString& RigFilename, const FString& DriveProfileFilename, FString& Error);
     bool Reset(const FTransform& ChassisPose, FString& Error, double InitialYaw = 0, double InitialPitch = 0);
     bool Step(double Seconds, FString& Error);
     bool StartDedicated(double PeriodSeconds, FString& Error);
     void StopDedicated();
-    bool IsDedicated() const { return Dedicated.IsValid(); }
+    bool IsDedicated() const { return World().Dedicated.IsValid(); }
+    bool IsMatchWorld() const { return World().bDualRig; }
     void SetDedicatedPaused(bool Paused);
-    void SubmitDedicatedControls(double DeadlineWallSeconds);
+    void SubmitDedicatedControls(double DeadlineWallSeconds, double OpponentDeadlineWallSeconds = 0);
     bool ConsumeDedicatedFrame(bool& Updated, FString& Error);
     bool ReadDedicatedProgress(uint64& Steps, uint64& Failsafes) const;
     void VisitDedicatedQueryFrames(TFunctionRef<void(double,const TArray<FTransform>&,bool)> Visitor);
@@ -73,7 +78,7 @@ public:
         const FTransform& LocalMount, FTransform& OutPose, FVector& OutPointVelocityCmS,
         FVector& OutAngularVelocityRadS) const;
     bool GetSensorPoseHistoryRange(double& OldestSolverTime, double& NewestSolverTime, int32& SampleCount) const;
-    bool IsTimingEnabled() const { return bTimingEnabled; }
+    bool IsTimingEnabled() const { return World().bTimingEnabled; }
     void RecordTiming(EMujocoTimingScope Scope, double WallSeconds) const;
     void FlushTiming();
     const TArray<FString>& BodyNames() const { return OrderedBodyNames; }
@@ -91,11 +96,17 @@ private:
     struct FDedicated;
     TUniquePtr<FImplementation> Impl;
     TUniquePtr<FDedicated> Dedicated;
+    TSharedPtr<FMujocoVehicleDynamics> SharedWorld;
+    FMujocoVehicleDynamics& World() { return SharedWorld ? *SharedWorld : *this; }
+    const FMujocoVehicleDynamics& World() const { return SharedWorld ? *SharedWorld : *this; }
+    int32 VehicleSlot() const { return SharedWorld ? 1 : 0; }
     TSharedPtr<FJsonObject> ManifestObject;
     TArray<FString> OrderedBodyNames;
-    TArray<FMujocoContactSample> FrameContacts;
+    TArray<FMujocoContactSample> FrameContacts[2];
     FString ModelPath;
     FString ModelMd5;
+    FString SourceRigPath;
+    FString SourceDriveProfilePath;
     FString RootBodyName = TEXT("body");
     FString YawBodyName = TEXT("yaw");
     FString PitchBodyName = TEXT("pitch");
@@ -103,12 +114,13 @@ private:
     bool bPhysicsIdentityVerified = false;
     double RemainderSeconds = 0;
     uint64 TotalSteps = 0;
-    uint64 ResetCount = 0;
+    uint64 ResetCount[2] = {};
     int32 LastFrameSteps = 0;
-    double MaximumPenetrationM = 0;
+    double MaximumPenetrationM[2] = {};
+    bool bDualRig = false;
     bool ValidateState(FString& Error) const;
     void CollectContacts(const TArray<FVector>& BeforeVelocities);
-    bool CaptureSensorHistory(FString& Error);
+    bool CaptureSensorHistory(FString& Error, int32 Slot);
     bool FindSensorHistoryBracket(double SolverTime, int32& Lower, int32& Upper, double& Alpha) const;
     void ApplyBodyDamping(int32 Body, const FMujocoBodyState& State);
     bool PrepareBodyDamping(FString& Error);

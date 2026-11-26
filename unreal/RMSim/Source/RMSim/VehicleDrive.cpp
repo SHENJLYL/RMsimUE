@@ -25,7 +25,7 @@ void DriveBasis(const FRotator& Rotation,FVector2D& Forward,FVector2D& Left)
 }
 }
 
-bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FString& Error)
+bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FString& Error,bool UseConfiguredGyroLimits)
 {
     const TSharedPtr<FJsonObject> *Profile=nullptr,*Control=nullptr,*Physics=nullptr;
     if(Spec->TryGetObjectField(TEXT("drive_profile"),Profile))
@@ -40,6 +40,7 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
         {Error=TEXT("drive profile requires control and physics parameters");return false;}
         PhysicsOverrides=*Physics;
     }
+    constexpr double NumericRateMaximum=TNumericLimits<double>::Max();
     struct FSetting {const TCHAR* Name;double Default,Minimum,Maximum;};
     for(const FSetting& P:{FSetting{TEXT("MaxForwardSpeedMps"),3,.1,20},{TEXT("MaxReverseSpeedMps"),1.5,.1,20},
         {TEXT("MaxLateralSpeedMps"),2,.1,20},{TEXT("LinearAccelerationMps2"),.8,.05,20},
@@ -48,7 +49,8 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
         {TEXT("LinearJerkMps3"),4,.1,100},{TEXT("DecelerationJerkMps3"),20,.1,100},{TEXT("ManualYawRateRadS"),PI/2,.1,10},
         {TEXT("LateralAccelerationMps2"),10,.1,30},{TEXT("DirectionJerkMps3"),100,.1,200},
         {TEXT("AngularAccelerationRadS2"),3,.1,50},{TEXT("AngularDecelerationRadS2"),5,.1,50},
-        {TEXT("GyroDefaultRadS"),2,.1,10},{TEXT("GyroMinRadS"),.1,.1,10},{TEXT("GyroMaxRadS"),5,.1,10},
+        {TEXT("GyroDefaultRadS"),2,.1,NumericRateMaximum},{TEXT("GyroMinRadS"),.1,.1,NumericRateMaximum},
+        {TEXT("GyroMaxRadS"),5,.1,NumericRateMaximum},
         {TEXT("GyroStepRadS"),.5,.05,5},{TEXT("SteeringRateRadS"),15.7079632679,.1,50},
         {TEXT("SteeringStiffnessNmRad"),80,.1,1000},{TEXT("SteeringDampingNmS"),8,.01,100},
         {TEXT("SteeringTorqueNm"),8,.1,100},{TEXT("MaxWheelSpeedMps"),4,.1,25},
@@ -63,12 +65,14 @@ bool AVehicleRig::InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FSt
     if(GetDriveParameter(TEXT("GyroMinRadS"))>GetDriveParameter(TEXT("GyroDefaultRadS"))||
        GetDriveParameter(TEXT("GyroDefaultRadS"))>GetDriveParameter(TEXT("GyroMaxRadS")))
     {Error=TEXT("gyro default must lie between minimum and maximum");return false;}
-    // Older vehicle packages may specify a higher maximum. Keep their profiles
-    // loadable and apply the simulator-wide cap at the shared drive boundary.
-    for (const TCHAR* Key : {TEXT("GyroMinRadS"), TEXT("GyroDefaultRadS"), TEXT("GyroMaxRadS")})
+    // The shared match world uses the vehicle profile. Practice retains its existing cap.
+    if(!UseConfiguredGyroLimits)
     {
-        double& Rate = DriveParameters.FindChecked(Key);
-        Rate = FMath::Min(Rate, 5.0);
+        for (const TCHAR* Key : {TEXT("GyroMinRadS"), TEXT("GyroDefaultRadS"), TEXT("GyroMaxRadS")})
+        {
+            double& Rate = DriveParameters.FindChecked(Key);
+            Rate = FMath::Min(Rate, 5.0);
+        }
     }
     return true;
 }

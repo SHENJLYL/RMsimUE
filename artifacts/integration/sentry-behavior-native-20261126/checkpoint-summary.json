@@ -1,0 +1,86 @@
+{
+  "build_command": "D:/simulator/tools/environment/Build-Behavior.ps1",
+  "scope": "Windows Humble on isolated localhost ROS domain 190",
+  "behavior": "aa4d82b73ae3c404b3037f2630eb2950dc0bbea4",
+  "behaviortree_ros2": "5e3979e16bcfd7369c8df6d2c903e89e86f9a80b",
+  "type_support": "dji_referee_protocol/msg/GameStatus loaded",
+  "client_result": "rmsim_native_smoke succeeded in one tick",
+  "loaded_plugins": [
+    "calculate_attack_pose.dll",
+    "competition_conditions.dll",
+    "is_attacked.dll",
+    "is_detect_enemy.dll",
+    "is_game_status.dll",
+    "is_manual_start.dll",
+    "is_map_ready.dll",
+    "is_nav2_ready.dll",
+    "is_rfid_detected.dll",
+    "is_status_ok.dll",
+    "is_tf_ready.dll",
+    "navigate_goal_pose.dll",
+    "print_referee_status.dll",
+    "pub_auto_aim.dll",
+    "pub_gimbal_absolute.dll",
+    "pub_gimbal_velocity.dll",
+    "pub_nav2_goal.dll",
+    "pub_spin_speed.dll",
+    "pub_twist.dll",
+    "rate_controller.dll",
+    "recovery_node.dll",
+    "send_nav2_goal.dll",
+    "send_nav2_through_poses.dll",
+    "tick_after_timeout_node.dll"
+  ],
+  "loaded_original_phase1_xml": true,
+  "loaded_absolute_xml_directory": true,
+  "navigation_goal_frame_ids": [
+    [
+      "map"
+    ],
+    [
+      "smoke/map",
+      "smoke/map"
+    ]
+  ],
+  "sha256": {
+    "behavior_server.exe": "63c45bf40818947eeb6274bee2be4731b12c23f55324a718410bad99b0568539",
+    "behavior_client.exe": "52d93e8836344efd4d399e31d4d31c3089edcdb1e9d24b9ea8ff8afe9a0ead91",
+    "calculate_attack_pose.dll": "223cd2d4168ecee018d4519c05f1b0e1ae8a2a85651ba74d11a22ced2c424e47",
+    "competition_conditions.dll": "f04fd4c2ada38a95ebc76fd8ab09961853b9b7f69e324aeb68f07b7ce6c06f56",
+    "is_attacked.dll": "1236470a7f699c026daf9b566cd7a08819b91f891f8056f215110952be6fd455",
+    "is_detect_enemy.dll": "60382d9b489313b5dd955aca3cb69c5617632aee31914e84a22b846a260c98e0",
+    "is_game_status.dll": "17d47281829283dd41483cb28cc6cea1a3aa3301737e199f20c348828e366958",
+    "is_manual_start.dll": "d3f67cf026935db17f6f55c971a6f57a80ccfe08f2459c59c183c9c3fd796880",
+    "is_map_ready.dll": "0390c328c4ff428922d656e9b0380bb9773285ff2ebfd21e133c5b9bfc539809",
+    "is_nav2_ready.dll": "3bc0559653d63a93e1a00118440404b38884d3efbecba9387dfaf4a0ffee63ec",
+    "is_rfid_detected.dll": "db85cb9e8892c1ba7bfbb6093b1a877aa179e38b775bf351cb76a02d5a465a40",
+    "is_status_ok.dll": "eec5817976e74e0921ca927aa7869fca3aef542d64171b765207bb9424f6df4a",
+    "is_tf_ready.dll": "fc8555b0a607650556ecc927689090d34b63a53d1adac260cb5c5f128f930d3b",
+    "navigate_goal_pose.dll": "16258738a602c7c4efc16670a6919cfa222623b17470640320d14e7a07e73f81",
+    "print_referee_status.dll": "45a305ab2dc22037d504df82a938e2329ef0fb0a266c1bd4b94def89c8c4e742",
+    "pub_auto_aim.dll": "68bac10c3ed7e083fc624114091e2ced113d8ecb495d113e1c21d5ed46670431",
+    "pub_gimbal_absolute.dll": "d1a315af1cf70b777e2f5addaa027c4200df4f4926187922ee9a3e2ab68868c2",
+    "pub_gimbal_velocity.dll": "336609f8b2fc301be996bbe5ecd351f7c18402278d44114a273e5af7504f13e2",
+    "pub_nav2_goal.dll": "6642d98994d5248932ec7b8082495d3c1415d8e0a219a9a828478a96250cd2bf",
+    "pub_spin_speed.dll": "8e781d6812b67fba929aa3947e2b6dc1ddc074e961fcb21e1bf666a8449dbf64",
+    "pub_twist.dll": "5c3cc060a7c25954d583f1f2ae45528ab4238bbe3fc0862c421af2f4ea2c7657",
+    "rate_controller.dll": "3803bfd659cadacf97aebba02fe898fdeca0445129086f50c35e9ff2a24ffedb",
+    "recovery_node.dll": "27e85645e5d1a42ddaa23a2f9c1a21339308daa91b5defb578fde2bbbe495365",
+    "send_nav2_goal.dll": "3f7771f416c3c20d61a65a97fb0f4e497a8ca54200db7a798e840f7b1af51b8d",
+    "send_nav2_through_poses.dll": "9d459e20c4e627b0f4b8b71044471cf6500d22bd54fbed7b5b35893b3974adb2",
+    "tick_after_timeout_node.dll": "d58ba19e773f90d2674b08b87fd5ddc96efee1cede3ae34bb85951e59cf705c7"
+  },
+  "build_exit_code": 0,
+  "build_package_count": 6,
+  "build_log": "ros2_ws/log_behavior/build_2026-11-26_11-24-03/logger_all.log",
+  "smoke_exit_code": 0,
+  "vision_interfaces": [
+    "Armor",
+    "Armors",
+    "Target"
+  ],
+  "initial_failures": [
+    "MSVC object-section limit C1128 resolved with /bigobj on behavior_server",
+    "Initial smoke showed empty plugin extension, corrected before final build"
+  ]
+}

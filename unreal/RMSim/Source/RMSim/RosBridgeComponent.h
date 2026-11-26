@@ -11,6 +11,7 @@ class ISocketSubsystem;
 class FJsonObject;
 class FJsonValue;
 class ATrainingRange;
+class ARMUCGameReferee;
 class URosAimController;
 class URosImuComponent;
 class URosLidarComponent;
@@ -29,9 +30,11 @@ public:
     FString StatusText() const;
     bool HasClient() const { return Client!=nullptr; }
     void SetMapIdentity(const FString& Id,const FString& Source,bool Mesh,bool SavedScene=false);
+    void SetReferee(ARMUCGameReferee* InReferee);
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
+    UPROPERTY() ARMUCGameReferee* Referee=nullptr;
     UPROPERTY() USceneCaptureComponent2D* Camera=nullptr;
     UPROPERTY() UTextureRenderTarget2D* Target=nullptr;
     UPROPERTY() URosAimController* AimController=nullptr;
@@ -45,7 +48,12 @@ private:
     FString MapId,MapHash,MapKind;
     int64 SlowReaderDisconnects=0;
     bool bControl=false,bOperatorBrake=false,bMotorControl=false,bOperatorGyroAvailable=false;
+    bool bMatchAutonomy=false;
+    int64 MatchStanceSequence=-1;
+    int64 MatchAmmoPurchaseSequence=-1;
+    double MatchOperatorGyroRateRadS=5.0;
     double OperatorGyroRateRadS=0.0;
+    bool bNavigationFrameAvailable=false;
     double NavigationFrameYawRad=0.0;
     bool bStallProbe=false,bStallInjected=false,bProfileSensorTiming=false;
     double ProfileCameraWall=0,ProfileCameraStartSim=0;
@@ -60,6 +68,7 @@ private:
     struct FCameraReadback;
     TArray<TSharedPtr<FCameraReadback,ESPMode::ThreadSafe>> CameraReadbacks,FreeCameraReadbacks;
     int64 CameraConnection=0,CameraReadbackMisses=0;
+    bool bFpvVideoCut=false,bOutboundHasCameraFrame=false;
     double LastSimTime=0,RealTimeFactor=0,RateWindowWall=0,RateWindowSim=0;
     double StallCommandFloor=-1.,LastGameTickGapMs=0.;
     int64 GameTickStalls=0;

@@ -1,6 +1,8 @@
 """Run the original estimator; a new simulator session gets a clean process/map."""
 import datetime,json,math,os,subprocess,time
 from pathlib import Path
+from .native_transport import load_windows_fastrtps
+load_windows_fastrtps()
 import rclpy
 from rclpy.node import Node
 from rclpy.clock import Clock,ClockType

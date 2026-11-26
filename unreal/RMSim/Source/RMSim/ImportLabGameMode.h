@@ -8,6 +8,7 @@
 
 class AVehicleRig;
 class ATrainingRange;
+class ARMUCGameReferee;
 class ACameraActor;
 class USceneCaptureComponent2D;
 class AStaticMeshActor;
@@ -66,6 +67,9 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     FString GetControlHudText() const;
+    bool HasReferee() const { return Referee != nullptr; }
+    bool ShouldShowDebugHud() const;
+    void DrawRefereeHud(AHUD* Hud, UCanvas* Canvas) const;
     bool GetGunWorldPoint(FVector& OutPoint) const;
     bool GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
@@ -77,10 +81,21 @@ public:
 private:
     UPROPERTY() AVehicleRig* Rig = nullptr;
     UPROPERTY() ATrainingRange* Training = nullptr;
+    UPROPERTY() ARMUCGameReferee* Referee = nullptr;
     UPROPERTY() URosBridgeComponent* RosBridge=nullptr;
     UPROPERTY() UWTFoliageCrushComponent* SoftFoliage=nullptr;
     UPROPERTY() UWTGeneratedCollisionComponent* GeneratedCollision=nullptr;
     bool bRosBridgeEnabled=false,bRosControl=false,bRosAimControl=false;
+    bool bPhysicalMatch = false;
+    bool bBridgeControlsOpponent = false;
+#if WITH_DEV_AUTOMATION_TESTS
+    bool bMatchOpponentGyroFixture = false;
+    double MatchOpponentGyroNextSample = 0.0, MatchOpponentMotionMetres = 0.0;
+#endif
+    FString MatchPrimaryTeam;
+    FString MatchRosTeam;
+    bool ConfigureMatchSeats(FString& Error);
+    AVehicleRig* SpawnMatchOpponent(FString& Error);
     FString ImuFixture;
     double ImuFixtureElapsed=0;
     bool bImuFixtureApplied=false;
@@ -223,6 +238,10 @@ private:
     FVector AimWorldTarget = FVector::ZeroVector;
     FString InputEvidencePath;
     TMap<FString, int32> InputEventCounts;
+    FString LastRuneClientResult;
+    enum class EMatchShiftGesture : uint8 { Idle, Sight, Dart };
+    EMatchShiftGesture MatchShiftGesture = EMatchShiftGesture::Idle;
+    bool bDartTargetKeyHeld = false;
     TSharedPtr<FJsonObject> ProbeReport;
     TArray<TSharedPtr<FJsonValue>> ProbeChecks;
     TArray<TSharedPtr<FJsonValue>> ProbeCaptures;

@@ -8,6 +8,7 @@ import time
 import unittest
 
 from rmsim_bridge.protocol import PacketReader, ProtocolError, command_packet, motor_packet, aim_packet, hold_aim, intrinsics, validate_state, MAX_IMAGE, MAX_JSON
+from rmsim_bridge.protocol import match_ammo_purchase_packet
 from rmsim_bridge.transport import LoopbackClient
 
 
@@ -25,6 +26,25 @@ def packet(value=None, pixels=b''):
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_match_ammo_uses_simulator_seat_and_active_referee(self):
+        current = state()
+        with self.assertRaises(ProtocolError):
+            match_ammo_purchase_packet(current, 4, 'aim_sentry', 1)
+        current['drive'] = {'match_autonomy': True}
+        current['referee'] = {'game_status': {'game_progress': 3}}
+        with self.assertRaises(ProtocolError):
+            match_ammo_purchase_packet(current, 4, 'aim_sentry', 1)
+        current['referee']['game_status']['game_progress'] = 4
+        for mode in (1, 2):
+            result = json.loads(match_ammo_purchase_packet(current, 4, 'aim_sentry', mode))
+            self.assertEqual(result, dict(
+                v=1, kind='match_ammo_purchase', session='run-one', epoch=1, seq=4,
+                stamp_ns=1_000_000_000, frame_id='aim_sentry/base_link', purchase_mode=mode,
+            ))
+        for invalid_mode in (0, 3, True, 1.0):
+            with self.assertRaises(ProtocolError):
+                match_ammo_purchase_packet(current, 4, 'aim_sentry', invalid_mode)
+
     def test_optional_map_identity_is_strict(self):
         value=state();value['map']={'id':'import_lab','kind':'rm_flat_map','source_md5':'a'*32}
         validate_state(value,b'','aim_sentry')
@@ -106,6 +126,20 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(brake['kind'], 'command')
         with self.assertRaises(ProtocolError):
             command_packet(*args, [0., 0., 0., 0., 0., 5.], 'aim_sentry', operator_idle=True)
+
+    def test_match_navigation_frame_is_independent_of_operator_gyro(self):
+        current = state()
+        current['drive'] = {'navigation_frame_available': True, 'operator_gyro_available': False}
+        args = (current, 9, 990_000_000, 'aim_sentry/odom', [1., 0., 0., 0., 0., 0.], 'aim_sentry')
+        self.assertEqual(json.loads(command_packet(*args, navigation_frame=True))['frame_id'], 'aim_sentry/odom')
+        with self.assertRaises(ProtocolError):
+            command_packet(current, 9, 990_000_000, 'aim_sentry/base_link', [0.] * 6,
+                           'aim_sentry', operator_idle=True)
+        current['drive'] = {'navigation_frame_available': False, 'operator_gyro_available': True}
+        with self.assertRaises(ProtocolError):
+            command_packet(*args, navigation_frame=True)
+        current['drive'] = {'operator_gyro_available': True}
+        self.assertEqual(json.loads(command_packet(*args, navigation_frame=True))['vx'], 1.)
 
     def test_bad_command_never_silently_changes_frame_or_axes(self):
         invalid=[('map', 1_000_000_000, [1, 0, 0, 0, 0, 0]),

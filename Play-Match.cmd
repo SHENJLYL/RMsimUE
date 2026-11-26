@@ -1,0 +1,11 @@
+@echo off
+setlocal
+title RM Simulator - RMUC 2027 Match Mode
+set "PY_VENV=%~dp0artifacts\environments\mujoco-4.0.1\Scripts\python.exe"
+if exist "%PY_VENV%" (
+  "%PY_VENV%" "%~dp0tools\launcher\rmsim_launcher.py" --mode match %*
+) else (
+  python "%~dp0tools\launcher\rmsim_launcher.py" --mode match %*
+)
+if errorlevel 1 pause
+exit /b %ERRORLEVEL%

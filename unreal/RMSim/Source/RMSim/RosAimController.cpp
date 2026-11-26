@@ -1,6 +1,7 @@
 #include "RosAimController.h"
 #include "VehicleRig.h"
 #include "TrainingRange.h"
+#include "RMUCGameReferee.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Dom/JsonObject.h"
 #include "HAL/PlatformTime.h"
@@ -39,6 +40,7 @@ void URosAimController::Stop(const FString& Reason)
 {
     bLive=false;bFire=false;bPermit=false;Yaw.Mode=0;Pitch.Mode=0;
     YawVelocity=0;PitchVelocity=0;Status=Reason;
+    if(bEnabled&&IsValid(Referee))Referee->SetRosFlywheels(Rig,false);
 }
 
 void URosAimController::Reject(const FString& Reason)
@@ -48,6 +50,7 @@ void URosAimController::Reset(bool ResetPose)
 {
     Stop(bEnabled?TEXT("waiting"):TEXT("observe_only"));AcceptedSeq=-1;LastCommandWall=-1;bLimited=false;
     if(ResetPose&&bEnabled){FString Error;Rig->SetGimbal(0,0,Error);}
+    MatchShotCount=0;LastMatchShotSeq=-1;LastMatchFireRejectionSeq=-1;LastMatchFireRejection.Reset();
     bHaveSample=false;PreviousMuzzle=Aim->GetComponentTransform();
 }
 
@@ -74,7 +77,7 @@ bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence,d
         !AimNumber(J,TEXT("fire"),Fire)||!AimNumber(J,TEXT("permit"),Permit)||
         (Fire!=0&&Fire!=1)||(Permit!=0&&Permit!=1))
     {Reject(TEXT("aim_fields_or_limits"));return false;}
-    if(Fire>0&&!Training){Reject(TEXT("shooting_not_enabled"));return false;}
+    if(Fire>0&&!Training&&!IsValid(Referee)){Reject(TEXT("shooting_not_enabled"));return false;}
     if(Fire>0&&Permit==0){Reject(TEXT("fire_permission"));return false;}
     FString Frame;J->TryGetStringField(TEXT("frame_id"),Frame);
     const bool NewBodyFrame=Frame==Rig->GetVehicleId()+TEXT("/base_link");
@@ -126,7 +129,9 @@ void URosAimController::Drive(double Seconds)
     const auto CurrentWorld=WorldAngles();
     const double WY=Yaw.Mode?Yaw.Target:CurrentWorld.X,WP=Pitch.Mode?Pitch.Target:CurrentWorld.Y;
     const FVector WorldDirection(FMath::Cos(WP)*FMath::Cos(WY),-FMath::Cos(WP)*FMath::Sin(WY),-FMath::Sin(WP));
-    const FRotator Local=Rig->GetActorTransform().InverseTransformVectorNoScale(WorldDirection).Rotation();
+    const FTransform BodyPose=Rig->GetActorTransform();
+    const FVector LocalDirection=BodyPose.InverseTransformVectorNoScale(WorldDirection);
+    const FRotator Local=LocalDirection.Rotation();
     double BeforeY,BeforeP;Rig->GetGimbalAngles(BeforeY,BeforeP);
     const double DesiredY=Yaw.Mode?(bBodyFrame?Yaw.Target:-FMath::DegreesToRadians(Local.Yaw)):BeforeY;
     const double UnclampedP=Pitch.Mode?(bBodyFrame?Pitch.Target:-FMath::DegreesToRadians(Local.Pitch)):BeforeP;
@@ -148,16 +153,47 @@ void URosAimController::Drive(double Seconds)
         if(Rig->SetDedicatedGimbalTrajectory(BeforeY+DeltaY,FMath::Clamp(BeforeP+DeltaP,PitchMin,PitchMax),
             BodyRate(Yaw),BodyRate(Pitch),Deadline))return;
     }
-    Rig->NudgeGimbal(DeltaY,DeltaP);
+    if(Rig->IsMujocoPhysics())
+    {
+        // Rate-limit the servo target toward the requested direction, as in manual world aim.
+        double TargetY, TargetP;
+        Rig->GetGimbalTargets(TargetY,TargetP);
+        const double YawStep=Yaw.Mode?FMath::Clamp(FMath::FindDeltaAngleRadians(TargetY,DesiredY),
+            -YawRateLimit*Seconds,YawRateLimit*Seconds):0.;
+        const double PitchStep=Pitch.Mode?FMath::Clamp(DesiredP-TargetP,-PitchRateLimit*Seconds,PitchRateLimit*Seconds):0.;
+        double YawFeedforward=0.,PitchFeedforward=0.,ExpiresWall=0.;
+        const double HorizontalSquared=LocalDirection.SizeSquared2D();
+        if(!bBodyFrame&&Rig->GetDedicatedMujocoPeriod()>0.&&HorizontalSquared>1.e-4)
+        {
+            FTransform ChassisPose;
+            FVector LinearVelocity,AngularVelocity;
+            if(Rig->SampleChassisImu(FTransform::Identity,ChassisPose,LinearVelocity,AngularVelocity))
+            {
+                const FVector Omega=BodyPose.InverseTransformVectorNoScale(AngularVelocity);
+                const FVector Rate=FVector::CrossProduct(LocalDirection,Omega);
+                YawFeedforward=Yaw.Mode?FMath::Clamp((LocalDirection.Y*Rate.X-LocalDirection.X*Rate.Y)/HorizontalSquared,
+                    -YawRateLimit,YawRateLimit):0.;
+                PitchFeedforward=Pitch.Mode?FMath::Clamp(-Rate.Z/FMath::Sqrt(HorizontalSquared),-PitchRateLimit,PitchRateLimit):0.;
+                ExpiresWall=Deadline;
+            }
+        }
+        Rig->NudgeGimbal(YawStep,PitchStep,YawFeedforward,PitchFeedforward,ExpiresWall);
+    }
+    else Rig->NudgeGimbal(DeltaY,DeltaP);
 }
 
-bool URosAimController::CanFire() const
-{return bEnabled&&bLive&&bPermit&&bFire&&!bOperatorBrake&&FPlatformTime::Seconds()<=Deadline&&Training&&Training->GetStatus()==TEXT("running");}
+bool URosAimController::HasLiveTrigger() const
+{return bEnabled&&bLive&&bPermit&&bFire&&!bOperatorBrake&&FPlatformTime::Seconds()<=Deadline;}
+
+bool URosAimController::CanFireTraining() const
+{return HasLiveTrigger()&&Training&&Training->GetStatus()==TEXT("running");}
 
 void URosAimController::Advance(double Seconds)
 {
     if(!FMath::IsFinite(Seconds)||Seconds<0)return;
     if(bEnabled&&bLive&&FPlatformTime::Seconds()>Deadline)Stop(TEXT("expired"));
+    const bool bLiveTrigger=HasLiveTrigger();
+    if(bEnabled&&IsValid(Referee))Referee->SetRosFlywheels(Rig,bLiveTrigger);
     if(bEnabled&&Seconds>0)
     {
         if(bLive)Drive(Seconds);else{YawVelocity=0;PitchVelocity=0;}
@@ -168,7 +204,22 @@ void URosAimController::Advance(double Seconds)
         {
             const double Step=FMath::Min(Remaining,.25),Elapsed=Seconds-Remaining;
             FTransform A,B;A.Blend(Start,End,Elapsed/Seconds);B.Blend(Start,End,(Elapsed+Step)/Seconds);
-            Training->AdvanceInterval(Step,CanFire(),false,A,B);Remaining-=Step;
+            Training->AdvanceInterval(Step,CanFireTraining(),false,A,B);Remaining-=Step;
+        }
+        if(IsValid(Referee)&&bLiveTrigger)
+        {
+            // The referee owns shot cadence and projectile state. Use the current physical muzzle.
+            const FString Result=Referee->RequestRosShot(Rig,End);
+            if(Result==TEXT("accepted"))
+            {
+                ++MatchShotCount;
+                LastMatchShotSeq=AcceptedSeq;
+            }
+            else
+            {
+                LastMatchFireRejectionSeq=AcceptedSeq;
+                LastMatchFireRejection=Result;
+            }
         }
     }
     double Y,P;Rig->GetGimbalAngles(Y,P);
@@ -195,7 +246,17 @@ TSharedRef<FJsonObject> URosAimController::State(int64 Stamp) const
     J->SetNumberField(TEXT("pitch_min_rad"),PitchMin);J->SetNumberField(TEXT("pitch_max_rad"),PitchMax);
     J->SetNumberField(TEXT("yaw_rate_limit"),YawRateLimit);J->SetNumberField(TEXT("pitch_rate_limit"),PitchRateLimit);
     J->SetNumberField(TEXT("target_world_yaw"),Yaw.Target);J->SetNumberField(TEXT("target_world_pitch"),Pitch.Target);
-    J->SetBoolField(TEXT("mechanically_limited"),bLimited);J->SetBoolField(TEXT("trigger_active"),CanFire());
+    J->SetBoolField(TEXT("mechanically_limited"),bLimited);
+    J->SetBoolField(TEXT("trigger_active"),IsValid(Referee)?HasLiveTrigger():CanFireTraining());
+    if(IsValid(Referee))
+    {
+        auto FireState=MakeShared<FJsonObject>();
+        FireState->SetNumberField(TEXT("accepted_count"),MatchShotCount);
+        FireState->SetNumberField(TEXT("last_accepted_seq"),LastMatchShotSeq);
+        FireState->SetNumberField(TEXT("last_rejected_seq"),LastMatchFireRejectionSeq);
+        FireState->SetStringField(TEXT("last_rejection"),LastMatchFireRejection);
+        J->SetObjectField(TEXT("match_fire"),FireState);
+    }
     auto Shooter=MakeShared<FJsonObject>();Shooter->SetBoolField(TEXT("available"),Training!=nullptr);
     if(Training)
     {

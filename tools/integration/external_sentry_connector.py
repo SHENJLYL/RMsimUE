@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / "tools/integration"))
 sys.path.insert(0, str(ROOT / "ros2_ws/src/rmsim_bridge"))
 
 from navigation_console_config import prepare_scene, rviz_configuration, scene_spawn_prior  # noqa: E402
+from native_sentry_behavior import prepare_behavior  # noqa: E402
 from rmsim_bridge.navigation_map_identity import validate_localization_map  # noqa: E402
 from rmsim_bridge.native_transport import configure_navigation_transport  # noqa: E402
 from rmsim_bridge.protocol import identifier  # noqa: E402
@@ -70,6 +71,15 @@ def main() -> int:
         default=ROOT / "assets/vehicles/aim_sentry/drive-profile.json",
     )
     parser.add_argument("--no-rviz", action="store_true")
+    parser.add_argument("--match-autonomy", action="store_true")
+    parser.add_argument("--no-behavior", action="store_true", help="Disable automatic RMUC 2027 sentry behavior tree node")
+    parser.add_argument("--no-vision", action="store_true", help="Disable automatic vision auto-aim node")
+    parser.add_argument(
+        "--vision-backend",
+        choices=("sp_vision_25", "legacy"),
+        default="sp_vision_25",
+        help="Vision auto-aim backend to launch in --match-autonomy mode",
+    )
     args = parser.parse_args()
 
     os.environ["ROS_DOMAIN_ID"] = str(args.domain)
@@ -87,12 +97,25 @@ def main() -> int:
     ref_config = ROOT / "ros2_ws/src/pb2025_nav_bringup/config/reality/nav2_params.yaml"
     native_runtime = ROOT / "artifacts/runtime/navigation/windows"
     rviz_exe = ROOT / "artifacts/runtime/rviz/windows/rviz2.exe"
+    classifier_path = ROOT / "artifacts/runtime/vision/tiny_resnet.onnx"
+    sp_vision_assets = ROOT / "ros2_ws/src/sp_vision_25/assets"
+    if args.match_autonomy and not args.no_vision:
+        if args.vision_backend == "sp_vision_25":
+            missing = [f for f in ("yolov8.xml", "yolov8.bin", "tiny_resnet.onnx") if not (sp_vision_assets / f).is_file()]
+            if missing:
+                print(f"[external_sentry] Missing sp_vision_25 weights under {sp_vision_assets}: {missing}", file=sys.stderr, flush=True)
+                return 2
+        elif not classifier_path.is_file():
+            print(f"[external_sentry] Missing RMUC armor classifier: {classifier_path}", file=sys.stderr, flush=True)
+            return 2
     if not args.no_rviz and not rviz_exe.is_file():
         print(f"[ERROR] RViz2 binary missing: {rviz_exe}", flush=True)
         return 3
     try:
         identifier(args.robot_id)
         map_yaml, localization_map, initial_pose = prepare_navigation_inputs(args, session_dir)
+        native_behavior = (prepare_behavior(ROOT, session_dir, args.map_file, args.spawn_id, args.robot_id)
+                           if args.match_autonomy and not args.no_behavior else None)
         lio_dir = session_dir / "pointlio"
         nav_dir = session_dir / "navigation"
         lio_dir.mkdir(parents=True, exist_ok=True)
@@ -126,10 +149,9 @@ def main() -> int:
         spawn(
             "pointlio",
             [
-                ros2,
-                "run",
-                "rmsim_bridge",
-                "point_lio",
+                sys.executable,
+                "-c",
+                "from rmsim_bridge.point_lio_runner import main; main()",
                 "--ros-args",
                 "-p",
                 f"robot_id:={args.robot_id}",
@@ -146,10 +168,9 @@ def main() -> int:
         spawn(
             "navigation",
             [
-                ros2,
-                "run",
-                "rmsim_bridge",
-                "navigation",
+                sys.executable,
+                "-c",
+                "from rmsim_bridge.navigation_runner import main; main()",
                 "--ros-args",
                 "-p",
                 f"robot_id:={args.robot_id}",
@@ -166,6 +187,8 @@ def main() -> int:
                 f"control_source:={args.navigation_source.resolve()}",
                 "-p",
                 f"drive_profile:={args.drive_profile.resolve()}",
+                *(["-p", "match_translation_limit_mps:=4.5"] if args.match_autonomy else []),
+                *(["-p", "native_match_behavior:=true"] if native_behavior else []),
                 "-p",
                 f"native_runtime:={native_runtime}",
                 "-p",
@@ -173,6 +196,59 @@ def main() -> int:
             ],
             env,
         )
+
+        if native_behavior:
+            server, client = native_behavior
+            spawn("behavior_server", server, env)
+            spawn("behavior_client", client, env)
+
+        if args.match_autonomy and not args.no_vision:
+            vis_env = dict(env)
+            if args.vision_backend == "sp_vision_25":
+                sp_src = str(ROOT / "ros2_ws/src/sp_vision_25")
+                vis_env["PYTHONPATH"] = sp_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")
+                sp_bins = [
+                    str(ROOT / "ros2_ws/install_control/sp_msgs/bin"),
+                    str(ROOT / "ros2_ws/install_control/pb_rm_interfaces/bin"),
+                ]
+                vis_env["PATH"] = os.pathsep.join(sp_bins) + os.pathsep + vis_env.get("PATH", "")
+                spawn(
+                    "vision_autoaim",
+                    [
+                        sys.executable,
+                        "-c",
+                        "from sp_vision_25.vision_node import main; main()",
+                        "--ros-args",
+                        "-p",
+                        "use_sim_time:=true",
+                        "-p",
+                        f"robot_id:={args.robot_id}",
+                        "-p",
+                        f"assets_dir:={sp_vision_assets}",
+                        "-p",
+                        "require_behavior_switch:=true",
+                    ],
+                    vis_env,
+                )
+            else:
+                bt_src = str(ROOT / "ros2_ws/src/rmsim_sentry_behavior")
+                vis_env["PYTHONPATH"] = bt_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")
+                spawn(
+                    "vision_autoaim",
+                    [
+                        sys.executable,
+                        "-c",
+                        "from rmsim_sentry_behavior.vision_autoaim_node import main; main()",
+                        "--ros-args",
+                        "-p",
+                        "use_sim_time:=true",
+                        "-p",
+                        f"robot_id:={args.robot_id}",
+                        "-p",
+                        f"classifier_path:={classifier_path}",
+                    ],
+                    vis_env,
+                )
 
         if not args.no_rviz:
             gui_env = dict(env)
@@ -209,7 +285,12 @@ def main() -> int:
     finally:
         for _name, p, log_file in procs:
             if p.poll() is None:
-                p.terminate()
+                if os.name == "nt":
+                    subprocess.run(["taskkill.exe", "/PID", str(p.pid), "/T", "/F"],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                   creationflags=subprocess.CREATE_NO_WINDOW, check=False)
+                else:
+                    p.terminate()
         for _name, p, log_file in procs:
             try:
                 p.wait(timeout=5)

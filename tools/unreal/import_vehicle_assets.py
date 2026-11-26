@@ -7,6 +7,7 @@ Windows native import is covered by project evidence; native Ubuntu remains unve
 
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -206,7 +207,9 @@ def main():
         "schema_version": 1, "kind": "rm_ue_mesh_rig", "id": vehicle_id, "parts": parts,
         "gimbal": {
             "yaw": {"part": "yaw", "axis": by_name["yaw"]["rotation_axis_ros"]},
-            "pitch": {"part": "pitch", "axis": by_name["pitch"]["rotation_axis_ros"], "lower": -0.45, "upper": 0.55},
+            # The rotation about ROS +Y is down-positive.
+            "pitch": {"part": "pitch", "axis": by_name["pitch"]["rotation_axis_ros"],
+                      "lower": math.radians(-60.0), "upper": math.radians(45.0)},
         },
         "wheels": [{"part": name, "axis": part["rotation_axis_ros"], "radius_m": manifest["wheel_radius_m"],
                     **({"collision_vertices_m":source_vertices(part['collision_vertices_m'])} if 'collision_vertices_m' in part else {}),
@@ -217,9 +220,9 @@ def main():
         "steering": manifest.get("steering", []),
         "camera": {"id": "aim_camera", "type": "camera", "parent_link": "pitch",
                    "origin": camera_origin, "rate_hz": 1,
-                   "parameters": {"width": 1280, "height": 720, "horizontal_fov_rad": 1.0471975511965976}},
+                   "parameters": {"width": 1280, "height": 720, "horizontal_fov_rad": math.radians(75.0)}},
         "limitations": ["asset_geometry_not_a_calibrated_dynamics_model", "source_suspension_travel_is_reference_only",
-                        "camera_pose_and_pitch_limits_are_demo_parameters", "not_ros_ready"],
+                        "camera_pose_not_calibrated", "not_ros_ready"],
     }
     if manifest.get('drive_profile'):
         profile_path=local_path(root,manifest['drive_profile'])

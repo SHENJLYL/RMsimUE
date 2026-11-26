@@ -317,12 +317,21 @@ bool AVehicleRig::GetRosGimbalGeometry(const USceneCaptureComponent2D* Camera,FS
     YawName=YawJoint;PitchName=PitchJoint;PitchMin=P->Lower;PitchMax=P->Upper;return true;
 }
 
-void AVehicleRig::NudgeGimbal(double DeltaYawRad, double DeltaPitchRad)
+void AVehicleRig::NudgeGimbal(double DeltaYawRad, double DeltaPitchRad,
+    double YawFeedforwardRadS, double PitchFeedforwardRadS, double ExpiresWall)
 {
     if(MujocoDynamics)
     {
-        const auto* P=Joints.Find(PitchJoint);FString Error;
-        if(P)SetMujocoGimbal(ManualYaw+DeltaYawRad,FMath::Clamp(ManualPitch+DeltaPitchRad,P->Lower,P->Upper),Error);
+        const auto* P = Joints.Find(PitchJoint);
+        if (!P) return;
+        const double Yaw = MujocoYawTarget + DeltaYawRad;
+        const double Pitch = FMath::Clamp(MujocoPitchTarget + DeltaPitchRad, P->Lower, P->Upper);
+        if ((Pitch <= P->Lower && PitchFeedforwardRadS < 0) || (Pitch >= P->Upper && PitchFeedforwardRadS > 0))
+            PitchFeedforwardRadS = 0;
+        if (ExpiresWall > 0 && SetDedicatedGimbalTrajectory(Yaw, Pitch, YawFeedforwardRadS, PitchFeedforwardRadS, ExpiresWall))
+            return;
+        FString Error;
+        SetMujocoGimbal(Yaw, Pitch, Error);
         return;
     }
     auto Apply = [this](const FString& Name, double Delta, double& Current)
@@ -630,8 +639,12 @@ void AVehicleRig::EnableArticulatedSensorQueries()
     {
         // Ray queries still see this joint surface; overlap events have no consumer.
         Visual->SetGenerateOverlapEvents(false);
-        Visual->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-        Visual->SetCollisionResponseToAllChannels(ECR_Ignore);
+        if (Visual->GetCollisionEnabled() == ECollisionEnabled::NoCollision)
+        {
+            Visual->SetCollisionResponseToAllChannels(ECR_Ignore);
+            Visual->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        }
+        // Other query channels can already be bound to these articulated surfaces.
         Visual->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Block);
         Visual->RecreatePhysicsState();
     }

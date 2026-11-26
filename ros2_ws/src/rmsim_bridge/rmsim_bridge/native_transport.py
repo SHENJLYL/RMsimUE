@@ -3,9 +3,11 @@ import hashlib
 from collections import Counter
 import os
 from pathlib import Path
+import sys
 import xml.etree.ElementTree as ET
 
 NAMESPACE='http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles'
+_windows_rmw = None
 
 
 def loopback_environment(environment, profile):
@@ -66,6 +68,16 @@ def loopback_environment(environment, profile):
                    'profile_sha256':hashlib.sha256(data).hexdigest(),'profile':str(profile)}
 
 
+def load_windows_fastrtps():
+    global _windows_rmw
+    if os.name!='nt' or os.environ.get('RMW_IMPLEMENTATION','rmw_fastrtps_cpp')!='rmw_fastrtps_cpp':return
+    # Load the RMW paired with this Python runtime before native ROS resolves it by basename.
+    library=Path(sys.executable).parent/'Library/bin/rmw_fastrtps_cpp.dll'
+    if _windows_rmw is None and library.is_file():
+        import ctypes
+        _windows_rmw=ctypes.WinDLL(str(library))
+
+
 def configure_navigation_transport():
     mode=os.environ.get('RMSIM_NAV_TRANSPORT','loopback_udp' if os.name=='nt' else 'default')
     if mode=='default':return {'mode':'default','ros_localhost_only':os.environ.get('ROS_LOCALHOST_ONLY')}
@@ -74,4 +86,5 @@ def configure_navigation_transport():
     profile=Path(get_package_share_directory('rmsim_bridge'))/'config/fastdds-loopback-udp.xml'
     environment,report=loopback_environment(os.environ,profile)
     os.environ.update(environment)
+    load_windows_fastrtps()
     return report

@@ -1,0 +1,64 @@
+{
+  "platform": "Windows RoboStack ROS 2 Humble + UE 5.8",
+  "behavior": "aa4d82b73ae3c404b3037f2630eb2950dc0bbea4",
+  "build_packages": 6,
+  "plugin_dlls": 24,
+  "pytest_passed": 67,
+  "pytest_subtests": 5,
+  "live_acceptance_passed": true,
+  "live_team": "blue",
+  "pregame": {
+    "wall_seconds": 27.5971,
+    "kind": "gimbal_scan",
+    "yaw": 0.5,
+    "progress": 3
+  },
+  "forward_translation_m": 0.15070692208371894,
+  "low_hp_threshold": 150,
+  "actual_low_hp": 140,
+  "forward_cancel_status": 5,
+  "retreat_status": 4,
+  "retreat_translation_m": 6.617544398099572,
+  "final_hp": 222,
+  "final_position_m": [
+    -12.144972284361614,
+    -6.146810870294244
+  ],
+  "ros_node_counts": {
+    "behavior_server": 1,
+    "rmsim_sentry_bt_server": 1,
+    "rmsim_sentry_bt_client": 1
+  },
+  "cleaned_processes": 27,
+  "raw_log_directory": "live-match-blue-final",
+  "python_archive": "python-archive",
+  "red": {
+    "live_acceptance_passed": true,
+    "pregame_joint_sweep": {
+      "samples": 147,
+      "joint": "yaw",
+      "duration_sim_s": 4.865,
+      "span_deg": 133.94065340928736,
+      "travel_deg": 133.94065340928736,
+      "net_deg": 133.94065340928736,
+      "median_velocity_rad_s": 0.49416492128480427
+    },
+    "forward_translation_m": 0.1518601124609679,
+    "actual_low_hp": 140,
+    "forward_cancel_status": 5,
+    "retreat_status": 4,
+    "retreat_translation_m": 6.505143214186962,
+    "final_hp": 189,
+    "final_position_m": [
+      12.224612309816406,
+      5.855062051270095
+    ],
+    "ros_node_counts": {
+      "behavior_server": 1,
+      "rmsim_sentry_bt_server": 1,
+      "rmsim_sentry_bt_client": 1
+    },
+    "cleaned_processes": 27,
+    "raw_log_directory": "live-match-red"
+  }
+}

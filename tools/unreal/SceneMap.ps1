@@ -76,6 +76,20 @@ function Read-RMSimSceneMap {
     return $map
 }
 
+function Get-RMSimArenaRenderArguments {
+    param([string]$MapFile, [string]$Project)
+    $arenaPath = Join-Path (Split-Path -Parent $MapFile) 'arena-shell.json'
+    if (-not (Test-Path -LiteralPath $arenaPath -PathType Leaf)) { return }
+
+    $arena = Get-Content -LiteralPath $arenaPath -Raw -Encoding UTF8 | ConvertFrom-Json -ErrorAction Stop
+    $profile = $arena.PSObject.Properties['render_profile']
+    if (-not $profile -or $profile.Value -isnot [string] -or $profile.Value -cne 'RMSimGymLumen') { return }
+
+    $config = Join-Path (Split-Path -Parent $Project) 'Config/Custom/RMSimGymLumen/DefaultEngine.ini'
+    if (-not (Test-Path -LiteralPath $config -PathType Leaf)) { throw 'RMSimGymLumen profile config is missing.' }
+    return @('-CustomConfig=RMSimGymLumen', '-d3d12', '-sm6')
+}
+
 function Get-RMSimMapLaunch {
     param(
         [Parameter(Mandatory=$true)][string]$MapFile,

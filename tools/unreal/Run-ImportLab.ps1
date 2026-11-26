@@ -59,18 +59,7 @@ try {
     if (-not $MapFile) { $MapFile = Join-Path $PSScriptRoot '../../assets/maps/rmuc2027/map.json' }
     $mapLaunch=Get-RMSimMapLaunch -MapFile $MapFile -Project $ue.Project -SpawnId $SpawnId
     $MapFile=$mapLaunch.MapFile
-    # Only the manifest beside this resolved map opts its process into the gym profile.
-    $renderProfile = ''
-    $arenaManifestPath = Join-Path (Split-Path -Parent $MapFile) 'arena-shell.json'
-    if (Test-Path -LiteralPath $arenaManifestPath -PathType Leaf) {
-        $arenaManifest = Get-Content -LiteralPath $arenaManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -ErrorAction Stop
-        $profileProperty = $arenaManifest.PSObject.Properties['render_profile']
-        if ($profileProperty -and ($profileProperty.Value -is [string]) -and ($profileProperty.Value -ceq 'RMSimGymLumen')) {
-            $renderProfile = 'RMSimGymLumen'
-            $profileConfig = Join-Path (Split-Path -Parent $ue.Project) 'Config/Custom/RMSimGymLumen/DefaultEngine.ini'
-            if (-not (Test-Path -LiteralPath $profileConfig -PathType Leaf)) { throw 'RMSimGymLumen profile config is missing.' }
-        }
-    }
+    $arenaRenderArguments = @(Get-RMSimArenaRenderArguments -MapFile $MapFile -Project $ue.Project)
     $flag = if ($InputType -eq 'MeshRig') { '-MeshRigFile=' } else { '-VehicleFile=' }
     $culture = [Globalization.CultureInfo]::InvariantCulture
     $arguments = @(
@@ -98,11 +87,11 @@ try {
     $arguments += '-SpawnId=' + (Quote-UnrealArgument $SpawnId)
     if ($MapReport) { $arguments += '-MapReport=' + (Quote-UnrealArgument ([IO.Path]::GetFullPath($MapReport))) }
     if ($MapOverview) { $arguments += '-MapOverview' }
-    if ($renderProfile -eq 'RMSimGymLumen') {
+    if ($arenaRenderArguments.Count) {
         $arguments = @($arguments | Where-Object {
             ($_ -notin @('-d3d11','-dx11','-d3d12','-dx12','-sm5','-sm6')) -and ($_ -notlike '-CustomConfig=*')
         })
-        $arguments += @('-CustomConfig=RMSimGymLumen','-d3d12','-sm6')
+        $arguments += $arenaRenderArguments
         Write-Output 'Selected RMSimGymLumen for this map: D3D12 / SM6; renderer acceptance is checked separately.'
     } else {
         if ($GraphicsRhi -eq 'D3D11') { $arguments += '-d3d11' }

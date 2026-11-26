@@ -17,7 +17,7 @@ void AImportLabGameMode::ResetContactVehicle(const FString& Reason,bool ResetTra
 {
     if(!IsValid(Rig)||!Rig->IsContactPhysics())return;
     Rig->ResetContactPose(ContactSpawn);++ContactRecoveryCount;
-    if(RosBridge)RosBridge->ResetEpoch();
+    if(RosBridge&&!bBridgeControlsOpponent)RosBridge->ResetEpoch();
     SpeedCmPerSecond=0;TurnDegreesPerSecond=0;bAimTargetValid=false;
     bHoldManualAimDirection=false;bProbeAimWorldTargetOverride=false;
     HeldManualAimDirection=GetAimCapture()?GetAimCapture()->GetForwardVector():Rig->GetActorForwardVector();

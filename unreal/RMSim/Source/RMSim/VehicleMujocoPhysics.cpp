@@ -46,6 +46,12 @@ double AVehicleRig::GetSimulationTimeSeconds() const
 double AVehicleRig::GetDynamicsStepSeconds() const
 { return MujocoDynamics?MujocoDynamics->Timestep():FApp::UseFixedTimeStep()?FApp::GetFixedDeltaTime():0.; }
 
+const TArray<FMujocoContactSample>* AVehicleRig::GetNativeContactFrame() const
+{
+    check(IsInGameThread());
+    return MujocoDynamics ? &MujocoDynamics->Contacts() : nullptr;
+}
+
 FVector AVehicleRig::GetDynamicsGravityVectorCmS2() const
 { return MujocoDynamics?MujocoDynamics->GravityCmS2():FVector(0,0,GetWorld()?GetWorld()->GetGravityZ():0.); }
 
@@ -166,7 +172,25 @@ bool AVehicleRig::InitializeCanonicalMujocoPhysics(const FString& CanonicalFilen
     return true;
 }
 
-bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error)
+bool AVehicleRig::AttachSharedMujoco(AVehicleRig& Primary,const FString& RigFilename,FString& Error)
+{
+    if (&Primary == this || GetWorld() != Primary.GetWorld() ||
+        !Primary.MujocoDynamics || !Primary.MujocoDynamics->IsMatchWorld() ||
+        Primary.bMujocoSharedFollower || Primary.MujocoOpponent.IsValid() ||
+        Primary.MujocoDynamics->IsDedicated())
+    {
+        Error = TEXT("MuJoCo opponent binding requires a ready shared match world before its first step");
+        return false;
+    }
+    if (!InitializeMujocoPhysics(RigFilename,FString(),Error,Primary.MujocoDynamics)) return false;
+    bMujocoSharedFollower = true;
+    MujocoOpponent = &Primary;
+    Primary.MujocoOpponent = this;
+    return true;
+}
+
+bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error,
+    const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld)
 {
     auto Fail=[&Error](const FString& Why){Error=Why;return false;};
     if(bContactPhysics||!ContactBodies.IsEmpty()||!GetWorld()||Links.IsEmpty())return Fail(TEXT("MuJoCo requires an inactive imported visual rig"));
@@ -189,7 +213,7 @@ bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FStri
        !Spec->TryGetArrayField(TEXT("steering"),Steering)||Steering->Num()!=4||!Spec->TryGetArrayField(TEXT("suspension"),Suspensions)||Suspensions->Num()!=4)
         return Fail(TEXT("MuJoCo AIM adapter requires the complete 15-part four-module rig"));
     bSwerveContact=true;
-    if(!InitializeDriveProfile(Spec,Error))return false;
+    if(!InitializeDriveProfile(Spec,Error,bMujocoMatchWorld||SharedWorld.IsValid()))return false;
     TMap<FString,UStaticMesh*> Shapes;TArray<FString> BodyNames;
     for(const auto& Value:*Parts)
     {
@@ -218,7 +242,12 @@ bool AVehicleRig::InitializeMujocoPhysics(const FString& RigFilename,const FStri
     ContactMotorTorqueNm=ContactParameters[TEXT("MotorTorqueNm")];ContactBrakeTorqueNm=ContactParameters[TEXT("BrakeTorqueNm")];ContactMotorDamping=ContactParameters[TEXT("MotorDampingNmS")];
     const double InitialYaw=ManualYaw,InitialPitch=ManualPitch;
     auto Native=MakeShared<FMujocoVehicleDynamics>();
-    if(!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error))return false;
+    if (SharedWorld)
+    {
+        if (!Native->AttachOpponent(SharedWorld,BodyNames,RigFilename,ResolvedProfileFile,Error)) return false;
+    }
+    else if (!Native->Initialize(ModelFilename,BodyNames,RigFilename,ResolvedProfileFile,Error,bMujocoMatchWorld))
+        return false;
     const FVector SourceWorldGravity(0,0,GetWorld()->GetGravityZ());
     if(!Native->GravityCmS2().Equals(SourceWorldGravity,1.e-4))
         return Fail(FString::Printf(TEXT("MuJoCo gravity differs from active UE World: native=%s cm/s^2 source=%s cm/s^2; rebuild the model from the current world gravity"),
@@ -300,14 +329,12 @@ bool AVehicleRig::SetMujocoGimbal(double Yaw,double Pitch,FString& Error)
     const auto* PitchBinding=Joints.Find(PitchJoint);
     if(!MujocoDynamics||!PitchBinding||!FMath::IsFinite(Yaw)||!FMath::IsFinite(Pitch)||Pitch<PitchBinding->Lower||Pitch>PitchBinding->Upper)
     {Error=TEXT("invalid MuJoCo gimbal target");return false;}
-    const double PrevYawTarget=MujocoYawTarget,PrevPitchTarget=MujocoPitchTarget;
     MujocoYawTarget=FMath::UnwindRadians(Yaw);MujocoPitchTarget=Pitch;
     DedicatedGimbalExpiry=0;
-    const double Dt=FMath::Max(.005,MujocoFrameSeconds);
-    // Feedforward velocity comes from target motion, not measured tracking error,
-    // preventing frame-to-frame kick/drop oscillation on the physical barrel.
-    MujocoYawTargetRate=FMath::Clamp(FMath::FindDeltaAngleRadians(PrevYawTarget,MujocoYawTarget)/Dt,-MujocoYawRateLimit,MujocoYawRateLimit);
-    MujocoPitchTargetRate=FMath::Clamp((MujocoPitchTarget-PrevPitchTarget)/Dt,-MujocoPitchRateLimit,MujocoPitchRateLimit);
+    // Pure critically-damped position servo for manual/step targets (zero derivative-kick twitch).
+    // Analytical velocity feedforward is reserved for SetDedicatedGimbalTrajectory().
+    MujocoYawTargetRate=0.0;
+    MujocoPitchTargetRate=0.0;
     return true;
 }
 
@@ -324,13 +351,14 @@ bool AVehicleRig::SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double Ya
 
 bool AVehicleRig::StartDedicatedMujoco(double PeriodSeconds, FString& Error)
 {
-    if(!MujocoDynamics)
+    if (!MujocoDynamics || bMujocoSharedFollower || (MujocoDynamics->IsMatchWorld() && !MujocoOpponent.IsValid()))
     {
-        Error=TEXT("dedicated MuJoCo requires a ready native vehicle");
+        Error=TEXT("dedicated MuJoCo requires the ready owner rig and its match opponent");
         return false;
     }
     if(!MujocoDynamics->StartDedicated(PeriodSeconds,Error))return false;
     DedicatedMujocoPeriod=PeriodSeconds;
+    if (auto* Opponent = MujocoOpponent.Get()) Opponent->DedicatedMujocoPeriod = PeriodSeconds;
     PrimaryActorTick.bTickEvenWhenPaused=true;
     return true;
 }
@@ -344,31 +372,45 @@ void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<v
 {
     check(IsInGameThread());
     if(!MujocoDynamics)return;
-    const auto& Names=MujocoDynamics->BodyNames();
+    AVehicleRig* Primary = bMujocoSharedFollower ? MujocoOpponent.Get() : this;
+    if (!Primary || !Primary->MujocoDynamics) return;
+    AVehicleRig* Opponent = Primary->MujocoOpponent.Get();
     bool Reposed=false;
-    MujocoDynamics->VisitDedicatedQueryFrames([&](double Time,const TArray<FTransform>& Parts,bool Latest)
+    Primary->MujocoDynamics->VisitDedicatedQueryFrames([&](double Time,const TArray<FTransform>& Parts,bool Latest)
     {
         // Both self-occlusion and arena rays use the original UE collision channels.
         // The arena is fixed. Replay the exact native robot poses, then leave the
         // latest frame restored before ROS, gameplay or the viewport reads it.
         if(ApplyScenePoses&&(!Latest||Reposed))
         {
-            for(int32 I=0;I<Names.Num();++I)
-                if(Names[I]==MujocoRootBodyName)SetActorTransform(Parts[I],false,nullptr,ETeleportType::None);
-            for(int32 I=0;I<Names.Num();++I)
-            {
-                if(auto* const* Link=Links.Find(Names[I]))(*Link)->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
-                if(auto* Body=MujocoQueryBodies.FindRef(Names[I]))Body->SetWorldTransform(Parts[I],false,nullptr,ETeleportType::None);
-            }
+            Primary->ApplyMujocoQueryPose(Parts,0);
+            if (Opponent)
+                Opponent->ApplyMujocoQueryPose(Parts,Primary->MujocoDynamics->BodyNames().Num());
             Reposed=true;
         }
         Query(Time);
     });
 }
 
+void AVehicleRig::ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset)
+{
+    const auto& Names = MujocoDynamics->BodyNames();
+    for (int32 I = 0; I < Names.Num(); ++I)
+        if (Names[I] == MujocoRootBodyName)
+            SetActorTransform(Parts[Offset + I],false,nullptr,ETeleportType::None);
+    for (int32 I = 0; I < Names.Num(); ++I)
+    {
+        const FTransform& Pose = Parts[Offset + I];
+        if (auto* const* Link = Links.Find(Names[I])) (*Link)->SetWorldTransform(Pose,false,nullptr,ETeleportType::None);
+        if (auto* Body = MujocoQueryBodies.FindRef(Names[I])) Body->SetWorldTransform(Pose,false,nullptr,ETeleportType::None);
+    }
+}
+
 void AVehicleRig::TickMujocoPhysics(double Seconds)
 {
-    if(!MujocoDynamics||bMujocoFailed)return;
+    if (!MujocoDynamics || bMujocoFailed || bMujocoSharedFollower) return;
+    AVehicleRig* Opponent = MujocoOpponent.Get();
+    if (MujocoDynamics->IsMatchWorld() && !Opponent) return;
     const bool Dedicated=MujocoDynamics->IsDedicated();
     const auto Fail=[this](const FString& Error)
     {
@@ -392,17 +434,29 @@ void AVehicleRig::TickMujocoPhysics(double Seconds)
         SyncMujocoPose();
         DedicatedControlSeconds=MujocoDynamics->Time()-Before;
         if(DedicatedControlSeconds>0)MujocoFrameSeconds=DedicatedControlSeconds;
+        if (Opponent)
+        {
+            Opponent->MujocoFrameSeconds = MujocoFrameSeconds;
+            Opponent->SyncMujocoPose();
+        }
         return;
     }
     // The fixed-step source is double precision; AActor::Tick narrows it to
     // float, which otherwise turns the first 5 ms frame into four 1 ms steps.
     if(FApp::UseFixedTimeStep())Seconds=FApp::GetFixedDeltaTime();
     if(Seconds>0)MujocoFrameSeconds=Seconds;
-    RefreshMujocoInputs(Seconds,FPlatformTime::Seconds());
+    const double Now = FPlatformTime::Seconds();
+    RefreshMujocoInputs(Seconds,Now);
+    if (Opponent)
+    {
+        Opponent->MujocoFrameSeconds = MujocoFrameSeconds;
+        Opponent->RefreshMujocoInputs(Seconds,Now);
+    }
     FString Error;
     if(!MujocoDynamics->Step(Seconds,Error))
     {Fail(Error);return;}
     SyncMujocoPose();
+    if (Opponent) Opponent->SyncMujocoPose();
     MujocoDynamics->FlushTiming();
 }
 
@@ -428,14 +482,23 @@ void AVehicleRig::RefreshMujocoInputs(double Seconds,double Now)
 
 void AVehicleRig::SubmitDedicatedMujocoInputs()
 {
-    if(!MujocoDynamics||!MujocoDynamics->IsDedicated()||bMujocoFailed||DedicatedControlSeconds<=0)return;
+    if (bMujocoSharedFollower || !MujocoDynamics || !MujocoDynamics->IsDedicated() ||
+        bMujocoFailed || DedicatedControlSeconds <= 0) return;
     const double Now=FPlatformTime::Seconds();
     const double Seconds=DedicatedControlSeconds;
     DedicatedControlSeconds=0;
+    const double Deadline = StageDedicatedMujocoInputs(Seconds,Now);
+    auto* Opponent = MujocoOpponent.Get();
+    const double OpponentDeadline = Opponent ? Opponent->StageDedicatedMujocoInputs(Seconds,Now) : 0.;
+    MujocoDynamics->SubmitDedicatedControls(Deadline,OpponentDeadline);
+}
+
+double AVehicleRig::StageDedicatedMujocoInputs(double Seconds,double Now)
+{
+    if (bMujocoFailed) return 0.;
     RefreshMujocoInputs(Seconds,Now);
     // The worker also enforces the wall lease with the game thread stalled.
-    const double Deadline=bExternalDriveLease&&!bContactBrake?FMath::Min(Now+.25,ExternalDriveDeadline):Now+.25;
-    MujocoDynamics->SubmitDedicatedControls(Deadline);
+    return bExternalDriveLease&&!bContactBrake?FMath::Min(Now+.25,ExternalDriveDeadline):Now+.25;
 }
 
 bool AVehicleRig::SampleSensorParentWorldAtTime(const FString& ParentFrame,double SolverTime,FTransform& OutPose) const
@@ -477,12 +540,22 @@ void AVehicleRig::SyncMujocoPose()
     FScopedMujocoTiming ContactTiming(*MujocoDynamics,EMujocoTimingScope::ContactIdentity);
     for(const auto& C:MujocoDynamics->Contacts())
     {
-        FCollisionQueryParams Query(SCENE_QUERY_STAT(MujocoContactVisualMapping),true,this);
+        UPrimitiveComponent* Other = nullptr;
         FHitResult Hit;
-        // Map the solved MuJoCo surface to its existing UE query component.
-        // This query supplies only an object identity; it never drives motion.
-        if(!GetWorld()->LineTraceSingleByChannel(Hit,C.PointCm-C.IntoObstacleNormal*2.,C.PointCm+C.IntoObstacleNormal*2.,ECC_Visibility,Query))continue;
-        auto* Other=Hit.GetComponent();if(!Other||FVector::Dist(Hit.ImpactPoint,C.PointCm)>2.05)continue;
+        if (C.OtherVehicleSlot != INDEX_NONE)
+        {
+            if (const auto* Opponent = MujocoOpponent.Get()) Other = Opponent->MujocoQueryBodies.FindRef(C.OtherBodyName);
+        }
+        else
+        {
+            // Resolve the static surface's UE identity using the native solved contact.
+            FCollisionQueryParams Query(SCENE_QUERY_STAT(MujocoContactVisualMapping),true,this);
+            if (const auto* Opponent = MujocoOpponent.Get()) Query.AddIgnoredActor(Opponent);
+            if (GetWorld()->LineTraceSingleByChannel(Hit,C.PointCm-C.IntoObstacleNormal*2.,
+                C.PointCm+C.IntoObstacleNormal*2.,ECC_Visibility,Query) && FVector::Dist(Hit.ImpactPoint,C.PointCm)<=2.05)
+                Other = Hit.GetComponent();
+        }
+        if (!Other) continue;
         auto& Obs=ContactObservations.FindOrAdd(C.BodyName);
         const FVector Impulse=-C.IntoObstacleNormal*(C.ImpulseNs*100.);
         if(Obs.Time==Now&&Obs.OtherComponent==Other)Obs.Impulse+=Impulse;
@@ -508,7 +581,7 @@ void AVehicleRig::ResetMujocoPose(const FTransform& Pose)
     DedicatedControlSeconds=0;
     for(auto& W:ContactWheels){W.SteeringTargetRad=0;W.SteeringMeasuredRad=0;W.WheelIntegralBiasRadS=0;W.PreviousWheelTargetRadS=0;}
     SyncMujocoPose();SetContactDrive(0,0,true);ExternalDriveDeadline=0;
-    if(DedicatedMujocoPeriod>0&&!StartDedicatedMujoco(DedicatedMujocoPeriod,Error))
+    if(DedicatedMujocoPeriod>0&&!MujocoDynamics->IsDedicated()&&!StartDedicatedMujoco(DedicatedMujocoPeriod,Error))
     {
         bMujocoFailed=true;
         UE_LOG(LogRMSim,Error,TEXT("MUJOCO_DEDICATED_RESET_FAILED %s"),*Error);
@@ -589,6 +662,11 @@ TSharedRef<FJsonObject> AVehicleRig::GetMujocoContactState() const
     {
         auto J=MakeShared<FJsonObject>();J->SetStringField(TEXT("body"),C.BodyName);J->SetStringField(TEXT("other"),C.OtherName);
         J->SetNumberField(TEXT("other_geom"),C.OtherGeom);J->SetNumberField(TEXT("other_flex"),C.OtherFlex);
+        if (C.OtherVehicleSlot != INDEX_NONE)
+        {
+            J->SetNumberField(TEXT("other_vehicle_slot"),C.OtherVehicleSlot);
+            J->SetStringField(TEXT("other_vehicle_body"),C.OtherBodyName);
+        }
         J->SetArrayField(TEXT("point_cm"),MjVector(C.PointCm));J->SetArrayField(TEXT("into_obstacle_normal"),MjVector(C.IntoObstacleNormal));
         J->SetNumberField(TEXT("normal_force_n"),C.ForceN);J->SetNumberField(TEXT("normal_impulse_ns"),C.ImpulseNs);J->SetNumberField(TEXT("time_s"),C.TimeSeconds);
         Contacts.Add(MakeShared<FJsonValueObject>(J));

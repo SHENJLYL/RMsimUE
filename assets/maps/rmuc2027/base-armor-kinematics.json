@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "units": "ROS map meters and right-hand radians",
+  "source_product": 4774244,
+  "closed_pose": "DJI RMUC2027 V1.0.0 full-map.glb",
+  "open_pose": "Estimate from official Rule Manual V1.0.0 figures 4-11 and 4-12 and the official 2024 base demonstration at 00:16–00:21",
+  "official_rules": "https://bbs.robomaster.com/wiki/20204847/1969149",
+  "official_video": "https://www.bilibili.com/video/BV1cV41197Vd/",
+  "reference_simulation": "https://github.com/RM-Arena/Arena-1/blob/e70c1f010edfd5d2b4454c6d5a21bee71c0baba4/simulation/src/structures.rs",
+  "modeling_notes": "Three CAD corner assemblies per team. Each spans two outer faces. Opening duration follows Arena-1; the open angle and radial/downward travel fit the official imagery. The two serial joints approximate the path of an unpublished linkage.",
+  "open_duration_s": 1.5,
+  "approximation": {
+    "radial_travel_m": 0.25,
+    "drop_m": 0.075,
+    "pitch_deg": 6.0
+  },
+  "origins_m": {
+    "red": [
+      11.585539772762,
+      2.99267e-07,
+      0.196999989832
+    ],
+    "blue": [
+      -11.587144705667,
+      2.64267e-07,
+      0.196999989832
+    ]
+  },
+  "lower_armor": {
+    "center_radius_m": 0.18,
+    "center_z_m": 0.775,
+    "face_width_m": 0.125,
+    "face_height_m": 0.373,
+    "tilt_up_deg": 12.0,
+    "visible_from_fraction": 0.995
+  },
+  "panels": [
+    {
+      "side": "red",
+      "index": 1,
+      "pivot_m": [
+        11.845539772762,
+        2.99267e-07,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        0.957826285221,
+        0.0,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "slide_open_m": 0.26100766272276377,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        -0.004365785271,
+        0.000137329102,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.318896539509,
+        0.579646885395,
+        0.601729691029
+      ],
+      "visual_mesh": "base_red_armor_1"
+    },
+    {
+      "side": "red",
+      "index": 2,
+      "pivot_m": [
+        11.455539772762,
+        0.225166904251,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        -0.478913142611,
+        0.829501895414,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        -0.866025403784,
+        -0.5,
+        0.0
+      ],
+      "slide_open_m": 0.2610076627227637,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        0.041797776818,
+        -0.010598994805,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.507173448801,
+        0.425290925195,
+        0.601729691029
+      ],
+      "visual_mesh": "base_red_armor_2"
+    },
+    {
+      "side": "red",
+      "index": 3,
+      "pivot_m": [
+        11.455539772762,
+        -0.225166305717,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        -0.478913142611,
+        -0.829501895414,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        0.866025403784,
+        -0.5,
+        0.0
+      ],
+      "slide_open_m": 0.26100766272276377,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        0.041992333829,
+        0.010574614759,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.507216140628,
+        0.425141135231,
+        0.601729691029
+      ],
+      "visual_mesh": "base_red_armor_3"
+    },
+    {
+      "side": "blue",
+      "index": 1,
+      "pivot_m": [
+        -11.847144705667,
+        2.64267e-07,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        -0.957826285221,
+        -0.0,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "slide_open_m": 0.26100766272276377,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        0.004365785271,
+        -0.000137329102,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.318896539509,
+        0.579646885395,
+        0.601729691029
+      ],
+      "visual_mesh": "base_blue_armor_1"
+    },
+    {
+      "side": "blue",
+      "index": 2,
+      "pivot_m": [
+        -11.457144705667,
+        -0.225166340717,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        0.478913142611,
+        -0.829501895414,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        0.866025403784,
+        0.5,
+        -0.0
+      ],
+      "slide_open_m": 0.2610076627227637,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        -0.041797776818,
+        0.010598994805,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.507173448801,
+        0.425290925195,
+        0.601729691029
+      ],
+      "visual_mesh": "base_blue_armor_2"
+    },
+    {
+      "side": "blue",
+      "index": 3,
+      "pivot_m": [
+        -11.457144705667,
+        0.225166869251,
+        0.781999989832
+      ],
+      "slide_axis_ros": [
+        0.478913142611,
+        0.829501895414,
+        -0.287347885566
+      ],
+      "hinge_axis_ros": [
+        -0.866025403784,
+        0.5,
+        0.0
+      ],
+      "slide_open_m": 0.26100766272276377,
+      "hinge_open_rad": 0.10471975511965978,
+      "visual_center_m": [
+        -0.041992333829,
+        -0.010574614759,
+        0.000257202387
+      ],
+      "visual_size_m": [
+        0.507216140628,
+        0.425141135231,
+        0.601729691029
+      ],
+      "visual_mesh": "base_blue_armor_3"
+    }
+  ]
+}

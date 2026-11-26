@@ -175,8 +175,12 @@ class NavigationConsoleTests(unittest.TestCase):
         with (patch.object(external,'ROOT',self.root), patch.object(sys,'argv',argv),
               patch.dict(external.os.environ), patch.object(external,'configure_navigation_transport'),
               patch.object(external.shutil,'which',return_value='ros2.exe'),
+              patch.object(external.subprocess,'run') as stop_tree,
               patch.object(external.subprocess,'Popen',side_effect=launch)):
             self.assertEqual(external.main(), 0)
+        if external.os.name == 'nt':
+            self.assertEqual([call.args[0] for call in stop_tree.call_args_list],
+                             [['taskkill.exe','/PID',str(pid),'/T','/F'] for pid in (1,2)])
         self.assertEqual(len(commands), 3)
         nav = commands[1]
         self.assertIn('initial_pose:=[8.0, 2.0, 1.0]', nav)

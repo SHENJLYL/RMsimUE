@@ -92,6 +92,7 @@ def validate_state(state, image, robot_id):
     if 'aim' in state:validate_aim_state(state['aim'],state['sim_time_ns'])
     if 'imu' in state:validate_imu(state['imu'],robot_id,state['sim_time_ns'])
     if 'training_evaluation' in state and not isinstance(state['training_evaluation'],dict):raise ProtocolError('invalid training evaluation')
+    if 'referee' in state and not isinstance(state['referee'],dict):raise ProtocolError('invalid referee state')
     return state
 
 
@@ -168,7 +169,8 @@ def command_packet(state, sequence, stamp_ns, frame_id, values, robot_id, *, ope
     if frame_id != robot_id + frame:
         required = 'odometry' if navigation_frame else 'robot base_link'
         raise ProtocolError(f'cmd_vel must use the {required} frame')
-    if navigation_frame and not (state.get('drive') or {}).get('operator_gyro_available'):
+    drive = state.get('drive') or {}
+    if navigation_frame and not drive.get('navigation_frame_available', drive.get('operator_gyro_available')):
         raise ProtocolError('navigation velocity requires a native odometry frame')
     if len(values) != 6:
         raise ProtocolError('invalid twist')
@@ -203,9 +205,32 @@ def motor_packet(state, sequence, steer, wheel, brake, robot_id):
     return json.dumps(payload,allow_nan=False,separators=(',',':')).encode('utf-8')+b'\n'
 
 
+def match_stance_packet(state, sequence, robot_id, stance):
+    if not (state.get('drive') or {}).get('match_autonomy') or stance not in ('MOVE', 'ATTACK', 'DEFENSE'):
+        raise ProtocolError('stance requires a simulator match seat')
+    payload = dict(v=1, kind='match_stance', session=state['session'], epoch=state['epoch'],
+                   seq=integer(sequence, 'sequence', 1), stamp_ns=state['sim_time_ns'],
+                   frame_id=identifier(robot_id)+'/base_link', stance=stance)
+    return json.dumps(payload, allow_nan=False, separators=(',', ':')).encode('utf-8') + b'\n'
+
+
+def match_ammo_purchase_packet(state, sequence, robot_id, purchase_mode):
+    referee = state.get('referee') or {}
+    if not (state.get('drive') or {}).get('match_autonomy') or referee.get('game_status', {}).get('game_progress') != 4:
+        raise ProtocolError('ammo purchase requires an active simulator match seat')
+    payload = dict(v=1, kind='match_ammo_purchase', session=state['session'], epoch=state['epoch'],
+                   seq=integer(sequence, 'sequence', 1), stamp_ns=state['sim_time_ns'],
+                   frame_id=identifier(robot_id)+'/base_link', purchase_mode=integer(purchase_mode, 'purchase mode', 1, 2))
+    return json.dumps(payload, allow_nan=False, separators=(',', ':')).encode('utf-8') + b'\n'
+
+
 def hold_aim():
     return dict(yaw_type=0,pitch_type=0,yaw=0.,pitch=0.,yaw_rate=0.,pitch_rate=0.,
                 yaw_min=-math.pi,yaw_max=math.pi,pitch_min=-math.pi/2,pitch_max=math.pi/2,fire=0,permit=0)
+
+
+MATCH_TRACK_MEMORY_NS = 350_000_000
+MATCH_FIRE_OBSERVATION_NS = 150_000_000
 
 
 def aim_packet(state, sequence, stamp_ns, command, frame_id="rmsim_world"):

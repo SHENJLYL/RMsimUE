@@ -35,6 +35,6 @@ public class RMSim : ModuleRules
         }
         AddEngineThirdPartyPrivateStaticDependencies(Target, "FreeType2", "UElibPNG", "zlib");
         PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine" });
-        PrivateDependencyModuleNames.AddRange(new[] { "Json", "ImageCore", "RenderCore", "RHI", "InputCore", "PhysicsCore", "Chaos", "Sockets", "Landscape", "Slate", "SlateCore", "Foliage", "ProceduralMeshComponent" });
+        PrivateDependencyModuleNames.AddRange(new[] { "Json", "ImageCore", "RenderCore", "RHI", "InputCore", "PhysicsCore", "Chaos", "Sockets", "Landscape", "Slate", "SlateCore", "Foliage", "ProceduralMeshComponent", "AudioExtensions" });
     }
 }

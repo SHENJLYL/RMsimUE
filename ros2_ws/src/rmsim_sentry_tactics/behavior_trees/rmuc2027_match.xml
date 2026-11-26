@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="rmuc2027_match">
+  <BehaviorTree ID="rmuc2027_match">
+    <Sequence>
+      <RetryUntilSuccessful num_attempts="-1">
+        <Fallback>
+          <Sequence>
+            <IsMapReady topic_name="/map" settle_time="0.1" timeout="120.0"/>
+            <IsTfReady map_frame="map" base_frame="base_link" timeout="120.0"/>
+            <IsNav2Ready action_name="navigate_through_poses" through_poses="true" timeout="30.0"/>
+          </Sequence>
+          <ForceFailure><Sleep msec="500"/></ForceFailure>
+        </Fallback>
+      </RetryUntilSuccessful>
+      <RMUC2027Tactics route="{tactical_route}">
+        <Timeout msec="90000">
+          <SendNav2ThroughPoses goals="{tactical_route}" frame_id="map"
+                                action_name="navigate_through_poses"/>
+        </Timeout>
+      </RMUC2027Tactics>
+    </Sequence>
+  </BehaviorTree>
+</root>

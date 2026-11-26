@@ -1,0 +1,12 @@
+{
+  "name": "rmsim-rmuc-rune-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "aedes": "1.2.0",
+    "mqtt": "5.16.1",
+    "protobufjs": "8.8.1"
+  }
+}

@@ -7,6 +7,9 @@
     [string]$DriveProfile = '',
     [switch]$NoRviz,
     [switch]$CheckContractOnly,
+    [switch]$MatchAutonomy,
+    [switch]$NoBehavior,
+    [switch]$NoVision,
     [string]$MapFile = '',
     [ValidatePattern('^[a-z][a-z0-9_]*$')][string]$SpawnId = 'default'
 )
@@ -50,11 +53,24 @@ if ($CheckContractOnly) {
 }
 
 $setupBat = "call `"$root\ros2_ws\install_lio\setup.bat`" && call `"$root\ros2_ws\install_navigation\setup.bat`" && call `"$root\ros2_ws\install_bridge\setup.bat`""
+if ($MatchAutonomy) {
+    $controlSetup = Join-Path $root 'ros2_ws/install_control/local_setup.bat'
+    if (!(Test-Path -LiteralPath $controlSetup -PathType Leaf)) { throw "Missing match messages: $controlSetup" }
+    $setupBat += " && call `"$controlSetup`""
+    if (-not $NoBehavior) {
+        $behaviorSetup = Join-Path $root 'ros2_ws/install_behavior/local_setup.bat'
+        if (!(Test-Path -LiteralPath $behaviorSetup -PathType Leaf)) { throw 'Run tools/environment/Build-Behavior.ps1 before starting match autonomy.' }
+        $setupBat += " && call `"$behaviorSetup`""
+    }
+}
 $connector = Join-Path $root 'tools\integration\external_sentry_connector.py'
 $noRvizArg = if ($NoRviz) { ' --no-rviz' } else { '' }
 $mapArg = if ($MapYaml) { " --map-yaml `"$MapYaml`"" } else { '' }
 $localizationArg = if ($LocalizationMapYaml) { " --localization-map-yaml `"$LocalizationMapYaml`"" } else { '' }
-$cmdLine = "$setupBat && python `"$connector`" --robot-id $RobotId --domain $Domain --navigation-source `"$NavigationSource`" --map-file `"$MapFile`" --spawn-id $SpawnId --drive-profile `"$DriveProfile`"$mapArg$localizationArg$noRvizArg"
+$matchArg = if ($MatchAutonomy) { ' --match-autonomy' } else { '' }
+$noBehaviorArg = if ($NoBehavior) { ' --no-behavior' } else { '' }
+$noVisionArg = if ($NoVision) { ' --no-vision' } else { '' }
+$cmdLine = "$setupBat && python `"$connector`" --robot-id $RobotId --domain $Domain --navigation-source `"$NavigationSource`" --map-file `"$MapFile`" --spawn-id $SpawnId --drive-profile `"$DriveProfile`"$mapArg$localizationArg$noRvizArg$matchArg$noBehaviorArg$noVisionArg"
 
 & (Join-Path $PSScriptRoot 'run-env.ps1') cmd /c $cmdLine
 exit $LASTEXITCODE

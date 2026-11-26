@@ -49,6 +49,9 @@ ros-humble-rviz2 = ">=11.2.29,<12"
 ros-humble-nav2-rviz-plugins = ">=1.1.20,<2"
 ros-humble-ros2bag = ">=0.15.17,<0.16"
 ros-humble-rosbag2-storage-default-plugins = ">=0.15.17,<0.16"
+ros-humble-behaviortree-cpp = { version = "==4.10.0", build = "h9490d1a_22" }
+ros-humble-generate-parameter-library = { version = "==0.7.7", build = "h9490d1a_22" }
+pyserial = "3.5.*"
 
 [activation.env]
 ROS_DISTRO = "humble"

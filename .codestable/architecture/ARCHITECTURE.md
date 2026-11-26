@@ -12,6 +12,22 @@ implements: []
 
 # 当前架构
 
+## 2026-11-26 RMUC 比赛小陀螺配置
+
+共享 MuJoCo 比赛 world 的两席均按车辆包读取小陀螺限值，比赛的 UE ROS 桥沿用相同车辆限值。非比赛入口保留已有 5 rad/s 策略。模型清单与原配置重新绑定，物理 XML 保持字节一致。
+
+## 2026-11-26 RMUC 哨兵移动交战与场地战术
+
+现有 C++ 服务器加载专用 `rmuc2027_match` XML。插件根据 UE 权威裁判状态和已激活的导航进程选择阵营航点，沿用 Point-LIO、AMCL 和 Nav2。场地控制、购买结算、堡垒开甲继续由 UE 裁判负责。视觉锁与开火许可独立，桥接层按视觉锁、有效导航平移及驻守扫视仲裁。用于测试的真值存放在独立评估与录包通路。
+
+证据、当前战术阈值、场地规则来源与验收范围见 `docs/changes/2026-11-26-rmuc-sentry-tactics.md` 和 `docs/changes/2026-11-26-rmuc-field-control-and-ammo.md`。
+
+## 2026-11-26 RMUC 原版 C++ 哨兵行为树
+
+UE 裁判 → rmsim_bridge 原版 DJI 消息及既有 PB/JSON → 独立的 BehaviorTree.CPP v4 哨兵节点 → 既有 Nav2 动作、云台扫描、视觉自瞄许可和底盘控制。Point-LIO、AMCL 与 Humble Nav2 保持原运行层。Windows 行为树隔离安装在 install_behavior，原版 XML 与比赛生成副本同时保留。比赛副本绑定双方场地航点、实际 map/TF、Nav2 多点执行树的帧和仿真小陀螺设定。ROS 图中 rmsim_sentry_bt_server 避开 Nav2 behavior_server 名称。
+
+固定上游版本、构建命令、Windows 红蓝双方实机闭环及原始日志见 docs/changes/2026-11-26-rmuc-native-sentry-behavior.md。
+
 ## 2026-11-20：可选校园远景与入口资产
 
 `CampusGym.cpp` 支持可选 `outdoor_background`：半径 8 km 天空与外边长 4 km 的四条正交地面环带，中央孔洞匹配原校园地面 160×140 m，顶面采用真实 ExtGrass 高度。该分支独立校验尺寸、源地面孔洞、环带接缝、球面余量及 NoCollision/NoNav/NoShadow/NoDF；普通 layout 的 100 m 范围限制和比赛物理合同保持。缺少配置项时保持旧背景行为。
@@ -233,6 +249,20 @@ CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云
 
 ## RMUC 源学校体育馆与地图边界（2026-11-20）
 
+哨兵贴纸独立渲染为带灯条避空和四孔的工字形平面网格，并随原装甲平面移动。 [实现与验收](../../docs/changes/2026-11-25-rmuc-sentry-i-profile-sticker.md)
+
+红蓝飞镖站独立消耗弹量。UE 飞行动画进入虚拟检测体积后由裁判确认，场点观测屏蔽压制期间的读卡效果。 [比赛飞镖实现](../../docs/changes/2026-11-25-rmuc-dart-match.md)
+
+发射站的固定结构、导轨盖板和抽拉滑台由原场地 CAD 拆分。盖板以原 CAD 全开为零位，独立于发射架的摆位配置。笃行发射架可见总成按原 CAD 尺寸加载为共享静态网格，安装垫块与原 CAD 的灰黑端罩同属滑台，虚拟飞镖从模型本地出站点开始。准备阶段允许抽拉滑台并在开赛前收回。 [运动、资产和验证](../../docs/changes/2026-11-26-rmuc-dart-station-guide-and-tray.md)
+
+`RMUCDartVisual` 采样世界空间曳光。`RMUCDartGameplay` 将靶头位姿同步到原 CAD 的显示网格、查询网格和虚拟检测，裁判确认后触发场景命中效果。 [动效验收](../../docs/changes/2026-11-25-rmuc-dart-presentation.md) 绿灯、外壳和滑块归入同一 CAD 总成，点光挂载到活动视觉网格。 [滑台验证](../../docs/changes/2026-11-25-rmuc-dart-carriage.md) 导轨下方支撑台面及支架属于固定基地网格。 [固定支撑](../../docs/changes/2026-11-26-rmuc-dart-fixed-rail-support.md) 展开外壳携带原 CAD 紧固件，显示用滑靴与导向座连接固定内架。 [展开支撑](../../docs/changes/2026-11-26-rmuc-base-open-supports.md) 绿灯聚光灯由原 CAD 透镜的中心与法向确定。 [照明验证](../../docs/changes/2026-11-25-rmuc-base-guide-light.md) 飞镖落地姿态读取 CAD 碰撞面，独立的连续网格光带随时间回收。 [贴面验证](../../docs/changes/2026-11-26-rmuc-dart-ribbon-landing.md)
+
+轴心两面的 R 标志使用独立材质槽，随裁判亮靶、完成和到期状态改变发光。 [实现与验证](../../docs/changes/2026-11-25-rmuc-rune-hub-lights.md)
+
+转盘中性底色与裁判控制的红蓝灯分别绑定到原 CAD 材质槽。固定轴心标志由导入器统一重映射为中性灰。 [转盘外观与验收](../../docs/changes/2026-11-25-rmuc-rune-rotor-colors.md)
+
+RMUC 能量机关由红蓝双面裁判状态驱动 CAD 转子与独立发光条，游戏 HUD 的 `T` 和选手端网关复用裁判的阶段和机会校验。本机网关以 RMUC 2027 MQTT／Protobuf 发布阵营状态，通过会话与回合标识转发已验证步兵席命令。 [实现与验证](../../docs/changes/2026-11-25-rmuc-rune-client-and-lights.md)
+
 `ArenaShell` 将 `rmsim_campus_gym_v1` 分派给 `CampusGym`。当前布局加载独立 `SchoolGymFidelity` 命名空间的 23 个 native mesh / 57 实例，保留原馆看台、窗户和钢构，26 棵场外树与教学楼提供实际视差。新增座椅为 0。源馆两个篮球架移除，其余几何完整保留；馆体中心对齐原篮球运动区，整体竖向移动使源地板承托 RMUC 原底面。场馆及场外装饰使用无碰撞实例网格，原比赛 CAD 和车辆接触几何独立保持。
 
 `CampusGym::Transform` 根据实际保存 mesh bounds、配置中心/尺寸及 ROS→UE 转换生成实例。源还原布局用 native bounds 重建单位缩放位置，随后统一加竖向支撑偏移。当前 `visual_floor_z_m=-0.3009999990463257`；地板、场外物件及灯位总上移 0.13559999942779544 m，树根与草地相对变换保持。源码 probe 读取每块玻璃的实际世界下端，核对与支撑面的关系。
@@ -240,6 +270,10 @@ CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云
 连续边界显式区分历史 `preserve_validated_arena_shell_v1` 与活动 `outside_source_bounds_v1`。当前 `outside_clearance_m=0`、`source_bounds_outer_face`，四面 0.48 m 厚碰撞墙从 RMUC 原外沿向场外展开，Z=-1.25～4.80 m；相对前一 1 mm 配置仅平移内侧边界。每片玻璃、框架和关闭门的厚度向场外放置，四角墙重叠 0.48 m。视觉基座延伸到馆地板，上端保持，物理墙高度保持。固定装饰门无通行/交互状态。当前场外视觉不参与导航和 LiDAR 查询。
 
 体育馆在当前地图世界内配置 12 盏面积灯、曝光、Lumen GI/反射及独立天空材质。照明使用 8K pure-sky 源生成的 cubemap；可见远景使用另一个完整 8K 景观源及独立背景材质。清透玻璃无额外 refraction，原玻璃两面/透明分类按源材质解释。其他地图保留各自路径。`GymCameraPosition/Target/Fov` 与 `GymProbeOutput` 提供真实场内/接触视角和边界检查；截图工具同时记录实际配置、模块、图像 SHA。
+
+比赛弹丸使用 `RMSimProjectile` 专用查询通道。地板和赛场结构使用已绑定的 CAD 碰撞，玻璃、门框及五金使用其可见实例的查询形状。转子、闸门与基地活动装甲的弹丸查询随各自网格运动。裁判将阻挡接触与有效装甲命中分别处理。`RMUCPhysicalAudio` 从底盘实测运动和裁判发射/碰撞事件生成空间音效。[原生验证](../../docs/changes/2026-11-24-rmuc-projectiles-and-physical-audio.md)
+
+`FRMUCFieldRules` 分别维护前哨塔体所属方、阵地控制方和控制阶段。`StepFieldObserver` 把前哨增益点及中央高地的合格激活信号送入裁判；HUD 和遥测读取同一状态。`RMUCFieldDeviceVisuals` 用塔体归属和存活状态更新装甲颜色，能量机关的 CAD 涂装与靶灯发光分别驱动。[规则与验证](../../docs/changes/2026-11-24-rmuc-outpost-and-rune-feedback.md)
 
 源准备使用 `restore_school_source_materials.py`、`prepare_school_gym_fidelity.py`、`prepare_school_tree_fidelity.py`、`assemble_school_fidelity.py`；原生导入复用基础 transport 与 `school_fidelity_materials.py`。`verify_school_fidelity_geometry.py` 从保存资产 LODResources[0] 读取三角位置、UV0、材质和绕序，以 2 ULP 逐面核验；显式零面积/重复面和 UE 固定 UV 代表合并由独立证据闭合。Nanite 完整 fallback 与 cluster 编码范围分列。`activate_school_fidelity.py` 要求完整几何报告通过；外景和地面支撑调整分别有输入/输出 SHA 与回滚快照。
 
@@ -310,3 +344,27 @@ RMUC 仿真使用 10 m 滚动窗口及原 5 m 地形观测半径，候选停车�
 ## 2026-11-22：坡面识别与角前速度
 
 选定 sentry_ws 配置可为 terrain_analysis 和 terrain_analysis_ext 指定最大可行坡度。节点用 odom 系中的低表面点拟合局部支持面。接受同一实测坡面连续相接的高侧与低侧平台，核对高度变化和拟合残差。接近支持面的点为地面，其他点沿用原高度和体素标记路径。Omni PID 对浅弯设置连续进入速度，静态体素代价和车身制动扫掠约束巡航。
+
+## 2026-11-25 RMUC 装甲图案与局部灯光
+
+装甲外观依附原车体或前哨转子。局部灯光只消费裁判和比赛装置状态。哨兵雷达使用原始材质。能量机关的灯臂分段控制局部直接光。 [变更与验收](../../docs/changes/2026-11-25-rmuc-armor-and-match-lighting.md)
+
+## 2026-11-25 RMUC 比赛自主哨兵
+
+比赛自动接入以实际 ROS 席位、出生点和地图启动 Point-LIO、Nav2、行为与视觉适配。行为等待导航动作回执并发出站姿与云台扫视请求。UE 裁判确认站姿和发射，小陀螺走导航系速度接口和停车旋转净空检查。视觉配对图像、内参及采集时云台角度，识别后才取得短时瞄准许可。 [运行证据](../../docs/changes/2026-11-25-rmuc-sim-autonomy-repair.md)
+
+## 2026-11-25 RMUC 哨兵原地复活
+
+比赛裁判的读条与金币复活共用 `RespawnCompetitor`。该入口恢复血量和相关裁判状态。车体位姿与传感器时序由持续运行的物理求解器提供。 [复活验证](../../docs/changes/2026-11-25-rmuc-sentry-in-place-revival.md)
+
+## 2026-11-25 RMUC 自动哨兵跟踪与驻守
+
+自动比赛通过绑定的车辆资料启用导航云台跟随和 75° 相机。实际相机与云台姿态按采集时刻关联。连续确认的可见装甲取得跟踪控制和发射请求权限，裁判结算发射间隔、热量、弹量和命中。当前高地目标回执决定驻守，已控制或已重建归属的前哨状态决定推进。 [Windows 验收](../../docs/changes/2026-11-25-rmuc-sentry-combat-tracking.md)
+
+## 2026-11-25 RMUC 驻守扫视和俯仰稳定
+
+驻守无锁定时由行为节点根据当前世界朝向扫视，失锁附近短时复扫。导航保持原航向跟随，并以实测世界俯仰和关节俯仰的差补偿转动底盘。MuJoCo 世界方向伺服使用底盘角速度前馈。Windows ROS 入口先加载当前 Python 环境的 Fast DDS RMW，再初始化消息接口。 [验证](../../docs/changes/2026-11-25-rmuc-search-and-pitch-stability.md)
+
+## 2026-11-25 RMUC 装甲命中音效
+
+比赛弹丸先结算命中类别。计分装甲命中统一播放命中点的金属板录音，其他碰撞按照材质选音。操控侧裁判命中确认声走原 HUD 通路。 [音效验证](../../docs/changes/2026-11-25-rmuc-armor-impact-audio.md)

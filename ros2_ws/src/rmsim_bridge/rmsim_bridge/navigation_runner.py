@@ -1,12 +1,16 @@
 """Supervise the original sentry navigation stack on real simulator sensing."""
 import datetime,json,math,os,subprocess,time
 from pathlib import Path
+import xml.etree.ElementTree as ET
+from .native_transport import load_windows_fastrtps
+load_windows_fastrtps()
 import rclpy
 from rclpy.node import Node
 from rclpy.clock import Clock,ClockType
 from rclpy.parameter import Parameter
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseWithCovarianceStamped,Twist,TwistStamped
+from example_interfaces.msg import Float32
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import OccupancyGrid,Odometry
 from action_msgs.msg import GoalStatus,GoalStatusArray
@@ -56,11 +60,29 @@ class NavigationRunner(Node):
         self.control_profile=self.declare_parameter('control_profile','legacy').value
         self.control_source=self.declare_parameter('control_source','').value
         self.drive_profile=self.declare_parameter('drive_profile','').value
+        match_speed=float(self.declare_parameter('match_translation_limit_mps',0.0).value)
+        self.native_match_behavior=bool(self.declare_parameter('native_match_behavior',False).value)
+        self.behavior_spin_seen=None
+        if not math.isfinite(match_speed) or match_speed < 0.:
+            raise ValueError('Invalid simulator match translation limit')
         if self.drive_profile:
             self.set_parameters([Parameter('use_sim_time',Parameter.Type.BOOL,True)])
         base=Path(self.declare_parameter('output_directory','artifacts/navigation/live').value)
         self.output=base/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+str(os.getpid()));self.output.mkdir(parents=True,exist_ok=False)
         cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source,self.localization_map_yaml,self.drive_profile)
+        if self.native_match_behavior:
+            bt=cfg['bt_navigator']['ros__parameters']
+            tree_key='default_nav_through_poses_bt_xml'
+            tree=ET.parse(bt[tree_key])
+            passed_goals=tree.findall('.//RemovePassedGoals')
+            if not passed_goals:
+                raise ValueError('The original through-poses tree lacks RemovePassedGoals')
+            for node in passed_goals:
+                node.set('global_frame',bt['global_frame'])
+                node.set('robot_base_frame',bt['robot_base_frame'])
+            runtime_tree=self.output/'navigate_through_poses.xml'
+            tree.write(runtime_tree,encoding='utf-8',xml_declaration=True)
+            bt[tree_key]=str(runtime_tree)
         self.drive_identity=self.map_metadata.get('drive_profile')
         self.localization_nodes=list(cfg['lifecycle_manager_localization']['ros__parameters']['node_names'])
         self.map_identity=self.map_metadata.get('localization_map')
@@ -75,11 +97,26 @@ class NavigationRunner(Node):
         from .sentry_navigation_source import source_profile
         self.source_identity=source_profile(reference,self.control_profile,self.control_source)[1]
         self.controller_config=cfg['controller_server']['ros__parameters']['FollowPath']
+        self.smoother_config=cfg['velocity_smoother']['ros__parameters']
+        if match_speed:
+            if not self.drive_identity:
+                raise ValueError('Match translation limit requires a shared drive profile')
+            # Preserve the reviewed profile and clearance logic. Bound simultaneous
+            # translation separately from the continuous chassis spin in this mode.
+            for key, sign in (('v_linear_max',1),('v_linear_min',-1)):
+                value=sign*min(abs(self.controller_config[key]),match_speed)
+                self.controller_config[key]=value
+                self.drive_identity['controller_limits'][key]=value
+            for key, sign in (('max_velocity',1),('min_velocity',-1)):
+                limits=self.smoother_config[key]
+                limits[:2]=[sign*min(abs(value),match_speed) for value in limits[:2]]
+                self.drive_identity['smoother_limits'][key]=list(limits)
+            self.drive_identity['match_translation_limit_mps']=match_speed
         if self.controller_config.pop('rmsim_bagged_bt', False):
             cfg['bt_navigator']['ros__parameters'].update(bt_loop_duration=32, default_server_timeout=500)
-        self.smoother_config=cfg['velocity_smoother']['ros__parameters']
         self.params=self.output/'parameters.yaml';self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.state=None;self.lio=None;self.received=0.;self.identity=None;self.children={};self.streams=[];self.starts=0;self.phase='waiting'
+        self.amcl_start_retried=False
         self.scan=None;self.pose=None;self.seeded=False;self.localized=False;self.nav_started=False;self.seed_ns=0;self.pose_stamp=0;self.good_poses=0;self.pending_state=None;self.pending_update=None;self.next_update=0.
         self.initial_pub=self.create_publisher(PoseWithCovarianceStamped,'initialpose',1)
         self.amcl_state=self.create_client(GetState,'amcl/get_state');self.nomotion=self.create_client(Empty,'request_nomotion_update')
@@ -123,6 +160,7 @@ class NavigationRunner(Node):
             self.idle_spin_sent=False
             self.idle_spin_anchor=None
             self.idle_spin_block='waiting'
+            self.idle_spin_blocked_cell=None
             qos=QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL,reliability=ReliabilityPolicy.RELIABLE)
             for name in ('navigate_to_pose','navigate_through_poses','follow_waypoints','follow_path'):
                 self.create_subscription(GoalStatusArray,'/'+name+'/_action/status',
@@ -132,6 +170,10 @@ class NavigationRunner(Node):
             self.create_subscription(Odometry,'/odometry',
                 lambda msg:setattr(self,'idle_spin_odom',(msg,time.monotonic())),qos_profile_sensor_data)
             self.create_subscription(Twist,topics['navigation_raw'],self.on_idle_spin_motion,1)
+            if self.native_match_behavior:
+                prefix='/'+self.robot+'/behavior/'
+                self.create_subscription(Float32,prefix+'cmd_spin',self.on_behavior_spin,1)
+                self.create_subscription(Twist,prefix+'cmd_vel',self.on_behavior_stop,1)
         if self.map_identity:
             qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL)
             self.create_subscription(OccupancyGrid,cfg['map_server']['ros__parameters'].get('topic_name','map'),
@@ -233,8 +275,13 @@ class NavigationRunner(Node):
             for col in range(low_x, high_x+1):
                 if (col+.5-mx)**2+(row+.5-my)**2>cells*cells:
                     continue
-                if not 0<=grid.data[row*g.width+col]<100:
+                occupancy=grid.data[row*g.width+col]
+                if not 0<=occupancy<100:
                     self.idle_spin_block='rotation_footprint_blocked'
+                    self.idle_spin_blocked_cell=dict(
+                        frame=grid.header.frame_id, center=[x,y], radius_m=radius,
+                        cell=[g.origin.position.x+(col+.5)*g.resolution,
+                              g.origin.position.y+(row+.5)*g.resolution], occupancy=occupancy)
                     return False
         if self.idle_spin_anchor is None:
             self.idle_spin_anchor=(x,y)
@@ -248,21 +295,43 @@ class NavigationRunner(Node):
         active=any(self.idle_spin_active_goals.values()) or wall-self.idle_spin_last_motion<.35
         drive=(self.state or {}).get('drive') or {}
         requested=drive.get('operator_gyro_setpoint_rad_s',0.)
+        if self.native_match_behavior:
+            sample=self.behavior_spin_seen
+            if not sample or wall-sample[1]>.3 or sample[0]<=0.:
+                requested=0.
         if active or not self.velocity_adapter_ready() or not requested:
             self.idle_spin_anchor=None
         ready=(self.phase=='running' and self.velocity_adapter_ready()
                and wall-self.received<=.25 and not active)
-        self.idle_spin_block='navigation_active' if active else 'not_armed'
-        allow=(ready and type(requested) in (int,float) and 0.<requested<=5.
-               and drive.get('operator_gyro_available') is True and self.idle_spin_clearance(wall))
+        self.idle_spin_block='navigation_active' if active else ''
+        self.idle_spin_blocked_cell=None
+        # Keep stationary gyro spinning up to GyroMaxRadS (12 rad/s) in match autonomy
+        max_spin=float((self.drive_identity.get('vehicle_control') or {}).get('GyroMaxRadS', 5.0))
+        allow=(ready and type(requested) in (int,float) and 0.<requested<=max_spin
+               and drive.get('operator_gyro_available') is True)
         if allow or (ready and self.idle_spin_sent):
             stamp=self.get_clock().now()
             if stamp.nanoseconds>0:
-                zero=TwistStamped()
-                zero.header.stamp=stamp.to_msg()
-                zero.header.frame_id=self.robot+'/base_link'
-                (self.idle_spin_pub if allow else self.public_velocity_pub).publish(zero)
+                cmd=TwistStamped()
+                cmd.header.stamp=stamp.to_msg()
+                cmd.header.frame_id=self.robot+'/base_link'
+                if allow and self.native_match_behavior:
+                    cmd.twist.angular.z=float(requested)
+                    self.public_velocity_pub.publish(cmd)
+                else:
+                    (self.idle_spin_pub if allow else self.public_velocity_pub).publish(cmd)
         self.idle_spin_sent=bool(allow)
+
+    def on_behavior_spin(self,message):
+        value=float(message.data)
+        max_spin=float((self.drive_identity.get('vehicle_control') or {}).get('GyroMaxRadS', 12.0)) if self.drive_identity else 12.0
+        if math.isfinite(value) and 0.<=value<=max_spin:
+            self.behavior_spin_seen=(value,time.monotonic())
+
+    def on_behavior_stop(self,message):
+        # All original match-tree Twist outputs are stops. Nav2 owns translation.
+        if self.finite_planar_velocity(message) and self.stop_velocity(message) and self.body_stop_ns is None:
+            self.publish_navigation_brake()
 
     def publish_navigation_brake(self):
         now=self.get_clock().now().nanoseconds
@@ -482,6 +551,7 @@ class NavigationRunner(Node):
     def poll(self):
         if self.state and self.identity is not None and self.identity!=[self.state.get('session'),self.state.get('epoch')]:
             self.stop();self.phase='waiting';self.map_fault=''
+            self.amcl_start_retried=False
         ready=self.state and self.state.get('connected') and self.state.get('state_fresh') and time.monotonic()-self.received<1 and self.lio and self.lio.get('phase')=='running'
         if ready:
             scene=self.state.get('map',{})
@@ -499,7 +569,18 @@ class NavigationRunner(Node):
                     self.stop();self.phase='localization_map_mismatch';ready=False
         if ready:
             for name,child in self.children.items():
-                if child.poll() is not None:raise RuntimeError('Original navigation process exited: '+name+' '+str(child.returncode))
+                code=child.poll()
+                if code is None:
+                    continue
+                if (os.name=='nt' and name=='amcl' and (code & 0xffffffff)==0xc0000005
+                        and (self.state.get('drive') or {}).get('match_autonomy') is True
+                        and not self.localized and not self.nav_started and not self.amcl_start_retried):
+                    self.amcl_start_retried=True
+                    self.get_logger().warning('AMCL exited with 0xc0000005 before localization; restarting localization once.')
+                    self.stop()
+                    self.start()
+                    break
+                raise RuntimeError('Original navigation process exited: '+name+' '+str(code))
             if self.identity!=identity or not self.children:
                 self.stop();self.identity=identity;self.start()
             self.initialize_pose();self.phase='running' if self.localized and (self.localization_only or self.nav_active) else 'activating' if self.nav_started else 'localizing'
@@ -513,12 +594,14 @@ class NavigationRunner(Node):
             self.motion_released = True
         self.update_operator_idle()
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
+            amcl_start_retried=self.amcl_start_retried,
             output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,
             localization_map=self.map_identity,localization_map_verified=not self.map_identity or (all(self.map_seen.values()) and not self.map_fault),
             localization_map_topics=self.map_metadata.get('localization_map_binding'),map_input_fault=self.map_fault,
             control_profile=self.control_profile,control_source=self.source_identity,
             operator_idle_spin=getattr(self,'idle_spin_sent',False),
             operator_idle_reason=getattr(self,'idle_spin_block','unavailable'),
+            operator_idle_blocked_cell=getattr(self,'idle_spin_blocked_cell',None),
             drive_profile=self.drive_identity,velocity_adapter_counts=self.velocity_adapter_counts,
             velocity_stop_policy='immediate_zero_target_latch_v1' if self.drive_identity else 'legacy',
             velocity_stop_latched=self.body_stop_ns is not None,velocity_stop_stamp_ns=self.body_stop_ns,

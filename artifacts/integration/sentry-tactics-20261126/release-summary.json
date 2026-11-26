@@ -1,0 +1,195 @@
+{
+  "platform": "Windows UE 5.8.4 / RoboStack Humble / MuJoCo",
+  "behavior_tree": "rmuc2027_match",
+  "ue_build_result": "Succeeded",
+  "tested_ue_module_sha256": "EEE218806776797F64F3DA517156186E54CA5A3791AF5BF5232CF2E51D5F04ED",
+  "behavior_overlay_packages": 7,
+  "tested_tactics_plugin_sha256": "2EEB2C4748D2D94AE639F2DA928C251241C3341418ABCDE503E01A73C467F53C",
+  "vision_sha256": "0CBD271221DD9985A5842D03875DD70D644E06EC87EBB34090554214F06F17E8",
+  "python_regression_passed": 72,
+  "python_regression_subtests": 5,
+  "field_rule_verification": "../../../docs/verification/2026-11-26-rmuc-field-control-and-ammo.json",
+  "cases": {
+    "live-red-outpost-01": {
+      "team": "red",
+      "probe": "remote_ammo",
+      "passed": true,
+      "messages": 43196,
+      "camera_frames": 196,
+      "byte_count": 596938752,
+      "metadata_sha256": "821C3A94C9E2B63A4147D65AECFAA887D84ACE7405CE8E5CE426C90D0D327F24",
+      "live_report_sha256": "63F668F7D6E9F36D3B94DB60104BBC38DE560254D46DD8B1F082891BB4A3DE1B",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": 22,
+      "both_robots_moving": null,
+      "remote_purchase": true,
+      "low_hp": 140,
+      "recovered_hp": 171,
+      "fortress_active": null,
+      "final_team_hp": {
+        "red": 171,
+        "blue": 300
+      },
+      "final_red_base_hp": null,
+      "owned_processes_remaining": [],
+      "bag": "live-red-outpost-01/rosbag/metadata.yaml"
+    },
+    "live-blue-fortress-01": {
+      "team": "blue",
+      "probe": "own_fortress",
+      "passed": true,
+      "messages": 14379,
+      "camera_frames": 72,
+      "byte_count": 217481216,
+      "metadata_sha256": "0BEAB8E547DD409F8F4D3A2F50C110F9CB91823860FDC52D46E351DBE9A4C5C8",
+      "live_report_sha256": "6798229C5CE05846F5023CFC8AD3D0AF746AEEAC35B2842A01F0F363C4A5F8E2",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": null,
+      "both_robots_moving": null,
+      "remote_purchase": null,
+      "low_hp": null,
+      "recovered_hp": null,
+      "fortress_active": true,
+      "final_team_hp": {
+        "red": 400,
+        "blue": 400
+      },
+      "final_red_base_hp": null,
+      "owned_processes_remaining": [],
+      "bag": "live-blue-fortress-01/rosbag/metadata.yaml"
+    },
+    "live-blue-moving-01": {
+      "team": "blue",
+      "probe": "none",
+      "passed": true,
+      "messages": 16373,
+      "camera_frames": 321,
+      "byte_count": 910708736,
+      "metadata_sha256": "B8235073F99066A152716D0CEA8EE327847921BAFD6778BE4A3AD75C31B7CF3B",
+      "live_report_sha256": "358DA5C337FE327AF27120E9EA868EA3D5D58949D8985E9F163B801E63DE42DB",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": 30,
+      "both_robots_moving": {
+        "opponent_motion_samples": 601,
+        "firing_samples_with_both_robots_moving": 26,
+        "longest_same_track_observations": 19,
+        "matching_track_ids": [
+          1,
+          4
+        ]
+      },
+      "remote_purchase": null,
+      "low_hp": null,
+      "recovered_hp": null,
+      "fortress_active": null,
+      "final_team_hp": {
+        "red": 220,
+        "blue": 400
+      },
+      "final_red_base_hp": null,
+      "owned_processes_remaining": [],
+      "bag": "live-blue-moving-01/rosbag/metadata.yaml"
+    },
+    "live-red-moving-01": {
+      "team": "red",
+      "probe": "none",
+      "passed": true,
+      "messages": 14662,
+      "camera_frames": 278,
+      "byte_count": 788803584,
+      "metadata_sha256": "1D03A0C1A9D15F1A6D2797AAE6A20D13D85597E03B8BC5D4A7AD36F75D31DBA6",
+      "live_report_sha256": "66A71DEE5782AE135330DAB534BFBE971A786463804097EE48BE220A7FD6FA36",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": 41,
+      "both_robots_moving": {
+        "opponent_motion_samples": 513,
+        "firing_samples_with_both_robots_moving": 35,
+        "longest_same_track_observations": 22,
+        "matching_track_ids": [
+          1,
+          2
+        ]
+      },
+      "remote_purchase": null,
+      "low_hp": null,
+      "recovered_hp": null,
+      "fortress_active": null,
+      "final_team_hp": {
+        "red": 400,
+        "blue": 400
+      },
+      "final_red_base_hp": null,
+      "owned_processes_remaining": [],
+      "bag": "live-red-moving-01/rosbag/metadata.yaml"
+    },
+    "live-red-shared-lane-01": {
+      "team": "red",
+      "probe": "none",
+      "passed": true,
+      "messages": 15250,
+      "camera_frames": 292,
+      "byte_count": 828436480,
+      "metadata_sha256": "E369A0D9A1BBA3591B55CFB42E75E145233449AF20E0631ACBDCC88113EF0CB4",
+      "live_report_sha256": "6281F8317E47171A61AE8677DDAE06577E394831F597379CBD956EA6D65B120B",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": 19,
+      "both_robots_moving": {
+        "opponent_motion_samples": 457,
+        "firing_samples_with_both_robots_moving": 15,
+        "longest_same_track_observations": 7,
+        "matching_track_ids": [
+          1,
+          2,
+          4
+        ]
+      },
+      "remote_purchase": null,
+      "low_hp": null,
+      "recovered_hp": null,
+      "fortress_active": null,
+      "final_team_hp": {
+        "red": 400,
+        "blue": 0
+      },
+      "final_red_base_hp": 10000,
+      "owned_processes_remaining": [],
+      "bag": "live-red-shared-lane-01/rosbag/metadata.yaml"
+    },
+    "live-blue-base-01": {
+      "team": "blue",
+      "probe": "outpost",
+      "passed": true,
+      "messages": 33835,
+      "camera_frames": 134,
+      "byte_count": 413700096,
+      "metadata_sha256": "0DCA60F9F5710818393D45EFEA398A32BEFB486794DF0D9A783B29469801D8D2",
+      "live_report_sha256": "859ED86FA1A4AC2987F0EECA8063EAE673294EAE9F660A761740ABDC0603B9D2",
+      "moving_navigation_gimbal": true,
+      "moving_accepted_shots": 34,
+      "both_robots_moving": null,
+      "remote_purchase": null,
+      "low_hp": null,
+      "recovered_hp": null,
+      "fortress_active": null,
+      "final_team_hp": {
+        "red": 20,
+        "blue": 400
+      },
+      "final_red_base_hp": 10000,
+      "owned_processes_remaining": [],
+      "bag": "live-blue-base-01/rosbag/metadata.yaml"
+    }
+  },
+  "limitations": [
+    "Enemy base damage was not observed in the verified base-approach run.",
+    "Damage and ammunition seeds and the opponent motion driver were enabled only for their explicitly named test cases."
+  ],
+  "base_visual_control": {
+    "bag": "live-blue-structure-02/rosbag/metadata.yaml",
+    "case": "live-blue-structure-02/summary.json",
+    "reached_attack_position": true,
+    "acquired_base_armor": false,
+    "final_enemy_base_hp": 10000,
+    "camera_samples": "camera-analysis/structure-contact-sheet.jpg"
+  }
+}

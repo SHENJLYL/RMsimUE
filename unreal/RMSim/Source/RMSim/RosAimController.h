@@ -5,6 +5,7 @@
 
 class AVehicleRig;
 class ATrainingRange;
+class ARMUCGameReferee;
 class USceneCaptureComponent2D;
 class FJsonObject;
 
@@ -14,6 +15,7 @@ class RMSIM_API URosAimController : public UActorComponent
     GENERATED_BODY()
 public:
     bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Muzzle,ATrainingRange* Range,bool Enabled,FString& Error);
+    void SetReferee(ARMUCGameReferee* InReferee) { Referee=InReferee; }
     bool Accept(const TSharedPtr<FJsonObject>& Packet,int64 Sequence,double SimTime);
     void Reject(const FString& Reason);
     void Stop(const FString& Reason);
@@ -31,6 +33,7 @@ private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
     UPROPERTY() USceneCaptureComponent2D* Aim=nullptr;
     UPROPERTY() ATrainingRange* Training=nullptr;
+    UPROPERTY() ARMUCGameReferee* Referee=nullptr;
     bool bEnabled=false,bLive=false,bFire=false,bPermit=false,bOperatorBrake=false,bLimited=false;
     bool bBodyFrame=false;
     FAxis Yaw,Pitch;
@@ -41,8 +44,11 @@ private:
     double PreviousYaw=0,PreviousPitch=0;
     FTransform PreviousMuzzle=FTransform::Identity;
     int64 AcceptedSeq=-1,RejectedCount=0;
+    int64 MatchShotCount=0,LastMatchShotSeq=-1,LastMatchFireRejectionSeq=-1;
+    FString LastMatchFireRejection;
     FVector2D WorldAngles() const;
     static void StepAxis(FAxis& Axis,double Seconds);
     void Drive(double Seconds);
-    bool CanFire() const;
+    bool HasLiveTrigger() const;
+    bool CanFireTraining() const;
 };

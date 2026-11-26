@@ -3,6 +3,8 @@
 #include "CampusGym.h"
 #include "MapOverview.h"
 #include "TrainingRange.h"
+#include "RMUCGameReferee.h"
+#include "RMUCPhysicalAudio.h"
 #include "VehicleRig.h"
 #include "RosBridgeComponent.h"
 #include "RMSimViewportClient.h"
@@ -122,6 +124,112 @@ AImportLabGameMode::AImportLabGameMode()
     PrimaryActorTick.TickGroup = TG_PostPhysics; // Render cameras and evidence observe the completed physical pose.
 }
 
+bool AImportLabGameMode::ConfigureMatchSeats(FString& Error)
+{
+    FString RosterPath, RosTeamArgument;
+    const bool bHasRoster = FParse::Value(FCommandLine::Get(), TEXT("MatchRoster="), RosterPath);
+    const bool bHasRosTeam = FParse::Value(FCommandLine::Get(), TEXT("RosVehicleTeam="), RosTeamArgument);
+    if (!bHasRoster && !bHasRosTeam) return true;
+    if (!bHasRoster || RosterPath.IsEmpty())
+    {
+        Error = TEXT("A physical RMUC match requires -MatchRoster=<path>");
+        return false;
+    }
+    FString Json;
+    TSharedPtr<FJsonObject> Data;
+    if (IFileManager::Get().FileSize(*RosterPath) > 65536 || !FFileHelper::LoadFileToString(Json, *RosterPath) ||
+        !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json), Data) || !Data)
+    {
+        Error = TEXT("Could not read RMUC match roster");
+        return false;
+    }
+    FString MapId;
+    if (!Data->TryGetStringField(TEXT("map_id"), MapId) || MapId != TEXT("rmuc2027") ||
+        !Data->TryGetStringField(TEXT("primary_team"), MatchPrimaryTeam) ||
+        (MatchPrimaryTeam != TEXT("red") && MatchPrimaryTeam != TEXT("blue")))
+    {
+        Error = TEXT("RMUC roster requires the rmuc2027 map and a red or blue primary team");
+        return false;
+    }
+    for (const TCHAR* Team : {TEXT("red"), TEXT("blue")})
+    {
+        const TArray<TSharedPtr<FJsonValue>>* Seats = nullptr;
+        if (!Data->TryGetArrayField(Team, Seats) || Seats->Num() != 1 || (*Seats)[0]->Type != EJson::Object)
+        {
+            Error = TEXT("RMUC dual match requires one AIM sentry on each team");
+            return false;
+        }
+        const auto Seat = (*Seats)[0]->AsObject();
+        FString VehicleId, Control;
+        if (!Seat->TryGetStringField(TEXT("vehicle_id"), VehicleId) || VehicleId != TEXT("aim_sentry") ||
+            !Seat->TryGetStringField(TEXT("control"), Control) ||
+            (Control != TEXT("manual") && Control != TEXT("sentry_ws") && Control != TEXT("ai")))
+        {
+            Error = TEXT("Unsupported RMUC seat: the dual match currently uses AIM S7 and manual, sentry_ws, or passive AI seats");
+            return false;
+        }
+        if (Control == TEXT("sentry_ws"))
+        {
+            if (!MatchRosTeam.IsEmpty())
+            {
+                Error = TEXT("One ROS 2 sentry seat is supported per match session");
+                return false;
+            }
+            MatchRosTeam = Team;
+        }
+    }
+    if (bHasRosTeam && MatchRosTeam != RosTeamArgument)
+    {
+        Error = TEXT("-RosVehicleTeam does not match the selected sentry_ws roster seat");
+        return false;
+    }
+    if (!MatchRosTeam.IsEmpty() && !FParse::Param(FCommandLine::Get(), TEXT("RosAimControl")))
+    {
+        Error = TEXT("A sentry_ws match seat requires -RosAimControl");
+        return false;
+    }
+    bPhysicalMatch = true;
+    bBridgeControlsOpponent = !MatchRosTeam.IsEmpty() && MatchRosTeam != MatchPrimaryTeam;
+    bRosControl = !MatchRosTeam.IsEmpty() && !bBridgeControlsOpponent;
+    bRosAimControl = bRosControl;
+    return true;
+}
+
+AVehicleRig* AImportLabGameMode::SpawnMatchOpponent(FString& Error)
+{
+    const FMapSpawn* OpposingSpawn = StageMap.Spawns.FindByPredicate([this](const FMapSpawn& Spawn)
+    {
+        return Spawn.Team == (MatchPrimaryTeam == TEXT("red") ? TEXT("blue") : TEXT("red"));
+    });
+    if (!OpposingSpawn)
+    {
+        Error = TEXT("The opposing team has no declared RMUC spawn");
+        return nullptr;
+    }
+    auto* Vehicle = GetWorld()->SpawnActor<AVehicleRig>();
+    if (!Vehicle)
+    {
+        Error = TEXT("Could not create the opposing AIM sentry");
+        return nullptr;
+    }
+    if (!Vehicle->LoadMeshRig(ContactRigFile, Error)) { Vehicle->Destroy(); return nullptr; }
+    const FVector Position = RosCoordinates::Position(OpposingSpawn->GroundMetres) +
+        FVector(0., 0., 2. - Vehicle->GetLocalCollisionBounds().Min.Z);
+    Vehicle->SetActorLocationAndRotation(Position, RosCoordinates::Rotation(FVector(0, 0, OpposingSpawn->YawRadians)));
+    if (!Vehicle->SnapToTerrain(Error) || !Vehicle->AttachSharedMujoco(*Rig, ContactRigFile, Error))
+    {
+        Vehicle->Destroy();
+        return nullptr;
+    }
+    for (const auto& Camera : Vehicle->GetCameras())
+    {
+        Camera.Value->bCaptureEveryFrame = false;
+        Camera.Value->bCaptureOnMovement = false;
+    }
+    URMUCPhysicalAudio::AttachTo(Vehicle);
+    return Vehicle;
+}
+
 void AImportLabGameMode::Abort(const FString& Reason)
 {
     UE_LOG(LogRMSim, Error, TEXT("IMPORT_LAB_FAILED %s"), *Reason);
@@ -151,11 +259,26 @@ void AImportLabGameMode::BeginPlay()
     bContactProbeActive = bTractionProbeActive||bGyroProbeActive||FParse::Param(FCommandLine::Get(), TEXT("ContactProbe"));
     bRosAimControl=FParse::Param(FCommandLine::Get(),TEXT("RosAimControl"));
     bRosControl=FParse::Param(FCommandLine::Get(),TEXT("RosControl"))||FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
+    FString SeatError;
+    if (!ConfigureMatchSeats(SeatError)) { Abort(SeatError); return; }
+#if WITH_DEV_AUTOMATION_TESTS
+    bMatchOpponentGyroFixture = FParse::Param(FCommandLine::Get(), TEXT("MatchOpponentGyroFixture"));
+    if (bMatchOpponentGyroFixture && (!bPhysicalMatch || !bBridgeControlsOpponent ||
+        !FParse::Param(FCommandLine::Get(), TEXT("RenderOffScreen"))))
+    { Abort(TEXT("MatchOpponentGyroFixture requires an offscreen physical match with a manual primary")); return; }
+    if (FParse::Value(FCommandLine::Get(), TEXT("MatchOpponentMotionFixture="), MatchOpponentMotionMetres) &&
+        (!bMatchOpponentGyroFixture || !FMath::IsFinite(MatchOpponentMotionMetres) ||
+            MatchOpponentMotionMetres < 0.1 || MatchOpponentMotionMetres > 1.0))
+    { Abort(TEXT("MatchOpponentMotionFixture requires MatchOpponentGyroFixture and an amplitude of 0.1 to 1.0 m")); return; }
+#endif
     FString PhysicsBackend=TEXT("chaos");
     FParse::Value(FCommandLine::Get(),TEXT("PhysicsBackend="),PhysicsBackend);
     if(PhysicsBackend!=TEXT("chaos")&&PhysicsBackend!=TEXT("mujoco"))
     {Abort(TEXT("PhysicsBackend must be chaos or mujoco"));return;}
     const bool MujocoRequested=PhysicsBackend==TEXT("mujoco");
+    if (bPhysicalMatch && (!MujocoRequested || FParse::Param(FCommandLine::Get(), TEXT("TrainingMode")) ||
+        FParse::Param(FCommandLine::Get(), TEXT("NoReferee"))))
+    { Abort(TEXT("Dual RMUC requires MuJoCo and the match referee")); return; }
     double FixedStep=MujocoRequested?(FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"))?.001:.005):0;
     FParse::Value(FCommandLine::Get(),TEXT("SimStepSeconds="),FixedStep);
     if(MujocoRequested&&(FixedStep<=0||FixedStep>.005))
@@ -171,6 +294,8 @@ void AImportLabGameMode::BeginPlay()
     const bool Dedicated=MujocoRequested&&PaceRequested&&!bContactProbeActive&&
         !FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"))&&
         !FParse::Param(FCommandLine::Get(),TEXT("MujocoSynchronous"));
+    if (bPhysicalMatch && !Dedicated)
+    { Abort(TEXT("The dual RMUC match requires the dedicated MuJoCo worker with -SimRealTimePace")); return; }
     if(Dedicated)
     {
         DedicatedMujocoStep=FixedStep;
@@ -201,7 +326,7 @@ void AImportLabGameMode::BeginPlay()
     if(!ImuFixture.IsEmpty()&&ImuFixture!=TEXT("freefall")&&ImuFixture!=TEXT("incline"))
     {Abort(TEXT("unknown development IMU fixture"));return;}
 #endif
-    bRosBridgeEnabled=bRosControl||bRosAimControl||FParse::Param(FCommandLine::Get(),TEXT("RosBridge"))||FParse::Param(FCommandLine::Get(),TEXT("RosImu"))||FParse::Param(FCommandLine::Get(),TEXT("RosLidar"));
+    bRosBridgeEnabled=bRosControl||bRosAimControl||bBridgeControlsOpponent||FParse::Param(FCommandLine::Get(),TEXT("RosBridge"))||FParse::Param(FCommandLine::Get(),TEXT("RosImu"))||FParse::Param(FCommandLine::Get(),TEXT("RosLidar"));
     bContactMode = MujocoRequested||bRosBridgeEnabled||bContactProbeActive || FParse::Param(FCommandLine::Get(), TEXT("ContactPhysics"));
     bCombatProbeActive = FParse::Param(FCommandLine::Get(), TEXT("CombatProbe"));
     bTrainingMode = bCombatProbeActive || FParse::Param(FCommandLine::Get(), TEXT("TrainingMode"));
@@ -324,6 +449,8 @@ bool AImportLabGameMode::CreateStage()
     if (bTerrainProbeActive && !StageMap.bMeshTerrain) { Abort(TEXT("TerrainProbe requires a mesh map")); return false; }
     const FMapSpawn* Spawn = StageMap.Spawns.FindByPredicate([&SpawnId](const FMapSpawn& S) { return S.Id == SpawnId; });
     if (!Spawn) { Abort(TEXT("requested spawn id does not exist in map")); return false; }
+    if (bPhysicalMatch && (StageMap.Id != TEXT("rmuc2027") || Spawn->Team != MatchPrimaryTeam || Rig->IsCanonicalRig()))
+    { Abort(TEXT("Selected map, spawn or rig does not match the pilot team's AIM S7 roster seat")); return false; }
     SelectedSpawn = *Spawn;
     if (!StageMap.SpawnGeometry(GetWorld(), MapBoxes, MapError)) { Abort(MapError); return false; }
     if (StageMap.bMeshTerrain && !FArenaShell::Spawn(GetWorld(),StageMap,MapBoxes,MapError)) { Abort(MapError); return false; }
@@ -773,7 +900,11 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         }
         if (!UpdateSceneRenderingReadiness()) return;
         FString TerrainError;
-        if (StageMap.bMeshTerrain && !Rig->SnapToTerrain(TerrainError)) { Abort(TerrainError); return; }
+        FString PhysicsBackend;
+        FParse::Value(FCommandLine::Get(), TEXT("PhysicsBackend="), PhysicsBackend);
+        // A composed canonical MuJoCo model owns the spawn height and wheel contact.
+        const bool bComposedSpawn = Rig->IsCanonicalRig() && PhysicsBackend == TEXT("mujoco");
+        if (StageMap.bMeshTerrain && !bComposedSpawn && !Rig->SnapToTerrain(TerrainError)) { Abort(TerrainError); return; }
         const bool Overlapping = Rig->GetManualState().bBlockingOverlap;
         if (!MapReportFile.IsEmpty() && !StageMap.WriteReport(MapReportFile,SelectedSpawn,MapBoxes,Rig->GetActorLocation(),Overlapping,GetWorld()))
         { Abort(TEXT("cannot write fresh map report")); return; }
@@ -781,22 +912,40 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
         if(bContactMode)
         {
             FString PhysicsError;
+            if (bPhysicalMatch) Rig->EnableMujocoMatchWorld();
             if(!Rig->InitializeContactPhysics(ContactRigFile,PhysicsError)){Abort(PhysicsError);return;}
             ContactStart=Rig->GetActorTransform();
             ContactSpawn=ContactStart;
             GyroSpeedRadS=Rig->GetDriveParameter(TEXT("GyroDefaultRadS"));
         }
+        if (StageMap.Id == TEXT("rmuc2027") && !bProbeActive && !bControlProbeActive)
+            URMUCPhysicalAudio::AttachTo(Rig);
         if(bTrainingMode)
         {
             Training=GetWorld()->SpawnActor<ATrainingRange>();FString TrainingError;
             if(!Training||!Training->Initialize(Rig,TrainingError)){Abort(TrainingError);return;}
         }
+        else if(StageMap.Id==TEXT("rmuc2027")&&!bProbeActive&&!FParse::Param(FCommandLine::Get(),TEXT("NoReferee")))
+        {
+            FString RefError;
+            AVehicleRig* Opponent = bPhysicalMatch ? SpawnMatchOpponent(RefError) : nullptr;
+            if (bPhysicalMatch && !Opponent) { Abort(RefError); return; }
+            Referee=GetWorld()->SpawnActor<ARMUCGameReferee>();
+            if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent)){Abort(RefError);return;}
+        }
         if(bRosBridgeEnabled)
         {
+            AVehicleRig* BoundVehicle = bBridgeControlsOpponent ? Referee->GetEnemyRig() : Rig;
+            auto* BoundAim = bBridgeControlsOpponent ? BoundVehicle->GetCameras().FindRef(TEXT("aim_camera")) : GetAimCapture();
             RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
-            if(!RosBridge->Initialize(Rig,GetAimCapture(),Training,bRosControl,BridgeError)){Abort(BridgeError);return;}
+            if(!RosBridge->Initialize(BoundVehicle,BoundAim,Training,bRosControl||bBridgeControlsOpponent,BridgeError)){Abort(BridgeError);return;}
+            if(Referee)
+            {
+                RosBridge->SetReferee(Referee);
+                if (bRosAimControl || bBridgeControlsOpponent) Referee->BindRosCompetitor(BoundVehicle);
+            }
             RosBridge->SetMapIdentity(StageMap.Id,StageMap.SourceFile,StageMap.bMeshTerrain,StageMap.bSavedScene);
-            if(RosBridge->SupportsOperatorGyro()&&FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroStart")))
+            if(!bBridgeControlsOpponent&&RosBridge->SupportsOperatorGyro()&&FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroStart")))
             {
                 double StartupRate = GyroSpeedRadS;
                 if (FParse::Value(FCommandLine::Get(), TEXT("RosOperatorGyroStartRate="), StartupRate) &&
@@ -858,8 +1007,24 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
     TickManualControl(DeltaSeconds);
     if(!ImuFixture.IsEmpty())TickImuFixture(DeltaSeconds);
     if(RosBridge)RosBridge->Advance();
-    else if(UsesDedicatedMujoco())Rig->SubmitDedicatedMujocoInputs();
+    if(UsesDedicatedMujoco())Rig->SubmitDedicatedMujocoInputs();
     Elapsed += DeltaSeconds;
+    {
+        static bool bHudShotRequested = false;
+        static double HudShotAt = -1.0;
+        FString HudShotPath;
+        if (!bHudShotRequested && Elapsed >= 1.5 && FParse::Value(FCommandLine::Get(), TEXT("HudCapturePath="), HudShotPath) && !HudShotPath.IsEmpty())
+        {
+            bHudShotRequested = true;
+            HudShotAt = Elapsed;
+            FScreenshotRequest::RequestScreenshot(HudShotPath, true, false);
+            UE_LOG(LogRMSim, Display, TEXT("HUD_SCREENSHOT_REQUESTED %s"), *HudShotPath);
+        }
+        if (bHudShotRequested && HudShotAt >= 0.0 && Elapsed >= HudShotAt + 1.2 && FParse::Param(FCommandLine::Get(), TEXT("ExitAfterHudCapture")))
+        {
+            FPlatformMisc::RequestExitWithStatus(false, 0);
+        }
+    }
     if (!bCaptured && !CaptureDirectory.IsEmpty() && Elapsed >= CaptureDelay)
     {
         bCaptured = true;
@@ -894,6 +1059,7 @@ FVector AImportLabGameMode::TraceViewPoint(const FVector& Start, const FVector& 
 {
     const FVector End = Start + Direction.GetSafeNormal() * 100000.0;
     FCollisionQueryParams Query(SCENE_QUERY_STAT(RMSimViewAim), false, Rig);
+    if (Referee) Query.AddIgnoredActor(Referee);
     FHitResult Hit;
     return GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Query) ? Hit.ImpactPoint : End;
 }
@@ -949,7 +1115,11 @@ void AImportLabGameMode::UpdatePlayerView(APlayerController* PC)
         SightCamera->GetCameraComponent()->SetFieldOfView(SightFov);
         Aim->FOVAngle = SightFov; // Manual preview optics; no calibrated sensor-rate claim.
     }
-    ACameraActor* Wanted = bSightMode && !bFreeLook ? SightCamera : ChaseCamera;
+    AActor* Wanted = bSightMode && !bFreeLook ? SightCamera : ChaseCamera;
+#if WITH_DEV_AUTOMATION_TESTS
+    if (const auto* ProbeReferee = Referee)
+        if (AActor* ProbeCamera = ProbeReferee->GetRuneProbeCamera()) Wanted = ProbeCamera;
+#endif
     if (PC->GetViewTarget() != Wanted) PC->SetViewTarget(Wanted);
 }
 
@@ -958,8 +1128,16 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (!PC || !ChaseCamera || !SightCamera) return;
     UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
-    const bool Focused = ViewportClient && ViewportClient->Viewport &&
+    bool Focused = ViewportClient && ViewportClient->Viewport &&
         ViewportClient->Viewport->HasFocus() && ViewportClient->Viewport->IsForegroundWindow();
+#if WITH_DEV_AUTOMATION_TESTS
+    Focused = Focused && !bMatchOpponentGyroFixture;
+#endif
+    const bool bShiftPressed = PC->WasInputKeyJustPressed(EKeys::LeftShift) || PC->WasInputKeyJustPressed(EKeys::RightShift);
+    const bool bShiftDown = PC->IsInputKeyDown(EKeys::LeftShift) || PC->IsInputKeyDown(EKeys::RightShift);
+    const bool bDartPressed = Referee && Focused && PC->WasInputKeyJustPressed(EKeys::K);
+    if (bDartPressed) bDartTargetKeyHeld = bShiftDown || bShiftPressed;
+
     TSharedPtr<FJsonObject> BeforeInput;
     auto NoteEdges = [this, PC, Focused, &BeforeInput](FKey Key, const TCHAR* Name)
     {
@@ -986,6 +1164,12 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     NoteEdges(EKeys::M, TEXT("Map")); NoteEdges(EKeys::Escape, TEXT("MapClose"));
     NoteEdges(EKeys::LeftAlt, TEXT("MapModifier")); NoteEdges(EKeys::RightAlt, TEXT("MapModifier"));
     NoteEdges(EKeys::MiddleMouseButton, TEXT("MapPoint"));
+    if (Referee)
+    {
+        NoteEdges(EKeys::T, TEXT("RuneClientT"));
+        NoteEdges(EKeys::F5, TEXT("RuneClientF5"));
+        NoteEdges(EKeys::K, bDartTargetKeyHeld ? TEXT("DartTarget") : TEXT("DartGate"));
+    }
 
     float MouseX = 0.0f, MouseY = 0.0f;
     if (PC->PlayerInput)
@@ -1004,7 +1188,17 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     Input.Precision=PC->IsInputKeyDown(EKeys::LeftControl)||PC->IsInputKeyDown(EKeys::RightControl);
     Input.Brake = PC->IsInputKeyDown(EKeys::SpaceBar);
     Input.FreeLook = PC->IsInputKeyDown(EKeys::C);
-    Input.ToggleSight = PC->WasInputKeyJustPressed(EKeys::LeftShift) || PC->WasInputKeyJustPressed(EKeys::RightShift);
+    Input.ToggleSight = bShiftPressed;
+    if (Referee)
+    {
+        // Resolve a standalone Shift on release so a later F4 can consume the gesture.
+        if (bShiftPressed && MatchShiftGesture == EMatchShiftGesture::Idle)
+            MatchShiftGesture = EMatchShiftGesture::Sight;
+        if (bDartPressed && bDartTargetKeyHeld) MatchShiftGesture = EMatchShiftGesture::Dart;
+        const bool bShiftReleased = PC->WasInputKeyJustReleased(EKeys::LeftShift) || PC->WasInputKeyJustReleased(EKeys::RightShift);
+        Input.ToggleSight = Focused && bShiftReleased && !bShiftDown && MatchShiftGesture == EMatchShiftGesture::Sight;
+        if (!Focused || !bShiftDown) MatchShiftGesture = EMatchShiftGesture::Idle;
+    }
     Input.Zoom = PC->IsInputKeyDown(EKeys::RightMouseButton);
     Input.Fire = PC->IsInputKeyDown(EKeys::LeftMouseButton);
     Input.RestartRound = PC->WasInputKeyJustPressed(EKeys::R);
@@ -1018,6 +1212,24 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     Input.MapDrag = PC->IsInputKeyDown(EKeys::RightMouseButton);
     Input.MapPing = PC->WasInputKeyJustPressed(EKeys::LeftMouseButton);
     Input.MapPointOfInterest = PC->WasInputKeyJustPressed(EKeys::MiddleMouseButton);
+    if (Referee && Focused)
+    {
+        if (PC->WasInputKeyJustPressed(EKeys::F3)) Referee->RequestOwnAmmoPurchase();
+        if (PC->WasInputKeyJustPressed(EKeys::L)) Referee->ToggleOwnDartTray();
+        if (bDartPressed)
+        {
+            if (bDartTargetKeyHeld) Referee->CycleOwnDartTarget();
+            else Referee->RequestOwnDartGate();
+        }
+        if (PC->WasInputKeyJustPressed(EKeys::T) || PC->WasInputKeyJustPressed(EKeys::F5))
+            LastRuneClientResult = Referee->RequestClientRune(Rig);
+        if (PC->WasInputKeyJustPressed(EKeys::F6)) Referee->StartMatchNow();
+        if (PC->WasInputKeyJustPressed(EKeys::F7)) Referee->ResetMatch(true);
+        if (PC->WasInputKeyJustPressed(EKeys::F8)) Referee->ToggleFriendlyTeam();
+        if (PC->WasInputKeyJustPressed(EKeys::F9)) Referee->InjectSelfArmorHit(0, 20);
+        if (PC->WasInputKeyJustPressed(EKeys::F10)) Referee->ToggleDebugOverlay();
+    }
+    if (!Focused || PC->WasInputKeyJustReleased(EKeys::K)) bDartTargetKeyHeld = false;
     float CursorX = -1.0f, CursorY = -1.0f;
     if (PC->GetMousePosition(CursorX, CursorY)) Input.CursorPixels = FVector2D(CursorX, CursorY);
     Input.MouseX = MouseX; Input.MouseY = MouseY;
@@ -1033,9 +1245,53 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     {
         bPrecisionDrive=false;
         bMapDragging=false;
-        if(Rig->IsContactPhysics()&&!bRosControl)Rig->SetContactDrive(0,0,true);
-        if(RosBridge)RosBridge->SetOperatorBrake(false);
+        if (Rig->IsContactPhysics() && !bRosControl)
+        {
+#if WITH_DEV_AUTOMATION_TESTS
+            if (bMatchOpponentGyroFixture && Referee && Referee->IsChassisPowered())
+            {
+                const double Now = Rig->GetSimulationTimeSeconds();
+                const bool bSample = Now >= MatchOpponentGyroNextSample;
+                if (MatchOpponentMotionMetres > 0.0)
+                {
+                    // Track a small world-Y sweep around the fixture spawn using native contacts.
+                    constexpr double AngularFrequency = UE_DOUBLE_PI / 4.0;
+                    const double Phase = AngularFrequency * Now;
+                    const auto FromUe = [](const FVector& Value) { return FVector(Value.X, -Value.Y, Value.Z) * 0.01; };
+                    const FVector Position = FromUe(Rig->GetActorLocation());
+                    const FVector Spawn = FromUe(ContactSpawn.GetLocation());
+                    const double TargetY = Spawn.Y + MatchOpponentMotionMetres * FMath::Sin(Phase);
+                    const double FeedForward = MatchOpponentMotionMetres * AngularFrequency * FMath::Cos(Phase);
+                    const FVector2D Request(
+                        FMath::Clamp(1.5 * (Spawn.X - Position.X), -0.35, 0.35),
+                        FMath::Clamp(FeedForward + 1.5 * (TargetY - Position.Y), -1.0, 1.0));
+                    Rig->SetContactPlanarDrive(Request, 0.0, true, false);
+                    if (bSample)
+                    {
+                        const FVector Velocity = FromUe(Rig->GetCommandOriginVelocity());
+                        UE_LOG(LogRMSim, Display, TEXT("RMUC_TEST_OPPONENT_MOTION team=%s sim_s=%.6f x_m=%.5f y_m=%.5f z_m=%.5f vx_m_s=%.5f vy_m_s=%.5f vz_m_s=%.5f target_y_m=%.5f"),
+                            *MatchPrimaryTeam, Now, Position.X, Position.Y, Position.Z, Velocity.X, Velocity.Y, Velocity.Z, TargetY);
+                    }
+                }
+                else
+                {
+                    const double Rate = Rig->GetDriveParameter(TEXT("GyroMaxRadS"));
+                    Rig->SetContactPlanarDrive(FVector2D::ZeroVector, Rate, true, false);
+                    if (bSample)
+                    {
+                        UE_LOG(LogRMSim, Display, TEXT("RMUC_TEST_OPPONENT_GYRO team=%s sim_s=%.6f target_rad_s=%.4f measured_rad_s=%.4f"),
+                            *MatchPrimaryTeam, Now, Rate, Rig->GetMeasuredYawRate());
+                    }
+                }
+                if (bSample) MatchOpponentGyroNextSample = Now + 0.05;
+            }
+            else
+#endif
+                Rig->SetContactDrive(0, 0, true);
+        }
+        if(RosBridge&&!bBridgeControlsOpponent)RosBridge->SetOperatorBrake(false);
         if(Training&&!bRosAimControl)if(auto* Aim=GetAimCapture())Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),false,false,Aim->GetComponentTransform());
+        if(Referee){auto* Aim=GetAimCapture();Referee->Advance(DeltaSeconds,false,Aim?Aim->GetComponentTransform():FTransform::Identity,AimWorldTarget,bAimTargetValid,Aim!=nullptr);}
         bHadInputFocus = false;
         SpeedCmPerSecond = bRosControl?Rig->GetCommandOriginVelocity().Size2D():0.; TurnDegreesPerSecond = 0.0;
         UpdatePlayerView(PC);
@@ -1052,7 +1308,8 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     if (MapConsumesMouse) MouseX = MouseY = 0.0;
     if(Input.RestartRound&&AllowTrigger&&Rig->IsContactPhysics())
     {
-        ResetContactVehicle(TEXT("manual_R"),bRosAimControl);
+        if (Referee && !Referee->IsOwnAlive() && !bRosControl) Referee->RequestInstantRespawn();
+        else if (!bPhysicalMatch) ResetContactVehicle(TEXT("manual_R"),bRosAimControl);
         MouseX = MouseY = 0.0;
     }
     bPrecisionDrive=Input.Precision&&Rig->HasSteeringModules();
@@ -1123,7 +1380,7 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     }
     const double Throttle = FMath::Clamp(Input.Throttle, -1.0, 1.0);
     const bool Brake = Input.Brake;
-    if(RosBridge)
+    if(RosBridge&&!bBridgeControlsOpponent)
     {
         RosBridge->SetOperatorBrake(Brake);
         RosBridge->SetOperatorGyro(bGyroMode?GyroSpeedRadS:0.0);
@@ -1181,41 +1438,81 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
                     AimWorldTarget = TraceViewPoint(Muzzle, DesiredWorldDirection);
                 bAimTargetValid = true;
             }
-            const FRotator DesiredLocal = Rig->GetActorTransform().InverseTransformVectorNoScale(DesiredWorldDirection).Rotation();
+            const FTransform BodyPose = Rig->GetActorTransform();
+            const FVector LocalDirection = BodyPose.InverseTransformVectorNoScale(DesiredWorldDirection);
+            const FRotator DesiredLocal = LocalDirection.Rotation();
             const double DesiredYaw = -FMath::DegreesToRadians(DesiredLocal.Yaw);
             const double DesiredPitch = -FMath::DegreesToRadians(DesiredLocal.Pitch);
             double CurrentYaw, CurrentPitch;
-            Rig->GetGimbalAngles(CurrentYaw, CurrentPitch);
-            // Preview turn-rate limits, not measured actuator parameters.
+            Rig->GetGimbalTargets(CurrentYaw, CurrentPitch);
+            // Preview turn-rate limits stepped cleanly from target (no servo-lag feedback jitter).
             const double YawBudget = FMath::DegreesToRadians(GimbalYawSpeedDeg) * Step;
             const double PitchBudget = FMath::DegreesToRadians(GimbalPitchSpeedDeg) * Step;
+            double DeltaYaw = FMath::FindDeltaAngleRadians(CurrentYaw, DesiredYaw);
+            double DeltaPitch = DesiredPitch - CurrentPitch;
+            if (FMath::Abs(DeltaYaw) < 5e-4) DeltaYaw = 0.0;
+            if (FMath::Abs(DeltaPitch) < 5e-4) DeltaPitch = 0.0;
+            double YawFeedforward = 0, PitchFeedforward = 0, ExpiresWall = 0;
+            const double HorizontalSquared = LocalDirection.SizeSquared2D();
+            if (Rig->GetDedicatedMujocoPeriod() > 0 && HorizontalSquared > 1.e-4)
+            {
+                FTransform ChassisPose;
+                FVector LinearVelocity, AngularVelocity;
+                if (Rig->SampleChassisImu(FTransform::Identity, ChassisPose, LinearVelocity, AngularVelocity) &&
+                    !AngularVelocity.IsNearlyZero(1.e-3))
+                {
+                    // Fixed world aim seen from the rotating chassis: d(local direction)/dt = -omega x direction.
+                    const FVector BodyOmega = BodyPose.InverseTransformVectorNoScale(AngularVelocity);
+                    const FVector DirectionRate = FVector::CrossProduct(LocalDirection, BodyOmega);
+                    YawFeedforward = (LocalDirection.Y * DirectionRate.X - LocalDirection.X * DirectionRate.Y) / HorizontalSquared;
+                    PitchFeedforward = -DirectionRate.Z / FMath::Sqrt(HorizontalSquared);
+                    ExpiresWall = FPlatformTime::Seconds() + .05;
+                }
+            }
             Rig->NudgeGimbal(
-                FMath::Clamp(FMath::FindDeltaAngleRadians(CurrentYaw, DesiredYaw), -YawBudget, YawBudget),
-                FMath::Clamp(DesiredPitch - CurrentPitch, -PitchBudget, PitchBudget));
+                FMath::Clamp(DeltaYaw, -YawBudget, YawBudget),
+                FMath::Clamp(DeltaPitch, -PitchBudget, PitchBudget),
+                YawFeedforward, PitchFeedforward, ExpiresWall);
         }
         if (Training && !bRosAimControl)
             Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger&&!bRosControl&&!MapConsumesMouse,
                 Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
+        if (Referee)
+            Referee->Advance(DeltaSeconds, Input.Fire && AllowTrigger && !bRosControl && !MapConsumesMouse,
+                Aim->GetComponentTransform(), AimWorldTarget, bAimTargetValid, true);
     }
 
     if (Rig->IsContactPhysics())
     {
+        const bool bChassisPowered = (!Referee || Referee->IsChassisPowered());
         if (!bRosControl)
         {
-            const double MaximumDriveSpeed=Rig->GetDriveParameter(Throttle>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
-            const double DriveSpeed=Throttle*(bPrecisionDrive?FMath::Min(MaximumDriveSpeed,Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):MaximumDriveSpeed);
-            if (Rig->HasSteeringModules())
+            if (!bChassisPowered)
             {
-                // Sample after this frame's gimbal update: driving and both map arrows share actual heading.
-                const FVector2D Forward=GetGimbalPlanarForwardRos();
-                const FVector2D Left(-Forward.Y,Forward.X);
-                const double LateralSpeed=bPrecisionDrive?FMath::Min(Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps")),Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));
-                FVector2D WorldVelocity=Forward*DriveSpeed+Left*FMath::Clamp(Input.Strafe,-1.,1.)*LateralSpeed;
-                if(bPrecisionDrive&&WorldVelocity.Size()>Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")))WorldVelocity=WorldVelocity.GetSafeNormal()*Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"));
-                const double YawRate=bGyroMode?GyroSpeedRadS:-FMath::Clamp(Input.Turn,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS"));
-                Rig->SetContactPlanarDrive(WorldVelocity,YawRate,true,Brake);
+                if (Rig->HasSteeringModules()) Rig->SetContactPlanarDrive(FVector2D::ZeroVector, 0.0, true, true);
+                else Rig->SetContactDrive(0.0, 0.0, true);
             }
-            else Rig->SetContactDrive(DriveSpeed,-FMath::Clamp(Input.Steer,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS")),Brake);
+            else
+            {
+                const double MaximumDriveSpeed=Rig->GetDriveParameter(Throttle>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
+                const double DriveSpeed=Throttle*(bPrecisionDrive?FMath::Min(MaximumDriveSpeed,Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):MaximumDriveSpeed);
+                if (Rig->HasSteeringModules())
+                {
+                    // Sample after this frame's gimbal update: driving and both map arrows share actual heading.
+                    const FVector2D Forward=GetGimbalPlanarForwardRos();
+                    const FVector2D Left(-Forward.Y,Forward.X);
+                    const double LateralSpeed=bPrecisionDrive?FMath::Min(Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps")),Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"))):Rig->GetDriveParameter(TEXT("MaxLateralSpeedMps"));
+                    FVector2D WorldVelocity=Forward*DriveSpeed+Left*FMath::Clamp(Input.Strafe,-1.,1.)*LateralSpeed;
+                    if(bPrecisionDrive&&WorldVelocity.Size()>Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")))WorldVelocity=WorldVelocity.GetSafeNormal()*Rig->GetDriveParameter(TEXT("PrecisionSpeedMps"));
+                    const double YawRate=bGyroMode?GyroSpeedRadS:-FMath::Clamp(Input.Turn,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS"));
+                    Rig->SetContactPlanarDrive(WorldVelocity,YawRate,true,Brake);
+                }
+                else Rig->SetContactDrive(DriveSpeed,-FMath::Clamp(Input.Steer,-1.,1.)*Rig->GetDriveParameter(TEXT("ManualYawRateRadS")),Brake);
+            }
+        }
+        else if (!bChassisPowered)
+        {
+            Rig->SetExternalVelocityTarget(FVector2D::ZeroVector, 0.0, true, false);
         }
         SpeedCmPerSecond=Rig->HasSteeringModules()?Rig->GetCommandOriginVelocity().Size2D():FVector::DotProduct(Rig->GetVelocity(),Rig->GetActorForwardVector());
     }
@@ -1228,6 +1525,7 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
     State->SetNumberField(TEXT("frame_interval_s"),GetWorld()->GetDeltaSeconds());
     State->SetNumberField(TEXT("average_frame_interval_s"),FrameAverageSeconds);
     if(Training)State->SetObjectField(TEXT("training"),Training->State());
+    if(Referee)State->SetObjectField(TEXT("referee"),Referee->State());
     if (Rig)
     {
         State->SetNumberField(TEXT("contact_recovery_count"),ContactRecoveryCount);
@@ -1273,6 +1571,17 @@ TSharedRef<FJsonObject> AImportLabGameMode::ManualControlState() const
     State->SetBoolField(TEXT("precision_drive"),bPrecisionDrive);
     State->SetNumberField(TEXT("gyro_setpoint_rad_s"),GyroSpeedRadS);
     State->SetBoolField(TEXT("window_focused"), bHadInputFocus);
+    if (Referee)
+    {
+        State->SetStringField(TEXT("rune_client_last_result"), LastRuneClientResult);
+        if (!InputEvidencePath.IsEmpty())
+        {
+            const auto RefereeState = Referee->State();
+            const TSharedPtr<FJsonObject>* FieldDevices = nullptr;
+            if (RefereeState->TryGetObjectField(TEXT("field_devices"), FieldDevices))
+                State->SetObjectField(TEXT("field_devices"), *FieldDevices);
+        }
+    }
     State->SetBoolField(TEXT("map_expanded"), bTacticalMapExpanded);
     State->SetBoolField(TEXT("map_cursor_active"), bMapCursorActive);
     State->SetNumberField(TEXT("minimap_zoom_level"), MiniMapZoomLevel);
@@ -1333,6 +1642,16 @@ bool AImportLabGameMode::GetGunWorldPoint(FVector& OutPoint) const
     return false;
 }
 
+bool AImportLabGameMode::ShouldShowDebugHud() const
+{
+    return !Referee || Referee->IsDebugOverlayVisible();
+}
+
+void AImportLabGameMode::DrawRefereeHud(AHUD* Hud, UCanvas* Canvas) const
+{
+    if (Referee) Referee->DrawMatchHud(Hud, Canvas, bGyroMode ? GyroSpeedRadS : 0.0);
+}
+
 void AImportLabHUD::DrawHUD()
 {
     Super::DrawHUD();
@@ -1342,11 +1661,19 @@ void AImportLabHUD::DrawHUD()
     if (!MapOverview) MapOverview = NewObject<UMapOverview>(this);
     FMapOverviewFrame MapFrame;
     if (Mode->GetMapOverviewFrame(MapFrame) && MapOverview->Draw(this, Canvas, MapFrame)) return;
-    DrawRect(FLinearColor(0, 0, 0, 0.55f), 16, 16, FMath::Min(900.0f, Canvas->SizeX - 32.0f), 112);
-    DrawText(Mode->GetControlHudText(), FLinearColor::White, 26, 24, GEngine ? GEngine->GetMediumFont() : nullptr, 1.0f);
-    const float X = Canvas->SizeX * 0.5f, Y = Canvas->SizeY * 0.5f;
-    DrawLine(X - 12, Y, X - 4, Y, FLinearColor::White, 1.5f); DrawLine(X + 4, Y, X + 12, Y, FLinearColor::White, 1.5f);
-    DrawLine(X, Y - 12, X, Y - 4, FLinearColor::White, 1.5f); DrawLine(X, Y + 4, X, Y + 12, FLinearColor::White, 1.5f);
+    if (Mode->ShouldShowDebugHud())
+    {
+        const float HudTopY = Mode->HasReferee() ? 104.0f : 16.0f;
+        DrawRect(FLinearColor(0, 0, 0, 0.55f), 16, HudTopY, FMath::Min(900.0f, Canvas->SizeX - 32.0f), 112);
+        DrawText(Mode->GetControlHudText(), FLinearColor::White, 26, HudTopY + 8.0f, GEngine ? GEngine->GetMediumFont() : nullptr, 1.0f);
+    }
+    Mode->DrawRefereeHud(this, Canvas);
+    if (!Mode->HasReferee())
+    {
+        const float X = Canvas->SizeX * 0.5f, Y = Canvas->SizeY * 0.5f;
+        DrawLine(X - 12, Y, X - 4, Y, FLinearColor::White, 1.5f); DrawLine(X + 4, Y, X + 12, Y, FLinearColor::White, 1.5f);
+        DrawLine(X, Y - 12, X, Y - 4, FLinearColor::White, 1.5f); DrawLine(X, Y + 4, X, Y + 12, FLinearColor::White, 1.5f);
+    }
     FVector GunPoint; FVector2D Screen;
     if (PlayerOwner && Mode->IsGunReticleVisible() && Mode->GetGunWorldPoint(GunPoint) && PlayerOwner->ProjectWorldLocationToScreen(GunPoint, Screen, true) &&
         Screen.X >= 0 && Screen.X <= Canvas->SizeX && Screen.Y >= 0 && Screen.Y <= Canvas->SizeY)

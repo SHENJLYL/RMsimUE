@@ -1,0 +1,88 @@
+{
+  "source_product": 3749800,
+  "source_author": "西安交通大学笃行战队",
+  "source_url": "https://bbs.robomaster.com/article/1942144?source=11",
+  "source_kind": "complete CAD visible exterior as one static scene mesh",
+  "external_sample_views": 26,
+  "exterior_sample_spacing_m": 0.006,
+  "launcher_cad_palette": {
+    "DartCAD_000": {
+      "base_color": [
+        0.4232676699860717,
+        0.45641102318040466,
+        0.4851499400560704,
+        1.0
+      ],
+      "metallic": 0.75,
+      "roughness": 0.36,
+      "srgb": "AEB4B9",
+      "label": "Brushed aluminium profiles"
+    },
+    "DartCAD_Graphite": {
+      "base_color": [
+        0.0295568344378088,
+        0.03189603307301153,
+        0.03433980680868217,
+        1.0
+      ],
+      "metallic": 0.21,
+      "roughness": 0.54,
+      "srgb": "303234",
+      "label": "Matte graphite side panels"
+    },
+    "DartCAD_Hardware": {
+      "base_color": [
+        0.14126329114027164,
+        0.1589608350608804,
+        0.17788841598362912,
+        1.0
+      ],
+      "metallic": 0.68,
+      "roughness": 0.43,
+      "srgb": "696F75",
+      "label": "Steel fittings"
+    },
+    "DartCAD_DarkMetal": {
+      "base_color": [
+        0.0595112381629812,
+        0.07036009569659588,
+        0.08021982031446832,
+        1.0
+      ],
+      "metallic": 0.47,
+      "roughness": 0.46,
+      "srgb": "454B50",
+      "label": "Dark metal outer housings"
+    }
+  },
+  "assets": [
+    {
+      "name": "dart_launcher_duxing_cad",
+      "file": "dart_launcher_duxing_cad.fbx",
+      "sha256": "f2f76ce43bc6881f07378b976263d896e44cb613d39c7aee974c026be3cf36b9",
+      "triangles": 48047,
+      "bounds_m": [
+        [
+          -0.5054783225059509,
+          -0.29228949546813965,
+          0.0
+        ],
+        [
+          0.5054965615272522,
+          0.2923274040222168,
+          0.9099308848381042
+        ]
+      ],
+      "materials": [
+        "DartCAD_000",
+        "DartCAD_Graphite",
+        "DartCAD_Hardware",
+        "DartCAD_DarkMetal"
+      ],
+      "visual_only": true
+    }
+  ],
+  "colour_basis": "Reference approximation from RM2026 Duxing finals cover; source STEP RGB styles are all identical",
+  "colour_reference": "https://bbs.robomaster.com/article/1942144?source=11",
+  "archive_sha256": "efa4bcaa2ab90f8152864893564119a2c3a571e54df30c485f31961ffe0ce2cf"
+}

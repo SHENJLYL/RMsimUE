@@ -11,6 +11,7 @@ class UPhysicsConstraintComponent;
 class UPhysicalMaterial;
 class UPrimitiveComponent;
 class FMujocoVehicleDynamics;
+struct FMujocoContactSample;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogRMSim, Log, All);
 
@@ -64,6 +65,8 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual FVector GetVelocity() const override;
     bool IsMujocoPhysics() const { return MujocoDynamics.IsValid(); }
+    void EnableMujocoMatchWorld() { bMujocoMatchWorld=true; }
+    bool AttachSharedMujoco(AVehicleRig& Primary,const FString& RigFilename,FString& Error);
     bool StartDedicatedMujoco(double PeriodSeconds, FString& Error);
     double GetDedicatedMujocoPeriod() const { return DedicatedMujocoPeriod; }
     bool SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall);
@@ -73,6 +76,8 @@ public:
     const TCHAR* GetPhysicsBackendName() const { return IsMujocoPhysics()?TEXT("mujoco"):bContactPhysics?TEXT("chaos"):TEXT("kinematic"); }
     double GetSimulationTimeSeconds() const;
     double GetDynamicsStepSeconds() const;
+    // Immutable native contacts for the game thread; no UE visibility query is required.
+    const TArray<FMujocoContactSample>* GetNativeContactFrame() const;
     double GetDynamicsGravityCmS2() const;
     FVector GetDynamicsGravityVectorCmS2() const;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -83,7 +88,9 @@ public:
     bool SetJointAngle(const FString& JointName, double AngleRad, FString& Error);
     bool SetGimbal(double YawRad, double PitchRad, FString& Error);
     void GetGimbalAngles(double& YawRad, double& PitchRad) const { YawRad = ManualYaw; PitchRad = ManualPitch; }
-    void NudgeGimbal(double DeltaYawRad, double DeltaPitchRad);
+    void GetGimbalTargets(double& YawRad, double& PitchRad) const { YawRad = MujocoDynamics ? MujocoYawTarget : ManualYaw; PitchRad = MujocoDynamics ? MujocoPitchTarget : ManualPitch; }
+    void NudgeGimbal(double DeltaYawRad, double DeltaPitchRad,
+        double YawFeedforwardRadS=0, double PitchFeedforwardRadS=0, double ExpiresWall=0);
     bool GetRosGimbalGeometry(const USceneCaptureComponent2D* Camera,FString& YawName,FString& PitchName,double& PitchMin,double& PitchMax) const;
     // Query-only kinematic obstacle guard. Returns false if any requested motion was blocked.
     bool MoveManual(const FVector& LocalDeltaCm, double DeltaYawDegrees);
@@ -148,8 +155,12 @@ public:
 
 private:
     TSharedPtr<FMujocoVehicleDynamics> MujocoDynamics;
+    TWeakObjectPtr<AVehicleRig> MujocoOpponent;
+    bool bMujocoMatchWorld=false;
+    bool bMujocoSharedFollower=false;
     UPROPERTY() TMap<FString,UStaticMeshComponent*> MujocoQueryBodies;
-    bool InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error);
+    bool InitializeMujocoPhysics(const FString& RigFilename,const FString& ModelFilename,FString& Error,
+        const TSharedPtr<FMujocoVehicleDynamics>& SharedWorld={});
     bool InitializeCanonicalMujocoPhysics(const FString& CanonicalFilename,const FString& ModelFilename,FString& Error);
     FString MujocoRootBodyName=TEXT("body");
     FString MujocoYawBodyName=TEXT("yaw");
@@ -158,6 +169,8 @@ private:
     bool bCanonicalRig=false;
     void TickMujocoPhysics(double Seconds);
     void RefreshMujocoInputs(double Seconds,double Now);
+    double StageDedicatedMujocoInputs(double Seconds,double Now);
+    void ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset);
     void SyncMujocoPose();
     void ResetMujocoPose(const FTransform& Pose);
     bool SetMujocoGimbal(double Yaw,double Pitch,FString& Error);
@@ -232,7 +245,7 @@ private:
     TMap<FString,double> ContactParameters;
     TMap<FString,double> DriveParameters;
     TSharedPtr<FJsonObject> PhysicsOverrides;
-    bool InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FString& Error);
+    bool InitializeDriveProfile(const TSharedPtr<FJsonObject>& Spec,FString& Error,bool UseConfiguredGyroLimits=false);
     void UpdateContactDrive(double Seconds);
     bool bSwerveContact=false,bDriveWorldFrame=false;
     bool bFreeRollingDiagnostic=false;

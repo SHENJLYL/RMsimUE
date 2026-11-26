@@ -1,4 +1,5 @@
 #include "RosBridgeComponent.h"
+#include "RMUCGameReferee.h"
 #include "RMSimViewportClient.h"
 #include "VehicleRig.h"
 #include "RosAimController.h"
@@ -62,7 +63,7 @@ bool FlatJson(const FString& Text,TSharedPtr<FJsonObject>& Result)
         {const FString Key=Reader->GetIdentifier();if(Depth!=1||Keys.Contains(Key))return false;Keys.Add(Key);}
         else return false;
     }
-    return Depth==0&&Roots==1&&(Keys.Num()==10||Keys.Num()==16||Keys.Num()==19)&&Reader->GetErrorMessage().IsEmpty()&&
+    return Depth==0&&Roots==1&&(Keys.Num()==8||Keys.Num()==10||Keys.Num()==16||Keys.Num()==19)&&Reader->GetErrorMessage().IsEmpty()&&
         FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Result)&&Result.IsValid();
 }
 void LittleEndian(TArray<uint8>& Bytes,uint32 Value)
@@ -93,8 +94,14 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     FParse::Value(FCommandLine::Get(),TEXT("RosRobotId="),RobotId);
     bProfileSensorTiming=FParse::Param(FCommandLine::Get(),TEXT("ProfileSensorTiming"));
     bMotorControl=FParse::Param(FCommandLine::Get(),TEXT("RosMotorControl"));
+    FString MatchRoster;
+    const bool bMatchBridge=FParse::Value(FCommandLine::Get(),TEXT("MatchRoster="),MatchRoster);
+    bMatchAutonomy=bControl&&!bMotorControl&&bMatchBridge&&
+        FParse::Param(FCommandLine::Get(),TEXT("RmsimMatchAutonomy"));
     bOperatorGyroAvailable=bControl&&!bMotorControl&&Rig->HasSteeringModules()&&
-        FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroControl"));
+        (bMatchAutonomy||FParse::Param(FCommandLine::Get(),TEXT("RosOperatorGyroControl")));
+    bNavigationFrameAvailable=bControl&&!bMotorControl&&Rig->HasSteeringModules()&&
+        (bOperatorGyroAvailable||bMatchBridge);
     if(bMotorControl)
     {
         double WheelNmPerAmp=.14,SteerNmPerAmp=.14;
@@ -129,6 +136,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
         CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height);
     AimController=NewObject<URosAimController>(GetOwner());GetOwner()->AddInstanceComponent(AimController);AimController->RegisterComponent();
     if(!AimController->Initialize(Rig,Aim,Training,FParse::Param(FCommandLine::Get(),TEXT("RosAimControl")),Error))return false;
+    AimController->SetReferee(Referee);
     if(FParse::Param(FCommandLine::Get(),TEXT("RosImu")))
     {
         FString Profile;
@@ -189,10 +197,35 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
     if(!FlatJson(Text,J)){Reject(TEXT("malformed_json"));return false;}
     double Version,CommandEpoch,Sequence,Stamp;FString Kind,Identity,Frame;
     if(!Number(J,TEXT("v"),Version,true)||Version!=1||!String(J,TEXT("kind"),Kind)||
-        !(((Kind==TEXT("command")||Kind==TEXT("operator_idle"))&&J->Values.Num()==10)||(Kind==TEXT("motor_current")&&J->Values.Num()==16)||(Kind==TEXT("aim")&&J->Values.Num()==19))||
+        !(((Kind==TEXT("command")||Kind==TEXT("operator_idle"))&&J->Values.Num()==10)||(Kind==TEXT("motor_current")&&J->Values.Num()==16)||
+          (Kind==TEXT("aim")&&J->Values.Num()==19)||
+          ((Kind==TEXT("match_stance")||Kind==TEXT("match_ammo_purchase"))&&J->Values.Num()==8))||
         !String(J,TEXT("session"),Identity)||!Number(J,TEXT("epoch"),CommandEpoch,true)||!Number(J,TEXT("seq"),Sequence,true)||Sequence<1||
         !Number(J,TEXT("stamp_ns"),Stamp,true)||!String(J,TEXT("frame_id"),Frame))
     {Reject(TEXT("fields"));if(AimController)AimController->Reject(TEXT("fields"));return true;}
+    if(Kind==TEXT("match_stance"))
+    {
+        FString Stance;
+        const double Age=SimTime-Stamp/1.e9;
+        if(bMatchAutonomy&&IsValid(Referee)&&Identity==Session&&CommandEpoch==Epoch&&
+            Frame==RobotId+TEXT("/base_link")&&Sequence>MatchStanceSequence&&Age<=.2&&Age>=-.05&&
+            String(J,TEXT("stance"),Stance)&&Referee->SetSimMatchStance(Rig,Stance))
+            MatchStanceSequence=int64(Sequence);
+        return true;
+    }
+    if(Kind==TEXT("match_ammo_purchase"))
+    {
+        double Mode;
+        const double Age=SimTime-Stamp/1.e9;
+        if(bMatchAutonomy&&IsValid(Referee)&&Identity==Session&&CommandEpoch==Epoch&&
+            Frame==RobotId+TEXT("/base_link")&&Sequence>MatchAmmoPurchaseSequence&&Age<=.2&&Age>=-.05&&
+            Number(J,TEXT("purchase_mode"),Mode,true)&&(Mode==1||Mode==2))
+        {
+            MatchAmmoPurchaseSequence=int64(Sequence);
+            Referee->RequestSentryAmmoPurchase(Rig,Mode==2);
+        }
+        return true;
+    }
     if(StallCommandFloor>=0. && Stamp*1.e-9<=StallCommandFloor)
     {
         Reject(TEXT("pre_stall_command"));
@@ -208,7 +241,7 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
         AimController->Accept(J,int64(Sequence),SimTime);return true;
     }
     if(Identity!=Session||CommandEpoch!=Epoch){Reject(TEXT("session_epoch"));return true;}
-    const bool NavigationFrame=bOperatorGyroAvailable&&!bMotorControl&&Kind==TEXT("command")&&
+    const bool NavigationFrame=bNavigationFrameAvailable&&Kind==TEXT("command")&&
         Frame==RobotId+TEXT("/odom");
     if(Frame!=RobotId+TEXT("/base_link")&&!NavigationFrame){Reject(TEXT("frame"));return true;}
     if(Sequence<=AcceptedSeq){Reject(TEXT("sequence"));return true;}
@@ -217,6 +250,8 @@ bool URosBridgeComponent::ReadCommand(const TArray<uint8>& Line,double SimTime)
     if(!bControl){Reject(TEXT("manual_mode"));return true;}
     if(bOperatorBrake){Reject(TEXT("operator_brake"));return true;}
     if((Kind==TEXT("motor_current"))!=bMotorControl){Reject(TEXT("control_mode"));return true;}
+    if(IsValid(Referee)&&!Referee->IsChassisPoweredFor(Rig))
+    {Reject(TEXT("referee_chassis_power_cut"));return true;}
     if(bMotorControl)
     {
         double Brake;
@@ -351,7 +386,7 @@ void URosBridgeComponent::AdvanceCamera(double SimTime)
         FreeCameraReadbacks.Add(First);
         CameraReadbacks.RemoveAt(0);
     }
-    if(!Client||SimTime+1.e-8<NextImageSim)return;
+    if(!Client||bFpvVideoCut||SimTime+1.e-8<NextImageSim)return;
     const int64 Due=1+FMath::FloorToInt64(FMath::Max(0.,SimTime-NextImageSim)*CameraHz);
     NextImageSim+=double(Due)/CameraHz;
     CameraReadbackMisses+=Due-1;
@@ -396,7 +431,7 @@ bool URosBridgeComponent::QueueState(double SimTime)
     const int64 Stamp=FMath::RoundToInt64(SimTime*1.e9);if(Stamp<0||Stamp>MaxInteger)return false;
     const auto Pose=RosPose(Rig->GetActorTransform());
     TSharedPtr<FCameraReadback,ESPMode::ThreadSafe> Frame;
-    if(!CameraReadbacks.IsEmpty())
+    if(!bFpvVideoCut&&!CameraReadbacks.IsEmpty())
     {
         const auto& First=CameraReadbacks[0];
         if(!First->PollQueued.load()&&First->Status.load()==FCameraReadback::EStatus::Ready&&First->Connection==CameraConnection)
@@ -416,7 +451,7 @@ bool URosBridgeComponent::QueueState(double SimTime)
     Sensor->SetNumberField(TEXT("hfov_rad"),FMath::DegreesToRadians(HFovDegrees));Sensor->SetNumberField(TEXT("stamp_ns"),double(Frame?Frame->Stamp:Stamp));
     Sensor->SetNumberField(TEXT("missed_captures"),CameraReadbackMisses);
     Sensor->SetNumberField(TEXT("nominal_hz"),CameraHz);
-    Sensor->SetBoolField(TEXT("capture_enabled"),CameraHz>0&&FApp::CanEverRender());
+    Sensor->SetBoolField(TEXT("capture_enabled"),!bFpvVideoCut&&CameraHz>0&&FApp::CanEverRender());
     if(const auto* Observer=Cast<USceneCaptureComponent2D>(Camera->GetAttachParent()))
         Sensor->SetNumberField(TEXT("observer_hfov_rad"),FMath::DegreesToRadians(double(Observer->FOVAngle)));
     Sensor->SetStringField(TEXT("frame_id"),RobotId+TEXT("/aim_camera_optical_frame"));Sensor->SetObjectField(TEXT("pose_in_base"),Local);State->SetObjectField(TEXT("camera"),Sensor);
@@ -426,6 +461,8 @@ bool URosBridgeComponent::QueueState(double SimTime)
     State->SetObjectField(TEXT("command"),Command);State->SetNumberField(TEXT("captured_images"),Images);
     auto Drive=Rig->GetVelocityCommandState();
     Drive->SetBoolField(TEXT("operator_gyro_available"),bOperatorGyroAvailable);
+    Drive->SetBoolField(TEXT("match_autonomy"),bMatchAutonomy);
+    Drive->SetBoolField(TEXT("navigation_frame_available"),bNavigationFrameAvailable);
     Drive->SetNumberField(TEXT("operator_gyro_setpoint_rad_s"),OperatorGyroRateRadS);
     Drive->SetNumberField(TEXT("measured_yaw_rad_s"),Rig->GetMeasuredYawRate());
     State->SetObjectField(TEXT("drive"),Drive);
@@ -436,6 +473,7 @@ bool URosBridgeComponent::QueueState(double SimTime)
         State->SetObjectField(TEXT("aim"),AimController->State(Stamp));
         State->SetObjectField(TEXT("training_evaluation"),AimController->Evaluation());
     }
+    if(IsValid(Referee))State->SetObjectField(TEXT("referee"),Referee->StateFor(Rig));
     if(bMotorControl)State->SetObjectField(TEXT("motors"),Rig->GetMotorFeedback());
     if(!SensorMountSamples.IsEmpty()){State->SetArrayField(TEXT("sensor_mounts"),SensorMountSamples);State->SetNumberField(TEXT("dropped_sensor_mounts"),DroppedSensorMountSamples);SensorMountSamples.Reset();}
     if(Imu)State->SetObjectField(TEXT("imu"),Imu->TakeState());
@@ -459,6 +497,7 @@ bool URosBridgeComponent::QueueState(double SimTime)
     State->SetNumberField(TEXT("engine_fixed_step_s"),EngineStep);
     FString Json;FJsonSerializer::Serialize(State,TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Json));
     const FTCHARToUTF8 Utf8(*Json);if(Utf8.Length()>65536)return false;
+    bOutboundHasCameraFrame=Frame.IsValid();
     Outbound.Reset();SendOffset=0;LittleEndian(Outbound,Utf8.Length());LittleEndian(Outbound,CameraBytes+LidarBytes.Num());
     Outbound.Append(reinterpret_cast<const uint8*>(Utf8.Get()),Utf8.Length());
     if(Frame)
@@ -481,6 +520,17 @@ void URosBridgeComponent::Advance()
     const double Now=FPlatformTime::Seconds();
 
     const double SimTime=FMath::Max(0.,SolverTime()-EpochSolverTime);
+    if(bMatchAutonomy)
+        OperatorGyroRateRadS=bOperatorGyroAvailable&&IsValid(Referee)&&Referee->IsSimMatchAutonomyActive(Rig)
+            ? FMath::Min(MatchOperatorGyroRateRadS,Rig->GetDriveParameter(TEXT("GyroMaxRadS"))) : 0.;
+    const bool bChassisPowerCut=bControl&&IsValid(Referee)&&!Referee->IsChassisPoweredFor(Rig);
+    if(bChassisPowerCut)
+    {
+        LastCommandWall=-1;
+        CommandStatus=TEXT("referee_chassis_power_cut");
+        Rig->RenewExternalDriveLease(0);
+        Rig->SetContactDrive(0,0,true);
+    }
     if(Client&&Now-LastPollWall>.25)
     {
         if(Rig->GetDedicatedMujocoPeriod()>0.)
@@ -564,7 +614,8 @@ void URosBridgeComponent::Advance()
             {
                 Client=Incoming;Client->SetNonBlocking(true);Client->SetNoDelay(true);int32 Actual=0;Client->SetSendBufferSize(4*1024*1024,Actual);
                 StallCommandFloor=-1.;GameTickStalls=0;LastGameTickGapMs=0.;
-                Session=FGuid::NewGuid().ToString();AcceptedSeq=-1;LastCommandWall=-1;CommandStatus=bControl?TEXT("waiting"):TEXT("manual_mode");
+                Session=FGuid::NewGuid().ToString();AcceptedSeq=-1;MatchStanceSequence=-1;MatchAmmoPurchaseSequence=-1;
+                LastCommandWall=-1;CommandStatus=bControl?TEXT("waiting"):TEXT("manual_mode");
                 NavigationFrameYawRad=-FMath::DegreesToRadians(Rig->GetActorRotation().Yaw);
                 LastStateWall=0;NextImageSim=SimTime;Inbound.Reset();Outbound.Reset();SendOffset=0;
                 if(AimController)AimController->Reset(false);
@@ -573,12 +624,24 @@ void URosBridgeComponent::Advance()
             }
         }
     }
-    if(bControl&&(bOperatorBrake||LastCommandWall<0||Now-LastCommandWall>.25))
+    if(bControl&&!bChassisPowerCut&&(bOperatorBrake||LastCommandWall<0||Now-LastCommandWall>.25))
     {
         Rig->RenewExternalDriveLease(0);Rig->SetContactDrive(0,0,true);
         if(bOperatorBrake)CommandStatus=TEXT("operator_brake");
         else if(LastCommandWall>=0)CommandStatus=TEXT("expired");
     }
+    const bool bWasFpvVideoCut=bFpvVideoCut;
+    bFpvVideoCut=IsValid(Referee)&&Referee->IsFpvVideoCutFor(Rig);
+    if(bFpvVideoCut&&!bWasFpvVideoCut)
+    {
+        ++CameraConnection; // Pending GPU readbacks will retire without being published.
+        if(bOutboundHasCameraFrame&&!Outbound.IsEmpty())
+        {
+            if(SendOffset>0)Disconnect(TEXT("referee_fpv_video_cut")); // Preserve framing after an incomplete write.
+            else Outbound.Reset();
+        }
+    }
+    if(!bFpvVideoCut&&bWasFpvVideoCut)NextImageSim=SimTime;
     if(Client)SendPending();
     AdvanceCamera(SimTime);
     const double StateInterval=CameraHz>0?FMath::Min(.02,1./CameraHz):.02;
@@ -604,8 +667,20 @@ void URosBridgeComponent::SetMapIdentity(const FString& Id,const FString& Source
 
 void URosBridgeComponent::SetOperatorGyro(double RateRadS)
 {
+    if(bMatchAutonomy)
+    {
+        MatchOperatorGyroRateRadS=FMath::IsFinite(RateRadS)?
+            FMath::Clamp(RateRadS,0.,Rig->GetDriveParameter(TEXT("GyroMaxRadS"))):0.;
+        return;
+    }
     OperatorGyroRateRadS=bOperatorGyroAvailable&&FMath::IsFinite(RateRadS)?
         FMath::Clamp(RateRadS,0.0,Rig->GetDriveParameter(TEXT("GyroMaxRadS"))):0.0;
+}
+
+void URosBridgeComponent::SetReferee(ARMUCGameReferee* InReferee)
+{
+    Referee=InReferee;
+    if(AimController)AimController->SetReferee(InReferee);
 }
 
 void URosBridgeComponent::SetOperatorBrake(bool Brake)

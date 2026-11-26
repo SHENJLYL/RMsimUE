@@ -85,6 +85,13 @@ FGroup NewGroup(AActor* Host,UStaticMesh* Mesh,UMaterialInterface* Material,
     C->RegisterComponent();
     return {C,Mesh};
 }
+void EnableProjectileQuery(const FGroup& Group, FName Surface)
+{
+    Group.Component->SetCollisionResponseToAllChannels(ECR_Ignore);
+    Group.Component->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Block);
+    Group.Component->ComponentTags.Add(Surface);
+    Group.Component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
 bool ReadJson(const FString& Path,FObj& Out,int64 MaxBytes)
 {
     FString Text;
@@ -502,6 +509,8 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         C->SetCollisionProfileName(TEXT("BlockAll"));C->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         C->SetCastShadow(false);C->SetCanEverAffectNavigation(false);
         C->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+        // Projectiles see the actual panels and hardware, not the taller chassis guard volume.
+        C->SetCollisionResponseToChannel(ECC_GameTraceChannel2,ECR_Ignore);
         A->SetActorHiddenInGame(true);A->Tags.Add(FName(*Name));Actors.Add(Name,A);
     }
     FGroup Glass=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("glass")],TEXT("GlassFence"));
@@ -514,6 +523,10 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
     FGroup Frame=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("steel_light")],TEXT("FenceMullions"),true);
     FGroup Gaskets=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("rubber")],TEXT("FenceGaskets"));
     FGroup Hardware=NewGroup(Host,Meshes[TEXT("cylinder")],Materials[TEXT("steel_light")],TEXT("DoorHardware"),true);
+    EnableProjectileQuery(Glass, TEXT("projectile_glass"));
+    EnableProjectileQuery(Frame, TEXT("projectile_metal"));
+    EnableProjectileQuery(Gaskets, TEXT("projectile_rubber"));
+    EnableProjectileQuery(Hardware, TEXT("projectile_metal"));
     FGroup Stripe=NewGroup(Host,Meshes[TEXT("cube")],Materials[TEXT("court_line")],TEXT("GlassSafetyMarks"));
     int32 PanelCount=0,GateLeaves=0;
     TArray<UTextRenderComponent*> GateLabels;
@@ -767,7 +780,18 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
             Sweep(FVector(CX+Sign*11+DX,CY+Sign*(Y-1),.5),FVector(CX+Sign*11+DX,CY+Sign*(Y+1),.5),TEXT("closed_decorative_gate"));
         bool CosmeticNoCollision=true;int32 AllInstances=0;
         TInlineComponentArray<UInstancedStaticMeshComponent*> Components;Host->GetComponents(Components);
-        for(const auto* C:Components){CosmeticNoCollision&=C->GetCollisionEnabled()==ECollisionEnabled::NoCollision;AllInstances+=C->GetInstanceCount();}
+        int32 ProjectileOnlyGroups=0;
+        for(const auto* C:Components)
+        {
+            bool bProjectileOnly=C->GetCollisionEnabled()==ECollisionEnabled::QueryOnly &&
+                C->GetCollisionResponseToChannel(ECC_GameTraceChannel2)==ECR_Block;
+            for(int32 Channel=0;Channel<ECC_MAX&&bProjectileOnly;++Channel)
+                if(Channel!=ECC_GameTraceChannel2)
+                    bProjectileOnly=C->GetCollisionResponseToChannel(static_cast<ECollisionChannel>(Channel))==ECR_Ignore;
+            ProjectileOnlyGroups+=bProjectileOnly?1:0;
+            CosmeticNoCollision&=bProjectileOnly||C->GetCollisionEnabled()==ECollisionEnabled::NoCollision;
+            AllInstances+=C->GetInstanceCount();
+        }
         // Inspect each rendered instance, rather than the whole ring's bounds.
         // The latter encloses the field even when every individual part is outside.
         bool BoundaryOutside=true,BoundaryOutsideTarget=true;
@@ -1027,6 +1051,7 @@ bool FCampusGym::Spawn(UWorld* World,const FMapStage& Stage,const FObj& Manifest
         Report->SetNumberField(TEXT("continuous_collision_walls"),4);Report->SetNumberField(TEXT("glass_panels"),PanelCount);
         Report->SetNumberField(TEXT("fixed_gate_leaves"),GateLeaves);Report->SetBoolField(TEXT("gate_interaction_enabled"),false);
         Report->SetBoolField(TEXT("cosmetic_no_collision"),CosmeticNoCollision);
+        Report->SetNumberField(TEXT("projectile_only_groups"),ProjectileOnlyGroups);
         Report->SetNumberField(TEXT("visual_instances"),AllInstances);Report->SetNumberField(TEXT("visual_groups"),Components.Num());
         Report->SetNumberField(TEXT("indoor_rect_lights"),LightCount);
         Report->SetBoolField(TEXT("venue_enabled"),VenueEnabled);

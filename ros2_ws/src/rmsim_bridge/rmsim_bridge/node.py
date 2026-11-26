@@ -10,10 +10,11 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPo
 from geometry_msgs.msg import PoseStamped, TransformStamped, TwistStamped
 from rosgraph_msgs.msg import Clock as ClockMessage
 from sensor_msgs.msg import Image, CameraInfo, JointState
-from std_msgs.msg import String
+from std_msgs.msg import String, UInt32
 from tf2_msgs.msg import TFMessage
 
-from .protocol import ProtocolError, command_packet, identifier, intrinsics, validate_state
+from .protocol import (ProtocolError, command_packet, identifier, intrinsics,
+                       match_ammo_purchase_packet, match_stance_packet, validate_state)
 from .transport import LoopbackClient
 
 
@@ -61,11 +62,16 @@ class BridgeNode(Node):
         self.command_error = ''
         self.last_transport_error = ''
         self.last_diagnostic = 0.
+        self.match_stance = None
+        self.stance_sent_at = 0.
+        self.ammo_request_sent_at = 0.
         self.generation = 0
         from .imu import ImuPublisher
         self.imu=ImuPublisher(self)
         from .lidar import LidarPublisher
         self.lidar=LidarPublisher(self)
+        from .referee import RefereePublisher
+        self.referee=RefereePublisher(self)
         backend=self.declare_parameter('control_backend','velocity').value
         if backend not in ('velocity','lk'):raise ValueError('control_backend must be velocity or lk')
         self.lk=None
@@ -76,11 +82,46 @@ class BridgeNode(Node):
         if self.declare_parameter('aim_control',False).value:
             from .aim_adapter import AimAdapter
             self.aim=AimAdapter(self)
+            self.create_subscription(String, prefix + '/sentry_stance_cmd', self.on_match_stance, control)
+            self.create_subscription(UInt32, prefix + '/behavior/ammo_purchase', self.on_match_ammo_purchase, control)
         # use_sim_time may be true for algorithm nodes. This I/O timer must keep running
         # before the first /clock message and through pauses or simulator restarts.
         self.wall_clock = Clock(clock_type=ClockType.STEADY_TIME)
         self.timer = self.create_timer(.001 if self.lk is not None else .01, self.poll, clock=self.wall_clock)
         self.get_logger().info('RMSim bridge listening to local simulator state; waiting for TCP 127.0.0.1:%d' % self.transport.port)
+
+    def on_match_stance(self, message):
+        if message.data in ('MOVE', 'ATTACK', 'DEFENSE'):
+            self.match_stance = message.data
+
+    def poll_match_stance(self):
+        state = self.state
+        now = time.monotonic()
+        if not (self.match_stance and self.transport.connected and state
+                and now-self.received_at <= .2 and now-self.stance_sent_at >= .2
+                and state.get('drive', {}).get('match_autonomy')):
+            return
+        referee = state.get('referee') or {}
+        if referee.get('game_status', {}).get('game_progress') != 4 or referee.get('sentry_stance') == self.match_stance:
+            return
+        seq = self.sequence + 1
+        if self.transport.queue(match_stance_packet(state, seq, self.robot_id, self.match_stance)):
+            self.sequence = seq
+            self.stance_sent_at = now
+
+    def on_match_ammo_purchase(self, message):
+        now = time.monotonic()
+        if not (self.transport.connected and self.state and now-self.received_at <= .2
+                and now-self.ammo_request_sent_at >= .25):
+            return
+        sequence = self.sequence + 1
+        try:
+            packet = match_ammo_purchase_packet(self.state, sequence, self.robot_id, message.data)
+        except ProtocolError:
+            return
+        if self.transport.queue(packet):
+            self.sequence = sequence
+            self.ammo_request_sent_at = now
 
     def on_command(self, message, *, operator_idle=False, navigation_frame=False):
         try:
@@ -133,6 +174,7 @@ class BridgeNode(Node):
                 self.get_logger().warning(self.last_transport_error)
         if self.lk is not None:self.lk.poll()
         if self.aim is not None:self.aim.poll()
+        self.poll_match_stance()
         if time.monotonic()-self.last_diagnostic >= 1:
             self.publish_diagnostic()
 
@@ -150,6 +192,7 @@ class BridgeNode(Node):
             self.tf_pub.publish(TFMessage(transforms=transforms))
         self.imu.observe(state)
         self.lidar.observe(state,pixels)
+        self.referee.observe(state)
         if state['v']==2:pixels=pixels[:state['camera_bytes']]
         self.states += 1
         truth = PoseStamped()
@@ -221,6 +264,7 @@ class BridgeNode(Node):
             diagnostic['camera_config']={key:camera.get(key) for key in ('width','height','hfov_rad','nominal_hz','observer_hfov_rad','capture_enabled')}
             if self.lk is not None:diagnostic['motors']=self.state.get('motors')
             if 'aim' in self.state:diagnostic['aim']=self.state['aim']
+            if 'referee' in self.state:diagnostic['sentry_stance']=(self.state['referee'] or {}).get('sentry_stance')
             if 'imu' in self.state:
                 data=self.state['imu'];diagnostic['imu']={key:data[key] for key in ('model','profile_md5','calibrated','gravity_z_mps2','profiles','stats')}
                 diagnostic['imu']['published_samples']=self.imu.count

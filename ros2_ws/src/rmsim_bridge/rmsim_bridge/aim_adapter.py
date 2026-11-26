@@ -7,7 +7,7 @@ from .control_dlls import load_package_dlls
 load_package_dlls('sp_msgs','pb_rm_interfaces')
 from sp_msgs.msg import AutoAimCommandMsg
 from pb_rm_interfaces.msg import GimbalCmd
-from .protocol import ProtocolError,aim_packet,hold_aim,number
+from .protocol import MATCH_FIRE_OBSERVATION_NS, MATCH_TRACK_MEMORY_NS, ProtocolError, aim_packet, hold_aim, number
 
 
 class AimAdapter:
@@ -19,6 +19,7 @@ class AimAdapter:
             self.navigation=NavigationFollowAdapter(node)
         self.serial=0;self.sent=None;self.rejected=0;self.error='';self.source='hold';self.legacy_frame=False
         self.last_stamp={'auto':-1,'scan':-1}
+        self.auto_holding=False
         qos=QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE)
         prefix='/'+node.robot_id
         self.subs=[node.create_subscription(AutoAimCommandMsg,prefix+'/autoaim_command',self.on_auto,qos),
@@ -30,6 +31,7 @@ class AimAdapter:
         if key!=self.identity:
             self.identity=key;self.permission=False;self.auto=None;self.scan=None;self.sent=None
             self.last_stamp={'auto':-1,'scan':-1}
+            self.auto_holding=False
             if self.navigation:self.navigation.reset()
 
     def ready(self):
@@ -78,30 +80,41 @@ class AimAdapter:
                      pitch_min=-float(v.pitch_max_range),pitch_max=-float(v.pitch_min_range))
             self.scan=self.checked('scan',message.header.stamp.sec*1_000_000_000+message.header.stamp.nanosec,c)
             self.legacy_frame=not message.header.frame_id
-        except ProtocolError as error:self.reject(error)
+        except ProtocolError as error:
+            self.error=str(error);self.rejected+=1;self.scan=None
 
-    def fresh(self,entry):
-        return entry is not None and time.monotonic()-entry['received']<=.2 and -50_000_000<=self.node.state['sim_time_ns']-entry['stamp']<=200_000_000
+    def fresh(self,entry,max_age_ns=200_000_000):
+        return (entry is not None and time.monotonic()-entry['received']<=max_age_ns*1e-9
+                and -50_000_000<=self.node.state['sim_time_ns']-entry['stamp']<=max_age_ns)
 
     def poll(self):
         try:self.ready()
         except ProtocolError:
+            self.auto_holding=False
             if self.node.state is None or not self.node.transport.connected:
                 self.identity=None;self.permission=False;self.auto=None;self.scan=None;self.sent=None
             return
-        auto_ready=self.permission and self.fresh(self.auto) and self.auto['control']
+        state=self.node.state
+        match=state.get('drive', {}).get('match_autonomy') and 'match_fire' in state['aim']
+        auto_ready=(self.permission and self.fresh(self.auto,MATCH_TRACK_MEMORY_NS if match else 200_000_000)
+                    and self.auto['control'])
+        self.auto_holding=bool(match and auto_ready and not self.fresh(self.auto,MATCH_FIRE_OBSERVATION_NS))
         scan_ready=self.fresh(self.scan)
-        nav=self.navigation.poll(bool(auto_ready or scan_ready)) if self.navigation else None
+        nav=(self.navigation.poll(auto_ready,scan_ready=scan_ready,measured_motion=match)
+             if self.navigation else None)
         if auto_ready:source='auto';entry=self.auto
-        elif scan_ready:source='scan';entry=self.scan
         elif nav:source='navigation';entry=nav
+        elif scan_ready:source='scan';entry=self.scan
         else:source='hold';entry=None
-        token=(source,entry['serial'] if entry else 0,self.permission)
+        token=(source,entry['serial'] if entry else 0,self.permission,self.auto_holding)
         self.source=source
         if token==self.sent:return
         command=dict(entry['command']) if entry else hold_aim()
         stamp=entry['stamp'] if entry else self.node.state['sim_time_ns']
-        if source!='auto':command['fire']=0;command['permit']=0
+        if self.auto_holding:
+            # Renew only the already-validated position; preserve the observation stamp in self.auto.
+            stamp=state['sim_time_ns']
+        if source!='auto' or self.auto_holding:command['fire']=0;command['permit']=0
         seq=self.node.sequence+1
         try:
             raw=aim_packet(self.node.state,seq,stamp,command,entry.get('frame_id','rmsim_world') if entry else 'rmsim_world')
@@ -109,5 +122,6 @@ class AimAdapter:
         except ProtocolError as error:self.reject(error)
 
     def diagnostic(self):
-        return dict(source=self.source,permission=self.permission,rejected=self.rejected,error=self.error,
+        return dict(source=self.source,permission=self.permission,auto_holding=self.auto_holding,
+                    rejected=self.rejected,error=self.error,
                     scan_empty_frame_means_world=self.legacy_frame,navigation_follow=self.navigation.report if self.navigation else None)
