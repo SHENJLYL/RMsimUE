@@ -15,12 +15,13 @@ credentials.*.json
 secrets.json
 secrets.*.json
 
-# Python / environment / editor caches
+# Python / Node / environment / editor caches
 __pycache__/
 *.py[cod]
 .venv/
 venv/
 .pixi/
+node_modules/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
@@ -38,9 +39,33 @@ Thumbs.db
 *.vcxproj*
 *.user
 *.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
 *.tmp
 *.bak
+*.orig
 *.log
+
+# Native C/C++/CMake/Ninja/MSVC compile outputs
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+cmake-build-*/
+CTestTestfile.cmake
+build.ninja
+rules.ninja
+.ninja_deps
+.ninja_log
+compile_commands.json
+*.o
+*.a
+*.pch
+*.idb
+*.ipdb
+*.iobj
+*.tlog
 
 # Unreal generated data and locally imported content; keep Source / Config / uproject
 **/Binaries/
@@ -48,6 +73,8 @@ Thumbs.db
 **/Saved/
 **/DerivedDataCache/
 /unreal/RMSim/Content/
+*.uasset.tmp
+*.umap.tmp
 *.pdb
 *.obj
 *.ilk
@@ -63,6 +90,7 @@ Thumbs.db
 /ros2_ws/build*/
 /ros2_ws/install*/
 /ros2_ws/log*/
+/tools/environment/smoke_ws/build/
 /tools/environment/smoke_ws/install/
 /tools/environment/smoke_ws/log/
 
@@ -101,16 +129,35 @@ Thumbs.db
 /assets/maps/wt_vlaanderen/materials.json
 /assets/maps/wt_vlaanderen/instances.json
 
-# ROS recordings and SQLite sidecars stay local.
+# ROS recordings, SQLite sidecars, compressed archives, and video captures stay local.
 *.db3
 *.db3-*
+*.db3.zst
 *.db3.zstd
 *.mcap
+*.mcap.*
 *.mcap.active
+*.mcap.zst
 *.mcap.zstd
 *.bag
+*.bag.*
 *.bag.active
+*.sqlite3
+*.sqlite3-*
+*.zst
+*.zstd
+*.mp4
+*.avi
+*.mov
+*.mkv
 rosbag2_*/
+**/rosbag/
+**/rosbags/
+**/python-archive/
+
+# Runtime UI textures/stickers generated for UE5 match HUD stay tracked.
+!/assets/ui/armor_stickers/*.png
+!/assets/ui/rmuc2026/*.png
 
 # Local experiment data. Opt in only to release summaries and source notices.
 /artifacts/**
@@ -241,3 +288,9 @@ rosbag2_*/
 !/third_party/notices/mujoco-4.0.1/
 /artifacts/integration/mujoco-ue-20261120/**
 !/artifacts/integration/mujoco-ue-20261120/release-summary.json
+
+# Pinned original behavior sources imported by Build-Behavior.ps1.
+/ros2_ws/src/BehaviorTree.ROS2/
+/ros2_ws/src/auto_aim_interfaces/
+/ros2_ws/src/behavior/
+/ros2_ws/src/dji_referee_protocol/
