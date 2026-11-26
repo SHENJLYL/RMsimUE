@@ -875,6 +875,23 @@ private:
       static const std::string kBlueCloser = "-2.62;-3.26;0.0";
       return is_red_ ? kRedCloser : kBlueCloser;
     }
+    if (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) {
+      // Three verified clear vantage angles around each outpost so if a static outpost's plates
+      // face away from one vantage, the sentry automatically repositions to a face-on angle!
+      static const std::array<std::string, 3> kBluePostVantages = {
+        "-3.0;-0.8;-1.59",   // North highland front (clear=0.85m, d=3.09m)
+        "-0.8;-3.6;-3.01",   // East flank (clear=1.83m, d=2.28m)
+        "-5.2;-3.8;-0.04",   // West flank (clear=1.01m, d=2.14m)
+      };
+      static const std::array<std::string, 3> kRedPostVantages = {
+        "3.0;0.8;1.55",      // South highland front (clear=0.90m, d=3.09m)
+        "0.8;3.6;0.13",      // West flank (clear=1.87m, d=2.28m)
+        "5.2;3.8;3.10",      // East flank (clear=1.05m, d=2.14m)
+      };
+      const bool target_red_post = (mode == Mode::OwnOutpostAttack) ? is_red_ : !is_red_;
+      const std::size_t idx = outpost_vantage_idx_ % 3;
+      return target_red_post ? kRedPostVantages[idx] : kBluePostVantages[idx];
+    }
     return mode == Mode::Patrol ? patrol_routes_[patrol_waypoint_] : routes_[Index(mode)];
   }
 
@@ -1134,10 +1151,23 @@ private:
       case Mode::EnemyBaseAttack: {
         const int hp = mode == Mode::OwnOutpostAttack ? ref.own_outpost_hp :
           (mode == Mode::EnemyOutpostAttack ? ref.enemy_outpost_hp : ref.enemy_base_hp);
-        if (objective_hp_ < 0 || hp < objective_hp_) progress_at_ = now;
+        if (objective_hp_ < 0 || hp < objective_hp_) {
+          progress_at_ = now;
+        }
         objective_hp_ = hp;
-        const double stall_timeout = (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) ? 25.0 : 16.0;
-        if (now - progress_at_ >= stall_timeout) {
+        const bool is_outpost_mode = (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack);
+        const bool attacking_hostile_post =
+          (mode == Mode::EnemyOutpostAttack && ref.enemy_outpost_hostile && ref.enemy_outpost_hp > 0) ||
+          (mode == Mode::OwnOutpostAttack && ref.own_outpost_enemy_owned && ref.own_outpost_hp > 0);
+        if (is_outpost_mode && attacking_hostile_post && (now - progress_at_ >= 5.5)) {
+          // No outpost damage for 5.5s (e.g., static outpost plates facing away from this vantage):
+          // rotate to the next clear shooting angle around the outpost!
+          outpost_vantage_idx_ = (outpost_vantage_idx_ + 1) % 3;
+          arrived_.reset();
+          progress_at_ = now;
+          RCLCPP_INFO(node_->get_logger(),
+            "RMUC_TACTICS no outpost hit for 5.5s, rotating to vantage %zu/3", outpost_vantage_idx_ + 1);
+        } else if (!is_outpost_mode && now - progress_at_ >= 16.0) {
           retry(20.0);
         }
         break;
@@ -1410,6 +1440,7 @@ private:
   std::string last_stance_cmd_;
   double last_stance_cmd_at_ = -100.0;
   int outpost_heal_recenter_tries_ = 0;
+  std::size_t outpost_vantage_idx_ = 0;
 };
 }  // namespace
 

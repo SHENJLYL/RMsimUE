@@ -112,6 +112,14 @@ std::optional<TrackedState> WorldAngularTracker::update(
     }
     const double dt = std::clamp(t_sec - last_t_, 0.0, 0.25);
     if (target_kind == "outpost") {
+      if (dt <= 0.14) {
+        // Brief 1-2 frame dropout on the active plate: keep extrapolating smoothly along spin velocity
+        const double pred_yaw = std::atan2(
+          std::sin(yaw_ + outpost_yaw_rate_ * dt),
+          std::cos(yaw_ + outpost_yaw_rate_ * dt));
+        return TrackedState{pred_yaw, pitch_, dist_, outpost_yaw_rate_, 0.0, track_hits_};
+      }
+      // Plate rotated out of view: pre-position at outpost center waiting for the next blade
       const double hold_yaw = outpost_center_yaw_.value_or(yaw_);
       return TrackedState{hold_yaw, pitch_, dist_, outpost_yaw_rate_, 0.0, track_hits_};
     }
@@ -167,19 +175,22 @@ std::optional<TrackedState> WorldAngularTracker::update(
 
     const double max_phys_rate = std::min(0.65, 1.15 / std::max(1.0, mdist));
     const bool plate_switched = (std::abs(dyaw) >= 0.085);
-    if (!plate_switched && dt <= 0.16) {
+    if (!plate_switched && dt <= 0.35) {
       const double raw_yr = dyaw / dt;
-      if (std::abs(raw_yr) <= max_phys_rate * 1.4) {
+      if (std::abs(raw_yr) <= max_phys_rate * 1.6) {
         const double clamped_yr = std::clamp(raw_yr, -max_phys_rate, max_phys_rate);
-        outpost_yaw_rate_ = 0.60 * outpost_yaw_rate_ + 0.40 * clamped_yr;
+        if (std::abs(outpost_yaw_rate_) < 0.04) {
+          outpost_yaw_rate_ = clamped_yr;  // Fast bootstrap so lead activates immediately
+        } else {
+          outpost_yaw_rate_ = 0.50 * outpost_yaw_rate_ + 0.50 * clamped_yr;
+        }
       }
     } else if (ang_jump > 0.45) {
       outpost_yaw_rate_ = 0.0;
       track_hits_ = 0;
     } else if (plate_switched) {
-      // Plate switched to the next rotor blade at a different height; keep learned spin rate
-      // but reset track_hits so the gimbal settles onto the new blade before firing.
-      track_hits_ = 0;
+      // Plate switched to the next rotor blade; keep learned spin rate!
+      track_hits_ = (std::abs(outpost_yaw_rate_) > 0.05) ? 1 : 0;
     }
 
     yaw_ = myaw;

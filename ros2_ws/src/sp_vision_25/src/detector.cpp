@@ -83,7 +83,7 @@ MarkerResult marker_mask(const cv::Mat & image)
   const int height = max_y - min_y + 1;
   res.width = width;
   res.height = height;
-  if (std::min(width, height) < 6) {
+  if (std::min(width, height) < 4) {
     return res;
   }
 
@@ -335,11 +335,11 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
     const int w = stats.at<int>(i, cv::CC_STAT_WIDTH);
     const int h = stats.at<int>(i, cv::CC_STAT_HEIGHT);
     const int area = stats.at<int>(i, cv::CC_STAT_AREA);
-    if (area < 4 || h < 3 || w <= 0) {
+    if (area < 3 || h < 3 || w <= 0) {
       continue;
     }
     const float aspect = static_cast<float>(h) / static_cast<float>(w);
-    if (aspect < 1.4f || aspect > 22.0f) {
+    if (aspect < 1.25f || aspect > 22.0f) {
       continue;
     }
     bars.push_back({x + w * 0.5f, y + h * 0.5f, static_cast<float>(w), static_cast<float>(h)});
@@ -359,7 +359,8 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
     const auto & b1 = bars[i];
     for (size_t j = i + 1; j < bars.size(); ++j) {
       const auto & b2 = bars[j];
-      if (std::max(b1.h / b1.w, b2.h / b2.w) < 1.9f) {
+      const float min_bar_aspect = prefer_outpost ? 1.45f : 1.75f;
+      if (std::max(b1.h / b1.w, b2.h / b2.w) < min_bar_aspect) {
         continue;
       }
       const float avg_h = 0.5f * (b1.h + b2.h);
@@ -413,7 +414,7 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
 
     if (!outpost_reference_.empty()) {
       const float score = outpost_marker_score(bgr, outpost_reference_, c.x1, c.x2, cy_p, avg_h);
-      const float marker_thr = prefer_outpost ? 0.48f : 0.56f;
+      const float marker_thr = prefer_outpost ? 0.36f : 0.50f;
       if (score >= marker_thr) {
         ArmorDetection det;
         det.color = color;
@@ -443,7 +444,7 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
     if (is_numbered_vehicle(name)) {
       conf_thr = 0.85f;
     } else if (prefer_outpost && name == "outpost") {
-      conf_thr = 0.50f;
+      conf_thr = 0.42f;
     }
     if (name == "not_armor" || cls_conf < conf_thr) {
       continue;
@@ -538,7 +539,12 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect(
           continue;
         }
         auto [name, cls_conf] = classify(pat);
-        const float min_c = is_numbered_vehicle(name) ? 0.85f : min_classify_conf_;
+        float min_c = min_classify_conf_;
+        if (is_numbered_vehicle(name)) {
+          min_c = 0.85f;
+        } else if (prefer_outpost && name == "outpost") {
+          min_c = 0.42f;
+        }
         if (name == "not_armor" || cls_conf < min_c) {
           continue;
         }
