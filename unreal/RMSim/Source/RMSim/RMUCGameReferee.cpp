@@ -438,8 +438,18 @@ void ARMUCGameReferee::StartMatchNow()
         FRMUCHudAudio::Play(GetWorld(), ERMUCHudAudioCue::Start);
         return;
     }
+    if (GameProgress == ERMUCGameProgress::Preparation || GameProgress == ERMUCGameProgress::SelfChecking)
+    {
+        // First F6 press during preparation/self-check enters a 10-second pre-start countdown.
+        GameProgress = ERMUCGameProgress::CountDown;
+        StageRemainSeconds = 10.0;
+        HudAudioCountdownSecond = 0;
+        PushBannerEvent(TEXT("COUNTDOWN 10s — 再按 F6 直接开赛"), 3.0);
+        return;
+    }
     if (GameProgress != ERMUCGameProgress::Running)
     {
+        // Second F6 press (from CountDown or NotStarted) immediately starts the 07:00 match.
         GameProgress = ERMUCGameProgress::Running;
         StageRemainSeconds = 420.0;
         PushBannerEvent(TEXT("MATCH RUNNING (07:00)"), 3.0);

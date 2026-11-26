@@ -342,17 +342,17 @@ class RMSimLauncherApp(tk.Tk):
 
         match_opt_row = tk.Frame(self.match_frame, bg="#1c222d")
         match_opt_row.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(6, 0))
-        self.match_preparation_var = tk.BooleanVar(value=False)
+        self.match_preparation_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="赛前准备（L 操作飞镖滑台）",
+            text="赛前准备（F6 跳过：按1下10s倒计时 / 按2下直接开赛）",
             variable=self.match_preparation_var,
             style="Card.TCheckbutton",
         ).pack(side="left", padx=(0, 12))
         self.match_auto_sentry_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="开赛后自动接入 sentry_ws (Point-LIO + Nav2 + RViz2)",
+            text="开赛后自动接入 sentry_ws (Point-LIO + Nav2 + 自瞄)",
             variable=self.match_auto_sentry_var,
             style="Card.TCheckbutton",
         ).pack(side="left")
