@@ -12,7 +12,7 @@
           <ForceFailure><Sleep msec="500"/></ForceFailure>
         </Fallback>
       </RetryUntilSuccessful>
-      <RMUC2027Tactics route="{tactical_route}">
+      <RMUC2027Tactics side="auto" route="{tactical_route}">
         <Timeout msec="90000">
           <SendNav2ThroughPoses goals="{tactical_route}" frame_id="map"
                                 action_name="navigate_through_poses"/>

@@ -118,6 +118,9 @@ list(APPEND plugin_libs recovery_node)
 
 ament_auto_add_library(rmuc2027_tactics SHARED plugins/control/rmuc2027_tactics.cpp)
 target_link_libraries(rmuc2027_tactics nlohmann_json::nlohmann_json)
+if(MSVC)
+  target_compile_options(rmuc2027_tactics PRIVATE /bigobj)
+endif()
 list(APPEND plugin_libs rmuc2027_tactics)
 
 ####### Decorators #######

@@ -14,6 +14,18 @@
 
 #include "behaviortree_cpp/decorator_node.h"
 #include "behaviortree_ros2/plugins.hpp"
+#include "dji_referee_protocol/msg/allowed_shoot.hpp"
+#include "dji_referee_protocol/msg/constants.hpp"
+#include "dji_referee_protocol/msg/damage_state.hpp"
+#include "dji_referee_protocol/msg/field_event.hpp"
+#include "dji_referee_protocol/msg/game_status.hpp"
+#include "dji_referee_protocol/msg/rfid_status.hpp"
+#include "dji_referee_protocol/msg/robot_heat.hpp"
+#include "dji_referee_protocol/msg/robot_hp.hpp"
+#include "dji_referee_protocol/msg/robot_performance.hpp"
+#include "dji_referee_protocol/msg/robot_position.hpp"
+#include "dji_referee_protocol/msg/self_color.hpp"
+#include "dji_referee_protocol/msg/sentry_decision_sync.hpp"
 #include "example_interfaces/msg/float32.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "nlohmann/json.hpp"
@@ -236,8 +248,24 @@ std::optional<bool> CardContact(Mode mode, const Referee & ref)
 struct Inputs
 {
   std::mutex mutex;
-  std::optional<Referee> referee;
+  bool side_auto = true;
+  bool side_red = true;
+  bool side_known = false;
+  // Primary native dji_referee_protocol state (works identically in simulator AND real robot!)
+  bool dji_referee_seen = false;
+  WallClock::time_point dji_referee_received{};
+  Referee dji_referee{
+    0, 400, 400, 0, 0, false, 0.0, 300, 0, 260, "MOVE", 0.0, 150.0, 60.0, 400,
+    {true, true, true, true, true, true},
+    10000, 1000, 10000, 1000, false, true, false, false, false, true, false, false,
+    true, true, false, false, false, false, false, false, false, false, false
+  };
+  bool dji_damage_pending = false;
+  int dji_gold = 800;
+  // Optional simulator-only enrichment overlay (/rmsim/referee/state)
+  std::optional<Referee> sim_referee;
   WallClock::time_point referee_received{};
+  bool nav_topic_seen = false;
   bool nav_ready = false;
   WallClock::time_point nav_received{};
   bool enemy_vehicle_visible = false;
@@ -262,53 +290,200 @@ public:
       throw BT::RuntimeError("RMUC2027Tactics needs the runner ROS node");
     }
     const auto side = getInput<std::string>("side");
-    if (!side || (*side != "red" && *side != "blue")) {
-      throw BT::RuntimeError("RMUC2027Tactics needs side red or blue");
+    if (side && (*side == "red" || *side == "blue")) {
+      is_red_ = (*side == "red");
+      side_auto_ = false;
+      inputs_->side_auto = false;
+      inputs_->side_red = is_red_;
+      inputs_->side_known = true;
+    } else {
+      is_red_ = true;
+      side_auto_ = true;
+      inputs_->side_auto = true;
+      inputs_->side_red = true;
+      inputs_->side_known = false;
     }
-    is_red_ = (*side == "red");
-    for (std::size_t i = Index(Mode::Patrol); i < ModeNames.size(); ++i) {
-      if (!HasStaticPort(static_cast<Mode>(i))) continue;
-      const auto route = getInput<std::string>(ModeNames[i]);
-      if (!route || route->empty()) {
-        throw BT::RuntimeError("RMUC2027Tactics missing route ", ModeNames[i]);
-      }
-      routes_[i] = *route;
-    }
-    for (const auto waypoint : BT::splitString(routes_[Index(Mode::Patrol)], '|')) {
-      patrol_routes_.emplace_back(waypoint);
-      auto parts = BT::splitString(waypoint, ';');
-      if (parts.size() >= 2) {
-        patrol_xy_.emplace_back(std::stod(std::string(parts[0])), std::stod(std::string(parts[1])));
-      } else {
-        patrol_xy_.emplace_back(0.0, 0.0);
-      }
-    }
-    if (patrol_routes_.empty()) {
-      throw BT::RuntimeError("RMUC2027Tactics needs a nonempty patrol");
-    }
+    LoadRoutesForSide(is_red_, true);
+
     const auto qos = rclcpp::QoS(1).reliable();
+    const auto dji_qos = rclcpp::QoS(5).reliable();
+
+    // 1. Native dji_referee_protocol subscriptions (EXACT same topics in simulator and real robot!)
+    dji_color_ = node_->create_subscription<dji_referee_protocol::msg::SelfColor>(
+      "/referee/parsed/common/self_color", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::SelfColor & msg) {
+        if (msg.color != dji_referee_protocol::msg::Constants::COLOR_RED &&
+            msg.color != dji_referee_protocol::msg::Constants::COLOR_BLUE) {
+          return;
+        }
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        if (inputs->side_auto) {
+          inputs->side_red = (msg.color == dji_referee_protocol::msg::Constants::COLOR_RED);
+          inputs->side_known = true;
+        }
+      });
+    dji_game_ = node_->create_subscription<dji_referee_protocol::msg::GameStatus>(
+      "/referee/common/game_status", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::GameStatus & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        inputs->dji_referee.progress = static_cast<int>(msg.game_progress);
+      });
+    dji_perf_ = node_->create_subscription<dji_referee_protocol::msg::RobotPerformance>(
+      "/referee/common/robot_performance", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::RobotPerformance & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        if (inputs->side_auto && msg.robot_id > 0) {
+          inputs->side_red = (msg.robot_id < 100);
+          inputs->side_known = true;
+        }
+        inputs->dji_referee.hp = static_cast<int>(msg.current_hp);
+        inputs->dji_referee.max_hp = std::max(1, static_cast<int>(msg.maximum_hp));
+        inputs->dji_referee.heat_limit = static_cast<int>(msg.shooter_barrel_heat_limit);
+        if (msg.chassis_power_limit > 0) {
+          inputs->dji_referee.power_limit_w = static_cast<double>(msg.chassis_power_limit);
+        }
+        inputs->dji_referee.shooter_locked =
+          (msg.current_hp == 0) || (!msg.power_management_shooter_output);
+      });
+    dji_hp_ = node_->create_subscription<dji_referee_protocol::msg::RobotHP>(
+      "/referee/common/robot_hp", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::RobotHP & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        const bool red = inputs->side_red;
+        inputs->dji_referee.enemy_alive = {
+          (red ? msg.blue_1_robot_hp : msg.red_1_robot_hp) > 0,
+          (red ? msg.blue_2_robot_hp : msg.red_2_robot_hp) > 0,
+          (red ? msg.blue_3_robot_hp : msg.red_3_robot_hp) > 0,
+          (red ? msg.blue_4_robot_hp : msg.red_4_robot_hp) > 0,
+          true,  // 2026 RobotHP omits robot 5; keep 5-armor tracking enabled
+          (red ? msg.blue_7_robot_hp : msg.red_7_robot_hp) > 0
+        };
+        inputs->dji_referee.opponent_hp = static_cast<int>(red ? msg.blue_7_robot_hp : msg.red_7_robot_hp);
+        inputs->dji_referee.own_base_hp = static_cast<int>(red ? msg.red_base_hp : msg.blue_base_hp);
+        inputs->dji_referee.own_outpost_hp = static_cast<int>(red ? msg.red_outpost_hp : msg.blue_outpost_hp);
+        inputs->dji_referee.enemy_base_hp = static_cast<int>(red ? msg.blue_base_hp : msg.red_base_hp);
+        inputs->dji_referee.enemy_outpost_hp = static_cast<int>(red ? msg.blue_outpost_hp : msg.red_outpost_hp);
+        inputs->dji_referee.own_outpost_available = (inputs->dji_referee.own_outpost_hp > 0);
+        inputs->dji_referee.own_outpost_controlled = (inputs->dji_referee.own_outpost_hp > 0);
+        inputs->dji_referee.enemy_outpost_hostile = (inputs->dji_referee.enemy_outpost_hp > 0);
+        inputs->dji_referee.enemy_base_protected = (inputs->dji_referee.enemy_outpost_hp > 0);
+        inputs->dji_referee.own_fortress_available = (inputs->dji_referee.own_outpost_hp == 0);
+        for (std::size_t idx = 0; idx < 6; ++idx) {
+          if (!inputs->dji_referee.enemy_alive[idx]) {
+            inputs->enemy_memory[idx].valid = false;
+          }
+        }
+      });
+    dji_heat_ = node_->create_subscription<dji_referee_protocol::msg::RobotHeat>(
+      "/referee/common/robot_heat", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::RobotHeat & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        inputs->dji_referee.heat = static_cast<int>(msg.shooter_17mm_barrel_heat);
+        inputs->dji_referee.buffer_energy_j = static_cast<double>(msg.buffer_energy);
+      });
+    dji_ammo_ = node_->create_subscription<dji_referee_protocol::msg::AllowedShoot>(
+      "/referee/common/allowed_shoot", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::AllowedShoot & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        inputs->dji_referee.ammo = static_cast<int>(msg.projectile_allowance_17mm);
+        inputs->dji_gold = static_cast<int>(msg.remaining_gold_coin);
+        inputs->dji_referee.local_ammo_available = (inputs->dji_gold >= 10);
+      });
+    dji_rfid_ = node_->create_subscription<dji_referee_protocol::msg::RFIDStatus>(
+      "/referee/common/rfid_status", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::RFIDStatus & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        const uint32_t bits = msg.detected_rfid_bits_low;
+        inputs->dji_referee.own_fortress_active = ((bits & (1u << 17)) != 0u);
+        inputs->dji_referee.own_outpost_active = ((bits & (1u << 18)) != 0u);
+        inputs->dji_referee.own_outpost_card = inputs->dji_referee.own_outpost_active;
+        inputs->dji_referee.supply_active = ((bits & ((1u << 19) | (1u << 20))) != 0u);
+      });
+    dji_field_ = node_->create_subscription<dji_referee_protocol::msg::FieldEvent>(
+      "/referee/common/field_event", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::FieldEvent & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        if (msg.supply_area_1) inputs->dji_referee.supply_active = true;
+        if (msg.fortress_buff_point != 0) inputs->dji_referee.own_fortress_active = true;
+        if (msg.outpost_buff_point != 0) inputs->dji_referee.own_outpost_active = true;
+      });
+    dji_damage_ = node_->create_subscription<dji_referee_protocol::msg::DamageState>(
+      "/referee/common/damage_state", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::DamageState & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        inputs->dji_referee.armor_id = static_cast<int>(msg.armor_id);
+        inputs->dji_referee.hp_deduction_reason = static_cast<int>(msg.damage_type);
+        inputs->dji_damage_pending = true;
+      });
+    dji_pos_ = node_->create_subscription<dji_referee_protocol::msg::RobotPosition>(
+      "/referee/common/robot_position", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::RobotPosition & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        inputs->dji_referee.body_yaw_rad = WrapAngle((90.0 - static_cast<double>(msg.angle)) * kPi / 180.0);
+      });
+    dji_sentry_sync_ = node_->create_subscription<dji_referee_protocol::msg::SentryDecisionSync>(
+      "/referee/common/sentry_decision_sync", dji_qos,
+      [inputs = inputs_](const dji_referee_protocol::msg::SentryDecisionSync & msg) {
+        std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->dji_referee_seen = true;
+        inputs->dji_referee_received = WallClock::now();
+        if (msg.sentry_posture == dji_referee_protocol::msg::Constants::SENTRY_POSTURE_ATTACK) {
+          inputs->dji_referee.stance = "ATTACK";
+        } else if (msg.sentry_posture == dji_referee_protocol::msg::Constants::SENTRY_POSTURE_DEFENSE) {
+          inputs->dji_referee.stance = "DEFENSE";
+        } else if (msg.sentry_posture == dji_referee_protocol::msg::Constants::SENTRY_POSTURE_MOVE) {
+          inputs->dji_referee.stance = "MOVE";
+        }
+        inputs->dji_referee.remote_ammo_available =
+          msg.in_disengage && (msg.remaining_ammo_exchange >= 100) && (inputs->dji_gold >= 150);
+      });
+
+    // 2. Optional simulator-only enrichment overlay (/rmsim/referee/state) for RMUC2027 outpost-capture extras
     referee_ = node_->create_subscription<std_msgs::msg::String>(
       "/rmsim/referee/state", qos,
-      [inputs = inputs_, red = is_red_](const std_msgs::msg::String & msg) {
+      [inputs = inputs_](const std_msgs::msg::String & msg) {
         try {
           const auto data = Json::parse(msg.data);
-          if (data.at("friendly_red") != red) return;
           std::lock_guard<std::mutex> lock(inputs->mutex);
+          const bool msg_red = data.at("friendly_red").get<bool>();
+          if (inputs->side_auto) {
+            inputs->side_red = msg_red;
+            inputs->side_known = true;
+          } else if (msg_red != inputs->side_red) {
+            return;
+          }
           if (data.at("available") == true) {
-            inputs->referee = Referee::Decode(data, red);
+            inputs->sim_referee = Referee::Decode(data, inputs->side_red);
             inputs->referee_received = WallClock::now();
-            // Clear memory immediately for any enemy robot (1-5 or 7) reported dead/unfielded by referee
             for (std::size_t idx = 0; idx < 6; ++idx) {
-              if (!inputs->referee->enemy_alive[idx]) {
+              if (!inputs->sim_referee->enemy_alive[idx]) {
                 inputs->enemy_memory[idx].valid = false;
               }
             }
           } else {
-            inputs->referee.reset();
+            inputs->sim_referee.reset();
           }
         } catch (const Json::exception &) {
           std::lock_guard<std::mutex> lock(inputs->mutex);
-          inputs->referee.reset();
+          inputs->sim_referee.reset();
         }
       });
     nav_ = node_->create_subscription<std_msgs::msg::String>(
@@ -319,6 +494,7 @@ public:
           data["localization_map_verified"] == true && data.contains("initial_pose_sent") &&
           data["initial_pose_sent"] == true;
         std::lock_guard<std::mutex> lock(inputs->mutex);
+        inputs->nav_topic_seen = true;
         inputs->nav_ready = active;
         inputs->nav_received = WallClock::now();
       });
@@ -337,8 +513,10 @@ public:
         const int label = (data.contains("label") && data["label"].is_number_integer())
           ? data["label"].get<int>() : -1;
         // Support all fielded enemy vehicles (1-5 and 7 sentry), gated by referee alive HP
+        const auto & alive_arr = inputs->sim_referee ? inputs->sim_referee->enemy_alive : inputs->dji_referee.enemy_alive;
+        const bool has_ref = inputs->sim_referee.has_value() || inputs->dji_referee_seen;
         const bool is_vehicle = (label >= 0 && label <= 5) &&
-          (!inputs->referee || inputs->referee->enemy_alive[static_cast<std::size_t>(label)]);
+          (!has_ref || alive_arr[static_cast<std::size_t>(label)]);
         if (visible && is_vehicle) {
           const auto seen_now = WallClock::now();
           inputs->enemy_vehicle_visible = true;
@@ -562,6 +740,60 @@ public:
   }
 
 private:
+  // Unified RMUC 2027 official field coordinates (same CAD map in simulation & real field!).
+  // Automatically mirrors Red vs Blue once self_color/robot_id is known; XML ports can still override.
+  void LoadRoutesForSide(bool red, bool allow_xml_override)
+  {
+    is_red_ = red;
+    if (red) {
+      routes_[Index(Mode::Patrol)] = "2.96;0.0;3.14159265|2.95;1.8;2.61|2.95;-1.8;-2.61";
+      routes_[Index(Mode::OwnOutpostHeal)] = "2.85;4.70;3.14159265";
+      routes_[Index(Mode::OwnBaseSupply)] = "12.0;6.0;3.14159265";
+      routes_[Index(Mode::OwnOutpostAttack)] = "3.0;0.8;1.54";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "2.85;4.70;3.14159265";
+      routes_[Index(Mode::EnemyOutpostAttack)] = "-3.0;-0.8;-1.60";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.60;-3.15;3.14159265";
+      routes_[Index(Mode::EnemyFortress)] = "-6.82;0.0;3.14159265";
+      routes_[Index(Mode::EnemyBaseAttack)] = "-9.0;-0.5;2.95";
+      routes_[Index(Mode::OwnFortress)] = "6.82;0.0;3.14159265";
+    } else {
+      routes_[Index(Mode::Patrol)] = "-2.96;0.0;0.0|-2.95;-1.8;-0.53|-2.95;1.8;0.53";
+      routes_[Index(Mode::OwnOutpostHeal)] = "-2.60;-3.15;0.0";
+      routes_[Index(Mode::OwnBaseSupply)] = "-12.0;-6.0;0.0";
+      routes_[Index(Mode::OwnOutpostAttack)] = "-3.0;-0.8;-1.60";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.60;-3.15;0.0";
+      routes_[Index(Mode::EnemyOutpostAttack)] = "3.0;0.8;1.54";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "2.85;4.70;0.0";
+      routes_[Index(Mode::EnemyFortress)] = "6.82;0.0;0.0";
+      routes_[Index(Mode::EnemyBaseAttack)] = "9.0;0.5;-0.19";
+      routes_[Index(Mode::OwnFortress)] = "-6.82;0.0;0.0";
+    }
+    if (allow_xml_override) {
+      for (std::size_t i = Index(Mode::Patrol); i < ModeNames.size(); ++i) {
+        if (!HasStaticPort(static_cast<Mode>(i))) continue;
+        const auto route = getInput<std::string>(ModeNames[i]);
+        if (route && !route->empty()) {
+          routes_[i] = *route;
+        }
+      }
+    }
+    patrol_routes_.clear();
+    patrol_xy_.clear();
+    for (const auto waypoint : BT::splitString(routes_[Index(Mode::Patrol)], '|')) {
+      patrol_routes_.emplace_back(waypoint);
+      auto parts = BT::splitString(waypoint, ';');
+      if (parts.size() >= 2) {
+        patrol_xy_.emplace_back(std::stod(std::string(parts[0])), std::stod(std::string(parts[1])));
+      } else {
+        patrol_xy_.emplace_back(0.0, 0.0);
+      }
+    }
+    if (patrol_routes_.empty()) {
+      throw BT::RuntimeError("RMUC2027Tactics needs a nonempty patrol");
+    }
+    patrol_waypoint_ = 0;
+  }
+
   bool EnemyInHomeZone(const VisionInfo & vision) const
   {
     if (!vision.has_enemy_xy) return false;
@@ -654,10 +886,15 @@ private:
   std::tuple<std::optional<Referee>, bool, VisionInfo> ReadInputs()
   {
     const auto now = WallClock::now();
-    const auto max_age = std::chrono::seconds(1);
+    const auto max_age = std::chrono::seconds(2);
     const auto engage_hold = std::chrono::milliseconds(1500);
     const auto chase_memory = std::chrono::milliseconds(4000);
     std::lock_guard<std::mutex> lock(inputs_->mutex);
+    if (side_auto_ && inputs_->side_known && inputs_->side_red != is_red_) {
+      LoadRoutesForSide(inputs_->side_red, false);
+      RCLCPP_INFO(node_->get_logger(), "RMUC_TACTICS auto-selected unified field coordinates for %s",
+        is_red_ ? "RED" : "BLUE");
+    }
     const bool enemy_recent =
       inputs_->enemy_vehicle_visible || (now - inputs_->enemy_vehicle_seen <= engage_hold);
     const bool chase_recent =
@@ -684,11 +921,28 @@ private:
         info.memory = {true, lbl, px, py, age};
       }
     }
-    return {
-      now - inputs_->referee_received <= max_age ? inputs_->referee : std::nullopt,
-      inputs_->nav_ready && now - inputs_->nav_received <= max_age,
-      info
-    };
+    std::optional<Referee> merged_ref;
+    const bool sim_fresh = inputs_->sim_referee && (now - inputs_->referee_received <= max_age);
+    const bool dji_fresh = inputs_->dji_referee_seen && (now - inputs_->dji_referee_received <= max_age);
+    if (sim_fresh) {
+      merged_ref = inputs_->sim_referee;
+      if (inputs_->dji_damage_pending) {
+        merged_ref->is_hp_deduced = true;
+        merged_ref->armor_id = inputs_->dji_referee.armor_id;
+        merged_ref->hp_deduction_reason = inputs_->dji_referee.hp_deduction_reason;
+        inputs_->dji_damage_pending = false;
+      }
+    } else if (dji_fresh) {
+      merged_ref = inputs_->dji_referee;
+      merged_ref->is_hp_deduced = inputs_->dji_damage_pending;
+      inputs_->dji_damage_pending = false;
+    }
+    // On real robot (no simulator /rmsim/{robot}/navigation topic), IsMapReady+IsTfReady+IsNav2Ready
+    // already verified Nav2 is ready before ticking RMUC2027Tactics.
+    const bool nav_ready = inputs_->nav_topic_seen
+      ? (inputs_->nav_ready && now - inputs_->nav_received <= max_age)
+      : true;
+    return {merged_ref, nav_ready, info};
   }
 
   Mode Select(const std::optional<Referee> & ref, bool nav_ready, const VisionInfo & vision, double now)
@@ -975,7 +1229,8 @@ private:
       }
 
       const double since_cmd = last_tick_ - last_stance_cmd_at_;
-      if (desired_stance != ref->stance && ref->stance_cooldown_s <= 0.05 &&
+      const double eff_cooldown = std::max(ref->stance_cooldown_s, std::max(0.0, 5.0 - since_cmd));
+      if (desired_stance != ref->stance && eff_cooldown <= 0.05 &&
           (urgent ? since_cmd >= 0.3 : since_cmd >= 1.2)) {
         std_msgs::msg::String stance_msg;
         stance_msg.data = desired_stance;
@@ -1033,6 +1288,17 @@ private:
 
   rclcpp::Node::SharedPtr node_;
   std::shared_ptr<Inputs> inputs_ = std::make_shared<Inputs>();
+  rclcpp::Subscription<dji_referee_protocol::msg::SelfColor>::SharedPtr dji_color_;
+  rclcpp::Subscription<dji_referee_protocol::msg::GameStatus>::SharedPtr dji_game_;
+  rclcpp::Subscription<dji_referee_protocol::msg::RobotPerformance>::SharedPtr dji_perf_;
+  rclcpp::Subscription<dji_referee_protocol::msg::RobotHP>::SharedPtr dji_hp_;
+  rclcpp::Subscription<dji_referee_protocol::msg::RobotHeat>::SharedPtr dji_heat_;
+  rclcpp::Subscription<dji_referee_protocol::msg::AllowedShoot>::SharedPtr dji_ammo_;
+  rclcpp::Subscription<dji_referee_protocol::msg::RFIDStatus>::SharedPtr dji_rfid_;
+  rclcpp::Subscription<dji_referee_protocol::msg::FieldEvent>::SharedPtr dji_field_;
+  rclcpp::Subscription<dji_referee_protocol::msg::DamageState>::SharedPtr dji_damage_;
+  rclcpp::Subscription<dji_referee_protocol::msg::RobotPosition>::SharedPtr dji_pos_;
+  rclcpp::Subscription<dji_referee_protocol::msg::SentryDecisionSync>::SharedPtr dji_sentry_sync_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr referee_, nav_, vision_track_;
   rclcpp::Publisher<example_interfaces::msg::Float32>::SharedPtr spin_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr stop_;
@@ -1041,6 +1307,7 @@ private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr priority_, stance_, state_;
   rclcpp::Publisher<std_msgs::msg::UInt32>::SharedPtr ammo_;
   bool is_red_ = true;
+  bool side_auto_ = true;
   std::array<std::string, ModeNames.size()> routes_;
   std::vector<std::string> patrol_routes_;
   std::vector<std::pair<double, double>> patrol_xy_;

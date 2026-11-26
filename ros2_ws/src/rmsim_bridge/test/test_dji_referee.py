@@ -57,6 +57,7 @@ class RefereeContractTests(unittest.TestCase):
             '/referee/common/robot_buff': 'RobotBuff',
             '/referee/common/ground_robot_position': 'GroundRobotPosition',
             '/referee/common/damage_state': 'DamageState',
+            '/referee/common/sentry_decision_sync': 'SentryDecisionSync',
             '/referee/parsed/common/constraints': 'Constraints',
             '/referee/parsed/common/self_color': 'SelfColor',
         })
@@ -92,6 +93,7 @@ class RefereeContractTests(unittest.TestCase):
         self.assertEqual(latest('/referee/common/field_event').big_energy_mech, Constants.ENERGY_MECH_ACTIVATED)
         self.assertEqual(latest('/referee/common/robot_buff').cooling_buff, 2)
         self.assertEqual(latest('/referee/parsed/common/self_color').color, Constants.COLOR_BLUE)
+        self.assertEqual(latest('/referee/common/sentry_decision_sync').sentry_posture, Constants.SENTRY_POSTURE_DEFENSE)
         self.assertTrue(latest('/referee/parsed/common/constraints').fire_allowed)
         self.assertAlmostEqual(latest('/referee/parsed/common/constraints').speed_scale, 0.675)
         self.assertTrue(node.topics['/rmsim/referee/state'].messages)

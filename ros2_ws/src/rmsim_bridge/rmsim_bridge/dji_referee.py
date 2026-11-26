@@ -16,6 +16,7 @@ from dji_referee_protocol.msg import (
     RobotPerformance,
     RobotPosition,
     SelfColor,
+    SentryDecisionSync,
 )
 
 from .control_dlls import load_package_dlls
@@ -33,6 +34,11 @@ RFID_BITS = (
 
 # Defaults from RMUCGameReferee.h and RMUCTacticalRules.h (RMUC 2027 three-stance power limits).
 STANCE_POWER_LIMIT_W = {'MOVE': 150, 'ATTACK': 100, 'DEFENSE': 100}
+STANCE_POSTURE_CODE = {
+    'ATTACK': Constants.SENTRY_POSTURE_ATTACK,
+    'DEFENSE': Constants.SENTRY_POSTURE_DEFENSE,
+    'MOVE': Constants.SENTRY_POSTURE_MOVE,
+}
 
 
 class DjiRefereePublisher:
@@ -51,7 +57,8 @@ class DjiRefereePublisher:
         self.constraints = node.create_publisher(Constraints, '/referee/parsed/common/constraints', qos)
         self.self_color = node.create_publisher(SelfColor, '/referee/parsed/common/self_color', qos)
         self.damage = node.create_publisher(DamageState, '/referee/common/damage_state', qos)
-        self.last_stage = self.last_hp = self.last_self_hp = self.last_damage_tick = None
+        self.sentry_sync = node.create_publisher(SentryDecisionSync, '/referee/common/sentry_decision_sync', qos)
+        self.last_stage = self.last_hp = self.last_self_hp = self.last_damage_tick = self.last_stance = None
         self.next_1hz = self.next_3hz = self.next_10hz = 0.0
         node.get_logger().info('RMUC referee bridge enabled (original dji_referee_protocol)')
 
@@ -65,9 +72,10 @@ class DjiRefereePublisher:
         stage = stream, progress
         stage_changed = stage != self.last_stage
         hp_changed = hp != self.last_hp
+        stance_changed = referee.get('sentry_stance') != self.last_stance
         self_hp = robot.get('current_hp')
 
-        if stage_changed or now >= self.next_1hz:
+        if stage_changed or stance_changed or now >= self.next_1hz:
             self.next_1hz = now + 1.0
             self._publish_field(referee, game, robot, rfid, progress)
 
@@ -104,6 +112,7 @@ class DjiRefereePublisher:
 
         self.last_stage = stage
         self.last_self_hp = self_hp
+        self.last_stance = referee.get('sentry_stance')
         if hp_changed:
             self.last_hp = dict(hp)
 
@@ -137,6 +146,25 @@ class DjiRefereePublisher:
         ground_fields = GroundRobotPosition.get_fields_and_field_types()
         if all(name in ground for name in ground_fields):
             self.ground.publish(GroundRobotPosition(**{name: float(ground[name]) for name in ground_fields}))
+        robot_id = int(robot.get('robot_id', 0))
+        own_key = 'red' if (1 <= robot_id < 100) else 'blue'
+        own_site = (referee.get('field_devices') or {}).get(own_key) or {}
+        hp = int(robot.get('current_hp', 0))
+        gold = int(robot.get('remaining_gold_coin', 0))
+        posture = STANCE_POSTURE_CODE.get(referee.get('sentry_stance'), Constants.SENTRY_POSTURE_MOVE)
+        can_exchange = bool(own_site.get('local_ammo_purchase_available') or own_site.get('remote_ammo_purchase_available'))
+        self.sentry_sync.publish(SentryDecisionSync(
+            exchanged_ammo=0,
+            remote_ammo_count=0,
+            remote_hp_count=0,
+            can_free_revive=(hp <= 0),
+            can_buy_revive=(hp <= 0 and gold >= 50),
+            revive_cost=50,
+            in_disengage=bool(own_site.get('remote_ammo_purchase_available', False)),
+            remaining_ammo_exchange=1000 if can_exchange else 0,
+            sentry_posture=posture,
+            can_activate_rune=False,
+        ))
 
     def _publish_robot(self, referee, robot, progress):
         robot_id = int(robot.get('robot_id', 0))
