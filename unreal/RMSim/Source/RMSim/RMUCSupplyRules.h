@@ -186,7 +186,7 @@ class FRMUCSupplyRules
 {
 public:
     static constexpr int InitialAllowance = 300;
-    static constexpr int SentryFreeAmmoCap = 200;
+    static constexpr int SentryFreeAmmoCap = 300;
     static constexpr int InitialGold = 800;
     static constexpr int LocalAmmoCost = 10;
     static constexpr int LocalAmmoAmount = 10;
@@ -224,7 +224,7 @@ public:
             if (AvailableMinutes > ClaimedMinutes)
             {
                 // Reserve half of each minute's 100 free 17mm rounds for infantry teammates;
-                // sentry claims at most 50/min and at most 200 total across the match.
+                // sentry claims at most 50/min and at most 300 total across the match.
                 const int Grant = std::min(50 * (AvailableMinutes - ClaimedMinutes),
                     SentryFreeAmmoCap - SentryFreeAmmoClaimed);
                 if (Grant > 0)
