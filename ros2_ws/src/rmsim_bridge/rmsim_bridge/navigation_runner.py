@@ -115,7 +115,7 @@ class NavigationRunner(Node):
             cfg['bt_navigator']['ros__parameters'].update(bt_loop_duration=32, default_server_timeout=500)
         self.params=self.output/'parameters.yaml';self.params.write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8')
         self.state=None;self.lio=None;self.received=0.;self.identity=None;self.children={};self.streams=[];self.starts=0;self.phase='waiting'
-        self.amcl_start_retried=False
+        self.amcl_start_retries=0;self.amcl_active_since=0.
         self.scan=None;self.pose=None;self.seeded=False;self.localized=False;self.nav_started=False;self.seed_ns=0;self.pose_stamp=0;self.good_poses=0;self.pending_state=None;self.pending_update=None;self.next_update=0.
         self.initial_pub=self.create_publisher(PoseWithCovarianceStamped,'initialpose',1)
         self.amcl_state=self.create_client(GetState,'amcl/get_state');self.nomotion=self.create_client(Empty,'request_nomotion_update')
@@ -408,7 +408,7 @@ class NavigationRunner(Node):
             except subprocess.TimeoutExpired:child.kill();child.wait(timeout=5)
         self.children={}
         self.map_seen={role:False for role in self.map_seen}
-        self.seeded=False;self.localized=False;self.nav_started=False;self.scan=None;self.pose=None;self.good_poses=0;self.pose_stamp=0
+        self.seeded=False;self.localized=False;self.nav_started=False;self.scan=None;self.pose=None;self.good_poses=0;self.pose_stamp=0;self.amcl_active_since=0.
         for future in (self.pending_state,self.pending_update,self.pending_active):
             if future and not future.done():future.cancel()
         self.pending_state=None;self.pending_update=None;self.pending_active=None;self.nav_active=False
@@ -450,6 +450,12 @@ class NavigationRunner(Node):
             if response is None:return
             active=response.current_state.id==3
             if not active:return
+            now_wall=time.monotonic()
+            if self.amcl_active_since<=0.:
+                self.amcl_active_since=now_wall
+                return
+            # Give Windows nav2_amcl a brief settle window after Active/createLaserObject before initialpose.
+            if now_wall-self.amcl_active_since<0.35:return
             m=PoseWithCovarianceStamped();self.seed_ns=self.state['sim_time_ns'];m.header.stamp.sec=self.seed_ns//1_000_000_000;m.header.stamp.nanosec=self.seed_ns%1_000_000_000;m.header.frame_id=self.robot+'/map'
             m.pose.pose.position.x=float(self.initial_pose[0]);m.pose.pose.position.y=float(self.initial_pose[1]);yaw=float(self.initial_pose[2]);m.pose.pose.orientation.z=math.sin(yaw/2);m.pose.pose.orientation.w=math.cos(yaw/2)
             m.pose.covariance[0]=.25;m.pose.covariance[7]=.25;m.pose.covariance[35]=.09
@@ -474,7 +480,7 @@ class NavigationRunner(Node):
     def poll(self):
         if self.state and self.identity is not None and self.identity!=[self.state.get('session'),self.state.get('epoch')]:
             self.stop();self.phase='waiting';self.map_fault=''
-            self.amcl_start_retried=False
+            self.amcl_start_retries=0
         ready=self.state and self.state.get('connected') and self.state.get('state_fresh') and time.monotonic()-self.received<1 and self.lio and self.lio.get('phase')=='running'
         if ready:
             scene=self.state.get('map',{})
@@ -497,9 +503,10 @@ class NavigationRunner(Node):
                     continue
                 if (os.name=='nt' and name=='amcl' and (code & 0xffffffff)==0xc0000005
                         and (self.state.get('drive') or {}).get('match_autonomy') is True
-                        and not self.localized and not self.nav_started and not self.amcl_start_retried):
-                    self.amcl_start_retried=True
-                    self.get_logger().warning('AMCL exited with 0xc0000005 before localization; restarting localization once.')
+                        and not self.localized and not self.nav_started and self.amcl_start_retries < 5):
+                    self.amcl_start_retries+=1
+                    self.get_logger().warning(
+                        f'AMCL exited with 0xc0000005 before localization; restarting localization ({self.amcl_start_retries}/5).')
                     self.stop()
                     self.start()
                     break
@@ -517,7 +524,8 @@ class NavigationRunner(Node):
             self.motion_released = True
         self.update_operator_idle()
         report=dict(phase=self.phase,starts=self.starts,identity=self.identity,pids={k:v.pid for k,v in self.children.items()},
-            amcl_start_retried=self.amcl_start_retried,
+            amcl_start_retried=self.amcl_start_retries>0,
+            amcl_start_retries=self.amcl_start_retries,
             output_directory=str(self.output),map_id=self.map_metadata['map_id'],initial_pose_sent=self.seeded,
             localization_map=self.map_identity,localization_map_verified=not self.map_identity or (all(self.map_seen.values()) and not self.map_fault),
             localization_map_topics=self.map_metadata.get('localization_map_binding'),map_input_fault=self.map_fault,
