@@ -135,6 +135,8 @@ struct Referee
   bool local_ammo_available;
   bool remote_ammo_available;
   bool remote_ammo_pending;
+  bool own_outpost_enemy_temp_ctrl = false;
+  bool captured_outpost_enemy_temp_ctrl = false;
 
   static Referee Decode(const Json & data, bool red)
   {
@@ -164,6 +166,14 @@ struct Referee
       all_hp.value(ep + "5_robot_hp", 0) > 0,
       all_hp.value(ep + "7_robot_hp", 0) > 0
     };
+    const char * enemy_ctrl_key = red ? "outpost_control_blue_active" : "outpost_control_red_active";
+    const bool enemy_post_hostile = enemy.at("outpost_owner_red") != red;
+    const bool own_enemy_temp_ctrl =
+      (!full_outpost_control && own.at("outpost_controller_red") != red) ||
+      own.value(enemy_ctrl_key, false);
+    const bool captured_enemy_temp_ctrl = !enemy_post_hostile && (
+      (!enemy.value("outpost_control_full", true) && enemy.value("outpost_controller_red", !red) != red) ||
+      enemy.value(enemy_ctrl_key, false));
     return {
       game.at("game_progress"), robot.at("current_hp"), robot.at("maximum_hp"),
       robot.value("armor_id", 0), robot.value("hp_deduction_reason", 0), robot.value("is_hp_deduced", false),
@@ -184,12 +194,13 @@ struct Referee
       own.value(outpost_card, false), enemy.value(outpost_card, false),
       own_outpost_controlled,
       own_outpost_enemy_owned, full_outpost_control && !own_outpost_controlled,
-      enemy.at("outpost_owner_red") != red, enemy.at("base_protected"), enemy.at("base_armor_open"),
+      enemy_post_hostile, enemy.at("base_protected"), enemy.at("base_armor_open"),
       own.value("own_fortress_available", false), own.value("fortress_active", false),
       own.value("enemy_fortress_available", false), own.value("enemy_fortress_active", false),
       own.value("enemy_fortress_armor_progress_s", 0.0), own.value("enemy_fortress_armor_required_s", 10.0),
       own.at("supply_active"), own.at("local_ammo_purchase_available"),
-      own.value("remote_ammo_purchase_available", false), own.value("remote_ammo_purchase_pending", false)
+      own.value("remote_ammo_purchase_available", false), own.value("remote_ammo_purchase_pending", false),
+      own_enemy_temp_ctrl, captured_enemy_temp_ctrl
     };
   }
 };
@@ -610,15 +621,15 @@ public:
     last_tick_ = now;
 
     if (ref) {
-      if (last_own_outpost_hp_ > 0 && ref->own_outpost_hp < last_own_outpost_hp_ &&
-          !ref->own_outpost_enemy_owned) {
+      if ((last_own_outpost_hp_ > 0 && ref->own_outpost_hp < last_own_outpost_hp_ &&
+           !ref->own_outpost_enemy_owned) || ref->own_outpost_enemy_temp_ctrl) {
         own_outpost_attacked_until_ = now + 10.0;
       }
       last_own_outpost_hp_ = ref->own_outpost_hp;
 
-      // Also monitor a captured enemy outpost (now owned by us) so we move there and fight back if attacked!
-      if (last_enemy_outpost_hp_ > 0 && ref->enemy_outpost_hp < last_enemy_outpost_hp_ &&
-          !ref->enemy_outpost_hostile) {
+      // Also monitor a captured enemy outpost (now owned by us) for HP drop OR enemy temporary control!
+      if ((last_enemy_outpost_hp_ > 0 && ref->enemy_outpost_hp < last_enemy_outpost_hp_ &&
+           !ref->enemy_outpost_hostile) || ref->captured_outpost_enemy_temp_ctrl) {
         captured_outpost_attacked_until_ = now + 10.0;
       }
       last_enemy_outpost_hp_ = ref->enemy_outpost_hp;
@@ -1052,13 +1063,13 @@ private:
         ready(Mode::ChaseEnemy)) {
       return Mode::ChaseEnemy;
     }
-    // Defend our original outpost if it is under attack
-    if (combat_ready && now < own_outpost_attacked_until_ && ref->own_outpost_hp > 0 &&
+    // Defend our original outpost if it is under attack OR temporarily controlled/contested by enemy
+    if (combat_ready && (now < own_outpost_attacked_until_ || ref->own_outpost_enemy_temp_ctrl) &&
         !ref->own_outpost_enemy_owned && ready(Mode::OwnOutpostAttack)) {
       return Mode::OwnOutpostAttack;
     }
-    // Defend an enemy outpost that we have captured if the enemy is attacking it
-    if (combat_ready && now < captured_outpost_attacked_until_ && ref->enemy_outpost_hp > 0 &&
+    // Defend an enemy outpost that we have captured if it is under attack OR temporarily controlled by enemy
+    if (combat_ready && (now < captured_outpost_attacked_until_ || ref->captured_outpost_enemy_temp_ctrl) &&
         !ref->enemy_outpost_hostile && ready(Mode::EnemyOutpostAttack)) {
       return Mode::EnemyOutpostAttack;
     }
