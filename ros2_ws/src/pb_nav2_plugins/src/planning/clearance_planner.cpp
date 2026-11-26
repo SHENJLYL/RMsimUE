@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 #include <mutex>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -110,12 +111,47 @@ public:
     return std::max(0.0, std::min(value - 0.72 * resolution_, boundary));
   }
 
+  std::optional<Point> findNearestClear(Point center, double min_clearance, double max_radius = 0.75) const
+  {
+    if (at(center) >= min_clearance) {return center;}
+    const double step = std::max(0.05, resolution_);
+    for (double r = step; r <= max_radius + 1e-6; r += step) {
+      const int samples = std::max(12, static_cast<int>(std::ceil(2.0 * 3.141592653589793 * r / step)));
+      Point best{};
+      double best_clear = -1.0;
+      for (int i = 0; i < samples; ++i) {
+        const double ang = (2.0 * 3.141592653589793 * i) / samples;
+        const Point cand{center.x + r * std::cos(ang), center.y + r * std::sin(ang)};
+        const double c = at(cand);
+        if (c >= min_clearance && c > best_clear) {
+          best_clear = c;
+          best = cand;
+        }
+      }
+      if (best_clear >= min_clearance) {return best;}
+    }
+    return std::nullopt;
+  }
+
   template<typename Iterator, typename Position>
   bool clearRoute(Point start, Iterator first, Iterator last, Position position) const
   {
     constexpr double minimum = 0.41;
-    constexpr double start_minimum = 0.22;
-    if (first == last || !(at(start) >= start_minimum)) {return false;}
+    constexpr double goal_minimum = 0.33;
+    if (first == last) {return false;}
+    const double start_clear = at(start);
+    const double start_floor = std::min(0.22, start_clear);
+    double total_len = 0.0;
+    {
+      Point prev = start;
+      for (auto it = first; it != last; ++it) {
+        const Point next = position(*it);
+        const double seg = (next - prev).length();
+        if (!std::isfinite(seg)) {return false;}
+        total_len += seg;
+        prev = next;
+      }
+    }
     double traversed = 0.0;
     for (; first != last; ++first) {
       const Point end = position(*first);
@@ -126,7 +162,14 @@ public:
       for (int i=1; i<=steps; ++i) {
         const double frac = double(i)/steps;
         const double d_here = traversed + length * frac;
-        const double req = (d_here < 1.00) ? std::min(minimum, start_minimum + (minimum - start_minimum) * (d_here / 1.00)) : minimum;
+        const double d_rem = std::max(0.0, total_len - d_here);
+        double req = minimum;
+        if (d_here < 1.00) {
+          req = std::min(req, start_floor + (minimum - start_floor) * (d_here / 1.00));
+        }
+        if (d_rem < 0.45) {
+          req = std::min(req, goal_minimum + (minimum - goal_minimum) * (d_rem / 0.45));
+        }
         if (!(at(start+delta*frac) >= req)) {return false;}
       }
       traversed += length;
@@ -370,7 +413,37 @@ public:
         return path;
       }
     }
-    auto raw = delegate_->createPlan(start, goal);
+    geometry_msgs::msg::PoseStamped plan_start = start;
+    geometry_msgs::msg::PoseStamped plan_goal = goal;
+    auto raw = delegate_->createPlan(plan_start, plan_goal);
+    if (raw.poses.empty()) {
+      // If start or goal brushed an obstacle/curb cell, snap to the nearest clear cell so the robot can escape instead of deadlocking.
+      bool adjusted = false;
+      if (auto clear_start = grid.findNearestClear(pointOf(start), 0.36, 0.75)) {
+        if ((*clear_start - pointOf(start)).length() > 1e-3) {
+          plan_start.pose.position.x = clear_start->x;
+          plan_start.pose.position.y = clear_start->y;
+          adjusted = true;
+        }
+      }
+      if (auto clear_goal = grid.findNearestClear(pointOf(goal), 0.36, 0.50)) {
+        if ((*clear_goal - pointOf(goal)).length() > 1e-3) {
+          plan_goal.pose.position.x = clear_goal->x;
+          plan_goal.pose.position.y = clear_goal->y;
+          adjusted = true;
+        }
+      }
+      if (adjusted) {
+        RCLCPP_WARN_THROTTLE(logger_, *clock_, 1000,
+          "Snapped blocked start/goal to nearby clear cell (start_c=%.3f -> %.3f, goal_c=%.3f -> %.3f)",
+          grid.at(pointOf(start)), grid.at(pointOf(plan_start)),
+          grid.at(pointOf(goal)), grid.at(pointOf(plan_goal)));
+        raw = delegate_->createPlan(plan_start, plan_goal);
+        if (!raw.poses.empty()) {
+          raw.poses.insert(raw.poses.begin(), start);
+        }
+      }
+    }
     if (raw.poses.empty()) {throw nav2_core::PlannerException("No route returned by route planner");}
     std::vector<Point> curve;
     // Recompute the whole route at finer spacing if the first smoothed route
@@ -387,15 +460,15 @@ public:
         }
       }
       anchors.front()=pointOf(start);
-      anchors.back()=pointOf(goal);
+      anchors.back()=pointOf(plan_goal);
       auto smooth=anchors.size()==1 ? anchors : interpolate(optimize(grid,anchors,margin_,escape_));
       return grid.clearRoute(pointOf(start),smooth.begin(),smooth.end(),[](Point p){return p;}) ? smooth : empty;
     };
     curve=validated_curve(raw,.60);
-    if (curve.empty() && grid.at(pointOf(start))>=.38 && grid.at(pointOf(goal))>=.38) {
+    if (curve.empty() && grid.at(pointOf(plan_start))>=.34 && grid.at(pointOf(plan_goal))>=.32) {
       // Replan globally on a private snapshot which excludes cells without
       // physical clearance. Smooth and verify the entire result again.
-      const auto second=grid.clearanceSeed(start,goal,margin_,.42);
+      const auto second=grid.clearanceSeed(plan_start,plan_goal,margin_,.36);
       curve=validated_curve(second,.32);
       if (!curve.empty()) {RCLCPP_INFO(logger_, "Validated complete replacement route");}
     }

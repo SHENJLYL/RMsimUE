@@ -1232,6 +1232,21 @@ geometry_msgs::msg::TwistStamped OmniPidPursuitController::computeVelocityComman
         "Leaving an occupied positioning margin at %.2f m/s with a clear hard footprint", crawl);
     }
   }
+  if (profile_speed && lin_vel < 0.05 && speed < 0.15 && desired_speed >= 0.20) {
+    // Unstick fallback: if stationary near a curb/wall/opponent where inflated sweep returns 0,
+    // crawl slowly along the planned path heading whenever the cell 0.25 m ahead is non-lethal.
+    const double probe_x = origin.x + heading.x * 0.25;
+    const double probe_y = origin.y + heading.y * 0.25;
+    unsigned int mx = 0, my = 0;
+    if (costmap_->worldToMap(probe_x, probe_y, mx, my) &&
+      costmap_->getCost(mx, my) < nav2_costmap_2d::LETHAL_OBSTACLE)
+    {
+      lin_vel = std::min(0.45, desired_speed);
+      RCLCPP_INFO_THROTTLE(logger_, *clock_, 1000,
+        "Unstick crawl at %.2f m/s along clear path heading (probe cost=%u)",
+        lin_vel, static_cast<unsigned>(costmap_->getCost(mx, my)));
+    }
+  }
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header = pose.header;
   cmd_vel.twist.linear.x = lin_vel * std::cos(theta_dist);
