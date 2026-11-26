@@ -1548,7 +1548,7 @@ void FRhine3DHudController::UpdateFrame(UWorld* World, const FRhine3DHudState& I
             return bTrig;
         };
         if (CheckEdge(EKeys::B, bPrevB)) TriggerBootSequence();
-        if (CheckEdge(EKeys::X, bPrevX)) TriggerSimulatedHit();
+        // X key is reserved for manual gyro faster (GyroFaster); do not trigger simulated hit on X.
         if (CheckEdge(EKeys::N, bPrevN)) ToggleSimulatedOverheat();
         if (CheckEdge(EKeys::M, bPrevM)) ToggleMinimap3D();
         if (CheckEdge(EKeys::O, bPrevO)) CycleSimulatedOutpostCapture();

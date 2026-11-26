@@ -129,6 +129,8 @@ struct Referee
   bool own_fortress_active;
   bool enemy_fortress_available;
   bool enemy_fortress_active;
+  double enemy_fortress_progress_s;
+  double enemy_fortress_required_s;
   bool supply_active;
   bool local_ammo_available;
   bool remote_ammo_available;
@@ -185,6 +187,7 @@ struct Referee
       enemy.at("outpost_owner_red") != red, enemy.at("base_protected"), enemy.at("base_armor_open"),
       own.value("own_fortress_available", false), own.value("fortress_active", false),
       own.value("enemy_fortress_available", false), own.value("enemy_fortress_active", false),
+      own.value("enemy_fortress_armor_progress_s", 0.0), own.value("enemy_fortress_armor_required_s", 10.0),
       own.at("supply_active"), own.at("local_ammo_purchase_available"),
       own.value("remote_ammo_purchase_available", false), own.value("remote_ammo_purchase_pending", false)
     };
@@ -259,7 +262,7 @@ struct Inputs
     0, 400, 400, 0, 0, false, 0.0, 300, 0, 260, "MOVE", 0.0, 150.0, 60.0, 400,
     {true, true, true, true, true, true},
     10000, 1000, 10000, 1000, false, true, false, false, false, true, false, false,
-    true, true, false, false, false, false, false, false, false, false, false
+    true, true, false, false, false, false, false, 0.0, 10.0, false, false, false, false
   };
   bool dji_damage_pending = false;
   int dji_gold = 800;
@@ -748,23 +751,23 @@ private:
     is_red_ = red;
     if (red) {
       routes_[Index(Mode::Patrol)] = "2.96;0.0;3.14159265|2.95;1.8;2.61|2.95;-1.8;-2.61";
-      routes_[Index(Mode::OwnOutpostHeal)] = "2.84;4.69;3.14159265";
+      routes_[Index(Mode::OwnOutpostHeal)] = "2.87;4.64;3.14159265";
       routes_[Index(Mode::OwnBaseSupply)] = "12.0;6.0;3.14159265";
       routes_[Index(Mode::OwnOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "2.84;4.69;3.14159265";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "2.87;4.64;3.14159265";
       routes_[Index(Mode::EnemyOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.61;-3.11;3.14159265";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.62;-3.21;3.14159265";
       routes_[Index(Mode::EnemyFortress)] = "-6.82;0.0;3.14159265";
       routes_[Index(Mode::EnemyBaseAttack)] = "-9.0;-0.5;2.95";
       routes_[Index(Mode::OwnFortress)] = "6.82;0.0;3.14159265";
     } else {
       routes_[Index(Mode::Patrol)] = "-2.96;0.0;0.0|-2.95;-1.8;-0.53|-2.95;1.8;0.53";
-      routes_[Index(Mode::OwnOutpostHeal)] = "-2.61;-3.11;0.0";
+      routes_[Index(Mode::OwnOutpostHeal)] = "-2.62;-3.21;0.0";
       routes_[Index(Mode::OwnBaseSupply)] = "-12.0;-6.0;0.0";
       routes_[Index(Mode::OwnOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.61;-3.11;0.0";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.62;-3.21;0.0";
       routes_[Index(Mode::EnemyOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "2.84;4.69;0.0";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "2.87;4.64;0.0";
       routes_[Index(Mode::EnemyFortress)] = "6.82;0.0;0.0";
       routes_[Index(Mode::EnemyBaseAttack)] = "9.0;0.5;-0.19";
       routes_[Index(Mode::OwnFortress)] = "-6.82;0.0;0.0";
@@ -857,6 +860,12 @@ private:
   const std::string & RouteFor(Mode mode) const
   {
     if (mode == Mode::ChaseEnemy) return chase_route_;
+    if (mode == Mode::OwnOutpostHeal && outpost_heal_recenter_tries_ > 0) {
+      // Nudge slightly deeper toward the outpost tower on re-center so Nav2 physically moves onto the RFID card
+      static const std::string kRedCloser = "2.85;4.60;3.14159265";
+      static const std::string kBlueCloser = "-2.62;-3.26;0.0";
+      return is_red_ ? kRedCloser : kBlueCloser;
+    }
     return mode == Mode::Patrol ? patrol_routes_[patrol_waypoint_] : routes_[Index(mode)];
   }
 
@@ -963,6 +972,18 @@ private:
     const bool overwhelmed =
       (ref->own_base_hp <= 4000 && ref->enemy_base_hp >= ref->own_base_hp + 2000) ||
       (ref->hp * 4 <= ref->max_hp && ref->opponent_hp * 3 >= ref->max_hp * 2);
+
+    // 0. Fortress finish-line commitment: if enemy fortress capture is nearly complete (>= 45% of 10s),
+    // stand firm in DEFENSE stance until enemy base armor opens, even if HP dropped below heal threshold!
+    const bool finishing_enemy_fortress =
+      mode_ && *mode_ == Mode::EnemyFortress &&
+      ref->enemy_fortress_active && !ref->enemy_base_open &&
+      ref->enemy_fortress_required_s > 0.0 &&
+      ref->enemy_fortress_progress_s >= 0.45 * ref->enemy_fortress_required_s &&
+      ref->hp > 45;
+    if (finishing_enemy_fortress) {
+      return Mode::EnemyFortress;
+    }
 
     // 1. Survival / defensive emergency
     if (overwhelmed && ref->own_fortress_available && ready(Mode::OwnFortress)) {

@@ -55,9 +55,9 @@ def prepare_match(installed, runtime, assets, poses, robot, team):
     xml.find('.//SendNav2ThroughPoses').set('frame_id', f'{robot}/map')
     tactics = xml.find('.//RMUC2027Tactics')
     tactics.set('side', team)
-    # Zero-inflation-cost (obs_clear >= 0.52m > 0.45m) & strictly inside card (>= 0.108m > 0.08m xy_goal_tolerance)
-    own_outpost_card = [2.84, 4.69] if team == 'red' else [-2.61, -3.11]
-    enemy_outpost_card = [-2.61, -3.11] if team == 'red' else [2.84, 4.69]
+    # Closer to outpost with >= 0.16m inside RFID card AND >= 0.47m obstacle clearance (> 0.45m inflation)
+    own_outpost_card = [2.87, 4.64] if team == 'red' else [-2.62, -3.21]
+    enemy_outpost_card = [-2.62, -3.21] if team == 'red' else [2.87, 4.64]
     for port, route in (
         ('patrol', poses['patrol']),
         ('own_outpost_heal', [[*own_outpost_card, yaw]]),

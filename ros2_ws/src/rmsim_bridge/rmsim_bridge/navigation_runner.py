@@ -14,7 +14,6 @@ from example_interfaces.msg import Float32
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import OccupancyGrid,Odometry
 from action_msgs.msg import GoalStatus,GoalStatusArray
-from tf2_ros import Buffer,TransformListener,TransformException
 from lifecycle_msgs.srv import GetState
 from std_srvs.srv import Empty,Trigger
 from rclpy.qos import qos_profile_sensor_data,QoSProfile,DurabilityPolicy,ReliabilityPolicy
@@ -144,29 +143,18 @@ class NavigationRunner(Node):
                 self.body_velocity_pub=self.create_publisher(Twist,topics['body_raw'],1)
                 self.create_subscription(TwistStamped,topics['body_stamped'],self.on_body_velocity,1)
                 self.create_subscription(Twist,topics['body_smoothed'],self.on_smoothed_body_velocity,1)
-            local=cfg['local_costmap']['local_costmap']['ros__parameters']
-            footprint=json.loads(local['footprint'])
-            padding=float(local.get('footprint_padding',0.0))
-            self.idle_spin_radius=max(math.hypot(abs(x)+padding,abs(y)+padding)
-                                      for x,y in footprint)+.085
             self.idle_spin_pub=self.create_publisher(TwistStamped,'/'+self.robot+'/navigation/cmd_vel_operator_idle',1)
-            self.idle_spin_tf=Buffer()
-            self.idle_spin_listener=TransformListener(self.idle_spin_tf,self)
-            self.idle_spin_grid=None
             self.idle_spin_odom=None
             self.idle_spin_active_goals={}
             self.navigation_executing_goals={}
             self.idle_spin_last_motion=0.
             self.idle_spin_sent=False
-            self.idle_spin_anchor=None
             self.idle_spin_block='waiting'
             self.idle_spin_blocked_cell=None
             qos=QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL,reliability=ReliabilityPolicy.RELIABLE)
             for name in ('navigate_to_pose','navigate_through_poses','follow_waypoints','follow_path'):
                 self.create_subscription(GoalStatusArray,'/'+name+'/_action/status',
                     lambda msg,name=name:self.on_idle_spin_action_status(name,msg),qos)
-            self.create_subscription(OccupancyGrid,'/local_costmap/costmap',
-                lambda msg:setattr(self,'idle_spin_grid',(msg,time.monotonic())),1)
             self.create_subscription(Odometry,'/odometry',
                 lambda msg:setattr(self,'idle_spin_odom',(msg,time.monotonic())),qos_profile_sensor_data)
             self.create_subscription(Twist,topics['navigation_raw'],self.on_idle_spin_motion,1)
@@ -225,69 +213,6 @@ class NavigationRunner(Node):
         if self.finite_planar_velocity(message) and not self.stop_velocity(message):
             self.idle_spin_last_motion=time.monotonic()
 
-    def idle_spin_clearance(self, wall):
-        if not self.idle_spin_grid or not self.idle_spin_odom:
-            self.idle_spin_block='missing_local_observation'
-            return False
-        grid,received=self.idle_spin_grid
-        odom,odom_received=self.idle_spin_odom
-        velocity=odom.twist.twist.linear
-        if wall-received>.30 or wall-odom_received>.25:
-            self.idle_spin_block='stale_local_observation'
-            return False
-        if self.idle_spin_anchor is None and not math.hypot(velocity.x,velocity.y)<.12:
-            self.idle_spin_block='translation_in_progress'
-            return False
-        try:
-            tf=self.idle_spin_tf.lookup_transform(grid.header.frame_id,self.robot+'/base_stabilized',rclpy.time.Time())
-        except TransformException:
-            self.idle_spin_block='local_pose_unavailable'
-            return False
-        stamp=tf.header.stamp.sec*1_000_000_000+tf.header.stamp.nanosec
-        age=self.get_clock().now().nanoseconds-stamp
-        if stamp<=0 or not -50_000_000<=age<=230_000_000:
-            self.idle_spin_block='stale_local_pose'
-            return False
-        x,y=tf.transform.translation.x,tf.transform.translation.y
-        if self.idle_spin_anchor is not None and math.dist((x,y),self.idle_spin_anchor)>.17:
-            self.idle_spin_block='translation_from_spin_anchor'
-            return False
-        g=grid.info
-        orientation=g.origin.orientation
-        if (not all(math.isfinite(v) for v in (x,y,g.resolution,g.origin.position.x,g.origin.position.y))
-                or g.resolution<=0 or abs(orientation.w)<.999
-                or abs(orientation.x)+abs(orientation.y)+abs(orientation.z)>.001
-                or len(grid.data)!=g.width*g.height):
-            self.idle_spin_block='invalid_costmap_geometry'
-            return False
-        # A rotating rectangle is bounded by its circumscribed disk. Include
-        # each grid cell whose area could contact that disk.
-        radius=self.idle_spin_radius+g.resolution*math.sqrt(.5)
-        mx=(x-g.origin.position.x)/g.resolution
-        my=(y-g.origin.position.y)/g.resolution
-        cells=radius/g.resolution
-        low_x,high_x=math.floor(mx-cells),math.floor(mx+cells)
-        low_y,high_y=math.floor(my-cells),math.floor(my+cells)
-        if low_x<0 or low_y<0 or high_x>=g.width or high_y>=g.height:
-            self.idle_spin_block='outside_local_costmap'
-            return False
-        for row in range(low_y, high_y+1):
-            for col in range(low_x, high_x+1):
-                if (col+.5-mx)**2+(row+.5-my)**2>cells*cells:
-                    continue
-                occupancy=grid.data[row*g.width+col]
-                if not 0<=occupancy<100:
-                    self.idle_spin_block='rotation_footprint_blocked'
-                    self.idle_spin_blocked_cell=dict(
-                        frame=grid.header.frame_id, center=[x,y], radius_m=radius,
-                        cell=[g.origin.position.x+(col+.5)*g.resolution,
-                              g.origin.position.y+(row+.5)*g.resolution], occupancy=occupancy)
-                    return False
-        if self.idle_spin_anchor is None:
-            self.idle_spin_anchor=(x,y)
-        self.idle_spin_block=''
-        return True
-
     def update_operator_idle(self):
         if not self.drive_identity:
             return
@@ -299,8 +224,6 @@ class NavigationRunner(Node):
             sample=self.behavior_spin_seen
             if not sample or wall-sample[1]>.3 or sample[0]<=0.:
                 requested=0.
-        if active or not self.velocity_adapter_ready() or not requested:
-            self.idle_spin_anchor=None
         ready=(self.phase=='running' and self.velocity_adapter_ready()
                and wall-self.received<=.25 and not active)
         self.idle_spin_block='navigation_active' if active else ''
