@@ -55,9 +55,9 @@ def prepare_match(installed, runtime, assets, poses, robot, team):
     xml.find('.//SendNav2ThroughPoses').set('frame_id', f'{robot}/map')
     tactics = xml.find('.//RMUC2027Tactics')
     tactics.set('side', team)
-    # Deepest Nav2-reachable interior points inside red_outpost (+0.181m margin) & blue_outpost (+0.204m margin)
-    own_outpost_card = [2.84, 4.59] if team == 'red' else [-2.67, -3.21]
-    enemy_outpost_card = [-2.67, -3.21] if team == 'red' else [2.84, 4.59]
+    # Zero-inflation-cost (obs_clear >= 0.52m > 0.45m) & strictly inside card (>= 0.108m > 0.08m xy_goal_tolerance)
+    own_outpost_card = [2.84, 4.69] if team == 'red' else [-2.61, -3.11]
+    enemy_outpost_card = [-2.61, -3.11] if team == 'red' else [2.84, 4.69]
     for port, route in (
         ('patrol', poses['patrol']),
         ('own_outpost_heal', [[*own_outpost_card, yaw]]),

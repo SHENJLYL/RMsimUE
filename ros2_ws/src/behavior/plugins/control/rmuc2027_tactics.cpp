@@ -716,7 +716,7 @@ public:
           } else {
             RCLCPP_WARN(node_->get_logger(), "RMUC_TACTICS navigation failed: %s",
               ModeNames[Index(next)]);
-            retry_at_[Index(next)] = now + 8.0;
+            retry_at_[Index(next)] = now + (next == Mode::OwnOutpostHeal ? 20.0 : 8.0);
           }
         }
       }
@@ -748,23 +748,23 @@ private:
     is_red_ = red;
     if (red) {
       routes_[Index(Mode::Patrol)] = "2.96;0.0;3.14159265|2.95;1.8;2.61|2.95;-1.8;-2.61";
-      routes_[Index(Mode::OwnOutpostHeal)] = "2.84;4.59;3.14159265";
+      routes_[Index(Mode::OwnOutpostHeal)] = "2.84;4.69;3.14159265";
       routes_[Index(Mode::OwnBaseSupply)] = "12.0;6.0;3.14159265";
       routes_[Index(Mode::OwnOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "2.84;4.59;3.14159265";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "2.84;4.69;3.14159265";
       routes_[Index(Mode::EnemyOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.67;-3.21;3.14159265";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.61;-3.11;3.14159265";
       routes_[Index(Mode::EnemyFortress)] = "-6.82;0.0;3.14159265";
       routes_[Index(Mode::EnemyBaseAttack)] = "-9.0;-0.5;2.95";
       routes_[Index(Mode::OwnFortress)] = "6.82;0.0;3.14159265";
     } else {
       routes_[Index(Mode::Patrol)] = "-2.96;0.0;0.0|-2.95;-1.8;-0.53|-2.95;1.8;0.53";
-      routes_[Index(Mode::OwnOutpostHeal)] = "-2.67;-3.21;0.0";
+      routes_[Index(Mode::OwnOutpostHeal)] = "-2.61;-3.11;0.0";
       routes_[Index(Mode::OwnBaseSupply)] = "-12.0;-6.0;0.0";
       routes_[Index(Mode::OwnOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.67;-3.21;0.0";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.61;-3.11;0.0";
       routes_[Index(Mode::EnemyOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "2.84;4.59;0.0";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "2.84;4.69;0.0";
       routes_[Index(Mode::EnemyFortress)] = "6.82;0.0;0.0";
       routes_[Index(Mode::EnemyBaseAttack)] = "9.0;0.5;-0.19";
       routes_[Index(Mode::OwnFortress)] = "-6.82;0.0;0.0";
@@ -968,9 +968,10 @@ private:
     if (overwhelmed && ref->own_fortress_available && ready(Mode::OwnFortress)) {
       return Mode::OwnFortress;
     }
-    // If already arrived & healing/resupplying at OwnBaseSupply, finish healing instead of bouncing back to outpost!
-    const bool finishing_base_supply = mode_ && *mode_ == Mode::OwnBaseSupply && arrived_;
-    if (healing_ && !needs_supply && !finishing_base_supply && ref->own_outpost_available && ready(Mode::OwnOutpostHeal)) {
+    // Once committed to OwnBaseSupply (either heading there or healing there), finish it
+    // instead of bouncing back and forth between OwnOutpostHeal and OwnBaseSupply!
+    const bool committed_base_supply = mode_ && *mode_ == Mode::OwnBaseSupply;
+    if (healing_ && !needs_supply && !committed_base_supply && ref->own_outpost_available && ready(Mode::OwnOutpostHeal)) {
       return Mode::OwnOutpostHeal;
     }
     if ((healing_ || needs_supply) && ready(Mode::OwnBaseSupply)) {
