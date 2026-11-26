@@ -139,7 +139,8 @@ struct FRMUCFieldPointEffects
     int FortressCoolingBonus = 0;
     int FortressReserveCapacity = 0;
 
-    bool CanPurchaseAmmo() const { return bSupply || bBase || bVantage || bFullOutpost; }
+    // Standard 1:1 ammo purchase (10 gold / 10 rounds) is only available inside the Supply/Repair Zone.
+    bool CanPurchaseAmmo() const { return bSupply; }
 
     static FRMUCFieldPointEffects Evaluate(const FRMUCFieldRules& Rules, FRMUCFieldRules::Team Team,
         double Elapsed, const FRMUCFieldPoints& Contacts, const std::array<FRMUCFieldPointLatch, 2>& Latches)
@@ -185,6 +186,7 @@ class FRMUCSupplyRules
 {
 public:
     static constexpr int InitialAllowance = 300;
+    static constexpr int SentryFreeAmmoCap = 200;
     static constexpr int InitialGold = 800;
     static constexpr int LocalAmmoCost = 10;
     static constexpr int LocalAmmoAmount = 10;
@@ -216,12 +218,20 @@ public:
             FractionalRecovery = 0.0;
             return;
         }
-        if (Effects.bSupply)
+        if (Effects.bSupply && SentryFreeAmmoClaimed < SentryFreeAmmoCap && Allowance < 200)
         {
             const int AvailableMinutes = std::clamp(static_cast<int>((Elapsed + TimeTolerance) / 60.0), 0, 6);
             if (AvailableMinutes > ClaimedMinutes)
             {
-                Allowance += 100 * (AvailableMinutes - ClaimedMinutes);
+                // Reserve half of each minute's 100 free 17mm rounds for infantry teammates;
+                // sentry claims at most 50/min and at most 200 total across the match.
+                const int Grant = std::min(50 * (AvailableMinutes - ClaimedMinutes),
+                    SentryFreeAmmoCap - SentryFreeAmmoClaimed);
+                if (Grant > 0)
+                {
+                    Allowance += Grant;
+                    SentryFreeAmmoClaimed += Grant;
+                }
                 ClaimedMinutes = AvailableMinutes;
             }
         }
@@ -315,6 +325,7 @@ private:
     double LastCombat = -CombatTimeoutSeconds;
     double FractionalRecovery = 0.0;
     int ClaimedMinutes = 0;
+    int SentryFreeAmmoClaimed = 0;
     int PurchasedAmmo = 0;
     int FortressAmmoSpent = 0;
     std::deque<double> RemoteAmmoOrders;
