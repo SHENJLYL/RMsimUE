@@ -85,6 +85,7 @@ struct Referee
   int hp;
   int max_hp;
   int armor_id;
+  int hp_deduction_reason;
   bool is_hp_deduced;
   double body_yaw_rad;
   int ammo;
@@ -150,7 +151,7 @@ struct Referee
     };
     return {
       game.at("game_progress"), robot.at("current_hp"), robot.at("maximum_hp"),
-      robot.value("armor_id", 0), robot.value("is_hp_deduced", false),
+      robot.value("armor_id", 0), robot.value("hp_deduction_reason", 0), robot.value("is_hp_deduced", false),
       robot.value("yaw_rad", 0.0),
       robot.at("projectile_allowance_17mm"), robot.at("shooter_17mm_1_barrel_heat"),
       robot.at("shooter_barrel_heat_limit"),
@@ -431,8 +432,10 @@ public:
       }
       last_own_outpost_hp_ = ref->own_outpost_hp;
 
-      // Legal 0x0206 referee hurt detection: snap gimbal toward attacker immediately!
-      if ((last_self_hp_ > 0 && ref->hp < last_self_hp_) || ref->is_hp_deduced) {
+      // Legal 0x0206 referee hurt detection: ignore self rule penalties (3=overheat, 4=overpower)
+      const bool armor_hurt = (ref->hp_deduction_reason == 0) &&
+        ((last_self_hp_ > 0 && ref->hp < last_self_hp_) || ref->is_hp_deduced);
+      if (armor_hurt) {
         self_under_attack_until_ = now + 4.5;
         static constexpr std::array<double, 4> kArmorYawOffset{0.0, kPi * 0.5, kPi, -kPi * 0.5};
         const int aid = std::clamp(ref->armor_id, 0, 3);

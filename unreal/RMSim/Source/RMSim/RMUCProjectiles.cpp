@@ -91,6 +91,13 @@ FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& M
     Shooter.BarrelHeat += HeatPerShot;
     Shooter.NextShotTime = MatchElapsedSeconds + ShotInterval;
 
+    if (Shooter.BarrelHeat >= 2.0 * BarrelHeatLimit)
+    {
+        const int32 SevereDmg = FMath::Max(1, FMath::RoundToInt(
+            ComputeRMUCSevereOverheatDamage(Shooter.BarrelHeat, BarrelHeatLimit, SentryMaxHp)));
+        Shooter.BarrelHeat = 2.0 * BarrelHeatLimit;
+        ApplySentryDamage(*Side, std::nullopt, 0, SevereDmg, ERMUCHpDeductionReason::OverHeat);
+    }
     if (Shooter.BarrelHeat >= BarrelHeatLimit + SevereOverheat17mmOffset)
     {
         Shooter.bOverheatMatchLocked = true;

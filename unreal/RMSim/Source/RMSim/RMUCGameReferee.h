@@ -285,6 +285,9 @@ private:
         double ChassisBufferEnergyJ = 60.0;
         double Referee10HzAccum = 0.0;
         double ChassisPowerCutTimer = 0.0;
+        double OverpowerDamageAccum = 0.0;
+        double OverheatDamageAccum = 0.0;
+        double NextOverpowerBannerSec = 0.0;
         bool bOverheatLocked = false;
         bool bOverheatMatchLocked = false;
         double OverspeedLockTimer = 0.0;

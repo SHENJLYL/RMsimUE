@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 enum class ERMUCSentryStance
 {
@@ -18,20 +19,20 @@ struct FRMUCSentryStanceModifiers
     int VulnerabilityBonusPercent = 25;
 };
 
-// RoboMaster 2027 Auto Sentry Three-Stance Rules (全自动哨兵三姿态, 5.0s 切换冷却)
+// RoboMaster 2027 Auto Sentry Three-Stance Rules (5.0s switch cooldown)
 inline FRMUCSentryStanceModifiers GetRMUCSentryStanceModifiers(ERMUCSentryStance Stance)
 {
     switch (Stance)
     {
     case ERMUCSentryStance::Attack:
-        // 进攻姿态: 100W 底盘功率, 30/s 枪口冷却, 0% 防御, +25% 易伤
+        // Attack: 100W chassis power, 30/s cooling, 0% defence, +25% vulnerability
         return {30.0, 100.0, 0, 25};
     case ERMUCSentryStance::Defense:
-        // 防御姿态: 100W 底盘功率, 10/s 枪口冷却, +25% 防御, 0% 易伤
+        // Defense: 100W chassis power, 10/s cooling, +25% defence, 0% vulnerability
         return {10.0, 100.0, 25, 0};
     case ERMUCSentryStance::Move:
     default:
-        // 移动姿态 (开局默认): 150W 底盘功率, 10/s 枪口冷却, 0% 防御, +25% 易伤
+        // Move (opening default): 150W chassis power, 10/s cooling, 0% defence, +25% vulnerability
         return {10.0, 150.0, 0, 25};
     }
 }
@@ -77,6 +78,52 @@ struct FRMUCSentryStanceState
         return GetRMUCSentryStanceModifiers(Current);
     }
 };
+
+// Official RMUC 10Hz chassis overpower HP deduction (after 60J buffer energy is exhausted):
+//   K = (P_r - P_l) / P_l
+//   K <= 10%: 10% MaxHP/s | 10% < K <= 20%: 20% MaxHP/s | K > 20%: 40% MaxHP/s
+inline double ComputeRMUCOverpowerDamagePerTick(
+    double PowerW, double PowerLimitW, double BufferEnergyJ, int MaxHp)
+{
+    if (MaxHp <= 0 || PowerLimitW <= 0.0 || BufferEnergyJ > 1e-6 || PowerW <= PowerLimitW)
+    {
+        return 0.0;
+    }
+    const double Ratio = (PowerW - PowerLimitW) / PowerLimitW;
+    const double TierRate = (Ratio <= 0.10) ? 0.10 : ((Ratio <= 0.20) ? 0.20 : 0.40);
+    return static_cast<double>(MaxHp) * TierRate * 0.1;
+}
+
+// Official RMUC 10Hz barrel overheat HP deduction while Q1 > Q0:
+//   DeltaHP = MaxHP * 0.1 * (Q1 - Q0) / 250
+inline double ComputeRMUCOverheatDamagePerTick(double BarrelHeat, double HeatLimit, int MaxHp)
+{
+    if (MaxHp <= 0 || HeatLimit <= 0.0 || BarrelHeat <= HeatLimit)
+    {
+        return 0.0;
+    }
+    return static_cast<double>(MaxHp) * 0.1 * (BarrelHeat - HeatLimit) / 250.0;
+}
+
+// Official RMUC immediate severe overheat HP deduction when Q1 >= 2 * Q0:
+//   DeltaHP = MaxHP * (Q1 - 2*Q0) / 250 (with Q1 clamped back to 2*Q0)
+inline double ComputeRMUCSevereOverheatDamage(double BarrelHeat, double HeatLimit, int MaxHp)
+{
+    if (MaxHp <= 0 || HeatLimit <= 0.0 || BarrelHeat < 2.0 * HeatLimit)
+    {
+        return 0.0;
+    }
+    return static_cast<double>(MaxHp) * (BarrelHeat - 2.0 * HeatLimit) / 250.0;
+}
+
+// Official RMUC respawn progress bar duration:
+//   round(10 + (420 - remain_sec) / 10 + 20 * buyback_count)
+inline double ComputeRMUCRespawnDurationSeconds(double MatchElapsedSeconds, int BuybackCount)
+{
+    const double Elapsed = std::clamp(MatchElapsedSeconds, 0.0, 420.0);
+    const int Buybacks = std::max(0, BuybackCount);
+    return std::round(10.0 + Elapsed / 10.0 + 20.0 * static_cast<double>(Buybacks));
+}
 
 // Shared team economy pool (Red = 0, Blue = 1)
 struct FRMUCSharedEconomy

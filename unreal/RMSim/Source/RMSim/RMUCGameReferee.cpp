@@ -784,14 +784,18 @@ bool ARMUCGameReferee::IsFpvVideoCutFor(const AVehicleRig* Robot) const
 void ARMUCGameReferee::RespawnCompetitor(FieldTeam Team, bool bBuyback)
 {
     auto& Record = Competitor(Team);
-    Record.Hp = bBuyback ? SentryMaxHp : FMath::Max(1, FMath::RoundToInt(SentryMaxHp * 0.10));
+    // Official RMUC respawn: natural respawn -> 20% HP + 30s weak & invulnerable (cleared by friendly gain card);
+    // instant buyback -> 100% HP + 0s weak + 3s invulnerable.
+    Record.Hp = bBuyback ? SentryMaxHp : FMath::Max(1, FMath::RoundToInt(SentryMaxHp * 0.20));
     Record.RespawnTimer = 0.0;
     Record.BarrelHeat = 0.0;
     Record.ChassisBufferEnergyJ = 60.0;
+    Record.OverpowerDamageAccum = 0.0;
+    Record.OverheatDamageAccum = 0.0;
     Record.bOverheatLocked = false;
     Record.SimStance.Reset();
-    Record.WeakTimer = bBuyback ? 0.0 : 10.0;
-    Record.InvulnerableTimer = bBuyback ? 3.0 : 10.0;
+    Record.WeakTimer = bBuyback ? 0.0 : 30.0;
+    Record.InvulnerableTimer = bBuyback ? 3.0 : 30.0;
 }
 
 bool ARMUCGameReferee::RequestInstantRespawn()
@@ -843,21 +847,23 @@ void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
 
     if (Record.Hp <= 0)
     {
-        // The pitch reader is still qualified during a respawn wait.
+        // Official RMUC respawn acceleration: 4x speed when in own supply zone or own base HP < 2000.
         const auto* Vehicle = VehicleFor(Team);
         const bool bAtSupply = Vehicle && ObserveFieldPoints(*Vehicle)[FRMUCFieldRules::Index(Team)].Supply.value_or(false);
-        const bool bAccel = bAtSupply || FieldRules.Get(Team).BaseHp < BaseMaxHp / 2;
-        Record.RespawnTimer += DeltaSeconds * (bAccel ? 2.0 : 1.0);
+        const bool bAccel = bAtSupply || FieldRules.Get(Team).BaseHp < 2000;
+        Record.RespawnTimer += DeltaSeconds * (bAccel ? 4.0 : 1.0);
         if (Record.RespawnTimer >= Record.OwnRespawnDuration)
         {
             RespawnCompetitor(Team, false);
             PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("RESPAWNED"), 0,
-                TEXT("10% HP / WEAK AND INVULNERABLE 10s"), 3.5);
+                TEXT("20% HP / WEAK & INVULN (CLEAR AT GAIN CARD)"), 3.5);
         }
     }
-    else if (Record.WeakTimer > 0.0 && Record.Hp >= SentryMaxHp)
+    else if (Record.WeakTimer > 0.0 && (Points.bSupply || Points.bFullOutpost || Points.bBase || Record.Hp >= SentryMaxHp))
     {
+        // Official RMUC rule: reading friendly supply/outpost/base gain card clears weak & invulnerable state.
         Record.WeakTimer = 0.0;
+        Record.InvulnerableTimer = 0.0;
     }
 }
 
@@ -886,6 +892,21 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
     while (Record.Referee10HzAccum >= 0.1)
     {
         Record.Referee10HzAccum -= 0.1;
+        // Official RMUC 10Hz overheat HP deduction while Q1 > Q0 (before cooling tick)
+        if (Record.Hp > 0 && Record.BarrelHeat > BarrelHeatLimit)
+        {
+            Record.OverheatDamageAccum += ComputeRMUCOverheatDamagePerTick(Record.BarrelHeat, BarrelHeatLimit, SentryMaxHp);
+            const int32 HeatDmg = FMath::FloorToInt(Record.OverheatDamageAccum + 1e-9);
+            if (HeatDmg > 0)
+            {
+                Record.OverheatDamageAccum -= HeatDmg;
+                ApplySentryDamage(Team, std::nullopt, 0, HeatDmg, ERMUCHpDeductionReason::OverHeat);
+            }
+        }
+        else
+        {
+            Record.OverheatDamageAccum = 0.0;
+        }
         Record.BarrelHeat = FMath::Max(0.0, Record.BarrelHeat - Cooling * 0.1);
         if (Record.bOverheatLocked && !Record.bOverheatMatchLocked && Record.BarrelHeat <= 1e-6)
         {
@@ -894,25 +915,36 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
                 0, TEXT("SHOOTER & VIDEO RESTORED"), 2.5);
         }
         if (Record.Hp <= 0) continue;
-        if (Record.ChassisPowerCutTimer > 0.0)
-        {
-            Record.ChassisBufferEnergyJ = FMath::Min(60.0, Record.ChassisBufferEnergyJ + 6.0 * 0.1);
-            continue;
-        }
+        // Official RMUC 10Hz chassis buffer energy & tiered overpower HP deduction (no 5s chassis cut)
         const double Limit = StanceMod.ChassisPowerLimitW;
         const double NetPower = Record.ChassisPowerW - Limit;
         if (NetPower > 0.0)
         {
-            Record.ChassisBufferEnergyJ = FMath::Max(0.0, Record.ChassisBufferEnergyJ - NetPower * 0.1);
+            if (Record.ChassisBufferEnergyJ > 1e-6)
+            {
+                Record.ChassisBufferEnergyJ = FMath::Max(0.0, Record.ChassisBufferEnergyJ - NetPower * 0.1);
+            }
             if (Record.ChassisBufferEnergyJ <= 1e-6)
             {
-                Record.ChassisPowerCutTimer = 5.0;
-                PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("OVERPOWER"), 0, TEXT("CHASSIS CUT 5.0s"), 3.0);
+                Record.OverpowerDamageAccum += ComputeRMUCOverpowerDamagePerTick(
+                    Record.ChassisPowerW, Limit, Record.ChassisBufferEnergyJ, SentryMaxHp);
+                const int32 PowerDmg = FMath::FloorToInt(Record.OverpowerDamageAccum + 1e-9);
+                if (PowerDmg > 0)
+                {
+                    Record.OverpowerDamageAccum -= PowerDmg;
+                    ApplySentryDamage(Team, std::nullopt, 0, PowerDmg, ERMUCHpDeductionReason::OverPower);
+                }
+                if (MatchElapsedSeconds >= Record.NextOverpowerBannerSec)
+                {
+                    Record.NextOverpowerBannerSec = MatchElapsedSeconds + 2.0;
+                    PushCombatBroadcast(BroadcastTeam(Team), SentryName(Team), TEXT("OVERPOWER"), 0, TEXT("HP PENALTY"), 2.0);
+                }
             }
         }
         else
         {
-            Record.ChassisBufferEnergyJ = FMath::Min(60.0, Record.ChassisBufferEnergyJ + FMath::Min(25.0, -NetPower * 0.5) * 0.1);
+            Record.OverpowerDamageAccum = 0.0;
+            Record.ChassisBufferEnergyJ = FMath::Min(60.0, Record.ChassisBufferEnergyJ + (-NetPower) * 0.1);
         }
     }
     const double Ratio = Record.ChassisBufferEnergyJ / 60.0;
@@ -932,26 +964,33 @@ bool ARMUCGameReferee::ApplySentryDamage(FieldTeam Target, std::optional<FieldTe
     int32 RawDamage, ERMUCHpDeductionReason Reason)
 {
     auto& Record = Competitor(Target);
-    if (GameProgress != ERMUCGameProgress::Running || Record.Hp <= 0 || Record.InvulnerableTimer > 0.0 || RawDamage <= 0)
+    const bool bRulePenalty = (Reason == ERMUCHpDeductionReason::OverPower || Reason == ERMUCHpDeductionReason::OverHeat);
+    if (GameProgress != ERMUCGameProgress::Running || Record.Hp <= 0 || (!bRulePenalty && Record.InvulnerableTimer > 0.0) || RawDamage <= 0)
         return false;
     const int32 Attack = Attacker ? Competitor(*Attacker).BuffAttack : 0;
-    const double Scale = (Attack > 0 ? Attack / 100. : 1.) * (1. + (Record.BuffVulnerability - Record.BuffDefence) / 100.);
+    const double Scale = bRulePenalty ? 1.0 :
+        ((Attack > 0 ? Attack / 100. : 1.) * (1. + (Record.BuffVulnerability - Record.BuffDefence) / 100.));
     const int32 Damage = FMath::Min(Record.Hp, FMath::Max(1, FMath::RoundToInt(RawDamage * Scale)));
     Record.Hp -= Damage;
-    Record.OwnLogistics.MarkCombat(MatchElapsedSeconds);
+    if (!bRulePenalty)
+    {
+        Record.OwnLogistics.MarkCombat(MatchElapsedSeconds);
+    }
     Record.LastArmorId = static_cast<uint8>(ArmorId);
     Record.LastDeductionReason = Reason;
     Record.bHpDeducedThisStep = true;
-    Record.OwnHitHudFlash = 0.55;
+    Record.OwnHitHudFlash = bRulePenalty ? 0.30 : 0.55;
     Record.OwnLedFlash = 0.30;
     if (Attacker) RecordHit(*Attacker, Damage);
     if (Record.Hp == 0)
     {
         Record.BarrelHeat = 0.0;
-        Record.ChassisBufferEnergyJ = 60.0;
+        Record.ChassisBufferEnergyJ = 0.0;
+        Record.OverpowerDamageAccum = 0.0;
+        Record.OverheatDamageAccum = 0.0;
         Record.bOverheatLocked = false;
         Record.RespawnTimer = 0.0;
-        Record.OwnRespawnDuration = FMath::Clamp(10.0 + (MatchElapsedSeconds / 60.0) * 3.0 + Record.OwnBuybackCount * 5.0, 10.0, 35.0);
+        Record.OwnRespawnDuration = ComputeRMUCRespawnDurationSeconds(MatchElapsedSeconds, Record.OwnBuybackCount);
         const FieldTeam Source = Attacker.value_or(FRMUCFieldRules::Other(Target));
         PushCombatBroadcast(BroadcastTeam(Source), SentryName(Source), TEXT("ELIMINATED"),
             BroadcastTeam(Target), SentryName(Target), 4.0);
