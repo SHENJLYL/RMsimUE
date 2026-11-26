@@ -99,12 +99,7 @@ def prepare_behavior(root: Path, session: Path, map_file: Path, spawn_id: str, r
     if target_tree == 'competition_phase1':
         prepare_phase1(installed, runtime, poses, robot)
     elif target_tree == 'rmuc2027_match':
-        tactics = 'rmsim_sentry_tactics'
-        sim_plugins = overlay / tactics / 'share' / tactics
-        if not (sim_plugins / 'bt_plugins').is_dir():
-            raise FileNotFoundError(f'{sim_plugins} is missing. Run tools/environment/Build-Behavior.ps1')
-        plugins.append(f'{tactics}/bt_plugins')
-        prepare_match(sim_plugins, runtime, assets, poses, robot, team)
+        prepare_match(installed, runtime, assets, poses, robot, team)
     else:
         raise ValueError(f'Unknown native match tree: {target_tree}')
 
@@ -142,6 +137,7 @@ def prepare_behavior(root: Path, session: Path, map_file: Path, spawn_id: str, r
         ('cmd_vel', f'/{robot}/behavior/cmd_vel'),
         ('tactical_target_priority', f'/{robot}/behavior/target_priority'),
         ('tactical_ammo_purchase', f'/{robot}/behavior/ammo_purchase'),
+        ('tactical_sentry_stance', f'/{robot}/sentry_stance_cmd'),
         ('tactical_state', f'/{robot}/behavior/tactical_state'),
     ):
         server_command.extend(('-r', f'{source}:={target}'))

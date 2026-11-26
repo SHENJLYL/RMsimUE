@@ -767,12 +767,12 @@ bool ARMUCGameReferee::SetSimMatchStance(const AVehicleRig* Robot, const FString
     if (!bPhysicalMatch || Robot != RosCompetitor || GameProgress != ERMUCGameProgress::Running) return false;
     const auto Team = TeamFor(Robot);
     if (!Team || Competitor(*Team).Hp <= 0) return false;
-    auto& Current = Competitor(*Team).SimStance;
-    if (Stance == TEXT("MOVE")) Current = ERMUCSentryStance::Move;
-    else if (Stance == TEXT("ATTACK")) Current = ERMUCSentryStance::Attack;
-    else if (Stance == TEXT("DEFENSE")) Current = ERMUCSentryStance::Defense;
+    ERMUCSentryStance Target = ERMUCSentryStance::Move;
+    if (Stance == TEXT("MOVE")) Target = ERMUCSentryStance::Move;
+    else if (Stance == TEXT("ATTACK")) Target = ERMUCSentryStance::Attack;
+    else if (Stance == TEXT("DEFENSE")) Target = ERMUCSentryStance::Defense;
     else return false;
-    return true;
+    return Competitor(*Team).SimStance.TrySwitch(Target);
 }
 
 bool ARMUCGameReferee::IsFpvVideoCutFor(const AVehicleRig* Robot) const
@@ -789,6 +789,7 @@ void ARMUCGameReferee::RespawnCompetitor(FieldTeam Team, bool bBuyback)
     Record.BarrelHeat = 0.0;
     Record.ChassisBufferEnergyJ = 60.0;
     Record.bOverheatLocked = false;
+    Record.SimStance.Reset();
     Record.WeakTimer = bBuyback ? 0.0 : 10.0;
     Record.InvulnerableTimer = bBuyback ? 3.0 : 10.0;
 }
@@ -824,10 +825,8 @@ void ARMUCGameReferee::StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds)
     Record.BuffCooling = Record.EnergyBuffTimer > 0. ? Rune.CoolingMultiplier : 1;
     Record.BuffDefence = FMath::Max(Points.DefencePercent, Record.EnergyBuffTimer > 0. ? Rune.DefencePercent : 0);
     Record.BuffAttack = Record.EnergyBuffTimer > 0. ? Rune.AttackPercent : 0;
-    if (Record.SimStance)
     {
-        const auto Modifiers = GetRMUCSentryStanceModifiers(*Record.SimStance);
-        Record.BuffCooling = FMath::Max<uint8>(Record.BuffCooling, static_cast<uint8>(Modifiers.CoolingMultiplier));
+        const auto Modifiers = Record.SimStance.Modifiers();
         Record.BuffDefence = FMath::Max<uint8>(Record.BuffDefence, Modifiers.DefenceBonusPercent);
         Record.BuffVulnerability = FMath::Max<uint8>(Record.BuffVulnerability, Modifiers.VulnerabilityBonusPercent);
     }
@@ -871,6 +870,7 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
     Record.OverspeedLockTimer = FMath::Max(0.0, Record.OverspeedLockTimer - DeltaSeconds);
     Record.WeakTimer = FMath::Max(0.0, Record.WeakTimer - DeltaSeconds);
     Record.InvulnerableTimer = FMath::Max(0.0, Record.InvulnerableTimer - DeltaSeconds);
+    Record.SimStance.Step(DeltaSeconds);
 
     const FVector Velocity = Vehicle->GetCommandOriginVelocity();
     const double SpeedMps = FVector2D(Velocity.X, Velocity.Y).Size() * 0.01;
@@ -880,8 +880,9 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
 
     Record.Referee10HzAccum += DeltaSeconds;
     const auto& Points = FieldPointEffects[FRMUCFieldRules::Index(Team)];
-    const double Cooling = FMath::Max(BarrelCoolingPerSec * FMath::Max<int32>(1, Record.BuffCooling),
-        BarrelCoolingPerSec + Points.FortressCoolingBonus);
+    const auto StanceMod = Record.SimStance.Modifiers();
+    const double Cooling = FMath::Max(StanceMod.BarrelCoolingPerSec * FMath::Max<int32>(1, Record.BuffCooling),
+        StanceMod.BarrelCoolingPerSec + Points.FortressCoolingBonus);
     while (Record.Referee10HzAccum >= 0.1)
     {
         Record.Referee10HzAccum -= 0.1;
@@ -898,7 +899,7 @@ void ARMUCGameReferee::StepPowerAndHeat(FieldTeam Team, double DeltaSeconds)
             Record.ChassisBufferEnergyJ = FMath::Min(60.0, Record.ChassisBufferEnergyJ + 6.0 * 0.1);
             continue;
         }
-        const double Limit = Record.SimStance ? GetRMUCSentryStanceModifiers(*Record.SimStance).ChassisPowerLimitW : ChassisPowerLimitW;
+        const double Limit = StanceMod.ChassisPowerLimitW;
         const double NetPower = Record.ChassisPowerW - Limit;
         if (NetPower > 0.0)
         {
@@ -2233,7 +2234,7 @@ TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) con
     RS->SetNumberField(TEXT("robot_level"), RobotLevel);
     RS->SetNumberField(TEXT("current_hp"), View.Hp);
     RS->SetNumberField(TEXT("maximum_hp"), SentryMaxHp);
-    RS->SetNumberField(TEXT("shooter_barrel_cooling_value"), FMath::RoundToInt(BarrelCoolingPerSec));
+    RS->SetNumberField(TEXT("shooter_barrel_cooling_value"), FMath::RoundToInt(View.SimStance.Modifiers().BarrelCoolingPerSec));
     RS->SetNumberField(TEXT("shooter_barrel_heat_limit"), FMath::RoundToInt(BarrelHeatLimit));
     RS->SetNumberField(TEXT("shooter_17mm_1_barrel_heat"), FMath::RoundToInt(View.BarrelHeat));
     RS->SetNumberField(TEXT("armor_id"), View.LastArmorId);
@@ -2282,13 +2283,14 @@ TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) con
     Root->SetObjectField(TEXT("rfid_status"), RF);
 
     Root->SetNumberField(TEXT("chassis_power_w"), View.ChassisPowerW);
+    Root->SetNumberField(TEXT("chassis_power_limit_w"), View.SimStance.Modifiers().ChassisPowerLimitW);
     Root->SetNumberField(TEXT("chassis_buffer_energy_j"), View.ChassisBufferEnergyJ);
     Root->SetObjectField(TEXT("field_devices"), FieldDeviceState());
     Root->SetBoolField(TEXT("chassis_powered"), IsChassisPoweredFor(Robot));
-    if (View.SimStance)
     {
         static const TCHAR* Stances[] = {TEXT("MOVE"), TEXT("ATTACK"), TEXT("DEFENSE")};
-        Root->SetStringField(TEXT("sentry_stance"), Stances[static_cast<int32>(*View.SimStance)]);
+        Root->SetStringField(TEXT("sentry_stance"), Stances[static_cast<int32>(View.SimStance.Current)]);
+        Root->SetNumberField(TEXT("stance_cooldown_seconds"), View.SimStance.CooldownRemainingSec);
     }
     Root->SetBoolField(TEXT("fpv_video_cut"), IsFpvVideoCutFor(Robot));
     Root->SetBoolField(TEXT("shooter_locked"), View.ShooterLocked());

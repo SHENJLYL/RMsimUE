@@ -102,7 +102,9 @@ class BridgeNode(Node):
                 and state.get('drive', {}).get('match_autonomy')):
             return
         referee = state.get('referee') or {}
-        if referee.get('game_status', {}).get('game_progress') != 4 or referee.get('sentry_stance') == self.match_stance:
+        if (referee.get('game_status', {}).get('game_progress') != 4
+                or referee.get('sentry_stance') == self.match_stance
+                or float(referee.get('stance_cooldown_seconds', 0.0)) > 0.05):
             return
         seq = self.sequence + 1
         if self.transport.queue(match_stance_packet(state, seq, self.robot_id, self.match_stance)):

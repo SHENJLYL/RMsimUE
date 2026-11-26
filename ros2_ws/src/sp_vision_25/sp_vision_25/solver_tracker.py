@@ -42,11 +42,19 @@ class AimSolution:
     pos_cam: tuple[float, float, float]
 
 
-def solve_armor_pnp(keypoints: np.ndarray, armor_type: str, K: np.ndarray) -> np.ndarray | None:
+def solve_armor_pnp(
+    keypoints: np.ndarray,
+    armor_type: str,
+    K: np.ndarray,
+    dist_coeffs: np.ndarray | None = None,
+) -> np.ndarray | None:
     """Return 3D position [x_right, y_down, z_forward] in camera optical frame (meters)."""
     obj_pts = BIG_ARMOR_3D if armor_type == "big" else SMALL_ARMOR_3D
     img_pts = keypoints.astype(np.float64).reshape(4, 1, 2)
-    dist = np.zeros((5, 1), dtype=np.float64)
+    if dist_coeffs is not None and dist_coeffs.size >= 4:
+        dist = dist_coeffs.astype(np.float64).reshape(-1, 1)
+    else:
+        dist = np.zeros((5, 1), dtype=np.float64)
     ok, _rvec, tvec = cv2.solvePnP(obj_pts, img_pts, K, dist, flags=cv2.SOLVEPNP_IPPE)
     if not ok:
         return None
@@ -57,7 +65,7 @@ def solve_armor_pnp(keypoints: np.ndarray, armor_type: str, K: np.ndarray) -> np
 
 
 def ray_to_world_angles(world_yaw: float, world_pitch: float, u: float, v: float) -> tuple[float, float]:
-    """Transform camera normalized ray (u=x/z right, v=y/z down) to rmsim_world (yaw CCW+, pitch down+)."""
+    """Transform camera normalized ray (u=x/z right, v=y/z down) to world frame (yaw CCW+, pitch down+)."""
     cy, sy = math.cos(world_yaw), math.sin(world_yaw)
     cp, sp = math.cos(world_pitch), math.sin(world_pitch)
     forward = cp - v * sp
@@ -264,7 +272,7 @@ class Kalman3DTracker:
 
 
 class BallisticAimer:
-    """17mm RMUC 2027 ballistic lead + gravity drop solver (24.5 m/s)."""
+    """17mm RMUC 2027 ballistic lead + gravity drop solver (24.5 m/s) with real-robot mounting calibration."""
 
     def __init__(
         self,
@@ -273,12 +281,18 @@ class BallisticAimer:
         latency_s: float = 0.08,
         shoot_tol_rad: float = math.radians(5.5),
         structure_shoot_tol_rad: float = math.radians(8.5),
+        yaw_offset_rad: float = 0.0,
+        pitch_offset_rad: float = 0.0,
+        cam_to_barrel_z_m: float = 0.0,
     ) -> None:
         self.v0 = float(muzzle_speed_mps)
         self.g = float(gravity)
         self.latency_s = float(latency_s)
         self.shoot_tol_rad = float(shoot_tol_rad)
         self.structure_shoot_tol_rad = float(structure_shoot_tol_rad)
+        self.yaw_offset_rad = float(yaw_offset_rad)
+        self.pitch_offset_rad = float(pitch_offset_rad)
+        self.cam_to_barrel_z_m = float(cam_to_barrel_z_m)
 
     def solve_world(
         self,
@@ -301,9 +315,15 @@ class BallisticAimer:
         max_lead = 0.14 if kind == "outpost" else 0.22
         lead_yaw = max(-max_lead, min(max_lead, yaw_rate * lead_t))
         lead_pitch = 0.0 if kind != "vehicle" else max(-0.10, min(0.10, pitch_rate * lead_t))
+        # Vertical parallax compensation when camera sits above/below barrel on real robot (+z = camera above barrel -> aim slightly higher = subtract from down-positive pitch)
+        horiz = max(0.35, float(dist_m) * math.cos(world_pitch))
+        parallax_pitch = math.atan2(self.cam_to_barrel_z_m, horiz) if abs(self.cam_to_barrel_z_m) > 1e-5 else 0.0
 
-        target_yaw = math.atan2(math.sin(world_yaw + lead_yaw), math.cos(world_yaw + lead_yaw))
-        target_pitch = max(-0.45, min(0.45, world_pitch + lead_pitch - drop_rad))
+        target_yaw = math.atan2(
+            math.sin(world_yaw + lead_yaw + self.yaw_offset_rad),
+            math.cos(world_yaw + lead_yaw + self.yaw_offset_rad),
+        )
+        target_pitch = max(-0.45, min(0.45, world_pitch + lead_pitch - drop_rad - parallax_pitch + self.pitch_offset_rad))
         err_yaw = math.remainder(target_yaw - cur_yaw, 2.0 * math.pi)
         err_pitch = target_pitch - cur_pitch
         is_struct = kind in ("outpost", "base")

@@ -94,6 +94,8 @@ private:
 #endif
     FString MatchPrimaryTeam;
     FString MatchRosTeam;
+    FName MatchRedArmorSticker;
+    FName MatchBlueArmorSticker;
     bool ConfigureMatchSeats(FString& Error);
     AVehicleRig* SpawnMatchOpponent(FString& Error);
     FString ImuFixture;

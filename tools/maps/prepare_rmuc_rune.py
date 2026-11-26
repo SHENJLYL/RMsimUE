@@ -8,7 +8,7 @@ import bpy
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from prepare_rmuc2027 import array, digest, read_glb
+from prepare_rmuc2027 import array, digest, read_glb, rmuc_visual_material
 
 
 GLB_SHA256 = '09ca8e9d088e1945faf095cb90206fe330bd97ab6f57bd3fb2cf3b9645ed7b61'
@@ -209,7 +209,7 @@ def prepare(source, output, include_outposts=False):
             bearings.append(turned_bearing(pivot, matrix[:3, 1], *OUTPOST_BEARING, 'RM27_M01'))
         for p, n, f, material, offset in parts:
             source_triangles += len(f)
-            cad_material = f'RM27_M{material:02d}'
+            cad_material = f"RM27_M{rmuc_visual_material(node['name'], material):02d}"
             if outpost:
                 vertices = f + offset
                 mask = discrete[vertices[:, 0]] | support[vertices].all(axis=1)
@@ -386,7 +386,7 @@ def prepare_dart(source, output):
             first_face = 0
             for p, n, f, material, offset in parts:
                 source_triangles += len(f)
-                cad_material = f'RM27_M{material:02d}'
+                cad_material = f"RM27_M{rmuc_visual_material(node['name'], material):02d}"
                 mask = moving[f[:, 0] + offset] if is_gate_source else np.zeros(len(f), dtype=bool)
                 tray_mask = tray_faces[first_face:first_face + len(f)] if is_gate_source else np.zeros(len(f), dtype=bool)
                 first_face += len(f)

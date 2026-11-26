@@ -74,7 +74,7 @@ class RefereeContractTests(unittest.TestCase):
             'event_data': {'supply_zone': 1, 'big_energy': 1},
             'buff': {'cooling_buff': 2},
             'rfid_status': {'friendly_fortress_gain_point': True, 'friendly_supply_zone_exchange': True},
-            'sentry_stance': 'DEFENSE', 'chassis_power_w': 76.0, 'chassis_buffer_energy_j': 38.5,
+            'sentry_stance': 'DEFENSE', 'chassis_power_w': 95.0, 'chassis_buffer_energy_j': 38.5,
             'chassis_powered': True, 'shooter_locked': False,
         }}
         referee.observe(packet)

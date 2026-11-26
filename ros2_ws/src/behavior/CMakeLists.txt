@@ -1,0 +1,203 @@
+cmake_minimum_required(VERSION 3.16)
+project(behavior)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+## enforcing cleaner code.
+if(MSVC)
+  add_compile_options(/utf-8)
+  add_compile_definitions(_USE_MATH_DEFINES NOMINMAX)
+else()
+  add_compile_options(-Wall -Werror)
+endif()
+
+## Export compile commands for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
+
+#######################
+## Find dependencies ##
+#######################
+
+find_package(ament_cmake_auto REQUIRED)
+find_package(nlohmann_json REQUIRED)
+ament_auto_find_build_dependencies()
+
+###########
+## Build ##
+###########
+
+ament_auto_add_executable(behavior_server src/behavior_server.cpp)
+if(MSVC)
+  target_compile_options(behavior_server PRIVATE /bigobj)
+endif()
+
+ament_auto_add_library(behavior_action_client SHARED
+  src/behavior_client.cpp
+)
+set_target_properties(behavior_action_client PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+rclcpp_components_register_node(behavior_action_client
+  PLUGIN behavior::SentryBehaviorClient
+  EXECUTABLE behavior_client
+)
+
+####### Conditions #######
+ament_auto_add_library(is_game_status SHARED plugins/condition/is_game_status.cpp)
+list(APPEND plugin_libs is_game_status)
+
+ament_auto_add_library(is_rfid_detected SHARED plugins/condition/is_rfid_detected.cpp)
+list(APPEND plugin_libs is_rfid_detected)
+
+ament_auto_add_library(is_status_ok SHARED plugins/condition/is_status_ok.cpp)
+list(APPEND plugin_libs is_status_ok)
+
+ament_auto_add_library(competition_conditions SHARED plugins/condition/competition_conditions.cpp)
+list(APPEND plugin_libs competition_conditions)
+
+ament_auto_add_library(is_attacked SHARED plugins/condition/is_attacked.cpp)
+list(APPEND plugin_libs is_attacked)
+
+ament_auto_add_library(is_detect_enemy SHARED plugins/condition/is_detect_enemy.cpp)
+list(APPEND plugin_libs is_detect_enemy)
+
+ament_auto_add_library(is_manual_start SHARED plugins/condition/is_manual_start.cpp)
+list(APPEND plugin_libs is_manual_start)
+
+# Competition state machine, phase 1 (INIT) readiness gates
+ament_auto_add_library(is_map_ready SHARED plugins/condition/is_map_ready.cpp)
+list(APPEND plugin_libs is_map_ready)
+
+ament_auto_add_library(is_tf_ready SHARED plugins/condition/is_tf_ready.cpp)
+list(APPEND plugin_libs is_tf_ready)
+
+ament_auto_add_library(is_nav2_ready SHARED plugins/condition/is_nav2_ready.cpp)
+set_target_properties(is_nav2_ready PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+list(APPEND plugin_libs is_nav2_ready)
+
+####### Actions #######
+ament_auto_add_library(send_nav2_goal SHARED plugins/action/send_nav2_goal.cpp)
+list(APPEND plugin_libs send_nav2_goal)
+
+ament_auto_add_library(pub_nav2_goal SHARED plugins/action/pub_nav2_goal.cpp)
+list(APPEND plugin_libs pub_nav2_goal)
+
+ament_auto_add_library(navigate_goal_pose SHARED plugins/action/navigate_goal_pose.cpp)
+list(APPEND plugin_libs navigate_goal_pose)
+
+ament_auto_add_library(pub_spin_speed SHARED plugins/action/pub_spin_speed.cpp)
+list(APPEND plugin_libs pub_spin_speed)
+
+ament_auto_add_library(pub_twist SHARED plugins/action/pub_twist.cpp)
+list(APPEND plugin_libs pub_twist)
+
+ament_auto_add_library(pub_gimbal_absolute SHARED plugins/action/pub_gimbal_absolute.cpp)
+list(APPEND plugin_libs pub_gimbal_absolute)
+
+ament_auto_add_library(pub_gimbal_velocity SHARED plugins/action/pub_gimbal_velocity.cpp)
+list(APPEND plugin_libs pub_gimbal_velocity)
+
+ament_auto_add_library(calculate_attack_pose SHARED plugins/action/calculate_attack_pose.cpp)
+list(APPEND plugin_libs calculate_attack_pose)
+
+ament_auto_add_library(print_referee_status SHARED plugins/action/print_referee_status.cpp)
+list(APPEND plugin_libs print_referee_status)
+
+ament_auto_add_library(pub_auto_aim SHARED plugins/action/pub_auto_aim.cpp)
+list(APPEND plugin_libs pub_auto_aim)
+
+ament_auto_add_library(send_nav2_through_poses SHARED plugins/action/send_nav2_through_poses.cpp)
+list(APPEND plugin_libs send_nav2_through_poses)
+
+####### Controls #######
+ament_auto_add_library(recovery_node SHARED plugins/control/recovery_node.cpp)
+list(APPEND plugin_libs recovery_node)
+
+ament_auto_add_library(rmuc2027_tactics SHARED plugins/control/rmuc2027_tactics.cpp)
+target_link_libraries(rmuc2027_tactics nlohmann_json::nlohmann_json)
+list(APPEND plugin_libs rmuc2027_tactics)
+
+####### Decorators #######
+ament_auto_add_library(rate_controller SHARED plugins/decorator/rate_controller.cpp)
+list(APPEND plugin_libs rate_controller)
+
+ament_auto_add_library(tick_after_timeout_node SHARED plugins/decorator/tick_after_timeout_node.cpp)
+list(APPEND plugin_libs tick_after_timeout_node)
+
+foreach(bt_plugin ${plugin_libs})
+  target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
+endforeach()
+
+#############
+## Testing ##
+#############
+
+if(BUILD_TESTING)
+  enable_testing()
+  ament_auto_add_executable(test_is_nav2_ready test/test_is_nav2_ready.cpp)
+  target_link_libraries(test_is_nav2_ready is_nav2_ready)
+  add_test(NAME nav2_ready_types COMMAND test_is_nav2_ready)
+  set_tests_properties(nav2_ready_types PROPERTIES TIMEOUT 10
+    ENVIRONMENT "ROS_DOMAIN_ID=189;ROS_LOCALHOST_ONLY=1;ROS_LOG_DIR=${CMAKE_CURRENT_BINARY_DIR}/test_ros_logs")
+
+  ament_auto_add_executable(test_competition_conditions test/test_competition_conditions.cpp)
+  add_test(NAME competition_conditions
+    COMMAND test_competition_conditions $<TARGET_FILE:competition_conditions>)
+  ament_auto_add_executable(test_competition_combat test/test_competition_combat.cpp)
+  add_test(NAME competition_combat
+    COMMAND test_competition_combat
+      $<TARGET_FILE:competition_conditions> $<TARGET_FILE:is_game_status>
+      $<TARGET_FILE:is_manual_start>
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_combat.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_test_combat.xml)
+  ament_auto_add_executable(test_competition_retreat test/test_competition_retreat.cpp)
+  add_test(NAME competition_retreat
+    COMMAND test_competition_retreat
+      $<TARGET_FILE:competition_conditions> $<TARGET_FILE:is_game_status>
+      $<TARGET_FILE:is_manual_start>
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_retreat.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_test_retreat.xml)
+  ament_auto_add_executable(test_competition_recover test/test_competition_recover.cpp)
+  add_test(NAME competition_recover
+    COMMAND test_competition_recover
+      $<TARGET_FILE:competition_conditions> $<TARGET_FILE:is_game_status>
+      $<TARGET_FILE:is_manual_start>
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_recover.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_test_recover.xml)
+  ament_auto_add_executable(test_competition_phase1 test/test_competition_phase1.cpp)
+  add_test(NAME competition_phase1
+    COMMAND test_competition_phase1
+      $<TARGET_FILE:competition_conditions> $<TARGET_FILE:is_game_status>
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_phase1.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_combat.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_retreat.xml
+      ${CMAKE_CURRENT_SOURCE_DIR}/behavior_trees/competition_recover.xml)
+  set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+  find_package(ament_lint_auto REQUIRED)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE
+    ament_cmake_uncrustify
+    ament_cmake_flake8
+  )
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+#############
+## Install ##
+#############
+
+install(
+  TARGETS ${plugin_libs}
+  LIBRARY DESTINATION share/${PROJECT_NAME}/bt_plugins
+  ARCHIVE DESTINATION share/${PROJECT_NAME}/bt_plugins
+  RUNTIME DESTINATION share/${PROJECT_NAME}/bt_plugins
+)
+
+ament_auto_package(
+  INSTALL_TO_SHARE
+  behavior_trees
+  params
+  launch
+)

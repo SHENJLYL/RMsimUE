@@ -317,7 +317,7 @@ private:
         uint8 BuffCooling = 1;
         uint8 BuffDefence = 0;
         uint8 BuffVulnerability = 0;
-        std::optional<ERMUCSentryStance> SimStance;
+        FRMUCSentryStanceState SimStance;
         uint16 BuffAttack = 0;
         uint8 BuffRemainingEnergy = 0x32;
         bool bRfidBase = false;

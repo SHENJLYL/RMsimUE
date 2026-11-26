@@ -12,6 +12,8 @@ class UTexture2D;
 namespace RMUCArmorPresentation
 {
 inline const FName SentryTag(TEXT("rmuc_sentry_armor_visual"));
+inline const FName Infantry3StickerTag(TEXT("rmuc_infantry_3_sticker"));
+inline const FName Infantry4StickerTag(TEXT("rmuc_infantry_4_sticker"));
 inline const FName OutpostTag(TEXT("rmuc_outpost_armor_visual"));
 inline const FName SentryLampSlot(TEXT("aim_sentry_red_led"));
 inline const FName LampColor(TEXT("ArmorLampColor"));

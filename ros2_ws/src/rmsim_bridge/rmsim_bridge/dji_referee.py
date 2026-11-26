@@ -31,8 +31,8 @@ RFID_BITS = (
     ('center_gain_point', 23),
 )
 
-# Defaults from RMUCGameReferee.h and RMUCTacticalRules.h for current packets.
-STANCE_POWER_LIMIT_W = {'MOVE': 120, 'ATTACK': 100, 'DEFENSE': 80}
+# Defaults from RMUCGameReferee.h and RMUCTacticalRules.h (RMUC 2027 three-stance power limits).
+STANCE_POWER_LIMIT_W = {'MOVE': 150, 'ATTACK': 100, 'DEFENSE': 100}
 
 
 class DjiRefereePublisher:

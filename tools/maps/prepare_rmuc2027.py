@@ -44,7 +44,21 @@ def array(doc,blob,index):
         strides=(view.get('byteStride',count*item),item))
 
 
-def world_primitives(doc,blob):
+# Match the original blue road marking, including on mirrored assets that
+# reuse the red paint in the source assembly.
+BLUE_STRIPE_OCCURRENCES = {
+    'blue-fortress_0_source_4059143_0',
+    'blue-resource-zone_0_source_3998852_0',
+    'centre-platform_0_source_1754789_5',
+    'blue-ramp-dart-station_0_source_2721188_6',
+}
+
+
+def rmuc_visual_material(occurrence, material):
+    return 4 if material == 7 and occurrence in BLUE_STRIPE_OCCURRENCES else material
+
+
+def world_primitives(doc,blob,visual_materials=False):
     def visit(index,parent):
         node=doc['nodes'][index]
         assert not any(k in node for k in ('rotation','translation','scale'))
@@ -61,17 +75,22 @@ def world_primitives(doc,blob):
                 normals=normals@np.linalg.inv(transform[:3,:3]);normals/=np.linalg.norm(normals,axis=1)[:,None]
                 indices=array(doc,blob,primitive['indices']).reshape(-1,3).astype(np.int32)
                 if np.linalg.det(transform[:3,:3])<0:indices=indices[:,[0,2,1]]
-                yield group,vertices,normals,indices,primitive.get('material',0)
+                material=primitive.get('material',0)
+                if visual_materials:
+                    material=rmuc_visual_material(node['name'],material)
+                yield group,vertices,normals,indices,material
         for child in node.get('children',[]):yield from visit(child,transform)
     for root in doc['scenes'][doc.get('scene',0)]['nodes']:
         yield from visit(root,np.eye(4))
 
 
-def export_groups(source,out,translation,collision=False):
+def export_groups(source,out,translation,collision=False,only=None):
     doc,blob=read_glb(source)
     assert doc['asset']['extras']['source_sha256']=='a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0'
     groups={}
-    for group,vertices,normals,indices,material in world_primitives(doc,blob):
+    for group,vertices,normals,indices,material in world_primitives(doc,blob,visual_materials=not collision):
+        if only is not None and group not in only:
+            continue
         groups.setdefault(group,[]).append((vertices+translation,normals,indices,material))
     materials=[]
     specs=[]

@@ -60,8 +60,12 @@ void ARMUCGameReferee::BindSentryArmorPresentation(AVehicleRig& Vehicle, FVehicl
     {
         if (!Body || !Body->IsVisible() || !Body->GetStaticMesh()) continue;
         if (Body->GetStaticMesh()->GetFName() != FName(TEXT("body"))) continue;
-        if (!SentrySticker) SentrySticker = LoadSticker(TEXT("sentry"));
-        UMaterialInstanceDynamic* Finish = MakeFinish(Vehicle, SentrySticker);
+        const TCHAR* InfantryPattern = nullptr;
+        if (Vehicle.ActorHasTag(Infantry3StickerTag)) InfantryPattern = TEXT("infantry_3");
+        if (Vehicle.ActorHasTag(Infantry4StickerTag)) InfantryPattern = TEXT("infantry_4");
+        if (!InfantryPattern && !SentrySticker) SentrySticker = LoadSticker(TEXT("sentry"));
+        UTexture2D* Sticker = InfantryPattern ? LoadSticker(InfantryPattern) : SentrySticker;
+        UMaterialInstanceDynamic* Finish = MakeFinish(Vehicle, Sticker);
         if (const int32 Slot = Body->GetMaterialIndex(SentryLampSlot); Slot != INDEX_NONE)
         {
             if (auto* Lamp = MakeEmitter(Vehicle, true))
@@ -81,6 +85,9 @@ void ARMUCGameReferee::BindSentryArmorPresentation(AVehicleRig& Vehicle, FVehicl
         }
         UE_LOG(LogRMSim, Display, TEXT("RMUC_ARMOR_PRESENTATION kind=sentry vehicle=%s faces=%d native_bars=%d"),
             *Vehicle.GetName(), Faces, Armor.NativeBars.IsValid());
+        if (InfantryPattern)
+            UE_LOG(LogRMSim, Display, TEXT("RMUC_INFANTRY_STICKER pattern=%s vehicle=%s faces=%d"),
+                InfantryPattern, *Vehicle.GetName(), Faces);
     }
 }
 

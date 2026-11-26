@@ -1,0 +1,52 @@
+# Real Robot Deployment Configuration for sp_vision_25 (RMUC 2027 Sentry)
+# Launch on Ubuntu ROS 2 Humble:
+#   ros2 launch sp_vision_25 vision_autoaim.launch.py mode:=real
+#
+# Quick bench test without referee serial (lock blue armors immediately):
+#   ros2 launch sp_vision_25 vision_autoaim.launch.py mode:=real enemy_color:=blue require_behavior_switch:=false debug_image:=true
+
+sp_vision_25_sim:
+  ros__parameters:
+    robot_id: "aim_sentry"
+
+    # --- Camera & Gimbal Attitude Topics ---
+    # Replace with your real Hikrobot / MindVision / USB camera ROS 2 topics:
+    camera_topic: "/camera/image_raw"
+    camera_info_topic: "/camera/camera_info"
+    # Gimbal attitude source (supports JointState OR Imu; both perform timestamp interpolation!):
+    joint_state_topic: "/aim_sentry/joint_states"
+    # Set imu_topic (e.g. "/gimbal/imu") if C-board publishes sensor_msgs/Imu quaternion directly:
+    imu_topic: ""
+    # Output sp_msgs/AutoAimCommandMsg topic consumed by C-board serial bridge / gimbal controller:
+    command_topic: "/aim_sentry/autoaim_command"
+    amcl_topic: "/amcl_pose"
+
+    # --- Referee & Behavior Integration ---
+    # "dji" uses native dji_referee_protocol (/referee/common/* & /referee/parsed/common/self_color)
+    # "auto" supports both simulator and real DJI referee seamlessly
+    referee_mode: "dji"
+    # "auto" reads self color from referee; set "red" or "blue" for bench testing without referee
+    enemy_color: "auto"
+    # Set true in full match with behavior tree; false for standalone vision testing
+    require_behavior_switch: true
+
+    # --- Real Hardware Mechanical & Ballistic Calibration ---
+    # Set true if your C-board/MCU uses pitch UP-positive (standard math); false for pitch DOWN-positive
+    pitch_up_positive: false
+    # Initial 17mm muzzle speed (m/s); automatically adapts from /referee/common/shoot_data in match
+    muzzle_speed_mps: 24.5
+    # End-to-end camera + inference + serial + feeder latency (seconds, typically 0.06 ~ 0.11s)
+    latency_s: 0.085
+    # Mechanical camera-to-barrel mounting offsets (degrees)
+    yaw_offset_deg: 0.0
+    pitch_offset_deg: 0.0
+    # Vertical height of camera optical center ABOVE barrel axis (meters; positive = camera above barrel)
+    cam_to_barrel_z_m: 0.05
+    # Firing alignment window (degrees)
+    shoot_tol_deg: 5.0
+    structure_shoot_tol_deg: 8.0
+    min_classify_conf: 0.60
+    max_image_age_ms: 150.0
+
+    # Set true during garage calibration to inspect /sp_vision/debug_image in RViz2/Foxglove
+    debug_image: false

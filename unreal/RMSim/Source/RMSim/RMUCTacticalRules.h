@@ -12,25 +12,71 @@ enum class ERMUCSentryStance
 
 struct FRMUCSentryStanceModifiers
 {
-    double CoolingMultiplier = 1.0;
-    double ChassisPowerLimitW = 100.0;
+    double BarrelCoolingPerSec = 10.0;
+    double ChassisPowerLimitW = 150.0;
     int DefenceBonusPercent = 0;
-    int VulnerabilityBonusPercent = 0;
+    int VulnerabilityBonusPercent = 25;
 };
 
+// RoboMaster 2027 Auto Sentry Three-Stance Rules (全自动哨兵三姿态, 5.0s 切换冷却)
 inline FRMUCSentryStanceModifiers GetRMUCSentryStanceModifiers(ERMUCSentryStance Stance)
 {
     switch (Stance)
     {
     case ERMUCSentryStance::Attack:
-        return {2.0, 100.0, 0, 25};
+        // 进攻姿态: 100W 底盘功率, 30/s 枪口冷却, 0% 防御, +25% 易伤
+        return {30.0, 100.0, 0, 25};
     case ERMUCSentryStance::Defense:
-        return {1.0, 80.0, 25, 0};
+        // 防御姿态: 100W 底盘功率, 10/s 枪口冷却, +25% 防御, 0% 易伤
+        return {10.0, 100.0, 25, 0};
     case ERMUCSentryStance::Move:
     default:
-        return {1.0, 120.0, 0, 0};
+        // 移动姿态 (开局默认): 150W 底盘功率, 10/s 枪口冷却, 0% 防御, +25% 易伤
+        return {10.0, 150.0, 0, 25};
     }
 }
+
+struct FRMUCSentryStanceState
+{
+    static constexpr double SwitchCooldownSeconds = 5.0;
+
+    ERMUCSentryStance Current = ERMUCSentryStance::Move;
+    double CooldownRemainingSec = 0.0;
+
+    void Reset()
+    {
+        Current = ERMUCSentryStance::Move;
+        CooldownRemainingSec = 0.0;
+    }
+
+    void Step(double DeltaSeconds)
+    {
+        if (DeltaSeconds > 0.0)
+        {
+            CooldownRemainingSec = std::max(0.0, CooldownRemainingSec - DeltaSeconds);
+        }
+    }
+
+    bool TrySwitch(ERMUCSentryStance Target)
+    {
+        if (Target == Current)
+        {
+            return true;
+        }
+        if (CooldownRemainingSec > 1e-6)
+        {
+            return false;
+        }
+        Current = Target;
+        CooldownRemainingSec = SwitchCooldownSeconds;
+        return true;
+    }
+
+    FRMUCSentryStanceModifiers Modifiers() const
+    {
+        return GetRMUCSentryStanceModifiers(Current);
+    }
+};
 
 // Shared team economy pool (Red = 0, Blue = 1)
 struct FRMUCSharedEconomy

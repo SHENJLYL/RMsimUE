@@ -1,0 +1,92 @@
+# ============================================================
+# DJI机甲大师裁判系统通信协议 - ROS 2话题配置文件
+# ============================================================
+#
+# 说明：
+#   本配置文件用于控制各个ROS 2话题是否发布。
+#   将对应话题的值设为true表示启用，false表示禁用。
+#
+# Glob模式匹配支持：
+#   - 支持 * 通配符匹配任意字符（不包括 /）
+#   - 支持 ** 通配符匹配多级路径（包括 /）
+#   - 后定义的规则会覆盖先定义的规则
+#
+# 覆盖规则示例：
+#   topics:
+#     '/referee/common/*': false           # 1. 禁用所有common话题
+#     '/referee/common/game_status': true  # 2. 覆盖：启用game_status
+#     '/referee/common/robot_*': true      # 3. 覆盖：启用robot_*匹配的话题
+#
+#   结果：game_status=true, robot_*=true, 其他common/*=false
+#
+# 使用方法：
+#   1. 复制此文件到你的配置目录
+#   2. 根据需要修改各话题的启用状态
+#   3. 启动节点时指定配置文件：
+#      ros2 run dji_referee_protocol referee_serial_node --ros-args -p config_file:=/path/to/topic_config.yaml
+#
+# 注意：
+#   - 禁用不需要的话题可以减少系统开销
+#   - 如果publish_all_topics参数为true，则忽略此配置文件
+#   - 所有话题默认启用
+#   - 优先级：后定义的规则覆盖先定义的
+#
+# 协议版本：V1.2.0
+# ============================================================
+
+topics:
+  # ==================== Glob模式配置 ====================
+  # 后定义的规则覆盖先定义的规则
+
+  # 1. 禁用所有 /referee/common/ 下的话题
+  '/referee/common/*': false
+
+  # 2. 覆盖：启用特定话题（后定义的覆盖先定义的）
+  '/referee/common/game_status': true
+#  '/referee/common/robot_hp': true
+#  '/referee/common/field_event': true
+  '/referee/common/robot_performance': true
+#  '/referee/common/robot_position': true
+#  '/referee/common/robot_buff': true
+  '/referee/common/robot_heat': true
+#  '/referee/common/damage_state': true
+  '/referee/common/allowed_shoot': true
+#  '/referee/common/rfid_status': true
+#  '/referee/common/ground_robot_position': true
+
+  # 3. 启用所有敌方数据
+  # '/referee/common/enemy_*': false
+
+  # 4. 启用解析后的数据
+  '/referee/parsed/**': true
+
+  # ==================== 具体话题配置（取消注释可覆盖上方glob配置）====================
+  # 常规链路数据（服务器→机器人）
+  # '/referee/common/game_result': true
+  # '/referee/common/robot_hp': true
+  # '/referee/common/field_event': true
+  # '/referee/common/referee_warning': true
+  # '/referee/common/dart_launch_data': true
+  # '/referee/common/robot_position': true
+  # '/referee/common/robot_buff': true
+  # '/referee/common/damage_state': true
+  # '/referee/common/rfid_status': true
+  # '/referee/common/dart_operator_cmd': true
+  # '/referee/common/ground_robot_position': true
+  # '/referee/common/radar_mark_progress': true
+  # '/referee/common/sentry_decision_sync': true
+  # '/referee/common/radar_decision_sync': true
+
+  # 选手端小地图交互数据
+  # '/referee/common/map_click_data': true
+  # '/referee/common/map_radar_data': true
+  # '/referee/common/map_path_data': true
+  # '/referee/common/map_robot_data': true
+
+  # 雷达无线链路数据
+  # '/referee/common/enemy_position': true
+  # '/referee/common/enemy_hp': true
+  # '/referee/common/enemy_ammo': true
+  # '/referee/common/enemy_team_status': true
+  # '/referee/common/enemy_buff': true
+  # '/referee/common/enemy_jamming_key': true

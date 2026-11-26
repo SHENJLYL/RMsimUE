@@ -2,6 +2,7 @@
 #include "ArenaShell.h"
 #include "CampusGym.h"
 #include "MapOverview.h"
+#include "RMUCArmorPresentation.h"
 #include "TrainingRange.h"
 #include "RMUCGameReferee.h"
 #include "RMUCPhysicalAudio.h"
@@ -167,6 +168,19 @@ bool AImportLabGameMode::ConfigureMatchSeats(FString& Error)
         {
             Error = TEXT("Unsupported RMUC seat: the dual match currently uses AIM S7 and manual, sentry_ws, or passive AI seats");
             return false;
+        }
+        if (Seat->HasField(TEXT("armor_number")))
+        {
+            double Number = 0.;
+            if (!Seat->TryGetNumberField(TEXT("armor_number"), Number) ||
+                (Number != 3. && Number != 4. && Number != 7.))
+            {
+                Error = TEXT("RMUC armor_number must be 3, 4, or 7 for the default appearance");
+                return false;
+            }
+            FName& Sticker = FCString::Strcmp(Team, TEXT("red")) == 0 ? MatchRedArmorSticker : MatchBlueArmorSticker;
+            if (Number == 3.) Sticker = RMUCArmorPresentation::Infantry3StickerTag;
+            if (Number == 4.) Sticker = RMUCArmorPresentation::Infantry4StickerTag;
         }
         if (Control == TEXT("sentry_ws"))
         {
@@ -930,6 +944,14 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
             FString RefError;
             AVehicleRig* Opponent = bPhysicalMatch ? SpawnMatchOpponent(RefError) : nullptr;
             if (bPhysicalMatch && !Opponent) { Abort(RefError); return; }
+            if (Opponent)
+            {
+                const bool bPrimaryRed = MatchPrimaryTeam == TEXT("red");
+                const FName PrimarySticker = bPrimaryRed ? MatchRedArmorSticker : MatchBlueArmorSticker;
+                const FName OpponentSticker = bPrimaryRed ? MatchBlueArmorSticker : MatchRedArmorSticker;
+                if (!PrimarySticker.IsNone()) Rig->Tags.Add(PrimarySticker);
+                if (!OpponentSticker.IsNone()) Opponent->Tags.Add(OpponentSticker);
+            }
             Referee=GetWorld()->SpawnActor<ARMUCGameReferee>();
             if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent)){Abort(RefError);return;}
         }
