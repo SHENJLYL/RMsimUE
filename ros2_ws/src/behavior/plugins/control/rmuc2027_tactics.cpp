@@ -40,11 +40,12 @@ using Json = nlohmann::json;
 using WallClock = std::chrono::steady_clock;
 
 constexpr double kPi = 3.14159265358979323846;
-// Enemy home ramp safety boundary (meters in map frame).
-// Red chases down to x >= -5.5; Blue chases up to x <= +5.5. Beyond that, hold and track by gimbal only.
-constexpr double kEnemyRampBoundaryX = 5.5;
-constexpr double kChaseClampX = 5.2;
-constexpr double kChaseClampY = 4.5;
+// Enemy home supply safety boundary (meters in map frame).
+// Allow advancing up to +/-8.0m to engage AFK/overheated/overpowered enemies across the enemy half,
+// while staying clear of the deep enemy base/supply corner (>9.5m).
+constexpr double kEnemyRampBoundaryX = 9.5;
+constexpr double kChaseClampX = 8.0;
+constexpr double kChaseClampY = 5.0;
 constexpr double kChaseHoldDistM = 3.2;
 constexpr double kChaseStandoffM = 2.4;
 
@@ -747,23 +748,23 @@ private:
     is_red_ = red;
     if (red) {
       routes_[Index(Mode::Patrol)] = "2.96;0.0;3.14159265|2.95;1.8;2.61|2.95;-1.8;-2.61";
-      routes_[Index(Mode::OwnOutpostHeal)] = "2.85;4.70;3.14159265";
+      routes_[Index(Mode::OwnOutpostHeal)] = "2.84;4.59;3.14159265";
       routes_[Index(Mode::OwnBaseSupply)] = "12.0;6.0;3.14159265";
       routes_[Index(Mode::OwnOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "2.85;4.70;3.14159265";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "2.84;4.59;3.14159265";
       routes_[Index(Mode::EnemyOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.60;-3.15;3.14159265";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "-2.67;-3.21;3.14159265";
       routes_[Index(Mode::EnemyFortress)] = "-6.82;0.0;3.14159265";
       routes_[Index(Mode::EnemyBaseAttack)] = "-9.0;-0.5;2.95";
       routes_[Index(Mode::OwnFortress)] = "6.82;0.0;3.14159265";
     } else {
       routes_[Index(Mode::Patrol)] = "-2.96;0.0;0.0|-2.95;-1.8;-0.53|-2.95;1.8;0.53";
-      routes_[Index(Mode::OwnOutpostHeal)] = "-2.60;-3.15;0.0";
+      routes_[Index(Mode::OwnOutpostHeal)] = "-2.67;-3.21;0.0";
       routes_[Index(Mode::OwnBaseSupply)] = "-12.0;-6.0;0.0";
       routes_[Index(Mode::OwnOutpostAttack)] = "-3.0;-0.8;-1.60";
-      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.60;-3.15;0.0";
+      routes_[Index(Mode::OwnOutpostRebuild)] = "-2.67;-3.21;0.0";
       routes_[Index(Mode::EnemyOutpostAttack)] = "3.0;0.8;1.54";
-      routes_[Index(Mode::EnemyOutpostCapture)] = "2.85;4.70;0.0";
+      routes_[Index(Mode::EnemyOutpostCapture)] = "2.84;4.59;0.0";
       routes_[Index(Mode::EnemyFortress)] = "6.82;0.0;0.0";
       routes_[Index(Mode::EnemyBaseAttack)] = "9.0;0.5;-0.19";
       routes_[Index(Mode::OwnFortress)] = "-6.82;0.0;0.0";
@@ -999,7 +1000,7 @@ private:
     const bool chase_dwell_hold = in_chase && (now - chase_entered_at_ < 3.5);
     const bool chase_cooldown_ok = in_chase || under_attack || (now - chase_exited_at_ >= 2.5);
     const bool enemy_in_pursuit_range =
-      vision.has_enemy_xy && !EnemyInHomeZone(vision) && vision.distance_m <= 7.5;
+      vision.has_enemy_xy && !EnemyInHomeZone(vision) && vision.distance_m <= 11.0;
     if (combat_ready && !holding_highland_outpost && enemy_in_pursuit_range && chase_cooldown_ok &&
         (vision.enemy_visible || chase_dwell_hold) &&
         ready(Mode::ChaseEnemy)) {
@@ -1056,8 +1057,22 @@ private:
     const double held = now - *arrived_;
     auto retry = [&](double cooldown) { retry_at_[Index(mode)] = now + cooldown; };
     if (contact == false) {
-      if (!arrived_on_card_ && held >= 3.0) retry(12.0);
+      if (!arrived_on_card_ && held >= 2.5) {
+        if (mode == Mode::OwnOutpostHeal && outpost_heal_recenter_tries_ < 2) {
+          // Re-center onto the outpost RFID card instead of prematurely running all the way home!
+          ++outpost_heal_recenter_tries_;
+          arrived_.reset();
+          RCLCPP_INFO(node_->get_logger(),
+            "RMUC_TACTICS outpost card not yet read, re-centering (%d/2)", outpost_heal_recenter_tries_);
+        } else {
+          outpost_heal_recenter_tries_ = 0;
+          retry(12.0);
+        }
+      }
       return;
+    }
+    if (mode == Mode::OwnOutpostHeal && contact == true) {
+      outpost_heal_recenter_tries_ = 0;
     }
 
     switch (mode) {
@@ -1341,6 +1356,7 @@ private:
   bool spin_boost_ = false;
   std::string last_stance_cmd_;
   double last_stance_cmd_at_ = -100.0;
+  int outpost_heal_recenter_tries_ = 0;
 };
 }  // namespace
 

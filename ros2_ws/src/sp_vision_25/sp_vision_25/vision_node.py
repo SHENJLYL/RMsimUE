@@ -811,7 +811,7 @@ class SpVisionSimNode(Node):
         eval_yaw, eval_pitch = (self.feedback[-1][1], self.feedback[-1][2]) if self.feedback else (cur_yaw, cur_pitch)
         sol = self.aimer.solve_world(wyaw, wpitch, dist, yr, pr, eval_yaw, eval_pitch, hits, target_kind=target_kind)
         self.last_solution = sol
-        if self.self_pos_m is not None and not is_structure and hits >= 3 and sol.distance_m <= 8.0:
+        if self.self_pos_m is not None and not is_structure and hits >= 3 and sol.distance_m <= 12.0:
             horiz = sol.distance_m * math.cos(sol.target_pitch)
             new_ex = self.self_pos_m[0] + horiz * math.cos(sol.target_yaw)
             new_ey = self.self_pos_m[1] + horiz * math.sin(sol.target_yaw)
