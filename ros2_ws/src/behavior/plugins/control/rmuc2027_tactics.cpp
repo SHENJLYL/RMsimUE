@@ -1050,11 +1050,9 @@ private:
       return Mode::Patrol;
     }
 
-    // 4. Offensive progression (only siege enemy outpost when no recent enemy contact needs hunting)
-    const bool recent_enemy_contact =
-      vision.enemy_visible || (vision.memory.valid && vision.memory.age_sec <= 6.0);
+    // 4. Offensive progression (uncontested outpost/base siege when no enemy is actively engaged or threatening our outposts)
     if (combat_ready) {
-      if (!recent_enemy_contact && ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0 &&
+      if (ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0 &&
           ready(Mode::EnemyOutpostAttack)) {
         return Mode::EnemyOutpostAttack;
       }
@@ -1138,7 +1136,8 @@ private:
           (mode == Mode::EnemyOutpostAttack ? ref.enemy_outpost_hp : ref.enemy_base_hp);
         if (objective_hp_ < 0 || hp < objective_hp_) progress_at_ = now;
         objective_hp_ = hp;
-        if (now - progress_at_ >= 16.0) {
+        const double stall_timeout = (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) ? 25.0 : 16.0;
+        if (now - progress_at_ >= stall_timeout) {
           retry(20.0);
         }
         break;

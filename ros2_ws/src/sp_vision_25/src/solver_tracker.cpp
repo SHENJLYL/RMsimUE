@@ -166,7 +166,7 @@ std::optional<TrackedState> WorldAngularTracker::update(
     }
 
     const double max_phys_rate = std::min(0.65, 1.15 / std::max(1.0, mdist));
-    const bool plate_switched = (std::abs(dyaw) >= 0.075) || (std::abs(dpitch) >= 0.032);
+    const bool plate_switched = (std::abs(dyaw) >= 0.085);
     if (!plate_switched && dt <= 0.16) {
       const double raw_yr = dyaw / dt;
       if (std::abs(raw_yr) <= max_phys_rate * 1.4) {
@@ -279,10 +279,10 @@ AimSolution BallisticAimer::solve_world(
   const bool is_outpost = (target_kind == "outpost");
   const bool is_base = (target_kind == "base");
   const int min_hits = is_base ? 1 : 2;
-  // Tighter precision gate on rotating 13.5x5.6cm outpost plates so shots land instead of spraying wide.
-  const double tol_yaw = is_outpost ? std::min(structure_shoot_tol_rad, 0.048)
+  // Tighter precision gate on rotating 13.5x5.6cm outpost plates so shots land without starving 15Hz fire cadence.
+  const double tol_yaw = is_outpost ? std::min(structure_shoot_tol_rad, 0.060)
     : (is_base ? structure_shoot_tol_rad : shoot_tol_rad);
-  const double tol_pitch = is_outpost ? std::min(structure_shoot_tol_rad, 0.036)
+  const double tol_pitch = is_outpost ? std::min(structure_shoot_tol_rad, 0.045)
     : (is_base ? structure_shoot_tol_rad : shoot_tol_rad);
   const bool can_shoot = (track_hits >= min_hits) &&
     (std::abs(err_yaw) <= tol_yaw) && (std::abs(err_pitch) <= tol_pitch);
