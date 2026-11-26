@@ -594,6 +594,8 @@ public:
       engaging_ = false;
       last_own_outpost_hp_ = -1;
       own_outpost_attacked_until_ = 0.0;
+      last_enemy_outpost_hp_ = -1;
+      captured_outpost_attacked_until_ = 0.0;
       last_self_hp_ = -1;
       self_under_attack_until_ = 0.0;
       last_stance_cmd_.clear();
@@ -610,9 +612,16 @@ public:
     if (ref) {
       if (last_own_outpost_hp_ > 0 && ref->own_outpost_hp < last_own_outpost_hp_ &&
           !ref->own_outpost_enemy_owned) {
-        own_outpost_attacked_until_ = now + 6.0;
+        own_outpost_attacked_until_ = now + 10.0;
       }
       last_own_outpost_hp_ = ref->own_outpost_hp;
+
+      // Also monitor a captured enemy outpost (now owned by us) so we move there and fight back if attacked!
+      if (last_enemy_outpost_hp_ > 0 && ref->enemy_outpost_hp < last_enemy_outpost_hp_ &&
+          !ref->enemy_outpost_hostile) {
+        captured_outpost_attacked_until_ = now + 10.0;
+      }
+      last_enemy_outpost_hp_ = ref->enemy_outpost_hp;
 
       // Legal 0x0206 referee hurt detection: ignore self rule penalties (3=overheat, 4=overpower)
       const bool armor_hurt = (ref->hp_deduction_reason == 0) &&
@@ -1013,29 +1022,40 @@ private:
       return Mode::OwnOutpostRebuild;
     }
 
-    // 3. Active enemy pursuit (if under attack, break outpost siege immediately to fight/chase attacker!)
+    // 3. Active enemy pursuit & outpost defense (always prioritize fighting enemies and defending our outposts over sieging enemy outpost!)
     const bool combat_ready = !healing_ && (ref->ammo > 35 || can_reload_remote);
     const bool under_attack = now < self_under_attack_until_;
-    const bool holding_highland_outpost =
-      !under_attack && mode_ && (*mode_ == Mode::EnemyOutpostAttack || *mode_ == Mode::OwnOutpostAttack) && arrived_;
     const bool in_chase = mode_ && *mode_ == Mode::ChaseEnemy;
     const bool chase_dwell_hold = in_chase && (now - chase_entered_at_ < 3.5);
-    const bool chase_cooldown_ok = in_chase || under_attack || (now - chase_exited_at_ >= 2.5);
+    const bool chase_cooldown_ok = in_chase || under_attack || (now - chase_exited_at_ >= 2.0);
     const bool enemy_in_pursuit_range =
       vision.has_enemy_xy && !EnemyInHomeZone(vision) && vision.distance_m <= 11.0;
-    if (combat_ready && !holding_highland_outpost && enemy_in_pursuit_range && chase_cooldown_ok &&
-        (vision.enemy_visible || chase_dwell_hold) &&
+    if (combat_ready && enemy_in_pursuit_range && chase_cooldown_ok &&
+        (vision.enemy_visible || under_attack || chase_dwell_hold) &&
         ready(Mode::ChaseEnemy)) {
       return Mode::ChaseEnemy;
     }
+    // Defend our original outpost if it is under attack
     if (combat_ready && now < own_outpost_attacked_until_ && ref->own_outpost_hp > 0 &&
         !ref->own_outpost_enemy_owned && ready(Mode::OwnOutpostAttack)) {
       return Mode::OwnOutpostAttack;
     }
+    // Defend an enemy outpost that we have captured if the enemy is attacking it
+    if (combat_ready && now < captured_outpost_attacked_until_ && ref->enemy_outpost_hp > 0 &&
+        !ref->enemy_outpost_hostile && ready(Mode::EnemyOutpostAttack)) {
+      return Mode::EnemyOutpostAttack;
+    }
+    // If taking fire while attacker is not yet in view, break outpost siege and actively hunt/sweep!
+    if (combat_ready && under_attack && ready(Mode::Patrol)) {
+      return Mode::Patrol;
+    }
 
-    // 4. Offensive progression from highland / outpost gain positions
+    // 4. Offensive progression (only siege enemy outpost when no recent enemy contact needs hunting)
+    const bool recent_enemy_contact =
+      vision.enemy_visible || (vision.memory.valid && vision.memory.age_sec <= 6.0);
     if (combat_ready) {
-      if (ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0 && ready(Mode::EnemyOutpostAttack)) {
+      if (!recent_enemy_contact && ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0 &&
+          ready(Mode::EnemyOutpostAttack)) {
         return Mode::EnemyOutpostAttack;
       }
       if (ref->enemy_outpost_hostile && ref->enemy_outpost_hp == 0 && ready(Mode::EnemyOutpostCapture)) {
@@ -1129,7 +1149,7 @@ private:
   }
 
   // Intelligent predictive gimbal sector scanner (uses POSITION mode so +/-pi wrap is seamless!)
-  void PublishSmartScan(Mode mode, const VisionInfo & vision, bool navigating, double dt)
+  void PublishSmartScan(Mode mode, const VisionInfo & vision, bool navigating, bool attacking_hostile_outpost, double dt)
   {
     const double sx = vision.has_self_xy ? vision.self_x : (is_red_ ? 3.0 : -3.0);
     const double sy = vision.has_self_xy ? vision.self_y : 0.0;
@@ -1143,18 +1163,26 @@ private:
     bool publish_while_moving = false;
 
     const bool under_attack = (last_tick_ < self_under_attack_until_);
-    const bool targeting_enemy_outpost = (mode == Mode::EnemyOutpostAttack);
-    const bool targeting_own_outpost = (mode == Mode::OwnOutpostAttack);
+    const bool defending_outpost = !attacking_hostile_outpost &&
+      (mode == Mode::OwnOutpostAttack || mode == Mode::EnemyOutpostAttack);
     if (under_attack && !vision.enemy_visible) {
       // Highest priority: snap gimbal toward hit armor direction and sweep wide/fast to acquire attacker!
       center_yaw = hurt_search_yaw_;
       amp_yaw = 2.15;   // +/- 123 deg rapid counter-sweep covering full flank/rear even while spinning
-      freq = 3.6;
+      freq = 3.8;
       center_pitch = 0.0;
       amp_pitch = 0.04;
       publish_while_moving = true;
-    } else if (targeting_enemy_outpost || targeting_own_outpost) {
-      const bool target_red_post = targeting_own_outpost ? is_red_ : !is_red_;
+    } else if (defending_outpost && !vision.enemy_visible) {
+      // Defending our own or captured outpost: sweep horizontally across enemy approach lanes!
+      center_yaw = is_red_ ? kPi : 0.0;
+      amp_yaw = 2.05;
+      freq = 2.5;
+      center_pitch = 0.0;
+      amp_pitch = 0.04;
+      publish_while_moving = true;
+    } else if (attacking_hostile_outpost) {
+      const bool target_red_post = (mode == Mode::OwnOutpostAttack) ? is_red_ : !is_red_;
       const double ox = target_red_post ? kRedOutpostX : -kRedOutpostX;
       const double oy = target_red_post ? kRedOutpostY : -kRedOutpostY;
       const double horiz = std::max(1.2, std::hypot(ox - sx, oy - sy));
@@ -1224,7 +1252,8 @@ private:
     // If taking armor fire while sieging an outpost/base, immediately drop the structure lock
     // (ENEMY_VEHICLE_FIRST forces sp_vision_25 to release outpost/base) so gimbal counter-sweep
     // turns around right away to acquire and return fire on the attacking enemy vehicle!
-    const bool attack_outpost = !under_attack && (mode == Mode::EnemyOutpostAttack ||
+    const bool attack_outpost = !under_attack && (
+      (mode == Mode::EnemyOutpostAttack && ref && ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0) ||
       (mode == Mode::OwnOutpostAttack && ref && ref->own_outpost_enemy_owned && ref->own_outpost_hp > 0));
     const bool attack_base = !under_attack && mode == Mode::EnemyBaseAttack;
     target.data = attack_outpost ? "ENEMY_VEHICLE_THEN_OUTPOST" :
@@ -1279,7 +1308,7 @@ private:
 
     example_interfaces::msg::Float32 spin;
     const bool calm_outpost_siege =
-      !navigating && !under_attack && (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) && !vision.enemy_visible;
+      !navigating && !under_attack && attack_outpost && !vision.enemy_visible;
     if (!active || quiet_supply || power_throttled_) {
       spin.data = 0.0f;
     } else if (navigating) {
@@ -1287,8 +1316,9 @@ private:
       // in ATTACK/DEFENSE (100W), cap transit spin at 2.5 rad/s to preserve buffer energy.
       spin.data = (ref->power_limit_w >= 140.0) ? 3.8f : 2.5f;
     } else if (calm_outpost_siege) {
-      // Steady spin when focused on destroying an uncontested outpost so gimbal keeps razor-sharp accuracy
-      spin.data = 3.5f;
+      // Slow steady spin when uncontested on rotating outpost plates for maximum hit rate;
+      // instantly jumps to full combat spin if enemy appears or armor is hit!
+      spin.data = 1.8f;
     } else {
       // Stationary combat / fortress / heal / contested:
       // Pour ALL available chassis power into maximum safe spin (12 + 1.8*w^2 <= P_limit)!
@@ -1299,7 +1329,7 @@ private:
     spin_->publish(spin);
 
     if (active || mode == Mode::Wait || mode == Mode::NavigationUnavailable) {
-      PublishSmartScan(mode, vision, navigating, dt);
+      PublishSmartScan(mode, vision, navigating, attack_outpost, dt);
     }
 
     std_msgs::msg::String message;
@@ -1368,6 +1398,8 @@ private:
   int objective_hp_ = -1;
   int last_own_outpost_hp_ = -1;
   double own_outpost_attacked_until_ = 0.0;
+  int last_enemy_outpost_hp_ = -1;
+  double captured_outpost_attacked_until_ = 0.0;
   int last_self_hp_ = -1;
   double self_under_attack_until_ = 0.0;
   double hurt_search_yaw_ = 0.0;
