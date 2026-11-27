@@ -12,11 +12,35 @@ implements: []
 
 # 当前架构
 
+## 2026-11-27 Mid-360 GPU BVH
+
+`FGpuLidarScene` 在专用 MuJoCo 快照上组装实例 BVH，复用 Chaos 烹焙几何建场地及连杆 BVH。HLSL 全局计算着色器合批追踪，两路 `URosLidarComponent` 通过有界 FIFO 回读共用 MID-360 物理测量和 ROS 扫描协议。显式开关选择 GPU，现有 CPU 路径用于默认工作流及逐射线参考。
+
 ## 2026-11-27 RMUC 六车内置步兵 AI
 
 `ARMUCGameReferee` 在比赛阶段切换时向所有载具同步底盘和云台权限。`AVehicleRig` 在运动指令入口执行锁止，ROS 云台控制器清理倒计时内的旧目标。
 
 席位控制标签由比赛入口交给裁判。六车对局中的 I3、I4 AI 共用 UE 镜像路点图，昂贵的场景查询由各席轮转。功率、读卡、扣金币与实际弹丸由既有裁判结算。手操和 ROS 席各自拥有独立控制路径。 [实现和验收](../../docs/changes/2026-11-27-rmuc-infantry-ai.md)
+
+## 2026-11-27 RMUC 用户飞镖外观
+
+比赛站体由地图包继续提供盖板、导轨和底部滑台。`dart-launcher/mount.json` 指定挂在滑台上的光辉 2.0 渲染网格，镜像变换共用同一模型。飞行展示加载 XD-1 渲染网格，镖头沿局部 +X，设备舱盖位于上侧，尾端连接阵营曳光。红方在镖头盖的独立材质槽绑定红色，蓝方使用原材质。裁判与场地查询使用既有仿真接口。 [资产换版](../../docs/changes/2026-11-27-rmuc-user-dart-visuals.md) · [上下核对与镖头配色](../../docs/changes/2026-11-27-rmuc-xd1-up-and-color.md)
+
+## 2026-11-27 RMUC 复活、后勤与场地增益
+
+裁判在每个比赛步按实体读卡和补给区车载视觉读取本车状态。视觉投影读取车辆标称图传视场与实际挂载位姿，静态标牌依附 CAD 公路侧墙。原始卡信号供高地跨越顺序和解除虚弱，补给区允许视觉途径参与区域资格。机器人保存自身复活、免费弹与已接单交付状态，付费额度和金币由队伍共享。 [规则与验证](../../docs/changes/2026-11-27-rmuc-field-rule-parity.md)
+
+## 2026-11-27 RMUC 现场购弹资格
+
+裁判使用本车已经激活的己方补给区、基地、制高点或己方完全控制的前哨站判定现场兑换。遥测 `local_ammo_exchange_active` 表示点位资格，`local_ammo_purchase_available` 增加金币与额度检查，`supply_active` 继续描述补给区。仿真哨兵行为树按这两个购弹字段选择现场请求和驻停，其余比赛状态继续从裁判读取。 [验收](../../docs/changes/2026-11-27-rmuc-ammo-exchange-points.md)
+
+## 2026-11-27 RMUC 3v3 补给、定位与目标保持
+
+UE 裁判在同一比赛步内更新每辆车的补给读卡状态并处理该席的购弹请求。各 ROS 席收到本车的购弹资格和队伍金币。双席 MID360 已按整组采样降载，Point-LIO 运行器对该仿真档位保留源点索引，后续仍应用原有体素过滤。比赛视觉以裁判阵营和实拍灯条为依据，当前目标持续可见时优先延续跟踪，交接等待独立图像确认。测试的真实车位只供误差对照。 [验收记录](../../docs/changes/2026-11-27-rmuc-match-supply-and-autonomy.md)
+
+## 2026-11-26 RMUC 3、4 号步兵外观
+
+可选编队字段 armor_number 只选择 AIM 装甲的中央纹理。红蓝着色仍由阵营灯条材质提供。红 3／蓝 4 和红 4／蓝 3 的样例随车辆包存放，覆盖层继续使用原透视、安装与碰撞合同。证据见 docs/changes/2026-11-26-rmuc-infantry-appearance.md。
 
 ## 2026-11-26 RMUC 比赛小陀螺配置
 
@@ -112,7 +136,7 @@ VehicleDrive.cpp拥有带坐标声明的速度目标、舵向前馈和轮速PI�
 
 ## 已有证明
 
-最新ROS流：物理车辆/独立固定相机 → RosBridgeComponent → 有界loopback TCP → rmsim_bridge → /clock、RGB8/CameraInfo、base→optical TF。TwistStamped反向进入同一个VehicleDrive；Rig在PrePhysics检查单调时钟租约。R更换epoch和连接session，清空旧指令；仅评测topic提供真值。通用ROS相机默认10Hz、1280×720/60度；导航控制台选择320×240并默认CameraHz=0，保留标定与安装TF，RGB按需开启。开启采集时渲染回读同步，实车标定继续跟踪。后续原LK电流与高层云台/发射接口见下方边界。
+最新ROS流：物理车辆/独立固定相机 → RosBridgeComponent → 有界loopback TCP → rmsim_bridge → /clock、RGB8/CameraInfo、base→optical TF。TwistStamped反向进入同一个VehicleDrive；Rig在PrePhysics检查单调时钟租约。R更换epoch和连接session，清空旧指令；仅评测topic提供真值。通用ROS相机默认10Hz、1280×720/60度；导航控制台选择320×240并默认CameraHz=0，保留标定与安装TF，RGB按需开启。开启采集时使用有界异步 GPU 读回，实车标定继续跟踪。后续原LK电流与高层云台/发射接口见下方边界。
 
 原生ROS11项、TCP19项、只读4项、stall1项、实际R复位及手动19项回归见artifacts/ros2/native-release-summary.json；旧控制45项与波浪/抓地记录仍保留在artifacts/gameplay/gyro-control。两者模块哈希不同，不将旧45项冒称为新模块全部重跑。
 
@@ -158,7 +182,7 @@ AIM车辆包默认每模块弹簧2000N/m、阻尼140N·s/m，预载50N、总行�
 
 Play-Navigation启动单实例生命周期监督器，编排UE、原Point-LIO、原AMCL/Nav2、桥与RViz。监控读取估计地图/位姿/action状态，采用127.0.0.1受限传输。真实GUI调用原NavigateToPose/FollowWaypoints和Cancel，默认视图聚焦已验证的红方波浪区域。
 
-原源码95c66c2的导航偏航目标整形在桥中独立实现，输入实际导航速度、估计底盘yaw与关节反馈；高优先级扫描/获准自瞄保留，导航不发射。v2传感器配置增加yaw_link，逐物理帧安装TF、射线和共装IMU跟随实际关节；v1固定安装入口保持。Loam接口根据重力初始化的原估计与动态安装TF恢复底盘，单次平移/偏航对齐，避免重复应用45°安装旋转。Point-LIO归一化与原始饱和参数配对转换到SI。
+原源码95c66c2的导航偏航目标整形在桥中独立实现，输入实际导航速度、估计底盘yaw与关节反馈；高优先级扫描/获准自瞄保留，导航不发射。v2传感器配置增加yaw_link，逐物理帧安装TF、射线和共装IMU跟随实际关节；v1固定安装入口保持。Loam接口根据重力初始化的原估计与动态安装TF恢复底盘，单次平移/偏航对齐，避免重复应用45°安装旋转。Point-LIO归一化与原始饱和参数配对转换到SI。 物理 IMU 从同一 5 ms 窗口计算测点速度差和旋转增量。仿真比赛在原 AMCL 的参数装配处使用基于验证结果的运动噪声，真值继续只供独立评估。
 
 2026-11-17版本的Windows原生84项、图形13项与离线120/2跳过已验收，见artifacts/navigation/sentry-console-20261117/release-summary.json；当前源控速与实时修改的发布/GUI/兼容回归由新汇总确认。硬件云台电流环、传感器标定、新组合实际R/断线、全场/多车和原生Ubuntu继续沿长期规划推进。
 
@@ -255,9 +279,17 @@ CameraHeadingProbe 在真实 Chaos 世界 tick 中独立采样参考方向、云
 
 ## RMUC 源学校体育馆与地图边界（2026-11-20）
 
+RMUC 双 ROS 席的 MID360 以整组四通道采样降载。名义发射时钟按车辆配置，ROS 桥按声明的组步长验证点数、真实发射偏移及通道顺序。 [双席与单席验收](../../docs/changes/2026-11-27-rmuc-dual-mid360-startup.md)
+
+RMUC 比赛各车共用同一份场地柔性碰撞网格。MuJoCo 每次复制车辆后立即清理该次生成的场地副本。 [六车启动验证](../../docs/changes/2026-11-27-rmuc-3v3-startup.md)
+
+RMUC 地图路点为前哨停转状态提供优先观察位。仿真行为树在前哨任务中根据独立识别观测确认是否切换到车辆追击，视觉类别继续使用原识别链路。 [停转选位与行为交接](../../docs/changes/2026-11-27-rmuc-outpost-visibility.md)
+
+场地导出按蓝方 CAD 实例匹配堡垒、补给区、中央高台和飞镖站外侧的标线，并共用蓝方道路材质。派生平台和站体网格沿用同一映射。 [资产与实拍](../../docs/changes/2026-11-26-rmuc-blue-ground-stripes.md)
+
 哨兵贴纸独立渲染为带灯条避空和四孔的工字形平面网格，并随原装甲平面移动。 [实现与验收](../../docs/changes/2026-11-25-rmuc-sentry-i-profile-sticker.md)
 
-红蓝飞镖站独立消耗弹量。UE 飞行动画进入虚拟检测体积后由裁判确认，场点观测屏蔽压制期间的读卡效果。 [比赛飞镖实现](../../docs/changes/2026-11-25-rmuc-dart-match.md)
+红蓝飞镖站独立消耗弹量。UE 飞行动画进入虚拟检测体积后由裁判确认，场点观测屏蔽压制期间的读卡效果。 [比赛飞镖实现](../../docs/changes/2026-11-25-rmuc-dart-match.md) 权威命中奖励在裁判结算，遮挡与按席经验由操作席读取。 [命中奖励](../../docs/changes/2026-11-27-rmuc-dart-rewards.md)
 
 发射站的固定结构、导轨盖板和抽拉滑台由原场地 CAD 拆分。盖板以原 CAD 全开为零位，独立于发射架的摆位配置。笃行发射架可见总成按原 CAD 尺寸加载为共享静态网格，安装垫块与原 CAD 的灰黑端罩同属滑台，虚拟飞镖从模型本地出站点开始。准备阶段允许抽拉滑台并在开赛前收回。 [运动、资产和验证](../../docs/changes/2026-11-26-rmuc-dart-station-guide-and-tray.md)
 
@@ -327,7 +359,7 @@ Windows 启动器将所属 UE PID 交给 MuJoCo 观察窗口和 RViz 覆盖检�
 
 ## 2026-11-20：RGB 异步传感器读回
 
-ROS RGB 使用同一 UE 场景相机。游戏线程记录采集时的物理时间和相机相对位姿，渲染线程按捕获顺序提交 GPU staging copy，并在 fence 完成后逐行读回。三个槽位有界复用，积压时计数，断线或复位后丢弃旧连接帧。UDP 观察、状态包、IMU 和 LiDAR 的时钟独立。ROS 图像、内参与相机光学 TF 共用原采集时间；关闭 RGB 的导航模式继续发布内参与 TF。
+ROS RGB 使用同一 UE 场景相机。游戏线程记录采集时的物理时间和相机相对位姿，渲染线程按捕获顺序提交 GPU staging copy，并在 fence 完成后按行跨度转换为 RGB8。游戏线程分段发送头部、原有 RGB8 缓冲和雷达块。读回帧持有到发完或取消，ROS 桥用缓冲视图读取像素。三个槽位有界复用，积压时计数，断线或复位后丢弃旧连接帧。UDP 观察、状态包、IMU 和 LiDAR 的时钟独立。ROS 图像、内参与相机光学 TF 共用原采集时间；关闭 RGB 的导航模式继续发布内参与 TF。
 
 ## 2026-11-21：主视口渲染比例
 

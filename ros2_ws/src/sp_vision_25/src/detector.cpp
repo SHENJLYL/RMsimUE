@@ -136,6 +136,45 @@ float outpost_marker_score(
   return static_cast<float>(inter) / static_cast<float>(std::max(1, uni));
 }
 
+// UE lamps retain their hue along both edges, even when their centers bloom white.
+int lamp_color(const cv::Mat & hsv, const cv::Point2f & top, const cv::Point2f & bottom)
+{
+  const cv::Point2f direction = bottom - top;
+  const float length = static_cast<float>(cv::norm(direction));
+  if (!std::isfinite(length) || length < 2.0f || length > hsv.rows) {
+    return -1;
+  }
+
+  const auto axis = direction * (1.0f / length);
+  const float width = std::clamp(0.16f * length, 2.0f, 18.0f);
+  const auto min_x = static_cast<int>(std::floor(std::min(top.x, bottom.x) - width));
+  const auto max_x = static_cast<int>(std::ceil(std::max(top.x, bottom.x) + width));
+  const auto min_y = static_cast<int>(std::floor(std::min(top.y, bottom.y) - width));
+  const auto max_y = static_cast<int>(std::ceil(std::max(top.y, bottom.y) + width));
+  int blue = 0;
+  int red = 0;
+  for (int y = std::max(0, min_y); y < std::min(hsv.rows, max_y); ++y) {
+    const auto * row = hsv.ptr<cv::Vec3b>(y);
+    for (int x = std::max(0, min_x); x < std::min(hsv.cols, max_x); ++x) {
+      const auto offset = cv::Point2f(static_cast<float>(x), static_cast<float>(y)) - top;
+      const float along = offset.dot(axis);
+      if (along < 0.12f * length || along > 0.88f * length ||
+          std::abs(offset.cross(axis)) > width) {
+        continue;
+      }
+      const auto & pixel = row[x];
+      if (pixel[2] < 135) continue;
+      if (pixel[1] >= 105 && pixel[0] >= 86 && pixel[0] <= 135) ++blue;
+      if (pixel[1] >= 115 && (pixel[0] <= 24 || pixel[0] >= 165)) ++red;
+    }
+  }
+
+  const int minimum = std::max(2, static_cast<int>(0.25f * length));
+  if (blue >= minimum && blue > 2 * red) return 0;
+  if (red >= minimum && red > 2 * blue) return 1;
+  return -1;
+}
+
 }  // namespace
 
 std::array<cv::Point2f, 4> sort_keypoints(const std::array<cv::Point2f, 4> & kps)
@@ -305,12 +344,10 @@ cv::Mat SpVisionYoloV8Detector::run_yolo_inference(const cv::Mat & letterbox_bgr
 }
 
 std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
-  const cv::Mat & bgr,
+  const cv::Mat & bgr, const cv::Mat & hsv,
   const std::string & color,
   bool prefer_outpost)
 {
-  cv::Mat hsv;
-  cv::cvtColor(bgr, hsv, cv::COLOR_BGR2HSV);
   cv::Mat mask;
   if (color == "red") {
     cv::Mat m1, m2;
@@ -425,6 +462,7 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
         det.keypoints = kps;
         det.center = cv::Point2f(cx_p, cy_p);
         det.bar_height_px = avg_h;
+        det.outpost_marker = true;
         out.push_back(std::move(det));
         continue;
       }
@@ -468,7 +506,8 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect_hsv_lightbars(
 std::vector<ArmorDetection> SpVisionYoloV8Detector::detect(
   const cv::Mat & bgr,
   const std::string & target_color,
-  bool prefer_outpost)
+  bool prefer_outpost,
+  bool verify_sim_lamp_color)
 {
   if (bgr.empty()) {
     return {};
@@ -484,6 +523,8 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect(
   cv::resize(bgr, resized, cv::Size(nw, nh));
   resized.copyTo(letterbox(cv::Rect(0, 0, nw, nh)));
 
+  cv::Mat hsv;
+  cv::cvtColor(bgr, hsv, cv::COLOR_BGR2HSV);
   cv::Mat out = run_yolo_inference(letterbox);  // (1, 14, 3549)
   std::vector<ArmorDetection> results;
 
@@ -528,11 +569,18 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect(
       std::vector<int> keep_idxs;
       cv::dnn::NMSBoxes(boxes, confs, score_threshold_, nms_threshold_, keep_idxs);
       for (int idx : keep_idxs) {
-        const std::string & det_color = kArmorColors[ids[idx]];
+        const auto & kps = kps_list[idx];
+        int color_id = ids[idx];
+        if (verify_sim_lamp_color) {
+          color_id = lamp_color(hsv, kps[0], kps[3]);
+          if (color_id < 0 || color_id != lamp_color(hsv, kps[1], kps[2])) {
+            continue;
+          }
+        }
+        const std::string & det_color = kArmorColors[color_id];
         if (!target_color.empty() && det_color != target_color) {
           continue;
         }
-        const auto & kps = kps_list[idx];
         cv::Mat pat = crop_armor_pattern(bgr, kps);
         if (pat.empty()) {
           continue;
@@ -573,21 +621,21 @@ std::vector<ArmorDetection> SpVisionYoloV8Detector::detect(
   }
 
   for (const auto & col : colors_to_scan) {
-    auto hsv_dets = detect_hsv_lightbars(bgr, col, prefer_outpost);
+    auto hsv_dets = detect_hsv_lightbars(bgr, hsv, col, prefer_outpost);
     for (auto & hdet : hsv_dets) {
-      const float dup_thresh = std::max(24.0f, hdet.bar_height_px * 2.0f);
-      bool dup = false;
-      for (const auto & r : results) {
-        if (r.color == hdet.color &&
-            std::abs(r.center.x - hdet.center.x) < dup_thresh &&
-            std::abs(r.center.y - hdet.center.y) < dup_thresh)
-        {
-          dup = true;
-          break;
-        }
-      }
-      if (!dup) {
+      const auto duplicate = std::find_if(results.begin(), results.end(), [&](const auto & r) {
+        const float margin = verify_sim_lamp_color
+          ? std::max(3.0f, 0.65f * std::min(r.bar_height_px, hdet.bar_height_px))
+          : std::max(24.0f, hdet.bar_height_px * 2.0f);
+        return r.color == hdet.color &&
+               std::abs(r.center.x - hdet.center.x) < margin &&
+               std::abs(r.center.y - hdet.center.y) < margin;
+      });
+      if (duplicate == results.end()) {
         results.push_back(std::move(hdet));
+      } else if (verify_sim_lamp_color && hdet.outpost_marker && !duplicate->outpost_marker) {
+        // A verified RMUC decal resolves a competing numeric class for the same plate.
+        *duplicate = std::move(hdet);
       }
     }
   }

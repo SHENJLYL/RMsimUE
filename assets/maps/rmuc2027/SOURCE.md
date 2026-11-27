@@ -8,6 +8,6 @@
 
 Preparation: tools/maps/prepare_rmuc2027.py reads the GLB's declared Z-up coordinates directly and exports 14 visual/collision FBX pairs. Internal translation: `[-0.000007152952372635468, -1.6243433957331543, 1.6403436655816601]` m. The central floor crest becomes Z=0; this is not a surveyed referee frame. UE mirrors Y and converts m to cm once at import. Current exterior bounds are approximately 28 × 16.003132 × 3.798683 m; visual mesh has 1,839,741 triangles.
 
-Source CAD colors and geometric markings are retained; no official surface-texture artwork has been added. Mechanical assemblies remain in static source rest poses. default/red are authored preview spawns, not certified competition starting positions. Regions, referee mechanisms and field electronics are not implemented.
+The geometric markings come from the source CAD. Four blue-side markings use the existing blue road material, and the arena uses CAD colors for its other static geometry. Mechanical assemblies remain in static source rest poses. default/red are authored preview spawns, not certified competition starting positions. Regions, referee mechanisms and field electronics are not implemented.
 
 map.json references /Game/RMSim/Maps/rmuc2027. mesh-source.json is the portable reimport descriptor. Original downloads/release reports are in artifacts/sources/rmuc2027; runtime evidence is in artifacts/maps/rmuc2027.

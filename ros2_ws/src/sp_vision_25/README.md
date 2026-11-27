@@ -1,38 +1,54 @@
-# sp_vision_25 (RMUC 2027 仿真与实车统一自瞄包)
+# sp_vision_25 (C++17 ROS 2 Humble — 仿真 & 实车通用自瞄包)
 
-同一套 ROS 2 节点（`sp_vision_25/vision_node`）同时支持 **UE5 仿真** 与 **Ubuntu 实车比赛部署**，内含全部模型权重与前哨站贴纸模板（`assets/yolov8.xml`、`yolov8.bin`、`tiny_resnet.onnx`、`outpost_sticker.png`），拷贝即用。
+纯 C++17 ROS 2 Humble 自瞄节点，**同一套代码、同一套权重、同一套 ROS 2 接口**无缝运行在 **Windows UE5 仿真** 与 **Ubuntu 实车 (Intel NUC / x86 / ARM)** 上：
 
-## 实车部署步骤（Ubuntu ROS 2 Humble）
+- **双引擎装甲板检测**：YOLOv8 (`assets/yolov8.xml` + `yolov8.bin`, 416×416 关键点检测) + 全分辨率 1280×720 HSV 灯条配对 + 前哨站贴纸模板 (`assets/outpost_sticker.png`) + `tiny_resnet.onnx` 9 类数字分类器。
+- **自动推理后端切换**：CMake 检测到 Intel OpenVINO C++ SDK 时自动启用原生 `ov::Core` 低延迟推理；未安装 OpenVINO SDK 时自动回退到 OpenCV DNN (`readNetFromModelOptimizer` + `readNetFromONNX`)，开箱即用。
+- **解算与追踪**：`cv::solvePnP(SOLVEPNP_IPPE)`（支持真实相机畸变 `D`）+ 世界坐标系角速度追踪（免疫小陀螺、前哨站三高度零滞后 Pitch 与旋转提前量）+ 17mm 弹道重力下坠/飞行时间/延迟提前量/相机-枪管视差补偿。
+- **零硬件 SDK 耦合**：直接解析 `sensor_msgs/Image`（无需 `cv_bridge`），自动适配 `JointState` / `Imu` 姿态插值、仿真 JSON 裁判系统与实车原生 `dji_referee_protocol`。
 
-### 1. 编译安装
-在实车工作空间放入 `sp_vision_25`、`sp_msgs`、`dji_referee_protocol`（以及可选的 `behavior`）：
+## 1. Windows 仿真环境编译与运行
+
+```powershell
+# 编译 C++17 视觉包到 ros2_ws/install_vision
+.\tools\environment\Build-Vision.ps1 -Clean
+
+# 离线帧精度与 C++ 耗时基准测试
+.\tools\environment\run-env.ps1 .\ros2_ws\install_vision\sp_vision_25\lib\sp_vision_25\sp_vision_offline_verify.exe
+
+# 独立启动视觉节点（external_sentry_connector.py 也会自动优先调用 C++ vision_node.exe）
+.\tools\environment\Start-VisionAutoAim.ps1 -RobotId aim_sentry -RequireBehaviorSwitch
+```
+
+## 2. Ubuntu 22.04 (ROS 2 Humble) 实车编译与部署
+
+安装依赖（可选安装 `openvino` C++ 运行时以在 NUC 上获得最高帧率）：
+
 ```bash
-cd ~/ros2_ws
-colcon build --packages-up-to sp_vision_25 behavior --cmake-args -DCMAKE_BUILD_TYPE=Release
+sudo apt update && sudo apt install -y libopencv-dev nlohmann-json3-dev
+```
+
+在实车工作空间中编译（含 `sp_msgs`、`dji_referee_protocol`、`sp_vision_25`）：
+
+```bash
+cd ~/rm_ws
+colcon build --packages-up-to sp_vision_25 --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 ```
 
-### 2. 配置实车话题与标定参数
-编辑 `config/real_robot.yaml`：
-- **相机话题**：`camera_topic`、`camera_info_topic`（节点会自动读取 `CameraInfo.k` 内参矩阵和 `CameraInfo.d` 畸变系数用于 PnP 解算）。
-- **云台姿态同步**：
-  - 若下位机/驱动发布关节角，设置 `joint_state_topic`（例如 `/aim_sentry/joint_states`）；
-  - 若下位机直接发布世界系四元数 IMU，设置 `imu_topic`（例如 `/gimbal/imu`）；
-  - 节点会对云台姿态做**时间戳线性插值**并与相机帧时间戳对齐，避免高速小陀螺时的相位滞后；
-  - 若下位机 Pitch 定义为**抬头为正**，将 `pitch_up_positive: true`。
-- **机械与弹道标定**：
-  - `yaw_offset_deg` / `pitch_offset_deg`：相机光轴与枪管零位偏置；
-  - `cam_to_barrel_z_m`：相机高于枪管轴线的垂直距离（米）；
-  - `latency_s`：从曝光到拨弹发射的全链路延迟（秒，实车一般 `0.06~0.11`）；
-  - `muzzle_speed_mps`：初始弹速（比赛期间会自动根据 `/referee/common/shoot_data` 实测初速平滑自适应）。
+### 2.1 车库标定 / 单节点调试（无需裁判系统与行为树）
 
-### 3. 启动方式
-- **单视觉台架调试（不接裁判系统/行为树，开启调试画面）**：
-  ```bash
-  ros2 launch sp_vision_25 vision_autoaim.launch.py mode:=real enemy_color:=blue require_behavior_switch:=false debug_image:=true
-  ```
-  可在 RViz2 / Foxglove 中订阅 `/sp_vision/debug_image` 和 `/sp_vision/status` 观察检测框、距离、预测提前量与开火状态。
-- **正式比赛（接入 `dji_referee_protocol` + `behavior` 行为树）**：
-  ```bash
-  ros2 launch sp_vision_25 vision_autoaim.launch.py mode:=real
-  ```
+```bash
+ros2 launch sp_vision_25 vision_autoaim.launch.py \
+  mode:=real enemy_color:=blue require_behavior_switch:=false debug_image:=true
+```
+
+在 RViz2 / Foxglove 中订阅 `/sp_vision/debug_image` 检查识别框、PnP 距离和弹着点误差。
+
+### 2.2 完整实车比赛运行
+
+编辑 `config/real_robot.yaml` 对齐你的相机话题、云台姿态源（`joint_state_topic` 或 `imu_topic`）、`pitch_up_positive` 符号及相机-枪管偏移（`yaw_offset_deg` / `pitch_offset_deg` / `cam_to_barrel_z_m` / `latency_s`），然后启动：
+
+```bash
+ros2 launch sp_vision_25 vision_autoaim.launch.py mode:=real
+```

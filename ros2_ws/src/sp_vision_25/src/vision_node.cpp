@@ -49,6 +49,8 @@ constexpr int64_t kMatchFireObservationNs = 150'000'000LL;
 constexpr int64_t kBehaviorCommandNs = 300'000'000LL;
 constexpr int64_t kTrackHoldNs = 1'100'000'000LL;
 constexpr int64_t kMaxFeedbackGapNs = 60'000'000LL;
+constexpr int64_t kSimHandoffHoldNs = 220'000'000LL;
+constexpr int64_t kSimHandoffGapNs = 250'000'000LL;
 
 const std::map<std::string, int> kArmorLabelIds = {
   {"one", 0}, {"two", 1}, {"three", 2}, {"four", 3},
@@ -62,15 +64,6 @@ const std::map<std::string, int> kTargetPriority = {
 
 const std::set<std::string> kVehicleNames = {
   "one", "two", "three", "four", "five", "sentry"
-};
-
-const std::map<std::string, std::string> kVehicleHpKeys = {
-  {"one", "1_robot_hp"},
-  {"two", "2_robot_hp"},
-  {"three", "3_robot_hp"},
-  {"four", "4_robot_hp"},
-  {"five", "5_robot_hp"},
-  {"sentry", "7_robot_hp"},
 };
 
 std::string to_lower_trim(std::string s)
@@ -128,6 +121,19 @@ std::filesystem::path default_assets_dir()
     return cwd_assets;
   }
   return std::filesystem::path("assets");
+}
+
+struct PlateObservation {
+  std::string name;
+  double yaw;
+  double pitch;
+  int64_t stamp_ns;
+  int count{1};
+};
+
+double observation_separation(const PlateObservation & a, const PlateObservation & b)
+{
+  return std::hypot(wrap_angle(a.yaw - b.yaw), a.pitch - b.pitch);
 }
 
 struct AttitudeSample {
@@ -395,6 +401,8 @@ public:
   {
     tracker_.reset();
     track_name_.reset();
+    sim_observation_.reset();
+    sim_challenger_.reset();
     track_visible_ = false;
     last_solution_.reset();
     enemy_world_xy_.reset();
@@ -415,8 +423,16 @@ private:
     return get_clock()->now().nanoseconds();
   }
 
+  bool simulator_observations() const
+  {
+    return referee_mode_ != "dji" && (sim_state_seen_ || sim_referee_seen_ || referee_mode_ == "sim");
+  }
+
   std::string enemy_color() const
   {
+    if (sim_team_known_) {
+      return is_red_ ? "blue" : "red";
+    }
     if (enemy_color_override_ == "red" || enemy_color_override_ == "blue") {
       return enemy_color_override_;
     }
@@ -522,42 +538,36 @@ private:
     } catch (const std::exception &) {
       return;
     }
-    if (!ref.is_object()) return;
+    if (!ref.is_object() || (ref.contains("available") && ref["available"] == false)) return;
 
     sim_referee_seen_ = true;
+    const auto rs = ref.contains("robot_status") && ref["robot_status"].is_object()
+      ? ref["robot_status"] : nlohmann::json::object();
+    std::optional<bool> team_red;
+    if (ref.contains("friendly_red") && ref["friendly_red"].is_boolean()) {
+      team_red = ref["friendly_red"].get<bool>();
+    } else if (rs.contains("robot_id") && rs["robot_id"].is_number_integer()) {
+      const int id = rs["robot_id"].get<int>();
+      if (id > 0 && id < 200) team_red = id < 100;  // Older simulator referee payload.
+    }
+    if (team_red) {
+      if (!sim_team_known_ || *team_red != is_red_) release();
+      is_red_ = *team_red;
+      sim_team_known_ = true;
+    }
     if (ref.contains("game_status") && ref["game_status"].is_object()) {
       const auto & gs = ref["game_status"];
       if (gs.contains("game_progress") && gs["game_progress"].is_number()) {
         game_running_ = (gs["game_progress"].get<int>() == 4);
       }
     }
-    if (ref.contains("robot_status") && ref["robot_status"].is_object()) {
-      const auto & rs = ref["robot_status"];
-      if (rs.contains("robot_id") && rs["robot_id"].is_number() && enemy_color_override_ == "auto") {
-        const bool is_red = (rs["robot_id"].get<int>() < 100);
-        if (is_red != is_red_) {
-          release();
-        }
-        is_red_ = is_red;
-      }
-      if (rs.contains("current_hp") && rs["current_hp"].is_number()) {
-        robot_alive_ = (rs["current_hp"].get<int>() > 0);
-      }
+    if (rs.contains("current_hp") && rs["current_hp"].is_number()) {
+      robot_alive_ = rs["current_hp"].get<int>() > 0;
     }
 
     const std::string enemy = enemy_color();
-    std::set<std::string> live;
-    if (ref.contains("all_robot_hp") && ref["all_robot_hp"].is_object() && !ref["all_robot_hp"].empty()) {
-      const auto & enemy_hp = ref["all_robot_hp"];
-      for (const auto & [vname, suffix] : kVehicleHpKeys) {
-        const std::string key = enemy + "_" + suffix;
-        if (enemy_hp.contains(key) && enemy_hp[key].is_number() && enemy_hp[key].get<int>() > 0) {
-          live.insert(vname);
-        }
-      }
-    } else {
-      live = kVehicleNames;
-    }
+    // The HP map does not distinguish an absent class from an eliminated vehicle.
+    std::set<std::string> live = kVehicleNames;
 
     if (ref.contains("field_devices") && ref["field_devices"].is_object()) {
       const auto & fd = ref["field_devices"];
@@ -586,7 +596,8 @@ private:
     }
     live_targets_ = std::move(live);
 
-    if (!robot_alive_ || !game_running_) {
+    if (!robot_alive_ || !game_running_ ||
+        (track_name_ && allowed_names().count(*track_name_) == 0)) {
       release();
     }
   }
@@ -720,6 +731,10 @@ private:
       last_cmd_stamp_ = 0;
       feedback_.clear();
       pending_image_.reset();
+      if (simulator_observations()) {
+        last_sim_frame_stamp_ = -1;
+        sim_team_known_ = false;
+      }
       release();
     }
 
@@ -801,8 +816,10 @@ private:
   const ArmorDetection * pick_target(
     const std::vector<ArmorDetection> & detections,
     double cur_yaw,
-    double cur_pitch) const
+    double cur_pitch,
+    int64_t stamp_ns)
   {
+    const bool simulate = simulator_observations();
     const std::string enemy_col = enemy_color();
     const auto allowed = allowed_names();
     const double fx = K_(0, 0);
@@ -811,7 +828,13 @@ private:
     const double cy = K_(1, 2);
 
     const ArmorDetection * best = nullptr;
+    const ArmorDetection * continued = nullptr;
+    std::optional<PlateObservation> best_observation;
+    std::optional<PlateObservation> continued_observation;
     std::tuple<int, int, double, float> best_score{-1, -1, -1e9, -1.0f};
+    const int64_t lost_ns = stamp_ns - track_stamp_;
+    const double same_track_margin = 0.11 + std::clamp(0.55e-9 * lost_ns, 0.0, 0.11);
+    double best_separation = same_track_margin;
 
     for (const auto & d : detections) {
       if (d.color != enemy_col || allowed.count(d.name) == 0) {
@@ -821,17 +844,60 @@ private:
       const auto pit = kTargetPriority.find(d.name);
       const int prio = (pit != kTargetPriority.end()) ? pit->second : 0;
       double ang_pen = 0.0;
-      if (tracker_.initialized()) {
+      std::optional<PlateObservation> observation;
+      if (simulate || tracker_.initialized()) {
         const auto [wy, wp] = ray_to_world_angles(
           cur_yaw, cur_pitch, (d.center.x - cx) / fx, (d.center.y - cy) / fy);
-        ang_pen = -std::hypot(wrap_angle(wy - tracker_.yaw()), wp - tracker_.pitch());
+        if (tracker_.initialized()) {
+          ang_pen = -std::hypot(wrap_angle(wy - tracker_.yaw()), wp - tracker_.pitch());
+        }
+        if (simulate) {
+          observation = PlateObservation{d.name, wy, wp, stamp_ns};
+          if (sim_observation_ && d.name == sim_observation_->name) {
+            const double separation = observation_separation(*observation, *sim_observation_);
+            if (separation < same_track_margin) {
+              if (separation < best_separation) {
+                best_separation = separation;
+                continued = &d;
+                continued_observation = observation;
+              }
+              continue;
+            }
+          }
+        }
       }
       const auto score = std::make_tuple(is_veh, prio, ang_pen, d.confidence);
       if (best == nullptr || score > best_score) {
         best = &d;
         best_score = score;
+        best_observation = observation;
       }
     }
+
+    if (!simulate) return best;
+    if (continued) {
+      sim_observation_ = continued_observation;
+      sim_challenger_.reset();
+      return continued;
+    }
+    if (!sim_observation_) {
+      sim_observation_ = best_observation;
+      return best;
+    }
+    if (!best_observation) return nullptr;
+
+    // Keep the visible plate across class/priority fluctuations. A different plate
+    // needs three distinct, nearby observations after the current one disappears.
+    if (sim_challenger_ && best_observation->name == sim_challenger_->name &&
+        stamp_ns - sim_challenger_->stamp_ns <= kSimHandoffGapNs &&
+        observation_separation(*best_observation, *sim_challenger_) < 0.14) {
+      best_observation->count = sim_challenger_->count + 1;
+    }
+    sim_challenger_ = best_observation;
+    if (sim_challenger_->count < 3 || lost_ns < kSimHandoffHoldNs) return nullptr;
+
+    release();
+    sim_observation_ = best_observation;
     return best;
   }
 
@@ -1009,7 +1075,9 @@ private:
   void process_image(const sensor_msgs::msg::Image::ConstSharedPtr & msg)
   {
     const int64_t now = now_ns();
-    if (!game_running_ || !robot_alive_ || !behavior_active(now)) {
+    const bool simulate = simulator_observations();
+    if (!game_running_ || !robot_alive_ || !behavior_active(now) ||
+        (simulate && !sim_team_known_)) {
       return;
     }
     if (!msg || msg->height == 0 || msg->width == 0) {
@@ -1052,7 +1120,8 @@ private:
     }
 
     pending_image_.reset();
-    if (track_name_.has_value() && stamp < track_stamp_) {
+    if ((track_name_ && stamp < track_stamp_) ||
+        (simulate && stamp <= last_sim_frame_stamp_)) {
       return;
     }
 
@@ -1066,8 +1135,12 @@ private:
       ? (static_cast<double>(stamp) * 1e-9)
       : std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
     const bool prefer_outpost = (target_priority_ == "ENEMY_VEHICLE_THEN_OUTPOST");
-    const auto dets = detector_->detect(bgr, enemy_col, prefer_outpost);
-    const ArmorDetection * best = pick_target(dets, cur_yaw, cur_pitch);
+    if (simulate) {
+      last_sim_frame_stamp_ = stamp;
+      if (track_name_ && stamp - track_stamp_ > kTrackHoldNs) release();
+    }
+    const auto dets = detector_->detect(bgr, enemy_col, prefer_outpost, simulate);
+    const ArmorDetection * best = pick_target(dets, cur_yaw, cur_pitch, stamp);
 
     const std::string active_name = best ? best->name : (track_name_ ? *track_name_ : "");
     const std::string target_kind =
@@ -1205,6 +1278,10 @@ private:
   bool sim_state_seen_{false};
   bool sim_match_{false};
   bool sim_referee_seen_{false};
+  bool sim_team_known_{false};
+  int64_t last_sim_frame_stamp_{-1};
+  std::optional<PlateObservation> sim_observation_;
+  std::optional<PlateObservation> sim_challenger_;
   std::optional<std::pair<nlohmann::json, nlohmann::json>> identity_;
   std::deque<AttitudeSample> feedback_;
   sensor_msgs::msg::Image::ConstSharedPtr pending_image_;

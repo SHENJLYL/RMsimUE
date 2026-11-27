@@ -274,8 +274,8 @@ class RMSimLauncherApp(tk.Tk):
             ("pure_ros", "纯仿真 + 标准 ROS 2 桥（外部机器人/sentry_ws 接入）"),
             ("manual", "手动试驾（UE5 + MuJoCo，无 ROS 2）"),
             ("training", "静态靶射击训练（手动 + 弹道/靶场）"),
-            ("nav_baseline", "内置哨兵导航基线（Play-Navigation.cmd · RMUC 32.2s 曲率规划 MPC · 0 碰撞）"),
-            ("flanders", "弗兰德斯战雷原图（Play-WarThunder.cmd）"),
+            ("nav_baseline", "内置哨兵导航基线（RMUC 32.2s 曲率规划 MPC · 0 碰撞）"),
+            ("flanders", "弗兰德斯战雷原图（D3D11 渲染路径）"),
         ]
         for idx, (val, label) in enumerate(modes):
             rb = ttk.Radiobutton(
@@ -404,22 +404,29 @@ class RMSimLauncherApp(tk.Tk):
         self.match_preparation_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="赛前准备（P 键跳过：按1下10s倒计时 / 按2下直接开赛）",
+            text="赛前准备（P 键跳过）",
             variable=self.match_preparation_var,
             style="Card.TCheckbutton",
-        ).pack(side="left", padx=(0, 12))
+        ).pack(side="left", padx=(0, 10))
         self.match_auto_sentry_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="开赛后自动接入 sentry_ws",
+            text="自动接入 sentry_ws",
             variable=self.match_auto_sentry_var,
             style="Card.TCheckbutton",
-        ).pack(side="left", padx=(0, 12))
+        ).pack(side="left", padx=(0, 10))
         self.match_no_lumen_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="关闭主视角 Lumen（大幅提帧）",
+            text="关闭主视角 Lumen",
             variable=self.match_no_lumen_var,
+            style="Card.TCheckbutton",
+        ).pack(side="left", padx=(0, 10))
+        self.match_gpu_lidar_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            match_opt_row,
+            text="GPU 满血雷达（200k×2）",
+            variable=self.match_gpu_lidar_var,
             style="Card.TCheckbutton",
         ).pack(side="left")
         ttk.Label(
@@ -508,7 +515,7 @@ class RMSimLauncherApp(tk.Tk):
         )
 
         ttk.Label(cfg_frame, text="渲染比例:", style="Card.TLabel").grid(row=1, column=4, sticky="w", padx=6, pady=4)
-        self.scale_var = tk.StringVar(value="50")
+        self.scale_var = tk.StringVar(value="100")
         ttk.Combobox(cfg_frame, textvariable=self.scale_var, values=["50", "75", "100"], state="readonly", width=10).grid(
             row=1, column=5, sticky="ew", padx=6, pady=4
         )
@@ -837,6 +844,7 @@ class RMSimLauncherApp(tk.Tk):
             cmd += [
                 "-RosVehicleTeam", ros_team,
                 "-RosBridge", "-RosControl", "-RosAimControl", "-RosImu", "-RosLidar",
+                "-GpuLidar" if self.match_gpu_lidar_var.get() else "-CpuLidar",
                 "-RobotId", robot_id,
                 "-RosPort", port,
                 "-Domain", domain,
@@ -855,9 +863,10 @@ class RMSimLauncherApp(tk.Tk):
         self._log(f"红方 {roster['red'][0]['control']} · 蓝方 {roster['blue'][0]['control']} · 本机视角 {team}")
         self._log(f"编队清单已写入: {roster_path}")
         if ros_team == "both":
+            lidar_label = "GPU BVH 满血 200k×2" if self.match_gpu_lidar_var.get() else "CPU Chaos 0.25× (50k×2)"
             self._log(
                 f"双全自动 ROS 2 哨兵已启用：红方 port={port} domain={domain}，"
-                f"蓝方 port={int(port)+1} domain={int(domain)+1}（轻量化分帧自瞄相机）。"
+                f"蓝方 port={int(port)+1} domain={int(domain)+1}（1280×720@15Hz 相机 · {lidar_label}）。"
             )
         elif ros_team:
             self._log(f"ROS 2 参赛车辆为 {ros_team} ({robot_id})，定位从 {rmuc_map['team_spawns'][ros_team]} 出生点初始化。")
@@ -869,10 +878,51 @@ class RMSimLauncherApp(tk.Tk):
             self._launch_match()
             return
         if mode == "nav_baseline":
-            self._run_background(["cmd", "/c", str(REPO_ROOT / "Play-Navigation.cmd")], "内置导航基线 32.2s 曲率规划 MPC")
+            ue_root = os.environ.get("UE_ROOT", r"E:\simulator-tools\UE_5.8")
+            self._run_background(
+                [
+                    "powershell.exe",
+                    "-NoProfile",
+                    "-File",
+                    str(REPO_ROOT / "tools" / "environment" / "Start-NavigationConsole.ps1"),
+                    "-Scene",
+                    "rmuc2027",
+                    "-EngineRoot",
+                    ue_root,
+                    "-PhysicsBackend",
+                    "mujoco",
+                    "-SimStep",
+                    "0.005",
+                    "-PaceRealTime",
+                    "-ReplaceManualPreview",
+                    "-RenderScale",
+                    self.scale_var.get() or "100",
+                    "-ViewportHz",
+                    "120",
+                ],
+                "内置导航基线 32.2s 曲率规划 MPC",
+            )
             return
         if mode == "flanders":
-            self._run_background(["cmd", "/c", str(REPO_ROOT / "Play-WarThunder.cmd")], "弗兰德斯原图")
+            ue_root = os.environ.get("UE_ROOT", r"E:\simulator-tools\UE_5.8")
+            self._run_background(
+                [
+                    "powershell.exe",
+                    "-NoProfile",
+                    "-File",
+                    str(REPO_ROOT / "tools" / "unreal" / "Start-PreparedVehicle.ps1"),
+                    "-EngineRoot",
+                    ue_root,
+                    "-MapFile",
+                    str(REPO_ROOT / "assets" / "maps" / "wt_vlaanderen" / "map.json"),
+                    "-SpawnId",
+                    "default",
+                    "-GraphicsRhi",
+                    "D3D11",
+                    "-SingleShaderWorker",
+                ],
+                "弗兰德斯原图",
+            )
             return
 
         v = self._selected_vehicle()
@@ -985,9 +1035,12 @@ class RMSimLauncherApp(tk.Tk):
             stderr=subprocess.DEVNULL,
             check=False,
         )
-        stop_cmd = REPO_ROOT / "Stop-Navigation.cmd"
-        if stop_cmd.is_file():
-            subprocess.Popen(["cmd", "/c", str(stop_cmd)], cwd=str(REPO_ROOT))
+        stop_ps1 = REPO_ROOT / "tools" / "environment" / "Stop-NavigationConsole.ps1"
+        if stop_ps1.is_file():
+            subprocess.Popen(
+                ["powershell.exe", "-NoProfile", "-File", str(stop_ps1)],
+                cwd=str(REPO_ROOT),
+            )
         self._log("已停止全部 RMSim 仿真与导航进程。")
 
 

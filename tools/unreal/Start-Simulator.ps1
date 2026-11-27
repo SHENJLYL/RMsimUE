@@ -7,7 +7,7 @@ param(
     [ValidateSet('mujoco', 'chaos')][string]$PhysicsBackend = 'mujoco',
     [double]$SimStepSeconds = 0.005,
     [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz = 120,
-    [ValidateRange(50, 100)][int]$RenderScale = 50,
+    [ValidateRange(50, 100)][int]$RenderScale = 100,
     [switch]$NoLumen,
     [switch]$TrainingMode,
     [string]$MatchRoster = '',
@@ -20,6 +20,11 @@ param(
     [switch]$RosAimControl,
     [switch]$RosImu,
     [switch]$RosLidar,
+    [switch]$GpuLidar,
+    [switch]$CpuLidar,
+    [ValidateRange(0.1, 1.0)][double]$LidarRayScale,
+    [switch]$VerifyLidarQueries,
+    [switch]$ProfileSensorTiming,
     [int]$RosPort = 9451,
     [int]$Domain = 71,
     [double]$CameraHz = 0,
@@ -217,16 +222,18 @@ $ueArgs += '-SimRealTimePace'
 if ($ViewportHz -gt 0) {
     $ueArgs += ('-RMSimViewportHz=' + $ViewportHz.ToString([Globalization.CultureInfo]::InvariantCulture))
 }
-$execCmds = @()
-if ($RenderScale -ne 100) {
-    $execCmds += "r.ScreenPercentage $RenderScale"
-}
+$execCmds = @("r.ScreenPercentage $RenderScale")
 if ($NoLumen) {
     $execCmds += @(
         'r.DynamicGlobalIlluminationMethod 0',
         'r.ReflectionMethod 0',
         'r.Lumen.DiffuseIndirect.Allow 0',
-        'r.Lumen.Reflections.Allow 0'
+        'r.Lumen.Reflections.Allow 0',
+        'r.AntiAliasingMethod 4',
+        'r.Shadow.MaxResolution 1024',
+        'r.AmbientOcclusionLevels 0',
+        'r.SSR.Quality 0',
+        'r.BloomQuality 1'
     )
 }
 if ($execCmds.Count -gt 0) {
@@ -234,6 +241,14 @@ if ($execCmds.Count -gt 0) {
 }
 $ueArgs += @(Get-RMSimArenaRenderArguments -MapFile $mapLaunch.MapFile -Project $ue.Project)
 if ($TrainingMode) { $ueArgs += '-TrainingMode' }
+if ($GpuLidar -and $CpuLidar) { throw 'GpuLidar and CpuLidar cannot be combined.' }
+if ($GpuLidar) { $ueArgs += '-GpuLidar' }
+if ($CpuLidar) { $ueArgs += '-CpuLidar' }
+if ($PSBoundParameters.ContainsKey('LidarRayScale')) {
+    $ueArgs += ('-LidarRayScale=' + $LidarRayScale.ToString([Globalization.CultureInfo]::InvariantCulture))
+}
+if ($VerifyLidarQueries) { $ueArgs += '-VerifyLidarQueries' }
+if ($ProfileSensorTiming) { $ueArgs += '-ProfileSensorTiming' }
 if ($MatchRoster) { $ueArgs += ('-MatchRoster=' + (Quote-UnrealArgument $MatchRoster)) }
 if ($MatchPreparation) { $ueArgs += '-RefereePreparationSeconds=180' }
 $navigationFollowProfile = ''

@@ -10,6 +10,7 @@
 #include "RMUCRuneClientBridge.h"
 #include "RMUCSupplyRules.h"
 #include "RMUCFieldZones.h"
+#include "RMUCHighlandTraversal.h"
 #include "RMUCInfantryAI.h"
 #include "Rhine3DHud.h"
 #include "RMUCGameReferee.generated.h"
@@ -41,7 +42,8 @@ enum class ERMUCHpDeductionReason : uint8
     OverShootSpeed = 2,
     OverHeat = 3,
     OverPower = 4,
-    ArmorCollision = 5
+    ArmorCollision = 5,
+    Dart = 6 // Simulator-internal; legacy armor-damage protocol keeps its published values.
 };
 
 struct FRMUCMatchRobotSpawn
@@ -76,6 +78,9 @@ public:
         bool bHasAimTarget,
         bool bHasMuzzle);
     void DrawMatchHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS) const;
+    double GetOwnDartBlackoutRemaining() const;
+    bool DrawDartBlackout(AHUD* Hud, UCanvas* Canvas) const;
+    bool DartBlackoutMapScreenToWorld(const FVector2D& ViewportPixels, const FVector2D& Pixel, FVector2D& OutRos) const;
     TSharedRef<FJsonObject> State() const;
     TSharedRef<FJsonObject> StateFor(const AVehicleRig* Robot) const;
     FString RequestRosShot(AVehicleRig* Robot, const FTransform& MuzzleTransform);
@@ -110,14 +115,14 @@ public:
     bool IsFriendlyRed() const { return bFriendlyRed; }
     int32 GetOwnRobotNumber() const { return PrimaryRobotNumber; }
     int32 GetOwnHp() const { return Own().Hp; }
-    int32 GetOwnMaxHp() const { return PrimaryRobotNumber == 7 ? SentryMaxHp : InfantryMaxHp; }
-    double GetOwnHeatLimit() const { return PrimaryRobotNumber == 7 ? BarrelHeatLimit : InfantryHeatLimit; }
+    int32 GetOwnMaxHp() const { return OwnSlot() ? OwnSlot()->MaxHp() : SentryMaxHp; }
+    double GetOwnHeatLimit() const { return OwnSlot() ? OwnSlot()->HeatLimit() : BarrelHeatLimit; }
     bool IsOwnAlive() const { return GetOwnHp() > 0; }
     bool IsChassisPowered() const { return IsChassisPoweredFor(Rig); }
     bool IsShooterLocked() const { return Own().ShooterLocked(); }
     bool IsFpvVideoCut() const { return IsFpvVideoCutFor(Rig); }
     bool RequestInstantRespawn();
-    int32 GetInstantRespawnCost() const { return 50 + Own().OwnBuybackCount * 50; }
+    int32 GetInstantRespawnCost() const;
     AVehicleRig* GetEnemyRig() const { return EnemyRig; }
 #if WITH_DEV_AUTOMATION_TESTS
     AActor* GetRuneProbeCamera() const;
@@ -167,7 +172,6 @@ private:
     struct FVehicleArmorLight
     {
         TWeakObjectPtr<UMaterialInstanceDynamic> NativeBars;
-        TArray<TWeakObjectPtr<class UPointLightComponent>> SceneLights;
     };
     FVehicleArmorLight OwnArmor, EnemyArmor;
     UPROPERTY() UTexture2D* SentrySticker = nullptr;
@@ -209,10 +213,6 @@ private:
     bool bFriendlyRed = true; // true = Red, false = Blue
     int32 PrimaryRobotNumber = 7; // 7 = Sentry, 3/4 = Infantry
     static constexpr int32 SentryMaxHp = 400;
-    static constexpr int32 InfantryMaxHp = 200;
-    static constexpr double InfantryHeatLimit = 200.0;
-    static constexpr double InfantryCoolingPerSec = 20.0;
-    static constexpr double InfantryPowerLimitW = 60.0;
     using FieldTeam = FRMUCFieldRules::Team;
     static constexpr int32 OutpostMaxHp = FRMUCFieldRules::OutpostMaxHp;
     static constexpr int32 BaseMaxHp = FRMUCFieldRules::BaseMaxHp;
@@ -255,11 +255,14 @@ private:
         bool bTargetScreenshot = false, bProgressScreenshot = false, bActiveScreenshot = false;
     } RuneLifecycleProbe;
     void StepRuneLifecycleProbe();
+    void StepAmmoLedgerProbe();
+    void StepFieldBoundaryProbe() const;
     bool VerifyArmorPresentation(const FString& Directory);
     bool bLogisticsProbeTriggered = false;
     bool bOutpostRebuildProbeTriggered = false;
     bool bTacticalHpFixtureTriggered = false;
     int32 TacticalFixtureStage = 0;
+    int32 AmmoLedgerProbeStage = 0;
 #endif
 
     // Full-field HP (RMUC 2027 V1.0.0 Ground Roster: 1 Heavy=400, 3/4 Infantry=200, 7 Auto Sentry=400; 2 Engineer=0 legacy compat only)
@@ -267,7 +270,6 @@ private:
     int32 Blue1Hp = 400, Blue2Hp = 0, Blue3Hp = 200, Blue4Hp = 200;
 
     // Own robot performance & ballistics (RMUC 2027 V1.0.0 Auto Sentry: 260 Heat / 30/s Cooling / <=25 m/s)
-    int32 RobotLevel = 1;
     double BarrelHeatLimit = 260.0;
     double BarrelCoolingPerSec = 30.0;
     double HeatPerShot = 10.0;
@@ -295,9 +297,11 @@ private:
     double NextHudHitSoundSeconds = 0.0;
 
     bool bBigEnergyMode = false;
+    enum class EAmmoPurchaseRequest { Manual, Local, Remote };
     struct FRMUCCompetitorState
     {
         int32 Hp = SentryMaxHp;
+        int32 ExperienceTenths = 0;
         double BarrelHeat = 0.0;
         double NextShotTime = 0.0;
         int32 ProjectileAllowance17mm = 300;
@@ -314,12 +318,15 @@ private:
         double OverspeedLockTimer = 0.0;
         bool bOverspeedMatchLocked = false;
         double RespawnTimer = 0.0;
+        double RespawnBaseRequirement = 10.0;
         double OwnRespawnDuration = 10.0;
         int32 OwnBuybackCount = 0;
+        bool bNaturalRespawnWeak = false;
         double WeakTimer = 0.0;
         double InvulnerableTimer = 0.0;
+        double BuybackPowerTimer = 0.0;
         FRMUCSupplyRules OwnLogistics;
-        std::optional<FRMUCSupplyRules::EPurchaseMode> AmmoPurchaseRequest;
+        std::optional<EAmmoPurchaseRequest> AmmoPurchaseRequest;
         uint8 LastArmorId = 0;
         ERMUCHpDeductionReason LastDeductionReason = ERMUCHpDeductionReason::ArmorHit;
         bool bHpDeducedThisStep = false;
@@ -352,10 +359,11 @@ private:
         bool bRfidSupplyExchange = false;
         bool bRfidCenterGain = false;
         double EnergyBuffTimer = 0.0;
+        bool IsWeak() const { return bNaturalRespawnWeak || WeakTimer > 0.0; }
         bool ShooterLocked() const
         {
             return Hp <= 0 || bOverheatLocked || bOverheatMatchLocked || bOverspeedMatchLocked ||
-                OverspeedLockTimer > 0.0 || WeakTimer > 0.0;
+                OverspeedLockTimer > 0.0 || IsWeak();
         }
     };
 
@@ -368,25 +376,33 @@ private:
         TArray<UMaterialInstanceDynamic*> LedMats;
         FVehicleArmorLight Armor;
         FRMUCFieldContactHold ContactHold;
+        FRMUCHighlandTraversal HighlandTraversal;
         FRMUCFieldPoints PhysicalContacts;
+        bool bSupplyVisualTagVisible = false;
+        double SupplyVisualTagExpiry = 0.0;
         FRMUCFieldPointEffects PointEffects;
         bool bAiControlled = false;
         FRMUCInfantryAI InfantryAI;
 
         bool IsSentry() const { return RobotNumber == 7; }
-        int32 MaxHp() const { return bAiControlled ? FRMUCInfantryAI::FullHp : IsSentry() ? SentryMaxHp : InfantryMaxHp; }
-        int32 InitialAmmo() const { return IsSentry() ? FRMUCSupplyRules::InitialAllowance : 0; }
-        double HeatLimit() const { return bAiControlled ? FRMUCInfantryAI::HeatLimit : IsSentry() ? 260.0 : InfantryHeatLimit; }
-        double BaseCoolingPerSec() const
+        bool IsInfantry() const { return RobotNumber == 3 || RobotNumber == 4; }
+        int32 Level() const
         {
-            return bAiControlled ? FRMUCInfantryAI::CoolingPerSecond : IsSentry()
-                ? State.SimStance.Modifiers().BarrelCoolingPerSec : InfantryCoolingPerSec;
+            static constexpr int32 Thresholds[]{5500, 11000, 16500, 22000, 27500, 33000, 38500, 44000, 50000};
+            return IsInfantry() ? 1 + int32(std::upper_bound(std::begin(Thresholds),
+                std::end(Thresholds), State.ExperienceTenths) - std::begin(Thresholds)) : 1;
         }
+        // Default virtual infantry profile: HP chassis and cooling-priority turret.
+        int32 MaxHp() const { return bAiControlled ? FRMUCInfantryAI::FullHp : IsSentry() ? SentryMaxHp : FMath::Min(400, 175 + Level() * 25); }
+        int32 InitialAmmo() const { return IsSentry() ? FRMUCSupplyRules::InitialAllowance : 0; }
+        double HeatLimit() const { return bAiControlled ? FRMUCInfantryAI::HeatLimit : IsSentry() ? 260.0 : Level() == 10 ? 120.0 : 32.0 + 8.0 * Level(); }
+        double BaseCoolingPerSec() const { return bAiControlled ? FRMUCInfantryAI::CoolingPerSecond : IsSentry() ? State.SimStance.Modifiers().BarrelCoolingPerSec : 10.0 + 2.0 * Level(); }
         double BasePowerLimitW() const
         {
-            return bAiControlled ? FRMUCInfantryAI::ChassisPowerW : IsSentry()
-                ? State.SimStance.Modifiers().ChassisPowerLimitW : InfantryPowerLimitW;
+            static constexpr double Limits[]{45, 50, 55, 60, 65, 70, 75, 80, 90, 100};
+            return bAiControlled ? FRMUCInfantryAI::ChassisPowerW : IsSentry() ? State.SimStance.Modifiers().ChassisPowerLimitW : Limits[Level() - 1];
         }
+        double PowerLimitW() const { return FRMUCRespawnRules::PowerLimit(BasePowerLimitW(), State.BuybackPowerTimer); }
         int32 ProtocolRobotId() const { return (Team == FieldTeam::Red ? 0 : 100) + RobotNumber; }
         FString DisplayName() const
         {
@@ -417,8 +433,8 @@ private:
 #endif
     std::array<FRMUCCompetitorState, 2> Competitors;
     std::array<int32, 2> TeamGold = { FRMUCSupplyRules::InitialGold, FRMUCSupplyRules::InitialGold };
-    std::array<int32, 2> TeamInfantryFreeAmmoClaimed = { 0, 0 };
-    std::array<int32, 2> TeamInfantryClaimedMinutes = { 0, 0 };
+    std::array<int32, 2> TeamPurchasedAmmo17mm{};
+    std::array<int32, 2> TeamInfantryFreeAmmoClaimed{};
     bool bPhysicalMatch = false;
     double EnemyPatrolPhase = 0.0;
 
@@ -468,9 +484,17 @@ private:
     bool IsHudFinalCountdown() const;
     int32 HudClockSeconds() const;
     void StepFieldDevices(double DeltaSeconds);
+#if WITH_DEV_AUTOMATION_TESTS
+    void StepDartRewardProbe();
+#endif
     void StepFieldObserver(double DeltaSeconds);
-    FRMUCFieldPoints ObserveFieldPoints(const AVehicleRig& Vehicle) const;
-    TSharedRef<FJsonObject> FieldDeviceState() const;
+    FHitResult TraceFieldReaderSurface(const AVehicleRig& Vehicle, const FVector& Reader) const;
+    FRMUCFieldPoints ObserveFieldPoints(const AVehicleRig& Vehicle, ERMUCHighlandCard* TraversalCard = nullptr,
+        FVector* ReaderSurfaceM = nullptr) const;
+    void InstallSupplyVisualTags();
+    bool IsSupplyVisualTagVisible(const AVehicleRig& Vehicle, FieldTeam Team, const FVector* ReaderSurfaceM = nullptr) const;
+    std::array<TWeakObjectPtr<USceneComponent>, 2> SupplyTagMeshes;
+    TSharedRef<FJsonObject> FieldDeviceState(const FMatchRobotSlot* ViewSlot) const;
     void StepFieldControls(double DeltaSeconds, const std::array<FRMUCFieldRules::FSiteActivation, 2>& Activation = {});
     int32 ApplyFieldStructureHit(bool bTargetRed, bool bOutpost, bool bAttackerRed, int32 Damage, bool bDart = false);
     static bool ClassifyFieldStructureHit(const FHitResult& Hit, const AStaticMeshActor* BaseCollision,
@@ -478,12 +502,18 @@ private:
         const UPrimitiveComponent* CentreVisibility);
     static int32 ClassifyVehicleArmorHit(const FHitResult& Hit, const AVehicleRig* Vehicle);
     void StepDynamicArenaAndEnemy(double DeltaSeconds);
+    void StepRespawnSlot(FMatchRobotSlot& Slot, double DeltaSeconds);
+    void ClearWeakAtGainCard(FMatchRobotSlot& Slot);
+#if WITH_DEV_AUTOMATION_TESTS
+    void StepRespawnParityProbe();
+#endif
     void StepRfidAndBuffsSlot(FMatchRobotSlot& Slot, double DeltaSeconds);
     void StepPowerAndHeatSlot(FMatchRobotSlot& Slot, double DeltaSeconds);
     void RespawnSlot(FMatchRobotSlot& Slot, bool bBuyback);
     void StepRfidAndBuffs(FieldTeam Team, double DeltaSeconds);
     void StepPowerAndHeat(FieldTeam Team, double DeltaSeconds);
     void RespawnCompetitor(FieldTeam Team, bool bBuyback);
+    static void RespawnState(FRMUCCompetitorState& Record, int32 MaxHp, bool bBuyback);
     void FireProjectile(const FTransform& MuzzleTransform);
     void StepProjectiles(double DeltaSeconds);
     EProjectileHit ApplyProjectileDamage(const FProjectile& Pellet, const FHitResult& Hit, double NormalSpeedCmS);
@@ -498,7 +528,7 @@ private:
     void PushCombatBroadcast(int32 ActorTeam, const FString& ActorVehicle, const FString& Action,
         int32 TargetTeam, const FString& TargetName, double BannerDurationSec = 0.0);
     FLinearColor TeamLedColor(bool bIsRed, bool bAlive, double FlashTimer) const;
-    void DrawTacticalMinimap(AHUD* Hud, UCanvas* Canvas, float X, float Y, float W, float H) const;
+    void DrawTacticalMinimap(AHUD* Hud, UCanvas* Canvas, float X, float Y, float W, float H, bool bShowRobotPositions = true) const;
     void DrawRhineLab3DHud(AHUD* Hud, UCanvas* Canvas, double GyroRadS) const;
     const TCHAR* OutpostControlPhase(FieldTeam Site) const;
 };

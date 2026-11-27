@@ -10,8 +10,9 @@ namespace
 {
 constexpr const TCHAR* ZoneKindNames[] = {
     TEXT("supply"), TEXT("base"), TEXT("outpost"),
-    TEXT("fortress"), TEXT("central_highland"), TEXT("vantage")
+    TEXT("fortress"), TEXT("central_highland"), TEXT("vantage"), TEXT("highland_lower")
 };
+constexpr int32 ContinuousZoneKinds = 6;
 
 bool ReadCoordinate(const TSharedPtr<FJsonValue>& Value, double& Coordinate)
 {
@@ -74,7 +75,7 @@ bool InsideRing(const TArray<FVector2D>& Ring, const FVector2D& Point)
     return bInside;
 }
 
-bool ReadZone(const FJsonObject& Object, FRMUCFieldZone& Zone)
+bool ReadZone(const FJsonObject& Object, FRMUCFieldZone& Zone, bool bInterruption)
 {
     FString Kind;
     FString Side;
@@ -98,11 +99,12 @@ bool ReadZone(const FJsonObject& Object, FRMUCFieldZone& Zone)
         return false;
     }
     const TCHAR* const* Match = Algo::FindByPredicate(ZoneKindNames, [&Kind](const TCHAR* Name) { return Kind == Name; });
-    if (!Match)
+    if (!Match && !bInterruption)
     {
         return false;
     }
-    Zone.Kind = static_cast<ERMUCFieldZoneKind>(Match - ZoneKindNames);
+    Zone.Kind = bInterruption ? ERMUCFieldZoneKind::TraversalInterruption :
+        static_cast<ERMUCFieldZoneKind>(Match - ZoneKindNames);
     Zone.Side = Side == TEXT("red") ? ERMUCFieldZoneSide::Red : ERMUCFieldZoneSide::Blue;
     for (const auto& Hole : *Holes)
     {
@@ -142,9 +144,16 @@ const FRMUCFieldZone* FRMUCFieldZones::Find(ERMUCFieldZoneKind Kind, ERMUCFieldZ
         [Kind, Side](const FRMUCFieldZone& Zone) { return Zone.Kind == Kind && Zone.Side == Side; });
 }
 
+bool FRMUCFieldZones::HasTraversalInterruption(const FVector& PositionM) const
+{
+    return TraversalInterruptions.ContainsByPredicate(
+        [&PositionM](const FRMUCFieldZone& Zone) { return Zone.Contains(PositionM); });
+}
+
 bool FRMUCFieldZones::Load(const FString& Filename, FString& Error)
 {
     Zones.Reset();
+    TraversalInterruptions.Reset();
     Error.Reset();
     auto Fail = [&Error, &Filename](const FString& Problem)
     {
@@ -170,25 +179,52 @@ bool FRMUCFieldZones::Load(const FString& Filename, FString& Error)
         || !Root->TryGetObjectField(TEXT("source"), Source) || !Source->IsValid()
         || !(*Source)->TryGetStringField(TEXT("source_step_sha256"), SourceStepDigest)
         || SourceStepDigest != TEXT("a5ad3ede3b7674fc98f2e73b71717216383cb2b4b5dcdbe900c2038918bea8e0")
-        || !Root->TryGetArrayField(TEXT("zones"), Values) || Values->Num() != 2 * UE_ARRAY_COUNT(ZoneKindNames))
+        || !Root->TryGetArrayField(TEXT("zones"), Values) || Values->Num() != 2 * ContinuousZoneKinds)
     {
         return Fail(TEXT("invalid manifest schema, frame, source identity or zone count"));
     }
 
     TArray<FRMUCFieldZone> Loaded;
+    TArray<FRMUCFieldZone> Interruptions;
     TSet<FString> Ids;
-    for (const auto& Value : *Values)
+    const auto LoadZones = [&](const TArray<TSharedPtr<FJsonValue>>& Entries, TArray<FRMUCFieldZone>& Result,
+        ERMUCFieldZoneKind First, ERMUCFieldZoneKind Last)
     {
-        const TSharedPtr<FJsonObject>* Object = nullptr;
-        FRMUCFieldZone Zone;
-        if (!Value.IsValid() || !Value->TryGetObject(Object) || !Object->IsValid() || !ReadZone(**Object, Zone)
-            || Ids.Contains(Zone.Id))
+        for (const auto& Value : Entries)
         {
-            return Fail(FString::Printf(TEXT("invalid or duplicate zone at index %d"), Loaded.Num()));
+            const TSharedPtr<FJsonObject>* Object = nullptr;
+            FRMUCFieldZone Zone;
+            if (!Value.IsValid() || !Value->TryGetObject(Object) || !Object->IsValid()
+                || !ReadZone(**Object, Zone, First == ERMUCFieldZoneKind::TraversalInterruption)
+                || Zone.Kind < First || Zone.Kind > Last || Ids.Contains(Zone.Id))
+            {
+                return false;
+            }
+            Ids.Add(Zone.Id);
+            Result.Add(MoveTemp(Zone));
         }
-        Ids.Add(Zone.Id);
-        Loaded.Add(MoveTemp(Zone));
+        return true;
+    };
+    if (!LoadZones(*Values, Loaded, ERMUCFieldZoneKind::Supply, ERMUCFieldZoneKind::Vantage))
+        return Fail(TEXT("invalid or duplicate persistent zone"));
+
+    if (Root->HasField(TEXT("highland_traversal")))
+    {
+        const TSharedPtr<FJsonObject>* Traversal = nullptr;
+        const TArray<TSharedPtr<FJsonValue>>* Lower = nullptr;
+        const TArray<TSharedPtr<FJsonValue>>* Other = nullptr;
+        const auto LowerKind = ERMUCFieldZoneKind::HighlandLower;
+        const auto OtherKind = ERMUCFieldZoneKind::TraversalInterruption;
+        if (!Root->TryGetObjectField(TEXT("highland_traversal"), Traversal) || !Traversal->IsValid()
+            || !(*Traversal)->TryGetArrayField(TEXT("lower_zones"), Lower) || Lower->Num() != 2
+            || !(*Traversal)->TryGetArrayField(TEXT("interruption_zones"), Other) || Other->Num() != 24
+            || !LoadZones(*Lower, Loaded, LowerKind, LowerKind)
+            || !LoadZones(*Other, Interruptions, OtherKind, OtherKind))
+        {
+            return Fail(TEXT("invalid or duplicate highland traversal zone"));
+        }
     }
     Zones = MoveTemp(Loaded);
+    TraversalInterruptions = MoveTemp(Interruptions);
     return true;
 }

@@ -195,7 +195,7 @@ class BridgeNode(Node):
         self.imu.observe(state)
         self.lidar.observe(state,pixels)
         self.referee.observe(state)
-        if state['v']==2:pixels=pixels[:state['camera_bytes']]
+        camera_bytes = state['camera_bytes'] if state['v'] == 2 else len(pixels)
         self.states += 1
         truth = PoseStamped()
         stamp(truth.header.stamp, state['sim_time_ns'])
@@ -223,7 +223,7 @@ class BridgeNode(Node):
         k = info.k
         info.p = [k[0], 0., k[2], 0., 0., k[4], k[5], 0., 0., 0., 1., 0.]
         self.info_pub.publish(info)
-        if pixels:
+        if camera_bytes:
             image = Image()
             stamp(image.header.stamp, camera['stamp_ns'])
             image.header.frame_id = camera['frame_id']
@@ -231,7 +231,9 @@ class BridgeNode(Node):
             image.encoding, image.is_bigendian, image.step = 'rgb8', 0, image.width*3
             # The generated ROS setter validates Python sequences per element;
             # byte storage is already range-checked by its type and the wire length gate.
-            image.data = array.array('B', pixels)
+            rgb = array.array('B')
+            rgb.frombytes(memoryview(pixels)[:camera_bytes])
+            image.data = rgb
             self.image_pub.publish(image)
             self.images += 1
         aiming=state.get('aim')

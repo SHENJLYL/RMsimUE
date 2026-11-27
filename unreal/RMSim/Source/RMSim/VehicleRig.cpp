@@ -275,6 +275,7 @@ bool AVehicleRig::AddSensor(const FObject& Sensor, FString& Error)
     Capture->TextureTarget = Target;
     AddInstanceComponent(Capture); Capture->RegisterComponent();
     Cameras.Add(Id, Capture);
+    CameraSensorFovDegrees.Add(Id, FMath::RadiansToDegrees(Fov));
     return true;
 }
 
@@ -637,6 +638,7 @@ bool AVehicleRig::GetSensorParentWorld(const FString& Parent,FTransform& Pose) c
 
 void AVehicleRig::EnableArticulatedSensorQueries()
 {
+    bArticulatedSensorQueries = true;
     // Dedicated query-only surface follows each actual visual joint. Physical contact
     // bodies and their response to vehicles/maps retain their existing settings.
     for(auto* Body:ContactBodies)if(IsValid(Body))Body->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Ignore);
@@ -659,7 +661,10 @@ TSharedRef<FJsonObject> AVehicleRig::GetSensorJointState(int64 Stamp) const
 {
     auto J=MakeShared<FJsonObject>();FTransform World;
     if(!GetSensorParentWorld(TEXT("yaw_link"),World))return J;
-    const FTransform Local=World.GetRelativeTransform(GetActorTransform());
+    const FTransform BaseWorld = (!MujocoRootBodyName.IsEmpty() && Links.Contains(MujocoRootBodyName) && IsValid(Links[MujocoRootBodyName]))
+        ? Links[MujocoRootBodyName]->GetComponentTransform()
+        : GetActorTransform();
+    const FTransform Local=World.GetRelativeTransform(BaseWorld);
     const FVector P=Local.GetLocation()/100;const FQuat Q=Local.GetRotation();
     J->SetStringField(TEXT("parent_frame_id"),VehicleId+TEXT("/base_link"));
     J->SetStringField(TEXT("frame_id"),VehicleId+TEXT("/yaw_link"));J->SetNumberField(TEXT("stamp_ns"),double(Stamp));

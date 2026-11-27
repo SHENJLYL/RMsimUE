@@ -45,9 +45,26 @@ const TCHAR* RuneStateName(FRMUCRuneRules::Phase State)
 }
 }
 
-FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle) const
+FHitResult ARMUCGameReferee::TraceFieldReaderSurface(const AVehicleRig& Vehicle, const FVector& Reader) const
+{
+    FCollisionQueryParams Params(SCENE_QUERY_STAT(RMSimRFIDSurface), true, &Vehicle);
+    Params.AddIgnoredActor(this);
+    if (IsValid(Rig)) Params.AddIgnoredActor(Rig);
+    if (IsValid(EnemyRig)) Params.AddIgnoredActor(EnemyRig);
+    for (const FMatchRobotSlot& Slot : MatchRobots)
+        if (AVehicleRig* V = Slot.Vehicle.Get(); IsValid(V)) Params.AddIgnoredActor(V);
+    FHitResult Ground;
+    GetWorld()->LineTraceSingleByObjectType(Ground, Reader, Reader - FVector(0., 0., 18.),
+        FCollisionObjectQueryParams(ECC_WorldStatic), Params);
+    return Ground;
+}
+
+FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle, ERMUCHighlandCard* TraversalCard,
+    FVector* ReaderSurfaceM) const
 {
     FRMUCFieldPoints Result;
+    using Card = ERMUCHighlandCard;
+    if (TraversalCard) *TraversalCard = Card::None;
     if (!FieldZones.IsLoaded() || !GetWorld()) return Result;
 
     // The diagram-derived reader is under the chassis, 8 cm above the visual wheel bottoms.
@@ -57,18 +74,17 @@ FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle
     if (Body.IsValid)
     {
         const FVector Reader = Vehicle.GetActorTransform().TransformPosition(FVector(0., 0., Body.Min.Z + 8.));
-        FCollisionQueryParams Params(SCENE_QUERY_STAT(RMSimRFIDSurface), true, &Vehicle);
-        Params.AddIgnoredActor(this);
-        if (IsValid(Rig)) Params.AddIgnoredActor(Rig);
-        if (IsValid(EnemyRig)) Params.AddIgnoredActor(EnemyRig);
-        for (const FMatchRobotSlot& Slot : MatchRobots)
-            if (AVehicleRig* V = Slot.Vehicle.Get(); IsValid(V)) Params.AddIgnoredActor(V);
-        GetWorld()->LineTraceSingleByObjectType(Ground, Reader, Reader - FVector(0., 0., 18.),
-            FCollisionObjectQueryParams(ECC_WorldStatic), Params);
+        Ground = TraceFieldReaderSurface(Vehicle, Reader);
     }
     const bool bHasSurface = Ground.bBlockingHit && Ground.ImpactNormal.Z >= .65;
     const FVector PositionM(Ground.ImpactPoint.X * .01, -Ground.ImpactPoint.Y * .01, Ground.ImpactPoint.Z * .01);
+    if (ReaderSurfaceM && bHasSurface) *ReaderSurfaceM = PositionM;
 
+    Card Observed = Card::None;
+    const auto RecordCard = [&Observed](Card Detected)
+    {
+        Observed = Observed == Card::None ? Detected : Card::Other;
+    };
     for (int32 Team = 0; Team < 2; ++Team)
     {
         const auto Side = Team == 0 ? ERMUCFieldZoneSide::Red : ERMUCFieldZoneSide::Blue;
@@ -84,7 +100,17 @@ FRMUCFieldPoints ARMUCGameReferee::ObserveFieldPoints(const AVehicleRig& Vehicle
         Site.Fortress = Contact(ERMUCFieldZoneKind::Fortress);
         Site.CentralHighland = Contact(ERMUCFieldZoneKind::CentralHighland);
         Site.Vantage = Contact(ERMUCFieldZoneKind::Vantage);
+        if (!TraversalCard || !bHasSurface) continue;
+        if (Contact(ERMUCFieldZoneKind::HighlandLower).value_or(false))
+            RecordCard(Team == 0 ? Card::RedLower : Card::BlueLower);
+        if (Site.CentralHighland.value_or(false))
+            RecordCard(Team == 0 ? Card::RedUpper : Card::BlueUpper);
+        if (Site.Supply.value_or(false) || Site.Base.value_or(false) || Site.Outpost.value_or(false)
+            || Site.Fortress.value_or(false) || Site.Vantage.value_or(false))
+            RecordCard(Card::Other);
     }
+    if (TraversalCard)
+        *TraversalCard = bHasSurface && FieldZones.HasTraversalInterruption(PositionM) ? Card::Other : Observed;
     return Result;
 }
 
@@ -175,12 +201,15 @@ void ARMUCGameReferee::CycleOwnDartTarget()
 bool ARMUCGameReferee::ConfirmDartDetector(bool bRed, ERMUCDartTarget Target)
 {
     if (GameProgress != ERMUCGameProgress::Running) return false;
-    FRMUCDartStation& Station = bRed ? RedDart : BlueDart;
-    const FRMUCDartHitResult Hit = Station.SubmitConfirmedHit(Target);
-    if (!Hit.Accepted) return false;
     const FieldTeam Sender = bRed ? FieldTeam::Red : FieldTeam::Blue;
     const FieldTeam Site = FRMUCFieldRules::Other(Sender);
     const bool bOutpost = Target == ERMUCDartTarget::Outpost;
+    const auto& Defending = FieldRules.Get(Site);
+    if (bOutpost ? Defending.OutpostHp <= 0 || Defending.OutpostOwner == Sender : Defending.BaseHp <= 0)
+        return false;
+    FRMUCDartStation& Station = bRed ? RedDart : BlueDart;
+    const FRMUCDartHitResult Hit = Station.SubmitConfirmedHit(Target);
+    if (!Hit.Accepted) return false;
     const int32 Sign = bRed ? 1 : -1;
     const TCHAR* Shooter = bRed ? TEXT("红方飞镖") : TEXT("蓝方飞镖");
     const FString Victim = FString::Printf(TEXT("%s%s"), bRed ? TEXT("蓝方") : TEXT("红方"),
@@ -188,16 +217,54 @@ bool ARMUCGameReferee::ConfirmDartDetector(bool bRed, ERMUCDartTarget Target)
     if (Hit.OpensBaseArmor && FieldRules.OpenBaseArmor(Site))
         PushCombatBroadcast(Sign, Shooter, TEXT("展开护甲"), -Sign, Victim, 3.5);
 
-    const double Defence = RuneRules.Get(!bRed).DefencePercent / 100.;
-    const int32 Lost = ApplyFieldStructureHit(!bRed, bOutpost, bRed,
-        FMath::RoundToInt(Hit.Damage * (1. - Defence)), true);
-    RecordHit(Sender, Lost);
+    if (Hit.ClearsExistingBuffs) RuneRules.ClearActiveBuff(!bRed);
+    else if (Hit.ExistingBuffSuppressionSeconds > 0.)
+        RuneRules.SuppressActiveBuff(!bRed, Hit.ExistingBuffSuppressionSeconds);
+
+    TArray<FMatchRobotSlot*, TInlineAllocator<4>> Infantry;
+    int32 GroundHpLost = 0;
+    for (FMatchRobotSlot& Slot : MatchRobots)
+    {
+        if (!IsValid(Slot.Vehicle.Get()) || Slot.State.Hp <= 0) continue;
+        if (Slot.Team == Sender)
+        {
+            if (Hit.InfantryExperience > 0 && Slot.IsInfantry()) Infantry.Add(&Slot);
+            continue;
+        }
+        if (Hit.ClearsExistingBuffs) Slot.HighlandTraversal.ClearActiveBuff();
+        else if (Hit.ExistingBuffSuppressionSeconds > 0.)
+            Slot.HighlandTraversal.SuppressActiveBuff(MatchElapsedSeconds, Hit.ExistingBuffSuppressionSeconds);
+        if (Hit.GroundRobotHpPercent > 0)
+        {
+            const int32 Before = Slot.State.Hp;
+            ApplyRobotDamage(Slot, nullptr, 0, FMath::RoundToInt(Slot.MaxHp() * Hit.GroundRobotHpPercent / 100.),
+                ERMUCHpDeductionReason::Dart);
+            GroundHpLost += Before - Slot.State.Hp;
+        }
+    }
+    if (!Infantry.IsEmpty())
+    {
+        const int32 BaseExperience = Hit.InfantryExperience * 10;
+        const int32 TotalExperience = BaseExperience + RuneRules.AwardExperienceBonus(bRed, BaseExperience);
+        const int32 Share = TotalExperience / Infantry.Num();
+        for (FMatchRobotSlot* Slot : Infantry)
+        {
+            const int32 BeforeMax = Slot->MaxHp();
+            Slot->State.ExperienceTenths += Share;
+            Slot->State.Hp += Slot->MaxHp() - BeforeMax;
+        }
+    }
+
+    const int32 Lost = ApplyFieldStructureHit(!bRed, bOutpost, bRed, Hit.Damage, true);
+    RecordHit(Sender, Lost + GroundHpLost);
+    SyncSharedTeamState();
     PushCombatBroadcast(Sign, Shooter, FString::Printf(TEXT("命中 -%d HP"), Lost), -Sign, Victim, 4.);
     if (Hit.SuppressesGainPoint)
         PushCombatBroadcast(Sign, Shooter, FString::Printf(TEXT("压制增益点 %.0f 秒"), Hit.SuppressionSeconds), -Sign, Victim, 4.);
-    UE_LOG(LogRMSim, Display, TEXT("RMUC_DART_SETTLED team=%s target=%s lost=%d nominal=%d shield=%d armor=%d suppressed_s=%.1f time=%.3f"),
+    UE_LOG(LogRMSim, Display, TEXT("RMUC_DART_SETTLED team=%s target=%s lost=%d nominal=%d shield=%d armor=%d suppressed_s=%.1f time=%.3f ground_lost=%d infantry=%d xp=%d blackout_s=%.1f"),
         bRed ? TEXT("red") : TEXT("blue"), DartTargetName(Target), Lost, Hit.Damage,
-        FieldRules.BaseProtected(Site), FieldRules.Get(Site).bBaseArmorOpen, Hit.SuppressionSeconds, MatchElapsedSeconds);
+        FieldRules.BaseProtected(Site), FieldRules.Get(Site).bBaseArmorOpen, Hit.SuppressionSeconds,
+        MatchElapsedSeconds, GroundHpLost, Infantry.Num(), Hit.InfantryExperience, Station.OpponentBlackoutRemaining());
     return true;
 }
 
@@ -235,6 +302,9 @@ void ARMUCGameReferee::StepFieldDevices(double DeltaSeconds)
     StepDartFlights();
     StepFieldObserver(DeltaSeconds);
 #if WITH_DEV_AUTOMATION_TESTS
+    StepDartRewardProbe();
+    StepAmmoLedgerProbe();
+    StepFieldBoundaryProbe();
     static const double TacticalHpAt = []()
     {
         double Seconds = -1.0;
@@ -300,13 +370,32 @@ void ARMUCGameReferee::StepFieldDevices(double DeltaSeconds)
         ApplyFieldStructureHit(!bFriendlyRed, true, bFriendlyRed, OutpostMaxHp);
     }
     static const bool bLogisticsProbe = FParse::Param(FCommandLine::Get(), TEXT("RefereeLogisticsSelfTest"));
+    const FMatchRobotSlot* LocalSlot = OwnSlot();
     if (bLogisticsProbe && !bLogisticsProbeTriggered && MatchElapsedSeconds >= .5 &&
-        FieldPointEffects[bFriendlyRed ? 0 : 1].bSupply)
+        LocalSlot && LocalSlot->PointEffects.bSupply)
     {
         bLogisticsProbeTriggered = true;
         InjectSelfArmorHit(0, 120);
         RequestOwnAmmoPurchase();
         FieldRules.OpenBaseArmor(bFriendlyRed ? FieldTeam::Red : FieldTeam::Blue);
+    }
+    static const bool bAmmoExchangeProbe = FParse::Param(FCommandLine::Get(), TEXT("RefereeAmmoExchangeProbe"));
+    static const bool bVisionExchangeProbe = FParse::Param(FCommandLine::Get(), TEXT("RefereeSupplyVisionProbe"));
+    if (bAmmoExchangeProbe && !bLogisticsProbeTriggered && GameProgress == ERMUCGameProgress::Running &&
+        MatchElapsedSeconds >= .5 && LocalSlot && (!bVisionExchangeProbe || LocalSlot->bSupplyVisualTagVisible))
+    {
+        bLogisticsProbeTriggered = true;
+        if (!LocalSlot->IsSentry() || RosCompetitors.IsEmpty())
+        {
+            RequestOwnAmmoPurchase();
+        }
+        for (const AVehicleRig* Vehicle : RosCompetitors)
+        {
+            if (FMatchRobotSlot* Slot = FindSlot(Vehicle); Slot && Slot->IsSentry())
+            {
+                Slot->State.ProjectileAllowance17mm = 20;
+            }
+        }
     }
 #endif
 
@@ -343,6 +432,72 @@ void ARMUCGameReferee::StepFieldDevices(double DeltaSeconds)
     bBigEnergyMode = MatchElapsedSeconds >= 180.;
 }
 
+#if WITH_DEV_AUTOMATION_TESTS
+void ARMUCGameReferee::StepAmmoLedgerProbe()
+{
+    static const bool bEnabled = FParse::Param(FCommandLine::Get(), TEXT("RefereeAmmoLedgerProbe"));
+    if (!bEnabled || AmmoLedgerProbeStage == 5 || GameProgress != ERMUCGameProgress::Running || MatchElapsedSeconds < .5)
+        return;
+
+    FMatchRobotSlot* Infantry = OwnSlot();
+    FMatchRobotSlot* Sentry = FindSentrySlot(FriendlyTeam());
+    if (!Infantry || Infantry->IsSentry() || !Sentry || !Infantry->PointEffects.bSupply || !Sentry->PointEffects.bSupply)
+        return;
+
+    const unsigned TeamIdx = FRMUCFieldRules::Index(FriendlyTeam());
+    const TCHAR* Side = bFriendlyRed ? TEXT("red") : TEXT("blue");
+    const TCHAR* OpposingSide = bFriendlyRed ? TEXT("blue") : TEXT("red");
+    const auto Report = [&](const TCHAR* Stage)
+    {
+        const auto InfantryView = FieldDeviceState(Infantry);
+        const auto SentryView = FieldDeviceState(Sentry);
+        const auto& Local = InfantryView->GetObjectField(Side);
+        const auto& Remote = SentryView->GetObjectField(Side);
+        UE_LOG(LogTemp, Display, TEXT("RMUC_AMMO_LEDGER_PROBE %s %s t=%.3f cap_used=%d gold=%d infantry=%d sentry=%d local=%d remote=%d pending=%d other_remote=%d"),
+            Side, Stage, MatchElapsedSeconds, TeamPurchasedAmmo17mm[TeamIdx], TeamGold[TeamIdx],
+            Infantry->State.ProjectileAllowance17mm, Sentry->State.ProjectileAllowance17mm,
+            Local->GetBoolField(TEXT("local_ammo_purchase_available")), Remote->GetBoolField(TEXT("remote_ammo_purchase_available")),
+            Remote->GetBoolField(TEXT("remote_ammo_purchase_pending")),
+            InfantryView->GetObjectField(OpposingSide)->GetBoolField(TEXT("remote_ammo_purchase_available")));
+    };
+    switch (AmmoLedgerProbeStage)
+    {
+    case 0:
+        TeamPurchasedAmmo17mm[TeamIdx] = 890;
+        Report(TEXT("initial"));
+        RequestSentryAmmoPurchase(Sentry->Vehicle.Get(), true);
+        RequestSentryAmmoPurchase(Sentry->Vehicle.Get(), true);
+        break;
+    case 1:
+        Report(TEXT("ordered"));
+        RequestOwnAmmoPurchase();
+        RequestOwnAmmoPurchase();
+        RequestSentryAmmoPurchase(Sentry->Vehicle.Get(), true);
+        break;
+    case 2:
+        Report(TEXT("capped"));
+        RequestOwnAmmoPurchase();
+        RequestSentryAmmoPurchase(Sentry->Vehicle.Get(), true);
+        break;
+    case 3:
+        if (Sentry->State.OwnLogistics.HasPendingRemoteAmmo()) return;
+        Report(TEXT("delivered"));
+        // Jump directly to the rule manual's 00:30 example after paid delivery.
+        MatchElapsedSeconds = 390.0;
+        StageRemainSeconds = 30.0;
+        RequestOwnAmmoPurchase();
+        break;
+    case 4:
+        if (MatchElapsedSeconds < 390.1) return;
+        Report(TEXT("free"));
+        break;
+    default:
+        return;
+    }
+    ++AmmoLedgerProbeStage;
+}
+#endif
+
 const TCHAR* ARMUCGameReferee::OutpostControlPhase(FieldTeam Site) const
 {
     const auto& Signal = OutpostControlSignals[FRMUCFieldRules::Index(Site)];
@@ -354,7 +509,7 @@ const TCHAR* ARMUCGameReferee::OutpostControlPhase(FieldTeam Site) const
     return Control.TransitionSeconds > 0 ? TEXT("decaying") : TEXT("full");
 }
 
-TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState() const
+TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState(const FMatchRobotSlot* ViewSlot) const
 {
     auto Root = MakeShared<FJsonObject>();
     Root->SetStringField(TEXT("rules"), TEXT("RMUC2027 V1.0.0"));
@@ -392,11 +547,16 @@ TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState() const
         auto State = MakeShared<FJsonObject>();
         const auto& Points = FieldPointEffects[Index];
         const auto& Contacts = FieldPhysicalContacts[Index];
-        const auto& Seat = Competitor(Team);
+        const FMatchRobotSlot* Seat = ViewSlot && ViewSlot->Team == Team ? ViewSlot : FindSentrySlot(Team);
         const bool bRunning = GameProgress == ERMUCGameProgress::Running;
-        const bool bAlive = bRunning && IsValid(VehicleFor(Team)) && Seat.Hp > 0;
+        const bool bAlive = bRunning && Seat && IsValid(Seat->Vehicle.Get()) && Seat->State.Hp > 0;
+        const bool bCanUseGainPoint = bAlive && !Seat->State.IsWeak();
         const auto& Incoming = bRed ? BlueDart : RedDart;
-        State->SetBoolField(TEXT("supply_active"), Points.bSupply);
+        State->SetBoolField(TEXT("supply_active"), bCanUseGainPoint && Seat->PointEffects.bSupply);
+        State->SetBoolField(TEXT("supply_visual_tag_visible"), bAlive && Seat->bSupplyVisualTagVisible);
+        State->SetBoolField(TEXT("supply_physical_card_read"),
+            bAlive && Seat->PhysicalContacts[Index].Supply.value_or(false));
+        State->SetBoolField(TEXT("local_ammo_exchange_active"), bCanUseGainPoint && Seat->PointEffects.CanPurchaseAmmo());
         State->SetBoolField(TEXT("vantage_active"), Points.bVantage);
         State->SetBoolField(TEXT("fortress_active"), Points.bFortress);
         State->SetBoolField(TEXT("enemy_fortress_active"), Points.bEnemyFortress);
@@ -407,17 +567,27 @@ TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState() const
         State->SetNumberField(TEXT("enemy_fortress_armor_progress_s"), EnemyControl.ArmorActivationSeconds);
         State->SetNumberField(TEXT("enemy_fortress_armor_required_s"), FRMUCFieldRules::EnemyFortressActivationSeconds);
         State->SetBoolField(TEXT("central_highland_active"), Points.bCentralHighland);
+        State->SetNumberField(TEXT("highland_traversal_remaining_s"),
+            bAlive ? Seat->HighlandTraversal.Remaining(MatchElapsedSeconds) : 0.0);
+        State->SetBoolField(TEXT("highland_traversal_effective"),
+            bAlive && Seat->HighlandTraversal.HasEffect(MatchElapsedSeconds));
+        static constexpr const TCHAR* TraversalCardNames[] = {
+            TEXT("none"), TEXT("red_lower"), TEXT("red_upper"), TEXT("blue_lower"), TEXT("blue_upper"), TEXT("other")
+        };
+        const auto Card = bAlive ? Seat->HighlandTraversal.ObservedCard() : ERMUCHighlandCard::None;
+        State->SetStringField(TEXT("highland_traversal_card"), TraversalCardNames[static_cast<int32>(Card)]);
         State->SetBoolField(TEXT("can_heal_at_own_outpost"), bAlive && FieldZones.IsLoaded() &&
             Control.OutpostControl.Controller == Team && Control.OutpostControl.bFull &&
             Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::Outpost) <= 0.);
         const auto CanPurchase = [&](Mode Method)
         {
-            return Seat.OwnLogistics.CheckAmmoPurchase(Points, bAlive, Seat.RemainingGoldCoin, Method, MatchElapsedSeconds)
-                == Purchase::Accepted;
+            return bAlive && (Method == Mode::Remote || bCanUseGainPoint) &&
+                Seat->State.OwnLogistics.CheckAmmoPurchase(Seat->PointEffects, true, TeamGold[Index],
+                    TeamPurchasedAmmo17mm[Index], Method, MatchElapsedSeconds) == Purchase::Accepted;
         };
         State->SetBoolField(TEXT("local_ammo_purchase_available"), CanPurchase(Mode::Local));
         State->SetBoolField(TEXT("remote_ammo_purchase_available"), CanPurchase(Mode::Remote));
-        State->SetBoolField(TEXT("remote_ammo_purchase_pending"), bRunning && Seat.OwnLogistics.HasPendingRemoteAmmo());
+        State->SetBoolField(TEXT("remote_ammo_purchase_pending"), bRunning && Seat && Seat->State.OwnLogistics.HasPendingRemoteAmmo());
         State->SetNumberField(TEXT("base_hp"), Control.BaseHp);
         State->SetBoolField(TEXT("base_protected"), FieldRules.BaseProtected(Team));
         State->SetBoolField(TEXT("base_armor_open"), Control.bBaseArmorOpen);
@@ -452,13 +622,15 @@ TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState() const
         State->SetNumberField(TEXT("rune_chances"), RuneRules.Available(bRed));
         State->SetNumberField(TEXT("rune_targets"), Rune.Targets);
         State->SetNumberField(TEXT("rune_groups"), Rune.Groups);
-        State->SetNumberField(TEXT("rune_defence_pct"), Rune.DefencePercent);
+        const double EffectiveRuneSeconds = RuneRules.EffectiveBuffRemaining(bRed);
+        State->SetNumberField(TEXT("rune_defence_pct"), EffectiveRuneSeconds > 0. ? Rune.DefencePercent : 0);
         State->SetBoolField(TEXT("rune_large"), Rune.bBig);
         State->SetNumberField(TEXT("rune_hits"), Rune.Hits);
         State->SetNumberField(TEXT("rune_average_rings"), Rune.Hits ? double(Rune.RingTotal) / Rune.Hits : 0.);
-        State->SetNumberField(TEXT("rune_attack_pct"), Rune.AttackPercent);
-        State->SetNumberField(TEXT("rune_cooling_multiplier"), Rune.CoolingMultiplier);
+        State->SetNumberField(TEXT("rune_attack_pct"), EffectiveRuneSeconds > 0. ? Rune.AttackPercent : 0);
+        State->SetNumberField(TEXT("rune_cooling_multiplier"), EffectiveRuneSeconds > 0. ? Rune.CoolingMultiplier : 1);
         State->SetNumberField(TEXT("rune_buff_seconds"), FMath::Max(0., Rune.BuffUntil - MatchElapsedSeconds));
+        State->SetNumberField(TEXT("rune_effective_buff_seconds"), EffectiveRuneSeconds);
         State->SetStringField(TEXT("dart_gate"), DartStateName(Dart.State()));
         State->SetNumberField(TEXT("dart_gate_open_fraction"), Dart.GateOpenFraction());
         State->SetNumberField(TEXT("dart_gate_chances"), Dart.AvailableChances());
@@ -468,6 +640,7 @@ TSharedRef<FJsonObject> ARMUCGameReferee::FieldDeviceState() const
             Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::FixedBase));
         State->SetNumberField(TEXT("dart_incoming_outpost_suppression_s"),
             Incoming.GainPointSuppressionRemaining(ERMUCDartTarget::Outpost));
+        State->SetNumberField(TEXT("dart_incoming_blackout_s"), Incoming.OpponentBlackoutRemaining());
         State->SetBoolField(TEXT("base_point_active"), Points.bBase);
         State->SetBoolField(TEXT("dart_detector_open"), Dart.DetectorWindowOpen());
         State->SetNumberField(TEXT("dart_detector_seconds"), Dart.DetectorWindowRemaining());

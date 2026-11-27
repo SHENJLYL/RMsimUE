@@ -33,6 +33,7 @@ private:
     TWeakObjectPtr<UProceduralMeshComponent> Trail;
     TArray<FTrailSample> History;
     FLinearColor TeamColor = FLinearColor::White;
+    double TrailAttachmentX = 0.;
     double LastTrailUpdate = -1.;
     FVector LandingPoint = FVector::ZeroVector;
     FVector LandingNormal = FVector::UpVector;

@@ -139,8 +139,7 @@ struct FRMUCFieldPointEffects
     int FortressCoolingBonus = 0;
     int FortressReserveCapacity = 0;
 
-    // Local 17 mm exchange is allowed at supply and fully controlled outposts.
-    bool CanPurchaseAmmo() const { return bSupply || bFullOutpost; }
+    bool CanPurchaseAmmo() const { return bSupply || bBase || bVantage || bFullOutpost; }
 
     static FRMUCFieldPointEffects Evaluate(const FRMUCFieldRules& Rules, FRMUCFieldRules::Team Team,
         double Elapsed, const FRMUCFieldPoints& Contacts, const std::array<FRMUCFieldPointLatch, 2>& Latches)
@@ -186,8 +185,8 @@ class FRMUCSupplyRules
 {
 public:
     static constexpr int InitialAllowance = 300;
-    static constexpr int SentryFreeAmmoCap = 300;
     static constexpr int InitialGold = 800;
+    static constexpr int PurchasedAmmoLimit = 1000;
     static constexpr int LocalAmmoCost = 10;
     static constexpr int LocalAmmoAmount = 10;
     static constexpr int RemoteAmmoCost = 150;
@@ -211,8 +210,7 @@ public:
     }
 
     void Step(double Seconds, double Elapsed, int OwnBaseHp, const FRMUCFieldPointEffects& Effects,
-        int MaxHp, int& Hp, int& Allowance, bool bIsSentry = true,
-        int* SharedInfantryFreeClaimed = nullptr, int* SharedInfantryClaimedMinutes = nullptr)
+        int MaxHp, int& Hp, int& Allowance, bool bIsSentry = true)
     {
         if (Hp <= 0)
         {
@@ -221,24 +219,13 @@ public:
         }
         if (Effects.bSupply && bIsSentry)
         {
-            const int AvailableMinutes = std::clamp(static_cast<int>((Elapsed + TimeTolerance) / 60.0), 0, 6);
-            if (SentryFreeAmmoClaimed < SentryFreeAmmoCap && Allowance < 200 && AvailableMinutes > ClaimedMinutes)
+            const int UnlockedMinutes = std::clamp(static_cast<int>((Elapsed + TimeTolerance) / 60.0), 0, 6);
+            if (UnlockedMinutes > ClaimedFreeAmmoMinutes)
             {
-                // Reserve half of each minute's 100 free 17mm rounds for infantry teammates;
-                // sentry claims at most 50/min and at most 300 total across the match.
-                // Infantry (#3/#4) claim their 300-round share manually at 10 rounds per F press in Supply Zone.
-                const int Grant = std::min(50 * (AvailableMinutes - ClaimedMinutes),
-                    SentryFreeAmmoCap - SentryFreeAmmoClaimed);
-                if (Grant > 0)
-                {
-                    Allowance += Grant;
-                    SentryFreeAmmoClaimed += Grant;
-                }
-                ClaimedMinutes = AvailableMinutes;
+                Allowance += 100 * (UnlockedMinutes - ClaimedFreeAmmoMinutes);
+                ClaimedFreeAmmoMinutes = UnlockedMinutes;
             }
         }
-        (void)SharedInfantryFreeClaimed;
-        (void)SharedInfantryClaimedMinutes;
         if (Hp >= MaxHp)
         {
             FractionalRecovery = 0.0;
@@ -257,14 +244,14 @@ public:
     }
 
     EPurchase CheckAmmoPurchase(const FRMUCFieldPointEffects& Effects, bool bAlive, int Gold,
-        EPurchaseMode Mode, double Elapsed) const
+        int TeamPurchasedAmmo, EPurchaseMode Mode, double Elapsed) const
     {
         const bool bRemote = Mode == EPurchaseMode::Remote;
         if (!bAlive || (bRemote ? !IsOutOfCombat(Elapsed) : !Effects.CanPurchaseAmmo()))
         {
             return EPurchase::Unavailable;
         }
-        if (PurchasedAmmo + (bRemote ? RemoteAmmoAmount : LocalAmmoAmount) > PurchasedAmmoLimit)
+        if (TeamPurchasedAmmo + (bRemote ? RemoteAmmoAmount : LocalAmmoAmount) > PurchasedAmmoLimit)
         {
             return EPurchase::LimitReached;
         }
@@ -275,21 +262,21 @@ public:
         return EPurchase::Accepted;
     }
 
-    EPurchase PurchaseAmmo(const FRMUCFieldPointEffects& Effects, bool bAlive, int& Gold, int& Allowance,
-        EPurchaseMode Mode = EPurchaseMode::Local, double Elapsed = 0.0)
+    EPurchase PurchaseAmmo(const FRMUCFieldPointEffects& Effects, bool bAlive, int& Gold,
+        int& TeamPurchasedAmmo, int& Allowance, EPurchaseMode Mode = EPurchaseMode::Local, double Elapsed = 0.0)
     {
-        const auto Result = CheckAmmoPurchase(Effects, bAlive, Gold, Mode, Elapsed);
+        const auto Result = CheckAmmoPurchase(Effects, bAlive, Gold, TeamPurchasedAmmo, Mode, Elapsed);
         if (Result != EPurchase::Accepted) return Result;
         if (Mode == EPurchaseMode::Remote)
         {
-            Gold -= RemoteAmmoCost;
-            PurchasedAmmo += RemoteAmmoAmount;
             RemoteAmmoOrders.push_back(Elapsed + RemoteAmmoDelaySeconds);
+            Gold -= RemoteAmmoCost;
+            TeamPurchasedAmmo += RemoteAmmoAmount;
         }
         else
         {
             Gold -= LocalAmmoCost;
-            PurchasedAmmo += LocalAmmoAmount;
+            TeamPurchasedAmmo += LocalAmmoAmount;
             Allowance += LocalAmmoAmount;
         }
         return Result;
@@ -323,14 +310,11 @@ public:
     }
 
 private:
-    static constexpr int PurchasedAmmoLimit = 1000;
     static constexpr double TimeTolerance = 1e-9;
     static constexpr double CombatTimeoutSeconds = 6.0;
     double LastCombat = -CombatTimeoutSeconds;
     double FractionalRecovery = 0.0;
-    int ClaimedMinutes = 0;
-    int SentryFreeAmmoClaimed = 0;
-    int PurchasedAmmo = 0;
+    int ClaimedFreeAmmoMinutes = 0;
     int FortressAmmoSpent = 0;
     std::deque<double> RemoteAmmoOrders;
 
@@ -338,7 +322,6 @@ private:
 
     static double ZoneHealingFactor(int OwnBaseHp, const FRMUCFieldPointEffects& Effects)
     {
-        const double Logistics = 0.5 + std::clamp(OwnBaseHp, 0, FRMUCFieldRules::BaseMaxHp) / 20000.0;
-        return Logistics * (Effects.bSupply ? 1.0 : (Effects.bFullOutpost ? 0.5 : 0.0));
+        return FRMUCFieldRules::LogisticsFactor(OwnBaseHp) * (Effects.bSupply ? 1.0 : (Effects.bFullOutpost ? 0.5 : 0.0));
     }
 };

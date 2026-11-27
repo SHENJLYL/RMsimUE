@@ -8,7 +8,7 @@ void URosImuComponent::AdvanceNative(double Time,bool Collect,double EpochSolver
     if(!Rig||!FMath::IsFinite(Time)||Time<0||Time>9.e6||!FMath::IsFinite(EpochSolverTime))return;
     check(IsInGameThread());
     LastAdvanceTime=Time;
-    constexpr double HalfSupport=.001;
+    constexpr double HalfSupport=NativeIntegrationSeconds * .5;
     if(MotionGeneration!=Rig->GetMotionGeneration())
     {
         MotionGeneration=Rig->GetMotionGeneration();
@@ -40,21 +40,24 @@ void URosImuComponent::AdvanceNative(double Time,bool Collect,double EpochSolver
                !Rig->SampleSensorMotionAtTime(C.ParentFrame,SolverStamp,C.Mount,Pose,Velocity,Omega)||
                !Rig->SampleSensorMotionAtTime(C.ParentFrame,SolverStamp+HalfSupport,C.Mount,PlusPose,PlusVelocity,PlusOmega))
             {++C.HistoryMisses;++C.Invalid;continue;}
-            // Native node velocities include body motion and omega cross the true sensor lever arm.
-            // Support t+1ms is required to exist before publishing the sample stamped t.
-            const FVector SpecificWorld=(PlusVelocity-MinusVelocity)/(2*HalfSupport)-Gravity;
+            // Integrate over a full 200 Hz interval so substep servo oscillations
+            // cannot alias into a sustained acceleration or gyro bias.
+            const FVector SpecificWorld=(PlusVelocity-MinusVelocity)/NativeIntegrationSeconds-Gravity;
             const FVector Specific=Pose.GetRotation().UnrotateVector(SpecificWorld)/100.;
-            const FVector LocalOmega=Pose.GetRotation().UnrotateVector(Omega);
+            FQuat RotationDelta=PlusPose.GetRotation()*MinusPose.GetRotation().Inverse();
+            RotationDelta.Normalize();
+            if(RotationDelta.W<0)RotationDelta=FQuat(-RotationDelta.X,-RotationDelta.Y,-RotationDelta.Z,-RotationDelta.W);
+            const FVector LocalOmega=Pose.GetRotation().UnrotateVector(RotationDelta.ToRotationVector())/NativeIntegrationSeconds;
             const FVector Accel(Specific.X,-Specific.Y,Specific.Z);
             const FVector Gyro(-LocalOmega.X,LocalOmega.Y,-LocalOmega.Z);
             if(bProfileTiming){ProfileSampleWall+=FPlatformTime::Seconds()-Started;++ProfileSampleCount;}
-            PublishSample(C,SampleTime,2*HalfSupport,Accel,Gyro,Collect,SampleIndex);
+            PublishSample(C,SampleTime,NativeIntegrationSeconds,Accel,Gyro,Collect,SampleIndex);
         }
     }
     if(bProfileTiming&&Time-ProfileStartSim>=5.)
     {
-        UE_LOG(LogRMSim,Display,TEXT("RMSIM_IMU_TIMING samples=%lld sample_ms=%.3f pack_ms=%.3f sim_elapsed=%.3f support_half_s=0.001"),
-            ProfileSampleCount,ProfileSampleWall*1000.,ProfilePackWall*1000.,Time-ProfileStartSim);
+        UE_LOG(LogRMSim,Display,TEXT("RMSIM_IMU_TIMING samples=%lld sample_ms=%.3f pack_ms=%.3f sim_elapsed=%.3f support_half_s=%.6f"),
+            ProfileSampleCount,ProfileSampleWall*1000.,ProfilePackWall*1000.,Time-ProfileStartSim,HalfSupport);
         ProfileSampleCount=0;ProfileSampleWall=ProfilePackWall=0;ProfileStartSim=Time;
     }
 }

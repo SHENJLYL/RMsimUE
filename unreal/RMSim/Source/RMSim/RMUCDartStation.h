@@ -16,6 +16,7 @@ struct FRMUCDartHitResult
     int Damage = 0;
     double SuppressionSeconds = 0.0;
     int GroundRobotHpPercent = 0;
+    int InfantryExperience = 0;
     double BlackoutSeconds = 0.0;
     double ExistingBuffSuppressionSeconds = 0.0;
     bool ClearsExistingBuffs = false;
@@ -226,6 +227,11 @@ public:
         return CurrentPhase == ERMUCDartPhase::Running && bOnline ? std::max(0.0, WindowUntil - Now) : 0.0;
     }
 
+    double OpponentBlackoutRemaining() const
+    {
+        return CurrentPhase == ERMUCDartPhase::Running ? std::max(0.0, OpponentBlackoutUntil - Now) : 0.0;
+    }
+
     double GainPointSuppressionRemaining(ERMUCDartTarget Site) const
     {
         if (CurrentPhase != ERMUCDartPhase::Running || !IsValidTarget(Site))
@@ -257,6 +263,7 @@ private:
     FRMUCDartHitResult ApplyConfirmedHit(ERMUCDartTarget Target)
     {
         static constexpr std::array<int, 5> DamageByTarget{1000, 200, 300, 800, 1250};
+        static constexpr std::array<int, 5> ExperienceByTarget{0, 200, 600, 2500, 2500};
         static constexpr std::array<double, 4> StaticBlackouts{10.0, 5.0, 3.0, 2.0};
         constexpr double SuppressSeconds = 30.0;
         const bool IsOutpost = Target == ERMUCDartTarget::Outpost;
@@ -276,7 +283,9 @@ private:
         Result.Damage = DamageByTarget[static_cast<int>(Target)];
         Result.SuppressionSeconds = SuppressSeconds;
         Result.GroundRobotHpPercent = MovingBase ? (Target == ERMUCDartTarget::LateMovingBase ? 50 : 20) : 0;
+        Result.InfantryExperience = ExperienceByTarget[static_cast<int>(Target)];
         Result.BlackoutSeconds = MovingBase ? 10.0 : StaticBlackouts[StaticDetectorHits++];
+        OpponentBlackoutUntil = std::max(Now, OpponentBlackoutUntil) + Result.BlackoutSeconds;
         Result.ExistingBuffSuppressionSeconds = Target == ERMUCDartTarget::RandomFixedBase ? Result.BlackoutSeconds : 0.0;
         Result.ClearsExistingBuffs = MovingBase;
         return Result;
@@ -351,6 +360,7 @@ private:
     std::array<FVirtualFlight, MatchDartBudget> VirtualFlights{};
     double VirtualDetectorReadyAt = 0.0;
     double Now = 0.0;
+    double OpponentBlackoutUntil = 0.0;
     double TransitionAt = 0.0;
     double CooldownUntil = 0.0;
     double WindowUntil = 0.0;

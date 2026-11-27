@@ -122,8 +122,44 @@ inline double ComputeRMUCRespawnDurationSeconds(double MatchElapsedSeconds, int 
 {
     const double Elapsed = std::clamp(MatchElapsedSeconds, 0.0, 420.0);
     const int Buybacks = std::max(0, BuybackCount);
-    return std::round(10.0 + Elapsed / 10.0 + 20.0 * static_cast<double>(Buybacks));
+    return std::round(10.0 + (Elapsed + 1e-9) / 10.0 + 20.0 * static_cast<double>(Buybacks));
 }
+
+// RMUC 2027 §§5.3.2, 5.4.1 and 5.6.1.
+struct FRMUCRespawnRules
+{
+    static constexpr double NaturalShieldSeconds = 30.0;
+    static constexpr double NaturalMinimumShieldSeconds = 10.0;
+    static constexpr double PaidProtectionSeconds = 3.0;
+    static constexpr double PaidPowerSeconds = 4.0;
+
+    static int SpawnHp(int MaxHp, bool bPaid)
+    {
+        return bPaid ? MaxHp : std::max(1, static_cast<int>(std::round(MaxHp * 0.10)));
+    }
+
+    static int ProgressPerSecond(bool bAtOwnSupply, int OwnBaseHp)
+    {
+        return (bAtOwnSupply || OwnBaseHp < 4000) ? 4 : 1;
+    }
+
+    static double ShieldAfterGainCard(double Remaining, bool bPaid)
+    {
+        if (bPaid) return Remaining;
+        return std::max(0.0, Remaining - (NaturalShieldSeconds - NaturalMinimumShieldSeconds));
+    }
+
+    static double PowerLimit(double BaseLimit, double PaidPowerRemaining)
+    {
+        return PaidPowerRemaining > 0.0 ? std::min(2.0 * BaseLimit, 200.0) : BaseLimit;
+    }
+
+    static int PaidCost(double MatchElapsedSeconds, int Level)
+    {
+        const double Elapsed = std::max(0.0, MatchElapsedSeconds - 1e-9);
+        return static_cast<int>(std::ceil(Elapsed / 60.0)) * 80 + Level * 20;
+    }
+};
 
 // Shared team economy pool (Red = 0, Blue = 1)
 struct FRMUCSharedEconomy

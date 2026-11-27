@@ -23,6 +23,11 @@ def rotate(q,v):
 def parameters(data,robot,imu_id,sentry_source='',*,source_tuning=None):
     tuning=pointlio_tuning(sentry_source) if source_tuning is None else dict(source_tuning)
     lidar=data['lidar'];imu=next(p for p in data['imu']['profiles'] if p['id']==imu_id)
+    if (lidar.get('profile_schema') == 'rm_lidar_runtime_v3' and
+            lidar['physical_model'].get('query_group_stride', 1) > 1):
+        # The simulator already sampled complete four-channel groups. Taking
+        # every eighth slot again would keep only one of those channels.
+        tuning['point_filter_num'] = 1
     if lidar['parent_frame_id']!=imu['parent_frame_id']:raise ValueError('Point-LIO requires LiDAR and IMU on the same rigid parent')
     li=mount_pose(lidar,robot);im=mount_pose(imu,robot)
     q=im['rotation_xyzw'];inverse=[-q[0],-q[1],-q[2],q[3]]

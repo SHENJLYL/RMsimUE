@@ -1,4 +1,5 @@
 #include "VehicleRig.h"
+#include "Sensors/GpuLidarScene.h"
 #include "MujocoVehicleDynamics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Dom/JsonObject.h"
@@ -373,7 +374,27 @@ bool AVehicleRig::ReadDedicatedMujocoProgress(uint64& Steps,uint64& Failsafes) c
     return MujocoDynamics&&MujocoDynamics->ReadDedicatedProgress(Steps,Failsafes);
 }
 
-void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query)
+void AVehicleRig::GetDedicatedLidarColliderIndices(TMap<const USceneComponent*, int32>& Indices) const
+{
+    if(!MujocoDynamics || bMujocoSharedFollower)return;
+    const auto& Names=MujocoDynamics->BodyNames();
+    const auto Add=[&](const AVehicleRig& Vehicle,int32 Offset)
+    {
+        for(int32 I=0;I<Names.Num();++I)
+        {
+            if(Vehicle.bArticulatedSensorQueries)
+            {
+                if(auto* const* Link=Vehicle.Links.Find(Names[I]))Indices.Add(*Link,Offset+I);
+            }
+            else if(const auto* Body=Vehicle.MujocoQueryBodies.FindRef(Names[I]))Indices.Add(Body,Offset+I);
+        }
+    };
+    Add(*this,0);
+    for(int32 I=0;I<MujocoFollowers.Num();++I)
+        if(const auto* Follower=MujocoFollowers[I].Get())Add(*Follower,(I+1)*Names.Num());
+}
+
+void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query,FGpuLidarScene* GpuScene)
 {
     check(IsInGameThread());
     if(!MujocoDynamics)return;
@@ -388,12 +409,13 @@ void AVehicleRig::ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<v
         // latest frame restored before ROS, gameplay or the viewport reads it.
         if(ApplyScenePoses&&(!Latest||Reposed))
         {
-            Primary->ApplyMujocoQueryPose(Parts,0);
+            Primary->ApplyMujocoQueryPose(Parts,0,true);
             for (int32 I = 0; I < Primary->MujocoFollowers.Num(); ++I)
                 if (auto* Follower = Primary->MujocoFollowers[I].Get())
-                    Follower->ApplyMujocoQueryPose(Parts, (I + 1) * BodyStride);
+                    Follower->ApplyMujocoQueryPose(Parts, (I + 1) * BodyStride, true);
             Reposed=true;
         }
+        if(GpuScene)GpuScene->CaptureSnapshot(Parts,ApplyScenePoses);
         Query(Time);
     });
 }
@@ -406,9 +428,29 @@ void AVehicleRig::ClearDedicatedLidarFrames()
     if (Primary && Primary->MujocoDynamics) Primary->MujocoDynamics->ClearDedicatedQueryFrames();
 }
 
-void AVehicleRig::ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset)
+void AVehicleRig::ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset,bool bQueryOnly)
 {
     const auto& Names = MujocoDynamics->BodyNames();
+    if (bQueryOnly)
+    {
+        // Only move the exact components that participate in LiDAR raycasts:
+        // - Articulated LiDAR carriers (sentries) block ECC_GameTraceChannel1 via Links (ContactBodies ignore it).
+        // - Non-LiDAR vehicles (infantry) block ECC_GameTraceChannel1 via hidden MujocoQueryBodies (zero visual/light dirtying).
+        // ActorTransform and untouched components stay at the latest render pose throughout replay.
+        if (bArticulatedSensorQueries)
+        {
+            for (int32 I = 0; I < Names.Num(); ++I)
+                if (auto* const* Link = Links.Find(Names[I]))
+                    (*Link)->SetWorldTransform(Parts[Offset + I],false,nullptr,ETeleportType::TeleportPhysics);
+        }
+        else
+        {
+            for (int32 I = 0; I < Names.Num(); ++I)
+                if (auto* Body = MujocoQueryBodies.FindRef(Names[I]))
+                    Body->SetWorldTransform(Parts[Offset + I],false,nullptr,ETeleportType::TeleportPhysics);
+        }
+        return;
+    }
     for (int32 I = 0; I < Names.Num(); ++I)
         if (Names[I] == MujocoRootBodyName)
             SetActorTransform(Parts[Offset + I],false,nullptr,ETeleportType::None);

@@ -9,6 +9,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "Dom/JsonObject.h"
 #include "HAL/PlatformTime.h"
 #include "HAL/PlatformProcess.h"
@@ -76,7 +77,7 @@ struct URosBridgeComponent::FCameraReadback
     std::atomic<EStatus> Status{EStatus::Waiting};
     std::atomic<bool> PollQueued{false};
     TUniquePtr<FRHIGPUTextureReadback> Copy;
-    TArray<FColor> Pixels;
+    TArray<uint8> Rgb;
     FTransform OpticalMount;
     int64 Stamp=0,Connection=0;
 };
@@ -156,6 +157,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
             Post.ReflectionMethod=EReflectionMethod::None;
             Camera->ShowFlags.SetLumenGlobalIllumination(false);
             Camera->ShowFlags.SetLumenReflections(false);
+            Camera->ShowFlags.SetDynamicShadows(false);
             Camera->ShowFlags.SetVolumetricFog(false);
             Camera->ShowFlags.SetBloom(false);
             Camera->ShowFlags.SetMotionBlur(false);
@@ -166,6 +168,21 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
             Camera->ShowFlags.SetContactShadows(false);
             Camera->ShowFlags.SetAtmosphere(false);
             Camera->ShowFlags.SetFog(false);
+            Camera->MaxViewDistanceOverride = 3400.f; // 28x16m RMUC arena diagonal is ~32m; cull exterior beyond 34m.
+            if (UWorld* World = GetWorld())
+            {
+                int32 HiddenVenueActors = 0;
+                for (TActorIterator<AActor> It(World); It; ++It)
+                {
+                    if (It->ActorHasTag(TEXT("rmsim_campus_gym")))
+                    {
+                        Camera->HiddenActors.Add(*It);
+                        ++HiddenVenueActors;
+                    }
+                }
+                UE_LOG(LogRMSim, Display, TEXT("ROS_CAMERA_VENUE_CULL port=%d hidden_venue_actors=%d max_view_cm=%.0f"),
+                    Port, HiddenVenueActors, Camera->MaxViewDistanceOverride);
+            }
         }
         Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
         Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
@@ -218,7 +235,7 @@ void URosBridgeComponent::Disconnect(const FString& Reason)
         UE_LOG(LogRMSim,Display,TEXT("ROS_BRIDGE_DISCONNECT reason=%s"),*Reason);}
     SensorMountSamples.Reset();
     ++CameraConnection;
-    CloseSocket(Client);Inbound.Reset();Outbound.Reset();SendOffset=0;LastCommandWall=-1;CommandStatus=Reason;
+    CloseSocket(Client);Inbound.Reset();ResetOutbound();LastCommandWall=-1;CommandStatus=Reason;
     if(AimController)AimController->Stop(Reason);
     if(Imu)Imu->DiscardPending();
     if(Lidar)Lidar->DiscardPending();
@@ -371,21 +388,40 @@ void URosBridgeComponent::Receive(double SimTime)
     }
 }
 
+void URosBridgeComponent::ResetOutbound()
+{
+    Outbound.Reset();
+    OutboundLidar.Reset();
+    SendOffset=0;
+    if(OutboundCameraFrame)FreeCameraReadbacks.Add(MoveTemp(OutboundCameraFrame));
+}
+
 void URosBridgeComponent::SendPending()
 {
+    if(!Client||Outbound.IsEmpty())return;
+    const TConstArrayView<uint8> CameraBytes=OutboundCameraFrame
+        ? TConstArrayView<uint8>(OutboundCameraFrame->Rgb) : TConstArrayView<uint8>{};
+    const TConstArrayView<uint8> Parts[]={TConstArrayView<uint8>(Outbound),CameraBytes,TConstArrayView<uint8>(OutboundLidar)};
     int32 Budget=4*1024*1024;
-    while(Client&&SendOffset<Outbound.Num()&&Budget>0)
+    int32 PartStart=0;
+    for(const auto Part:Parts)
     {
-        int32 Sent=0;
-        if(!Client->Send(Outbound.GetData()+SendOffset,FMath::Min(Outbound.Num()-SendOffset,Budget),Sent))
+        const int32 PartEnd=PartStart+Part.Num();
+        while(SendOffset<PartEnd&&Budget>0)
         {
-            if(Sockets->GetLastErrorCode()==SE_EWOULDBLOCK)break;
-            Disconnect(TEXT("socket_write_error"));return;
+            int32 Sent=0;
+            if(!Client->Send(Part.GetData()+(SendOffset-PartStart),FMath::Min(PartEnd-SendOffset,Budget),Sent))
+            {
+                if(Sockets->GetLastErrorCode()==SE_EWOULDBLOCK)break;
+                Disconnect(TEXT("socket_write_error"));return;
+            }
+            if(Sent<=0)break;
+            SendOffset+=Sent;Budget-=Sent;LastSendProgressWall=FPlatformTime::Seconds();
         }
-        if(Sent<=0)break;
-        SendOffset+=Sent;Budget-=Sent;LastSendProgressWall=FPlatformTime::Seconds();
+        if(SendOffset<PartEnd)break;
+        PartStart=PartEnd;
     }
-    if(SendOffset==Outbound.Num()){Outbound.Reset();SendOffset=0;}
+    if(SendOffset==Outbound.Num()+CameraBytes.Num()+OutboundLidar.Num())ResetOutbound();
     else if(FPlatformTime::Seconds()-LastSendProgressWall>1)Disconnect(TEXT("slow_reader"));
 }
 
@@ -407,9 +443,19 @@ void URosBridgeComponent::AdvanceCamera(double SimTime)
                 Status=FCameraReadback::EStatus::Failed;
                 if(Source&&Pitch>=Extent.X&&Rows>=Extent.Y)
                 {
-                    Readback->Pixels.SetNumUninitialized(Extent.X*Extent.Y);
-                    for(int32 Y=0;Y<Extent.Y;++Y)
-                        FMemory::Memcpy(Readback->Pixels.GetData()+Y*Extent.X,Source+Y*Pitch,Extent.X*sizeof(FColor));
+                    // Pack the wire format while the pitched GPU readback is locked.
+                    Readback->Rgb.SetNumUninitialized(Extent.X * Extent.Y * 3);
+                    uint8* Destination = Readback->Rgb.GetData();
+                    for (int32 Y = 0; Y < Extent.Y; ++Y)
+                    {
+                        const FColor* Row = Source + Y * Pitch;
+                        for (int32 X = 0; X < Extent.X; ++X)
+                        {
+                            *Destination++ = Row[X].R;
+                            *Destination++ = Row[X].G;
+                            *Destination++ = Row[X].B;
+                        }
+                    }
                     Status=FCameraReadback::EStatus::Ready;
                 }
                 if(Source)Readback->Copy->Unlock();
@@ -519,7 +565,7 @@ bool URosBridgeComponent::QueueState(double SimTime)
     if(bMotorControl)State->SetObjectField(TEXT("motors"),Rig->GetMotorFeedback());
     if(!SensorMountSamples.IsEmpty()){State->SetArrayField(TEXT("sensor_mounts"),SensorMountSamples);State->SetNumberField(TEXT("dropped_sensor_mounts"),DroppedSensorMountSamples);SensorMountSamples.Reset();}
     if(Imu)State->SetObjectField(TEXT("imu"),Imu->TakeState());
-    TArray<uint8> LidarBytes;const int32 CameraBytes=Frame?Width*Height*3:0;
+    TArray<uint8> LidarBytes;const int32 CameraBytes=Frame?Frame->Rgb.Num():0;
     if(Lidar)
     {State->SetNumberField(TEXT("camera_bytes"),CameraBytes);State->SetObjectField(TEXT("lidar"),Lidar->TakeState(LidarBytes,CameraBytes));}
     if(CameraBytes+LidarBytes.Num()>16*1024*1024)return false;
@@ -539,26 +585,22 @@ bool URosBridgeComponent::QueueState(double SimTime)
     State->SetNumberField(TEXT("engine_fixed_step_s"),EngineStep);
     FString Json;FJsonSerializer::Serialize(State,TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Json));
     const FTCHARToUTF8 Utf8(*Json);if(Utf8.Length()>65536)return false;
-    bOutboundHasCameraFrame=Frame.IsValid();
-    Outbound.Reset();SendOffset=0;LittleEndian(Outbound,Utf8.Length());LittleEndian(Outbound,CameraBytes+LidarBytes.Num());
+    // The readback slot stays owned by this packet until its final byte is sent.
+    OutboundCameraFrame=MoveTemp(Frame);
+    OutboundLidar=MoveTemp(LidarBytes);
+    LittleEndian(Outbound,Utf8.Length());LittleEndian(Outbound,CameraBytes+OutboundLidar.Num());
     Outbound.Append(reinterpret_cast<const uint8*>(Utf8.Get()),Utf8.Length());
-    if(Frame)
-    {
-        const int32 RGBOffset=Outbound.AddUninitialized(CameraBytes);
-        uint8* Destination=Outbound.GetData()+RGBOffset;
-        for(const FColor& Pixel:Frame->Pixels)
-        {
-            *Destination++=Pixel.R;*Destination++=Pixel.G;*Destination++=Pixel.B;
-        }
-        FreeCameraReadbacks.Add(MoveTemp(Frame));
-    }
-    Outbound.Append(LidarBytes);
     LastSendProgressWall=FPlatformTime::Seconds();return true;
 }
 
-void URosBridgeComponent::Advance()
+bool URosBridgeComponent::NeedsDedicatedLidarReplay() const
 {
-    if(!Listener||!IsValid(Rig))return;
+    return Lidar != nullptr && IsValid(Rig) && Rig->GetDedicatedMujocoPeriod() > 0.;
+}
+
+bool URosBridgeComponent::AdvancePreLidar(double& OutSimTime, double& OutNow, bool& OutChassisPowerCut, double& OutSimDelta)
+{
+    if(!Listener||!IsValid(Rig))return false;
     const double Now=FPlatformTime::Seconds();
 
     const double SimTime=FMath::Max(0.,SolverTime()-EpochSolverTime);
@@ -611,32 +653,44 @@ void URosBridgeComponent::Advance()
         }
         Rig->SubmitDedicatedMujocoInputs();
     }
+    OutSimTime=SimTime;
+    OutNow=Now;
+    OutChassisPowerCut=bChassisPowerCut;
+    OutSimDelta=SimDelta;
+    return true;
+}
+
+void URosBridgeComponent::StepDedicatedLidarFrame(double SolverAt)
+{
+    if(!IsValid(Rig))return;
     const bool UsesMount=(Imu&&Imu->UsesArticulatedMount())||(Lidar&&Lidar->UsesArticulatedMount());
-    const auto CaptureMount=[&](double At)
+    auto CaptureMount=[&](double At)
     {
         if(!Client||!UsesMount)return;
         if(SensorMountSamples.Num()>=64){SensorMountSamples.RemoveAt(0,1,EAllowShrinking::No);++DroppedSensorMountSamples;}
         SensorMountSamples.Add(MakeShared<FJsonValueObject>(Rig->GetSensorJointState(FMath::RoundToInt64(At*1.e9))));
     };
-    if(Lidar&&Dedicated)
+    if(SolverAt >= 0.0)
     {
-        Rig->ReplayDedicatedLidarFrames(Client!=nullptr,[&](double At)
-        {
-            if(At<EpochSolverTime)return;
-            const double Relative=At-EpochSolverTime;
-            CaptureMount(Relative);
-            if(Imu)Imu->Advance(Relative,Client!=nullptr,EpochSolverTime);
-            Lidar->Advance(Relative,Client!=nullptr,EpochSolverTime);
-        });
+        if(SolverAt<EpochSolverTime)return;
+        const double Relative=SolverAt-EpochSolverTime;
+        CaptureMount(Relative);
+        if(Imu)Imu->Advance(Relative,Client!=nullptr,EpochSolverTime);
+        if(Lidar)Lidar->Advance(Relative,Client!=nullptr,EpochSolverTime);
     }
     else
     {
-        // Multiple visual updates can consume the same completed solver state.
-        // Dynamic TF samples must advance strictly within their epoch.
-        if(SimDelta>0)CaptureMount(SimTime);
+        const double SimTime=LastSimTime;
+        if(SimTime>0)CaptureMount(SimTime);
         if(Imu)Imu->Advance(SimTime,Client!=nullptr,EpochSolverTime);
         if(Lidar)Lidar->Advance(SimTime,Client!=nullptr,EpochSolverTime);
     }
+}
+
+void URosBridgeComponent::AdvancePostLidar(double SimTime, double Now, bool bChassisPowerCut)
+{
+    if(!Listener||!IsValid(Rig))return;
+    const bool Dedicated=Rig->GetDedicatedMujocoPeriod()>0;
     // Retire an EOF peer before deciding whether a newly queued connection is
     // a competing client; otherwise an immediate reconnect can lose one attempt.
     if(Client&&!Dedicated)Receive(SimTime);
@@ -659,7 +713,7 @@ void URosBridgeComponent::Advance()
                 Session=FGuid::NewGuid().ToString();AcceptedSeq=-1;MatchStanceSequence=-1;MatchAmmoPurchaseSequence=-1;
                 LastCommandWall=-1;CommandStatus=bControl?TEXT("waiting"):TEXT("manual_mode");
                 NavigationFrameYawRad=-FMath::DegreesToRadians(Rig->GetActorRotation().Yaw);
-                LastStateWall=0;NextImageSim=SimTime+((CameraHz>0.0)?(CapturePhaseFraction/CameraHz):0.0);Inbound.Reset();Outbound.Reset();SendOffset=0;
+                LastStateWall=0;NextImageSim=SimTime+((CameraHz>0.0)?(CapturePhaseFraction/CameraHz):0.0);Inbound.Reset();ResetOutbound();
                 if(AimController)AimController->Reset(false);
                 if(Imu)Imu->DiscardPending();
                 if(Lidar)Lidar->DiscardPending();
@@ -677,10 +731,10 @@ void URosBridgeComponent::Advance()
     if(bFpvVideoCut&&!bWasFpvVideoCut)
     {
         ++CameraConnection; // Pending GPU readbacks will retire without being published.
-        if(bOutboundHasCameraFrame&&!Outbound.IsEmpty())
+        if(OutboundCameraFrame)
         {
             if(SendOffset>0)Disconnect(TEXT("referee_fpv_video_cut")); // Preserve framing after an incomplete write.
-            else Outbound.Reset();
+            else ResetOutbound();
         }
     }
     if(!bFpvVideoCut&&bWasFpvVideoCut)NextImageSim=SimTime;
@@ -694,6 +748,30 @@ void URosBridgeComponent::Advance()
         if(!QueueState(SimTime)){Disconnect(TEXT("state_encoding_failed"));return;}
         LastStateWall=Now;SendPending();
     }
+}
+
+void URosBridgeComponent::Advance()
+{
+    double SimTime = 0., Now = 0., SimDelta = 0.;
+    bool bChassisPowerCut = false;
+    if (!AdvancePreLidar(SimTime, Now, bChassisPowerCut, SimDelta)) return;
+    if (NeedsDedicatedLidarReplay())
+    {
+        Rig->ReplayDedicatedLidarFrames(Client!=nullptr,[&](double At)
+        {
+            StepDedicatedLidarFrame(At);
+        });
+    }
+    else
+    {
+        if (SimDelta > 0 || !Client) StepDedicatedLidarFrame(-1.0);
+        else
+        {
+            if (Imu) Imu->Advance(SimTime, Client != nullptr, EpochSolverTime);
+            if (Lidar) Lidar->Advance(SimTime, Client != nullptr, EpochSolverTime);
+        }
+    }
+    AdvancePostLidar(SimTime, Now, bChassisPowerCut);
 }
 
 void URosBridgeComponent::ResetEpoch()

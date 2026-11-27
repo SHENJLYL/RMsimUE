@@ -16,6 +16,20 @@ struct Mid360Model
     {return static_cast<std::int64_t>(std::llround(1.e9/Hz));}
     static std::int64_t ScanOrdinal(std::int64_t PointIndex,double Hz)
     {return PointIndex/(ScanPeriodNs(Hz)/PointIntervalNs);}
+
+    // Keep whole four-channel groups on the original 5 µs clock. Each scan
+    // restarts the group selection at its nominal first firing slot.
+    static constexpr int MaxQueryGroupStride=10;
+    static bool SamplesSlot(std::int64_t Slot,int GroupStride)
+    {
+        return (Slot/ChannelCount)%GroupStride==0;
+    }
+
+    static std::int64_t SampledSlotsPerScan(double Hz,int GroupStride)
+    {
+        const auto Groups=ScanPeriodNs(Hz)/(PointIntervalNs*ChannelCount);
+        return ((Groups+GroupStride-1)/GroupStride)*ChannelCount;
+    }
     static std::uint64_t Mix(std::uint64_t Value)
     {
         Value+=0x9e3779b97f4a7c15ULL;Value=(Value^(Value>>30))*0xbf58476d1ce4e5b9ULL;

@@ -189,6 +189,10 @@ struct RMSIM_API FRhine3DHudState
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Own")
     int32 OwnMaxHp = 400;
 
+    int32 OwnRobotNumber = 7;
+    int32 OwnLevel = 1;
+    int32 OwnExperienceTenths = 0;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Own")
     bool bOwnAlive = true;
 
@@ -291,6 +295,9 @@ struct RMSIM_API FRhine3DHudState
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
     float WeakRemainSeconds = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+    bool bWeakUntilGainCard = false;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
     float InvulnerableRemainSeconds = 0.0f;

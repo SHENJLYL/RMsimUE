@@ -1,0 +1,309 @@
+#include "/Engine/Public/Platform.ush"
+
+struct LidarNode
+{
+    float3 Min;
+    uint FirstAndCount;
+    float3 Max;
+    uint Escape;
+};
+struct LidarPrimitive
+{
+    float3 A, B, C;
+    uint Material, Flags, PlaneCount;
+};
+struct LidarInstance
+{
+    float4 ToLocalX, ToLocalY, ToLocalZ;
+    uint Begin, End, Vehicle, Mirrored;
+};
+struct LidarRay
+{
+    float3 Origin;
+    uint Snapshot;
+    float3 Direction;
+    uint Vehicle;
+    float RangeCm;
+    uint3 Padding;
+};
+struct LidarHit
+{
+    float3 Normal;
+    float DistanceCm;
+    uint Material, Flags, Windows, Primitive;
+    uint Instance, Plane;
+    uint2 Padding;
+};
+struct ClosestHit
+{
+    float3 Normal;
+    float Distance;
+    uint Primitive;
+    uint Vehicle, Instance, Plane;
+    bool Found;
+};
+
+uint RayCount;
+uint ArenaEnd;
+StructuredBuffer<LidarNode> GeometryNodes;
+StructuredBuffer<LidarNode> InstanceNodes;
+StructuredBuffer<LidarPrimitive> Primitives;
+StructuredBuffer<float4> Planes;
+StructuredBuffer<LidarInstance> Instances;
+StructuredBuffer<uint2> Snapshots;
+StructuredBuffer<LidarRay> Rays;
+RWStructuredBuffer<LidarHit> Hits;
+
+static const uint CullBack = 1, PlaneShape = 2, DarkWindow = 4, BlueWindow = 8;
+static const float Infinity = 1.e20;
+
+float3 InverseDirection(float3 Direction)
+{
+    const float3 SafeDirection = float3(
+        abs(Direction.x) < 1.e-20 ? 1.e-20 : Direction.x,
+        abs(Direction.y) < 1.e-20 ? 1.e-20 : Direction.y,
+        abs(Direction.z) < 1.e-20 ? 1.e-20 : Direction.z);
+    return rcp(SafeDirection);
+}
+
+bool Intersects(LidarNode Node, float3 Origin, float3 Inverse, float First, float Last)
+{
+    const float3 A = (Node.Min - Origin) * Inverse;
+    const float3 B = (Node.Max - Origin) * Inverse;
+    const float3 Near = min(A, B), Far = max(A, B);
+    return max(First, max(Near.x, max(Near.y, Near.z))) <= min(Last, min(Far.x, min(Far.y, Far.z)));
+}
+
+bool IntersectConvex(LidarPrimitive Shape, float3 Origin, float3 Direction,
+    float First, float Last, out float Distance, out float3 Normal, out uint Plane)
+{
+    float Near = -Infinity, Far = Last;
+    float3 NearNormal = -normalize(Direction);
+    const uint Base = Shape.Material;
+    Plane=0xffffffffu;
+    [loop] for (uint I = 0; I < Shape.PlaneCount; ++I)
+    {
+        const float4 P = Planes[Base + I];
+        const float Delta = P.w - dot(P.xyz, Origin);
+        const float Slope = dot(P.xyz, Direction);
+        if (abs(Slope) < 1.e-10)
+        {
+            if (Delta < 0) { Distance = 0; Normal = 0; return false; }
+        }
+        else
+        {
+            const float T = Delta / Slope;
+            if (Slope < 0 && T > Near)
+            {
+                Near = T;
+                NearNormal = P.xyz;
+                Plane = Base + I;
+            }
+            if (Slope > 0) Far = min(Far, T);
+            if (Far < Near) { Distance = 0; Normal = 0; return false; }
+        }
+    }
+    // Chaos reports the start of a query inside a solid as a zero-length hit.
+    Distance = max(Near, First);
+    Normal = Near < First ? -normalize(Direction) : NearNormal;
+    return Far >= Distance && Distance <= Last;
+}
+
+bool IntersectTriangle(LidarPrimitive Triangle, float3 Origin, float3 Direction,
+    float First, float Last, bool Mirrored, out float Distance, out float3 Normal)
+{
+    const float3 Cross = cross(Direction, Triangle.C);
+    const float Det = dot(Triangle.B, Cross);
+    Distance = 0;
+    Normal = 0;
+    const bool Front = Mirrored ? Det < 0 : Det > 0;
+    if (abs(Det) < 1.e-9 || ((Triangle.Flags & CullBack) && !Front)) return false;
+    const float3 Offset = Origin - Triangle.A;
+    const float U = dot(Offset, Cross) / Det;
+    const float3 Q = cross(Offset, Triangle.B);
+    const float V = dot(Direction, Q) / Det;
+    if (U < 0 || V < 0 || U + V > 1) return false;
+    Distance = dot(Triangle.C, Q) / Det;
+    if (Distance < First || Distance > Last) return false;
+    const float3 FaceNormal = normalize(cross(Triangle.B, Triangle.C));
+    Normal = Det > 0 ? FaceNormal : -FaceNormal;
+    return true;
+}
+
+struct WindowHits
+{
+    float4 Distances;
+    uint4 Materials;
+    uint Count;
+    bool Overflow;
+};
+
+void RecordWindow(float Distance, uint Material, inout WindowHits Windows)
+{
+    if (Windows.Count >= 4)
+    {
+        Windows.Overflow = true;
+        return;
+    }
+    uint I = Windows.Count++;
+    [unroll] for (uint Step = 0; Step < 3; ++Step)
+    {
+        if (I > 0)
+        {
+            const uint Last = I - 1;
+            if (Distance < Windows.Distances[Last])
+            {
+                Windows.Distances[I] = Windows.Distances[Last];
+                Windows.Materials[I] = Windows.Materials[Last];
+                I = Last;
+            }
+        }
+    }
+    Windows.Distances[I] = Distance;
+    Windows.Materials[I] = Material;
+}
+
+void TraceGeometry(float3 Origin, float3 Direction, float First, uint Root, uint End,
+    uint Vehicle, uint Instance, bool Mirrored, float3x3 NormalMatrix, bool CollectWindows,
+    inout ClosestHit Hit, inout WindowHits Windows)
+{
+    const float3 Inverse = InverseDirection(Direction);
+    // Depth-first escape indices encode the return address in each node.
+    // Traversal needs no per-ray stack or fixed depth limit.
+    [loop] for (uint I = Root; I < End;)
+    {
+        const LidarNode Node = GeometryNodes[I];
+        if (!Intersects(Node, Origin, Inverse, First, Hit.Distance))
+        {
+            I = Node.Escape;
+            continue;
+        }
+        const uint Count=Node.FirstAndCount&7;
+        const uint Start=Node.FirstAndCount>>3;
+        [loop] for (uint P = Start; P < Start + Count; ++P)
+        {
+            const LidarPrimitive Primitive = Primitives[P];
+            float T;
+            float3 N;
+            uint Plane=0xffffffffu;
+            bool Found;
+            if (Primitive.Flags & PlaneShape)
+                Found = IntersectConvex(Primitive, Origin, Direction, First, Hit.Distance, T, N, Plane);
+            else
+                Found = IntersectTriangle(Primitive, Origin, Direction, First, Hit.Distance, Mirrored, T, N);
+            if (Found && CollectWindows && (Primitive.Flags & (DarkWindow | BlueWindow)))
+                RecordWindow(T, Primitive.Flags & DarkWindow ? 1u : 256u, Windows);
+            else if (Found)
+            {
+                Hit.Found = true;
+                Hit.Distance = T;
+                Hit.Normal = normalize(mul(N, NormalMatrix));
+                Hit.Primitive = P;
+                Hit.Vehicle = Vehicle;
+                Hit.Instance = Instance;
+                Hit.Plane = Plane;
+            }
+        }
+        I = Count ? Node.Escape : I + 1;
+    }
+}
+
+ClosestHit TraceScene(LidarRay Ray, float First, bool CollectWindows, inout WindowHits Windows)
+{
+    ClosestHit Hit = (ClosestHit)0;
+    Hit.Distance = Ray.RangeCm;
+    const float3x3 Identity = float3x3(1,0,0, 0,1,0, 0,0,1);
+
+    const float3 Inv = InverseDirection(Ray.Direction);
+    const uint2 Window = Snapshots[Ray.Snapshot];
+    [loop] for (uint I = Window.x; I < Window.y;)
+    {
+        const LidarNode Node = InstanceNodes[I];
+        if (!Intersects(Node, Ray.Origin, Inv, First, Hit.Distance))
+        {
+            I = Node.Escape;
+            continue;
+        }
+        const bool Leaf=(Node.FirstAndCount&7)!=0;
+        if (Leaf)
+        {
+            const uint InstanceIndex=Node.FirstAndCount>>3;
+            const LidarInstance Instance = Instances[InstanceIndex];
+            const float3x3 ToLocal = float3x3(Instance.ToLocalX.xyz, Instance.ToLocalY.xyz, Instance.ToLocalZ.xyz);
+            const float3 LocalStart = mul(ToLocal, Ray.Origin) + float3(Instance.ToLocalX.w, Instance.ToLocalY.w, Instance.ToLocalZ.w);
+            const float3 LocalDirection = mul(ToLocal, Ray.Direction);
+            TraceGeometry(LocalStart, LocalDirection, First, Instance.Begin, Instance.End, Instance.Vehicle,
+                InstanceIndex, Instance.Mirrored != 0, ToLocal,
+                CollectWindows && Instance.Vehicle != 0 && Instance.Vehicle == Ray.Vehicle, Hit, Windows);
+        }
+        I = Leaf ? Node.Escape : I + 1;
+    }
+    // Nearby vehicle and self-window hits limit most first passes to a few centimetres.
+    TraceGeometry(Ray.Origin, Ray.Direction, First, 0, ArenaEnd, 0, 0xffffffffu, false, Identity, false, Hit, Windows);
+    return Hit;
+}
+
+void StoreHit(LidarRay Ray, ClosestHit Hit, inout LidarHit Result)
+{
+    if (!Hit.Found) return;
+    const LidarPrimitive Surface = Primitives[Hit.Primitive];
+    const bool Self = Hit.Vehicle != 0 && Hit.Vehicle == Ray.Vehicle;
+    Result.Normal = Hit.Normal;
+    Result.DistanceCm = Hit.Distance;
+    Result.Material = Surface.Flags & PlaneShape ? 0 : Surface.Material;
+    Result.Flags = (Self ? 3u : 1u) | (Hit.Vehicle ? 8u : 0u);
+    Result.Primitive = Hit.Primitive;
+    Result.Instance = Hit.Instance;
+    Result.Plane = Hit.Plane;
+}
+
+[numthreads(64, 1, 1)]
+void MainCS(uint3 DispatchID : SV_DispatchThreadID)
+{
+    const uint Index = DispatchID.x;
+    if (Index >= RayCount) return;
+    const LidarRay Ray = Rays[Index];
+    LidarHit Result = (LidarHit)0;
+    if (Ray.RangeCm <= 0)
+    {
+        Hits[Index] = Result;
+        return;
+    }
+    WindowHits Windows = (WindowHits)0;
+    const ClosestHit Opaque = TraceScene(Ray, 0, true, Windows);
+    float First = 0;
+    [unroll] for (uint I = 0; I < 4; ++I)
+    {
+        if (I < Windows.Count && Windows.Distances[I] >= First && Windows.Distances[I] <= Opaque.Distance)
+        {
+            Result.Windows += Windows.Materials[I];
+            First = Windows.Distances[I] + .02;
+        }
+    }
+    if (!Windows.Overflow && (!Opaque.Found || First <= Opaque.Distance))
+        StoreHit(Ray, Opaque, Result);
+    else
+    {
+        // Very thick window stacks and coincident opaque surfaces use the
+        // original 16-iteration rule on the same GPU invocation.
+        First = 0;
+        Result.Windows = 0;
+        [loop] for (uint Pass = 0; Pass < 16; ++Pass)
+        {
+            const ClosestHit Hit = TraceScene(Ray, First, false, Windows);
+            if (!Hit.Found) break;
+            const LidarPrimitive Surface = Primitives[Hit.Primitive];
+            const bool Self = Hit.Vehicle != 0 && Hit.Vehicle == Ray.Vehicle;
+            if (Self && (Surface.Flags & (DarkWindow | BlueWindow)))
+            {
+                Result.Windows += Surface.Flags & DarkWindow ? 1u : 256u;
+                First = Hit.Distance + .02;
+                if (Pass == 15) Result.Flags = 4;
+                continue;
+            }
+            StoreHit(Ray, Hit, Result);
+            break;
+        }
+    }
+    Hits[Index] = Result;
+}

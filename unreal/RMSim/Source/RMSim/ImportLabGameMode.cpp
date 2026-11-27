@@ -1,4 +1,6 @@
 #include "ImportLabGameMode.h"
+#include "RosLidarComponent.h"
+#include "Sensors/GpuLidarScene.h"
 #include "ArenaShell.h"
 #include "CampusGym.h"
 #include "MapOverview.h"
@@ -1001,6 +1003,7 @@ void AImportLabGameMode::EndPlay(const EEndPlayReason::Type Reason)
     if(bMujocoRealTimePace)
         UE_LOG(LogRMSim,Display,TEXT("SIM_REALTIME_PACE_SUMMARY backend=mujoco anchors=%llu lag_warnings=%llu late_debt_s=%.6f max_lag_s=%.6f deadline_policy=retain_absolute physics_steps_skipped=0"),
             MujocoPaceAnchorCount,MujocoPaceLagWarningCount,MujocoPaceCurrentLagSeconds,MujocoPaceMaxLagSeconds);
+    GpuLidar.Reset();
     Super::EndPlay(Reason);
 }
 
@@ -1105,6 +1108,15 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
             Referee=GetWorld()->SpawnActor<ARMUCGameReferee>();
             if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent,PrimaryRobotNum,ExtraSpawns,bPrimaryAiControlled)){Abort(RefError);return;}
         }
+        const bool bGpuLidar = FParse::Param(FCommandLine::Get(),TEXT("GpuLidar"));
+        const bool bCpuLidar = FParse::Param(FCommandLine::Get(),TEXT("CpuLidar"));
+        double LidarScaleOverride=0.;
+        if(FParse::Value(FCommandLine::Get(),TEXT("LidarRayScale="),LidarScaleOverride) &&
+            (!FMath::IsFinite(LidarScaleOverride)||LidarScaleOverride<.1||LidarScaleOverride>1.))
+        {Abort(TEXT("LidarRayScale must be between 0.1 and 1"));return;}
+        if(bGpuLidar && (bCpuLidar||!bRosBridgeEnabled||!UsesDedicatedMujoco()||
+            !FParse::Param(FCommandLine::Get(),TEXT("RosLidar"))))
+        {Abort(TEXT("GpuLidar requires dedicated MuJoCo and RosLidar, and cannot be combined with CpuLidar"));return;}
         if(bRosBridgeEnabled)
         {
             const bool bMultiMatchRos = bPhysicalMatch && !MatchRosTeams.IsEmpty();
@@ -1132,7 +1144,7 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                     else Opts.PortOverride = BasePort + Idx;
                     Opts.CapturePhaseFraction = double(Idx) / double(MatchRosTeams.Num());
                     Opts.bLightweightAimCamera = true;
-                    Opts.LidarRayScale = (MatchRosTeams.Num() >= 2) ? 0.25 : 1.0;
+                    Opts.LidarRayScale = LidarScaleOverride>0. ? LidarScaleOverride : (!bGpuLidar && MatchRosTeams.Num()>=2 ? .25 : 1.);
                     URosBridgeComponent* Bridge = NewObject<URosBridgeComponent>(this);
                     AddInstanceComponent(Bridge);
                     Bridge->RegisterComponent();
@@ -1169,7 +1181,9 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                 AVehicleRig* BoundVehicle = bBridgeControlsOpponent ? Referee->GetEnemyRig() : Rig;
                 auto* BoundAim = bBridgeControlsOpponent ? BoundVehicle->GetCameras().FindRef(TEXT("aim_camera")) : GetAimCapture();
                 RosBridge=NewObject<URosBridgeComponent>(this);AddInstanceComponent(RosBridge);RosBridge->RegisterComponent();FString BridgeError;
-                if(!RosBridge->Initialize(BoundVehicle,BoundAim,Training,bRosControl||bBridgeControlsOpponent,BridgeError)){Abort(BridgeError);return;}
+                FRosBridgeOptions Opts;
+                Opts.LidarRayScale=LidarScaleOverride>0.?LidarScaleOverride:1.;
+                if(!RosBridge->Initialize(BoundVehicle,BoundAim,Training,bRosControl||bBridgeControlsOpponent,Opts,BridgeError)){Abort(BridgeError);return;}
                 if(Referee)
                 {
                     RosBridge->SetReferee(Referee);
@@ -1190,6 +1204,17 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                 }
                 RosBridges.Add(RosBridge);
             }
+        }
+        if(bGpuLidar)
+        {
+            GpuLidar=MakeShared<FGpuLidarScene>();
+            TMap<const USceneComponent*,int32> Indices;
+            Rig->GetDedicatedLidarColliderIndices(Indices);
+            FString SceneError;
+            if(!GpuLidar->Initialize(*GetWorld(),Indices,SceneError)){Abort(SceneError);return;}
+            for(auto* Bridge:RosBridges)
+                if(!Bridge->GetLidar()||!Bridge->GetLidar()->SetGpuScene(*GpuLidar))
+                {Abort(TEXT("GpuLidar requires an articulated Mid-360 profile on each enabled bridge"));return;}
         }
         if(UsesDedicatedMujoco())
         {
@@ -1239,14 +1264,87 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
     }
     TickManualControl(DeltaSeconds);
     if(!ImuFixture.IsEmpty())TickImuFixture(DeltaSeconds);
-    for (URosBridgeComponent* Bridge : RosBridges)
-        if (Bridge) Bridge->Advance();
+    if(UsesDedicatedMujoco() && (RosBridges.Num()>=2 || GpuLidar))
+    {
+        struct FBridgeTickState
+        {
+            URosBridgeComponent* Bridge = nullptr;
+            double SimTime = 0., Now = 0., SimDelta = 0.;
+            bool bChassisPowerCut = false;
+            bool bNeedsReplay = false;
+        };
+        TArray<FBridgeTickState> States;
+        States.Reserve(RosBridges.Num());
+        bool bAnyReplay = false;
+        bool bAnyClient = false;
+        bool bCpuReference = false;
+        for (URosBridgeComponent* Bridge : RosBridges)
+        {
+            if (!Bridge) continue;
+            FBridgeTickState St;
+            St.Bridge = Bridge;
+            if (!Bridge->AdvancePreLidar(St.SimTime, St.Now, St.bChassisPowerCut, St.SimDelta)) continue;
+            St.bNeedsReplay = Bridge->NeedsDedicatedLidarReplay();
+            bAnyReplay |= St.bNeedsReplay;
+            if (St.bNeedsReplay && Bridge->HasClient())
+            {
+                bAnyClient=true;
+                if(GpuLidar && Bridge->GetLidar()->NeedsGpuReference())bCpuReference=true;
+            }
+            States.Add(St);
+        }
+        if(GpuLidar)GpuLidar->Drain();
+        if (bAnyReplay)
+        {
+            // Share ONE 6-vehicle historical MuJoCo snapshot replay across all ROS bridges!
+            Rig->ReplayDedicatedLidarFrames(bAnyClient && (!GpuLidar || bCpuReference), [&](double At)
+            {
+                for (const FBridgeTickState& St : States)
+                    if (St.bNeedsReplay) St.Bridge->StepDedicatedLidarFrame(At);
+            },bAnyClient?GpuLidar.Get():nullptr);
+        }
+        if(GpuLidar)GpuLidar->Submit();
+        for (const FBridgeTickState& St : States)
+        {
+            if (!St.bNeedsReplay) St.Bridge->StepDedicatedLidarFrame(-1.0);
+            St.Bridge->AdvancePostLidar(St.SimTime, St.Now, St.bChassisPowerCut);
+        }
+    }
+    else
+    {
+        for (URosBridgeComponent* Bridge : RosBridges)
+            if (Bridge) Bridge->Advance();
+    }
     if(UsesDedicatedMujoco())
     {
         Rig->ClearDedicatedLidarFrames();
         Rig->SubmitDedicatedMujocoInputs();
     }
     Elapsed += DeltaSeconds;
+#if WITH_DEV_AUTOMATION_TESTS
+    static const FString GpuLidarQuitRequest=[]
+    {
+        FString Filename;
+        FParse::Value(FCommandLine::Get(),TEXT("GpuLidarProbeQuitFile="),Filename);
+        return Filename;
+    }();
+    static const double GpuLidarResetAt=[]
+    {
+        double At=-1.;
+        FParse::Value(FCommandLine::Get(),TEXT("GpuLidarProbeResetAt="),At);
+        return At;
+    }();
+    static bool bGpuLidarProbeReset=false;
+    if(GpuLidar&&GpuLidarResetAt>0.&&!bGpuLidarProbeReset&&Elapsed>=GpuLidarResetAt)
+    {
+        bGpuLidarProbeReset=true;
+        const auto Before=Rig->GetMotionGeneration();
+        ResetContactVehicle(TEXT("gpu_lidar_epoch_probe"),false);
+        UE_LOG(LogTemp,Display,TEXT("RMSIM_GPU_LIDAR_RESET old=%llu current=%llu"),Before,Rig->GetMotionGeneration());
+    }
+    if(!GpuLidarQuitRequest.IsEmpty()&&FPaths::FileExists(GpuLidarQuitRequest))
+        FPlatformMisc::RequestExitWithStatus(false,0);
+#endif
     {
         static bool bHudShotRequested = false;
         static double HudShotAt = -1.0;
@@ -1473,6 +1571,60 @@ void AImportLabGameMode::TickManualControl(float DeltaSeconds)
     if (PC->GetMousePosition(CursorX, CursorY)) Input.CursorPixels = FVector2D(CursorX, CursorY);
     Input.MouseX = MouseX; Input.MouseY = MouseY;
     ApplyManualInput(Input, DeltaSeconds);
+#if WITH_DEV_AUTOMATION_TESTS
+    static const bool bDartMapProbe = []()
+    {
+        FString Path;
+        return FParse::Value(FCommandLine::Get(), TEXT("RefereeDartRewardProof="), Path);
+    }();
+    static double FirstDartMapClick = -1.;
+    static bool bDartMapCheckComplete = false;
+    if (bDartMapProbe && !bDartMapCheckComplete && Referee && Referee->GetOwnDartBlackoutRemaining() > 0.)
+    {
+        int32 W = 0, H = 0;
+        PC->GetViewportSize(W, H);
+        if (W > 0 && H > 0)
+        {
+            FManualControlInput Click;
+            Click.Focused = true;
+            Click.MapPing = true;
+            Click.CursorPixels = FVector2D(W * .50, H * .575);
+            int32 Wheel = 0;
+            bool bConsume = false;
+            const double Now = GetWorld()->GetTimeSeconds();
+            if (FirstDartMapClick < 0.)
+            {
+                DartBlackoutDestinationRos.Reset();
+                UpdateManualMapInput(Click, true, Wheel, bConsume);
+                const auto First = DartBlackoutDestinationRos;
+                FirstDartMapClick = LastDartBlackoutMoveTime;
+                Click.CursorPixels.X += 30.;
+                UpdateManualMapInput(Click, true, Wheel, bConsume);
+                if (!First.IsSet() || !DartBlackoutDestinationRos.IsSet() ||
+                    !First.GetValue().Equals(DartBlackoutDestinationRos.GetValue()) ||
+                    FirstDartMapClick != LastDartBlackoutMoveTime)
+                {
+                    UE_LOG(LogRMSim, Error, TEXT("RMUC_DART_BLACKOUT_MAP first_or_rate_limit=0"));
+                    FPlatformMisc::RequestExitWithStatus(false, 2);
+                    bDartMapCheckComplete = true;
+                }
+            }
+            else if (Now >= FirstDartMapClick + 3.)
+            {
+                Click.CursorPixels.X += 30.;
+                UpdateManualMapInput(Click, true, Wheel, bConsume);
+                const bool bAccepted = DartBlackoutDestinationRos.IsSet() &&
+                    LastDartBlackoutMoveTime >= FirstDartMapClick + 3.;
+                Click.CloseMap = true;
+                UpdateManualMapInput(Click, true, Wheel, bConsume);
+                const bool bPassed = bAccepted && !DartBlackoutDestinationRos.IsSet();
+                UE_LOG(LogRMSim, Display, TEXT("RMUC_DART_BLACKOUT_MAP passed=%d"), bPassed);
+                if (!bPassed) FPlatformMisc::RequestExitWithStatus(false, 2);
+                bDartMapCheckComplete = true;
+            }
+        }
+    }
+#endif
     if (BeforeInput.IsValid() && Focused) WriteInputEvidence(BeforeInput);
 }
 
@@ -1732,6 +1884,27 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
                 if (Rig->HasSteeringModules()) Rig->SetContactPlanarDrive(FVector2D::ZeroVector, 0.0, true, true);
                 else Rig->SetContactDrive(0.0, 0.0, true);
             }
+            else if (Referee && Referee->GetOwnDartBlackoutRemaining() > 0.0)
+            {
+                if (Rig->HasSteeringModules())
+                {
+                    const FVector Position = Rig->GetActorLocation();
+                    const FVector2D RobotRos = FVector2D(Position.X, -Position.Y) * 0.01;
+                    const FVector2D Offset = DartBlackoutDestinationRos.IsSet()
+                        ? DartBlackoutDestinationRos.GetValue() - RobotRos : FVector2D::ZeroVector;
+                    if (Offset.SizeSquared() <= FMath::Square(0.25) || Brake)
+                    {
+                        DartBlackoutDestinationRos.Reset();
+                        Rig->SetContactPlanarDrive(FVector2D::ZeroVector, 0.0, true, true);
+                    }
+                    else
+                    {
+                        const double Speed = FMath::Min(Rig->GetDriveParameter(TEXT("PrecisionSpeedMps")), Offset.Size());
+                        Rig->SetContactPlanarDrive(Offset.GetSafeNormal() * Speed, 0.0, true, false);
+                    }
+                }
+                else Rig->SetContactDrive(0.0, 0.0, true);
+            }
             else
             {
                 const double MaximumDriveSpeed=Rig->GetDriveParameter(Throttle>=0?TEXT("MaxForwardSpeedMps"):TEXT("MaxReverseSpeedMps"));
@@ -1892,12 +2065,17 @@ void AImportLabGameMode::DrawRefereeHud(AHUD* Hud, UCanvas* Canvas) const
     if (Referee) Referee->DrawMatchHud(Hud, Canvas, bGyroMode ? GyroSpeedRadS : 0.0);
 }
 
+bool AImportLabGameMode::DrawDartBlackout(AHUD* Hud, UCanvas* Canvas) const
+{
+    return Referee && Referee->DrawDartBlackout(Hud, Canvas);
+}
+
 void AImportLabHUD::DrawHUD()
 {
     Super::DrawHUD();
     if (FParse::Param(FCommandLine::Get(), TEXT("GymReviewCamera"))) return;
     const AImportLabGameMode* Mode = GetWorld()->GetAuthGameMode<AImportLabGameMode>();
-    if (!Canvas || !Mode || !Mode->IsControlHudVisible()) return;
+    if (!Canvas || !Mode || Mode->DrawDartBlackout(this, Canvas) || !Mode->IsControlHudVisible()) return;
     if (!MapOverview) MapOverview = NewObject<UMapOverview>(this);
     FMapOverviewFrame MapFrame;
     if (Mode->GetMapOverviewFrame(MapFrame) && MapOverview->Draw(this, Canvas, MapFrame)) return;

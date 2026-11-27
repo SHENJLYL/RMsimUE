@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 
+#include "../../unreal/RMSim/Source/RMSim/RMUCFieldRules.h"
 #include "../../unreal/RMSim/Source/RMSim/RMUCTacticalRules.h"
 
 int main()
@@ -66,6 +67,32 @@ int main()
     assert(std::abs(ComputeRMUCRespawnDurationSeconds(420.0, 0) - 52.0) < 1e-6);
     assert(std::abs(ComputeRMUCRespawnDurationSeconds(180.0, 1) - 48.0) < 1e-6);
     assert(std::abs(ComputeRMUCRespawnDurationSeconds(180.0, 2) - 68.0) < 1e-6);
+    assert(ComputeRMUCRespawnDurationSeconds(300.0, 2) == 80.0);
+    // The round-half-up occurs before division. The scaled requirement retains its fraction.
+    assert(ComputeRMUCRespawnDurationSeconds(4.99, 0) == 10.0);
+    assert(ComputeRMUCRespawnDurationSeconds(5.0, 0) == 11.0);
+    assert(ComputeRMUCRespawnDurationSeconds(4.99999999999, 0) == 11.0);
+    assert(std::abs(ComputeRMUCRespawnDurationSeconds(5.0, 0) / FRMUCFieldRules::LogisticsFactor(4000) - 110.0 / 7.0) < 1e-9);
+    assert(FRMUCRespawnRules::ProgressPerSecond(false, 4000) == 1);
+    assert(FRMUCRespawnRules::ProgressPerSecond(false, 3999) == 4);
+    assert(FRMUCRespawnRules::ProgressPerSecond(true, 10000) == 4);
+    assert(FRMUCRespawnRules::ProgressPerSecond(true, 3999) == 4);
+
+    assert(FRMUCRespawnRules::SpawnHp(400, false) == 40);
+    assert(FRMUCRespawnRules::SpawnHp(200, false) == 20);
+    assert(FRMUCRespawnRules::SpawnHp(400, true) == 400);
+    assert(FRMUCRespawnRules::ShieldAfterGainCard(30.0, false) == 10.0);
+    assert(FRMUCRespawnRules::ShieldAfterGainCard(25.0, false) == 5.0);
+    assert(FRMUCRespawnRules::ShieldAfterGainCard(20.0, false) == 0.0);
+    assert(FRMUCRespawnRules::ShieldAfterGainCard(19.9, false) == 0.0);
+    assert(FRMUCRespawnRules::ShieldAfterGainCard(2.0, true) == 2.0);
+    assert(FRMUCRespawnRules::PowerLimit(150.0, 1.0) == 200.0);
+    assert(FRMUCRespawnRules::PowerLimit(60.0, 1.0) == 120.0);
+    assert(FRMUCRespawnRules::PowerLimit(150.0, 0.0) == 150.0);
+    assert(FRMUCRespawnRules::PaidCost(60.0, 1) == 100);
+    assert(FRMUCRespawnRules::PaidCost(60.00000000001, 1) == 100);
+    assert(FRMUCRespawnRules::PaidCost(60.005, 1) == 180);
+    assert(FRMUCRespawnRules::PaidCost(300.0, 3) == 460);
 
     return 0;
 }

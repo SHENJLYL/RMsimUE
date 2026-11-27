@@ -6,44 +6,16 @@ void ARMUCGameReferee::RequestOwnAmmoPurchase()
     FMatchRobotSlot* Slot = OwnSlot();
     if (!Slot || Slot->bAiControlled || GameProgress != ERMUCGameProgress::Running || Slot->State.Hp <= 0) return;
 
-    const auto& Points = Slot->PointEffects;
-    if (Points.bSupply)
-    {
-        // Inside Supply Zone: Infantry (#3/#4) first claim 10 free rounds per press from the team's
-        // unlocked free infantry pool (50/min up to 300 total), then seamlessly buy 10 rounds / 10 gold.
-        if (!Slot->IsSentry())
-        {
-            const unsigned TeamIdx = FRMUCFieldRules::Index(Slot->Team);
-            const int32 AvailableMinutes = FMath::Clamp(FMath::FloorToInt((MatchElapsedSeconds + 1e-9) / 60.0), 0, 6);
-            const int32 UnlockedFree = FMath::Min(FRMUCSupplyRules::SentryFreeAmmoCap, AvailableMinutes * 50);
-            const int32 RemainingFree = UnlockedFree - TeamInfantryFreeAmmoClaimed[TeamIdx];
-            if (RemainingFree >= FRMUCSupplyRules::LocalAmmoAmount)
-            {
-                constexpr int32 StepRounds = FRMUCSupplyRules::LocalAmmoAmount; // 10 rounds per press
-                Slot->State.ProjectileAllowance17mm += StepRounds;
-                TeamInfantryFreeAmmoClaimed[TeamIdx] += StepRounds;
-                PushCombatBroadcast(BroadcastTeam(Slot->Team), Slot->DisplayName(),
-                    FString::Printf(TEXT("免费领弹 +%d (剩余可领 %d)"), StepRounds, RemainingFree - StepRounds),
-                    0, TEXT(""), 2.0);
-                return;
-            }
-        }
-        RequestSentryAmmoPurchase(Rig, false);
-        return;
-    }
-
-    // Outside Supply Zone: order the minimum official remote purchase (100 rounds / 150 gold, 6s out of combat).
-    RequestSentryAmmoPurchase(Rig, true);
+    Slot->State.AmmoPurchaseRequest = EAmmoPurchaseRequest::Manual;
 }
 
 void ARMUCGameReferee::RequestSentryAmmoPurchase(const AVehicleRig* Vehicle, bool bRemote)
 {
-    using Mode = FRMUCSupplyRules::EPurchaseMode;
     FMatchRobotSlot* Slot = FindSlot(Vehicle);
-    if (Slot && GameProgress == ERMUCGameProgress::Running && Slot->State.Hp > 0)
+    if (Slot && Slot->IsSentry() && GameProgress == ERMUCGameProgress::Running && Slot->State.Hp > 0)
     {
         auto& Request = Slot->State.AmmoPurchaseRequest;
-        if (!Request) Request = bRemote ? Mode::Remote : Mode::Local;
+        if (!Request) Request = bRemote ? EAmmoPurchaseRequest::Remote : EAmmoPurchaseRequest::Local;
     }
 }
 
@@ -59,7 +31,10 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
         for (auto& Slot : MatchRobots)
         {
             Slot.ContactHold = {};
+            Slot.HighlandTraversal = {};
             Slot.PhysicalContacts = {};
+            Slot.bSupplyVisualTagVisible = false;
+            Slot.SupplyVisualTagExpiry = 0.0;
             Slot.PointEffects = {};
             Slot.State.AmmoPurchaseRequest.reset();
         }
@@ -99,16 +74,27 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
         FMatchRobotSlot& Slot = MatchRobots[I];
         const AVehicleRig* Vehicle = Slot.Vehicle.Get();
         const bool bAlive = IsValid(Vehicle) && Slot.State.Hp > 0;
+        const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
+        ERMUCHighlandCard TraversalCard = ERMUCHighlandCard::None;
+        FVector ReaderSurfaceM = FVector::ZeroVector;
         if (bAlive)
         {
-            Slot.PhysicalContacts = ObserveFieldPoints(*Vehicle);
+            Slot.PhysicalContacts = ObserveFieldPoints(*Vehicle, &TraversalCard, &ReaderSurfaceM);
+#if WITH_DEV_AUTOMATION_TESTS
+            static const bool bVisualOnlyProbe = FParse::Param(FCommandLine::Get(), TEXT("RefereeSupplyVisionProbe"));
+            if (bVisualOnlyProbe && Vehicle == Rig) Slot.PhysicalContacts[TeamIdx].Supply = false;
+#endif
         }
         else
         {
             Slot.PhysicalContacts.fill({false, false, false, false, false, false});
         }
+        Slot.HighlandTraversal.Observe(TraversalCard, MatchElapsedSeconds, bAlive && !Slot.State.IsWeak());
         SlotHeld[I] = Slot.ContactHold.Observe(Slot.PhysicalContacts, MatchElapsedSeconds, bAlive);
-        const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
+        Slot.bSupplyVisualTagVisible = bAlive && IsSupplyVisualTagVisible(*Vehicle, Slot.Team, &ReaderSurfaceM);
+        if (!bAlive) Slot.SupplyVisualTagExpiry = 0.0;
+        if (Slot.bSupplyVisualTagVisible) Slot.SupplyVisualTagExpiry = MatchElapsedSeconds + 2.0;
+        if (MatchElapsedSeconds + 1e-9 < Slot.SupplyVisualTagExpiry) SlotHeld[I][TeamIdx].Supply = true;
         MergePoints(TeamPhysical[TeamIdx], Slot.PhysicalContacts);
         MergePoints(TeamHeld[TeamIdx], SlotHeld[I]);
     }
@@ -153,14 +139,16 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
         ApplyDartSuppression(SlotHeld[I]);
         Slot.PointEffects = FRMUCFieldPointEffects::Evaluate(
             FieldRules, Slot.Team, MatchElapsedSeconds, SlotHeld[I], FieldPointLatches);
+        if (Slot.HighlandTraversal.HasEffect(MatchElapsedSeconds))
+            Slot.PointEffects.DefencePercent = FMath::Max(Slot.PointEffects.DefencePercent, FRMUCHighlandTraversal::DefencePercent);
+        ClearWeakAtGainCard(Slot);
 
         auto& Record = Slot.State;
-        const auto& Points = Slot.PointEffects;
+        const auto Points = Record.IsWeak() ? FRMUCFieldPointEffects{} : Slot.PointEffects;
         const unsigned TeamIdx = FRMUCFieldRules::Index(Slot.Team);
         const int32 Before = Record.ProjectileAllowance17mm;
         Record.OwnLogistics.Step(RunningSeconds, MatchElapsedSeconds, FieldRules.Get(Slot.Team).BaseHp,
-            Points, Slot.MaxHp(), Record.Hp, Record.ProjectileAllowance17mm,
-            Slot.IsSentry(), &TeamInfantryFreeAmmoClaimed[TeamIdx], &TeamInfantryClaimedMinutes[TeamIdx]);
+            Points, Slot.MaxHp(), Record.Hp, Record.ProjectileAllowance17mm, Slot.IsSentry());
         if (Record.ProjectileAllowance17mm > Before)
         {
             PushCombatBroadcast(BroadcastTeam(Slot.Team), Slot.DisplayName(),
@@ -173,13 +161,16 @@ void ARMUCGameReferee::StepFieldObserver(double DeltaSeconds)
                 FString::Printf(TEXT("REMOTE PURCHASE +%d AMMO"), Delivered), 0, TEXT(""), 2.5);
         }
         if (!Record.AmmoPurchaseRequest) continue;
-        const auto Mode = *Record.AmmoPurchaseRequest;
+        const EAmmoPurchaseRequest Request = *Record.AmmoPurchaseRequest;
         Record.AmmoPurchaseRequest.reset();
-        const bool bRemote = Mode == FRMUCSupplyRules::EPurchaseMode::Remote;
+        using Mode = FRMUCSupplyRules::EPurchaseMode;
+        const bool bRemote = Request == EAmmoPurchaseRequest::Remote ||
+            (Request == EAmmoPurchaseRequest::Manual && !Slot.PointEffects.CanPurchaseAmmo());
         const bool bLocalSeat = (I == 0);
         using EPurchase = FRMUCSupplyRules::EPurchase;
         switch (Record.OwnLogistics.PurchaseAmmo(Points, Record.Hp > 0, TeamGold[TeamIdx],
-            Record.ProjectileAllowance17mm, Mode, MatchElapsedSeconds))
+            TeamPurchasedAmmo17mm[TeamIdx], Record.ProjectileAllowance17mm,
+            bRemote ? Mode::Remote : Mode::Local, MatchElapsedSeconds))
         {
         case EPurchase::Accepted:
             PushCombatBroadcast(BroadcastTeam(Slot.Team), Slot.DisplayName(), bRemote
@@ -279,7 +270,7 @@ int32 ARMUCGameReferee::ApplyFieldStructureHit(bool bTargetRed, bool bOutpost, b
     {
         return 0;
     }
-    if (FieldRules.BaseProtected(Site))
+    if (!bDart && FieldRules.BaseProtected(Site))
     {
         if (BaseHitFlash <= 0.0)
         {
@@ -290,7 +281,7 @@ int32 ARMUCGameReferee::ApplyFieldStructureHit(bool bTargetRed, bool bOutpost, b
     }
 
     BaseHitFlash = 0.25;
-    const int32 HpLost = FieldRules.HitBase(Site, Attacker, Damage);
+    const int32 HpLost = FieldRules.HitBase(Site, Attacker, Damage, bDart);
     if (FieldRules.Get(Site).BaseHp == 0)
     {
         SetGameProgress(ERMUCGameProgress::GameOver);

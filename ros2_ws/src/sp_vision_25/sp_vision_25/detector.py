@@ -22,6 +22,35 @@ class ArmorDetection:
     keypoints: np.ndarray      # shape (4, 2) ordered [tl, tr, br, bl] in pixel coords
     center: tuple[float, float]
     bar_height_px: float = 0.0
+    outpost_marker: bool = False
+
+
+def _lamp_color(hsv: np.ndarray, top: np.ndarray, bottom: np.ndarray) -> str | None:
+    """Read the colored edges of a UE lamp even if its center blooms white."""
+    direction = bottom - top
+    length = float(np.linalg.norm(direction))
+    if not 2.0 <= length <= hsv.shape[0]:
+        return None
+    axis = direction / length
+    width = min(18.0, max(2.0, 0.16 * length))
+    x0, y0 = np.maximum(0, np.floor(np.minimum(top, bottom) - width)).astype(int)
+    x1, y1 = np.minimum(hsv.shape[1::-1], np.ceil(np.maximum(top, bottom) + width)).astype(int)
+    if x0 >= x1 or y0 >= y1:
+        return None
+    y, x = np.ogrid[y0:y1, x0:x1]
+    dx, dy = x - top[0], y - top[1]
+    along = dx * axis[0] + dy * axis[1]
+    segment = (along >= 0.12 * length) & (along <= 0.88 * length) & (abs(dx * axis[1] - dy * axis[0]) <= width)
+    h, s, v = cv2.split(hsv[y0:y1, x0:x1])
+    lit = segment & (v >= 135)
+    blue = int(np.count_nonzero(lit & (s >= 105) & (h >= 86) & (h <= 135)))
+    red = int(np.count_nonzero(lit & (s >= 115) & ((h <= 24) | (h >= 165))))
+    minimum = max(2, int(0.25 * length))
+    if blue >= minimum and blue > 2 * red:
+        return "blue"
+    if red >= minimum and red > 2 * blue:
+        return "red"
+    return None
 
 
 def sort_keypoints(kps: np.ndarray) -> np.ndarray:
@@ -127,9 +156,10 @@ class SpVisionYoloV8Detector:
         idx = int(np.argmax(probs))
         return ARMOR_NAMES[idx], float(probs[idx])
 
-    def _detect_hsv_lightbars(self, bgr: np.ndarray, color: str, *, prefer_outpost: bool = False) -> list[ArmorDetection]:
-        """Full-resolution (1280x720) lightbar pairing fallback for long-range (4-12m) & rotating outpost."""
-        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+    def _detect_hsv_lightbars(
+        self, bgr: np.ndarray, hsv: np.ndarray, color: str, *, prefer_outpost: bool = False
+    ) -> list[ArmorDetection]:
+        """Full-resolution lightbar pairing fallback for long-range and rotating outpost."""
         if color == "red":
             m1 = cv2.inRange(hsv, (0, 115, 135), (24, 255, 255))
             m2 = cv2.inRange(hsv, (165, 115, 135), (180, 255, 255))
@@ -202,6 +232,7 @@ class SpVisionYoloV8Detector:
                             keypoints=kps,
                             center=(cx_p, cy_p),
                             bar_height_px=avg_h,
+                            outpost_marker=True,
                         )
                     )
                     continue
@@ -236,10 +267,14 @@ class SpVisionYoloV8Detector:
             )
         return out
 
-    def detect(self, bgr: np.ndarray, *, target_color: str | None = None, prefer_outpost: bool = False) -> list[ArmorDetection]:
+    def detect(
+        self, bgr: np.ndarray, *, target_color: str | None = None, prefer_outpost: bool = False,
+        verify_sim_lamp_color: bool = False,
+    ) -> list[ArmorDetection]:
         if bgr is None or bgr.size == 0:
             return []
         h0, w0 = bgr.shape[:2]
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
         scale = min(416.0 / h0, 416.0 / w0)
         nw, nh = int(w0 * scale), int(h0 * scale)
 
@@ -277,10 +312,14 @@ class SpVisionYoloV8Detector:
             idxs = cv2.dnn.NMSBoxes(boxes, confs, self.score_threshold, self.nms_threshold)
             if len(idxs) > 0:
                 for idx in np.array(idxs).reshape(-1):
+                    kps = kps_list[idx]
                     det_color = COLORS[ids_list[idx]]
+                    if verify_sim_lamp_color:
+                        det_color = _lamp_color(hsv, kps[0], kps[3])
+                        if det_color is None or det_color != _lamp_color(hsv, kps[1], kps[2]):
+                            continue
                     if target_color and det_color != target_color:
                         continue
-                    kps = kps_list[idx]
                     pat = crop_armor_pattern(bgr, kps)
                     if pat is None:
                         continue
@@ -309,13 +348,20 @@ class SpVisionYoloV8Detector:
         # Fuse full-res 1280x720 HSV lightbar + outpost sticker detections for long-range & oblique armors
         colors_to_scan = [target_color] if target_color in ("red", "blue") else ["red", "blue"]
         for col in colors_to_scan:
-            for hdet in self._detect_hsv_lightbars(bgr, col, prefer_outpost=prefer_outpost):
-                dup = any(
-                    r.color == hdet.color
-                    and abs(r.center[0] - hdet.center[0]) < max(24.0, hdet.bar_height_px * 2.0)
-                    and abs(r.center[1] - hdet.center[1]) < max(24.0, hdet.bar_height_px * 2.0)
-                    for r in results
-                )
-                if not dup:
+            for hdet in self._detect_hsv_lightbars(bgr, hsv, col, prefer_outpost=prefer_outpost):
+                for i, existing in enumerate(results):
+                    margin = (
+                        max(3.0, 0.65 * min(existing.bar_height_px, hdet.bar_height_px))
+                        if verify_sim_lamp_color else max(24.0, hdet.bar_height_px * 2.0)
+                    )
+                    if (
+                        existing.color == hdet.color
+                        and abs(existing.center[0] - hdet.center[0]) < margin
+                        and abs(existing.center[1] - hdet.center[1]) < margin
+                    ):
+                        if verify_sim_lamp_color and hdet.outpost_marker and not existing.outpost_marker:
+                            results[i] = hdet
+                        break
+                else:
                     results.append(hdet)
         return results

@@ -36,6 +36,11 @@ public:
     bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,FString& Error);
     bool Initialize(AVehicleRig* Vehicle,USceneCaptureComponent2D* Aim,ATrainingRange* Training,bool Control,const FRosBridgeOptions& Options,FString& Error);
     void Advance();
+    bool AdvancePreLidar(double& OutSimTime, double& OutNow, bool& OutChassisPowerCut, double& OutSimDelta);
+    void StepDedicatedLidarFrame(double SolverAt);
+    void AdvancePostLidar(double SimTime, double Now, bool bChassisPowerCut);
+    bool NeedsDedicatedLidarReplay() const;
+    URosLidarComponent* GetLidar() const { return Lidar; }
     void ResetEpoch();
     void SetOperatorBrake(bool Brake);
     bool SupportsOperatorGyro() const {return bOperatorGyroAvailable;}
@@ -79,11 +84,12 @@ private:
     bool bLightweightAimCamera=false;
     TArray<TSharedPtr<FJsonValue>> SensorMountSamples;
     int64 DroppedSensorMountSamples=0;
-    TArray<uint8> Inbound,Outbound;
+    TArray<uint8> Inbound,Outbound,OutboundLidar;
     struct FCameraReadback;
     TArray<TSharedPtr<FCameraReadback,ESPMode::ThreadSafe>> CameraReadbacks,FreeCameraReadbacks;
+    TSharedPtr<FCameraReadback,ESPMode::ThreadSafe> OutboundCameraFrame;
     int64 CameraConnection=0,CameraReadbackMisses=0;
-    bool bFpvVideoCut=false,bOutboundHasCameraFrame=false;
+    bool bFpvVideoCut=false;
     double LastSimTime=0,RealTimeFactor=0,RateWindowWall=0,RateWindowSim=0;
     double StallCommandFloor=-1.,LastGameTickGapMs=0.;
     int64 GameTickStalls=0;
@@ -94,6 +100,7 @@ private:
     bool ReadCommand(const TArray<uint8>& Line,double SimTime);
     void Receive(double SimTime);
     void SendPending();
+    void ResetOutbound();
     void AdvanceCamera(double SimTime);
     bool QueueState(double SimTime);
 };

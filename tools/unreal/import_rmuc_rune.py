@@ -83,10 +83,15 @@ def main():
         rune_track_material()
         return
     report_path = Path(next(arg.split('=', 1)[1] for arg in args if arg.startswith(
-        ('-RuneSource=', '-DartSource=', '-OutpostSource=', '-VisibilitySource=', '-BaseArmorSource='))))
+        ('-RuneSource=', '-DartSource=', '-OutpostSource=', '-VisibilitySource=', '-BaseArmorSource=', '-DartDisplaySource='))))
     report = json.loads(report_path.read_text(encoding='utf-8'))
     is_visibility = 'collision_source_sha256' in report
-    if is_visibility:
+    is_dart_display = any(arg.startswith('-DartDisplaySource=') for arg in args)
+    if is_dart_display:
+        if not all(spec.get('visual_only') for spec in report['assets']):
+            raise ValueError('Dart display assets must contain display meshes only')
+        destination, log_prefix = ROOT + '/Dart/UserAssets', 'RMUC_DART_DISPLAY_IMPORTED'
+    elif is_visibility:
         destination, log_prefix = ROOT + '/Visibility', 'RMUC_CENTRE_VISIBILITY_IMPORTED'
     else:
         destination, log_prefix = {

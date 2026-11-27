@@ -42,7 +42,7 @@ def generate(pdf: Path, sentry: Path, output: Path, renderer: str):
                 digit = reference.crop(tuple(
                     round(value * scale) for value, scale in zip(crop, (scale_x, scale_y) * 2)
                 )).convert("L").point(lambda level: max(0, min(255, (level - 13) * 255 // 225)))
-            digit_bounds = digit.getbbox()
+            digit_bounds = digit.point(lambda level: 255 if level >= 96 else 0).getbbox()
             if not digit_bounds:
                 raise ValueError(f"Missing digit {number} on reference page {page}")
             digit = digit.crop(digit_bounds)

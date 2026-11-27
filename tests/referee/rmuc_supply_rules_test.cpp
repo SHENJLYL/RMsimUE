@@ -81,6 +81,43 @@ int main()
     assert(Match.Get(Team::Red).BaseControl.Controller == Team::Red);
     assert(Match.Get(Team::Red).BaseControl.bFull);
 
+    for (const Team Side : Rules::Teams)
+    {
+        const Team Other = Rules::Other(Side);
+        const auto OwnIndex = Rules::Index(Side);
+        const auto OtherIndex = Rules::Index(Other);
+        Rules ExchangeMatch;
+        FRMUCFieldPoints Spot;
+        std::array<FRMUCFieldPointLatch, 2> SpotLatches;
+        const auto CanExchange = [&]() {
+            return FRMUCFieldPointEffects::Evaluate(ExchangeMatch, Side, 12.0, Spot, SpotLatches).CanPurchaseAmmo();
+        };
+        Spot[OwnIndex].Base = true;
+        assert(CanExchange());
+        Spot = {};
+        Spot[OwnIndex].Vantage = true;
+        assert(CanExchange());
+        Spot = {};
+        Spot[OwnIndex].CentralHighland = true;
+        SpotLatches[OwnIndex].CentralHighlandOwner = Side;
+        assert(!CanExchange());
+        Spot = {};
+        Spot[OtherIndex].Base = true;
+        Spot[OtherIndex].Vantage = true;
+        Spot[OtherIndex].Outpost = true;
+        assert(!CanExchange());
+        std::array<Rules::FSiteActivation, 2> Capture;
+        Capture[OtherIndex].OutpostPosition = Rules::FActivation{Side == Team::Red, Side == Team::Blue};
+        ExchangeMatch.Step(5.0, 5.0, Capture);
+        assert(ExchangeMatch.Get(Other).OutpostControl.Controller == Side);
+        assert(!ExchangeMatch.Get(Other).OutpostControl.bFull && !CanExchange());
+        ExchangeMatch.HitOutpost(Other, Side, Rules::OutpostMaxHp);
+        assert(ExchangeMatch.Get(Other).OutpostControl.bFull && CanExchange());
+        Spot = {};
+        Spot[OwnIndex].Outpost = true;
+        assert(CanExchange());
+    }
+
     FRMUCFieldContactHold Reader;
     FRMUCFieldPoints Cards;
     Cards[0].Outpost = true;
@@ -118,13 +155,19 @@ int main()
     assert(Hp == 140 && Allowance == 300);
     Logistics.Step(0.001, 60.0, 10000, Supply, 400, Hp, Allowance);
     assert(Allowance == 400);
+    Logistics.Step(0.0, 60.0, 10000, Supply, 400, Hp, Allowance);
+    assert(Allowance == 400);
+    FRMUCSupplyRules Infantry;
+    int InfantryAllowance = 0;
+    Infantry.Step(0.0, 390.0, 10000, Supply, 400, Hp, InfantryAllowance, false);
+    assert(InfantryAllowance == 0);
     Logistics.Step(1.0, 180.0, 10000, {}, 400, Hp, Allowance);
     assert(Hp == 140 && Allowance == 400);
     Logistics.Step(1.0, 181.0, 10000, Supply, 400, Hp, Allowance);
     assert(Hp == 180 && Allowance == 600);
     Hp = 100;
     Logistics.Step(2.0, 241.0, 10000, Supply, 400, Hp, Allowance);
-    assert(Hp == 240);
+    assert(Hp == 240 && Allowance == 700);
     Logistics.MarkCombat(241.0);
     Logistics.Step(1.0, 242.0, 6000, Supply, 400, Hp, Allowance);
     assert(Hp == 272 && Logistics.RecoveryPercent(242.0, 6000, Supply) == 8);
@@ -139,41 +182,61 @@ int main()
     Hp = 390;
     Logistics.Step(1.0, 361.0, 10000, Supply, 400, Hp, Allowance);
     assert(Hp == 400 && Allowance == 900);
+    FRMUCSupplyRules FirstLateClaim;
+    int LateAllowance = FRMUCSupplyRules::InitialAllowance;
+    FirstLateClaim.Step(0.0, 390.0, 10000, Supply, 400, Hp, LateAllowance);
+    assert(LateAllowance == 900);
+    FirstLateClaim.Step(0.0, 420.0, 10000, Supply, 400, Hp, LateAllowance);
+    assert(LateAllowance == 900);
 
     int Gold = 9;
-    assert(Logistics.PurchaseAmmo({}, true, Gold, Allowance) == Purchase::Unavailable);
-    assert(Logistics.PurchaseAmmo(Supply, true, Gold, Allowance) == Purchase::InsufficientGold);
-    assert(Gold == 9 && Allowance == 900);
+    int Purchased = 0;
+    assert(Logistics.PurchaseAmmo({}, true, Gold, Purchased, Allowance) == Purchase::Unavailable);
+    assert(Logistics.PurchaseAmmo(Outpost, true, Gold, Purchased, Allowance) == Purchase::InsufficientGold);
+    assert(Logistics.PurchaseAmmo(Supply, true, Gold, Purchased, Allowance) == Purchase::InsufficientGold);
+    assert(Gold == 9 && Allowance == 900 && Purchased == 0);
     Gold = 1200;
-    assert(Logistics.PurchaseAmmo(Supply, false, Gold, Allowance) == Purchase::Unavailable);
-    for (int I = 0; I < 100; ++I)
+    assert(Logistics.PurchaseAmmo(Supply, false, Gold, Purchased, Allowance) == Purchase::Unavailable);
+    for (int I = 0; I < 50; ++I)
     {
-        assert(Logistics.PurchaseAmmo(Outpost, true, Gold, Allowance) == Purchase::Accepted);
+        assert(Logistics.PurchaseAmmo(Supply, true, Gold, Purchased, Allowance) == Purchase::Accepted);
+        assert(Infantry.PurchaseAmmo(Supply, true, Gold, Purchased, InfantryAllowance) == Purchase::Accepted);
     }
-    assert(Logistics.PurchaseAmmo(Supply, true, Gold, Allowance) == Purchase::LimitReached);
-    assert(Gold == 200 && Allowance == 1900);
+    assert(Logistics.PurchaseAmmo(Supply, true, Gold, Purchased, Allowance) == Purchase::LimitReached);
+    assert(Infantry.PurchaseAmmo(Supply, true, Gold, Purchased, InfantryAllowance) == Purchase::LimitReached);
+    assert(Gold == 200 && Allowance == 1400 && InfantryAllowance == 500 && Purchased == 1000);
 
     FRMUCSupplyRules Orders;
+    FRMUCSupplyRules LocalBuyer;
     int Cash = 2000;
+    int MixedPurchased = 890;
     int Rounds = 0;
+    int LocalRounds = 0;
     Orders.MarkCombat(5.0);
-    assert(Orders.PurchaseAmmo({}, false, Cash, Rounds, Mode::Remote, 11.0) == Purchase::Unavailable);
-    assert(Orders.PurchaseAmmo({}, true, Cash, Rounds, Mode::Remote, 10.999) == Purchase::Unavailable);
-    assert(Orders.PurchaseAmmo({}, true, Cash, Rounds, Mode::Remote, 11.0) == Purchase::Accepted);
-    assert(Orders.HasPendingRemoteAmmo() && Cash == 1850 && Rounds == 0);
-    assert(Orders.PurchaseAmmo({}, true, Cash, Rounds, Mode::Remote, 12.0) == Purchase::Accepted);
+    assert(Orders.PurchaseAmmo({}, false, Cash, MixedPurchased, Rounds, Mode::Remote, 11.0) == Purchase::Unavailable);
+    assert(Orders.PurchaseAmmo({}, true, Cash, MixedPurchased, Rounds, Mode::Remote, 10.999) == Purchase::Unavailable);
+    assert(Orders.PurchaseAmmo({}, true, Cash, MixedPurchased, Rounds, Mode::Remote, 11.0) == Purchase::Accepted);
+    assert(Orders.HasPendingRemoteAmmo() && Cash == 1850 && Rounds == 0 && MixedPurchased == 990);
+    assert(LocalBuyer.PurchaseAmmo(Supply, true, Cash, MixedPurchased, LocalRounds) == Purchase::Accepted);
+    assert(LocalBuyer.PurchaseAmmo(Supply, true, Cash, MixedPurchased, LocalRounds) == Purchase::LimitReached);
+    assert(LocalBuyer.PurchaseAmmo({}, true, Cash, MixedPurchased, LocalRounds, Mode::Remote, 12.0) == Purchase::LimitReached);
+    assert(MixedPurchased == 1000 && Cash == 1840 && LocalRounds == 10);
     assert(Orders.DeliverRemoteAmmo(16.999, Rounds) == 0);
     assert(Orders.DeliverRemoteAmmo(17.0, Rounds) == 100 && Rounds == 100);
-    assert(Orders.DeliverRemoteAmmo(18.0, Rounds) == 100 && Rounds == 200);
     assert(!Orders.HasPendingRemoteAmmo() && Orders.DeliverRemoteAmmo(18.0, Rounds) == 0);
-    for (int I = 0; I < 71; ++I)
-    {
-        assert(Orders.PurchaseAmmo(Supply, true, Cash, Rounds) == Purchase::Accepted);
-    }
-    assert(Orders.PurchaseAmmo({}, true, Cash, Rounds, Mode::Remote, 20.0) == Purchase::LimitReached);
-    assert(Orders.PurchaseAmmo(Supply, true, Cash, Rounds) == Purchase::Accepted);
-    assert(!Orders.HasPendingRemoteAmmo() && Rounds == 920 && Cash == 980);
-    assert(Orders.CheckAmmoPurchase({}, true, 149, Mode::Remote, 20.0) == Purchase::LimitReached);
+    assert(MixedPurchased == 1000 && Cash == 1840);
+    assert(Orders.CheckAmmoPurchase({}, true, 149, MixedPurchased, Mode::Remote, 20.0) == Purchase::LimitReached);
+
+    FRMUCSupplyRules OpponentOrders;
+    int OpponentGold = 400;
+    int OpponentPurchased = 0;
+    int OpponentRounds = 0;
+    assert(OpponentOrders.PurchaseAmmo({}, true, OpponentGold, OpponentPurchased, OpponentRounds, Mode::Remote, 13.0) == Purchase::Accepted);
+    assert(OpponentOrders.PurchaseAmmo({}, true, OpponentGold, OpponentPurchased, OpponentRounds, Mode::Remote, 14.0) == Purchase::Accepted);
+    assert(OpponentPurchased == 200 && OpponentGold == 100 && MixedPurchased == 1000);
+    assert(OpponentOrders.DeliverRemoteAmmo(19.0, OpponentRounds) == 100 && OpponentOrders.HasPendingRemoteAmmo());
+    assert(OpponentOrders.DeliverRemoteAmmo(20.0, OpponentRounds) == 100 && !OpponentOrders.HasPendingRemoteAmmo());
+    assert(OpponentRounds == 200);
 
     std::cout << "RMUC supply and point rules checks passed\n";
 }

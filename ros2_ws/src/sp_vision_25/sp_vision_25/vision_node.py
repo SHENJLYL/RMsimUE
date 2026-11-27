@@ -27,6 +27,7 @@ import os
 import sys
 import time
 from collections import deque
+from dataclasses import dataclass
 from pathlib import Path
 
 _DLL_HANDLES = []
@@ -103,6 +104,20 @@ from .solver_tracker import AimSolution, BallisticAimer, WorldAngularTracker, ra
 
 BEHAVIOR_COMMAND_NS = 300_000_000
 TRACK_HOLD_NS = 1_100_000_000  # Keep gimbal locked on predicted world angle for 1.1s during brief occlusion/face switch
+SIM_HANDOFF_HOLD_NS = 220_000_000
+SIM_HANDOFF_GAP_NS = 250_000_000
+
+
+@dataclass
+class PlateObservation:
+    name: str
+    yaw: float
+    pitch: float
+    stamp_ns: int
+    count: int = 1
+
+    def separation(self, other: PlateObservation) -> float:
+        return math.hypot(math.remainder(self.yaw - other.yaw, 2.0 * math.pi), self.pitch - other.pitch)
 
 ARMOR_LABEL_IDS = {
     "one": 0,
@@ -259,6 +274,10 @@ class SpVisionSimNode(Node):
         self.sim_state_seen = False
         self.sim_match = False
         self.sim_referee_seen = False
+        self.sim_team_known = False
+        self.last_sim_frame_stamp = -1
+        self.sim_observation: PlateObservation | None = None
+        self.sim_challenger: PlateObservation | None = None
         self.identity: tuple | None = None
         self.feedback: deque[tuple[int, float, float]] = deque(maxlen=128)
         self.pending_image: Image | None = None
@@ -316,7 +335,14 @@ class SpVisionSimNode(Node):
     def _now_ns(self) -> int:
         return int(self.get_clock().now().nanoseconds)
 
+    def _simulator_observations(self) -> bool:
+        return self.referee_mode != "dji" and (
+            self.sim_state_seen or self.sim_referee_seen or self.referee_mode == "sim"
+        )
+
     def _enemy_color(self) -> str:
+        if self.sim_team_known:
+            return "blue" if self.is_red else "red"
         if self.enemy_color_override in ("red", "blue"):
             return self.enemy_color_override
         return "blue" if self.is_red else "red"
@@ -345,6 +371,8 @@ class SpVisionSimNode(Node):
     def _release(self) -> None:
         self.tracker.reset()
         self.track_name = None
+        self.sim_observation = None
+        self.sim_challenger = None
         self.track_visible = False
         self.last_solution = None
         self.enemy_world_xy = None
@@ -401,30 +429,30 @@ class SpVisionSimNode(Node):
             ref = json.loads(msg.data)
         except Exception:
             return
+        if not isinstance(ref, dict) or ref.get("available") is False:
+            return
         self.sim_referee_seen = True
         gs = ref.get("game_status") or {}
         rs = ref.get("robot_status") or {}
         if "game_progress" in gs:
             self.game_running = int(gs["game_progress"]) == 4
-        if "robot_id" in rs and self.enemy_color_override == "auto":
-            is_red = int(rs["robot_id"]) < 100
-            if is_red != self.is_red:
+        team_red = ref.get("friendly_red")
+        if type(team_red) is not bool:
+            robot_id = rs.get("robot_id")
+            team_red = robot_id < 100 if type(robot_id) is int and 0 < robot_id < 200 else None
+        if team_red is not None:
+            if not self.sim_team_known or team_red != self.is_red:
                 self._release()
-            self.is_red = is_red
+            self.is_red = team_red
+            self.sim_team_known = True
         if "current_hp" in rs:
             self.robot_alive = int(rs["current_hp"]) > 0
 
         enemy = self._enemy_color()
         field_devices = ref.get("field_devices") or {}
         enemy_site = field_devices.get(enemy) or {}
-        enemy_hp = ref.get("all_robot_hp") or {}
-        live: set[str] = set()
-        if enemy_hp:
-            for vname, suffix in VEHICLE_HP_KEYS.items():
-                if int(enemy_hp.get(f"{enemy}_{suffix}", 0)) > 0:
-                    live.add(vname)
-        else:
-            live = set(VEHICLE_NAMES)
+        # The HP map does not distinguish an absent class from an eliminated vehicle.
+        live = set(VEHICLE_NAMES)
         outposts = (field_devices.get(site) or {} for site in ("red", "blue"))
         if any(site.get("outpost_hp", 0) > 0 and site.get("outpost_owner_red") is (not self.is_red) for site in outposts):
             live.add("outpost")
@@ -432,7 +460,9 @@ class SpVisionSimNode(Node):
             live.add("base")
         self.live_targets = live
 
-        if not self.robot_alive or not self.game_running:
+        if not self.robot_alive or not self.game_running or (
+            self.track_name is not None and self.track_name not in self._allowed_names()
+        ):
             self._release()
 
     # --- Real-robot native dji_referee_protocol callbacks ---
@@ -532,6 +562,9 @@ class SpVisionSimNode(Node):
             self.last_cmd_stamp = 0
             self.feedback.clear()
             self.pending_image = None
+            if self._simulator_observations():
+                self.last_sim_frame_stamp = -1
+                self.sim_team_known = False
             self._release()
         self.sim_match = bool(
             d.get("state_fresh")
@@ -584,7 +617,9 @@ class SpVisionSimNode(Node):
         if len(msg.d) >= 4:
             self.D = np.array(msg.d, dtype=np.float64)
 
-    def _pick_target(self, detections: list[ArmorDetection], cur_yaw: float, cur_pitch: float) -> ArmorDetection | None:
+    def _pick_target(
+        self, detections: list[ArmorDetection], cur_yaw: float, cur_pitch: float, stamp_ns: int
+    ) -> ArmorDetection | None:
         enemy_color = self._enemy_color()
         allowed = self._allowed_names()
         enemies = [d for d in detections if d.color == enemy_color and d.name in allowed]
@@ -592,15 +627,58 @@ class SpVisionSimNode(Node):
             return None
         fx, fy, cx, cy = float(self.K[0, 0]), float(self.K[1, 1]), float(self.K[0, 2]), float(self.K[1, 2])
 
-        def score(d: ArmorDetection):
-            is_veh = 1 if d.name in VEHICLE_NAMES else 0
+        def observe(d: ArmorDetection) -> PlateObservation:
+            yaw, pitch = ray_to_world_angles(cur_yaw, cur_pitch, (d.center[0] - cx) / fx, (d.center[1] - cy) / fy)
+            return PlateObservation(d.name, yaw, pitch, stamp_ns)
+
+        def score(d: ArmorDetection, observation: PlateObservation | None):
             ang_pen = 0.0
             if self.tracker.initialized:
-                wy, wp = ray_to_world_angles(cur_yaw, cur_pitch, (d.center[0] - cx) / fx, (d.center[1] - cy) / fy)
-                ang_pen = -math.hypot(math.remainder(wy - self.tracker.yaw, 2.0 * math.pi), wp - self.tracker.pitch)
-            return (is_veh, TARGET_PRIORITY.get(d.name, 0), ang_pen, d.confidence)
+                assert observation is not None
+                ang_pen = -math.hypot(
+                    math.remainder(observation.yaw - self.tracker.yaw, 2.0 * math.pi),
+                    observation.pitch - self.tracker.pitch,
+                )
+            return (d.name in VEHICLE_NAMES, TARGET_PRIORITY.get(d.name, 0), ang_pen, d.confidence)
 
-        return max(enemies, key=score)
+        simulate = self._simulator_observations()
+        if not simulate:
+            return max(enemies, key=lambda d: score(d, observe(d) if self.tracker.initialized else None))
+
+        observations = [(d, observe(d)) for d in enemies]
+        if self.sim_observation is None:
+            best, self.sim_observation = max(observations, key=lambda pair: score(*pair))
+            return best
+
+        lost_ns = stamp_ns - self.track_stamp
+        limit = 0.11 + min(0.11, max(0.0, 0.55e-9 * lost_ns))
+        continued = None
+        for d, observation in observations:
+            separation = observation.separation(self.sim_observation)
+            if observation.name == self.sim_observation.name and separation < limit:
+                continued = d, observation
+                limit = separation
+        if continued is not None:
+            best, self.sim_observation = continued
+            self.sim_challenger = None
+            return best
+
+        # A different plate must recur after the current observation disappears.
+        best, observation = max(observations, key=lambda pair: score(*pair))
+        previous = self.sim_challenger
+        if (
+            previous is not None and previous.name == observation.name
+            and stamp_ns - previous.stamp_ns <= SIM_HANDOFF_GAP_NS
+            and observation.separation(previous) < 0.14
+        ):
+            observation.count = previous.count + 1
+        self.sim_challenger = observation
+        if observation.count < 3 or lost_ns < SIM_HANDOFF_HOLD_NS:
+            return None
+
+        self._release()
+        self.sim_observation = observation
+        return best
 
     def _publish_cmd(self, sol: AimSolution, stamp_ns: int, shoot: bool) -> None:
         if self.cmd_pub is None:
@@ -725,7 +803,10 @@ class SpVisionSimNode(Node):
 
     def _process_image(self, msg: Image) -> None:
         now = self._now_ns()
-        if not self.game_running or not self.robot_alive or not self._behavior_active(now):
+        simulate = self._simulator_observations()
+        if not self.game_running or not self.robot_alive or not self._behavior_active(now) or (
+            simulate and not self.sim_team_known
+        ):
             return
         if msg.height <= 0 or msg.width <= 0:
             return
@@ -754,7 +835,9 @@ class SpVisionSimNode(Node):
                 cur_yaw, cur_pitch = self.cur_yaw, self.cur_pitch
 
         self.pending_image = None
-        if self.track_name is not None and stamp < self.track_stamp:
+        if (self.track_name is not None and stamp < self.track_stamp) or (
+            simulate and stamp <= self.last_sim_frame_stamp
+        ):
             return
 
         arr = np.frombuffer(msg.data, dtype=np.uint8)
@@ -767,8 +850,14 @@ class SpVisionSimNode(Node):
         enemy_color = self._enemy_color()
         t_sec = stamp * 1e-9 if stamp > 0 else time.monotonic()
         prefer_outpost = self.target_priority == "ENEMY_VEHICLE_THEN_OUTPOST"
-        dets = self.detector.detect(bgr, target_color=enemy_color, prefer_outpost=prefer_outpost)
-        best = self._pick_target(dets, cur_yaw, cur_pitch)
+        if simulate:
+            self.last_sim_frame_stamp = stamp
+            if self.track_name is not None and stamp - self.track_stamp > TRACK_HOLD_NS:
+                self._release()
+        dets = self.detector.detect(
+            bgr, target_color=enemy_color, prefer_outpost=prefer_outpost, verify_sim_lamp_color=simulate
+        )
+        best = self._pick_target(dets, cur_yaw, cur_pitch, stamp)
 
         meas = None
         active_name = best.name if best is not None else self.track_name

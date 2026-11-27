@@ -16,6 +16,7 @@ class FJsonObject;
 class FJsonValue;
 class FRMSimWindowsDeadlineWait;
 class URosBridgeComponent;
+class FGpuLidarScene;
 class UWTFoliageCrushComponent;
 class UWTGeneratedCollisionComponent;
 class UMapOverview;
@@ -70,6 +71,7 @@ public:
     bool HasReferee() const { return Referee != nullptr; }
     bool ShouldShowDebugHud() const;
     void DrawRefereeHud(AHUD* Hud, UCanvas* Canvas) const;
+    bool DrawDartBlackout(AHUD* Hud, UCanvas* Canvas) const;
     bool GetGunWorldPoint(FVector& OutPoint) const;
     bool GetMapOverviewFrame(FMapOverviewFrame& OutFrame) const;
     bool IsControlHudVisible() const { return bReady && !bProbeActive; }
@@ -84,6 +86,7 @@ private:
     UPROPERTY() ARMUCGameReferee* Referee = nullptr;
     UPROPERTY() URosBridgeComponent* RosBridge=nullptr;
     UPROPERTY() TArray<URosBridgeComponent*> RosBridges;
+    TSharedPtr<FGpuLidarScene> GpuLidar;
     UPROPERTY() UWTFoliageCrushComponent* SoftFoliage=nullptr;
     UPROPERTY() UWTGeneratedCollisionComponent* GeneratedCollision=nullptr;
     bool bRosBridgeEnabled=false,bRosControl=false,bRosAimControl=false;
@@ -216,6 +219,8 @@ private:
     FVector2D LocalMapPointRos = FVector2D::ZeroVector;
     double LocalMapPingTime = -1000.0;
     bool bLocalMapPointValid = false;
+    TOptional<FVector2D> DartBlackoutDestinationRos;
+    double LastDartBlackoutMoveTime = -3.0;
     void UpdateManualMapInput(const FManualControlInput& Input, bool AllowActions,
         int32& CameraWheelSteps, bool& ConsumeMouse);
     void FillMapInteractionFrame(FMapOverviewFrame& Frame) const;

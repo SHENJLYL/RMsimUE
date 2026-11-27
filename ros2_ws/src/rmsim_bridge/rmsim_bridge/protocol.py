@@ -262,10 +262,13 @@ def validate_imu(data,robot,sim_time):
     physical_v3 = data.get('profile_schema') == 'rm_imu_runtime_v3'
     if physical_v3:
         model = data.get('physical_model')
-        if (not isinstance(model, dict) or model.get('schema') != 'rm_mid360_imu_physical_v1'
-                or model.get('measurement_calibrated') is not False
-                or abs(number(model.get('support_latency_s'), 'IMU support latency')-.001) > 1e-12
-                or abs(number(model.get('integration_window_s'), 'IMU differentiation window')-.002) > 1e-12):
+        supported_windows = {'rm_mid360_imu_physical_v1': .002, 'rm_mid360_imu_physical_v2': .005}
+        if not isinstance(model, dict) or model.get('measurement_calibrated') is not False:
+            raise ProtocolError('invalid native-history IMU measurement model')
+        window = supported_windows.get(model.get('schema')) if isinstance(model.get('schema'), str) else None
+        if (window is None
+                or abs(number(model.get('support_latency_s'), 'IMU support latency') - window * .5) > 1e-12
+                or abs(number(model.get('integration_window_s'), 'IMU integration window') - window) > 1e-12):
             raise ProtocolError('invalid native-history IMU measurement model')
     ids=set()
     physical_profiles={}
@@ -309,8 +312,9 @@ def validate_imu(data,robot,sim_time):
             rate, measurement = physical_profiles[s['id']]
             sample_index = round(stamp*rate/1_000_000_000)
             grid_stamp = round(sample_index*1_000_000_000/rate)
-            if (abs(stamp-grid_stamp)>1 or stamp + 1_000_000 > sim_time
-                    or abs(s['integration_dt_s']-.002) > 1e-10):
+            support_latency_ns = round(window * .5 * 1_000_000_000)
+            if (abs(stamp-grid_stamp)>1 or stamp + support_latency_ns > sim_time
+                    or abs(s['integration_dt_s'] - window) > 1e-10):
                 raise ProtocolError('IMU sample lacks native support or left its emission grid')
             for field,limit_key,quantum_key in (
                     ('angular_velocity_rad_s','gyro_range_rad_s','gyro_quantization_rad_s'),
@@ -336,7 +340,7 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
     ray_rate = number(data.get('rays_per_second'), 'ray rate')
     frame_rate = number(data.get('frame_hz'), 'LiDAR frame rate')
     physical_v3 = data.get('profile_schema') == 'rm_lidar_runtime_v3'
-    capacity, period_ns, expected_slots = 2, 0, 0
+    capacity, period_ns, expected_slots, group_stride = 2, 0, 0, 1
     if physical_v3:
         model = data.get('physical_model')
         if not isinstance(model, dict) or model.get('schema') != 'rm_mid360_physical_v1':
@@ -380,7 +384,14 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
         for key in ('no_hit', 'self_occluded', 'below_min_range', 'above_max_range',
                     'insufficient_signal', 'missing_pose_history', 'optical_pass_limit', 'noise_outside_range'):
             integer(rejected.get(key), 'rejected ' + key)
-        period_ns, expected_slots = round(1_000_000_000 / frame_rate), round(ray_rate / frame_rate)
+        period_ns = round(1_000_000_000 / frame_rate)
+        groups_per_scan = period_ns // (5000 * 4)
+        group_stride = integer(model.get('query_group_stride', 1), 'MID-360 query group stride', 1, 10)
+        expected_slots = ((groups_per_scan + group_stride - 1) // group_stride) * 4
+        if group_stride > 1:
+            if number(data.get('sampled_rays_per_second'), 'MID-360 sampled rate') != expected_slots * frame_rate:
+                raise ProtocolError('MID-360 sampled rate differs from its declared groups')
+            integer(data.get('sampling_omitted_slots'), 'MID-360 sampling omitted slots')
     elif not 100 <= ray_rate <= 200000 or not 1 <= frame_rate <= 30:
         raise ProtocolError('invalid LiDAR rate')
     lo=number(data.get('min_range_m'),'minimum range');hi=number(data.get('max_range_m'),'maximum range')
@@ -403,14 +414,15 @@ def validate_lidar(data,payload,camera_bytes,robot,sim_time):
         declared_offset=integer(scan.get('byte_offset'),'LiDAR offset',0,MAX_IMAGE)
         if seq<=previous or not start<=end<=sim_time or declared_offset!=offset or length!=n*20 or offset+length>len(payload):raise ProtocolError('invalid LiDAR payload layout/time')
         if physical_v3 and (end - start != period_ns or start % period_ns or n != expected_slots):
-            raise ProtocolError('MID-360 scan must contain one complete emission window')
+            raise ProtocolError('MID-360 scan must contain one complete sampled emission window')
         last_time=-1
         for slot,(dt,x,y,z,reflectivity,tag,line,pad) in enumerate(LIDAR_POINT.iter_unpack(memoryview(payload)[offset:offset+length])):
             if not all(math.isfinite(v) for v in (x,y,z)) or line>=4 or tag!=0 or pad!=0 or dt<last_time or start+dt>end+2:raise ProtocolError('invalid LiDAR return')
             radius2 = x*x+y*y+z*z
             if radius2>(hi+.001)**2:raise ProtocolError('LiDAR return exceeds configured range')
             if physical_v3:
-                if dt != slot * 5000 or line != ((start // 5000 + slot) % 4):
+                emission_slot = (slot // 4) * (4 * group_stride) + slot % 4
+                if dt != emission_slot * 5000 or line != ((start // 5000 + emission_slot) % 4):
                     raise ProtocolError('MID-360 emission time or channel sequence was altered')
                 if radius2 == 0:
                     if reflectivity != 0:

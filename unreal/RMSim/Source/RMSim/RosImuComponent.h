@@ -46,6 +46,7 @@ private:
     bool bPhysicalV3=false,bProfileTiming=false;
     double LastAdvanceTime=0,ProfileStartSim=0,ProfileSampleWall=0,ProfilePackWall=0;
     int64 ProfileSampleCount=0;
+    static constexpr double NativeIntegrationSeconds = .005;
     static double Gaussian(FRandomStream& Random);
     void AdvanceNative(double Time,bool Collect,double EpochSolverTime);
     int32 PendingSamplesPerChannel() const;

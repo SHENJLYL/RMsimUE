@@ -77,13 +77,10 @@ void ARMUCGameReferee::BindSentryArmorPresentation(AVehicleRig& Vehicle, FVehicl
         int32 Faces = 0;
         for (const FArmorFace& Face : SentryArmor)
         {
-            if (auto* Cover = Mount(Vehicle, *Body, Face.CentreM * 100., Face.Normal, .025, SentryTag, Finish))
-            {
+            if (Mount(Vehicle, *Body, Face.CentreM * 100., Face.Normal, .025, SentryTag, Finish))
                 ++Faces;
-                Armor.SceneLights.Add(AddPointLight(Vehicle, *Cover, FVector(6.5, 0, 0), TeamColor(true), 45.f));
-            }
         }
-        UE_LOG(LogRMSim, Display, TEXT("RMUC_ARMOR_PRESENTATION kind=sentry vehicle=%s faces=%d native_bars=%d"),
+        UE_LOG(LogRMSim, Display, TEXT("RMUC_ARMOR_PRESENTATION kind=sentry vehicle=%s faces=%d native_bars=%d spill_lights=0"),
             *Vehicle.GetName(), Faces, Armor.NativeBars.IsValid());
         if (InfantryPattern)
             UE_LOG(LogRMSim, Display, TEXT("RMUC_INFANTRY_STICKER pattern=%s vehicle=%s faces=%d"),

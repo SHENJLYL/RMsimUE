@@ -7,6 +7,8 @@
 #include "RosLidarComponent.generated.h"
 class AVehicleRig;
 class FJsonObject;
+class FGpuLidarScene;
+struct FGpuLidarHit;
 
 UCLASS()
 class RMSIM_API URosLidarComponent : public UActorComponent
@@ -17,6 +19,8 @@ public:
     void Advance(double Time,bool Connected,double EpochSolverTime=0.);
     void Reset();
     void DiscardPending();
+    bool SetGpuScene(FGpuLidarScene& Scene);
+    bool NeedsGpuReference() const { return GpuScene && bVerifyQueries && PreviousTime>=GpuReferenceDelay && GpuReferenceSubmitted<MaxVerificationRays; }
     bool UsesArticulatedMount() const { return bArticulated; }
     bool HasPendingScans() const { return !Pending.IsEmpty(); }
     const FString& GetSensorId() const { return Id; }
@@ -26,7 +30,18 @@ private:
     FString Id,ProfileHash,ParentFrame;
     bool bArticulated=false,bProfileTiming=false,bSerialQuery=false,bVerifyQueries=false;
     bool bMid360=false,bIncidenceCosine=true;
-    static constexpr int64 MaxVerificationRays=4096;
+    static constexpr int64 MaxVerificationRays=8192;
+    FGpuLidarScene* GpuScene=nullptr;
+    struct FNirOptics { double Reflectance=0.; bool bConfigured=false; };
+    TArray<FNirOptics> GpuOptics;
+    uint32 GpuVehicleId=0;
+    uint64 DeliveryGeneration=0;
+    int64 GpuReferenceSubmitted=0,GpuCompared=0,GpuHitDifferences=0,GpuOpticsDifferences=0,GpuHitPairs=0;
+    int64 GpuSelfCompared=0,GpuWindowCompared=0,GpuOtherCompared=0,GpuStaticCompared=0;
+    double GpuMaxDistance=0.,GpuMaxNormalAngle=0.;
+    bool bGpuVerificationLogged=false,bGpuCoverageQueued=false;
+    double GpuReferenceDelay=0.;
+    uint32 DarkGlass=0,BlueGlass=0;
     int64 VerifiedRays=0,VerifiedQueries=0;
     double VerificationMaxErrorCm=0;
     double ProfileRayWall=0,ProfileStartSim=0;
@@ -45,9 +60,9 @@ private:
     TArray<FVector2D> RecordedDirections;
     FString DirectionSequenceHash;
     TSharedPtr<FJsonObject> ModelProvenance;
-    int32 PendingScanLimit=2;
+    int32 PendingScanLimit=2,QueryGroupStride=1;
     int64 CurrentScanOrdinal=-1;
-    int64 DeliveryStartOrdinal=0,DeliverySuppressedSlots=0;
+    int64 DeliveryStartOrdinal=0,DeliverySuppressedSlots=0,SamplingOmittedSlots=0;
     int64 NoHitRays=0,TooNearRays=0,TooFarRays=0,WeakReturnRays=0,MissingPoseRays=0;
     int64 DisconnectedRays=0,OpticalLimitRays=0,NoiseRejectedRays=0,SkippedScanWindows=0,DefaultMaterialRays=0,IncompleteScanDrops=0;
     int32 Reflectivity=0,Seed=0;
@@ -57,18 +72,43 @@ private:
     TArray<uint8> Building;
     struct FScan {int64 Sequence=0;double Start=0,End=0;TArray<uint8> Bytes;};
     TArray<FScan> Pending;
+    struct FMid360PulseConfig;
+    struct FMid360PulsePage;
+    struct FPreparedPulse
+    {
+        FVector Local;
+        double RangeGaussian=0.;
+        double ElevCos=0.,ElevSin=0.,AzCos=0.,AzSin=0.;
+    };
+    TSharedPtr<const FMid360PulseConfig,ESPMode::ThreadSafe> GpuPulseConfig;
+    TSharedPtr<FMid360PulsePage,ESPMode::ThreadSafe> GpuPulseCurrent,GpuPulseNext;
+    int64 GpuPreparedPulseCount=0,GpuPreparedPulseMisses=0;
     struct FRay
     {
         int64 Index=0,StampNs=0;
         FVector Local,Direction,Start,RayStart,End;
         FHitResult Hit;
+        FPreparedPulse Pulse;
+        bool bPreparedPulse=false;
         double NirReflectance=0;
+        uint32 Windows=0;
+        bool bConfiguredMaterial=false,bSelfHit=false,bDynamicHit=false;
         bool bHit=false,bFound=false,bPoseValid=true,bVerify=false,bOpticalLimit=false;
     };
     void FinishScan();
     bool InitializeMid360(const TSharedPtr<FJsonObject>& Json,const FString& Profile,FString& Error);
     void AdvanceMid360(double Time,bool Connected,double EpochSolverTime);
-    void TraceRays(TArray<FRay>& Rays);
+    void TraceRays(TArray<FRay>& Rays,bool bReference=false);
+    void ConsumeMid360Rays(TConstArrayView<FRay> Rays,int64 NowNs);
+    void GenerateMid360Pulse(FRay& Ray);
+    void InitializeGpuPulseCache();
+    bool PrepareGpuPulse(FRay& Ray);
+    void QueueGpuRays(TArray<FRay>&& Rays,int64 NowNs,double Time,double Started);
+    void ApplyGpuResult(FRay& Ray,const FGpuLidarHit& Hit,TConstArrayView<FTransform> Poses,bool bCount=true);
+    void CompareGpuResult(const FRay& Reference,const FRay& Ray,int64 Count);
+#if WITH_DEV_AUTOMATION_TESTS
+    void QueueGpuVehicleCoverage();
+#endif
     void SelectScan(int64 Ordinal);
     double Gaussian(int64 Index,uint32 Dimension) const;
     void LogTiming(double Time,double Started,int32 Count);

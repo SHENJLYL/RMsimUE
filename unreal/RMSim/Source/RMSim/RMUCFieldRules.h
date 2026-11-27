@@ -85,6 +85,11 @@ public:
 
     const FSide& Get(Team Site) const { return Sites[Index(Site)]; }
 
+    static double LogisticsFactor(int BaseHp)
+    {
+        return 0.5 + std::clamp(BaseHp, 0, BaseMaxHp) / 20000.0;
+    }
+
     bool BaseProtected(Team Site) const
     {
         const FControl& Control = Get(Site).OutpostControl;
@@ -168,9 +173,9 @@ public:
         }
     }
 
-    int HitBase(Team Site, Team Attacker, int Damage)
+    int HitBase(Team Site, Team Attacker, int Damage, bool bDart = false)
     {
-        if (Site == Attacker || BaseProtected(Site) || Damage <= 0)
+        if (Site == Attacker || (!bDart && BaseProtected(Site)) || Damage <= 0)
         {
             return 0;
         }

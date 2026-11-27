@@ -7,7 +7,7 @@ from test_lidar_contract import frame
 from rmsim_bridge.protocol import validate_state, ProtocolError
 
 
-def physical_frame(hz=100, windows=1):
+def physical_frame(hz=100, windows=1, group_stride=1):
     state, _ = frame()
     lidar = state['lidar']
     period = 1_000_000_000 // hz
@@ -30,18 +30,23 @@ def physical_frame(hz=100, windows=1):
                      'below_min_range','above_max_range','insufficient_signal',
                      'missing_pose_history','optical_pass_limit','noise_outside_range')},
                  scans=[])
+    selected = [slot for slot in range(count) if (slot // 4) % group_stride == 0]
+    if group_stride > 1:
+        lidar['physical_model']['query_group_stride'] = group_stride
+        lidar['sampled_rays_per_second'] = len(selected) * hz
+        lidar['sampling_omitted_slots'] = (count - len(selected)) * windows
     payload = bytearray(range(12))
     for window in range(windows):
         start = state['sim_time_ns'] - (windows-window)*period
         offset = len(payload)
-        for slot in range(count):
+        for slot in selected:
             available = slot % 3 != 0
             payload.extend(struct.pack('<IfffBBBB', slot*5000,
                 1. if available else 0., 0., .1 if available else 0.,
                 75 if available else 0, 0, (start//5000+slot)%4, 0))
         lidar['scans'].append(dict(seq=window+1, start_ns=start,
-            end_ns=start+period, point_count=count, byte_offset=offset,
-            byte_length=count*20))
+            end_ns=start+period, point_count=len(selected), byte_offset=offset,
+            byte_length=len(selected)*20))
     return state, bytes(payload)
 
 
@@ -52,6 +57,23 @@ class Mid360PhysicalWireTests(unittest.TestCase):
                 state, payload = physical_frame(hz)
                 validate_state(state, payload, 'aim_sentry')
                 self.assertEqual(state['lidar']['scans'][0]['point_count'], 200000//hz)
+
+    def test_dual_sentry_sampling_preserves_nominal_time_and_channels(self):
+        for hz in (5, 10, 20, 50, 100):
+            with self.subTest(hz=hz):
+                state, payload = physical_frame(hz, group_stride=4)
+                validate_state(state, payload, 'aim_sentry')
+                self.assertEqual(state['lidar']['sampled_rays_per_second'], 50000)
+                self.assertEqual(state['lidar']['scans'][0]['point_count'], 50000 // hz)
+        state, payload = physical_frame(10, group_stride=4)
+        bad = bytearray(payload)
+        # The second four-channel burst occurs after 80 µs on the original grid.
+        struct.pack_into('<I', bad, 12 + 4 * 20, 20000)
+        with self.assertRaises(ProtocolError):
+            validate_state(state, bad, 'aim_sentry')
+        state['lidar']['sampled_rays_per_second'] = 200000
+        with self.assertRaises(ProtocolError):
+            validate_state(state, payload, 'aim_sentry')
 
     def test_eight_scan_backlog_is_bounded(self):
         state, payload = physical_frame(windows=8)
@@ -145,6 +167,17 @@ class NativeImuHistoryWireTests(unittest.TestCase):
     def test_completed_support_uses_200hz_grid_and_si(self):
         from rmsim_bridge.protocol import validate_imu
         validate_imu(self.sample(),'robot',10_000_000)
+
+    def test_window_averaged_imu_requires_its_full_support(self):
+        from rmsim_bridge.protocol import validate_imu
+        value = self.sample()
+        value['physical_model'].update(schema='rm_mid360_imu_physical_v2',
+                                       support_latency_s=.0025, integration_window_s=.005)
+        sample = value['samples'][0]
+        sample['integration_dt_s'] = .005
+        validate_imu(value, 'robot', sample['stamp_ns'] + 2_500_000)
+        with self.assertRaises(ProtocolError):
+            validate_imu(value, 'robot', sample['stamp_ns'] + 2_499_999)
 
     def test_nonintegral_nanosecond_sample_period_keeps_integer_index(self):
         from rmsim_bridge.protocol import validate_imu

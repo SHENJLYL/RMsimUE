@@ -193,9 +193,10 @@ TSharedRef<FJsonObject> URosImuComponent::TakeState()
     if(bPhysicalV3)
     {
         Root->SetStringField(TEXT("profile_schema"),TEXT("rm_imu_runtime_v3"));
-        Root->SetStringField(TEXT("model"),TEXT("native_point_velocity_centered_difference; instantaneous_native_gyro; SI; no_AHRS"));
-        auto Model=MakeShared<FJsonObject>();Model->SetStringField(TEXT("schema"),TEXT("rm_mid360_imu_physical_v1"));
-        Model->SetNumberField(TEXT("support_latency_s"),.001);Model->SetNumberField(TEXT("integration_window_s"),.002);
+        Root->SetStringField(TEXT("model"),TEXT("native_point_velocity_centered_difference; window_averaged_native_gyro; SI; no_AHRS"));
+        auto Model=MakeShared<FJsonObject>();Model->SetStringField(TEXT("schema"),TEXT("rm_mid360_imu_physical_v2"));
+        Model->SetNumberField(TEXT("support_latency_s"),NativeIntegrationSeconds * .5);
+        Model->SetNumberField(TEXT("integration_window_s"),NativeIntegrationSeconds);
         Model->SetBoolField(TEXT("measurement_calibrated"),false);
         Model->SetStringField(TEXT("noise_model"),TEXT("per_sample_independent_Gaussian_std; not_noise_density"));
         Model->SetStringField(TEXT("range_quantization_model"),TEXT("configured_uncalibrated_per_axis_SI; zero_disables_effect"));

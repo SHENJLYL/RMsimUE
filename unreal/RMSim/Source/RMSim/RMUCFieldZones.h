@@ -9,7 +9,9 @@ enum class ERMUCFieldZoneKind : uint8
     Outpost,
     Fortress,
     CentralHighland,
-    Vantage
+    Vantage,
+    HighlandLower,
+    TraversalInterruption
 };
 
 enum class ERMUCFieldZoneSide : uint8
@@ -39,8 +41,10 @@ public:
     bool Load(const FString& Filename, FString& Error);
     bool IsLoaded() const { return !Zones.IsEmpty(); }
     const FRMUCFieldZone* Find(ERMUCFieldZoneKind Kind, ERMUCFieldZoneSide Side) const;
+    bool HasTraversalInterruption(const FVector& PositionM) const;
     const TArray<FRMUCFieldZone>& GetZones() const { return Zones; }
 
 private:
     TArray<FRMUCFieldZone> Zones;
+    TArray<FRMUCFieldZone> TraversalInterruptions;
 };

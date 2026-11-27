@@ -4,7 +4,7 @@
   "Category": "Robotics",
   "Description": "Canonical vehicle import lab; dynamics and ROS integration are not implemented.",
   "Modules": [
-    {"Name": "RMSim", "Type": "Runtime", "LoadingPhase": "Default"}
+    {"Name": "RMSim", "Type": "Runtime", "LoadingPhase": "PostConfigInit"}
   ],
   "Plugins": [
     {"Name": "AndroidFileServer", "Enabled": false},

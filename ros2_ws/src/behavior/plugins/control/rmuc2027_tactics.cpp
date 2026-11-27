@@ -2,6 +2,7 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <iomanip>
 #include <memory>
 #include <mutex>
@@ -71,25 +72,32 @@ enum class Mode : std::size_t
 {
   RefereeUnavailable, Wait, Inactive, NavigationUnavailable, Patrol, OwnOutpostHeal, OwnBaseSupply,
   OwnOutpostAttack, OwnOutpostRebuild, EnemyOutpostAttack, EnemyOutpostCapture, EnemyFortress,
-  EnemyBaseAttack, OwnFortress, ChaseEnemy
+  EnemyBaseAttack, OwnFortress, ChaseEnemy, LocalAmmoExchange
 };
 
 constexpr std::array ModeNames{
   "referee_unavailable", "wait", "inactive", "navigation_unavailable", "patrol",
   "own_outpost_heal", "own_base_supply",
   "own_outpost_attack", "own_outpost_rebuild", "enemy_outpost_attack", "enemy_outpost_capture",
-  "enemy_fortress", "enemy_base_attack", "own_fortress", "chase_enemy"
+  "enemy_fortress", "enemy_base_attack", "own_fortress", "chase_enemy", "local_ammo_exchange"
 };
 constexpr auto Index(Mode mode) { return static_cast<std::size_t>(mode); }
-constexpr bool HasRoute(Mode mode) { return Index(mode) >= Index(Mode::Patrol); }
+constexpr bool HasRoute(Mode mode)
+{
+  return Index(mode) >= Index(Mode::Patrol) && mode != Mode::LocalAmmoExchange;
+}
 constexpr bool HasStaticPort(Mode mode)
 {
-  return Index(mode) >= Index(Mode::Patrol) && mode != Mode::ChaseEnemy;
+  return HasRoute(mode) && mode != Mode::ChaseEnemy;
+}
+constexpr bool IsOutpostAttack(Mode mode)
+{
+  return mode == Mode::OwnOutpostAttack || mode == Mode::EnemyOutpostAttack;
 }
 constexpr bool CanEngageHold(Mode mode)
 {
-  return mode == Mode::Patrol || mode == Mode::OwnOutpostAttack ||
-    mode == Mode::EnemyOutpostAttack || mode == Mode::EnemyBaseAttack || mode == Mode::ChaseEnemy;
+  return mode == Mode::Patrol || IsOutpostAttack(mode) ||
+    mode == Mode::EnemyBaseAttack || mode == Mode::ChaseEnemy;
 }
 
 struct Referee
@@ -137,6 +145,10 @@ struct Referee
   bool remote_ammo_pending;
   bool own_outpost_enemy_temp_ctrl = false;
   bool captured_outpost_enemy_temp_ctrl = false;
+  bool own_outpost_parked = false;
+  bool enemy_outpost_parked = false;
+  bool simulator = false;
+  bool local_ammo_exchange_active = false;
 
   static Referee Decode(const Json & data, bool red)
   {
@@ -200,7 +212,9 @@ struct Referee
       own.value("enemy_fortress_armor_progress_s", 0.0), own.value("enemy_fortress_armor_required_s", 10.0),
       own.at("supply_active"), own.at("local_ammo_purchase_available"),
       own.value("remote_ammo_purchase_available", false), own.value("remote_ammo_purchase_pending", false),
-      own_enemy_temp_ctrl, captured_enemy_temp_ctrl
+      own_enemy_temp_ctrl, captured_enemy_temp_ctrl,
+      own.value("outpost_rotor_parked", false), enemy.value("outpost_rotor_parked", false), true,
+      own.value("local_ammo_exchange_active", own.at("supply_active").get<bool>())
     };
   }
 };
@@ -284,6 +298,10 @@ struct Inputs
   bool nav_ready = false;
   WallClock::time_point nav_received{};
   bool enemy_vehicle_visible = false;
+  int observed_vehicle_label = -1;
+  std::int64_t observed_vehicle_track = -1;
+  std::int64_t observed_vehicle_stamp = -1;
+  int distinct_vehicle_observations = 0;
   WallClock::time_point enemy_vehicle_seen{};
   bool has_enemy_xy = false;
   double enemy_x = 0.0;
@@ -532,6 +550,27 @@ public:
         const bool has_ref = inputs->sim_referee.has_value() || inputs->dji_referee_seen;
         const bool is_vehicle = (label >= 0 && label <= 5) &&
           (!has_ref || alive_arr[static_cast<std::size_t>(label)]);
+        if (inputs->sim_referee && visible) {
+          const auto track = data.find("track_id");
+          const auto stamp = data.find("observation_stamp_ns");
+          const bool stamped = track != data.end() && track->is_number_integer() &&
+            stamp != data.end() && stamp->is_number_integer();
+          if (!is_vehicle || !stamped) {
+            inputs->distinct_vehicle_observations = 0;
+          } else {
+            const auto id = track->get<std::int64_t>();
+            const auto time = stamp->get<std::int64_t>();
+            const bool same = label == inputs->observed_vehicle_label && id == inputs->observed_vehicle_track;
+            if (!same || time < inputs->observed_vehicle_stamp || time - inputs->observed_vehicle_stamp > 220000000) {
+              inputs->distinct_vehicle_observations = 1;
+            } else if (time > inputs->observed_vehicle_stamp) {
+              inputs->distinct_vehicle_observations = std::min(3, inputs->distinct_vehicle_observations + 1);
+            }
+            inputs->observed_vehicle_label = label;
+            inputs->observed_vehicle_track = id;
+            inputs->observed_vehicle_stamp = time;
+          }
+        }
         if (visible && is_vehicle) {
           const auto seen_now = WallClock::now();
           inputs->enemy_vehicle_visible = true;
@@ -577,6 +616,8 @@ public:
   {
     BT::PortsList ports{
       BT::InputPort<std::string>("side"),
+      BT::InputPort<std::string>("own_outpost_parked_view", std::string{}, "Parked RMUC simulator viewpoint"),
+      BT::InputPort<std::string>("enemy_outpost_parked_view", std::string{}, "Parked RMUC simulator viewpoint"),
       BT::OutputPort<std::string>("route")
     };
     for (std::size_t i = Index(Mode::Patrol); i < ModeNames.size(); ++i) {
@@ -665,7 +706,19 @@ public:
     }
 
     const Mode next = Select(ref, nav_ready, vision, now);
-    if (!mode_ || *mode_ != next) {
+    const bool parked_view = ref && (
+      (next == Mode::OwnOutpostAttack && ref->own_outpost_enemy_owned && ref->own_outpost_hp > 0 &&
+       ref->own_outpost_parked && !parked_outpost_views_[0].empty()) ||
+      (next == Mode::EnemyOutpostAttack && ref->enemy_outpost_hostile && ref->enemy_outpost_hp > 0 &&
+       ref->enemy_outpost_parked && !parked_outpost_views_[1].empty()));
+    const bool changed_view = parked_view != use_parked_outpost_view_;
+    const bool changed_mode = !mode_ || *mode_ != next;
+    if (changed_view || (changed_mode && (parked_view || (ref && ref->simulator && IsOutpostAttack(next))))) {
+      outpost_vantage_idx_ = 0;
+      outpost_navigation_failures_ = 0;
+    }
+    use_parked_outpost_view_ = parked_view;
+    if (changed_mode || changed_view) {
       if (mode_ && *mode_ == Mode::ChaseEnemy) chase_exited_at_ = now;
       if (next == Mode::ChaseEnemy) chase_entered_at_ = now;
       resetChild();
@@ -729,6 +782,7 @@ public:
           if (status == BT::NodeStatus::SUCCESS) {
             arrived_ = now;
             progress_at_ = now;
+            if (IsOutpostAttack(next)) outpost_navigation_failures_ = 0;
             if (next == Mode::Patrol) {
               if (vision.memory.valid) {
                 SelectMemoryPatrolWaypoint(vision.memory);
@@ -739,14 +793,21 @@ public:
           } else {
             RCLCPP_WARN(node_->get_logger(), "RMUC_TACTICS navigation failed: %s",
               ModeNames[Index(next)]);
-            retry_at_[Index(next)] = now + (next == Mode::OwnOutpostHeal ? 20.0 : 8.0);
+            if (ref && ref->simulator && IsOutpostAttack(next) && ++outpost_navigation_failures_ < 3) {
+              outpost_vantage_idx_ = (outpost_vantage_idx_ + 1) % 3;
+              RCLCPP_INFO(node_->get_logger(), "RMUC_TACTICS trying alternate outpost route=%s",
+                RouteFor(next).c_str());
+            } else {
+              retry_at_[Index(next)] = now + (next == Mode::OwnOutpostHeal ? 20.0 : 8.0);
+            }
           }
         }
       }
     }
-    if (ref && HasRoute(next)) {
+    if (ref && (HasRoute(next) ||
+      (ref->simulator && ref->progress == 4 && ref->hp > 0 && ref->local_ammo_exchange_active))) {
       PurchaseAmmo(*ref, next, now);
-      if (arrived_ && !engaging_) {
+      if (HasRoute(next) && arrived_ && !engaging_) {
         MonitorDestination(*ref, next, contact, now);
       }
     }
@@ -793,6 +854,8 @@ private:
       routes_[Index(Mode::OwnFortress)] = "-6.82;0.0;0.0";
     }
     if (allow_xml_override) {
+      parked_outpost_views_[0] = getInput<std::string>("own_outpost_parked_view").value();
+      parked_outpost_views_[1] = getInput<std::string>("enemy_outpost_parked_view").value();
       for (std::size_t i = Index(Mode::Patrol); i < ModeNames.size(); ++i) {
         if (!HasStaticPort(static_cast<Mode>(i))) continue;
         const auto route = getInput<std::string>(ModeNames[i]);
@@ -886,7 +949,7 @@ private:
       static const std::string kBlueCloser = "-2.62;-3.26;0.0";
       return is_red_ ? kRedCloser : kBlueCloser;
     }
-    if (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack) {
+    if (IsOutpostAttack(mode)) {
       // Three verified clear vantage angles around each outpost so if a static outpost's plates
       // face away from one vantage, the sentry automatically repositions to a face-on angle!
       static const std::array<std::string, 3> kBluePostVantages = {
@@ -901,7 +964,11 @@ private:
       };
       const bool target_red_post = (mode == Mode::OwnOutpostAttack) ? is_red_ : !is_red_;
       const std::size_t idx = outpost_vantage_idx_ % 3;
-      return target_red_post ? kRedPostVantages[idx] : kBluePostVantages[idx];
+      if (use_parked_outpost_view_ && idx == 0) {
+        return parked_outpost_views_[mode == Mode::OwnOutpostAttack ? 0 : 1];
+      }
+      const std::size_t fallback = use_parked_outpost_view_ ? idx - 1 : idx;
+      return target_red_post ? kRedPostVantages[fallback] : kBluePostVantages[fallback];
     }
     return mode == Mode::Patrol ? patrol_routes_[patrol_waypoint_] : routes_[Index(mode)];
   }
@@ -942,10 +1009,16 @@ private:
       RCLCPP_INFO(node_->get_logger(), "RMUC_TACTICS auto-selected unified field coordinates for %s",
         is_red_ ? "RED" : "BLUE");
     }
-    const bool enemy_recent =
-      inputs_->enemy_vehicle_visible || (now - inputs_->enemy_vehicle_seen <= engage_hold);
-    const bool chase_recent =
-      inputs_->enemy_vehicle_visible || (now - inputs_->enemy_vehicle_seen <= chase_memory);
+    // Keep all vision labels. In the simulator, a single image of a field prop
+    // should not interrupt a running outpost tactic.
+    const bool outpost_tactic = mode_ &&
+      (*mode_ == Mode::OwnOutpostAttack || *mode_ == Mode::EnemyOutpostAttack);
+    const bool can_handoff = !inputs_->sim_referee || !outpost_tactic ||
+      inputs_->distinct_vehicle_observations >= 3;
+    const bool enemy_recent = can_handoff &&
+      (inputs_->enemy_vehicle_visible || now - inputs_->enemy_vehicle_seen <= engage_hold);
+    const bool chase_recent = can_handoff &&
+      (inputs_->enemy_vehicle_visible || now - inputs_->enemy_vehicle_seen <= chase_memory);
     VisionInfo info;
     info.enemy_visible = enemy_recent;
     info.has_enemy_xy = chase_recent && inputs_->has_enemy_xy;
@@ -997,11 +1070,11 @@ private:
     if (!ref) return Mode::RefereeUnavailable;
     if (ref->progress != 4) return ref->progress < 4 ? Mode::Wait : Mode::Inactive;
     if (ref->hp <= 0 || ref->max_hp <= 0) return Mode::Inactive;
+    healing_ = healing_ ? ref->hp * 100 < ref->max_hp * 85 : ref->hp <= 150;
+    reloading_ = reloading_ ? ref->ammo < 110 : ref->ammo <= 35;
     if (!nav_ready) return Mode::NavigationUnavailable;
 
     const auto ready = [&](Mode mode) { return now >= retry_at_[Index(mode)]; };
-    healing_ = healing_ ? ref->hp * 100 < ref->max_hp * 85 : ref->hp <= 150;
-    reloading_ = reloading_ ? ref->ammo < 110 : ref->ammo <= 35;
     const bool can_reload_remote = ref->remote_ammo_available || ref->remote_ammo_pending;
     const bool prefer_local = ref->supply_active && ref->local_ammo_available &&
       !ref->remote_ammo_pending;
@@ -1025,6 +1098,10 @@ private:
     // 1. Survival / defensive emergency
     if (overwhelmed && ref->own_fortress_available && ready(Mode::OwnFortress)) {
       return Mode::OwnFortress;
+    }
+    if (ref->simulator && reloading_ && !healing_ && !ref->supply_active &&
+        ref->local_ammo_exchange_active && ref->local_ammo_available && !ref->remote_ammo_pending) {
+      return Mode::LocalAmmoExchange;
     }
     // Once committed to OwnBaseSupply (either heading there or healing there), finish it
     // instead of bouncing back and forth between OwnOutpostHeal and OwnBaseSupply!
@@ -1104,13 +1181,13 @@ private:
 
   void PurchaseAmmo(const Referee & ref, Mode mode, double now)
   {
-    if (!reloading_ || now < next_purchase_) return;
+    if (!reloading_ || ref.remote_ammo_pending || now < next_purchase_) return;
 
     std_msgs::msg::UInt32 request;
-    if (mode == Mode::OwnBaseSupply && ref.supply_active && ref.local_ammo_available &&
-        !ref.remote_ammo_pending) {
+    const bool at_exchange = ref.simulator ? ref.local_ammo_exchange_active : ref.supply_active;
+    if ((ref.simulator || mode == Mode::OwnBaseSupply) && at_exchange && ref.local_ammo_available) {
       request.data = 1;
-    } else if (ref.remote_ammo_available && !ref.remote_ammo_pending) {
+    } else if (ref.remote_ammo_available && !(ref.simulator && at_exchange)) {
       request.data = 2;
     } else {
       return;
@@ -1166,7 +1243,7 @@ private:
           progress_at_ = now;
         }
         objective_hp_ = hp;
-        const bool is_outpost_mode = (mode == Mode::EnemyOutpostAttack || mode == Mode::OwnOutpostAttack);
+        const bool is_outpost_mode = IsOutpostAttack(mode);
         const bool attacking_hostile_post =
           (mode == Mode::EnemyOutpostAttack && ref.enemy_outpost_hostile && ref.enemy_outpost_hp > 0) ||
           (mode == Mode::OwnOutpostAttack && ref.own_outpost_enemy_owned && ref.own_outpost_hp > 0);
@@ -1278,8 +1355,10 @@ private:
   void Publish(Mode mode, const std::optional<Referee> & ref, const VisionInfo & vision,
     bool navigating, std::optional<bool> contact, double dt)
   {
-    const bool active = ref && HasRoute(mode);
-    const bool quiet_supply = active && !navigating && mode == Mode::OwnBaseSupply && !vision.enemy_visible;
+    const bool exchanging = mode == Mode::LocalAmmoExchange;
+    const bool active = ref && (HasRoute(mode) || exchanging);
+    const bool quiet_supply = active && !navigating &&
+      (mode == Mode::OwnBaseSupply || exchanging) && !vision.enemy_visible;
     std_msgs::msg::Int32 aim;
     aim.data = active;
     std_msgs::msg::Int32 fire;
@@ -1310,7 +1389,7 @@ private:
     if (active) {
       const bool low_hp_defense = ref->hp <= 180 || healing_;
       const bool defensive_objective =
-        mode == Mode::OwnOutpostHeal || mode == Mode::OwnBaseSupply || mode == Mode::OwnFortress ||
+        mode == Mode::OwnOutpostHeal || mode == Mode::OwnBaseSupply || exchanging || mode == Mode::OwnFortress ||
         mode == Mode::OwnOutpostRebuild || mode == Mode::EnemyOutpostCapture || mode == Mode::EnemyFortress;
       const bool offensive_fire =
         vision.enemy_visible || mode == Mode::ChaseEnemy ||
@@ -1374,7 +1453,7 @@ private:
 
     std_msgs::msg::String message;
     const char * phase = engaging_ ? "engaging" :
-      (navigating ? "moving" : (arrived_ && active ? (contact == false ? "checking_card" : "holding") : "idle"));
+      (navigating ? "moving" : ((arrived_ || exchanging) && active ? (contact == false ? "checking_card" : "holding") : "idle"));
     message.data = Json{
       {"mode", ModeNames[Index(mode)]}, {"route", active ? active_route_ : ""},
       {"phase", phase},
@@ -1452,6 +1531,9 @@ private:
   double last_stance_cmd_at_ = -100.0;
   int outpost_heal_recenter_tries_ = 0;
   std::size_t outpost_vantage_idx_ = 0;
+  int outpost_navigation_failures_ = 0;
+  std::array<std::string, 2> parked_outpost_views_{};
+  bool use_parked_outpost_view_ = false;
 };
 }  // namespace
 

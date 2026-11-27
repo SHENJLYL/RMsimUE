@@ -672,8 +672,10 @@ bool FRMUCFieldDeviceVisuals::BindDartGates(AActor& Owner, AStaticMeshActor* Red
         ReadBaseVector(*LauncherMount, TEXT("source_exit_offset_m"), ExitOffset) &&
         LauncherMount->TryGetNumberField(TEXT("scale"), LauncherScale) && LauncherScale > 0. && LauncherScale <= 1.)
     {
-        Launcher = LoadObject<UStaticMesh>(nullptr,
-            TEXT("/Game/RMSim/Maps/rmuc2027/Dart/dart_launcher_duxing_cad.dart_launcher_duxing_cad"));
+        FString MeshAsset;
+        if (!LauncherMount->TryGetStringField(TEXT("mesh_asset"), MeshAsset))
+            MeshAsset = TEXT("/Game/RMSim/Maps/rmuc2027/Dart/dart_launcher_duxing_cad.dart_launcher_duxing_cad");
+        Launcher = LoadObject<UStaticMesh>(nullptr, *MeshAsset);
     }
     if (!Launcher)
         UE_LOG(LogTemp, Warning, TEXT("RMUC_DART_LAUNCHER_UNAVAILABLE mount=%s"), *LauncherDescription);
@@ -767,8 +769,8 @@ bool FRMUCFieldDeviceVisuals::BindDartGates(AActor& Owner, AStaticMeshActor* Red
                 Team == 0 ? TEXT("red") : TEXT("blue"), RedSpacerCentres.Num());
         }
         DartLauncherExitCm = ExitOffset * FVector(100., -100., 100.);
-        UE_LOG(LogTemp, Display, TEXT("RMUC_DART_LAUNCHER_BOUND team=%s location=%s size_cm=%s scale=%.3f"),
-            Team == 0 ? TEXT("red") : TEXT("blue"), *Display->GetComponentLocation().ToCompactString(),
+        UE_LOG(LogTemp, Display, TEXT("RMUC_DART_LAUNCHER_BOUND team=%s asset=%s location=%s size_cm=%s scale=%.3f"),
+            Team == 0 ? TEXT("red") : TEXT("blue"), *Launcher->GetPathName(), *Display->GetComponentLocation().ToCompactString(),
             *(Launcher->GetBoundingBox().GetSize() * LauncherScale).ToCompactString(), LauncherScale);
     }
     UpdateDartGates(0., 0.);

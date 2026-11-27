@@ -166,9 +166,8 @@ bool FRMUCDartVisual::Spawn(AActor& Owner, bool bRed)
     Destroy();
     UWorld* World = Owner.GetWorld();
     if (!World) return false;
-    auto* Cylinder = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
-    auto* Basic = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
-    if (!Cylinder || !Basic) return false;
+    auto* ImportedBody = LoadObject<UStaticMesh>(nullptr,
+        TEXT("/Game/RMSim/Maps/rmuc2027/Dart/UserAssets/dart_body_xd1.dart_body_xd1"), nullptr, LOAD_NoWarn);
 
     FActorSpawnParameters Params;
     Params.Owner = &Owner;
@@ -183,46 +182,78 @@ bool FRMUCDartVisual::Spawn(AActor& Owner, bool bRed)
     BodyRoot->RegisterComponent();
 
     TeamColor = RMUCArmorPresentation::TeamColor(bRed);
-    const auto Paint = [&](const FLinearColor& Color)
+    TrailAttachmentX = TrailExitX;
+    if (ImportedBody)
     {
-        auto* PaintMaterial = UMaterialInstanceDynamic::Create(Basic, Display);
-        PaintMaterial->SetVectorParameterValue(TEXT("Color"), Color);
-        return PaintMaterial;
-    };
-    auto* Shell = Paint(FLinearColor(.24f, .29f, .35f));
-    auto* Metal = Paint(FLinearColor(.56f, .62f, .69f));
-    auto* Graphite = Paint(FLinearColor(.055f, .075f, .10f));
-    auto* TeamFinish = Paint(TeamColor * .52f);
-    auto* Lamp = RMUCArmorPresentation::MakeEmitter(*Display, bRed, 2.8f);
-    const FQuat AlongX = FQuat::FindBetweenNormals(FVector::UpVector, FVector::ForwardVector);
-    const auto AddBand = [&](double X, double Diameter, double Length, UMaterialInterface* Material)
+        auto* Skin = AddMesh<UStaticMeshComponent>(*Display, *BodyRoot);
+        Skin->SetStaticMesh(ImportedBody);
+        const int32 NoseSlot = ImportedBody->GetMaterialIndex(FName(TEXT("UserDart_dart_body_xd1_08")));
+        if (bRed && NoseSlot != INDEX_NONE)
+        {
+            if (auto* RedNose = LoadObject<UMaterialInterface>(nullptr,
+                TEXT("/Game/RMSim/Maps/rmuc2027/Dart/UserAssets/UserDart_dart_body_xd1_RedNose.UserDart_dart_body_xd1_RedNose"),
+                nullptr, LOAD_NoWarn))
+            {
+                Skin->SetMaterial(NoseSlot, RedNose);
+            }
+        }
+        Skin->RegisterComponent();
+        TrailAttachmentX = ImportedBody->GetBoundingBox().Min.X;
+        UE_LOG(LogTemp, Display, TEXT("RMUC_DART_DISPLAY_BODY team=%s asset=%s size_cm=%s nose_material=%s"),
+            bRed ? TEXT("red") : TEXT("blue"), *ImportedBody->GetPathName(),
+            *ImportedBody->GetBoundingBox().GetSize().ToCompactString(),
+            *GetNameSafe(NoseSlot == INDEX_NONE ? nullptr : Skin->GetMaterial(NoseSlot)));
+    }
+    else
     {
-        auto* Part = AddMesh<UStaticMeshComponent>(*Display, *BodyRoot);
-        Part->SetStaticMesh(Cylinder);
-        Part->SetMaterial(0, Material);
-        Part->SetRelativeTransform(FTransform(AlongX, FVector(X, 0., 0.), FVector(Diameter, Diameter, Length) / 100.));
-        Part->RegisterComponent();
-    };
+        auto* Cylinder = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+        auto* Basic = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
+        if (!Cylinder || !Basic)
+        {
+            Display->Destroy();
+            return false;
+        }
+        const auto Paint = [&](const FLinearColor& Color)
+        {
+            auto* PaintMaterial = UMaterialInstanceDynamic::Create(Basic, Display);
+            PaintMaterial->SetVectorParameterValue(TEXT("Color"), Color);
+            return PaintMaterial;
+        };
+        auto* Shell = Paint(FLinearColor(.24f, .29f, .35f));
+        auto* Metal = Paint(FLinearColor(.56f, .62f, .69f));
+        auto* Graphite = Paint(FLinearColor(.055f, .075f, .10f));
+        auto* TeamFinish = Paint(TeamColor * .52f);
+        auto* Lamp = RMUCArmorPresentation::MakeEmitter(*Display, bRed, 2.8f);
+        const FQuat AlongX = FQuat::FindBetweenNormals(FVector::UpVector, FVector::ForwardVector);
+        const auto AddBand = [&](double X, double Diameter, double Length, UMaterialInterface* Material)
+        {
+            auto* Part = AddMesh<UStaticMeshComponent>(*Display, *BodyRoot);
+            Part->SetStaticMesh(Cylinder);
+            Part->SetMaterial(0, Material);
+            Part->SetRelativeTransform(FTransform(AlongX, FVector(X, 0., 0.), FVector(Diameter, Diameter, Length) / 100.));
+            Part->RegisterComponent();
+        };
 
-    AddBand(-1.8, 4.36, 26.5, Shell);
-    AddBand(7.5, 4.66, 3.4, Graphite);
-    AddBand(9.4, 4.76, .8, Metal);
-    AddBand(10.25, 4.60, 1.2, Lamp ? Lamp : TeamFinish);
-    AddBand(-6.8, 4.54, 1.7, TeamFinish);
-    AddBand(-12.4, 4.71, 1.95, Metal);
-    AddBand(-15.8, 4.16, 3.0, Graphite);
-    AddBand(-17.1, 3.45, 1.1, Metal);
-    AddBand(-17.65, 2.1, .45, Lamp ? Lamp : TeamFinish);
+        AddBand(-1.8, 4.36, 26.5, Shell);
+        AddBand(7.5, 4.66, 3.4, Graphite);
+        AddBand(9.4, 4.76, .8, Metal);
+        AddBand(10.25, 4.60, 1.2, Lamp ? Lamp : TeamFinish);
+        AddBand(-6.8, 4.54, 1.7, TeamFinish);
+        AddBand(-12.4, 4.71, 1.95, Metal);
+        AddBand(-15.8, 4.16, 3.0, Graphite);
+        AddBand(-17.1, 3.45, 1.1, Metal);
+        AddBand(-17.65, 2.1, .45, Lamp ? Lamp : TeamFinish);
 
-    auto* Nose = AddMesh<UProceduralMeshComponent>(*Display, *BodyRoot);
-    AddNose(*Nose);
-    Nose->SetMaterial(0, TeamFinish);
-    Nose->RegisterComponent();
-    auto* Fins = AddMesh<UProceduralMeshComponent>(*Display, *BodyRoot);
-    AddFins(*Fins);
-    Fins->SetMaterial(0, Graphite);
-    Fins->SetMaterial(1, Metal);
-    Fins->RegisterComponent();
+        auto* Nose = AddMesh<UProceduralMeshComponent>(*Display, *BodyRoot);
+        AddNose(*Nose);
+        Nose->SetMaterial(0, TeamFinish);
+        Nose->RegisterComponent();
+        auto* Fins = AddMesh<UProceduralMeshComponent>(*Display, *BodyRoot);
+        AddFins(*Fins);
+        Fins->SetMaterial(0, Graphite);
+        Fins->SetMaterial(1, Metal);
+        Fins->RegisterComponent();
+    }
     BodyRoot->SetVisibility(false, true);
 
     auto* Wake = AddMesh<UProceduralMeshComponent>(*Display, *Root);
@@ -250,7 +281,7 @@ void FRMUCDartVisual::ShowAt(const FVector& Position, const FVector& Direction, 
     auto* Wake = Trail.Get();
     if (!Wake) return;
     if (History.IsEmpty()) Wake->SetWorldLocation(Position);
-    const FTrailSample Sample{Now, Position + Rotation.RotateVector(FVector(TrailExitX, 0., 0.)) - Wake->GetComponentLocation()};
+    const FTrailSample Sample{Now, Position + Rotation.RotateVector(FVector(TrailAttachmentX, 0., 0.)) - Wake->GetComponentLocation()};
     if (!History.IsEmpty() && Now <= History.Last().Time) History.Last() = Sample;
     else History.Add(Sample);
     FadeTrail(Now);

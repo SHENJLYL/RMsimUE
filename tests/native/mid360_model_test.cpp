@@ -22,6 +22,19 @@ int main()
         assert(Mid360Model::ScanOrdinal(N-1,Hz)==0);
         assert(Mid360Model::ScanOrdinal(N,Hz)==1);
         assert((N-1)*5000<Mid360Model::ScanPeriodNs(Hz));
+        assert(Mid360Model::SampledSlotsPerScan(Hz,1)==N);
+        assert(Mid360Model::SampledSlotsPerScan(Hz,4)==N/4);
+        for(int Stride=1;Stride<=Mid360Model::MaxQueryGroupStride;++Stride)
+        {
+            std::int64_t Sampled=0;
+            for(std::int64_t Slot=0;Slot<N;++Slot)
+            {
+                if(!Mid360Model::SamplesSlot(Slot,Stride))continue;
+                assert(Slot%4==Sampled%4);
+                ++Sampled;
+            }
+            assert(Sampled==Mid360Model::SampledSlotsPerScan(Hz,Stride));
+        }
     }
     assert(!Mid360Model::SupportedFrameRate(30.));
     auto Off=Clock.Advance(1234500000,0);assert(Off.Count==0&&Off.Missed==46900);

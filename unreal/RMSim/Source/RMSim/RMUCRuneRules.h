@@ -23,6 +23,8 @@ public:
         int DefencePercent = 0;
         int CoolingMultiplier = 1;
         double BuffUntil = 0.;
+        double BuffSuppressedUntil = 0.;
+        int ExtraExperienceTenths = 0;
         bool bBig = false;
 
         int SmallUsed = 0;
@@ -44,6 +46,32 @@ public:
     }
 
     const Face& Get(bool bRed) const { return Faces[bRed ? 0 : 1]; }
+    double EffectiveBuffRemaining(bool bRed) const
+    {
+        const Face& Side = Get(bRed);
+        return Side.State == Phase::Activated && Now >= Side.BuffSuppressedUntil ? std::max(0., Side.BuffUntil - Now) : 0.;
+    }
+    void SuppressActiveBuff(bool bRed, double Seconds)
+    {
+        Face& Side = Faces[bRed ? 0 : 1];
+        if (Seconds > 0. && Side.State == Phase::Activated && Now < Side.BuffUntil)
+            Side.BuffSuppressedUntil = std::max(Now, Side.BuffSuppressedUntil) + Seconds;
+    }
+    void ClearActiveBuff(bool bRed)
+    {
+        Face& Side = Faces[bRed ? 0 : 1];
+        if (Side.State != Phase::Activated) return;
+        Side.BuffUntil = Now;
+        ExpireBuff(Side);
+    }
+    int AwardExperienceBonus(bool bRed, int BaseExperienceTenths)
+    {
+        Face& Side = Faces[bRed ? 0 : 1];
+        if (Side.bBig || EffectiveBuffRemaining(bRed) <= 0. || BaseExperienceTenths <= 0) return 0;
+        const int Bonus = std::min(BaseExperienceTenths, 12000 - Side.ExtraExperienceTenths);
+        Side.ExtraExperienceTenths += Bonus;
+        return Bonus;
+    }
     double AngleRad() const { return Angle; }
 
     int Available(bool bRed) const
@@ -91,12 +119,7 @@ public:
         Now = Seconds;
         for (Face& Side : Faces)
         {
-            if (Side.State == Phase::Activated && Now >= Side.BuffUntil)
-            {
-                Side.State = Phase::Idle;
-                Side.Groups = Side.Lit = Side.AttackPercent = Side.DefencePercent = 0;
-                Side.CoolingMultiplier = 1;
-            }
+            if (Side.State == Phase::Activated && Now >= Side.BuffUntil) ExpireBuff(Side);
             if (!IsAttempt(Side)) continue;
             if (Now >= Side.AttemptUntil)
             {
@@ -142,6 +165,14 @@ public:
     }
 
 private:
+    static void ExpireBuff(Face& Side)
+    {
+        Side.State = Phase::Idle;
+        Side.Groups = Side.Lit = Side.AttackPercent = Side.DefencePercent = 0;
+        Side.CoolingMultiplier = 1;
+        Side.BuffSuppressedUntil = 0.;
+    }
+
     int Pick(int Count) { return std::uniform_int_distribution<int>(0, Count - 1)(Random); }
     int PickArm(int Candidates)
     {
@@ -193,6 +224,8 @@ private:
         Side.Lit = 31;
         Side.DefencePercent = 25;
         Side.BuffUntil = Now + 45.;
+        Side.BuffSuppressedUntil = 0.;
+        Side.ExtraExperienceTenths = 0;
         if (Side.bBig)
         {
             ++Side.BigWins;

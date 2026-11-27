@@ -20,7 +20,7 @@
 - 模型保持 249 个源车辆凸壳、14 组原三角面，禁止用整场凸包、包围盒、平面或轮胎简化来替代正式接触。保留真实尺度，惯量和摩擦仍以 calibrated=false 标识。
 - 运行时由 mj_step 单独驱动；UE 车辆代理只提供查询。普通运动只能经执行器。初始化和 R 明确复位允许设定位姿，并清理传感器历史与 ROS epoch。
 - 云台初始角必须同时设置初始关节状态和伺服目标。接触 normal 从 MuJoCo geom0→geom1 的 frame 按车辆 Side 取向；禁止用整个 body 质心猜测组合凸壳的接触方向。
-- 主交互保持 1 ms MuJoCo / 5 ms UE 世界 / 60 Hz 视口。Mid-360 v3 每 5 μs 发射一个槽，基于真实 1 ms native 位姿节点做平移线性插值与四元数 slerp；环境和自体遮挡网格使用当前 UE 世界快照。200 Hz IMU 使用实际测点速度的 t±1 ms 中心差分，integration_dt_s=0.002，采样时间戳仍为 t；需要后支撑可用后才交付。扫描光机轨迹、NIR 材料响应与噪声模型保留未标定声明。
+- 主交互保持 1 ms MuJoCo / 5 ms UE 世界 / 60 Hz 视口。Mid-360 v3 每 5 μs 发射一个槽，基于真实 1 ms native 位姿节点做平移线性插值与四元数 slerp；环境和自体遮挡网格使用当前 UE 世界快照。200 Hz IMU 用同一 t±2.5 ms 窗口的测点速度差和旋转差，integration_dt_s=0.005，采样时间戳仍为 t，待后支撑可用后交付。扫描光机轨迹、NIR 材料响应与噪声模型保留未标定声明。
 - 正式启动对模型和实际 MapFile 做预检；导航运行场景旁须放置同身份 arena-shell.json。模型的源码/配置绑定发生变化时通过 Prepare-MujocoModel.ps1 重建，旧包归档。静态缓存的直接几何修改须显式失效。
 - Windows 原生证据、原版/缓存等价证据与 Ubuntu 验收分别记录。弗兰德斯动态破坏和碎屑尚需建立对应原生实体映射。精简证据为 artifacts/integration/mujoco-ue-20261120/release-summary.json。
 

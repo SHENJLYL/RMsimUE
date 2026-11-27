@@ -1,5 +1,6 @@
 #include "ImportLabGameMode.h"
 #include "MapOverview.h"
+#include "RMUCGameReferee.h"
 #include "VehicleRig.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
@@ -69,12 +70,18 @@ void AImportLabGameMode::UpdateManualMapInput(const FManualControlInput& Input, 
     CameraWheelSteps = Input.WheelSteps;
     ConsumeMouse = false;
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    if (!PC || !StageMap.bSavedScene) return;
+    const bool bDartBlackout = Referee && Referee->GetOwnDartBlackoutRemaining() > 0.0;
+    if (!PC || (!StageMap.bSavedScene && !bDartBlackout && !bMapCursorActive)) return;
     const bool HadCursor = bMapCursorActive;
     const bool PreviousExpanded = bTacticalMapExpanded;
-    if (AllowActions && Input.ToggleMap) bTacticalMapExpanded = !bTacticalMapExpanded;
-    if (AllowActions && Input.CloseMap) bTacticalMapExpanded = false;
-    bMapCursorActive = bTacticalMapExpanded || Input.MapModifier;
+    if (!bDartBlackout)
+    {
+        DartBlackoutDestinationRos.Reset();
+        LastDartBlackoutMoveTime = -3.0;
+        if (StageMap.bSavedScene && AllowActions && Input.ToggleMap) bTacticalMapExpanded = !bTacticalMapExpanded;
+        if (StageMap.bSavedScene && AllowActions && Input.CloseMap) bTacticalMapExpanded = false;
+    }
+    bMapCursorActive = bDartBlackout || (StageMap.bSavedScene && (bTacticalMapExpanded || Input.MapModifier));
     // Also discard the frame which returns from UI to captured mouse-look.
     ConsumeMouse = bMapCursorActive || HadCursor;
     if (HadCursor || !AllowActions) CameraWheelSteps = 0;
@@ -106,6 +113,25 @@ void AImportLabGameMode::UpdateManualMapInput(const FManualControlInput& Input, 
     int32 Width = 0, Height = 0;
     PC->GetViewportSize(Width, Height);
     const FVector2D ViewportPixels(Width, Height);
+    if (bDartBlackout)
+    {
+        bMapDragging = false;
+        CameraWheelSteps = 0;
+        if (AllowActions && Input.CloseMap) DartBlackoutDestinationRos.Reset();
+        const double Now = GetWorld()->GetTimeSeconds();
+        FVector2D RosPoint;
+        if (AllowActions && !Input.CloseMap && Input.MapPing &&
+            !bRosControl && Rig && Rig->IsContactPhysics() && Rig->HasSteeringModules() &&
+            Referee->IsChassisPowered() && Now >= LastDartBlackoutMoveTime + 3.0 &&
+            Referee->DartBlackoutMapScreenToWorld(ViewportPixels, Input.CursorPixels, RosPoint))
+        {
+            DartBlackoutDestinationRos = RosPoint;
+            LastDartBlackoutMoveTime = Now;
+            UE_LOG(LogRMSim, Display, TEXT("RMUC_DART_BLACKOUT_MOVE sim_s=%.6f ros_m=(%.6f,%.6f)"),
+                Now, RosPoint.X, RosPoint.Y);
+        }
+        return;
+    }
     auto* Hud = Cast<AImportLabHUD>(PC->GetHUD());
     FMapOverviewFrame Frame;
     FMapOverviewPresentation Presentation;

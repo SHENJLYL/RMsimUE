@@ -735,8 +735,12 @@ public:
             DrawTextEx(bGyroOn ? FString::Printf(TEXT("小陀螺 %.1f rad/s"), FMath::Abs(St.GyroRadS)) : TEXT("小陀螺 关闭"),
                 PVit.Map(0.045f, 0.10f), 8, true, bGyroOn ? C_GoldHi : C_Sage);
 
-            DrawTextEx(TEXT("07号 // 哨兵S7"), PVit.Map(0.39f, 0.08f), 8, false, C_Sage);
-            DrawTextEx(St.bFriendlyRed ? TEXT("红方 S7") : TEXT("蓝方 S7"), PVit.Map(0.96f, 0.08f), 9, true, St.bFriendlyRed ? C_Verm : C_Teal, 1);
+            const bool bInfantry = St.OwnRobotNumber == 3 || St.OwnRobotNumber == 4;
+            DrawTextEx(bInfantry ? FString::Printf(TEXT("%02d号 步兵  Lv.%d"), St.OwnRobotNumber, St.OwnLevel)
+                    : FString(TEXT("07号 // 哨兵S7")), PVit.Map(0.39f, 0.08f), 8, false, C_Sage);
+            DrawTextEx(bInfantry ? FString::Printf(TEXT("经验 %.1f"), St.OwnExperienceTenths / 10.)
+                    : FString(St.bFriendlyRed ? TEXT("红方 S7") : TEXT("蓝方 S7")),
+                PVit.Map(0.96f, 0.08f), 9, true, St.bFriendlyRed ? C_Verm : C_Teal, 1);
             const float HpPct = FMath::Clamp(float(St.OwnHp) / float(FMath::Max(1, St.OwnMaxHp)), 0.0f, 1.0f);
             const FColor HpCol = HpPct < 0.30f ? C_Crimson : (HpPct < 0.60f ? C_Gold : C_Mint);
             DrawTextEx(FString::FromInt(St.OwnHp), PVit.Map(0.39f, 0.16f), 24, true, C_Ivory);
@@ -1183,13 +1187,18 @@ public:
                     PSpd.Map(0.5f, 0.24f), 9, true, C_Verm, 0);
                 AlertY -= 30.0f * S;
             }
-            if (St.bOwnAlive && (St.InvulnerableRemainSeconds > 0.01f || St.WeakRemainSeconds > 0.01f))
+            if (St.bOwnAlive && (St.InvulnerableRemainSeconds > 0.01f || St.WeakRemainSeconds > 0.01f || St.bWeakUntilGainCard))
             {
                 const FPanel3DTransform PInv = { CX + RigShiftX * 0.4f, AlertY, 390.0f * S, 24.0f * S, 0.0f, FMath::DegreesToRadians(-5.0f), 0.0f, 1400.0f * S };
                 DrawTiltedGlassPanel(-1, PInv, 5.0f * S, 0.95f);
                 FString StatusTag;
                 if (St.InvulnerableRemainSeconds > 0.01f) StatusTag += FString::Printf(TEXT("临时无敌 %.1fs"), St.InvulnerableRemainSeconds);
-                if (St.WeakRemainSeconds > 0.01f) StatusTag += (StatusTag.IsEmpty() ? TEXT("") : TEXT("  //  ")) + FString::Printf(TEXT("虚弱禁射 %.1fs"), St.WeakRemainSeconds);
+                if (St.bWeakUntilGainCard || St.WeakRemainSeconds > 0.01f)
+                {
+                    if (!StatusTag.IsEmpty()) StatusTag += TEXT("  //  ");
+                    StatusTag += St.bWeakUntilGainCard ? FString(TEXT("虚弱禁射（需读卡）"))
+                        : FString::Printf(TEXT("虚弱禁射 %.1fs"), St.WeakRemainSeconds);
+                }
                 DrawTextEx(StatusTag, PInv.Map(0.5f, 0.24f), 8, true, C_GoldHi, 0);
             }
 

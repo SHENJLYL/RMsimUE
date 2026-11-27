@@ -70,6 +70,12 @@ class NavigationRunner(Node):
         self.output=base/(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+str(os.getpid()));self.output.mkdir(parents=True,exist_ok=False)
         cfg,self.map_metadata=prepare(reference,map_yaml,self.robot,initial,self.control_profile,self.control_source,self.localization_map_yaml,self.drive_profile)
         if self.native_match_behavior:
+            if self.control_profile == 'simulation':
+                # With the simulator's stable local odometry, real-robot
+                # motion noise lets prolonged spin diffuse the seeded pose.
+                cfg['amcl']['ros__parameters'].update(
+                    alpha1=.002, alpha2=.002, alpha3=.002, alpha4=.002, alpha5=.002,
+                )
             bt=cfg['bt_navigator']['ros__parameters']
             tree_key='default_nav_through_poses_bt_xml'
             tree=ET.parse(bt[tree_key])

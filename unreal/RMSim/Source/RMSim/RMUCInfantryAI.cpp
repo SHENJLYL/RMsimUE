@@ -206,7 +206,7 @@ void ARMUCGameReferee::TryInfantryAIResupply(FMatchRobotSlot& Slot)
     auto& AI = Slot.InfantryAI;
     auto& Robot = Slot.State;
     const auto& Points = Slot.PointEffects;
-    if (Robot.WeakTimer > 0. || !Points.CanPurchaseAmmo() || MatchElapsedSeconds < AI.NextPurchase) return;
+    if (Robot.IsWeak() || !Points.CanPurchaseAmmo() || MatchElapsedSeconds < AI.NextPurchase) return;
     AI.NextPurchase = MatchElapsedSeconds + .42;
     const unsigned Team = FRMUCFieldRules::Index(Slot.Team);
     constexpr int32 Rounds = FRMUCSupplyRules::LocalAmmoAmount;
@@ -219,7 +219,7 @@ void ARMUCGameReferee::TryInfantryAIResupply(FMatchRobotSlot& Slot)
         return;
     }
     if (TeamGold[Team] < 200 + FRMUCSupplyRules::LocalAmmoCost) return;
-    if (Robot.OwnLogistics.PurchaseAmmo(Points, true, TeamGold[Team], Robot.ProjectileAllowance17mm,
+    if (Robot.OwnLogistics.PurchaseAmmo(Points, true, TeamGold[Team], TeamPurchasedAmmo17mm[Team], Robot.ProjectileAllowance17mm,
             FRMUCSupplyRules::EPurchaseMode::Local, MatchElapsedSeconds) == FRMUCSupplyRules::EPurchase::Accepted)
     {
         AI.LocalPaid += Rounds;

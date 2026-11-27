@@ -43,10 +43,11 @@ def prepare_phase1(installed, runtime, poses, robot):
         raise ValueError(f'Unexpected waypoint actions in installed competition trees: {goal_count}')
 
 
-def prepare_match(installed, runtime, assets, poses, robot, team):
+def prepare_match(installed, runtime, assets, waypoints, robot, team):
     field_zones = json.loads((assets / 'field-zones.json').read_text(encoding='utf-8'))
     zones = {zone['id']: zone['reference_m'] for zone in field_zones['zones']}
     enemy = 'blue' if team == 'red' else 'red'
+    poses = waypoints[team]
     yaw = math.pi if team == 'red' else 0.0
     xml = ET.parse(installed / 'behavior_trees' / 'rmuc2027_match.xml')
     ready = xml.find('.//IsTfReady')
@@ -71,6 +72,9 @@ def prepare_match(installed, runtime, assets, poses, robot, team):
         ('enemy_base_attack', poses['enemy_base_attack']),
     ):
         tactics.set(port, format_route(route, f'{team}/{port}'))
+    for port, site in (('own_outpost_parked_view', team), ('enemy_outpost_parked_view', enemy)):
+        if route := waypoints[site].get('outpost_parked_view'):
+            tactics.set(port, format_route(route, f'{site}/{port}'))
     xml.write(runtime / 'rmuc2027_match.xml', encoding='utf-8', xml_declaration=True)
 
 
@@ -82,7 +86,8 @@ def prepare_behavior(root: Path, session: Path, map_file: Path, spawn_id: str, r
         raise ValueError('The C++ match tree requires an RMUC 2027 red or blue spawn')
     team = spawn['team']
     assets = root / 'assets/maps/rmuc2027'
-    poses = json.loads((assets / 'behavior-waypoints.json').read_text(encoding='utf-8'))[team]
+    waypoints = json.loads((assets / 'behavior-waypoints.json').read_text(encoding='utf-8'))
+    poses = waypoints[team]
 
     overlay = root / 'ros2_ws/install_behavior'
     package = overlay / 'behavior'
@@ -100,7 +105,7 @@ def prepare_behavior(root: Path, session: Path, map_file: Path, spawn_id: str, r
     if target_tree == 'competition_phase1':
         prepare_phase1(installed, runtime, poses, robot)
     elif target_tree == 'rmuc2027_match':
-        prepare_match(installed, runtime, assets, poses, robot, team)
+        prepare_match(installed, runtime, assets, waypoints, robot, team)
     else:
         raise ValueError(f'Unknown native match tree: {target_tree}')
 

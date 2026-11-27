@@ -77,7 +77,7 @@ FString ARMUCGameReferee::RequestRosShot(AVehicleRig* Robot, const FTransform& M
     const double HeatLimit = Slot->HeatLimit();
     const int32 MaxHp = Slot->MaxHp();
     if (Shooter.Hp <= 0) return TEXT("dead");
-    if (Shooter.WeakTimer > 0.0) return TEXT("weak");
+    if (Shooter.IsWeak()) return TEXT("weak");
     if (Shooter.bOverheatMatchLocked) return TEXT("severe_overheat");
     if (Shooter.bOverheatLocked) return TEXT("overheat");
     if (Shooter.bOverspeedMatchLocked) return TEXT("overspeed_match_lock");
@@ -211,8 +211,11 @@ ARMUCGameReferee::EProjectileHit ARMUCGameReferee::ApplyProjectileDamage(
     const FieldTeam Site = bTargetRed ? FieldTeam::Red : FieldTeam::Blue;
     const FieldTeam DefendingTeam = bOutpost ? FieldRules.Get(Site).OutpostOwner : Site;
     const auto& Defence = RuneRules.Get(DefendingTeam == FieldTeam::Red);
-    const double AttackMultiplier = Attack.AttackPercent > 0 ? Attack.AttackPercent / 100. : 1.;
-    const int32 Damage = FMath::RoundToInt(20. * AttackMultiplier * (1. - Defence.DefencePercent / 100.));
+    const double AttackMultiplier = RuneRules.EffectiveBuffRemaining(Pellet.bFromRed) > 0. && Attack.AttackPercent > 0
+        ? Attack.AttackPercent / 100. : 1.;
+    const int32 DefencePercent = RuneRules.EffectiveBuffRemaining(DefendingTeam == FieldTeam::Red) > 0.
+        ? Defence.DefencePercent : 0;
+    const int32 Damage = FMath::RoundToInt(20. * AttackMultiplier * (1. - DefencePercent / 100.));
     const int32 Lost = ApplyFieldStructureHit(bTargetRed, bOutpost, Pellet.bFromRed, Damage);
     if (Lost <= 0) return EProjectileHit::None;
     if (ShooterSlot) RecordSlotHit(*ShooterSlot, Lost); else RecordHit(Attacker, Lost);

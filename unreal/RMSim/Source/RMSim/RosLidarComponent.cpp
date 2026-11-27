@@ -65,7 +65,10 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
     if(FMath::IsFinite(RayScale)&&RayScale>0.0&&RayScale<0.999)
     {
         const double ClampedScale=FMath::Clamp(RayScale,0.1,1.0);
-        RaysPerSecond=FMath::Max(bMid360?20000.0:1000.0,FMath::RoundToDouble(RaysPerSecond*ClampedScale));
+        if(bMid360)
+            QueryGroupStride=FMath::Clamp(FMath::RoundToInt(1./ClampedScale),1,RMSimSensors::Mid360Model::MaxQueryGroupStride);
+        else
+            RaysPerSecond=FMath::Max(1000.0,FMath::RoundToDouble(RaysPerSecond*ClampedScale));
     }
     if(bMid360&&(!Vehicle->IsMujocoPhysics()||!InitializeMid360(J,Profile,Error)))
     {if(Error.IsEmpty())Error=TEXT("MID360 v3 requires native MuJoCo pose history");return false;}
@@ -83,14 +86,18 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
         bSerialQuery?TEXT("serial"):TEXT("parallel_staged"),bVerifyQueries?MaxVerificationRays:0);
     Seed=int32(SeedValue);Reflectivity=int32(ReflectivityValue);Random.Initialize(Seed);
     ProfileHash=LexToString(FMD5Hash::HashFile(*Profile));MotionGeneration=Rig->GetMotionGeneration();
-    UE_LOG(LogRMSim,Display,TEXT("LIDAR_READY pattern=%s rays_s=%.0f frame_hz=%.1f mount_uncalibrated=true"),
-        bMid360?(RecordedDirections.IsEmpty()?TEXT("spherical_fibonacci_approx"):TEXT("recorded_direction_replay")):TEXT("spherical_fibonacci"),RaysPerSecond,FrameHz);
+    const double SampledRate=bMid360 ? RMSimSensors::Mid360Model::SampledSlotsPerScan(FrameHz,QueryGroupStride)*FrameHz : RaysPerSecond;
+    UE_LOG(LogRMSim,Display,TEXT("LIDAR_READY pattern=%s rays_s=%.0f frame_hz=%.1f mount_uncalibrated=true nominal_rays_s=%.0f group_stride=%d"),
+        bMid360?(RecordedDirections.IsEmpty()?TEXT("spherical_fibonacci_approx"):TEXT("recorded_direction_replay")):TEXT("spherical_fibonacci"),
+        SampledRate,FrameHz,RaysPerSecond,QueryGroupStride);
     return true;
 }
 
 void URosLidarComponent::DiscardPending()
 {
+    ++DeliveryGeneration;
     Pending.Reset();
+    if(!bGpuVerificationLogged){GpuReferenceSubmitted=GpuCompared;bGpuCoverageQueued=false;}
     // Reconnect discards delivery backlog, while the physical emission phase continues.
     if(bMid360)
     {
@@ -107,7 +114,7 @@ void URosLidarComponent::DiscardPending()
 void URosLidarComponent::Reset()
 {
     DiscardPending();Building.Reset();PreviousTime=-1;FrameStart=-1;FrameEnd=0;RayRemainder=0;Cadence.Reset();
-    PulseClock.Reset();CurrentScanOrdinal=-1;DeliveryStartOrdinal=DeliverySuppressedSlots=0;NoHitRays=TooNearRays=TooFarRays=WeakReturnRays=MissingPoseRays=0;
+    PulseClock.Reset();CurrentScanOrdinal=-1;DeliveryStartOrdinal=DeliverySuppressedSlots=SamplingOmittedSlots=0;NoHitRays=TooNearRays=TooFarRays=WeakReturnRays=MissingPoseRays=0;
     DisconnectedRays=OpticalLimitRays=NoiseRejectedRays=SkippedScanWindows=DefaultMaterialRays=IncompleteScanDrops=0;
     ProfileRayWall=ProfileSetupWall=ProfileQueryWall=ProfileOpticalWall=ProfilePackWall=ProfileStartSim=0;ProfileRayCount=0;
     RayIndex=0;Traced=0;Hits=0;MissedRays=0;DroppedScans=0;ScanSequence=0;HistoryResets=0;MaxStep=0;
@@ -117,7 +124,7 @@ void URosLidarComponent::Reset()
 
 void URosLidarComponent::FinishScan()
 {
-    if(bMid360&&Building.Num()/20!=RMSimSensors::Mid360Model::ScanPeriodNs(FrameHz)/RMSimSensors::Mid360Model::PointIntervalNs)
+    if(bMid360&&Building.Num()/20!=RMSimSensors::Mid360Model::SampledSlotsPerScan(FrameHz,QueryGroupStride))
     {++IncompleteScanDrops;++DroppedScans;Building.Reset();return;}
     FScan Scan;Scan.Sequence=++ScanSequence;Scan.Start=FrameStart;Scan.End=FrameEnd;Scan.Bytes=MoveTemp(Building);
     if(Pending.Num()>=PendingScanLimit){Pending.RemoveAt(0,1,EAllowShrinking::No);++DroppedScans;}
@@ -184,7 +191,7 @@ void URosLidarComponent::Advance(double Time,bool Connected,double EpochSolverTi
     RayIndex+=Due-Count;FrameEnd=Time;
 }
 
-void URosLidarComponent::TraceRays(TArray<FRay>& Rays)
+void URosLidarComponent::TraceRays(TArray<FRay>& Rays,bool bReference)
 {
     // The game thread waits for each stage after synchronous Chaos has completed.
     // UE 5.8 SceneQuery.cpp holds FScopedSceneReadLock around each ray query;
@@ -202,7 +209,7 @@ void URosLidarComponent::TraceRays(TArray<FRay>& Rays)
     const int32 Count=Rays.Num();
     TArray<int32> Active,Next;Active.Reserve(Count);Next.Reserve(Count);
     for(int32 I=0;I<Count;++I)if(Rays[I].bPoseValid)Active.Add(I);
-    Traced+=Active.Num();
+    if(!bReference)Traced+=Active.Num();
     // This cache lives for one synchronous GT batch, including all window passes.
     // Material changes between batches are observed on the next call.
     struct FMaterialOptics
@@ -215,9 +222,9 @@ void URosLidarComponent::TraceRays(TArray<FRay>& Rays)
     if(!Active.IsEmpty())MaterialCache.Reserve(16);
     const bool NeedsNirMaterials=bMid360&&!NirMaterialReflectance.IsEmpty();
     int32 VerifyCount=0;
-    if(bVerifyQueries)for(int32 I:Active)
+    if(bVerifyQueries&&!bReference)for(int32 I:Active)
         if(VerifiedRays+VerifyCount<MaxVerificationRays){Rays[I].bVerify=true;++VerifyCount;}
-    int32 FaceLogBudget=Traced==Active.Num()?8:0; // At most8 diagnostics in the first traced batch per epoch.
+    int32 FaceLogBudget=!bReference&&Traced==Active.Num()?8:0; // At most8 diagnostics in the first traced batch per epoch.
     // Preserve all optical intersections, including opaque parts of this robot.
     for(int32 Pass=0;Pass<(bArticulated?16:1)&&!Active.IsEmpty();++Pass)
     {
@@ -262,7 +269,7 @@ void URosLidarComponent::TraceRays(TArray<FRay>& Rays)
             },EParallelForFlags::Unbalanced);
         }
         else TraceRange(0,Active.Num());
-        if(bProfileTiming)ProfileQueryWall+=FPlatformTime::Seconds()-QueryStarted;
+        if(bProfileTiming&&!bReference)ProfileQueryWall+=FPlatformTime::Seconds()-QueryStarted;
         const double OpticalStarted=bProfileTiming?FPlatformTime::Seconds():0.;
         Next.Reset();
         for(int32 I:Active)
@@ -338,18 +345,26 @@ void URosLidarComponent::TraceRays(TArray<FRay>& Rays)
             if(bMid360)
             {
                 Ray.NirReflectance=Optical.NirReflectance;
-                if(!Optical.bConfigured)++DefaultMaterialRays;
+                Ray.bConfiguredMaterial=Optical.bConfigured;
+                if(!bReference&&!Optical.bConfigured)++DefaultMaterialRays;
             }
             if(SelfArticulated&&Component&&Hit.FaceIndex!=INDEX_NONE&&FaceLogBudget>0)
             {--FaceLogBudget;UE_LOG(LogRMSim,Display,TEXT("LIDAR_SELF_FACE comp=%s face=%d section=%d material=%s distance_cm=%.6f window=%d"),*Component->GetName(),Hit.FaceIndex,Section,Material?*Material->GetName():TEXT("none"),Hit.Distance,Window);}
-            if(!Window){Ray.bFound=true;continue;}
-            ++WindowPasses;Ray.RayStart=Hit.ImpactPoint+Ray.Direction*.02;
+            if(!Window)
+            {
+                Ray.bFound=true;
+                Ray.bSelfHit=SelfArticulated;
+                Ray.bDynamicHit=Cast<AVehicleRig>(Hit.GetActor())!=nullptr;
+                continue;
+            }
+            if(!bReference)++WindowPasses;
+            ++Ray.Windows;Ray.RayStart=Hit.ImpactPoint+Ray.Direction*.02;
             Next.Add(I);
         }
         Swap(Active,Next);
-        if(bProfileTiming)ProfileOpticalWall+=FPlatformTime::Seconds()-OpticalStarted;
+        if(bProfileTiming&&!bReference)ProfileOpticalWall+=FPlatformTime::Seconds()-OpticalStarted;
     }
-    if(bMid360){OpticalLimitRays+=Active.Num();for(int32 I:Active)Rays[I].bOpticalLimit=true;}
+    if(bMid360){if(!bReference)OpticalLimitRays+=Active.Num();for(int32 I:Active)Rays[I].bOpticalLimit=true;}
     if(VerifyCount>0)
     {
         VerifiedRays+=VerifyCount;
@@ -367,13 +382,19 @@ void URosLidarComponent::LogTiming(double Time,double Started,int32 Count)
     if(Time-ProfileStartSim<5.)return;
     UE_LOG(LogRMSim,Display,TEXT("RMSIM_LIDAR_TIMING rays=%lld wall_total_ms=%.3f wall_us_per_ray=%.3f sim_elapsed=%.3f query_mode=%s setup_ms=%.3f query_ms=%.3f optical_ms=%.3f pack_ms=%.3f"),
         ProfileRayCount,ProfileRayWall*1000.,ProfileRayWall*1.e6/FMath::Max(1.,double(ProfileRayCount)),Time-ProfileStartSim,
-        bSerialQuery?TEXT("serial"):TEXT("parallel_staged"),ProfileSetupWall*1000.,ProfileQueryWall*1000.,ProfileOpticalWall*1000.,ProfilePackWall*1000.);
+        GpuScene?TEXT("gpu_bvh"):bSerialQuery?TEXT("serial"):TEXT("parallel_staged"),ProfileSetupWall*1000.,ProfileQueryWall*1000.,ProfileOpticalWall*1000.,ProfilePackWall*1000.);
     ProfileRayCount=0;ProfileRayWall=ProfileSetupWall=ProfileQueryWall=ProfileOpticalWall=ProfilePackWall=0;ProfileStartSim=Time;
 }
 
 TSharedRef<FJsonObject> URosLidarComponent::TakeState(TArray<uint8>& Bytes,int32 Offset)
 {
     auto J=MakeShared<FJsonObject>();J->SetStringField(TEXT("id"),Id);J->SetStringField(TEXT("profile_md5"),ProfileHash);
+    J->SetStringField(TEXT("query_backend"),GpuScene?TEXT("gpu_bvh"):TEXT("cpu_chaos"));
+    if(GpuScene)
+    {
+        J->SetNumberField(TEXT("gpu_prepared_pulses"),GpuPreparedPulseCount);
+        J->SetNumberField(TEXT("gpu_prepared_pulse_misses"),GpuPreparedPulseMisses);
+    }
     J->SetBoolField(TEXT("calibrated"),false);J->SetStringField(TEXT("model"),TEXT("ideal_single_return_raycast; spherical_fibonacci_not_device_pattern; constant_reflectivity; physics_frame_time_quantization"));
     if(bMid360)
     {
@@ -382,6 +403,12 @@ TSharedRef<FJsonObject> URosLidarComponent::TakeState(TArray<uint8>& Bytes,int32
         auto P=MakeShared<FJsonObject>();P->SetStringField(TEXT("schema"),TEXT("rm_mid360_physical_v1"));
         P->SetNumberField(TEXT("emission_interval_ns"),RMSimSensors::Mid360Model::PointIntervalNs);
         P->SetNumberField(TEXT("laser_channels"),RMSimSensors::Mid360Model::ChannelCount);
+        if(QueryGroupStride>1)
+        {
+            P->SetNumberField(TEXT("query_group_stride"),QueryGroupStride);
+            J->SetNumberField(TEXT("sampled_rays_per_second"),RMSimSensors::Mid360Model::SampledSlotsPerScan(FrameHz,QueryGroupStride)*FrameHz);
+            J->SetNumberField(TEXT("sampling_omitted_slots"),SamplingOmittedSlots);
+        }
         P->SetBoolField(TEXT("retains_no_returns"),true);P->SetNumberField(TEXT("pending_scan_capacity"),PendingScanLimit);
         P->SetStringField(TEXT("scan_pattern"),RecordedDirections.IsEmpty()?TEXT("spherical_fibonacci_approx"):TEXT("recorded_direction_replay"));
         P->SetStringField(TEXT("direction_sequence_md5"),DirectionSequenceHash);P->SetNumberField(TEXT("direction_sequence_points"),RecordedDirections.Num());
@@ -413,7 +440,7 @@ TSharedRef<FJsonObject> URosLidarComponent::TakeState(TArray<uint8>& Bytes,int32
         J->SetNumberField(TEXT("disconnected_slots"),DisconnectedRays);J->SetNumberField(TEXT("skipped_scan_windows"),SkippedScanWindows);
         J->SetNumberField(TEXT("incomplete_scan_drops"),IncompleteScanDrops);
         J->SetNumberField(TEXT("default_NIR_material_intersections"),DefaultMaterialRays);
-        J->SetStringField(TEXT("query_execution"),bSerialQuery?TEXT("game_thread_serial"):TEXT("UE_task_pool_contiguous_blocks32_game_thread_optical_stage"));
+        J->SetStringField(TEXT("query_execution"),GpuScene?TEXT("gpu_compute_bvh_fifo_readback"):bSerialQuery?TEXT("game_thread_serial"):TEXT("UE_task_pool_contiguous_blocks32_game_thread_optical_stage"));
     }
     J->SetStringField(TEXT("frame_id"),Rig->GetVehicleId()+TEXT("/")+Id+TEXT("_link"));
     J->SetStringField(TEXT("parent_frame_id"),Rig->GetVehicleId()+TEXT("/")+ParentFrame);

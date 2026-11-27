@@ -1,6 +1,19 @@
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, RMSim, "RMSim");
+#include "Misc/Paths.h"
+#include "ShaderCore.h"
+
+class FRMSimModule final : public FDefaultGameModuleImpl
+{
+public:
+    void StartupModule() override
+    {
+        AddShaderSourceDirectoryMapping(TEXT("/RMSimShaders"), FPaths::ConvertRelativePathToFull(
+            FPaths::Combine(FPaths::ProjectDir(), TEXT("Shaders"))));
+    }
+};
+
+IMPLEMENT_PRIMARY_GAME_MODULE(FRMSimModule, RMSim, "RMSim");
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"

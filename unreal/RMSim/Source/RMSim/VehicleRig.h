@@ -71,7 +71,8 @@ public:
     double GetDedicatedMujocoPeriod() const { return DedicatedMujocoPeriod; }
     bool SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall);
     bool ReadDedicatedMujocoProgress(uint64& Steps,uint64& Failsafes) const;
-    void ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query);
+    void ReplayDedicatedLidarFrames(bool ApplyScenePoses,TFunctionRef<void(double)> Query, class FGpuLidarScene* GpuScene=nullptr);
+    void GetDedicatedLidarColliderIndices(TMap<const USceneComponent*, int32>& Indices) const;
     void ClearDedicatedLidarFrames();
     void SubmitDedicatedMujocoInputs();
     const TCHAR* GetPhysicsBackendName() const { return IsMujocoPhysics()?TEXT("mujoco"):bContactPhysics?TEXT("chaos"):TEXT("kinematic"); }
@@ -153,6 +154,7 @@ public:
     FBox GetCollisionBounds() const;
     FBox GetLocalCollisionBounds() const;
     const TMap<FString, USceneCaptureComponent2D*>& GetCameras() const { return Cameras; }
+    double GetCameraSensorFovDegrees(const FString& CameraId) const { return CameraSensorFovDegrees.FindRef(CameraId); }
     const FString& GetVehicleId() const { return VehicleId; }
     const FString& GetTerrainBlockReason() const { return TerrainBlockReason; }
 
@@ -172,11 +174,11 @@ private:
     FString MujocoYawBodyName=TEXT("yaw");
     FString MujocoPitchBodyName=TEXT("pitch");
     FString ControlType=TEXT("swerve");
-    bool bCanonicalRig=false;
+    bool bCanonicalRig=false,bArticulatedSensorQueries=false;
     void TickMujocoPhysics(double Seconds);
     void RefreshMujocoInputs(double Seconds,double Now);
     double StageDedicatedMujocoInputs(double Seconds,double Now);
-    void ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset);
+    void ApplyMujocoQueryPose(const TArray<FTransform>& Parts,int32 Offset,bool bQueryOnly=false);
     void SyncMujocoPose();
     void ResetMujocoPose(const FTransform& Pose);
     bool SetMujocoGimbal(double Yaw,double Pitch,FString& Error);
@@ -208,6 +210,7 @@ private:
 
     UPROPERTY() TMap<FString, USceneComponent*> Links;
     UPROPERTY() TMap<FString, USceneCaptureComponent2D*> Cameras;
+    TMap<FString, double> CameraSensorFovDegrees;
     // Explicit imported geometry only; SceneCapture editor frusta also contribute generic actor bounds.
     UPROPERTY() TArray<UStaticMeshComponent*> VisualMeshes;
     TMap<FString, FJointBinding> Joints;

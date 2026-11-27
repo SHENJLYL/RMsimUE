@@ -137,13 +137,19 @@ class PointLioSnapshotTests(unittest.TestCase):
                         runner.poll()
                         runner.state['epoch']=1
                         runner.poll()
-                self.assertEqual(launch.call_count,2)
+                        runner.state['epoch']=2
+                        runner.state['lidar'].update(
+                            profile_schema='rm_lidar_runtime_v3',
+                            physical_model={'query_group_stride':4})
+                        runner.poll()
+                self.assertEqual(launch.call_count,3)
             generated=[json.loads(p.read_text())['/**']['ros__parameters']
                        for p in sorted(runner.output.glob('run-*.yaml'))]
-            self.assertEqual(len(generated),2)
+            self.assertEqual(len(generated),3)
             self.assertEqual(generated[0],generated[1])
             for key,value in original['parameters'].items():
                 self.assertEqual(generated[0][key],value)
+            self.assertEqual(generated[2],dict(generated[0],point_filter_num=1))
             status=json.loads(publisher.publish.call_args.args[0].data)
             self.assertEqual(status['source_identity']['sha256'],original['sha256'])
             self.assertEqual(status['source_filtering'],original['parameters'])

@@ -8,6 +8,7 @@
 #include "Misc/DefaultValueHelper.h"
 #include "HAL/FileManager.h"
 #include "HAL/PlatformTime.h"
+#include "Tasks/Task.h"
 
 namespace
 {
@@ -135,6 +136,7 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
     RayIndex=PulseClock.NextIndex();
     if(!Connected)
     {
+        ++DeliveryGeneration;
         DisconnectedRays+=Batch.Missed;Pending.Reset();Building.Reset();CurrentScanOrdinal=-1;FrameStart=-1;return;
     }
     MissedRays+=Batch.Missed;
@@ -142,6 +144,7 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
     const int64 PointsPerScan=PeriodNs/RMSimSensors::Mid360Model::PointIntervalNs;
     if(Batch.Missed>0)
     {
+        ++DeliveryGeneration;
         // A bounded overload discards incomplete delivery windows, preserving full-frame slots.
         const int64 FirstWhole=Batch.First/PointsPerScan+(Batch.First%PointsPerScan?1:0);
         if(CurrentScanOrdinal>=0)
@@ -153,30 +156,140 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
     const int64 First=FMath::Min<int64>(Batch.End,FMath::Max<int64>(Batch.First,DeliveryStartOrdinal*PointsPerScan));
     DeliverySuppressedSlots+=First-Batch.First;
     const double Started=bProfileTiming?FPlatformTime::Seconds():0.;
-    TArray<FRay> Rays;Rays.SetNum(int32(Batch.End-First));
-    for(int32 I=0;I<Rays.Num();++I)
+    TArray<FRay> Rays;
+    Rays.Reserve(int32(Batch.End-First));
+    for(int64 Index=First;Index<Batch.End;++Index)
     {
-        FRay& Ray=Rays[I];Ray.Index=First+I;Ray.StampNs=Ray.Index*RMSimSensors::Mid360Model::PointIntervalNs;
+        if(!RMSimSensors::Mid360Model::SamplesSlot(Index%PointsPerScan,QueryGroupStride))
+        {
+            ++SamplingOmittedSlots;
+            continue;
+        }
+        FRay& Ray=Rays.AddDefaulted_GetRef();
+        Ray.Index=Index;
+        Ray.StampNs=Index*RMSimSensors::Mid360Model::PointIntervalNs;
         FTransform ParentPose;
         if(!Rig->SampleSensorParentWorldAtTime(ParentFrame,EpochSolverTime+double(Ray.StampNs)*1.e-9,ParentPose))
         {Ray.bPoseValid=false;++MissingPoseRays;++MissedRays;continue;}
         const FTransform Pose=Mount*ParentPose;
-        double Azimuth,Elevation;
-        if(RecordedDirections.IsEmpty())
-        {
-            Azimuth=2*PI*FMath::Frac((Ray.Index+.5)*.6180339887498949);
-            const double Z=FMath::Lerp(FMath::Sin(MinElevation),FMath::Sin(MaxElevation),FMath::Frac((Ray.Index+.5)*.7548776662466927));
-            Elevation=FMath::Asin(Z);
-        }
-        else
-        {const FVector2D& D=RecordedDirections[int32(Ray.Index%RecordedDirections.Num())];Azimuth=D.X;Elevation=D.Y;}
-        const double XY=FMath::Cos(Elevation);
-        Ray.Local=FVector(XY*FMath::Cos(Azimuth),-XY*FMath::Sin(Azimuth),FMath::Sin(Elevation));
+        GenerateMid360Pulse(Ray);
         Ray.Direction=Pose.TransformVectorNoScale(Ray.Local);Ray.Start=Pose.GetLocation();
         Ray.RayStart=Ray.Start;Ray.End=Ray.Start+Ray.Direction*(MaxRange*100);
     }
-    if(bProfileTiming)ProfileSetupWall+=FPlatformTime::Seconds()-Started;
+    if(bProfileTiming&&!GpuScene)ProfileSetupWall+=FPlatformTime::Seconds()-Started;
+    if(GpuScene)
+    {
+        QueueGpuRays(MoveTemp(Rays),NowNs,Time,Started);
+        return;
+    }
     TraceRays(Rays);
+    ConsumeMid360Rays(Rays,NowNs);
+    LogTiming(Time,Started,Rays.Num());
+}
+
+namespace
+{
+constexpr int64 PulsePageSize=8192;
+
+FVector PulseDirection(int64 Index,TConstArrayView<FVector2D> Recorded,double MinZ,double MaxZ)
+{
+    double Azimuth,Elevation;
+    if(Recorded.IsEmpty())
+    {
+        Azimuth=2*PI*FMath::Frac((Index+.5)*.6180339887498949);
+        const double Z=FMath::Lerp(MinZ,MaxZ,FMath::Frac((Index+.5)*.7548776662466927));
+        Elevation=FMath::Asin(Z);
+    }
+    else
+    {
+        const FVector2D& D=Recorded[int32(Index%Recorded.Num())];
+        Azimuth=D.X;Elevation=D.Y;
+    }
+    const double XY=FMath::Cos(Elevation);
+    return FVector(XY*FMath::Cos(Azimuth),-XY*FMath::Sin(Azimuth),FMath::Sin(Elevation));
+}
+}
+
+struct URosLidarComponent::FMid360PulseConfig
+{
+    TArray<FVector2D> Recorded;
+    double MinZ=0.,MaxZ=0.,AngularNoise=0.;
+    uint64 Seed=0;
+};
+
+struct URosLidarComponent::FMid360PulsePage
+{
+    explicit FMid360PulsePage(int64 InFirst) : First(InFirst) {}
+    int64 First;
+    TArray<FPreparedPulse> Data;
+    TAtomic<bool> Ready{false};
+};
+
+void URosLidarComponent::InitializeGpuPulseCache()
+{
+    auto Config=MakeShared<FMid360PulseConfig,ESPMode::ThreadSafe>();
+    Config->Recorded=RecordedDirections;
+    Config->MinZ=FMath::Sin(MinElevation);
+    Config->MaxZ=FMath::Sin(MaxElevation);
+    Config->AngularNoise=AngularNoiseStd;
+    Config->Seed=uint64(Seed);
+    GpuPulseConfig=MoveTemp(Config);
+}
+
+bool URosLidarComponent::PrepareGpuPulse(FRay& Ray)
+{
+    const int64 First=Ray.Index/PulsePageSize*PulsePageSize;
+    if((!GpuPulseCurrent||GpuPulseCurrent->First!=First)&&GpuPulseNext&&
+        GpuPulseNext->First==First&&GpuPulseNext->Ready.Load())
+        GpuPulseCurrent=MoveTemp(GpuPulseNext);
+    // Only one unpublished page per component. On an epoch jump, finish the
+    // already scheduled immutable page before requesting the new range.
+    const bool bPrepared=GpuPulseCurrent&&GpuPulseCurrent->First==First;
+    const int64 Needed=bPrepared?First+PulsePageSize:First;
+    if(!GpuPulseNext||(GpuPulseNext->First!=Needed&&GpuPulseNext->Ready.Load()))
+    {
+        const auto Page=MakeShared<FMid360PulsePage,ESPMode::ThreadSafe>(Needed);
+        GpuPulseNext=Page;
+        const auto Config=GpuPulseConfig;
+        UE::Tasks::Launch(UE_SOURCE_LOCATION,[Page,Config]
+        {
+            Page->Data.SetNumUninitialized(PulsePageSize);
+            for(int64 I=0;I<PulsePageSize;++I)
+            {
+                const int64 Index=Page->First+I;
+                FPreparedPulse& P=Page->Data[I];
+                P.Local=PulseDirection(Index,Config->Recorded,Config->MinZ,Config->MaxZ);
+                P.RangeGaussian=RMSimSensors::Mid360Model::Gaussian(Config->Seed,uint64(Index),0);
+                double Azimuth=FMath::Atan2(-P.Local.Y,P.Local.X),Elevation=FMath::Asin(P.Local.Z);
+                if(Config->AngularNoise>0.)
+                {
+                    Azimuth+=Config->AngularNoise*RMSimSensors::Mid360Model::Gaussian(Config->Seed,uint64(Index),1);
+                    Elevation=FMath::Clamp(Elevation+Config->AngularNoise*
+                        RMSimSensors::Mid360Model::Gaussian(Config->Seed,uint64(Index),2),-PI/2,PI/2);
+                }
+                P.ElevCos=FMath::Cos(Elevation);P.ElevSin=FMath::Sin(Elevation);
+                P.AzCos=FMath::Cos(Azimuth);P.AzSin=FMath::Sin(Azimuth);
+            }
+            Page->Ready.Store(true);
+        });
+    }
+    if(!bPrepared){++GpuPreparedPulseMisses;return false;}
+    ++GpuPreparedPulseCount;
+    Ray.Pulse=GpuPulseCurrent->Data[Ray.Index-First];
+    Ray.Local=Ray.Pulse.Local;
+    Ray.bPreparedPulse=true;
+    return true;
+}
+
+void URosLidarComponent::GenerateMid360Pulse(FRay& Ray)
+{
+    if(GpuScene&&PrepareGpuPulse(Ray))return;
+    Ray.Local=PulseDirection(Ray.Index,RecordedDirections,FMath::Sin(MinElevation),FMath::Sin(MaxElevation));
+}
+
+void URosLidarComponent::ConsumeMid360Rays(TConstArrayView<FRay> Rays,int64 NowNs)
+{
+    const int64 PeriodNs=RMSimSensors::Mid360Model::ScanPeriodNs(FrameHz);
     const double PackStarted=bProfileTiming?FPlatformTime::Seconds():0.;
     // Queries share this UE scene snapshot. Emitter poses/time use the native1ms history;
     // dynamic obstacle/self-occluder meshes have the current world-frame pose (typically5ms).
@@ -190,7 +303,7 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
             if(!Ray.bPoseValid)break;
             if(!Ray.bFound){if(!Ray.bOpticalLimit)++NoHitRays;break;}
             const FHitResult& Hit=Ray.Hit;
-            if(Hit.GetActor()==Rig)++SelfBlocked; // Opaque self geometry also produces its physical first return.
+            if(Ray.bSelfHit)++SelfBlocked; // Opaque self geometry also produces its physical first return.
             double Distance=(Hit.ImpactPoint-Ray.Start).Size()/100.;
             if(Distance<MinRange){++TooNearRays;break;}
             if(Distance>MaxRange){++TooFarRays;break;}
@@ -199,25 +312,32 @@ void URosLidarComponent::AdvanceMid360(double Time,bool Connected,double EpochSo
                 RangeLowReflectance,RangeLowMetres,RangeHighReflectance,RangeHighMetres,MaxRange);
             if(Distance>Detectable){++WeakReturnRays;break;}
             const double Sigma=RMSimSensors::Mid360Model::RangeSigma(Distance,NearNoiseStd,NoiseStd,NoiseNearDistance,NoiseReferenceDistance);
-            if(Sigma>0)Distance+=Sigma*Gaussian(Ray.Index,0);
+            if(Sigma>0)Distance+=Sigma*(Ray.bPreparedPulse?Ray.Pulse.RangeGaussian:Gaussian(Ray.Index,0));
             if(Distance<MinRange||Distance>MaxRange){++NoiseRejectedRays;break;}
-            double Azimuth=FMath::Atan2(-Ray.Local.Y,Ray.Local.X),Elevation=FMath::Asin(Ray.Local.Z);
-            if(AngularNoiseStd>0){Azimuth+=AngularNoiseStd*Gaussian(Ray.Index,1);Elevation=FMath::Clamp(Elevation+AngularNoiseStd*Gaussian(Ray.Index,2),-PI/2,PI/2);}
-            const double XY=FMath::Cos(Elevation)*Distance;
-            Point=FVector(XY*FMath::Cos(Azimuth),XY*FMath::Sin(Azimuth),Distance*FMath::Sin(Elevation));
+            if(Ray.bPreparedPulse)
+            {
+                const double XY=Ray.Pulse.ElevCos*Distance;
+                Point=FVector(XY*Ray.Pulse.AzCos,XY*Ray.Pulse.AzSin,Distance*Ray.Pulse.ElevSin);
+            }
+            else
+            {
+                double Azimuth=FMath::Atan2(-Ray.Local.Y,Ray.Local.X),Elevation=FMath::Asin(Ray.Local.Z);
+                if(AngularNoiseStd>0){Azimuth+=AngularNoiseStd*Gaussian(Ray.Index,1);Elevation=FMath::Clamp(Elevation+AngularNoiseStd*Gaussian(Ray.Index,2),-PI/2,PI/2);}
+                const double XY=FMath::Cos(Elevation)*Distance;
+                Point=FVector(XY*FMath::Cos(Azimuth),XY*FMath::Sin(Azimuth),Distance*FMath::Sin(Elevation));
+            }
             // Device diffuse reflectivity uses0..150;151..255 is reserved for retroreflectors.
             PointReflectivity=uint8(FMath::Clamp(FMath::RoundToInt(150.*Ray.NirReflectance),0,150));++Hits;
         }while(false);
         const int64 StartNs=CurrentScanOrdinal*RMSimSensors::Mid360Model::ScanPeriodNs(FrameHz);
         MidU32(Building,uint32(Ray.StampNs-StartNs));
         MidFloat(Building,float(Point.X));MidFloat(Building,float(Point.Y));MidFloat(Building,float(Point.Z));
-        // Every firing slot survives; absent returns retain zero XYZ/reflectivity with its time/line.
-        Building.Add(PointReflectivity);Building.Add(0);Building.Add(uint8(Ray.Index%4));Building.Add(0);
+        // Selected slots with absent returns retain zero XYZ/reflectivity and their time/channel.
+        Building.Add(PointReflectivity);Building.Add(0);Building.Add(uint8(Ray.Index%RMSimSensors::Mid360Model::ChannelCount));Building.Add(0);
     }
     if(CurrentScanOrdinal>=0&&NowNs>=(CurrentScanOrdinal+1)*PeriodNs)
     {
         FrameEnd=double((CurrentScanOrdinal+1)*PeriodNs)*1.e-9;FinishScan();CurrentScanOrdinal=-1;FrameStart=-1;
     }
     if(bProfileTiming)ProfilePackWall+=FPlatformTime::Seconds()-PackStarted;
-    LogTiming(Time,Started,Rays.Num());
 }
