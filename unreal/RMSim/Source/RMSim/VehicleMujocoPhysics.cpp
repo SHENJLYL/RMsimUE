@@ -344,7 +344,7 @@ bool AVehicleRig::SetMujocoGimbal(double Yaw,double Pitch,FString& Error)
 bool AVehicleRig::SetDedicatedGimbalTrajectory(double Yaw,double Pitch,double YawRate,double PitchRate,double ExpiresWall)
 {
     FString Error;
-    if(DedicatedMujocoPeriod<=0||!SetMujocoGimbal(Yaw,Pitch,Error))return false;
+    if(!bMatchGimbalEnabled||DedicatedMujocoPeriod<=0||!SetMujocoGimbal(Yaw,Pitch,Error))return false;
     MujocoYawTargetRate=FMath::Clamp(YawRate,-MujocoYawRateLimit,MujocoYawRateLimit);
     MujocoPitchTargetRate=FMath::Clamp(PitchRate,-MujocoPitchRateLimit,MujocoPitchRateLimit);
     DedicatedGimbalTime=MujocoDynamics->Time();

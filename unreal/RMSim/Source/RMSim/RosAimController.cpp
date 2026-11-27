@@ -60,6 +60,7 @@ void URosAimController::SetOperatorBrake(bool Brake)
 bool URosAimController::Accept(const TSharedPtr<FJsonObject>& J,int64 Sequence,double SimTime)
 {
     if(!bEnabled){Reject(TEXT("aim_control_disabled"));return false;}
+    if(!Rig->IsMatchGimbalEnabled()){Reject(TEXT("referee_gimbal_locked"));return false;}
     if(bOperatorBrake){Reject(TEXT("operator_brake"));return false;}
     if(Sequence<=AcceptedSeq){Reject(TEXT("sequence"));return false;}
     FAxis Y,P;
@@ -191,6 +192,7 @@ bool URosAimController::CanFireTraining() const
 void URosAimController::Advance(double Seconds)
 {
     if(!FMath::IsFinite(Seconds)||Seconds<0)return;
+    if(bEnabled&&bLive&&!Rig->IsMatchGimbalEnabled())Stop(TEXT("referee_gimbal_locked"));
     if(bEnabled&&bLive&&FPlatformTime::Seconds()>Deadline)Stop(TEXT("expired"));
     const bool bLiveTrigger=HasLiveTrigger();
     if(bEnabled&&IsValid(Referee))Referee->SetRosFlywheels(Rig,bLiveTrigger);

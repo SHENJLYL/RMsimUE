@@ -139,8 +139,8 @@ struct FRMUCFieldPointEffects
     int FortressCoolingBonus = 0;
     int FortressReserveCapacity = 0;
 
-    // Standard 1:1 ammo purchase (10 gold / 10 rounds) is only available inside the Supply/Repair Zone.
-    bool CanPurchaseAmmo() const { return bSupply; }
+    // Local 17 mm exchange is allowed at supply and fully controlled outposts.
+    bool CanPurchaseAmmo() const { return bSupply || bFullOutpost; }
 
     static FRMUCFieldPointEffects Evaluate(const FRMUCFieldRules& Rules, FRMUCFieldRules::Team Team,
         double Elapsed, const FRMUCFieldPoints& Contacts, const std::array<FRMUCFieldPointLatch, 2>& Latches)

@@ -10,6 +10,7 @@
 #include "RMUCRuneClientBridge.h"
 #include "RMUCSupplyRules.h"
 #include "RMUCFieldZones.h"
+#include "RMUCInfantryAI.h"
 #include "Rhine3DHud.h"
 #include "RMUCGameReferee.generated.h"
 
@@ -48,6 +49,7 @@ struct FRMUCMatchRobotSpawn
     AVehicleRig* Vehicle = nullptr;
     bool bRed = true;
     int32 RobotNumber = 7; // 7 = Auto Sentry, 3/4 = Standard Infantry
+    bool bAiControlled = false;
 };
 
 UCLASS()
@@ -65,7 +67,7 @@ public:
         const TMap<FString, AStaticMeshActor*>& ArenaMapBoxes,
         FString& Error, AVehicleRig* Opponent = nullptr,
         int32 PrimaryRobotNumber = 7,
-        const TArray<FRMUCMatchRobotSpawn>& ExtraRobots = {});
+        const TArray<FRMUCMatchRobotSpawn>& ExtraRobots = {}, bool bPrimaryAiControlled = false);
     void Advance(
         double DeltaSeconds,
         bool bFirePressed,
@@ -81,6 +83,7 @@ public:
     void BindRosCompetitor(AVehicleRig* Robot) { if (Robot) RosCompetitors.AddUnique(Robot); }
     bool IsRosCompetitor(const AVehicleRig* Robot) const { return Robot && RosCompetitors.Contains(const_cast<AVehicleRig*>(Robot)); }
     bool IsChassisPoweredFor(const AVehicleRig* Robot) const;
+    bool IsInfantryAiControlledFor(const AVehicleRig* Robot) const;
     bool IsSimMatchAutonomyActive(const AVehicleRig* Robot) const;
     bool SetSimMatchStance(const AVehicleRig* Robot, const FString& Stance);
     bool IsFpvVideoCutFor(const AVehicleRig* Robot) const;
@@ -367,13 +370,23 @@ private:
         FRMUCFieldContactHold ContactHold;
         FRMUCFieldPoints PhysicalContacts;
         FRMUCFieldPointEffects PointEffects;
+        bool bAiControlled = false;
+        FRMUCInfantryAI InfantryAI;
 
         bool IsSentry() const { return RobotNumber == 7; }
-        int32 MaxHp() const { return IsSentry() ? SentryMaxHp : InfantryMaxHp; }
+        int32 MaxHp() const { return bAiControlled ? FRMUCInfantryAI::FullHp : IsSentry() ? SentryMaxHp : InfantryMaxHp; }
         int32 InitialAmmo() const { return IsSentry() ? FRMUCSupplyRules::InitialAllowance : 0; }
-        double HeatLimit() const { return IsSentry() ? 260.0 : InfantryHeatLimit; }
-        double BaseCoolingPerSec() const { return IsSentry() ? State.SimStance.Modifiers().BarrelCoolingPerSec : InfantryCoolingPerSec; }
-        double BasePowerLimitW() const { return IsSentry() ? State.SimStance.Modifiers().ChassisPowerLimitW : InfantryPowerLimitW; }
+        double HeatLimit() const { return bAiControlled ? FRMUCInfantryAI::HeatLimit : IsSentry() ? 260.0 : InfantryHeatLimit; }
+        double BaseCoolingPerSec() const
+        {
+            return bAiControlled ? FRMUCInfantryAI::CoolingPerSecond : IsSentry()
+                ? State.SimStance.Modifiers().BarrelCoolingPerSec : InfantryCoolingPerSec;
+        }
+        double BasePowerLimitW() const
+        {
+            return bAiControlled ? FRMUCInfantryAI::ChassisPowerW : IsSentry()
+                ? State.SimStance.Modifiers().ChassisPowerLimitW : InfantryPowerLimitW;
+        }
         int32 ProtocolRobotId() const { return (Team == FieldTeam::Red ? 0 : 100) + RobotNumber; }
         FString DisplayName() const
         {
@@ -385,6 +398,23 @@ private:
     };
 
     TArray<FMatchRobotSlot> MatchRobots;
+    int32 InfantryAICount = 0;
+    int32 NextInfantryAISeat = 0;
+    void StepInfantryAI(double DeltaSeconds);
+    bool StepInfantryAISeat(FMatchRobotSlot& Slot, double DeltaSeconds, FTransform& ShotMuzzle);
+    void StopInfantryAI(FMatchRobotSlot& Slot);
+    void TryInfantryAIResupply(FMatchRobotSlot& Slot);
+#if WITH_DEV_AUTOMATION_TESTS
+    FString InfantryAIEvidencePath;
+    uint64 InfantryAIFrame = 0;
+    double InfantryAIFrameSeconds = 0.;
+    double InfantryAIShotSeconds = 0.;
+    double InfantryAIPeakShotMs = 0.;
+    double NextInfantryAIEvidenceAt = 0.;
+    TArray<double> InfantryAIFrameSamples;
+    int32 InfantryAIEvidenceWriteErrors = 0;
+    void RecordInfantryAIEvidence(double ElapsedWallSeconds, double ShotSeconds);
+#endif
     std::array<FRMUCCompetitorState, 2> Competitors;
     std::array<int32, 2> TeamGold = { FRMUCSupplyRules::InitialGold, FRMUCSupplyRules::InitialGold };
     std::array<int32, 2> TeamInfantryFreeAmmoClaimed = { 0, 0 };
@@ -432,6 +462,7 @@ private:
     void SpawnRealEnemySentry(const FString& VehicleRigFilename);
     void RefreshDynamicMaterials();
     void StepMatchClock(double DeltaSeconds);
+    void SetGameProgress(ERMUCGameProgress Progress);
     FString StartRuneAttempt(bool bRed, int32 RobotNumber);
     void AdvanceHudAudio(ERMUCGameProgress PreviousProgress);
     bool IsHudFinalCountdown() const;

@@ -316,7 +316,7 @@ bool ARMUCGameReferee::Initialize(
     const TMap<FString, AStaticMeshActor*>& ArenaMapBoxes,
     FString& Error, AVehicleRig* Opponent,
     int32 InPrimaryRobotNumber,
-    const TArray<FRMUCMatchRobotSpawn>& ExtraRobots)
+    const TArray<FRMUCMatchRobotSpawn>& ExtraRobots, bool bPrimaryAiControlled)
 {
     if (!Vehicle || !GetWorld())
     {
@@ -340,19 +340,31 @@ bool ARMUCGameReferee::Initialize(
     bPhysicalMatch = (Opponent != nullptr) || !ExtraRobots.IsEmpty();
 
     MatchRobots.Reset();
-    auto AddRobotSlot = [&](AVehicleRig* V, FieldTeam T, int32 Num) -> FMatchRobotSlot&
+    InfantryAICount = 0;
+    const bool bSixSeatMatch = 1 + (Opponent ? 1 : 0) + ExtraRobots.Num() == 6;
+#if WITH_DEV_AUTOMATION_TESTS
+    FParse::Value(FCommandLine::Get(), TEXT("RmsimInfantryAIEvidence="), InfantryAIEvidencePath);
+    if (!InfantryAIEvidencePath.IsEmpty()) InfantryAIFrameSamples.Reserve(240);
+#endif
+    auto AddRobotSlot = [&](AVehicleRig* V, FieldTeam T, int32 Num, bool bAI = false) -> FMatchRobotSlot&
     {
         FMatchRobotSlot& Slot = MatchRobots.AddDefaulted_GetRef();
         Slot.Vehicle = V;
         Slot.Team = T;
         Slot.RobotNumber = (Num == 3 || Num == 4) ? Num : 7;
+        Slot.bAiControlled = bSixSeatMatch && bAI && (Num == 3 || Num == 4);
+        if (Slot.bAiControlled)
+        {
+            Slot.InfantryAI.Reset(InfantryAICount++, Slot.ProtocolRobotId());
+            V->EnableExternalDriveLease(true);
+        }
         BindVehicleLedMaterials(V, Slot.LedMats, Slot.Armor);
         BindProjectileVehicleSurfaces(V);
         return Slot;
     };
 
     // Slot 0 is always the primary piloted/viewed vehicle (Rig).
-    FMatchRobotSlot& PrimarySlot = AddRobotSlot(Rig, FriendlyTeam(), PrimaryRobotNumber);
+    FMatchRobotSlot& PrimarySlot = AddRobotSlot(Rig, FriendlyTeam(), PrimaryRobotNumber, bPrimaryAiControlled);
     OwnLedMats = PrimarySlot.LedMats;
     OwnArmor = PrimarySlot.Armor;
 
@@ -369,7 +381,7 @@ bool ARMUCGameReferee::Initialize(
         {
             if (!IsValid(Extra.Vehicle) || Extra.Vehicle == Rig || Extra.Vehicle == EnemyRig) continue;
             const FieldTeam ExtraTeam = Extra.bRed ? FieldTeam::Red : FieldTeam::Blue;
-            FMatchRobotSlot& Slot = AddRobotSlot(Extra.Vehicle, ExtraTeam, Extra.RobotNumber);
+            FMatchRobotSlot& Slot = AddRobotSlot(Extra.Vehicle, ExtraTeam, Extra.RobotNumber, Extra.bAiControlled);
             if (!EnemyRig && ExtraTeam != FriendlyTeam())
             {
                 EnemyRig = Extra.Vehicle;
@@ -405,7 +417,7 @@ bool ARMUCGameReferee::Initialize(
     if (FParse::Value(FCommandLine::Get(), TEXT("RefereePreparationSeconds="), PreparationSeconds) &&
         FMath::IsFinite(PreparationSeconds) && PreparationSeconds > 0.)
     {
-        GameProgress = ERMUCGameProgress::Preparation;
+        SetGameProgress(ERMUCGameProgress::Preparation);
         StageRemainSeconds = FMath::Clamp(PreparationSeconds, 10., 180.);
     }
 #if WITH_DEV_AUTOMATION_TESTS
@@ -426,7 +438,7 @@ void ARMUCGameReferee::ResetMatch(bool bWithCountdown)
     }
     Projectiles.Reset();
 
-    GameProgress = bWithCountdown ? ERMUCGameProgress::CountDown : ERMUCGameProgress::Running;
+    SetGameProgress(bWithCountdown ? ERMUCGameProgress::CountDown : ERMUCGameProgress::Running);
     StageRemainSeconds = bWithCountdown ? 5.0 : 420.0;
     MatchElapsedSeconds = 0.0;
     WinnerText.Reset();
@@ -440,8 +452,17 @@ void ARMUCGameReferee::ResetMatch(bool bWithCountdown)
     TeamGold = { FRMUCSupplyRules::InitialGold, FRMUCSupplyRules::InitialGold };
     TeamInfantryFreeAmmoClaimed = { 0, 0 };
     TeamInfantryClaimedMinutes = { 0, 0 };
+    NextInfantryAISeat = 0;
+#if WITH_DEV_AUTOMATION_TESTS
+    NextInfantryAIEvidenceAt = 0.;
+#endif
     for (FMatchRobotSlot& Slot : MatchRobots)
     {
+        if (Slot.bAiControlled)
+        {
+            StopInfantryAI(Slot);
+            Slot.InfantryAI.Reset(Slot.InfantryAI.CrewIndex, Slot.ProtocolRobotId());
+        }
         Slot.State = {};
         Slot.State.Hp = Slot.MaxHp();
         Slot.State.ProjectileAllowance17mm = Slot.InitialAmmo();
@@ -499,7 +520,7 @@ void ARMUCGameReferee::StartMatchNow()
     if (GameProgress == ERMUCGameProgress::Preparation || GameProgress == ERMUCGameProgress::SelfChecking)
     {
         // First F6 press during preparation/self-check enters a 10-second pre-start countdown.
-        GameProgress = ERMUCGameProgress::CountDown;
+        SetGameProgress(ERMUCGameProgress::CountDown);
         StageRemainSeconds = 10.0;
         HudAudioCountdownSecond = 0;
         PushBannerEvent(TEXT("COUNTDOWN 10s — 再按 P 直接开赛"), 3.0);
@@ -508,7 +529,7 @@ void ARMUCGameReferee::StartMatchNow()
     if (GameProgress != ERMUCGameProgress::Running)
     {
         // Second F6 press (from CountDown or NotStarted) immediately starts the 07:00 match.
-        GameProgress = ERMUCGameProgress::Running;
+        SetGameProgress(ERMUCGameProgress::Running);
         StageRemainSeconds = 420.0;
         PushBannerEvent(TEXT("MATCH RUNNING (07:00)"), 3.0);
         FRMUCHudAudio::Play(GetWorld(), ERMUCHudAudioCue::Start);
@@ -711,6 +732,49 @@ void ARMUCGameReferee::RefreshDynamicMaterials()
     }
 }
 
+void ARMUCGameReferee::SetGameProgress(ERMUCGameProgress Progress)
+{
+    GameProgress = Progress;
+    const bool bChassis = Progress == ERMUCGameProgress::Running;
+    // RMUC 2027 section 6.5 ignores operator commands during the five-second countdown.
+    const bool bGimbal = Progress != ERMUCGameProgress::NotStart && Progress != ERMUCGameProgress::CountDown;
+#if WITH_DEV_AUTOMATION_TESTS
+    static const bool bProbe = FParse::Param(FCommandLine::Get(), TEXT("RefereePrestartControlProbe"));
+#endif
+    for (const FMatchRobotSlot& Slot : MatchRobots)
+    {
+        AVehicleRig* Vehicle = Slot.Vehicle.Get();
+        if (!Vehicle) continue;
+        Vehicle->SetMatchControlEnabled(bChassis, bGimbal);
+#if WITH_DEV_AUTOMATION_TESTS
+        if (bProbe)
+        {
+            const FVector P = Vehicle->GetActorLocation();
+            bool bBlocked = !IsChassisPoweredFor(Vehicle);
+            if (!bChassis)
+            {
+                const bool bManualRejected = !Vehicle->SetContactPlanarDrive(FVector2D(0.6, 0.1), 0.5, false, false);
+                const bool bExternalRejected = !Vehicle->SetExternalVelocityTarget(FVector2D(0.6, 0.1), 0.5, false);
+                bBlocked &= bManualRejected && bExternalRejected && Vehicle->GetRequestedDriveWorldVelocityCmS().IsZero();
+            }
+            double InitialYaw, InitialPitch, FinalYaw, FinalPitch;
+            Vehicle->GetGimbalTargets(InitialYaw, InitialPitch);
+            FString Error;
+            const bool bAimAccepted = Vehicle->SetGimbal(InitialYaw + 0.025, InitialPitch, Error);
+            if (bAimAccepted) Vehicle->SetGimbal(InitialYaw, InitialPitch, Error);
+            else Vehicle->NudgeGimbal(0.05, 0.02, 1., 1., FPlatformTime::Seconds() + 0.1);
+            Vehicle->GetGimbalTargets(FinalYaw, FinalPitch);
+            const bool bGimbalPass = bAimAccepted == bGimbal && Vehicle->IsMatchGimbalEnabled() == bGimbal &&
+                FMath::IsNearlyEqual(FMath::FindDeltaAngleRadians(InitialYaw, FinalYaw), 0., 1.e-6) &&
+                FMath::IsNearlyEqual(InitialPitch, FinalPitch, 1.e-6);
+            UE_LOG(LogRMSim, Display, TEXT("RMUC_PRESTART_CONTROL phase=%s id=%d x_cm=%.3f y_cm=%.3f chassis_blocked=%d gimbal_enabled=%d pass=%d"),
+                *ProgressName(Progress), Slot.ProtocolRobotId(), P.X, P.Y, bBlocked, bAimAccepted,
+                bBlocked == !bChassis && bGimbalPass);
+        }
+#endif
+    }
+}
+
 void ARMUCGameReferee::StepMatchClock(double DeltaSeconds)
 {
     if (GameProgress == ERMUCGameProgress::GameOver || GameProgress == ERMUCGameProgress::NotStart) return;
@@ -736,7 +800,7 @@ void ARMUCGameReferee::StepMatchClock(double DeltaSeconds)
         }
         if (StageRemainSeconds <= 0.0)
         {
-            GameProgress = ERMUCGameProgress::GameOver;
+            SetGameProgress(ERMUCGameProgress::GameOver);
             // RMUC 2027 V1.0.0: Exclude legacy #2 Engineer from end-of-match team HP total
             const int32 RedTotalHp = Red.BaseHp + Red.OutpostHp + Red1Hp + Red3Hp + Red4Hp + Competitor(FieldTeam::Red).Hp;
             const int32 BlueTotalHp = Blue.BaseHp + Blue.OutpostHp + Blue1Hp + Blue3Hp + Blue4Hp + Competitor(FieldTeam::Blue).Hp;
@@ -752,11 +816,11 @@ void ARMUCGameReferee::StepMatchClock(double DeltaSeconds)
     }
     else if (StageRemainSeconds <= 0.0)
     {
-        if (GameProgress == ERMUCGameProgress::Preparation) { GameProgress = ERMUCGameProgress::SelfChecking; StageRemainSeconds = 15.0; }
-        else if (GameProgress == ERMUCGameProgress::SelfChecking) { GameProgress = ERMUCGameProgress::CountDown; StageRemainSeconds = 5.0; }
+        if (GameProgress == ERMUCGameProgress::Preparation) { SetGameProgress(ERMUCGameProgress::SelfChecking); StageRemainSeconds = 15.0; }
+        else if (GameProgress == ERMUCGameProgress::SelfChecking) { SetGameProgress(ERMUCGameProgress::CountDown); StageRemainSeconds = 5.0; }
         else if (GameProgress == ERMUCGameProgress::CountDown)
         {
-            GameProgress = ERMUCGameProgress::Running;
+            SetGameProgress(ERMUCGameProgress::Running);
             StageRemainSeconds = 420.0;
             PushBannerEvent(TEXT("RMUC 2027 MATCH START!"), 3.0);
         }
@@ -926,14 +990,13 @@ std::optional<ARMUCGameReferee::FieldTeam> ARMUCGameReferee::TeamFor(const AVehi
 
 bool ARMUCGameReferee::IsChassisPoweredFor(const AVehicleRig* Robot) const
 {
+    if (GameProgress != ERMUCGameProgress::Running) return false;
     if (const FMatchRobotSlot* Slot = FindSlot(Robot))
     {
-        return Slot->State.Hp > 0 && Slot->State.ChassisPowerCutTimer <= 0.0 &&
-            GameProgress != ERMUCGameProgress::GameOver;
+        return Slot->State.Hp > 0 && Slot->State.ChassisPowerCutTimer <= 0.0;
     }
     const auto Team = TeamFor(Robot);
-    return Team && Competitor(*Team).Hp > 0 && Competitor(*Team).ChassisPowerCutTimer <= 0.0 &&
-        GameProgress != ERMUCGameProgress::GameOver;
+    return Team && Competitor(*Team).Hp > 0 && Competitor(*Team).ChassisPowerCutTimer <= 0.0;
 }
 
 bool ARMUCGameReferee::IsSimMatchAutonomyActive(const AVehicleRig* Robot) const
@@ -1313,7 +1376,7 @@ void ARMUCGameReferee::Advance(
     if (bThermalProof && GameProgress == ERMUCGameProgress::Running)
         bFirePressed = MatchElapsedSeconds < 11.0 || (MatchElapsedSeconds >= 14.0 && MatchElapsedSeconds < 23.0);
 #endif
-    if (!IsRosCompetitor(Rig)) SetRosFlywheels(Rig, bFirePressed && bHasMuzzle);
+    if (!IsRosCompetitor(Rig) && !IsInfantryAiControlledFor(Rig)) SetRosFlywheels(Rig, bFirePressed && bHasMuzzle);
     if (GameProgress == ERMUCGameProgress::Running)
     {
         for (FMatchRobotSlot& Slot : MatchRobots)
@@ -1324,6 +1387,7 @@ void ARMUCGameReferee::Advance(
         if (bFirePressed && bHasMuzzle) FireProjectile(MuzzleTransform);
     }
     StepProjectiles(Dt);
+    StepInfantryAI(Dt);
 #if WITH_DEV_AUTOMATION_TESTS
     StepRuneLifecycleProbe();
 #endif

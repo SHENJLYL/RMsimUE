@@ -280,6 +280,8 @@ bool AVehicleRig::AddSensor(const FObject& Sensor, FString& Error)
 
 bool AVehicleRig::SetJointAngle(const FString& JointName, double AngleRad, FString& Error)
 {
+    if (!bMatchGimbalEnabled && (JointName == YawJoint || JointName == PitchJoint))
+        return Fail(Error, TEXT("gimbal locked by match phase"));
     if(MujocoDynamics)
     {
         if(JointName==YawJoint)return SetMujocoGimbal(AngleRad,ManualPitch,Error);
@@ -299,6 +301,7 @@ bool AVehicleRig::SetJointAngle(const FString& JointName, double AngleRad, FStri
 
 bool AVehicleRig::SetGimbal(double YawRad, double PitchRad, FString& Error)
 {
+    if (!bMatchGimbalEnabled) return Fail(Error, TEXT("gimbal locked by match phase"));
     if(MujocoDynamics)return SetMujocoGimbal(YawRad,PitchRad,Error);
     if (YawJoint.IsEmpty() && PitchJoint.IsEmpty())
         return (YawRad == 0.0 && PitchRad == 0.0) || Fail(Error, TEXT("vehicle has no gimbal mapping"));
@@ -320,6 +323,7 @@ bool AVehicleRig::GetRosGimbalGeometry(const USceneCaptureComponent2D* Camera,FS
 void AVehicleRig::NudgeGimbal(double DeltaYawRad, double DeltaPitchRad,
     double YawFeedforwardRadS, double PitchFeedforwardRadS, double ExpiresWall)
 {
+    if (!bMatchGimbalEnabled) return;
     if(MujocoDynamics)
     {
         const auto* P = Joints.Find(PitchJoint);
@@ -367,6 +371,7 @@ bool AVehicleRig::OverlapsWorld(const FTransform& Pose, const FBox& LocalBounds,
 
 bool AVehicleRig::MoveManual(const FVector& LocalDeltaCm, double DeltaYawDegrees)
 {
+    if (!bMatchChassisEnabled) return false;
     if(bContactPhysics)return false; // Native bodies must move through forces/constraints, never this preview teleport path.
     bLastSweepHit = false; LastBlockingActor.Reset(); LastImpactPoint = FVector::ZeroVector; LastSweepFraction = 1.0;
     if (!GetWorld() || LocalDeltaCm.ContainsNaN() || !FMath::IsFinite(DeltaYawDegrees) ||

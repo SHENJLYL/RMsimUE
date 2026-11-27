@@ -4,7 +4,7 @@
 void ARMUCGameReferee::RequestOwnAmmoPurchase()
 {
     FMatchRobotSlot* Slot = OwnSlot();
-    if (!Slot || GameProgress != ERMUCGameProgress::Running || Slot->State.Hp <= 0) return;
+    if (!Slot || Slot->bAiControlled || GameProgress != ERMUCGameProgress::Running || Slot->State.Hp <= 0) return;
 
     const auto& Points = Slot->PointEffects;
     if (Points.bSupply)
@@ -293,7 +293,7 @@ int32 ARMUCGameReferee::ApplyFieldStructureHit(bool bTargetRed, bool bOutpost, b
     const int32 HpLost = FieldRules.HitBase(Site, Attacker, Damage);
     if (FieldRules.Get(Site).BaseHp == 0)
     {
-        GameProgress = ERMUCGameProgress::GameOver;
+        SetGameProgress(ERMUCGameProgress::GameOver);
         WinnerText = bTargetRed ? TEXT("BLUE VICTORY — RED BASE DESTROYED") : TEXT("RED VICTORY — BLUE BASE DESTROYED");
         PushCombatBroadcast(AtkSign, AtkVeh, TEXT("DESTROYED"), TgtSign, FString::Printf(TEXT("%s BASE"), SiteName), 10.0);
     }

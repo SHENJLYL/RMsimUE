@@ -88,6 +88,8 @@ public:
     bool LoadMeshRig(const FString& Filename, FString& Error);
     bool SetJointAngle(const FString& JointName, double AngleRad, FString& Error);
     bool SetGimbal(double YawRad, double PitchRad, FString& Error);
+    void SetMatchControlEnabled(bool bChassisEnabled, bool bGimbalEnabled);
+    bool IsMatchGimbalEnabled() const { return bMatchGimbalEnabled; }
     void GetGimbalAngles(double& YawRad, double& PitchRad) const { YawRad = ManualYaw; PitchRad = ManualPitch; }
     void GetGimbalTargets(double& YawRad, double& PitchRad) const { YawRad = MujocoDynamics ? MujocoYawTarget : ManualYaw; PitchRad = MujocoDynamics ? MujocoPitchTarget : ManualPitch; }
     void NudgeGimbal(double DeltaYawRad, double DeltaPitchRad,
@@ -271,6 +273,7 @@ private:
     double ContactMotorDamping=2,ContactMotorTorqueNm=4,ContactBrakeTorqueNm=8;
     double ContactDriveForward=0,ContactDriveYaw=0;
     bool bContactBrake=true;
+    bool bMatchChassisEnabled = true, bMatchGimbalEnabled = true;
     struct FContactObservation { FVector Point,Normal,Impulse; double Time=0; FString Other; TWeakObjectPtr<UPrimitiveComponent> OtherComponent; };
     TMap<FString,FContactObservation> ContactObservations;
     // Game-thread solver notification ring; existing per-body telemetry remains independent.

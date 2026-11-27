@@ -1067,12 +1067,14 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
             FString RefError;
             AVehicleRig* Opponent = nullptr;
             int32 PrimaryRobotNum = 7;
+            bool bPrimaryAiControlled = false;
             TArray<FRMUCMatchRobotSpawn> ExtraSpawns;
             MatchSpawnedVehicles.Reset();
             if (bPhysicalMatch)
             {
                 const FMatchSeatSpec& PrimarySeat = MatchSeats[MatchPrimarySeatIndex];
                 PrimaryRobotNum = PrimarySeat.RobotNumber;
+                bPrimaryAiControlled = PrimarySeat.Control == TEXT("ai");
                 if (!PrimarySeat.ArmorSticker.IsNone()) Rig->Tags.AddUnique(PrimarySeat.ArmorSticker);
                 if (PrimarySeat.Control == TEXT("sentry_ws")) MatchRosVehicles.Add(PrimarySeat.Team, Rig);
 
@@ -1095,12 +1097,13 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                         Extra.Vehicle = Vehicle;
                         Extra.bRed = (Seat.Team == TEXT("red"));
                         Extra.RobotNumber = Seat.RobotNumber;
+                        Extra.bAiControlled = Seat.Control == TEXT("ai");
                         ExtraSpawns.Add(Extra);
                     }
                 }
             }
             Referee=GetWorld()->SpawnActor<ARMUCGameReferee>();
-            if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent,PrimaryRobotNum,ExtraSpawns)){Abort(RefError);return;}
+            if(!Referee||!Referee->Initialize(Rig,ContactRigFile,StageMap.SourceFile,SelectedSpawn.Team,MapBoxes,RefError,Opponent,PrimaryRobotNum,ExtraSpawns,bPrimaryAiControlled)){Abort(RefError);return;}
         }
         if(bRosBridgeEnabled)
         {
@@ -1477,11 +1480,12 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
 {
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (!PC || !Rig || !ChaseCamera || !SightCamera) return;
+    const bool bPrimaryInfantryAI = Referee && Referee->IsInfantryAiControlledFor(Rig);
     if (!Input.Focused)
     {
         bPrecisionDrive=false;
         bMapDragging=false;
-        if (Rig->IsContactPhysics() && !bRosControl)
+        if (Rig->IsContactPhysics() && !bRosControl && !bPrimaryInfantryAI)
         {
 #if WITH_DEV_AUTOMATION_TESTS
             if (bMatchOpponentGyroFixture && Referee && Referee->IsChassisPowered())
@@ -1636,7 +1640,7 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
     UpdatePlayerView(PC);
     if (USceneCaptureComponent2D* Aim = GetAimCapture())
     {
-        if (!bRosControl && !bRosAimControl)
+        if (!bRosControl && !bRosAimControl && !bPrimaryInfantryAI)
         {
             FVector DesiredWorldDirection;
             if (bControlProbeActive && bProbeAimWorldTargetOverride && bAimTargetValid)
@@ -1714,14 +1718,14 @@ void AImportLabGameMode::ApplyManualInput(const FManualControlInput& Input, doub
             Training->Advance(FMath::Clamp(DeltaSeconds,0.,.25),Input.Fire&&AllowTrigger&&!bRosControl&&!MapConsumesMouse,
                 Input.RestartRound&&AllowTrigger,Aim->GetComponentTransform());
         if (Referee)
-            Referee->Advance(DeltaSeconds, Input.Fire && AllowTrigger && !bRosControl && !MapConsumesMouse,
+            Referee->Advance(DeltaSeconds, Input.Fire && AllowTrigger && !bRosControl && !bPrimaryInfantryAI && !MapConsumesMouse,
                 Aim->GetComponentTransform(), AimWorldTarget, bAimTargetValid, true);
     }
 
     if (Rig->IsContactPhysics())
     {
         const bool bChassisPowered = (!Referee || Referee->IsChassisPowered());
-        if (!bRosControl)
+        if (!bRosControl && !bPrimaryInfantryAI)
         {
             if (!bChassisPowered)
             {

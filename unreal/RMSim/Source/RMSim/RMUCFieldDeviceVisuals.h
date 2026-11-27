@@ -54,6 +54,10 @@ public:
     bool GetBaseTarget(const FHitResult& Hit, bool& bRed, bool* bLarge = nullptr) const;
     bool GetRuneTarget(const FHitResult& Hit, bool& bRed, int32& PlateIndex, double* PlateOffsetCm = nullptr) const;
     bool GetOutpostTarget(const FHitResult& Hit, bool& bRed) const;
+    const UBoxComponent* GetInfantryOutpostPlate(bool bRed, int32 Index) const
+    {
+        return Index >= 0 && Index < OutpostPlatesPerTeam ? OutpostPlates[bRed ? 0 : 1][Index].Get() : nullptr;
+    }
     bool UndoOutpostRotation(bool bRed, const FVector& ImpactPoint, const FVector& ImpactNormal,
         FVector& RestPoint, FVector& RestNormal) const;
     bool IsRuneReady() const { return Rune.IsValid(); }

@@ -40,7 +40,7 @@ bool AVehicleRig::EnableMotorCurrentControl(double WheelNmPerAmp,double SteerNmP
 
 bool AVehicleRig::SetMotorCurrentCommands(const TArray<double>& Steer,const TArray<double>& Wheel)
 {
-    if(!bMotorCurrentControl||Steer.Num()!=4||Wheel.Num()!=4)return false;
+    if(!bMatchChassisEnabled||!bMotorCurrentControl||Steer.Num()!=4||Wheel.Num()!=4)return false;
     for(double Value:Steer)if(!FMath::IsFinite(Value)||FMath::Abs(Value)>2000)return false;
     for(double Value:Wheel)if(!FMath::IsFinite(Value)||FMath::Abs(Value)>2000)return false;
     SteerCurrentCommands=Steer;WheelCurrentCommands=Wheel;bMotorCommandValid=true;bContactBrake=false;return true;

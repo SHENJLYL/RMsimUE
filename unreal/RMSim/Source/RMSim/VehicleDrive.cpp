@@ -127,6 +127,25 @@ bool AVehicleRig::SampleChassisImu(const FTransform& Mount,FTransform& SensorWor
     return !SensorWorld.ContainsNaN()&&!PointVelocityCm.ContainsNaN()&&!AngularVelocityRad.ContainsNaN();
 }
 
+void AVehicleRig::SetMatchControlEnabled(bool bChassisEnabled, bool bGimbalEnabled)
+{
+    if (bMatchChassisEnabled && !bChassisEnabled)
+    {
+        SetContactDrive(0., 0., true);
+        ExternalDriveDeadline = 0.;
+    }
+    bMatchChassisEnabled = bChassisEnabled;
+    if (bMatchGimbalEnabled && !bGimbalEnabled && MujocoDynamics)
+    {
+        // Discard active feedforward instead of letting a pre-countdown command keep slewing.
+        MujocoYawTarget = FMath::UnwindRadians(ManualYaw);
+        if (const FJointBinding* Joint = Joints.Find(PitchJoint))
+            MujocoPitchTarget = FMath::Clamp(ManualPitch, Joint->Lower, Joint->Upper);
+        MujocoYawTargetRate = MujocoPitchTargetRate = DedicatedGimbalExpiry = 0.;
+    }
+    bMatchGimbalEnabled = bGimbalEnabled;
+}
+
 void AVehicleRig::SetContactDrive(double ForwardMetresPerSecond,double YawRadiansPerSecond,bool Brake)
 { SetContactPlanarDrive(FVector2D(ForwardMetresPerSecond,0),YawRadiansPerSecond,false,Brake); }
 
@@ -139,6 +158,11 @@ void AVehicleRig::SetFreeRollingDiagnostic(bool Enabled,double SteeringRosRadian
 
 bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool WorldFrame,bool Brake)
 {
+    if (!bMatchChassisEnabled)
+    {
+        if (!LinearMetresPerSecond.IsZero() || YawRadiansPerSecond != 0.) return false;
+        Brake = true;
+    }
     const bool EnteringExternalBrake=bExternalVelocityTracking && bExternalDriveLease && Brake && !bContactBrake;
     bExternalVelocityTracking=false;
     bExternalOperatorGyro=false;
@@ -168,7 +192,7 @@ bool AVehicleRig::SetContactPlanarDrive(const FVector2D& LinearMetresPerSecond,d
 
 bool AVehicleRig::SetExternalVelocityTarget(const FVector2D& LinearMetresPerSecond,double YawRadiansPerSecond,bool Brake,bool OperatorGyro)
 {
-    if(!bExternalDriveLease)return false;
+    if(!bMatchChassisEnabled||!bExternalDriveLease)return false;
     FVector2D LimitedLinear=LinearMetresPerSecond;
     double LimitedYaw=YawRadiansPerSecond;
     // Navigation commands remain in base_link; the shared shaper converts to world below.
