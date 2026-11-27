@@ -831,7 +831,7 @@ class RMSimLauncherApp(tk.Tk):
                 "-RobotId", robot_id,
                 "-RosPort", port,
                 "-Domain", domain,
-                "-CameraHz", str(int(camera_hz) if camera_hz and float(camera_hz).is_integer() else (camera_hz or (10 if ros_team == "both" else 15))),
+                "-CameraHz", str(int(camera_hz) if camera_hz and float(camera_hz).is_integer() else (camera_hz or 15)),
             ]
             if ros_team != "both":
                 self.match_connector = self._external_sentry_command(
