@@ -7,9 +7,6 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $env:ROS_DOMAIN_ID = "$Domain"
-$env:PIXI_CACHE_DIR = 'E:\simulator-cache\pixi'
-$env:PIXI_HOME = 'E:\simulator-cache\pixi-home'
-$env:PIXI_NO_CONFIG = '1'
 
 $pyPaths = @(
     (Join-Path $root 'ros2_ws/src/sp_vision_25'),
@@ -40,12 +37,9 @@ $assetsDir = Join-Path $root 'ros2_ws/src/sp_vision_25/assets'
 
 if (Test-Path $cppExe) {
     Write-Host "[sp_vision_25] Starting C++17 Vision Auto-Aim (robot_id=$RobotId, domain=$Domain, require_bt=$reqBt)..."
-    & 'E:\simulator-tools\pixi\pixi.exe' run --manifest-path (Join-Path $PSScriptRoot 'pixi.toml') `
-        $cppExe --ros-args -p "robot_id:=$RobotId" -p "assets_dir:=$assetsDir" -p "muzzle_speed_mps:=$MuzzleSpeedMps" -p "require_behavior_switch:=$reqBt"
+    & (Join-Path $PSScriptRoot 'run-env.ps1') -Command @($cppExe, '--ros-args', '-p', "robot_id:=$RobotId", '-p', "assets_dir:=$assetsDir", '-p', "muzzle_speed_mps:=$MuzzleSpeedMps", '-p', "require_behavior_switch:=$reqBt")
 } else {
     Write-Host "[sp_vision_25] C++ binary not found, falling back to Python vision_node (run Build-Vision.ps1 to build C++)..."
-    & 'E:\simulator-tools\pixi\pixi.exe' run --manifest-path (Join-Path $PSScriptRoot 'pixi.toml') `
-        python -c "from sp_vision_25.vision_node import main; main()" `
-        --ros-args -p "robot_id:=$RobotId" -p "muzzle_speed_mps:=$MuzzleSpeedMps" -p "require_behavior_switch:=$reqBt"
+    & (Join-Path $PSScriptRoot 'run-env.ps1') -Command @('python', '-c', 'from sp_vision_25.vision_node import main; main()', '--ros-args', '-p', "robot_id:=$RobotId", '-p', "muzzle_speed_mps:=$MuzzleSpeedMps", '-p', "require_behavior_switch:=$reqBt")
 }
 exit $LASTEXITCODE

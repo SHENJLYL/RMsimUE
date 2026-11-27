@@ -1025,8 +1025,8 @@ class RMSimLauncherApp(tk.Tk):
         # Also close any UnrealEditor.exe / rviz2.exe belonging to this RMSim workspace.
         cleanup_ps = (
             "$proj = 'd:/simulator/unreal/rmsim/rmsim.uproject'; "
-            "Get-CimInstance Win32_Process -Filter \"Name='UnrealEditor.exe' OR Name='rviz2.exe'\" | "
-            "Where-Object { $_.Name -eq 'rviz2.exe' -or ($_.CommandLine -and $_.CommandLine.Replace('\\','/').ToLowerInvariant().Contains($proj)) } | "
+            "Get-CimInstance Win32_Process -Filter \"Name='UnrealEditor.exe' OR Name='RMSim.exe' OR Name='rviz2.exe'\" | "
+            "Where-Object { $_.Name -eq 'rviz2.exe' -or $_.Name -eq 'RMSim.exe' -or ($_.CommandLine -and $_.CommandLine.Replace('\\','/').ToLowerInvariant().Contains($proj)) } | "
             "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }"
         )
         subprocess.run(

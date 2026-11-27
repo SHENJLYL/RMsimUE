@@ -137,8 +137,11 @@ if (Test-Path -LiteralPath $vehiclePath -PathType Container) {
     }
 }
 
+$pyPortable = Join-Path $root 'runtime/ros2_env/python.exe'
 $pyVenv = Join-Path $root 'artifacts/environments/mujoco-4.0.1/Scripts/python.exe'
-if (-not (Test-Path -LiteralPath $pyVenv -PathType Leaf)) {
+if (Test-Path -LiteralPath $pyPortable -PathType Leaf) {
+    $pyVenv = $pyPortable
+} elseif (-not (Test-Path -LiteralPath $pyVenv -PathType Leaf)) {
     $pyVenv = (Get-Command python -ErrorAction Stop).Source
 }
 
@@ -189,15 +192,29 @@ if ($mapKind -eq 'rm_scene_map') {
     }
 }
 
-$ue = Get-UnrealTools -EngineRoot $EngineRoot
-$mapLaunch = Get-RMSimMapLaunch -MapFile $mapPath -Project $ue.Project -SpawnId $SpawnId
-
-$ueArgs = @(
-    (Quote-UnrealArgument $ue.Project),
-    $mapLaunch.WorldUrl,
-    '-game',
-    '-nosplash'
-)
+$packagedExe = Join-Path $root 'unreal/RMSim/Binaries/Win64/RMSim.exe'
+$devUproject = Join-Path $root 'unreal/RMSim/RMSim.uproject'
+$isPackaged = (Test-Path -LiteralPath $packagedExe -PathType Leaf) -and -not (Test-Path -LiteralPath $devUproject -PathType Leaf)
+if ($isPackaged) {
+    $ueExecutable = $packagedExe
+    $projectRef = Join-Path $root 'unreal/RMSim/RMSim.uproject'
+    $mapLaunch = Get-RMSimMapLaunch -MapFile $mapPath -Project $projectRef -SpawnId $SpawnId
+    $ueArgs = @(
+        $mapLaunch.WorldUrl,
+        '-nosplash'
+    )
+} else {
+    $ue = Get-UnrealTools -EngineRoot $EngineRoot
+    $ueExecutable = $ue.Editor
+    $projectRef = $ue.Project
+    $mapLaunch = Get-RMSimMapLaunch -MapFile $mapPath -Project $projectRef -SpawnId $SpawnId
+    $ueArgs = @(
+        (Quote-UnrealArgument $ue.Project),
+        $mapLaunch.WorldUrl,
+        '-game',
+        '-nosplash'
+    )
+}
 if ($Offscreen) {
     $ueArgs += @('-RenderOffScreen', '-NoSound', '-ResX=640', '-ResY=480')
 } else {
@@ -239,7 +256,7 @@ if ($NoLumen) {
 if ($execCmds.Count -gt 0) {
     $ueArgs += ('-ExecCmds=' + (Quote-UnrealArgument ($execCmds -join ', ')))
 }
-$ueArgs += @(Get-RMSimArenaRenderArguments -MapFile $mapLaunch.MapFile -Project $ue.Project)
+$ueArgs += @(Get-RMSimArenaRenderArguments -MapFile $mapLaunch.MapFile -Project $projectRef)
 if ($TrainingMode) { $ueArgs += '-TrainingMode' }
 if ($GpuLidar -and $CpuLidar) { throw 'GpuLidar and CpuLidar cannot be combined.' }
 if ($GpuLidar) { $ueArgs += '-GpuLidar' }
@@ -334,7 +351,7 @@ if ($enableRos) {
 }
 
 if ($DryRun) {
-    Write-Output ('UE Command: ' + $ue.Editor + ' ' + ($ueArgs -join ' '))
+    Write-Output ('UE Command: ' + $ueExecutable + ' ' + ($ueArgs -join ' '))
     exit 0
 }
 
@@ -351,7 +368,7 @@ $ueLogPath = Join-Path $ueLogDir 'ue.log'
 $ueArgs += ('-AbsLog=' + (Quote-UnrealArgument $ueLogPath))
 try {
     $windowStyle = if ($Offscreen) { 'Hidden' } else { 'Normal' }
-    $ueProc = Start-Process -FilePath $ue.Editor -ArgumentList $ueArgs -WindowStyle $windowStyle -PassThru
+    $ueProc = Start-Process -FilePath $ueExecutable -ArgumentList $ueArgs -WindowStyle $windowStyle -PassThru
     Write-Output "Started UE5 Simulator (PID $($ueProc.Id))"
     Write-Output "UE logs: $ueLogPath"
 

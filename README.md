@@ -1,72 +1,184 @@
-# RM Simulator
+# RM Simulator (RMSim) — RMUC 2027 高保真 3v3 机甲对抗仿真器
 
-RMUC 默认入口使用 32.4 秒稳态 MPC 配置。Windows 使用 `Play-Navigation.cmd` 或 `Play-Simulator.cmd` 中的内置导航模式。[当前版本与验证](docs/changes/2026-11-24-simulator-snapshot.md)
+> **UE 5.8 + MuJoCo 4.0.1 + 原生 ROS 2 Humble** · 面向 RoboMaster 机甲大师赛的 **Sim2Real 零作弊** 全栈仿真与算法验证平台
 
-UE5 + 原生 ROS 2 RoboMaster 仿真工程。当前已有 Windows AIM 哨兵接触物理驾驶、射击训练和原控制/传感器链路；长期目标保留 Windows/Ubuntu 原生同源算法、通用车辆包、可换地图、高画质和联机权威比赛。
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11%20x64-0078D6)](#)
+[![Engine](https://img.shields.io/badge/Engine-Unreal%20Engine%205.8-0E1128)](#)
+[![Physics](https://img.shields.io/badge/Physics-MuJoCo%204.0.1%20(400Hz)-FF6F00)](#)
+[![ROS2](https://img.shields.io/badge/ROS%202-Humble%20(Native%20Win64)-22314E)](#)
 
-[当前进度](docs/progress/current.md) · [长期目标](.codestable/goal.md) · [最新变更](docs/changes/2026-11-20-mujoco-integration.md) · [仓库与本地资源](docs/guides/repository.md)
+---
 
-## 统一工程与参数
+## 🎯 项目目标
 
-当前活动工程统一在 `D:\simulator`。RMUC、弗兰德斯、训练和导航入口使用同一个 `unreal/RMSim/RMSim.uproject`；车辆动力学与手动驾驶参数共用 `assets/vehicles/aim_sentry/drive-profile.json`，云台和观察设置共用 `unreal/RMSim/Config/DefaultGame.ini`。导航沿用所选 `sentry_ws` YAML 的控制、规划、避障和速度平滑算法，运动能力限值从同一车辆 `drive-profile.json` 生成；手动与导航在车辆端共用连续整形器、执行器和传感器包。
+打造一套**开箱即玩、算法同源、零真值泄露**的 RoboMaster RMUC 2027 3v3 仿真环境，既能用于**全自动哨兵算法（SLAM / 导航 / 自瞄 / 决策）的闭环迭代与对抗回归**，也能让操作手直接下场手操体验完整赛制：
 
-AIM 当前车辆配置的前进、倒车、横移速度上限各为 **4.6 m/s**，每个悬挂模块为 **2000 N/m、280 N·s/m**，预载 **60 N**。切换地图直接选择入口，地图包保存地形、材质、布局和出生点。原地图工作树保留在本目录的 `artifacts/archive/wt-vlaanderen-before-unified-20261118`。工程整合、枕木与路肩碰撞、地表细节和植被修正的逐项结果见[本轮变更](docs/changes/2026-11-18-unified-flanders.md)。
+- **真物理（MuJoCo 400 Hz）**：独立后台物理线程解算 6 辆车（红蓝 #7 哨兵 + #3/#4 步兵）的刚体动力学、四舵轮悬挂接触、摩擦、小陀螺与车车碰撞。
+- **真传感器（0 真值作弊）**：
+  - **Mid-360 激光雷达**：基于 UE5 **Compute Shader 两级 BVH** 实现 GPU 加速射线求交，支持双哨兵满血 **200,000 点/秒 × 2（40 万射线/秒）**，保留 5 µs 发射节拍、运动畸变、`offset_time`、自车雷达罩玻璃穿透与测距/测角噪声。
+  - **双路自瞄相机**：红蓝哨兵各自输出真实渲染的 **`1280×720 @ 15 Hz` 无损 RGB8** 图像，直连 `sp_vision_25` C++17 神经网络识别与弹道解算。
+  - **共装 IMU**：由 MuJoCo 连续子步状态生成带噪原始线加速度与角速度。
+- **真赛制（RMUC 2027）**：内置官方血量/热量/功率缓冲/团队金币与免费弹池、前哨站与基地机制、飞镖系统、补给区回血买弹（`F` 键）以及 4 台会巡逻、温和对枪、残弹自动回前哨/回家补弹的内置步兵 AI。
+- **车图解耦 & 离线便携**：车辆资产、地图包、物理引擎与外部 ROS 2 算法栈完全解耦；支持一键打包为**免装 UE5 / Python / ROS 2 的全离线可执行版**。
 
-## 弗兰德斯原图驾驶
+---
 
-双击 **Play-WarThunder.cmd** 打开完整导入的 War Thunder 弗兰德斯原图，驾驶原尺度 AIM 哨兵。右下角小地图显示真实车辆位置、朝向与出生点，**M** 展开或收起全图。Windows UE 5.8.4 / D3D11 使用同一套车辆控制和悬挂；原生关卡、材质、植被及两地图驾驶检查均按各次实际模块与资源哈希记录。
+## 📦 下载全离线安装包（解压即玩）
 
-场景保留 1,365 个源网格、35,922 个视觉 placements、20,033 个原碰撞 placements 和原高度场；另为 18,454 个枕木与路肩实例生成按范围加载的精确碰撞。地表使用原地类细节、12 槽源微细节和 RVT，草地使用 10 个模型、16 层分布，并排除道路、铁路、水面和建筑区域。启动等待实际资源和渲染完成，原有悬挂与驾驶参数保持。地图的完整导航路线、稳定 1× 和原 Dagor 特效继续单独扩展。[操作与重建](docs/guides/war-thunder-flanders.md) · [来源与覆盖](assets/maps/wt_vlaanderen/SOURCE.md)
+不想折腾环境？直接下载已验证的 **Windows 64 位全离线一体包**（内置独立 `RMSim.exe` + MuJoCo + 全套离线 ROS 2 Humble + 红蓝双自动哨兵算法栈）：
 
-## 可视化 SLAM / 航点导航
+| 版本 | 体积 | 环境要求 | 下载链接 |
+| :--- | :--- | :--- | :--- |
+| **RMUC 2027 全离线一体包 (Win64)** | 约 2.29 GB（解压后 ~5.08 GB） | Windows 10/11 + DX12 (SM6) 独显<br>**无需安装 UE5 / Python / Pixi / ROS 2** | **[夸克网盘直达下载](https://pan.quark.cn/s/0ffc010ac494)** |
 
-双击 **Play-Navigation.cmd** 打开UE场景与RViz。定位就绪后，用 **Nav2 Goal** 点击拖动选目标；**Waypoint / Nav Through Poses Mode** 累积多个地点，再点 **Start Waypoint Following**；**Cancel** 取消任务。关闭RViz或运行 **Stop-Navigation.cmd** 结束本次会话。[操作指南](docs/guides/navigation-console.md)
+### 🚀 3 步快速开玩
+1. **解压**：将压缩包解压到**不含中文和空格**的路径（例如 `D:\RMSim\`）。
+2. **首次运行库检查**（仅极纯净 Windows 需要）：若首次启动提示缺少 VC++ / DirectX 运行库，运行一次包内 `unreal\Engine\Extras\Redist\en-us\UEPrereqSetup_x64.exe`。
+3. **启动**：双击根目录的 **`Play-Simulator.cmd`** 打开桌面启动器，直接点击 **启动仿真** 即可进入 6 车 RMUC 2027 3v3 实战！
 
-已接入原sentry导航偏航目标整形，以及按源模型yaw_link实际位置/45°倾角安装的动态Mid-360与共装IMU。2026-11-17导航版本验收84项原生、13项真实GUI操作通过；离线120通过、2权限跳过。完整波浪路线实际单点误差0.1888m、航点队列终点0.1795m，取消后5.33cm停车，原25cm门限保持。[机器验收](artifacts/navigation/sentry-console-20261117/release-summary.json)
+---
 
-## 本机直接运行
+## 🏗️ 系统架构
 
-双击 **Play-ManualVehicle.cmd** 驾驶，双击 **Play-Training.cmd** 进行静态靶射击训练。标准手动与 **Play-Navigation.cmd** 导航入口均直接采用 MuJoCo 车辆动力学和 UE5 画面，原独立 MuJoCo 入口已移除。默认进入 RMUC2027 来源场地，使用本机 `E:\simulator-tools\UE_5.8` 和已导入资源；其他引擎目录可设置 `UE_ROOT`。车辆驾驶参数读取共同车辆包；导航算法读取所选 `sentry_ws` 参数，速度和加减速等车辆能力限值按共同 profile 覆盖到生成配置。[融合与重建说明](docs/guides/mujoco-integration.md)
+```mermaid
+flowchart LR
+    Launcher["Play-Simulator.cmd\n桌面统一启动器 (rmsim_launcher.py)"] --> UE
 
-| 输入 | 行为 |
-|---|---|
-| W/S/A/D | 以实际云台水平方向为基准前后/横向平移 |
-| Q/E；G；Z/X | 普通模式旋转；切换小陀螺；调整自转速度 |
-| Ctrl；Space；R | 慢行；加强制动；复位 |
-| 鼠标、C | 瞄准；按住 C 绕车观察，驾驶方向继续跟随实际云台 |
-| Shift、右键、滚轮 | 瞄准镜；临时放大；镜头距离/倍率 |
-| 左键 | 训练模式开火 |
-| M | 弗兰德斯全图展开或收回；小地图显示车辆位置与朝向 |
+    subgraph UE["UE 5.8 仿真器进程 (RMSim.exe)"]
+        direction TB
+        MJ["MuJoCo 4.0.1 独立物理线程\n6车动力学 · 400 Hz · 历史位姿"]
+        GPU["GPU Compute 两级 BVH\n双路 Mid-360 满血 200k×2 点/秒"]
+        CAM["双路轻量 RosCamera\n1280×720@15Hz 无损 RGB8"]
+        REF["RMUC 2027 裁判系统 + 4台步兵 AI\n飞镖 / 补给 / 血量 / 热量 / 功率"]
+        MJ --> GPU
+        MJ --> CAM
+        MJ --> REF
+    end
 
-松键主动制动。启动入口会阻止重复游戏实例与构建期间启动。[操作说明](docs/guides/manual-controls.md) · [训练规则](docs/guides/training-combat.md)
+    UE <-->|"TCP 127.0.0.1:9451\n(无损 RGB8 + 点云 + IMU + 控制)"| BR_R["rmsim_bridge (红方)\nROS_DOMAIN_ID = 71"]
+    UE <-->|"TCP 127.0.0.1:9452\n(无损 RGB8 + 点云 + IMU + 控制)"| BR_B["rmsim_bridge (蓝方)\nROS_DOMAIN_ID = 72"]
 
-## 2026-11-17 实证：悬挂与接触驾驶
+    subgraph RED["红方 #7 全自动哨兵 (Domain 71)"]
+        R_LIO["Point-LIO 定位建图"]
+        R_NAV["Nav2 + AMCL 路径规划"]
+        R_BT["RMUC 2027 C++ 行为树"]
+        R_VIS["sp_vision_25 C++17 自瞄"]
+    end
 
-AIM 为原尺度15视觉部件/13刚体的四舵轮接触样例。11 月 17 日对照采用每模块 **2000 N/m、140 N·s/m**；上一轮1800/130，质量、预载、行程、轮胎凸包、摩擦与控制增益保持不变。
+    subgraph BLUE["蓝方 #7 全自动哨兵 (Domain 72)"]
+        B_LIO["Point-LIO 定位建图"]
+        B_NAV["Nav2 + AMCL 路径规划"]
+        B_BT["RMUC 2027 C++ 行为树"]
+        B_VIS["sp_vision_25 C++17 自瞄"]
+    end
 
-同模块原生对照：100N附加载荷压缩15.620→14.447mm，卸载回弹峰值1.085→0.774mm，冲量后反弹0.213→0.029mm。新配置两次专项结果一致。2026-11-17悬挂版本的模块/参数完成92项原生回归与48PNG，覆盖操控、小陀螺、红蓝波浪往返、坡面制动、射击/复位、ROS速度桥与原LK电流环；另有两次悬挂专项各4项/6PNG。
+    BR_R <--> RED
+    BR_B <--> BLUE
+```
 
-[悬挂参数、实测与回退](docs/guides/suspension.md) · [机器验收汇总](artifacts/control/suspension-round2-20261117/release-summary.json)
+---
 
-## 算法、地图与车辆扩展
+## 🎮 使用方式与操作键位
 
-Windows 原生 ROS 已接入速度指令、原LK电流/反馈、高层云台/发射、相机、IMU、LiDAR与原Point-LIO。11 月 17 日的 2000/140 悬挂配置下，原LK/Point-LIO联合11项通过。该配置完成两轮RMUC断线重连与自主往返各14项、平地实际R复位恢复17项，合计45项导航检查；两轮实际去程误差0.1871/0.1830m、返程0.0902/0.1026m，沿用0.25m门限。Windows导航进程使用经校验的127.0.0.1 UDP配置，解决已复现的重启消息中断；原失败证据保留。[导航指南](docs/guides/native-navigation.md) · [恢复验收](artifacts/navigation/reconnect-tf-20261117/release-summary.json)
+打开 `Play-Simulator.cmd` 后，启动器支持多种运行模式：
+- **🏆 RMUC 2027 比赛模式（默认）**：6 车完整 3v3，可自由指定红蓝各车为「全自动 `sentry_ws`」「内置步兵 AI」或「本机手操」，默认开启 **100% 渲染比例 + TSR + 关闭主视角 Lumen + GPU 满血雷达（200k×2）**。
+- **纯仿真 + 标准 ROS 2 桥**：仅启动仿真器与标准 ROS 2 桥，方便接入你自己的外部算法工作区。
+- **手动试驾 / 静态靶射击训练**：无 ROS 2 依赖，轻量练车与调参。
 
-标准手动与导航入口使用完整 RMUC2027 MuJoCo 场地包，切换其他地图时须提供匹配的物理模型；启动校验会拒绝身份不匹配的地图。弗兰德斯原图由专用 `Play-WarThunder.cmd` 打开已验证的保存关卡，其动态破坏与碎屑尚需建立对应 MuJoCo 实体。[地图说明](docs/guides/map-packages.md)
+### 手操快捷键
+| 按键 | 功能 |
+| :--- | :--- |
+| `W` / `S` / `A` / `D` | 以云台水平朝向为基准前后/横向平移 |
+| `Q` / `E`、`G`、`Z` / `X` | 普通旋转 / 切换小陀螺 / 调节小陀螺转速 |
+| `鼠标移动` / `左键` / `右键` | 云台瞄准 / 发射弹丸 / 开镜放大 |
+| `C` / `Shift` / `滚轮` | 按住自由环视 / 瞄准镜视角 / 镜头缩放 |
+| `F` | 补给区领免费弹丸 / 本地金币买弹 / 区外远程买弹 |
+| `P` | 赛前准备阶段快捷跳过（按 1 次切 10s 倒计时，按 2 次直接开赛） |
+| `Space` / `Ctrl` / `R` | 加强制动 / 慢行 / 车辆复位 |
 
-车辆包v1提供校验、受限URDF和规范化导出；AIM采用已运行验证的mesh-rig资产路径。任意新车的完整惯量/关节/传感器即插即用仍在后续范围。[车辆资源](docs/guides/aim-sentry-assets.md) · [构建与导入](docs/guides/unreal-import-lab.md)
+---
 
-原生Ubuntu、实车动力学/传感器标定、完整视觉/Hub/行为树、正式裁判、多机器人权威联机与原地图更多路线、程序内容及特效画质验收继续保留。[Ubuntu准备](docs/guides/ubuntu-offline.md) · [长期规划](.codestable/roadmap/rm-simulator/rm-simulator-roadmap.md)
+## 🔌 接入你自己的 ROS 2 算法
 
-## 仓库内容
+仿真器与算法端通过标准 ROS 2 话题完全解耦（默认 `robot_id=aim_sentry`，红方 `ROS_DOMAIN_ID=71`，蓝方 `ROS_DOMAIN_ID=72`）：
 
-| 路径 | 内容 |
-|---|---|
-| `.codestable/`、`docs/` | 目标、架构、需求、问题、进度、变更与指南 |
-| `unreal/RMSim/Source`、`Config` | UE运行时源码和配置 |
-| `ros2_ws/src`、`src/` | 原生ROS工作包及车辆/地图工具 |
-| `assets/`、`schemas/` | 小型车辆/地图描述、控制/传感器参数与协议 |
-| `tools/`、`tests/` | 导出、构建、验证、集成与离线测试 |
-| `artifacts/`、`third_party/patches` | 精简真实验证/来源记录及上游适配补丁 |
+| 方向 | 话题 | 消息类型 | 说明 |
+| :--- | :--- | :--- | :--- |
+| 仿真 → 算法 | `/clock` | `rosgraph_msgs/Clock` | MuJoCo 物理时钟（需 `use_sim_time:=true`） |
+| 仿真 → 算法 | `/tf` | `tf2_msgs/TFMessage` | `base_link` → `yaw_link` / 雷达 / 相机 / IMU 外参 |
+| 仿真 → 算法 | `/aim_sentry/lidar/livox` | `livox_ros_driver2/CustomMsg` | Mid-360 原始点云（200k 点/秒，含 `offset_time`） |
+| 仿真 → 算法 | `/aim_sentry/lidar/points` | `sensor_msgs/PointCloud2` | 标准点云格式 |
+| 仿真 → 算法 | `/aim_sentry/imu/data_raw` | `sensor_msgs/Imu` | 共装 IMU 原始角速度与比力 |
+| 仿真 → 算法 | `/aim_sentry/camera/image_raw` | `sensor_msgs/Image` | `1280×720 @ 15 Hz` 原始 RGB8 图像 |
+| 仿真 → 算法 | `/aim_sentry/gimbal/joint_states` | `sensor_msgs/JointState` | 云台实时关节角 |
+| 算法 → 仿真 | `/aim_sentry/cmd_vel` | `geometry_msgs/TwistStamped` | 底盘速度控制指令 |
 
-大型模型/贴图、导入后的UE Content、编译/安装目录、缓存和完整运行轨迹保留本地，不进入Git。全新克隆需要按来源记录准备合法可用的资源与本机依赖，再构建/导入。源码与精简证据已发布至用户指定的公开仓库 [SHENJLYL/RMsimUE](https://github.com/SHENJLYL/RMsimUE)，main及回退标签均已核对远程提交。
+---
+
+## 🛠️ 调试与排错指南
+
+### 1. 日志位置（排错第一时间看这里）
+- **UE5 仿真器日志**：`artifacts/unreal/pure-simulator/<session_id>/ue.log`
+  - 核对 GPU 雷达生效：搜索 `RMSIM_GPU_LIDAR_READY`（应显示 `rays_s=200000`）
+  - 核对相机外围场馆剔除：搜索 `ROS_CAMERA_VENUE_CULL`
+  - 核对 ROS 桥就绪：搜索 `ROS_BRIDGE_READY`
+- **ROS 2 桥日志**：`artifacts/ros2/simulator-bridge-<pid>-<team>/stderr.log`
+- **双哨兵算法日志**（Point-LIO / Nav2 / 行为树 / 自瞄）：`artifacts/navigation/external-<timestamp>/` 下的 `pointlio.log`、`navigation.log`、`behavior_server.log`、`vision_autoaim.log`
+
+### 2. 常用命令行调试开关（`tools/unreal/Start-Simulator.ps1`）
+```powershell
+# 预览最终生成的 UE5 启动命令而不实际运行
+.\tools\unreal\Start-Simulator.ps1 -NoLumen -GpuLidar -DryRun
+
+# 性能优先：75% 渲染比例 + TSR（画质接近原生，GPU 压力减半）
+.\tools\unreal\Start-Simulator.ps1 -NoLumen -GpuLidar -RenderScale 75
+
+# 对比 GPU BVH 雷达与 CPU Chaos 雷达的逐射线几何精度（< 1e-3 cm 误差对拍）
+.\tools\unreal\Start-Simulator.ps1 -NoLumen -GpuLidar -VerifyLidarQueries -ProfileSensorTiming
+
+# 回退到 CPU Chaos 雷达基线
+.\tools\unreal\Start-Simulator.ps1 -NoLumen -CpuLidar
+```
+
+### 3. 常见问题
+- **帧率偏低 / 想冲 100 FPS**：在启动器中确保勾选 **「关闭主视角 Lumen」** 和 **「GPU 满血雷达」**，或将渲染比例从 `100%` 调为 `75%`（TSR 升采样几乎无损清晰度）。
+- **进程残留**：点击启动器底部的 **「停止全部进程」** 即可一键清理 `RMSim.exe` / `UnrealEditor.exe` 与全部 ROS 2 子进程。
+
+---
+
+## 💻 开发者：从源码编译与一键打包
+
+> 仅需二次开发或修改 C++/Shader 源码时才需要本节；直接试玩请直接使用上方全离线安装包。
+
+1. **基础环境**：Windows 10/11 + Visual Studio 2022 + Unreal Engine 5.8（默认 `E:\simulator-tools\UE_5.8`，可通过 `UE_ROOT` 指定）+ Pixi。
+2. **编译 UE5 编辑器模块**：
+   ```powershell
+   .\tools\unreal\Build-ImportLab.ps1 -EngineRoot "E:\simulator-tools\UE_5.8"
+   ```
+3. **编译 C++17 视觉自瞄节点（`sp_vision_25`）**：
+   ```powershell
+   .\tools\environment\Build-Vision.ps1
+   ```
+4. **一键打全离线可分发 `.zip` 包**（含独立 `RMSim.exe` + 离线 ROS 2 + 双自动哨兵）：
+   ```powershell
+   .\tools\unreal\Package-Standalone.ps1 -OfflineAllInOne -OutputDir artifacts/release/RMSim-RMUC2027-AllInOne-Win64 -Zip
+   ```
+
+---
+
+## 📁 仓库结构
+
+| 目录 | 说明 |
+| :--- | :--- |
+| `Play-Simulator.cmd` | 根目录唯一桌面启动入口 |
+| `unreal/RMSim/Source`、`Shaders`、`Config` | UE5 运行时 C++ 源码、Mid-360 GPU Compute Shader 与渲染配置 |
+| `ros2_ws/src` | 原生 ROS 2 功能包（`rmsim_bridge`、`sp_vision_25`、`behavior`、导航配置等） |
+| `assets/` | 车辆包描述、传感器物理配置、RMUC 2027 赛场规则/区域/HUD 贴图 |
+| `tools/` | 桌面启动器、编译/一键独立打包脚本、ROS 2 集成与环境脚本 |
+| `tests/`、`docs/` | 物理/裁判/传感器回归测试与各阶段变更验收文档 |
+
+---
+
+## 🙏 致谢与许可说明
+
+本项目基于并集成多项优秀开源生态：[MuJoCo](https://mujoco.org/) (Apache-2.0)、[ROS 2 Humble](https://docs.ros.org/en/humble/)、[Nav2](https://navigation.ros.org/)、[Point-LIO](https://github.com/hku-mars/Point-LIO)、[sp_vision_25](https://github.com/chenjunnn) 等；赛场与场馆原始建模源文件不随分发包单独再分发，相关来源与许可记录见 `assets/` 与 `third_party/notices/`。

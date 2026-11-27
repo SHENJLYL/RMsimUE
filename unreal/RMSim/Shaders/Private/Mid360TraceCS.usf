@@ -145,22 +145,17 @@ void RecordWindow(float Distance, uint Material, inout WindowHits Windows)
         Windows.Overflow = true;
         return;
     }
-    uint I = Windows.Count++;
-    [unroll] for (uint Step = 0; Step < 3; ++Step)
-    {
-        if (I > 0)
-        {
-            const uint Last = I - 1;
-            if (Distance < Windows.Distances[Last])
-            {
-                Windows.Distances[I] = Windows.Distances[Last];
-                Windows.Materials[I] = Windows.Materials[Last];
-                I = Last;
-            }
-        }
-    }
-    Windows.Distances[I] = Distance;
-    Windows.Materials[I] = Material;
+    const uint Count = Windows.Count++;
+    float D = Distance;
+    uint M = Material;
+    if (Count == 0) { Windows.Distances.x = D; Windows.Materials.x = M; return; }
+    if (D < Windows.Distances.x) { float TD = Windows.Distances.x; uint TM = Windows.Materials.x; Windows.Distances.x = D; Windows.Materials.x = M; D = TD; M = TM; }
+    if (Count == 1) { Windows.Distances.y = D; Windows.Materials.y = M; return; }
+    if (D < Windows.Distances.y) { float TD = Windows.Distances.y; uint TM = Windows.Materials.y; Windows.Distances.y = D; Windows.Materials.y = M; D = TD; M = TM; }
+    if (Count == 2) { Windows.Distances.z = D; Windows.Materials.z = M; return; }
+    if (D < Windows.Distances.z) { float TD = Windows.Distances.z; uint TM = Windows.Materials.z; Windows.Distances.z = D; Windows.Materials.z = M; D = TD; M = TM; }
+    Windows.Distances.w = D;
+    Windows.Materials.w = M;
 }
 
 void TraceGeometry(float3 Origin, float3 Direction, float First, uint Root, uint End,

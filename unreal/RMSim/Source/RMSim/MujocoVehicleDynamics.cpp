@@ -276,9 +276,22 @@ bool ValidateRuntimeBindings(const TSharedPtr<FJsonObject>& Manifest,const FStri
         if(Path.IsEmpty())return Fail(TEXT("actual source path absent: ")+Role);
         if(FPaths::IsRelative(Path))Path=FPaths::Combine(FPaths::GetPath(XmlPath),Path);
         Path=FPaths::ConvertRelativePathToFull(Path);
-        if(double(IFileManager::Get().FileSize(*Path))!=Bytes)return Fail(TEXT("source byte length changed: ")+Role+TEXT(" ")+Path);
-        const FMD5Hash Hash=FMD5Hash::HashFile(*Path);
-        if(!Hash.IsValid()||!LexToString(Hash).Equals(ExpectedMd5,ESearchCase::IgnoreCase))return Fail(TEXT("source content changed: ")+Role+TEXT(" ")+Path);
+#if !WITH_EDITOR
+        // Packaged builds cook .uasset files into .pak archives (different byte size/hash than uncooked assets);
+        // verify the cooked asset is present while keeping strict disk hashes for all external XML/mesh/JSON files.
+        const bool bCookedUAsset = (Role == TEXT("vehicle_collision") || Role == TEXT("map_collision"))
+            && Path.EndsWith(TEXT(".uasset"), ESearchCase::IgnoreCase);
+        if (bCookedUAsset)
+        {
+            if(IFileManager::Get().FileSize(*Path)<=0)return Fail(TEXT("cooked asset missing: ")+Role+TEXT(" ")+Path);
+        }
+        else
+#endif
+        {
+            if(double(IFileManager::Get().FileSize(*Path))!=Bytes)return Fail(TEXT("source byte length changed: ")+Role+TEXT(" ")+Path);
+            const FMD5Hash Hash=FMD5Hash::HashFile(*Path);
+            if(!Hash.IsValid()||!LexToString(Hash).Equals(ExpectedMd5,ESearchCase::IgnoreCase))return Fail(TEXT("source content changed: ")+Role+TEXT(" ")+Path);
+        }
         ++Roles.FindOrAdd(Role);
     }
     for(const TCHAR* Role:{TEXT("vehicle_rig"),TEXT("drive_profile"),TEXT("mujoco_backend"),TEXT("model_xml")})
@@ -315,9 +328,22 @@ bool ValidateGenericRuntimeBindings(const TSharedPtr<FJsonObject>& Manifest,cons
         else if(Role==TEXT("model_xml"))Path=XmlPath;
         else if(FPaths::IsRelative(Path))Path=FPaths::Combine(FPaths::GetPath(XmlPath),Path);
         Path=FPaths::ConvertRelativePathToFull(Path);
-        if(double(IFileManager::Get().FileSize(*Path))!=Bytes)return Fail(TEXT("source byte length changed: ")+Role+TEXT(" ")+Path);
-        const FMD5Hash Hash=FMD5Hash::HashFile(*Path);
-        if(!Hash.IsValid()||!LexToString(Hash).Equals(ExpectedMd5,ESearchCase::IgnoreCase))return Fail(TEXT("source content changed: ")+Role+TEXT(" ")+Path);
+#if !WITH_EDITOR
+        // Packaged builds cook .uasset files into .pak archives (different byte size/hash than uncooked assets);
+        // verify the cooked asset is present while keeping strict disk hashes for all external XML/mesh/JSON files.
+        const bool bCookedUAsset = (Role == TEXT("vehicle_collision") || Role == TEXT("map_collision"))
+            && Path.EndsWith(TEXT(".uasset"), ESearchCase::IgnoreCase);
+        if (bCookedUAsset)
+        {
+            if(IFileManager::Get().FileSize(*Path)<=0)return Fail(TEXT("cooked asset missing: ")+Role+TEXT(" ")+Path);
+        }
+        else
+#endif
+        {
+            if(double(IFileManager::Get().FileSize(*Path))!=Bytes)return Fail(TEXT("source byte length changed: ")+Role+TEXT(" ")+Path);
+            const FMD5Hash Hash=FMD5Hash::HashFile(*Path);
+            if(!Hash.IsValid()||!LexToString(Hash).Equals(ExpectedMd5,ESearchCase::IgnoreCase))return Fail(TEXT("source content changed: ")+Role+TEXT(" ")+Path);
+        }
         ++Roles.FindOrAdd(Role);
     }
     for(const TCHAR* Role:{TEXT("canonical_vehicle"),TEXT("map_manifest"),TEXT("model_xml"),TEXT("vehicle_xml"),TEXT("map_xml")})

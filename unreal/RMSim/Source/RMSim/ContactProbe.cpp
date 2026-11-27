@@ -164,7 +164,10 @@ void AImportLabGameMode::TickContactProbe(double DeltaSeconds)
             auto* Wall=GetWorld()->SpawnActor<AStaticMeshActor>(Position,FRotator(0,ContactStageStart.Rotator().Yaw,0));
             if(!Wall){Abort(TEXT("cannot create physical wall check"));return;}
             ContactProbeWall=Wall;
-            Wall->SetActorLabel(TEXT("ContactProbeWall"));auto* Mesh=Wall->GetStaticMeshComponent();
+#if WITH_EDITOR
+            Wall->SetActorLabel(TEXT("ContactProbeWall"));
+#endif
+            auto* Mesh=Wall->GetStaticMeshComponent();
             Mesh->SetMobility(EComponentMobility::Movable);
             Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
             Mesh->SetWorldScale3D(FVector(.2,2,1.2));Mesh->SetCollisionProfileName(TEXT("BlockAll"));
