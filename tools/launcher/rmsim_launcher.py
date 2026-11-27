@@ -411,13 +411,20 @@ class RMSimLauncherApp(tk.Tk):
         self.match_auto_sentry_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="开赛后自动接入 sentry_ws (Point-LIO + Nav2 + 自瞄)",
+            text="开赛后自动接入 sentry_ws",
             variable=self.match_auto_sentry_var,
+            style="Card.TCheckbutton",
+        ).pack(side="left", padx=(0, 12))
+        self.match_truth_vision_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            match_opt_row,
+            text="哨兵真值自瞄（免额外相机渲染，大幅提帧）",
+            variable=self.match_truth_vision_var,
             style="Card.TCheckbutton",
         ).pack(side="left")
         ttk.Label(
             match_opt_row,
-            text="地图锁定: RMUC 2027 全尺寸赛场",
+            text="地图锁定: RMUC 2027",
             style="Muted.TLabel",
         ).pack(side="right")
 
@@ -825,14 +832,18 @@ class RMSimLauncherApp(tk.Tk):
             cmd.append("-MatchPreparation")
         if ros_team:
             nav_source = self.nav_yaml_var.get().strip()
+            use_truth_vision = bool(self.match_truth_vision_var.get())
+            eff_cam_hz = "0" if use_truth_vision else str(int(camera_hz) if camera_hz and float(camera_hz).is_integer() else (camera_hz or 15))
             cmd += [
                 "-RosVehicleTeam", ros_team,
                 "-RosBridge", "-RosControl", "-RosAimControl", "-RosImu", "-RosLidar",
                 "-RobotId", robot_id,
                 "-RosPort", port,
                 "-Domain", domain,
-                "-CameraHz", str(int(camera_hz) if camera_hz and float(camera_hz).is_integer() else (camera_hz or 15)),
+                "-CameraHz", eff_cam_hz,
             ]
+            if use_truth_vision:
+                cmd.append("-TruthVision")
             if ros_team != "both":
                 self.match_connector = self._external_sentry_command(
                     robot_id, domain, rmuc_map["path"], rmuc_map["team_spawns"][ros_team], nav_source,

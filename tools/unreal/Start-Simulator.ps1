@@ -13,6 +13,7 @@ param(
     [switch]$MatchPreparation,
     [ValidateSet('red', 'blue', 'both')][string]$RosVehicleTeam,
     [switch]$AutoSentry,
+    [switch]$TruthVision,
     [string]$NavigationSource = '',
     [switch]$RosBridge,
     [switch]$RosControl,
@@ -76,11 +77,13 @@ if ($MatchRoster) {
     }
     if ($RosVehicleTeam) {
         $RosVehicleTeam = $RosVehicleTeam.ToLowerInvariant()
-        $teamList = if ($RosVehicleTeam -eq 'both') { @('red', 'blue') } else { @($RosVehicleTeam) }
+        $teamList = @(if ($RosVehicleTeam -eq 'both') { 'red'; 'blue' } else { $RosVehicleTeam })
         for ($i = 0; $i -lt $teamList.Count; $i++) {
             $t = $teamList[$i]
-            $spawns = @($mapJson.spawns | Where-Object { $_.team -ceq $t })
-            if ($spawns.Count -ne 1) { throw "Expected one match spawn for the $t ROS vehicle." }
+            $spawns = @($mapJson.spawns | Where-Object {
+                $_.team -ceq $t -and (-not $_.PSObject.Properties['robot_number'] -or $_.robot_number -eq 7)
+            })
+            if ($spawns.Count -ne 1) { throw "Expected one S7 match spawn for the $t ROS vehicle." }
             $rosSeats += [pscustomobject]@{
                 Team = $t
                 Spawn = [string]$spawns[0].id
@@ -90,7 +93,11 @@ if ($MatchRoster) {
         }
         $rosSpawn = $rosSeats[0].Spawn
         $RosBridge = $RosControl = $RosAimControl = $RosImu = $RosLidar = $true
-        if ($CameraHz -eq 0) { $CameraHz = 15 }
+        if ($TruthVision) {
+            $CameraHz = 0
+        } elseif ($CameraHz -eq 0) {
+            $CameraHz = 15
+        }
         if ($RosVehicleTeam -eq 'both' -and -not $PSBoundParameters.ContainsKey('CameraWidth') -and -not $PSBoundParameters.ContainsKey('CameraHeight')) {
             $CameraWidth = 640
             $CameraHeight = 480
@@ -410,6 +417,7 @@ try {
                             '-RobotId',$RobotId,'-Domain',$st.Seat.Domain,'-MapFile',(Quote-UnrealArgument $mapLaunch.MapFile),'-SpawnId',$st.Seat.Spawn,
                             '-MatchAutonomy')
                         if (-not $WithRviz) { $sentryArgs += '-NoRviz' }
+                        if ($TruthVision) { $sentryArgs += '-TruthVision' }
                         if ($NavigationSource) { $sentryArgs += @('-NavigationSource',(Quote-UnrealArgument $NavigationSource)) }
                         $sProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $sentryArgs -WindowStyle Hidden -PassThru `
                             -RedirectStandardOutput (Join-Path $ueLogDir "$tag.stdout.log") -RedirectStandardError (Join-Path $ueLogDir "$tag.stderr.log")

@@ -325,8 +325,12 @@ AVehicleRig* AImportLabGameMode::SpawnMatchSeatVehicle(const FMatchSeatSpec& Sea
     }
     for (const auto& Camera : Vehicle->GetCameras())
     {
+        if (!Camera.Value) continue;
         Camera.Value->bCaptureEveryFrame = false;
         Camera.Value->bCaptureOnMovement = false;
+        Camera.Value->bAlwaysPersistRenderingState = false;
+        Camera.Value->TextureTarget = nullptr;
+        Camera.Value->SetComponentTickEnabled(false);
     }
     URMUCPhysicalAudio::AttachTo(Vehicle);
     return Vehicle;
@@ -520,11 +524,32 @@ void AImportLabGameMode::BeginPlay()
         Abort(TEXT("CaptureDelay must be 0.1..300 seconds")); return;
     }
     bExitAfterCapture = FParse::Param(FCommandLine::Get(), TEXT("ExitAfterCapture"));
-    // Interactive driving renders the player view only. These unused offscreen
-    // targets previously rendered two additional views every frame and added latency.
+    // Interactive driving renders the player view only. Release unused offscreen
+    // render targets and persistent view states so idle vehicles/overview incur zero GPU overhead.
     const bool ContinuousCapture=bProbeActive||bControlProbeActive||!CaptureDirectory.IsEmpty();
-    for(const auto& Camera:Rig->GetCameras())Camera.Value->bCaptureEveryFrame=ContinuousCapture;
-    if(OverviewCapture)OverviewCapture->bCaptureEveryFrame=ContinuousCapture;
+    for(const auto& Camera:Rig->GetCameras())
+    {
+        if(!Camera.Value)continue;
+        Camera.Value->bCaptureEveryFrame=ContinuousCapture;
+        if(!ContinuousCapture)
+        {
+            Camera.Value->bCaptureOnMovement=false;
+            Camera.Value->bAlwaysPersistRenderingState=false;
+            Camera.Value->TextureTarget=nullptr;
+            Camera.Value->SetComponentTickEnabled(false);
+        }
+    }
+    if(OverviewCapture)
+    {
+        OverviewCapture->bCaptureEveryFrame=ContinuousCapture;
+        if(!ContinuousCapture)
+        {
+            OverviewCapture->bCaptureOnMovement=false;
+            OverviewCapture->bAlwaysPersistRenderingState=false;
+            OverviewCapture->TextureTarget=nullptr;
+            OverviewCapture->SetComponentTickEnabled(false);
+        }
+    }
     FParse::Value(FCommandLine::Get(), TEXT("InputEvidence="), InputEvidencePath);
     if (bExitAfterCapture && CaptureDirectory.IsEmpty())
     {

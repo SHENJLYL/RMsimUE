@@ -47,6 +47,7 @@ public:
 private:
     UPROPERTY() AVehicleRig* Rig=nullptr;
     UPROPERTY() ARMUCGameReferee* Referee=nullptr;
+    UPROPERTY() USceneCaptureComponent2D* AimMount=nullptr;
     UPROPERTY() USceneCaptureComponent2D* Camera=nullptr;
     UPROPERTY() UTextureRenderTarget2D* Target=nullptr;
     UPROPERTY() URosAimController* AimController=nullptr;

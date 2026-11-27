@@ -2616,6 +2616,89 @@ TSharedRef<FJsonObject> ARMUCGameReferee::StateFor(const AVehicleRig* Robot) con
     Root->SetNumberField(TEXT("respawn_required_seconds"), View.OwnRespawnDuration);
     Root->SetNumberField(TEXT("shots_fired"), View.TotalShotsFired);
     Root->SetNumberField(TEXT("hits_landed"), View.TotalHitsLanded);
+
+    // Lightweight 3D ground-truth targets for zero-camera autonomous sentry auto-aim (-TruthVision).
+    if (bPhysicalMatch && IsValid(Robot) && GetWorld())
+    {
+        FVector EyeCm = Robot->GetActorLocation() + FVector(0., 0., 38.);
+        if (USceneCaptureComponent2D* const* AimCam = Robot->GetCameras().Find(TEXT("aim_camera")); AimCam && *AimCam)
+        {
+            EyeCm = (*AimCam)->GetComponentLocation();
+        }
+        auto HasLos = [&](const FVector& TargetCm, const AActor* IgnoreTarget) -> bool
+        {
+            FCollisionQueryParams Q(SCENE_QUERY_STAT(RMSimTruthVisionLOS), false, Robot);
+            Q.AddIgnoredActor(this);
+            if (IgnoreTarget) Q.AddIgnoredActor(IgnoreTarget);
+            FHitResult Hit;
+            return !GetWorld()->LineTraceSingleByChannel(Hit, EyeCm, TargetCm, ECC_Visibility, Q);
+        };
+
+        TArray<TSharedPtr<FJsonValue>> TruthList;
+        for (const FMatchRobotSlot& Other : MatchRobots)
+        {
+            if (Other.Team == Team || Other.State.Hp <= 0) continue;
+            const AVehicleRig* OtherRig = Other.Vehicle.Get();
+            if (!IsValid(OtherRig)) continue;
+            const FVector TargetCm = OtherRig->GetActorLocation() + FVector(0., 0., 18.);
+            const FVector TargetM = UeCmToRosMeters(TargetCm);
+            const FVector VelCm = OtherRig->GetCommandOriginVelocity();
+            const double DistM = FVector::Dist(EyeCm, TargetCm) * 0.01;
+            const bool bVis = (DistM <= 14.0) && HasLos(TargetCm, OtherRig);
+            auto Entry = MakeShared<FJsonObject>();
+            Entry->SetStringField(TEXT("name"), Other.RobotNumber == 3 ? TEXT("three") : (Other.RobotNumber == 4 ? TEXT("four") : TEXT("sentry")));
+            Entry->SetNumberField(TEXT("label"), Other.RobotNumber);
+            Entry->SetNumberField(TEXT("x"), TargetM.X);
+            Entry->SetNumberField(TEXT("y"), TargetM.Y);
+            Entry->SetNumberField(TEXT("z"), TargetM.Z);
+            Entry->SetNumberField(TEXT("vx"), VelCm.X * 0.01);
+            Entry->SetNumberField(TEXT("vy"), -VelCm.Y * 0.01);
+            Entry->SetNumberField(TEXT("vz"), VelCm.Z * 0.01);
+            Entry->SetNumberField(TEXT("dist"), DistM);
+            Entry->SetBoolField(TEXT("visible"), bVis);
+            TruthList.Add(MakeShared<FJsonValueObject>(Entry));
+        }
+
+        // Enemy / contested outposts (pick front-most rotor armor plate at radius 0.276 m, z = 1.38 m)
+        for (const FieldTeam Site : FRMUCFieldRules::Teams)
+        {
+            const auto& Post = FieldRules.Get(Site);
+            if (Post.OutpostHp <= 0 || Post.OutpostOwner == Team) continue;
+            const double Sign = (Site == FieldTeam::Red) ? 1.0 : -1.0;
+            const FVector CenterM(3.06 * Sign, 3.89 * Sign, 1.38);
+            const FVector EyeM = UeCmToRosMeters(EyeCm);
+            const double ToEyeAng = FMath::Atan2(EyeM.Y - CenterM.Y, EyeM.X - CenterM.X);
+            const double RotorAng = Post.OutpostRotor.AngleRadians;
+            const double Omega = Post.OutpostRotor.AngularRateRadS;
+            double BestPlateAng = RotorAng;
+            double BestDiff = 1e9;
+            for (int32 K = 0; K < 3; ++K)
+            {
+                const double Ang = RotorAng + K * (2.0 * PI / 3.0);
+                const double Diff = FMath::Abs(FMath::UnwindRadians(Ang - ToEyeAng));
+                if (Diff < BestDiff) { BestDiff = Diff; BestPlateAng = Ang; }
+            }
+            constexpr double R = 0.276;
+            const FVector PlateM(CenterM.X + R * FMath::Cos(BestPlateAng), CenterM.Y + R * FMath::Sin(BestPlateAng), CenterM.Z);
+            const FVector PlateCm = RosMetersToUeCm(PlateM.X, PlateM.Y, PlateM.Z);
+            const double DistM = FVector::Dist(EyeCm, PlateCm) * 0.01;
+            const FVector OutwardCm = RosMetersToUeCm(FMath::Cos(BestPlateAng) * 0.12, FMath::Sin(BestPlateAng) * 0.12, 0.0);
+            const bool bVis = (DistM <= 14.0) && HasLos(PlateCm + OutwardCm, nullptr);
+            auto Entry = MakeShared<FJsonObject>();
+            Entry->SetStringField(TEXT("name"), TEXT("outpost"));
+            Entry->SetNumberField(TEXT("label"), 8);
+            Entry->SetNumberField(TEXT("x"), PlateM.X);
+            Entry->SetNumberField(TEXT("y"), PlateM.Y);
+            Entry->SetNumberField(TEXT("z"), PlateM.Z);
+            Entry->SetNumberField(TEXT("vx"), -R * Omega * FMath::Sin(BestPlateAng));
+            Entry->SetNumberField(TEXT("vy"), R * Omega * FMath::Cos(BestPlateAng));
+            Entry->SetNumberField(TEXT("vz"), 0.0);
+            Entry->SetNumberField(TEXT("dist"), DistM);
+            Entry->SetBoolField(TEXT("visible"), bVis);
+            TruthList.Add(MakeShared<FJsonValueObject>(Entry));
+        }
+        Root->SetArrayField(TEXT("truth_targets"), TruthList);
+    }
     return Root;
 }
 

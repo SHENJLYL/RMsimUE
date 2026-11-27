@@ -76,7 +76,7 @@ def main() -> int:
     parser.add_argument("--no-vision", action="store_true", help="Disable automatic vision auto-aim node")
     parser.add_argument(
         "--vision-backend",
-        choices=("sp_vision_25", "legacy"),
+        choices=("sp_vision_25", "truth", "legacy"),
         default="sp_vision_25",
         help="Vision auto-aim backend to launch in --match-autonomy mode",
     )
@@ -204,17 +204,50 @@ def main() -> int:
 
         if args.match_autonomy and not args.no_vision:
             vis_env = dict(env)
-            if args.vision_backend == "sp_vision_25":
+            if args.vision_backend == "truth":
                 sp_src = str(ROOT / "ros2_ws/src/sp_vision_25")
                 vis_env["PYTHONPATH"] = sp_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")
-                sp_bins = [
-                    str(ROOT / "ros2_ws/install_control/sp_msgs/bin"),
-                    str(ROOT / "ros2_ws/install_control/pb_rm_interfaces/bin"),
-                ]
-                vis_env["PATH"] = os.pathsep.join(sp_bins) + os.pathsep + vis_env.get("PATH", "")
                 spawn(
                     "vision_autoaim",
                     [
+                        sys.executable,
+                        "-c",
+                        "from sp_vision_25.truth_vision_node import main; main()",
+                        "--ros-args",
+                        "-p",
+                        "use_sim_time:=true",
+                        "-p",
+                        f"robot_id:={args.robot_id}",
+                        "-p",
+                        "require_behavior_switch:=true",
+                    ],
+                    vis_env,
+                )
+            elif args.vision_backend == "sp_vision_25":
+                sp_bins = [
+                    str(ROOT / "ros2_ws/install_control/sp_msgs/bin"),
+                    str(ROOT / "ros2_ws/install_control/pb_rm_interfaces/bin"),
+                    str(ROOT / "ros2_ws/install_behavior/dji_referee_protocol/bin"),
+                ]
+                vis_env["PATH"] = os.pathsep.join(sp_bins) + os.pathsep + vis_env.get("PATH", "")
+                cpp_exe = ROOT / "ros2_ws/install_vision/sp_vision_25/lib/sp_vision_25/vision_node.exe"
+                if cpp_exe.is_file():
+                    vision_cmd = [
+                        str(cpp_exe),
+                        "--ros-args",
+                        "-p",
+                        "use_sim_time:=true",
+                        "-p",
+                        f"robot_id:={args.robot_id}",
+                        "-p",
+                        f"assets_dir:={sp_vision_assets}",
+                        "-p",
+                        "require_behavior_switch:=true",
+                    ]
+                else:
+                    sp_src = str(ROOT / "ros2_ws/src/sp_vision_25")
+                    vis_env["PYTHONPATH"] = sp_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")
+                    vision_cmd = [
                         sys.executable,
                         "-c",
                         "from sp_vision_25.vision_node import main; main()",
@@ -227,9 +260,8 @@ def main() -> int:
                         f"assets_dir:={sp_vision_assets}",
                         "-p",
                         "require_behavior_switch:=true",
-                    ],
-                    vis_env,
-                )
+                    ]
+                spawn("vision_autoaim", vision_cmd, vis_env)
             else:
                 bt_src = str(ROOT / "ros2_ws/src/rmsim_sentry_behavior")
                 vis_env["PYTHONPATH"] = bt_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")

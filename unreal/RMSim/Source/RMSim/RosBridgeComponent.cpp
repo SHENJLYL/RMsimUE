@@ -139,29 +139,41 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     bool Valid=false;auto Address=Sockets->CreateInternetAddr();Address->SetIp(*BindIp,Valid);Address->SetPort(Port);
     if(!Listener||!Valid||!Listener->SetNonBlocking(true)||!Listener->Bind(*Address)||!Listener->Listen(1))
     {Error=FString::Printf(TEXT("cannot bind exclusive ROS port %s:%d"),*BindIp,Port);CloseSocket(Listener);return false;}
-    Camera=NewObject<USceneCaptureComponent2D>(Rig,*FString::Printf(TEXT("RosCamera_%d"),Port));Camera->SetupAttachment(Aim);
-    Camera->SetRelativeTransform(FTransform::Identity);Camera->FOVAngle=HFovDegrees;Camera->CaptureSource=ESceneCaptureSource::SCS_FinalColorLDR;
-    Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=true;
-    if(bLightweightAimCamera)
+    AimMount=Aim;
+    if(CameraHz>0&&FApp::CanEverRender())
     {
-        // Strip expensive viewport-only passes from multi-robot aim cameras while preserving emissive lightbars and armor stickers.
-        Camera->ShowFlags.SetDynamicShadows(false);
-        Camera->ShowFlags.SetVolumetricFog(false);
-        Camera->ShowFlags.SetBloom(false);
-        Camera->ShowFlags.SetMotionBlur(false);
-        Camera->ShowFlags.SetAmbientOcclusion(false);
-        Camera->ShowFlags.SetScreenSpaceReflections(false);
-        Camera->ShowFlags.SetAntiAliasing(false);
-        Camera->ShowFlags.SetTemporalAA(false);
-        Camera->ShowFlags.SetContactShadows(false);
-        Camera->ShowFlags.SetAtmosphere(false);
-        Camera->ShowFlags.SetFog(false);
+        Camera=NewObject<USceneCaptureComponent2D>(Rig,*FString::Printf(TEXT("RosCamera_%d"),Port));Camera->SetupAttachment(Aim);
+        Camera->SetRelativeTransform(FTransform::Identity);Camera->FOVAngle=HFovDegrees;Camera->CaptureSource=ESceneCaptureSource::SCS_FinalColorLDR;
+        Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=!bLightweightAimCamera;
+        if(bLightweightAimCamera)
+        {
+            // Strip expensive viewport-only passes (including Lumen GI/Reflections) from multi-robot aim cameras while preserving emissive lightbars and armor stickers.
+            auto& Post=Camera->PostProcessSettings;
+            Post.bOverride_DynamicGlobalIlluminationMethod=true;
+            Post.DynamicGlobalIlluminationMethod=EDynamicGlobalIlluminationMethod::None;
+            Post.bOverride_ReflectionMethod=true;
+            Post.ReflectionMethod=EReflectionMethod::None;
+            Camera->ShowFlags.SetGlobalIllumination(false);
+            Camera->ShowFlags.SetLumenGlobalIllumination(false);
+            Camera->ShowFlags.SetLumenReflections(false);
+            Camera->ShowFlags.SetDynamicShadows(false);
+            Camera->ShowFlags.SetVolumetricFog(false);
+            Camera->ShowFlags.SetBloom(false);
+            Camera->ShowFlags.SetMotionBlur(false);
+            Camera->ShowFlags.SetAmbientOcclusion(false);
+            Camera->ShowFlags.SetScreenSpaceReflections(false);
+            Camera->ShowFlags.SetAntiAliasing(false);
+            Camera->ShowFlags.SetTemporalAA(false);
+            Camera->ShowFlags.SetContactShadows(false);
+            Camera->ShowFlags.SetAtmosphere(false);
+            Camera->ShowFlags.SetFog(false);
+        }
+        Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
+        Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
+        Rig->AddInstanceComponent(Camera);Camera->RegisterComponent();
     }
-    Target=NewObject<UTextureRenderTarget2D>(this);Target->RenderTargetFormat=RTF_RGBA8_SRGB;
-    Target->InitAutoFormat(Width,Height);Target->UpdateResourceImmediate(true);Camera->TextureTarget=Target;
-    Rig->AddInstanceComponent(Camera);Camera->RegisterComponent();
     UE_LOG(LogRMSim,Display,TEXT("ROS_CAMERA_CAPTURE enabled=%d nominal_hz=%.3f width=%d height=%d lightweight=%d phase=%.2f"),
-        CameraHz>0&&FApp::CanEverRender()?1:0,CameraHz,Width,Height,bLightweightAimCamera?1:0,CapturePhaseFraction);
+        Camera!=nullptr?1:0,CameraHz,Width,Height,bLightweightAimCamera?1:0,CapturePhaseFraction);
     AimController=NewObject<URosAimController>(GetOwner());GetOwner()->AddInstanceComponent(AimController);AimController->RegisterComponent();
     if(!AimController->Initialize(Rig,Aim,Training,FParse::Param(FCommandLine::Get(),TEXT("RosAimControl")),Error))return false;
     AimController->SetReferee(Referee);
@@ -380,7 +392,7 @@ void URosBridgeComponent::SendPending()
 
 void URosBridgeComponent::AdvanceCamera(double SimTime)
 {
-    if(CameraHz<=0||!FApp::CanEverRender())return;
+    if(CameraHz<=0||!Camera||!Target||!FApp::CanEverRender())return;
     const FIntPoint Extent(Width,Height);
     for(const auto& Readback:CameraReadbacks)
     {
@@ -471,7 +483,8 @@ bool URosBridgeComponent::QueueState(double SimTime)
             ++Images;
         }
     }
-    const auto Local=RosPose(Frame?Frame->OpticalMount:Camera->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform()),true);
+    const USceneCaptureComponent2D* ActiveMount=Camera?Camera:AimMount;
+    const auto Local=RosPose(Frame?Frame->OpticalMount:(ActiveMount?ActiveMount->GetComponentTransform().GetRelativeTransform(Rig->GetActorTransform()):FTransform::Identity),true);
     auto State=MakeShared<FJsonObject>();State->SetNumberField(TEXT("v"),Lidar?2:1);State->SetStringField(TEXT("kind"),TEXT("state"));
     State->SetStringField(TEXT("session"),Session);State->SetStringField(TEXT("robot_id"),RobotId);
     State->SetNumberField(TEXT("epoch"),Epoch);State->SetNumberField(TEXT("tick"),TickIndex);State->SetNumberField(TEXT("sim_time_ns"),double(Stamp));
@@ -481,8 +494,8 @@ bool URosBridgeComponent::QueueState(double SimTime)
     Sensor->SetNumberField(TEXT("hfov_rad"),FMath::DegreesToRadians(HFovDegrees));Sensor->SetNumberField(TEXT("stamp_ns"),double(Frame?Frame->Stamp:Stamp));
     Sensor->SetNumberField(TEXT("missed_captures"),CameraReadbackMisses);
     Sensor->SetNumberField(TEXT("nominal_hz"),CameraHz);
-    Sensor->SetBoolField(TEXT("capture_enabled"),!bFpvVideoCut&&CameraHz>0&&FApp::CanEverRender());
-    if(const auto* Observer=Cast<USceneCaptureComponent2D>(Camera->GetAttachParent()))
+    Sensor->SetBoolField(TEXT("capture_enabled"),!bFpvVideoCut&&Camera!=nullptr&&CameraHz>0&&FApp::CanEverRender());
+    if(const auto* Observer=Camera?Cast<USceneCaptureComponent2D>(Camera->GetAttachParent()):AimMount)
         Sensor->SetNumberField(TEXT("observer_hfov_rad"),FMath::DegreesToRadians(double(Observer->FOVAngle)));
     Sensor->SetStringField(TEXT("frame_id"),RobotId+TEXT("/aim_camera_optical_frame"));Sensor->SetObjectField(TEXT("pose_in_base"),Local);State->SetObjectField(TEXT("camera"),Sensor);
     auto Command=MakeShared<FJsonObject>();Command->SetNumberField(TEXT("accepted_seq"),double(AcceptedSeq));Command->SetStringField(TEXT("status"),CommandStatus);

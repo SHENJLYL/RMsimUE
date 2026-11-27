@@ -10,6 +10,7 @@
     [switch]$MatchAutonomy,
     [switch]$NoBehavior,
     [switch]$NoVision,
+    [switch]$TruthVision,
     [string]$MapFile = '',
     [ValidatePattern('^[a-z][a-z0-9_]*$')][string]$SpawnId = 'default'
 )
@@ -70,7 +71,8 @@ $localizationArg = if ($LocalizationMapYaml) { " --localization-map-yaml `"$Loca
 $matchArg = if ($MatchAutonomy) { ' --match-autonomy' } else { '' }
 $noBehaviorArg = if ($NoBehavior) { ' --no-behavior' } else { '' }
 $noVisionArg = if ($NoVision) { ' --no-vision' } else { '' }
-$cmdLine = "$setupBat && python `"$connector`" --robot-id $RobotId --domain $Domain --navigation-source `"$NavigationSource`" --map-file `"$MapFile`" --spawn-id $SpawnId --drive-profile `"$DriveProfile`"$mapArg$localizationArg$noRvizArg$matchArg$noBehaviorArg$noVisionArg"
+$visionBackendArg = if ($TruthVision) { ' --vision-backend truth' } else { '' }
+$cmdLine = "$setupBat && python `"$connector`" --robot-id $RobotId --domain $Domain --navigation-source `"$NavigationSource`" --map-file `"$MapFile`" --spawn-id $SpawnId --drive-profile `"$DriveProfile`"$mapArg$localizationArg$noRvizArg$matchArg$noBehaviorArg$noVisionArg$visionBackendArg"
 
 & (Join-Path $PSScriptRoot 'run-env.ps1') cmd /c $cmdLine
 exit $LASTEXITCODE
