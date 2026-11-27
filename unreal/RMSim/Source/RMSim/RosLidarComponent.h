@@ -13,7 +13,7 @@ class RMSIM_API URosLidarComponent : public UActorComponent
 {
     GENERATED_BODY()
 public:
-    bool Initialize(AVehicleRig* Vehicle,const FString& Profile,FString& Error);
+    bool Initialize(AVehicleRig* Vehicle,const FString& Profile,FString& Error,double RayScale=1.0);
     void Advance(double Time,bool Connected,double EpochSolverTime=0.);
     void Reset();
     void DiscardPending();

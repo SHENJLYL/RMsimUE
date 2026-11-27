@@ -92,7 +92,7 @@ if ($MatchRoster) {
         }
         $rosSpawn = $rosSeats[0].Spawn
         $RosBridge = $RosControl = $RosAimControl = $RosImu = $RosLidar = $true
-        if ($CameraHz -eq 0) { $CameraHz = 15 }
+        if ($CameraHz -eq 0) { $CameraHz = if ($RosVehicleTeam -eq 'both') { 10 } else { 15 } }
         if ($RosVehicleTeam -eq 'both' -and -not $PSBoundParameters.ContainsKey('CameraWidth') -and -not $PSBoundParameters.ContainsKey('CameraHeight')) {
             $CameraWidth = 640
             $CameraHeight = 480

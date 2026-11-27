@@ -25,6 +25,7 @@ struct FRosBridgeOptions
     bool bLightweightAimCamera = false;
     bool bAllowImu = true;
     bool bAllowLidar = true;
+    double LidarRayScale = 1.0;
 };
 
 UCLASS()

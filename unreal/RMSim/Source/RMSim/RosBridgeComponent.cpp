@@ -144,7 +144,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
     {
         Camera=NewObject<USceneCaptureComponent2D>(Rig,*FString::Printf(TEXT("RosCamera_%d"),Port));Camera->SetupAttachment(Aim);
         Camera->SetRelativeTransform(FTransform::Identity);Camera->FOVAngle=HFovDegrees;Camera->CaptureSource=ESceneCaptureSource::SCS_FinalColorLDR;
-        Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=!bLightweightAimCamera;
+        Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=true;
         if(bLightweightAimCamera)
         {
             // Keep direct lighting + dynamic shadows (so the arena stays well-lit and realistic)
@@ -198,7 +198,7 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
             Profile=FPaths::Combine(FPaths::GetPath(RigFile),TEXT("sensors/lidar.json"));
         }
         Lidar=NewObject<URosLidarComponent>(GetOwner());GetOwner()->AddInstanceComponent(Lidar);Lidar->RegisterComponent();
-        if(!Lidar->Initialize(Rig,Profile,Error))return false;
+        if(!Lidar->Initialize(Rig,Profile,Error,Options.LidarRayScale))return false;
         if(Imu&&Imu->UsesId(Lidar->GetSensorId())){Error=TEXT("IMU and LiDAR sensor ids must be unique");return false;}
     }
     EpochSolverTime=SolverTime();LastPollWall=FPlatformTime::Seconds();

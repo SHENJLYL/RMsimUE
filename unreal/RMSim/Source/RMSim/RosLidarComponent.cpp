@@ -40,7 +40,7 @@ TArray<TSharedPtr<FJsonValue>> LidarVec(const FVector& V)
 {return {MakeShared<FJsonValueNumber>(V.X),MakeShared<FJsonValueNumber>(V.Y),MakeShared<FJsonValueNumber>(V.Z)};}
 }
 
-bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FString& Error)
+bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,FString& Error,double RayScale)
 {
     FString Text;TSharedPtr<FJsonObject> J;
     if(!Vehicle||!Vehicle->IsContactPhysics()||!FFileHelper::LoadFileToString(Text,*Profile)||
@@ -62,6 +62,11 @@ bool URosLidarComponent::Initialize(AVehicleRig* Vehicle,const FString& Profile,
        !LidarNumber(J,TEXT("reflectivity"),ReflectivityValue,0,255)||FMath::FloorToDouble(ReflectivityValue)!=ReflectivityValue||
        !LidarNumber(J,TEXT("noise_seed"),SeedValue,0,2147483647)||FMath::FloorToDouble(SeedValue)!=SeedValue)
     {Error=TEXT("invalid LiDAR identity, mount, scan or range configuration");return false;}
+    if(FMath::IsFinite(RayScale)&&RayScale>0.0&&RayScale<0.999)
+    {
+        const double ClampedScale=FMath::Clamp(RayScale,0.1,1.0);
+        RaysPerSecond=FMath::Max(bMid360?20000.0:1000.0,FMath::RoundToDouble(RaysPerSecond*ClampedScale));
+    }
     if(bMid360&&(!Vehicle->IsMujocoPhysics()||!InitializeMid360(J,Profile,Error)))
     {if(Error.IsEmpty())Error=TEXT("MID360 v3 requires native MuJoCo pose history");return false;}
     for(TCHAR Ch:Id)if(Ch>127||!(FChar::IsAlnum(Ch)||Ch=='_')){Error=TEXT("invalid LiDAR id");return false;}

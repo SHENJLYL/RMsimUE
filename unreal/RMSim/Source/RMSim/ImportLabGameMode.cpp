@@ -1129,6 +1129,7 @@ void AImportLabGameMode::Tick(float DeltaSeconds)
                     else Opts.PortOverride = BasePort + Idx;
                     Opts.CapturePhaseFraction = double(Idx) / double(MatchRosTeams.Num());
                     Opts.bLightweightAimCamera = true;
+                    Opts.LidarRayScale = (MatchRosTeams.Num() >= 2) ? 0.25 : 1.0;
                     URosBridgeComponent* Bridge = NewObject<URosBridgeComponent>(this);
                     AddInstanceComponent(Bridge);
                     Bridge->RegisterComponent();
