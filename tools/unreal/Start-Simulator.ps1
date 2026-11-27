@@ -8,6 +8,7 @@ param(
     [double]$SimStepSeconds = 0.005,
     [ValidateScript({$_ -eq 0 -or ($_ -ge 10 -and $_ -le 144)})][double]$ViewportHz = 120,
     [ValidateRange(50, 100)][int]$RenderScale = 50,
+    [switch]$NoLumen,
     [switch]$TrainingMode,
     [string]$MatchRoster = '',
     [switch]$MatchPreparation,
@@ -93,10 +94,6 @@ if ($MatchRoster) {
         $rosSpawn = $rosSeats[0].Spawn
         $RosBridge = $RosControl = $RosAimControl = $RosImu = $RosLidar = $true
         if ($CameraHz -eq 0) { $CameraHz = 15 }
-        if ($RosVehicleTeam -eq 'both' -and -not $PSBoundParameters.ContainsKey('CameraWidth') -and -not $PSBoundParameters.ContainsKey('CameraHeight')) {
-            $CameraWidth = 640
-            $CameraHeight = 480
-        }
         if ($AutoSentry -and $NavigationSource) {
             $NavigationSource = Resolve-RepoPath $NavigationSource
             if (-not (Test-Path -LiteralPath $NavigationSource -PathType Leaf)) {
@@ -220,8 +217,20 @@ $ueArgs += '-SimRealTimePace'
 if ($ViewportHz -gt 0) {
     $ueArgs += ('-RMSimViewportHz=' + $ViewportHz.ToString([Globalization.CultureInfo]::InvariantCulture))
 }
+$execCmds = @()
 if ($RenderScale -ne 100) {
-    $ueArgs += ('-ExecCmds=' + (Quote-UnrealArgument "r.ScreenPercentage $RenderScale"))
+    $execCmds += "r.ScreenPercentage $RenderScale"
+}
+if ($NoLumen) {
+    $execCmds += @(
+        'r.DynamicGlobalIlluminationMethod 0',
+        'r.ReflectionMethod 0',
+        'r.Lumen.DiffuseIndirect.Allow 0',
+        'r.Lumen.Reflections.Allow 0'
+    )
+}
+if ($execCmds.Count -gt 0) {
+    $ueArgs += ('-ExecCmds=' + (Quote-UnrealArgument ($execCmds -join ', ')))
 }
 $ueArgs += @(Get-RMSimArenaRenderArguments -MapFile $mapLaunch.MapFile -Project $ue.Project)
 if ($TrainingMode) { $ueArgs += '-TrainingMode' }

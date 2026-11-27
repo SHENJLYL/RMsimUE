@@ -411,13 +411,20 @@ class RMSimLauncherApp(tk.Tk):
         self.match_auto_sentry_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             match_opt_row,
-            text="开赛后自动接入 sentry_ws (Point-LIO + Nav2 + 自瞄)",
+            text="开赛后自动接入 sentry_ws",
             variable=self.match_auto_sentry_var,
+            style="Card.TCheckbutton",
+        ).pack(side="left", padx=(0, 12))
+        self.match_no_lumen_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            match_opt_row,
+            text="关闭主视角 Lumen（大幅提帧）",
+            variable=self.match_no_lumen_var,
             style="Card.TCheckbutton",
         ).pack(side="left")
         ttk.Label(
             match_opt_row,
-            text="地图锁定: RMUC 2027 全尺寸赛场",
+            text="地图锁定: RMUC 2027",
             style="Muted.TLabel",
         ).pack(side="right")
 
@@ -823,6 +830,8 @@ class RMSimLauncherApp(tk.Tk):
         self.match_owns_connector = roster["auto_sentry_ws"]
         if self.match_preparation_var.get():
             cmd.append("-MatchPreparation")
+        if self.match_no_lumen_var.get():
+            cmd.append("-NoLumen")
         if ros_team:
             nav_source = self.nav_yaml_var.get().strip()
             cmd += [
