@@ -13,7 +13,6 @@ param(
     [switch]$MatchPreparation,
     [ValidateSet('red', 'blue', 'both')][string]$RosVehicleTeam,
     [switch]$AutoSentry,
-    [switch]$TruthVision,
     [string]$NavigationSource = '',
     [switch]$RosBridge,
     [switch]$RosControl,
@@ -93,11 +92,7 @@ if ($MatchRoster) {
         }
         $rosSpawn = $rosSeats[0].Spawn
         $RosBridge = $RosControl = $RosAimControl = $RosImu = $RosLidar = $true
-        if ($TruthVision) {
-            $CameraHz = 0
-        } elseif ($CameraHz -eq 0) {
-            $CameraHz = 15
-        }
+        if ($CameraHz -eq 0) { $CameraHz = 15 }
         if ($RosVehicleTeam -eq 'both' -and -not $PSBoundParameters.ContainsKey('CameraWidth') -and -not $PSBoundParameters.ContainsKey('CameraHeight')) {
             $CameraWidth = 640
             $CameraHeight = 480
@@ -417,7 +412,6 @@ try {
                             '-RobotId',$RobotId,'-Domain',$st.Seat.Domain,'-MapFile',(Quote-UnrealArgument $mapLaunch.MapFile),'-SpawnId',$st.Seat.Spawn,
                             '-MatchAutonomy')
                         if (-not $WithRviz) { $sentryArgs += '-NoRviz' }
-                        if ($TruthVision) { $sentryArgs += '-TruthVision' }
                         if ($NavigationSource) { $sentryArgs += @('-NavigationSource',(Quote-UnrealArgument $NavigationSource)) }
                         $sProc = Start-Process -FilePath 'powershell.exe' -ArgumentList $sentryArgs -WindowStyle Hidden -PassThru `
                             -RedirectStandardOutput (Join-Path $ueLogDir "$tag.stdout.log") -RedirectStandardError (Join-Path $ueLogDir "$tag.stderr.log")

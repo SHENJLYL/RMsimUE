@@ -76,7 +76,7 @@ def main() -> int:
     parser.add_argument("--no-vision", action="store_true", help="Disable automatic vision auto-aim node")
     parser.add_argument(
         "--vision-backend",
-        choices=("sp_vision_25", "truth", "legacy"),
+        choices=("sp_vision_25", "legacy"),
         default="sp_vision_25",
         help="Vision auto-aim backend to launch in --match-autonomy mode",
     )
@@ -204,26 +204,7 @@ def main() -> int:
 
         if args.match_autonomy and not args.no_vision:
             vis_env = dict(env)
-            if args.vision_backend == "truth":
-                sp_src = str(ROOT / "ros2_ws/src/sp_vision_25")
-                vis_env["PYTHONPATH"] = sp_src + (os.pathsep + vis_env["PYTHONPATH"] if vis_env.get("PYTHONPATH") else "")
-                spawn(
-                    "vision_autoaim",
-                    [
-                        sys.executable,
-                        "-c",
-                        "from sp_vision_25.truth_vision_node import main; main()",
-                        "--ros-args",
-                        "-p",
-                        "use_sim_time:=true",
-                        "-p",
-                        f"robot_id:={args.robot_id}",
-                        "-p",
-                        "require_behavior_switch:=true",
-                    ],
-                    vis_env,
-                )
-            elif args.vision_backend == "sp_vision_25":
+            if args.vision_backend == "sp_vision_25":
                 sp_bins = [
                     str(ROOT / "ros2_ws/install_control/sp_msgs/bin"),
                     str(ROOT / "ros2_ws/install_control/pb_rm_interfaces/bin"),

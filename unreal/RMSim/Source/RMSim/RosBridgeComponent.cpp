@@ -147,16 +147,15 @@ bool URosBridgeComponent::Initialize(AVehicleRig* Vehicle,USceneCaptureComponent
         Camera->bCaptureEveryFrame=false;Camera->bCaptureOnMovement=false;Camera->bAlwaysPersistRenderingState=!bLightweightAimCamera;
         if(bLightweightAimCamera)
         {
-            // Strip expensive viewport-only passes (including Lumen GI/Reflections) from multi-robot aim cameras while preserving emissive lightbars and armor stickers.
+            // Keep direct lighting + dynamic shadows (so the arena stays well-lit and realistic)
+            // while stripping UE5 Lumen GI / Lumen Reflections and expensive viewport-only post-process passes.
             auto& Post=Camera->PostProcessSettings;
             Post.bOverride_DynamicGlobalIlluminationMethod=true;
             Post.DynamicGlobalIlluminationMethod=EDynamicGlobalIlluminationMethod::None;
             Post.bOverride_ReflectionMethod=true;
             Post.ReflectionMethod=EReflectionMethod::None;
-            Camera->ShowFlags.SetGlobalIllumination(false);
             Camera->ShowFlags.SetLumenGlobalIllumination(false);
             Camera->ShowFlags.SetLumenReflections(false);
-            Camera->ShowFlags.SetDynamicShadows(false);
             Camera->ShowFlags.SetVolumetricFog(false);
             Camera->ShowFlags.SetBloom(false);
             Camera->ShowFlags.SetMotionBlur(false);
